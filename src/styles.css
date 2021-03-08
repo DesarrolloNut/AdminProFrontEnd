@@ -1,0 +1,91 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import url("https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,600,700,800");
+@import "~@ng-select/ng-select/themes/default.theme.css";
+
+@import "../node_modules/@syncfusion/ej2-base/styles/bootstrap.css";
+@import "../node_modules/@syncfusion/ej2-buttons/styles/bootstrap.css";
+@import "../node_modules/@syncfusion/ej2-inputs/styles/bootstrap.css";
+@import "../node_modules/@syncfusion/ej2-popups/styles/bootstrap.css";
+@import "../node_modules/@syncfusion/ej2-lists/styles/bootstrap.css";
+@import "../node_modules/@syncfusion/ej2-splitbuttons/styles/bootstrap.css";
+@import "../node_modules/@syncfusion/ej2-calendars/styles/bootstrap.css";
+@import "../node_modules/@syncfusion/ej2-angular-calendars/styles/bootstrap.css";
+
+@import "~bootstrap/dist/css/bootstrap.min.css";
+@import "~bs-stepper/dist/css/bs-stepper.min.css";
+
+/* // regular style toast  */
+/* @import '~ngx-toastr/toastr'; */
+
+/* @import '~ngx-toastr/toastr-bs4-alert'; */
+
+/* @import '../node_modules/ngx-toastr/toastr-bs4-alert'; */
+
+/* // if you'd like to use it without importing all of bootstrap it requires  */
+/* @import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/mixins'; */
+/* @import '~ngx-toastr/toastr-bs4-alert'; */
+
+@media print {
+  div.saltopagina {
+    display: block;
+    page-break-before: always;
+  }
+
+  .isPrinting > * {
+    display: none;
+  }
+
+  .isPrinting app-print-layout {
+    display: block;
+  }
+
+  html,
+  body {
+    height: 100%;
+    /*margin: 0 !important;*/
+    /*padding: 0 !important;*/
+    /*overflow: hidden;*/
+  }
+
+  @page {
+    margin: 0;
+  }
+
+  body {
+    margin: 1.6cm;
+  }
+
+  .container-print,
+  .noshow-on-print {
+    display: none !important;
+  }
+
+  .show-on-print {
+    display: block !important;
+  }
+}
+
+.turno-label {
+  font-size: 200px;
+}
+.turno-label-sm {
+  font-size: 50px;
+}
+
+.bg-yellow {
+  background-color: #f2ff00 !important;
+}
+
+.bg-green {
+  background-color: #176617 !important;
+}
+
+/* ELIMINAR FLECHAS DE LOS INPUTS NUMBER */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

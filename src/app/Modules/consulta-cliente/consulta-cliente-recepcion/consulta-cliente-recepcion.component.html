@@ -1,0 +1,349 @@
+<div class="container-fluid" [hidden]="Cargando">
+
+    <div class="row  pt-5  ">
+
+        <div class="col-md-3 col">
+
+            <img src="https://www.noln.net/ext/resources/archives/q/QuickLane-logo.jpg?1564449449"
+                style="max-width:250px; height:80px;" class="img-fluid" alt="Responsive image">
+
+        </div>
+
+        <div class="col-md-6 m-auto text-center">
+            <h2>Inspección multipunto</h2>
+        </div>
+
+        <div class="col-md-3 text-right">
+            <img src="https://grupoviamar.com/uploads/5610_1529193213.png" style="max-width:250px; height:80px;"
+                class="img-fluid" alt="Responsive image">
+        </div>
+        <div class="col-md-12 mt-3">
+
+            <div class="form-row">
+                <div class="form-group col-md-3">
+                    <label for="formGroupExampleInput">Cliente</label>
+                    <input [readonly]="true" style="border-bottom:1px solid black;" type="text"
+                        class="form-control-plaintext p-0" [ngModel]="recepcion.clienteNombre">
+                </div>
+
+                <div class="form-group col-md-3">
+                    <label for="formGroupExampleInput2">Fecha </label>
+                    <input [readonly]="true" style="border-bottom:1px solid black;" type="text"
+                        class="form-control-plaintext p-0" [ngModel]="recepcion.cita.fechaRecepcion ">
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="formGroupExampleInput2">Kilometraje </label>
+                    <input [readonly]="true" style="border-bottom:1px solid black;" type="text"
+                        class="form-control-plaintext p-0" [ngModel]="recepcion.cita.kilometraje + ' KM'">
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="formGroupExampleInput2">RO/Tag </label>
+                    <input [readonly]="true" style="border-bottom:1px solid black;" type="text"
+                        class="form-control-plaintext p-0" [ngModel]="recepcion.tag">
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="formGroupExampleInput2">Modelo/Año </label>
+                    <input [readonly]="true" style="border-bottom:1px solid black;" type="text"
+                        class="form-control-plaintext p-0"
+                        [ngModel]="recepcion.modelo + ' ' + recepcion.vehiculo.anio ">
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="formGroupExampleInput2">Marca </label>
+                    <input [readonly]="true" style="border-bottom:1px solid black;" type="text"
+                        class="form-control-plaintext p-0" [ngModel]="recepcion.marca">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="formGroupExampleInput2">Chasis # </label>
+                    <input [readonly]="true" style="border-bottom:1px solid black;" type="text"
+                        class="form-control-plaintext p-0" [ngModel]="recepcion.vehiculo.chasis">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="formGroupExampleInput2">Placa </label>
+                    <input [readonly]="true" style="border-bottom:1px solid black;" type="text"
+                        class="form-control-plaintext p-0" [ngModel]="recepcion.vehiculo.placa">
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <h5>Protecciones, equipos y accesorios</h5>
+            <hr />
+        </div>
+        <div class="form-group col-12 col-md-3" *ngFor="let accesorio of recepcion.accesorios">
+
+            <div class="lessons-list" *ngIf="accesorio.inputType == 'checkbox' else InputNumber ">
+                <label> {{accesorio.nombre}} </label>
+                <span class="ml-2">
+                    <i class="fa " [ngClass]="{     'fa-check text-success': accesorio.inputValue == 'true' ,
+                                'fa-times text-danger': !accesorio.inputValue || accesorio.inputValue == 'false'
+                                            }"></i>
+                </span>
+            </div>
+
+            <ng-template #InputNumber>
+
+                <label> {{accesorio.nombre}} </label>
+                <h4 class="d-inline ml-2">
+                    <span class="badge badge-info badge-pill"> {{accesorio.inputValue > 0 ? accesorio.inputValue : 0 }}
+                    </span>
+                </h4>
+
+            </ng-template>
+
+
+        </div>
+
+    </div>
+
+
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <h5>Alertas en el panel</h5>
+        </div>
+
+        <div class="form-group col-4 col-md-2" *ngFor="let alerta of recepcion.alertasTablero">
+            <label class="m-0">
+                <img class="icon-switch" [src]="alerta.imagenNombre" />
+            </label>
+            <div class=" d-inline-block pt-1">
+                <span>
+                    <i *ngIf="alerta.value > 0" class="fa fa-exclamation-triangle text-warning"></i>
+                    <i *ngIf="alerta.value <= 0" class="fa fa-check text-success"></i>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3 mb-2">
+        <div class="col-md-12">
+            <h5>Imágenes del vehículo recibido</h5>
+        </div>
+        <div class="col-md-3 mt-2" *ngFor="let img of recepcion.citaImagenes">
+            <div class="card">
+                <img (click)="openLg(content,img._imageAsDataUrl)" style="height: 200px; cursor:pointer"
+                    class="card-img-top" [src]="img._imageAsDataUrl" alt="Card image cap">
+            </div>
+        </div>
+
+    </div>
+
+    <div class="saltopagina"></div>
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h5>Multipuntos</h5>
+        </div>
+
+        <div *ngIf="opciones.length < 1" class="col-md-12 text-center">
+            <h3>MULTIPUNTOS NO SE HA REPORTADO</h3>
+        </div>
+
+        <div class="col-12 mt-3">
+            <div class="card" *ngFor="let cp of categoriasPadres">
+
+                <div class="card-body">
+                    <h4 *ngIf="cp" class="card-title bg-info text-white p-2">
+                        {{cp}}
+                    </h4>
+                    <ng-template ngFor let-c [ngForOf]="categoriasHijas">
+
+
+                        <ng-template [ngIf]="c.categoriaPadre == cp ">
+                            <h5 class="card-subtitle text-info mt-3">{{c.categoria}} </h5>
+                            <hr>
+                            <div class="row" *ngFor="let op of opciones; let  i = index">
+
+                                <div class="col-12" *ngIf="op.categoria == c.categoria ">
+
+                                    <ng-template [ngIf]="op.tipoInput1=='color'">
+                                        <!-- <div *ngFor="let c of colores; let ii = index"
+                                            class="form-check form-check-inline border border-light p-2"
+                                            [ngStyle]="{'background': c.nombre}">
+
+                                            <input type="radio" [checked]="op.respuesta1 == c.codigo "
+                                                [(ngModel)]="op.respuesta1" name="{{i}}_radio" [value]="c.codigo">
+                                        </div> -->
+
+                                        <span *ngFor="let c of colores; let ii = index">
+                                            <i [ngStyle]="{'color': c.nombre}" [ngClass]="{'fa-check-square': op.respuesta1 == c.codigo,
+                                                             'fa-square' :   op.respuesta1 != c.codigo   }"
+                                                class="fa  fa-2x  m-1"></i>
+                                        </span>
+
+                                    </ng-template>
+
+                                    <div class="form-check form-check-inline p-2">
+                                        <label for="inlineRadio112" class="form-check-label">
+                                            {{op.opcion}}
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline" *ngIf="op.tipoInput2">
+                                        <!-- <input style="width: 70px !important" type="number" [(ngModel)]="op.respuesta2"
+                                            class="form-control" id="inputPassword2"> -->
+                                        <span *ngIf="op.respuesta2 > 0">{{op.respuesta2}}</span>
+                                        <span *ngIf="op.respuesta2 <= 0 ">0</span>
+                                        <!-- <label for="inlineRadio1" class="form-check-label">1</label> -->
+                                    </div>
+                                    <div class="form-check form-check-inline p-2" *ngIf="op.tipoInput2">
+                                        <label for="inlineRadio112" class="form-check-label">
+                                            mm
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline" *ngIf="op.tipoInput3">
+                                        <!-- <input style="width: 70px !important" type="number" [(ngModel)]="op.respuesta3"
+                                            class="form-control" id="inputPassword2"> -->
+                                        <span *ngIf="op.respuesta3 > 0">{{op.respuesta3}}</span>
+                                        <span *ngIf="op.respuesta3 <= 0 ">0</span>
+                                        <!-- <label for="inlineRadio1" class="form-check-label">1</label> -->
+                                    </div>
+                                    <div class="form-check form-check-inline p-2" *ngIf="op.tipoInput3">
+                                        <label for="inlineRadio112" class="form-check-label">
+                                            /32"
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check form-check-inline p-2">
+                                        <label class="form-check-label mx-3">
+                                            <span class="badge badge-light" *ngIf="op.multipuntoEstado == 'false' ">
+                                                No Reparado
+                                            </span>
+
+                                            <span class="badge badge-info" *ngIf="op.multipuntoEstado == 'true' ">
+                                                Reparado
+                                            </span>
+                                        </label>
+                                        <!-- <input type="checkbox" class="form-check-input"
+                                            [(ngModel)]="op.multipuntoEstado" [attr.id]="'radioCheck' + i "
+                                            class="form-check-input"> -->
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+                        </ng-template>
+
+
+                    </ng-template>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <hr />
+    <br />
+    <br />
+    <br />
+    <div class="saltopagina"></div>
+    <div class="row ">
+        <div class="col-md-12">
+            <h5>Observaciones</h5>
+        </div>
+
+        <div class="col-md-12">
+            <p class="text-justify text-info">
+                {{recepcion.cita.observaciones}}
+            </p>
+        </div>
+    </div>
+
+
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h5>Firmas</h5>
+        </div>
+
+        <div class="col-md-12">
+            <div class="form-row">
+                <div class="form-group col-md-3 ">
+                    <label>Receptor</label>
+                    <input [readonly]="true" style="border-bottom:1px solid black;" type="text"
+                        class="form-control-plaintext  p-0" [ngModel]="recepcion.receptorNombre">
+                </div>
+
+                <div class="form-group col-md-3">
+                    <label>Asesor </label>
+                    <input [readonly]="true" style="border-bottom:1px solid black;" type="text"
+                        class="form-control-plaintext p-0" [ngModel]="recepcion.asesorNombre">
+                </div>
+
+                <div class="form-group col-md-3">
+                    <label>Cliente entrega </label>
+                    <input [readonly]="true" style="border-bottom:1px solid black;" type="text"
+                        class="form-control-plaintext p-0" [ngModel]="recepcion.clienteNombre">
+                </div>
+
+                <div class="form-group col-md-4 offset-md-4 text-center">
+                    <img [src]="recepcion.citaClienteRecepcion.clienteEntregaFirma" class="img-fluid" alt="">
+                    <hr class="mt-0" />
+                    <span>Firma del cliente</span>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <hr>
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <p class="text-justify text-black">
+                Declaro haber entregado el vehículo descrito en este documento en las
+                condiciones aquí señaladas.
+                El cliente debe retirar del vehículo todos los objetos y valores personales, ya que Grupo Viamar
+                no se responsabiliza de la pérdida; una vez que el vehículo esté en manos del asesor de servicios.
+                Las fallas no reportadas al momento de ingresar el vehículo al taller no son responsabilidad
+                de Grupo Viamar sino del cliente. El cliente autoriza a tomar fotos del vehículo en su presencia.
+            </p>
+        </div>
+    </div>
+
+    <div class="row noshow-on-print mb-5 mt-4">
+        <div class="col-md-12 text-right ">
+            <a class="btn btn-info m-1" target="_blank"
+                [routerLink]="['/consultas/orden-servicio', citaIDEncriptada]"><i class="fa fa-file"></i> ORDEN DE
+                SERVICIO</a>
+
+            <button class="btn btn-info m-1" onclick="window.print()">GUARDAR O IMPRIMIR</button>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="container pt-5 mt-5" [hidden]="!Cargando">
+
+    <app-loading-listado class="mt-5"></app-loading-listado>
+    <div class="row">
+        <div class="col text-center">
+            <h3>Estamos generando tu reporte en línea.</h3>
+        </div>
+    </div>
+</div>
+
+
+
+<!--MODAL DE LAS FOTOS-->
+<div class="row">
+    <ng-template #content let-modal>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="card text-center">
+                                <img class="card-img-top" [src]="imageSrcSeleccionada" alt="Imagen tomada">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</div>

@@ -1,0 +1,22 @@
+.icon-switch {
+    width: 30px;
+    display: inline-block;
+  }
+  
+
+  #ngx .ng-valid, .ng-touched.ng-valid {
+    border: none !important;
+}
+
+@media all {
+  div.saltopagina{
+     display: none;
+  }
+}
+  
+@media print{
+  div.saltopagina{
+     display:block;
+     page-break-before:always;
+  }
+}

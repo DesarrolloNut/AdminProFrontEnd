@@ -1,0 +1,90 @@
+<!--<div class="animated yt-loader" *ngIf="Cargando"></div>-->
+<!-- Content Row -->
+
+<div class="container-fluid h-100 bg-white pl-0">
+  <div class="row justify-content-center h-100">
+    <div class="col p-0 d-none d-sm-none  d-md-block d-lg-block">
+      <div id="carouselExampleSlidesOnly" class="carousel slide h-100" data-ride="carousel">
+        <div class="carousel-inner h-100">
+          <div class="carousel-item active h-100">
+            <img src="https://media.ed.edmunds-media.com/kia/seltos/2021/fd/2021_kia_seltos_f34_fd_1118192_1600.jpg"
+                 class="d-block w-100 h-100 " alt="...">
+          </div>
+          <div class="carousel-item h-100">
+            <img src="http://www.revistaturbo.com/sites/default/files/picanto_0.jpg"
+                 class="d-block w-100 h-100  " alt="...">
+          </div>
+          <div class="carousel-item h-100">
+            <img src="https://www.diariomotor.com/imagenes/picscache/1920x1600c/mazda-cx-3-2018-0918-ficha-001_1920x1600c.jpg"
+                 class="d-block w-100 h-100 " alt="...">
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col">
+      <div class="row mt-2">
+        <div class="col-md-12 text-right">
+          <button class="btn btn-outline-danger btn-sm" (click)="logOut()"><!--<i class="fa fa-sign-out-alt "></i>--> Cerrar sesión</button>
+        </div>
+      </div>
+      <div class="text-center mt-2">
+        <img src="https://grupoviamar.com/uploads/5610_1529193213.png" style="max-width:250px; height:80px;" class="img-fluid" alt="Responsive image">
+        <h5 class="text-muted">
+          Turnos Viamar <!--| <span class="text-primary">GVMG</span>-->
+        </h5>
+
+        <div class="row mt-2">
+          <div class="col-md-6 offset-md-3 col-sm-12">
+            <div class=" ">
+              <div class="card-body">
+                <button [routerLink]='["/servicios"]'
+                        class="btn btn-primary text-uppercase btn-lg btn-block animated fadeInUp">
+                  <i class="fa fa-receipt "></i> Tomar turno
+                </button>
+
+                <button [routerLink]='["/turno"]'
+                        class="btn btn-info text-uppercase btn-lg btn-block animated fadeInUp">
+                  <i class="fa fa-list "></i> Lista de turnos
+                </button>
+
+                <button [routerLink]='["/entrega"]'
+                        class="btn btn-info text-uppercase btn-lg btn-block animated fadeInUp">
+                  <i class="fa fa-list "></i> Lista de entregas
+                </button>
+
+
+                <!--<button [routerLink]='["/cita"]'
+
+                        class="btn btn-info text-uppercase btn-lg btn-block animated fadeInUp">
+                  <i class="fa fa-calendar-day "></i> Citas
+                </button>-->
+
+                <button [routerLink]='["/recepcion"]'
+                        class="btn btn-info text-uppercase btn-lg btn-block animated fadeInUp">
+                  <i class="fa fa-car "></i> Recepción
+                </button>
+
+                <!--<button [routerLink]='["/receptores"]'
+
+                        class="btn btn-info text-uppercase btn-lg btn-block animated fadeInUp">
+                  <i class="fa fa-user-friends "></i> Receptores
+                </button>-->
+                <!--<button (click)="onPrintInvoice()" class="btn btn-primary btn-lg btn-block"><i class="fa fa-list-ul "></i> PrintCotizacion</button>-->
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+

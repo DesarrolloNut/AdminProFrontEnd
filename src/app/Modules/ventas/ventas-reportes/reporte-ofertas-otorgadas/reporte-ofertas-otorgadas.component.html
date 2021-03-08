@@ -1,0 +1,52 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+
+                    <div class="col-md-6 p-2">
+                        <div class="form-group">
+                            <ejs-datepicker [format]="'dd-MM-yyyy'"></ejs-datepicker>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 p-2">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <label for="search" class="input-group-text bg-white">
+                                    <span class="bg-white" style="border-right:none">
+                                        <i class="ti-search"></i>
+                                    </span>
+                                </label>
+                            </div>
+                            <!-- <input [(ngModel)]="Search" (keyup)="getCitas()" type="text"
+                                style="border-left:none !important;" class="form-control" placeholder="Buscar cita"> -->
+                            <input type="text" style="border-left:none !important;" class="form-control"
+                                placeholder="Buscar factura">
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- <app-loading-listado [hidden]="!Cargando"></app-loading-listado> -->
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-3 col-md-4">
+        <div class="card border-bottom border-info">
+            <div class="card-body">
+                <div class="d-flex no-block align-items-center">
+                    <div><span class="text-info display-6"><i class="ti-pie-chart"></i></span></div>
+                    <div class="ml-auto">
+                        <h2>120</h2>
+                        <h6 class="text-info">Net Income</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

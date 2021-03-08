@@ -1,0 +1,76 @@
+<!--<div class="animated yt-loader" *ngIf="Cargando"></div>-->
+<!-- Content Row -->
+
+<div class="container-fluid h-100 bg-white pl-0">
+  <div class="row justify-content-center h-100">
+    <!-- <div class="col p-0 d-none d-sm-none  d-md-block d-lg-block">
+        <div id="carouselExampleSlidesOnly" class="carousel slide h-100" data-ride="carousel">
+          <div class="carousel-inner h-100">
+            <div class="carousel-item active h-100">
+              <img src="https://media.ed.edmunds-media.com/kia/seltos/2021/fd/2021_kia_seltos_f34_fd_1118192_1600.jpg"
+                   class="d-block w-100 h-100 " alt="...">
+            </div>
+            <div class="carousel-item h-100">
+              <img src="http://www.revistaturbo.com/sites/default/files/picanto_0.jpg"
+                   class="d-block w-100 h-100  " alt="...">
+            </div>
+            <div class="carousel-item h-100">
+              <img src="https://www.diariomotor.com/imagenes/picscache/1920x1600c/mazda-cx-3-2018-0918-ficha-001_1920x1600c.jpg"
+                   class="d-block w-100 h-100 " alt="...">
+            </div>
+          </div>
+        </div>
+      </div> -->
+    <div class="col-12 ml-1 pr-0 overflow-hidden text-center ">
+
+      <img src="https://grupoviamar.com/uploads/5610_1529193213.png" style="max-width:250px; height:80px;"
+        class="img-fluid" alt="Responsive image">
+
+
+      <div class="row">
+        <div style="background-color:#2991C1" class="col-4 p-3 text-center border   ">
+          <h1 class="text-white">Turno</h1>
+        </div>
+        <div style="background-color:#2991C1" class="col-4 p-3 text-center border   ">
+          <h1 class="text-white">Servicio</h1>
+        </div>
+        <div style="background-color:#2991C1" class="col-4 p-3 text-center border ">
+          <h1 class="text-white">Posición</h1>
+        </div>
+      </div>
+
+      <div class="row" *ngFor="let turno of turnos">
+
+        <ng-template [ngIf]="turno.estadoID == 2" [ngIfElse]="TurnosDesactivados">
+
+          <div style="background-color:#2FB1EE" class="col-4 p-3 text-center border   ">
+            <h1 class="text-white">{{turno.turno}}</h1>
+          </div>
+          <div style="background-color:#2FB1EE" class="col-4 p-3 text-center border ">
+            <h1 class="text-white">{{turno.servicio}}</h1>
+          </div>
+          <div style="background-color:#2FB1EE" class="col-4 p-3 text-center border ">
+            <h1 class="text-white">{{turno.posicion}}</h1>
+          </div>
+
+        </ng-template>
+
+        <ng-template #TurnosDesactivados>
+
+          <div class="col-4 p-3 text-center border bg-secondary  ">
+            <h1 class="text-white">{{turno.turno}}</h1>
+          </div>
+          <div class="col-4 p-3 text-center border bg-secondary ">
+            <h1 class="text-white">{{turno.servicio}}</h1>
+          </div>
+          <div class="col-4 p-3 text-center border bg-secondary">
+            <h1 class="text-white">{{turno.posicion}}</h1>
+          </div>
+
+        </ng-template>
+
+
+      </div>
+    </div>
+  </div>
+</div>

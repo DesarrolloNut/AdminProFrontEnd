@@ -1,0 +1,168 @@
+<div class="row">
+    <div class="col-lg-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex no-block">
+                    <div class="m-r-20 align-self-center"><span class="lstick m-r-20"></span><img
+                            src="assets/images/icon/income.png" alt="Income"></div>
+                    <div class="align-self-center">
+                        <h6 class="text-muted m-t-10 m-b-0">Recepciones hoy</h6>
+                        <h2 class="m-t-0"> 53</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="col-lg-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex no-block">
+                    <div class="m-r-20 align-self-center"><span class="lstick m-r-20"></span><img
+                            src="assets/images/icon/expense.png" alt="Income"></div>
+                    <div class="align-self-center">
+                        <h6 class="text-muted m-t-10 m-b-0">Turnos Atendidos</h6>
+                        <h2 class="m-t-0">236,000</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex no-block">
+                    <div class="m-r-20 align-self-center"><span class="lstick m-r-20"></span><img
+                            src="assets/images/icon/assets.png" alt="Income"></div>
+                    <div class="align-self-center">
+                        <h6 class="text-muted m-t-10 m-b-0">Total Assets</h6>
+                        <h2 class="m-t-0">987,563</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex no-block">
+                    <div class="m-r-20 align-self-center"><span class="lstick m-r-20"></span><img
+                            src="assets/images/icon/staff.png" alt="Income"></div>
+                    <div class="align-self-center">
+                        <h6 class="text-muted m-t-10 m-b-0">Total Staff</h6>
+                        <h2 class="m-t-0">987,563</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> -->
+</div>
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body" [hidden]="Cargando">
+
+                <div class="row" *ngIf="turnoActual">
+                    <div class="col-7">
+                        <h2 class="card-title"><span class="badge badge-info">{{turnoActual.turno}}</span></h2>
+                        <h6 class="card-subtitle">Turno actual</h6>
+                    </div>
+                    <div class="col-5 text-right">
+                        <button class="btn btn-info m-1" routerLink="./{{turnoActual.citaID}}"><i
+                                class="fa fa-pencil-alt"></i></button>
+                        <button class="btn btn-success m-1" (click)="LlamarTurno()"
+                            *ngIf="!CargandoBoton && turnoActual.llamadas < 4"><i class="fa fa-bell"></i></button>
+                        <button class="btn btn-danger m-1" (click)="LlamarTurno()"
+                            *ngIf="!CargandoBoton && turnoActual.llamadas == 4"><i class="fa fa-times"></i></button>
+                        <button class="btn btn-success m-1 disabled" disabled *ngIf="CargandoBoton"><i
+                                class="fa fa-spin fa-spinner"></i></button>
+                    </div>
+
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                        <h3 class="box-title m-t-40">Información General </h3>
+                        <div class="table-responsive">
+                            <table class="table">
+
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">Cliente</th>
+                                        <td>{{turnoActual.cliente}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Marca</th>
+                                        <td>{{turnoActual.marca}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Modelo</th>
+                                        <td>{{turnoActual.modelo}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Chasis</th>
+                                        <td>{{turnoActual.chasis}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Año</th>
+                                        <td>{{turnoActual.ano}}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <th scope="row">Servicio</th>
+                                        <td>
+                                            <div *ngIf="turnoActual.servicio == 'Entrega de vehículo' "
+                                                class="label label-table label-primary">
+                                                {{turnoActual.servicio}}</div>
+                                            <div *ngIf="turnoActual.servicio == 'Taller' "
+                                                class="label label-table label-success">{{turnoActual.servicio}}
+                                            </div>
+                                            <div *ngIf="turnoActual.servicio == 'Expreso' "
+                                                class="label label-table label-info">{{turnoActual.servicio}}</div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Llamadas</th>
+                                        <td>
+                                            <h5>
+                                                <span class="badge animated " [ngClass]="{
+                                                    'badge-success' : turnoActual.llamadas == 1,
+                                                    'badge-secondary' : turnoActual.llamadas == 2,
+                                                    'badge-warning' : turnoActual.llamadas == 3,
+                                                    'badge-danger' : turnoActual.llamadas == 4
+                                                    }">
+                                                    {{turnoActual.llamadas}}
+                                                </span>
+                                            </h5>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" *ngIf="!turnoActual">
+                    <div class="col-md-6 offset-md-3 mt-3 text-center">
+                        <div class="mt-2">
+                            <i class="fa fa-info-circle text-info fa-2x"></i>
+                        </div>
+                        <h5>No tienes un turno asignado.</h5>
+                        <button class="btn btn-success mt-3" (click)="LlamarTurno()"><i class="fa fa-bell"></i> Llamar
+                            siguiente
+                            turno</button>
+                    </div>
+                </div>
+
+
+
+            </div>
+
+
+
+            <div class="card-body" [hidden]="!Cargando">
+                <app-loading-listado></app-loading-listado>
+            </div>
+        </div>
+    </div>
+</div>

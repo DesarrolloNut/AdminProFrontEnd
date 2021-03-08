@@ -1,0 +1,179 @@
+<div class="row mb-2">
+    <div class="col">
+        <button class="btn btn-light" routerLink="/herramientas/minutas"><i class="fa fa-arrow-left"></i>
+            Regresar</button>
+    </div>
+</div>
+<div class="row">
+
+    <div class="col-8 offset-2">
+        <div class="card">
+            <div class="card-body">
+                <form class="" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="Titulo">Titulo</label>
+                                <input formControlName="titulo" type="text" class="form-control" id="Titulo"
+                                    aria-describedby="Titulo" placeholder="Enter Titulo">
+                                <div *ngIf="submitted && f.titulo.errors"
+                                    class="text-danger small animated animated--fade-in">
+                                    <div *ngIf="f.titulo.errors.required  ">El campo es obligatorio</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="col-6">
+                            <div class="form-group">
+                                <label for="Fecha">Fecha</label>
+                                <input formControlName="clienteID" type="date" class="form-control" id="Fecha" aria-describedby="Titulo"
+                                    placeholder="Enter Titulo">
+                            </div>
+                        </div> -->
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="FechaInicio">Fecha Inicio</label>
+                                <ejs-datepicker formControlName="fechaInicio" [format]="'dd-MM-yyyy'"></ejs-datepicker>
+                                <div *ngIf="submitted && f.fechaInicio.errors"
+                                    class="text-danger small animated animated--fade-in">
+                                    <div *ngIf="f.fechaInicio.errors.required  ">El campo es obligatorio</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="FechaFinal">Fecha Final</label>
+                                <ejs-datepicker formControlName="fechaFinal" [format]="'dd-MM-yyyy'"></ejs-datepicker>
+                                <div *ngIf="submitted && f.fechaFinal.errors"
+                                    class="text-danger small animated animated--fade-in">
+                                    <div *ngIf="f.fechaFinal.errors.required  ">El campo es obligatorio</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="Asistentes">Asistente</label>
+                                <ng-select id="Asistentes" formControlName="asistenteId" [items]="AsistentesCombo"
+                                    bindLabel="nombre" [loading]="loadingAsistentesCombo" bindValue="codigo"
+                                    notFoundText="No resultados">
+                                </ng-select>
+                                <div *ngIf="submitted && f.asistenteId.errors"
+                                    class="text-danger small animated animated--fade-in">
+                                    <div *ngIf="f.asistenteId.errors.required  ">El campo es obligatorio</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="Lugares">Lugar</label>
+                                <ng-select id="Lugares" formControlName="lugarId" [items]="LugaresCombo"
+                                    bindLabel="nombre" bindValue="codigo" [loading]="loadingLugaresCombo"
+                                    notFoundText="No resultados">
+                                </ng-select>
+                                <div *ngIf="submitted && f.lugarId.errors"
+                                    class="text-danger small animated animated--fade-in">
+                                    <div *ngIf="f.lugarId.errors.required  ">El campo es obligatorio</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="Lugares">Presentador</label>
+                                <ng-select id="Presentador" formControlName="presentadorId" [items]="PresentadoresCombo"
+                                    bindLabel="nombre" [loading]="loadingPresentadoresCombo" bindValue="codigo"
+                                    notFoundText="No resultados">
+                                </ng-select>
+                                <div *ngIf="submitted && f.presentadorId.errors"
+                                    class="text-danger small animated animated--fade-in">
+                                    <div *ngIf="f.presentadorId.errors.required  ">El campo es obligatorio</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="Responsable">Responsable</label>
+                                <ng-select id="Responsable" formControlName="responsableId" [items]="responsablesCombo"
+                                    bindLabel="nombre" [loading]="loadingresponsablesCombo" bindValue="codigo"
+                                    notFoundText="No resultados">
+                                </ng-select>
+                                <div *ngIf="submitted && f.responsableId.errors"
+                                    class="text-danger small animated animated--fade-in">
+                                    <div *ngIf="f.responsableId.errors.required  ">El campo es obligatorio</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="Estados">Estado</label>
+                                <ng-select id="Estados" formControlName="estatus" [items]="EstadosCombo"
+                                    bindLabel="nombre" [loading]="loadingEstadosCombo" bindValue="nombre"
+                                    notFoundText="No resultados">
+                                </ng-select>
+                                <div *ngIf="submitted && f.estatus.errors"
+                                    class="text-danger small animated animated--fade-in">
+                                    <div *ngIf="f.estatus.errors.required  ">El campo es obligatorio</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <hr>
+                            <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0">
+
+
+                                <ngb-panel [title]="seccion.titulo" *ngFor="let seccion of secciones">
+                                  <ng-template ngbPanelContent>
+                                   
+                                    <table class="table table-sm">
+                                        <thead>
+                                          <tr>
+                                            <th scope="col">Accion</th>
+                                            <th scope="col">Fecha Inicio</th>
+                                            <th scope="col">Fecha Final</th>
+                                            <th scope="col">Estatus</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          <tr *ngFor="let accion of seccion.acciones">
+                                            <th scope="row">{{accion.accion}}</th>
+                                            <td>{{accion.fechaInicio}}</td>
+                                            <td>{{accion.fechaFin}}</td>
+                                            <td>{{accion.estatus}}</td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+
+                                  </ng-template>
+                                </ngb-panel>
+                             
+                              </ngb-accordion>
+                              
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group text-right col-md-12">
+                            <hr />
+
+                            <button class="btn btn-light m-1" routerLink="/herramientas/minutas" type="button">
+                                <i class="fas fa-times"></i>Cancelar
+                            </button>
+
+                            <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+                                <i class="fas fa-check"></i>Guardar
+                            </button>
+
+                            <!-- boton cargando -->
+                            <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                                <span class="spinner-border spinner-border-sm"></span> Guardando
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>

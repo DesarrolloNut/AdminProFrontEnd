@@ -1,0 +1,84 @@
+<div class="container">
+
+    <div class="row container-print my-4">
+
+        <div class="col-md-6" *ngxPermissionsOnly="['ventas_ofertas_consulta_factura']">
+            <button class="btn btn-light" routerLink="/ventas/ofertas-consulta-factura"><i class="fa fa-arrow-left"></i>
+                Regresar</button>
+        </div>
+
+        <div class="col-md-6 text-right">
+            <button class="btn btn-info m-1" onclick="location.reload()"><i class="fa fa-redo"></i> Refrescar</button>
+
+            <button class="btn btn-info m-1" onclick="window.print()"><i class="fa fa-print"></i> Guardar o
+                imprimir</button>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-12 my-auto ">
+            <div class="col-12 text-center ">
+                <img style="max-width:250px; height:80px;" src="https://grupoviamar.com/uploads/5610_1529193213.png">
+            </div>
+        </div>
+    </div>
+
+    <div class="row" *ngIf="!Cargando">
+
+        <div class="col-md-8 offset-md-2" *ngIf="notaCredito">
+
+            <div class="card mb-3 text-center">
+                <h2 class="text-left">Resumen de oferta</h2>
+                <hr>
+                <qrcode [qrdata]="notaCredito" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
+                <div class="card-body">
+                    <h5 class="card-title">{{cliente}}</h5>
+                    <h6 class="card-title">Factura {{factura}}</h6>
+                    <h6 class="card-title">Nota de crédito {{notaCredito}}</h6>
+                    <h6 class="card-title">Válido hasta {{ fechaValidoHasta | date:'dd/MMM/yyyy' }}</h6>
+
+                    <div class="row">
+                        <div class="col">
+                            <h4 class="card-title text-left">Tus artículos ganados</h4>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Cantidad</th>
+                                            <th scope="col"></th>
+                                            <th scope="col">Equivalente en efectivo</th>
+                                            <!-- <th scope="col">Handle</th> -->
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of resultados">
+                                            <td>{{item.cantidad}}</td>
+                                            <td>{{item.descripcion}}</td>
+                                            <td>
+                                                {{ item.montoPromocion | currency:'RD$ ' }}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <hr>
+                            <h2 class="card-title text-left">Total equivalente en efectivo <span
+                                    class="badge badge-success">
+                                    {{montoPromocion | currency:'RD$ ' }}</span></h2>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-12" *ngIf="!notaCredito">
+            <h2>FACTURA NO VÁLIDA</h2>
+        </div>
+
+    </div>
+
+    <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+
+</div>

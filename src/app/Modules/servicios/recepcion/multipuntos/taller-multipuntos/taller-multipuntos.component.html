@@ -1,0 +1,115 @@
+<!-- <div class="row mb-2">
+    <div class="col">
+        <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
+    </div>
+</div> -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Multipuntos Taller</h4>
+                <div class="row m-t-40">
+
+                    <div class="col-12">
+                        <div class="card" *ngFor="let cp of categoriasPadres">
+                            <div class="card-body">
+                                <h4 *ngIf="cp" class="card-title bg-info text-white p-2">
+                                    {{cp}}
+                                </h4>
+                                <ng-template ngFor let-c [ngForOf]="categoriasHijas">
+
+
+                                    <ng-template [ngIf]="c.categoriaPadre == cp ">
+                                        <h5 class="card-subtitle text-info mt-3">{{c.categoria}} </h5>
+                                        <hr>
+                                        <div class="row" *ngFor="let op of opciones; let  i = index">
+
+                                            <div class="col-12" *ngIf="op.categoria == c.categoria ">
+
+                                                <ng-template [ngIf]="op.tipoInput1=='color'">
+                                                    <div *ngFor="let c of colores; let ii = index"
+                                                        class="form-check form-check-inline border border-light p-2"
+                                                        [ngStyle]="{'background': c.nombre}">
+
+                                                        <input type="radio" [checked]="op.respuesta1 == c.codigo "
+                                                            [(ngModel)]="op.respuesta1" name="{{i}}_radio"
+                                                            [value]="c.codigo">
+                                                    </div>
+                                                </ng-template>
+
+                                                <div class="form-check form-check-inline p-2">
+                                                    <label for="inlineRadio112" class="form-check-label">
+                                                        {{op.opcion}}
+                                                    </label>
+                                                </div>
+                                                <div class="form-check form-check-inline" *ngIf="op.tipoInput2">
+                                                    <input style="width: 70px !important" type="number"
+                                                        [(ngModel)]="op.respuesta2" class="form-control"
+                                                        id="inputPassword2">
+                                                    <!-- <label for="inlineRadio1" class="form-check-label">1</label> -->
+                                                </div>
+                                                <div class="form-check form-check-inline p-2" *ngIf="op.tipoInput2">
+                                                    <label for="inlineRadio112" class="form-check-label">
+                                                        mm
+                                                    </label>
+                                                </div>
+                                                <div class="form-check form-check-inline" *ngIf="op.tipoInput3">
+                                                    <input style="width: 70px !important" type="number"
+                                                        [(ngModel)]="op.respuesta3" class="form-control"
+                                                        id="inputPassword2">
+                                                    <!-- <label for="inlineRadio1" class="form-check-label">1</label> -->
+                                                </div>
+                                                <div class="form-check form-check-inline p-2" *ngIf="op.tipoInput3">
+                                                    <label for="inlineRadio112" class="form-check-label">
+                                                        /32"
+                                                    </label>
+                                                </div>
+
+                                                <div class="form-check form-check-inline p-2">
+                                                    <label [attr.for]="'radioCheck' + i" class="form-check-label mx-3">
+                                                        <!-- <span class="mx-3">|</span> -->
+                                                        (Reparado)
+                                                    </label>
+                                                    <input type="checkbox" class="form-check-input"
+                                                        [checked]="op.multipuntoEstado"
+                                                        [(ngModel)]="op.multipuntoEstado" [attr.id]="'radioCheck' + i "
+                                                        class="form-check-input">
+                                                </div>
+
+                                            </div>
+
+
+                                        </div>
+                                    </ng-template>
+
+
+                                </ng-template>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class=" text-right col-md-12">
+                        <hr />
+
+                        <button class="btn btn-light m-1" routerLink="/servicios/citas" type="button">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+
+                        <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="button"
+                            (click)="guardarRespuestas()">
+                            <i class="fas fa-check"></i> Guardar
+                        </button>
+
+                        <!-- boton cargando -->
+                        <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span> Guardando
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,160 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-md-6 align-middle">
+                        <h4 class="card-title">Control de horarios de citas</h4>
+                    </div>
+                    <div class="col-md-6 text-right">
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <hr>
+                    </div>
+                    <div class="form-group col-12">
+                        <label for="sucursalID"> <i class="fa fa-map-marker"></i> Sucursal </label>
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="sucursales" [clearable]="false"
+                            [loading]="loadingSucursales" notFoundText="No resultados" (change)="getHorarios()"
+                            [(ngModel)]="sucursalSeleccionada">
+                        </ng-select>
+                    </div>
+                </div>
+
+
+                <div class="row" *ngIf="sucursalSeleccionada">
+                    <div class="col-md-12 text-right">
+                        <button class="btn btn-lg btn-success rounded-circle" type="button"
+                            (click)="nuevoHorario(modalRegistrar)">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                        <hr>
+                    </div>
+                </div>
+
+                <div class="row" *ngIf="!Cargando">
+                    <div class="col-12" *ngFor="let item of horariosAgrupados">
+                        <div class="row mb-2">
+                            <div class="col-md-6 align-middle">
+                                <h2 class="card-title">
+                                    <span class="badge badge-info"> {{item.dia}} </span>
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0 no-wrap v-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Hora</th>
+                                        <th>Cantidad</th>
+                                        <th>Tipo de cita</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    <tr *ngFor="let ittem of item.horarios">
+                                        <td><span><i class="fa fa-clock"></i> {{ittem.horaCita}}</span></td>
+                                        <td>
+                                            <span> {{ ittem.cantidad }}</span>
+                                        </td>
+                                        <td>
+                                            <span> {{ittem.citaTipo}}</span>
+                                        </td>
+
+                                        <td>
+                                            <button class="btn btn-sm btn-info m-1"
+                                                (click)="editar(ittem,modalRegistrar)">
+                                                <i class="fa fa-sm fa-edit"></i>
+                                            </button>
+                                            <!-- <button class="btn btn-sm btn-danger  m-1" (click)="eliminar(item)">
+                                                <i class="fa fa-sm fa-times"></i>
+                                            </button> -->
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<ng-template #modalRegistrar let-modal>
+    <div class="container-fluid">
+        <form class="row" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
+            <div class="col">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modal-title">Registro de horas</h4>
+                    <button type="button" class="close" aria-describedby="modal-title"
+                        (click)="modal.dismiss('Cross click')">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for=""> <i class="fa fa-calendar-alt"></i> Día </label>
+                            <ng-select bindLabel="nombre" bindValue="codigo" [items]="diasSemana"
+                                [loading]="loadingDiasSemana" [clearable]="false"
+                                [ngClass]="{'form-control border-danger p-0' : submitted && f.diaSemanaID.errors }"
+                                notFoundText="No resultados" formControlName="diaSemanaID">
+                            </ng-select>
+                            <div *ngIf="submitted && f.diaSemanaID.errors" class="text-danger small">
+                                <div *ngIf="f.diaSemanaID.errors.required  ">El campo es obligatorio</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="sucursalID"> Límite citas </label>
+                            <input formControlName="cantidad" type="number" name="cantidad" id="cantidad"
+                                [ngClass]="{'is-invalid' : submitted && f.cantidad.errors,  'form-control':true  }">
+                            <div class="invalid-feedback" *ngIf="submitted && f.cantidad.errors">
+                                <div *ngIf="f.cantidad.errors.required">El campo es obligatorio</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <label for="sucursalID"> Tipo de cita </label>
+                            <ng-select bindLabel="nombre" bindValue="codigo" [items]="citaTipos"
+                                [loading]="loadingCitaTipos" [clearable]="false"
+                                [ngClass]="{'form-control border-danger p-0' : submitted && f.citaTipoID.errors }"
+                                notFoundText="No resultados" formControlName="citaTipoID">
+                            </ng-select>
+                            <div *ngIf="submitted && f.citaTipoID.errors" class="text-danger small">
+                                <div *ngIf="f.citaTipoID.errors.required  ">El campo es obligatorio</div>
+                            </div>
+                        </div>
+
+                        <div class=" col-md-6">
+                            <label for="sucursalID"> <i class="fa fa-clock"></i> Hora </label>
+                            <ngb-timepicker [(ngModel)]="horaModel" [ngModelOptions]="{standalone: true}"
+                                [meridian]="true"></ngb-timepicker>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary"
+                        (click)="modal.close('Close click')">Cancel</button>
+                    <button type="submit" class="btn btn-info">Guardar</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- <app-loading-listado [hidden]="!CargandoDelete"></app-loading-listado> -->
+
+    </div>
+</ng-template>

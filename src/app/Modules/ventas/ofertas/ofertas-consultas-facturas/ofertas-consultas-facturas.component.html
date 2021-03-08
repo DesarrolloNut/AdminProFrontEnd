@@ -1,0 +1,157 @@
+<div class="row">
+    <div class="control-section">
+        <div id="control_wrapper">
+        </div>
+    </div>
+</div>
+
+<!-- <div class="row mb-2">
+    <div class="col">
+        <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
+    </div>
+</div> -->
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 col-12">
+                        <h4 class="card-title">Consulta de ofertas</h4>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-12 text-right">
+                    </div>
+                </div>
+                <h6 class="card-subtitle">Puedes validar si la factura aplicó a las ofertas disponibles.</h6>
+                <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()" *ngIf="!Cargando">
+
+                    <div class="form-group col-md-6">
+                        <label for="facturaNum"> <i class="fa fa-hashtag"></i> Número de Factura</label>
+                        <input formControlName="facturaNum" type="text" name="facturaNum" id="facturaNum"
+                            [ngClass]="{'is-invalid' : submitted && f.facturaNum.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.facturaNum.errors">
+                            <div *ngIf="f.facturaNum.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group col-md-6 ">
+                        <label for="inputEmail4"> <i class="fa fa-dollar-sign"></i> Tipo de Pago</label>
+                        <ng-select bindLabel="nombre" bindValue="grupo" [items]="tiposPago" [loading]="loadingTiposPago"
+                            [clearable]="false"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.tipoPago.errors }"
+                            notFoundText="No resultados" formControlName="tipoPago">
+                        </ng-select>
+                        <div *ngIf="submitted && f.tipoPago.errors" class="text-danger small">
+                            <div *ngIf="f.tipoPago.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6 ">
+                        <label for="inputEmail4">Tipo de documento </label>
+                        <ng-select [items]="documentos" bindLabel="nombre" bindValue="codigo" [searchable]="false"
+                            [clearable]="false" [loading]="loadingDocumentosTipo"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.documentoTipoID.errors }"
+                            notFoundText="No resultados" formControlName="documentoTipoID">
+                        </ng-select>
+                        <div *ngIf="submitted && f.documentoTipoID.errors"
+                            class="text-danger animated animated--fade-in pt-1" style="font-size:13px">
+                            <div *ngIf="f.documentoTipoID.errors.required">Campo obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="documento" class=" col-form-label">Documento</label>
+                        <div class="input-group">
+                            <input type="text" (keyup)="onDocumentoKeyUp()" formControlName="documento"
+                                class="form-control"
+                                [ngClass]="{ 'is-invalid': f.documento.value && f.documento.errors }">
+                            <div class="input-group-append" *ngIf="buscandoDocumento">
+                                <span class="input-group-text bg-white border-0"> <i
+                                        class="fa fa-spin fa-spinner"></i></span>
+                            </div>
+                        </div>
+                        <div *ngIf="f.documento.value && f.documento.errors" class=" text-danger animated fadeIn pt-1"
+                            style="font-size:13px">
+                            <div *ngIf="f.documento.errors.required ">Campo obligatorio</div>
+                            <div *ngIf="f.documento.errors.cedulaestructura">Documento no válido</div>
+                            <div *ngIf="f.documento.errors.minlength">Mínimo 9 caracteres</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group  col-md-6 ">
+                        <label for="nombres" class=" col-form-label">Nombres</label>
+                        <input type="text" formControlName="nombres" class="form-control"
+                            [ngClass]="{ 'is-invalid': submitted && f.nombres.errors }">
+                        <div *ngIf="submitted && f.nombres.errors" class="text-danger animated fadeIn pt-1"
+                            style="font-size:13px">
+                            <div *ngIf="f.nombres.errors.required ">
+                                Campo obligatorio
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group   col-md-6">
+                        <label for="apellidos" class=" col-form-label">Apellidos</label>
+                        <input type="text" formControlName="apellidos" class="form-control"
+                            [ngClass]="{ 'is-invalid': submitted && f.apellidos.errors }">
+                        <div *ngIf="submitted && f.apellidos.errors" class="   text-danger animated fadeIn pt-1"
+                            style="font-size:13px">
+                            <div *ngIf="f.apellidos.errors.required ">
+                                Campo obligatorio
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6 ">
+                        <label for="celular" class=" col-form-label">Celular</label>
+                        <input type="text" formControlName="celular" class="form-control" mask="(000) 000-0000"
+                            [ngClass]="{ 'is-invalid': submitted && f.celular.errors }">
+                        <div *ngIf="submitted && f.celular.errors" class="   text-danger animated fadeIn pt-1"
+                            style="font-size:13px">
+                            <div *ngIf="f.celular.errors.required ">
+                                Campo obligatorio
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group   col-md-6">
+                        <label for="email" class=" col-form-label">Email</label>
+                        <input type="text" formControlName="email" class="form-control"
+                            [ngClass]="{ 'is-invalid': submitted && f.email.errors }">
+                        <div *ngIf="submitted && f.email.errors" class="   text-danger animated fadeIn pt-1"
+                            style="font-size:13px">
+                            <div *ngIf="f.email.errors.required ">
+                                Campo obligatorio
+                            </div>
+                            <div *ngIf="f.email.errors.email ">
+                                Ingresa un email válido
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group text-right col-md-12">
+                        <hr />
+
+                        <!-- <button class="btn btn-light m-1" routerLink="../" type="button">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button> -->
+
+                        <button class="btn btn-info m-1" type="submit">
+                            <i class="fas fa-search"></i> Validar
+                        </button>
+
+                        <!-- boton cargando -->
+                        <!-- <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span> Guardando
+                        </button> -->
+                    </div>
+
+                </form>
+                <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,74 @@
+<div class="container bg-white animated--fade-in animated">
+  <div class="row">
+
+    <div class="col-md-12 mt-4 ">
+      <div id="header" class="text-center mt-4">
+        <div class="row">
+          <div class="col-md-2">
+          </div>
+          <div class="col-md-8 ">
+            <img src="https://grupoviamar.com/uploads/5610_1529193213.png" style="max-width:250px; height:80px;"
+              class="img-fluid" alt="Responsive image">
+          </div>
+        </div>
+        <div class="text-left mt-1">
+          <h2><strong>Toma tu turno</strong></h2>
+          <h5>Selecciona el servicio que deseas</h5>
+          <hr />
+        </div>
+      </div>
+    </div>
+
+
+    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+      <div class="box-part text-center border rounded border-secondary" routerLink="./taller">
+        <i class="fa fa-cogs fa-3x" aria-hidden="true"></i>
+        <div class="title">
+          <h4>Taller</h4>
+        </div>
+        <div class="text">
+          <span>Si tienes problemas y necesitas reparar a tu vehículo, esta es tu opción.</span>
+        </div>
+        <button type="button" class="btn btn-info">
+          Solicitar
+        </button>
+      </div>
+    </div>
+
+
+    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+      <div class="box-part text-center border rounded-lg border-secondary" routerLink="./expreso">
+        <i class="fa fa-fighter-jet fa-3x" aria-hidden="true"></i>
+        <div class="title">
+          <h4>Línea expreso</h4>
+        </div>
+        <div class="text">
+          <span>Para mantenimiento de aceite, limpieza, filtros y otros.</span>
+        </div>
+        <button type="button" class="btn btn-info">
+          Solicitar
+        </button>
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+      <div class="box-part text-center border rounded border-secondary" (click)="showNoDisponibleMensaje()">
+        <i class="fa fa-car fa-3x" aria-hidden="true"></i>
+        <div class="title">
+          <h4>Entrega de vehículo</h4>
+        </div>
+        <div class="text">
+          <span>Prepárate para recibir tu vehículo reparado y listo para conducirlo.</span>
+        </div>
+        <button type="button" class="btn btn-info">
+          Solicitar
+        </button>
+      </div>
+    </div>
+
+
+  </div>
+
+
+
+</div>

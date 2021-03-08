@@ -1,0 +1,189 @@
+<div class="row">
+  <div class="col-lg-3">
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex no-block">
+          <div class="m-r-20 align-self-center"><span class="lstick m-r-20"></span><img
+              src="assets/images/icon/income.png" alt="Income"></div>
+          <div class="align-self-center">
+            <h6 class="text-muted m-t-10 m-b-0">Sin asignar</h6>
+            <h2 class="m-t-0">000</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-3">
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex no-block">
+          <div class="m-r-20 align-self-center"><span class="lstick m-r-20"></span><img
+              src="assets/images/icon/expense.png" alt="Income"></div>
+          <div class="align-self-center">
+            <h6 class="text-muted m-t-10 m-b-0">Sin asignar</h6>
+            <h2 class="m-t-0">000</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-3">
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex no-block">
+          <div class="m-r-20 align-self-center"><span class="lstick m-r-20"></span><img
+              src="assets/images/icon/assets.png" alt="Income"></div>
+          <div class="align-self-center">
+            <h6 class="text-muted m-t-10 m-b-0">Sin asignar</h6>
+            <h2 class="m-t-0">000</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-3">
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex no-block">
+          <div class="m-r-20 align-self-center"><span class="lstick m-r-20"></span><img
+              src="assets/images/icon/staff.png" alt="Income"></div>
+          <div class="align-self-center">
+            <h6 class="text-muted m-t-10 m-b-0">Sin asignar</h6>
+            <h2 class="m-t-0">000</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row mb-2">
+          <div class="col-md-6 align-middle">
+            <h4 class="card-title">Listado de citas</h4>
+          </div>
+          <div class="col-md-6 text-right">
+            <button [routerLink]="[0]" class="btn btn-info "> <i class="fa fa-plus"></i> Nueva cita
+            </button>
+          </div>
+          <div class="col-md-12 p-2">
+
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <label for="search" class="input-group-text bg-white">
+                  <span class="bg-white" style="border-right:none">
+                    <i class="ti-search"></i>
+                  </span>
+                </label>
+              </div>
+              <input [(ngModel)]="Search" (keyup)="getCitas()" type="text" style="border-left:none !important;"
+                class="form-control" placeholder="Buscar cita">
+            </div>
+          </div>
+        </div>
+        <!-- <h6 class="card-subtitle">Create responsive tables by wrapping any <code>.table</code> in <code>.table-responsive </code></h6>-->
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Cliente</th>
+                <th>Vehículo</th>
+                <!-- <th>Marca</th>
+                <th>Modelo</th> -->
+                <!-- <th>Documento</th> -->
+                <th>Servicio</th>
+                <th>Agente</th>
+                <th>Fecha cita</th>
+                <th>Hora cita</th>
+              </tr>
+            </thead>
+            <tbody [hidden]="Cargando">
+
+              <tr *ngFor="let cita of citas">
+                <td><span class="badge badge-light text-info">#{{cita.citaID}}</span></td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <i class="fa fa-user fa-2x text-light"></i>
+                    <div class="ml-3">
+                      <p class="font-bold mb-0">
+                        {{cita.cliente | titlecase }}</p>
+                      <small class="text-info"> <i class="fa fa-id-card"></i> {{cita.documento }}</small>
+                      <!-- <small class="text-info">{{cita.modelo }}</small> -->
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <i class="fa fa-car fa-2x text-light"></i>
+                    <div class="ml-3">
+                      <p class="font-bold mb-0">
+                        {{cita.chasis | uppercase  }}</p>
+                      <small class="text-info">{{cita.marca + ' ' + cita.modelo  + ' ' + cita.anio}}</small>
+                    </div>
+                  </div>
+                </td>
+
+                <!-- <td>{{cita.chasis}}</td> -->
+                <!-- <td>{{cita.marca}}</td>
+                <td>{{cita.modelo}}</td> -->
+                <!-- <td>{{cita.documento}}</td> -->
+                <!-- <td>{{cita.cliente | titlecase }}</td> -->
+                <td>
+                  <div *ngIf="cita.servicio == 'Entrega de vehículo' " class="label label-table label-primary">
+                    {{cita.servicio}}</div>
+                  <div *ngIf="cita.servicio == 'Taller' " class="label label-table label-success">{{cita.servicio}}
+                  </div>
+                  <div *ngIf="cita.servicio == 'Expreso' " class="label label-table label-info">{{cita.servicio}}</div>
+                </td>
+                <td>
+                  <!-- <i class="fa fa-user text-light"></i>  -->
+                  {{cita.usuarioCreador  | titlecase}}</td>
+                <td>
+                  <span class="text-muted"><i class="far fa-calendar"></i>
+                    {{cita.fechaCita  | date:'dd/MM/yy' }}
+                  </span>
+                </td>
+                <td>
+                  <span class="text-muted"><i class="far fa-clock"></i> {{cita.horaCita}}</span>
+                </td>
+                <td>
+                  <button *ngIf="cita.canEdit" class="btn btn-sm btn-info" [routerLink]="[cita.citaID]">
+                    <i class="fa fa-sm fa-edit"></i>
+                  </button>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+
+        </div>
+
+        <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+
+        <div class="row ">
+          <div class="col-md-8 col-xs-12 ">
+            <ngb-pagination [collectionSize]="paginaTotalRecords" [(page)]="paginaNumeroActual" [pageSize]="paginaSize"
+              [maxSize]="5" [boundaryLinks]="true" (pageChange)="getCitas()">
+            </ngb-pagination>
+          </div>
+
+          <div class="col-md-4 text-right d-none d-md-block  ">
+            <select class="form-control d-block" name="paginaSize" [(ngModel)]="paginaSize" (change)="getCitas()">
+              <option [ngValue]="5">5 registro por pagina</option>
+              <option [ngValue]="10">10 registro por pagina</option>
+              <option [ngValue]="15">15 registro por pagina</option>
+            </select>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+</div>

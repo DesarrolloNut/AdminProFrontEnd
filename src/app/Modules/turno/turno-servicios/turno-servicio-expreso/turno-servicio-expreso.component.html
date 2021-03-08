@@ -1,0 +1,592 @@
+<div class="container noshow-on-print">
+
+  <div class="row mt-5">
+    <div class="col-md-2  my-auto">
+      <button class="btn btn-secondary" type="button" [routerLink]="['/turno/servicios']"
+        routerLinkActive="router-link-active">
+        <i class="fa fa-home text-dark"></i> Inicio
+      </button>
+    </div>
+    <div class="col-md-8 my-auto ">
+      <div class="col-12 text-center ">
+        <img style="max-width:250px; height:80px;" src="https://grupoviamar.com/uploads/5610_1529193213.png">
+      </div>
+    </div>
+  </div>
+
+  <div id="stepper1" class="bs-stepper no-show">
+    <div class="bs-stepper-header">
+
+      <div class="step" data-target="#test-l-1">
+        <button class="step-trigger">
+          <span class="bs-stepper-circle">1</span>
+          <span class="bs-stepper-label">¿ Cita?</span>
+        </button>
+      </div>
+
+      <div class="line"></div>
+
+      <div class="step" data-target="#test-l-2">
+        <button class="step-trigger">
+          <span class="bs-stepper-circle">2</span>
+          <span class="bs-stepper-label">Número de Cita</span>
+        </button>
+      </div>
+
+      <div class="line"></div>
+
+      <div class="step" data-target="#test-l-3">
+        <button class="step-trigger">
+          <span class="bs-stepper-circle">3</span>
+          <span class="bs-stepper-label">Identifícate</span>
+        </button>
+      </div>
+
+      <div class="line"></div>
+
+      <div class="step" data-target="#test-l-4">
+        <button class="step-trigger">
+          <span class="bs-stepper-circle">4</span>
+          <span class="bs-stepper-label">Registro</span>
+        </button>
+      </div>
+
+      <div class="line"></div>
+
+      <div class="step" data-target="#test-l-5">
+        <button class="step-trigger">
+          <span class="bs-stepper-circle">5</span>
+          <span class="bs-stepper-label">Chasis</span>
+        </button>
+      </div>
+
+      <div class="line"></div>
+
+      <div class="step" data-target="#test-l-6">
+        <button class="step-trigger">
+          <span class="bs-stepper-circle">6</span>
+          <span class="bs-stepper-label">Turno</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="bs-stepper-content" [hidden]="loading">
+
+      <!-- PASO NUMERO 1 -->
+      <div id="test-l-1" class="content">
+        <div class="container-fluid">
+          <div class="row">
+
+            <div class="col-12 text-center">
+              <h2>¿ Tienes una cita reservada ?</h2>
+            </div>
+
+            <div class="col-6">
+              <div class="box-part text-center border rounded border-info" style="cursor: pointer;"
+                (click)="onTieneCitaRespuesta(true)">
+                <div class="title">
+                  <h4 class="text-info">SÍ</h4>
+                </div>
+                <div class="text">
+                  <span>Sí, claro que tengo una cita reservada.</span>
+                </div>
+                <i class="fa fa-smile fa-3x" aria-hidden="true"></i>
+
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="box-part text-center border rounded border-secondary" style="cursor: pointer;"
+                (click)="onTieneCitaRespuesta(false)">
+                <div class="title">
+                  <h4>NO</h4>
+                </div>
+                <div class="text">
+                  <span>No, no he reservado una cita.</span>
+                </div>
+                <i class="fa fa-frown fa-3x text-secondary" aria-hidden="true"></i>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+
+
+      <!-- PASO NUMERO 2 -->
+      <div id="test-l-2" class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              <button type="button" (click)="previous()" class="btn btn-secondary m-1"><i
+                  class="fa fa-arrow-left text-dark"></i>
+                Anterior</button>
+
+              <hr>
+            </div>
+            <div class="col-12 mt-3">
+              <h3>¿Qué número deseas ingesar? </h3>
+            </div>
+            <div class="col-3">
+
+              <div class="card card-hover border rounded">
+                <div class="card-body">
+                  <div class="custom-control custom-radio">
+                    <input id="opcionCita" name="radioCita" type="radio" class="custom-control-input" checked
+                      [(ngModel)]="tipoCitaBusqueda" value="4">
+                    <label class="custom-control-label" for="opcionCita">CITA</label>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="col-3">
+
+              <div class="card card-hover border rounded">
+                <div class="card-body">
+                  <div class="custom-control custom-radio">
+                    <input id="opcionCedula" name="radioCita" type="radio" class="custom-control-input"
+                      [(ngModel)]="tipoCitaBusqueda" value="1">
+                    <label class="custom-control-label" for="opcionCedula">CÉDULA</label>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="col-3">
+
+              <div class="card card-hover border rounded">
+                <div class="card-body">
+                  <div class="custom-control custom-radio">
+                    <input id="opcionRNC" name="radioCita" type="radio" class="custom-control-input"
+                      [(ngModel)]="tipoCitaBusqueda" value="2">
+                    <label class="custom-control-label" for="opcionRNC">RNC</label>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="col-3">
+
+              <div class="card card-hover border rounded">
+                <div class="card-body">
+                  <div class="custom-control custom-radio">
+                    <input id="opcionPASAPORTE" name="radioCita" type="radio" class="custom-control-input"
+                      [(ngModel)]="tipoCitaBusqueda" value="3">
+                    <label class="custom-control-label" for="opcionPASAPORTE">PASAPORTE</label>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+
+            <div class="col-12" *ngIf="pasoAcual == 2">
+              <app-teclado-virtual (onClickBtnAceptar)="onSendNumeroCita($event)" [(tipoTeclado)]="tipoTeclado"
+                [mostrarInput]="true">
+              </app-teclado-virtual>
+            </div>
+
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- PASO NUMERO 3 -->
+      <div id="test-l-3" class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              <button type="button" (click)="stepperTo(1)" class="btn btn-secondary m-1"><i
+                  class="fa fa-arrow-left text-dark"></i> Anterior</button>
+              <!-- <button type="button" (click)="stepperTo(1)" class="btn btn-secondary m-1"><i class="fa fa-redo"></i>
+                    Reiniciar</button> -->
+              <hr>
+            </div>
+            <div class="col-12 mt-3">
+              <h3>Seleciona el tipo de documento</h3>
+            </div>
+
+            <div class="col-4">
+
+              <div class="card card-hover border rounded">
+                <div class="card-body">
+                  <div class="custom-control custom-radio">
+                    <input id="opcionCedulaCliente" name="radioCliente" type="radio" checked
+                      class="custom-control-input" [(ngModel)]="tipoClienteDocumento" value="1">
+                    <label class="custom-control-label" for="opcionCedulaCliente">CÉDULA</label>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="col-4">
+
+              <div class="card card-hover border rounded">
+                <div class="card-body">
+                  <div class="custom-control custom-radio">
+                    <input id="opcionRNCCliente" name="radioCliente" type="radio" class="custom-control-input"
+                      [(ngModel)]="tipoClienteDocumento" value="2">
+                    <label class="custom-control-label" for="opcionRNCCliente">RNC</label>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="col-4">
+
+              <div class="card card-hover border rounded">
+                <div class="card-body">
+                  <div class="custom-control custom-radio">
+                    <input id="opcionPASAPORTECliente" name="radioCliente" type="radio" class="custom-control-input"
+                      [(ngModel)]="tipoClienteDocumento" value="3">
+                    <label class="custom-control-label" for="opcionPASAPORTECliente">PASAPORTE</label>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+
+            <div class="col-12" *ngIf="pasoAcual == 3">
+              <app-teclado-virtual (onClickBtnAceptar)="onSendClienteDocumento($event)" [(tipoTeclado)]="tipoTeclado"
+                [mostrarInput]="true">
+              </app-teclado-virtual>
+            </div>
+
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- PASO NUMERO 4 -->
+      <div id="test-l-4" class="content ">
+        <div class="container-fluid">
+          <div class="row">
+            <!-- <div class="col-12">
+                <button type="button" (click)="stepperTo(3)" class="btn btn-secondary m-1"><i
+                    class="fa fa-arrow-left text-dark"></i>
+                  Regresar</button>
+  
+                <button type="button" (click)="stepperTo(1)" class="btn btn-secondary m-1"><i
+                    class="fa fa-redo text-dark"></i>
+                  Reiniciar</button>
+  
+                <hr>
+              </div>
+  
+  
+              <div class="col-12 mt-3">
+                <h3>Completa los datos y regístrate </h3>
+              </div>
+  
+  
+              <div class="col-4">
+  
+                <div class="card card-hover border rounded">
+                  <div class="card-body">
+                    <div class="custom-control custom-radio">
+                      <input id="opcionCedulaClienteRegistro" name="radioClienteRegistro" type="radio" checked
+                        class="custom-control-input" [(ngModel)]="tipoClienteDocumento" value="1">
+                      <label class="custom-control-label" for="opcionCedulaClienteRegistro">CÉDULA</label>
+                    </div>
+                  </div>
+                </div>
+  
+              </div>
+              <div class="col-4">
+  
+                <div class="card card-hover border rounded">
+                  <div class="card-body">
+                    <div class="custom-control custom-radio">
+                      <input id="opcionRNCClienteRegistro" name="radioClienteRegistro" type="radio"
+                        class="custom-control-input" [(ngModel)]="tipoClienteDocumento" value="2">
+                      <label class="custom-control-label" for="opcionRNCClienteRegistro">RNC</label>
+                    </div>
+                  </div>
+                </div>
+  
+              </div>
+              <div class="col-4">
+  
+                <div class="card card-hover border rounded">
+                  <div class="card-body">
+                    <div class="custom-control custom-radio">
+                      <input id="opcionPASAPORTEClienteRegistro" name="radioClienteRegistro" type="radio"
+                        class="custom-control-input" [(ngModel)]="tipoClienteDocumento" value="3">
+                      <label class="custom-control-label" for="opcionPASAPORTEClienteRegistro">PASAPORTE</label>
+                    </div>
+                  </div>
+                </div>
+  
+              </div>
+  
+  
+  
+              <div class="col-12">
+                <app-teclado-virtual (onClickBtnAceptar)="onSendClienteDocumento($event)" [(tipoTeclado)]="tipoTeclado"
+                  [mostrarInput]="false">
+                </app-teclado-virtual>
+              </div> -->
+
+
+            <div class="col-12 mt-3 text-center">
+
+              <div class="mt-5">
+                <i class="fa fa-info-circle fa-3x"></i>
+              </div>
+              <h3>No estás registrado como cliente.</h3>
+              <p class="mt-3">Comunícate al número
+                <span class="text-info font-weight-bold" style="font-size: 20px !important;"> (809) 565-3111 <i
+                    class="fa fa-phone"></i></span>
+                y pídele que registre tus datos y tu chasis.
+              </p>
+
+              <div class="mt-5">
+                <button class="btn btn-info" type="button" [routerLink]="['/turno/servicios']"
+                  routerLinkActive="router-link-active">
+                  <i class="fa fa-home text-white"></i> Volver al inicio
+                </button>
+              </div>
+
+            </div>
+
+
+
+
+          </div>
+        </div>
+      </div>
+
+      <!-- PASO NUMERO 5 -->
+
+      <div id="test-l-5" class="content">
+        <div class="container-fluid">
+          <div class="row" *ngIf="listadoChasis.length > 0">
+            <div class="col-12">
+              <button type="button" (click)="stepperTo(3)" class="btn btn-secondary m-1"><i
+                  class="fa fa-arrow-left text-dark"></i>
+                Regresar</button>
+
+              <button type="button" (click)="stepperTo(1)" class="btn btn-secondary m-1"><i
+                  class="fa fa-redo text-dark"></i>
+                Reiniciar</button>
+
+              <hr>
+            </div>
+
+            <div class="col-12" *ngIf="listadoChasis.length > 0">
+              <h3>Selecciona tu chasis</h3>
+            </div>
+
+            <div class="col-12 mt-3">
+
+            </div>
+
+
+            <div class="col-md-12 p-2">
+
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <label for="search" class="input-group-text bg-white">
+                    <span class="bg-white" style="border-right:none">
+                      <i class="ti-search"></i>
+                    </span>
+                  </label>
+                </div>
+                <input type="text" [(ngModel)]="searchText" style="border-left:none !important;" class="form-control"
+                  placeholder="Buscar">
+              </div>
+            </div>
+
+            <div class="col-12" *ngIf="(listadoChasis | filter: searchText).length > 0; else noResults">
+              <div class="form  scrollable" [perfectScrollbar]="config" style="height: 300px;">
+                <div class="inputGroup" *ngFor=" let chasis of listadoChasis | filter: searchText; i as index">
+                  <input id="{{chasis.codigo}}" name="radio" [checked]="chasis == chasisSeleccionado" [value]="chasis"
+                    type="radio" [(ngModel)]="chasisSeleccionado" />
+                  <label for="{{chasis.codigo}}">{{chasis.nombre}}</label>
+                </div>
+              </div>
+
+              <div class="mt-5" *ngIf="chasisSeleccionado">
+                <hr>
+                <button (click)="onSelectChasis()" class="btn btn-info btn-block">Siguiente <i
+                    class="fa fa-arrow-right text-white"></i></button>
+              </div>
+
+              <ng-template #noResults>
+                <h2>No resultados para "{{searchText}}".</h2>
+              </ng-template>
+
+            </div>
+
+
+
+          </div>
+
+
+          <div class="row" *ngIf="listadoChasis.length < 1">
+
+            <div class="col-12 mt-3 text-center">
+
+              <div class="mt-5">
+                <i class="fa fa-info-circle fa-2x"></i>
+              </div>
+              <h3>No tienes chasis registrado.</h3>
+              <p class="mt-3">Comunícate al número
+                <span class="text-info font-weight-bold" style="font-size: 20px !important;"> (809) 565-3111 <i
+                    class="fa fa-phone"></i></span>
+                para realizar el registro de tu chasis.
+              </p>
+
+              <div class="mt-5">
+                <button class="btn btn-info" type="button" [routerLink]="['/turno/servicios']"
+                  routerLinkActive="router-link-active">
+                  <i class="fa fa-home text-white"></i> Volver al inicio
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+
+      <!-- PASO NUMERO 6 -->
+
+      <div id="test-l-6" class="content ">
+
+        <div class="container-fluid">
+
+          <div class="row noshow-on-print">
+            <div class="col-12">
+              <button type="button" (click)="stepperTo(1)" class="btn btn-secondary m-1"><i
+                  class="fa fa-redo text-dark"></i>
+                Reiniciar</button>
+              <hr>
+            </div>
+            <div class="col-md-12" *ngIf="cita">
+              <div class="col-md-6 offset-md-3 mt-1 text-center mb-3">
+                <div class="mt-2">
+                  <i class="fa fa-info-circle fa-2x"></i>
+                </div>
+                <h3>Confirma para generar tu turno</h3>
+              </div>
+              <div class="col-md-8 offset-md-2">
+                <table class="table">
+                  <tbody>
+                    <tr>
+                      <th scope="row">Cliente</th>
+                      <td class="text-uppercase">
+                        <span>{{cita.cliente}}</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Documento</th>
+                      <td>{{cita.documento}}</td>
+                    </tr>
+                    <tr *ngIf="cita.chasis">
+                      <th scope="row">Chasis</th>
+                      <td class="text-uppercase">{{cita.chasis}}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Servicio</th>
+                      <td class="text-uppercase">
+                        <span *ngIf="cita.servicio == 'Expreso' " class="label label-table label-info">
+                          {{cita.servicio}}</span>
+                        <span *ngIf="cita.servicio == 'Taller' " class="label label-table label-success">
+                          {{cita.servicio}}</span>
+                        <span *ngIf="cita.servicio == 'Entrega de vehículo' " class="label label-table label-primary">
+                          {{cita.servicio}}</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="row"> </th>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+
+              <div class="col-md-8 offset-md-2" *ngIf="!mostrarturno">
+                <div class="text-center mt-3">
+                  <button class="btn btn-secondary mr-2" (click)="onBtnCancelarClick()"><i
+                      class="fa text-dark fa-times"></i>
+                    Cancelar</button>
+                  <button class="btn btn-info" (click)="onClickConfirmarTurno()"><i class="fa text-white fa-check"></i>
+                    Confirmar</button>
+                </div>
+                <hr />
+              </div>
+
+
+
+              <div class="col-md-8 offset-md-2 animated fadeInUp" *ngIf="mostrarturno">
+                <div class="text-center mt-1">
+                  <h2>Turno <span class="text-primary">{{numeroTurno}}</span> </h2>
+                  <h6>Espere sentado</h6>
+                </div>
+                <hr />
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <app-loading-listado [hidden]="!loading"></app-loading-listado>
+
+
+</div>
+
+<div class="container-fluid show-on-print">
+  <div class="row text-center" *ngIf="imprimiendo">
+    <div class="col-md-12">
+      <img src="https://grupoviamar.com/uploads/5610_1529193213.png" class="img-fluid" alt="Responsive image">
+    </div>
+    <div class="col-md-12">
+      <h1 class="turno-label-sm">SU TURNO ES </h1>
+    </div>
+    <div class="col-md-12">
+      <h1 class="turno-label">{{turnoGenerado.turno}}</h1>
+    </div>
+    <div class="col-md-12 mt-5">
+      <table class="table">
+        <tbody>
+          <tr>
+            <td>
+              <span style="font-size: 90px;">{{turnoGenerado.clienteNombres + ' ' +
+                turnoGenerado.clienteApellidos}}</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="text-uppercase">
+              <span style="font-size: 90px;">{{turnoGenerado.servicio}}</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="text-uppercase">
+              <span style="font-size: 70px;">{{ turnoGenerado.fechaRegistro | date:'medium'}}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,110 @@
+<div class="auth-wrapper d-flex no-block justify-content-center align-items-center"
+  style="background:url(assets/images/big/auth-bg.jpg) no-repeat center center;">
+  <div>
+    <!--<div class="alert alert-primary">
+        <span class="mr-1">Username : admin</span> |
+        <span class="ml-1">Password : admin123</span>
+    </div>-->
+    <div class="auth-box">
+      <div>
+        <div class="logo">
+          <!--<span class="db"><img src="assets/images/logo-icon.png" alt="logo" /></span>-->
+          <!-- <span class="db"><img src="https://www.exentia.com.mx/wp-content/uploads/2018/04/cloud.png" style="width:140px" alt="logo" /></span> -->
+          <h5 class="font-medium m-b-20">Ingresa a <b class="text-success">Nutriciosa Admin</b></h5>
+        </div>
+        <div *ngIf="error" class="alert alert-danger"> <i class="fa fa-info-circle"></i> {{ error }}</div>
+        <!-- Form -->
+        <div class="row">
+          <div class="col-12">
+            <form class="form-horizontal m-t-20" [formGroup]="loginForm" (ngSubmit)="Login()">
+
+              <div class="input-group mb-3">
+                <!-- <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon1"><i class="ti-user"></i></span>
+                </div> -->
+                <input type="text" class="form-control form-control-lg" placeholder="Usuario" aria-label="Usuario"
+                  formControlName="usuario" aria-describedby="basic-addon1"
+                  [ngClass]="{ 'is-invalid': submitted && f.usuario.errors }">
+              </div>
+
+              <div class="input-group mb-3">
+                <!-- <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon2"><i class="ti-key"></i></span>
+                </div> -->
+                <input type="password" class="form-control form-control-lg" placeholder="Password" aria-label="Password"
+                  formControlName="password" aria-describedby="basic-addon1"
+                  [ngClass]="{ 'is-invalid': submitted && f.password.errors }">
+              </div>
+
+              <div class="form-group">
+
+                <!-- <label for="inputEmail4">Sucursal</label> -->
+                <ng-select bindLabel="nombre" bindValue="codigo" [items]="sucursales" placeholder="Sucursal"
+                  [ngClass]="{'border-danger p-0 ' : submitted && f.sucursalID.errors }" notFoundText="No resultados"
+                  formControlName="sucursalID">
+                </ng-select>
+                <div *ngIf="submitted && f.sucursalID.errors" class="text-danger small animated animated--fade-in">
+                  <div *ngIf="f.sucursalID.errors.required  ">El campo es obligatorio</div>
+                </div>
+              </div>
+              <div class="form-group text-center">
+                <div class="col-xs-12 p-b-20">
+                  <button class="btn btn-block btn-lg btn-success" type="submit" [disabled]="loading || loginForm.invalid">
+                    Ingresar <i *ngIf="loading && submitted" class="fa fa-spin fa-spinner"></i>
+                  </button>
+                </div>
+              </div>
+              <!--<div class="row">
+                  <div class="col-xs-12 col-sm-12 col-md-12 m-t-10 text-center">
+                      <div class="social">
+                          <a href="javascript:void(0)" class="btn btn-facebook" data-toggle="tooltip" title=""
+                              data-original-title="Login with Facebook"> <i aria-hidden="true" class="fab fa-facebook"></i>
+                          </a>
+                          <a href="javascript:void(0)" class="btn btn-googleplus ml-2" data-toggle="tooltip" title=""
+                              data-original-title="Login with Google"> <i aria-hidden="true" class="fab fa-google-plus"></i>
+                          </a>
+                      </div>
+                  </div>
+              </div>-->
+              <hr />
+
+              <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12 text-center">
+                  <img style="width:138px"
+                    src="https://lh3.googleusercontent.com/proxy/yx9cJ08BuV8j2O_Pj1965ZzF2AUObgt_516Df0KOpk5jKCOp7YIiLFAZJFduEbgggdo0wqystZYtLZH_1S8Y5aH_e2tuQZdyeULo7IKpeHUl-tRa1ga9XUYYf2SI_h4Y8A"
+                    alt="" />
+                </div>
+              </div>
+              <!--<div class="form-group m-b-0 m-t-10">
+                  <div class="col-sm-12 text-center">
+                      Don't have an account? <a href="#/authentication/signup" class="text-info m-l-5"><b>Contáctanos</b></a>
+                  </div>
+              </div>-->
+            </form>
+          </div>
+        </div>
+      </div>
+      <!--<div id="recoverform" [ngClass]="{'d-block': recoverform}">
+        <div class="logo">
+          <span class="db"><img src="assets/images/logo-icon.png" alt="logo" /></span>
+          <h5 class="font-medium m-b-20">Recover Password</h5>
+          <span>Enter your Email and instructions will be sent to you!</span>
+        </div>
+        <div class="row m-t-20">
+          <form class="col-12">
+            <div class="form-group row">
+              <div class="col-12">
+                <input class="form-control form-control-lg" type="email" required="" placeholder="Username">
+              </div>
+            </div>
+            <div class="row m-t-20">
+              <div class="col-12">
+                <button class="btn btn-block btn-lg btn-danger" type="submit" name="action">Reset</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>-->
+    </div>
+  </div>
+</div>
