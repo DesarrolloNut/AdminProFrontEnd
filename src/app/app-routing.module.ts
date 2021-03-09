@@ -10,7 +10,7 @@ export const Approutes: Routes = [
     {
         path: 'login',
         data: {
-            title: 'ViaCloud | Login',
+            title: 'Nutriciosa | Login',
         },
         component: LoginComponent
     },

@@ -14,7 +14,7 @@ const routes: Routes = [
     {
         path: '',
         data: {
-            title: 'ViaCloud | Inicio',
+            title: 'Nutriciosa | Inicio',
             urls: [
                 { title: 'Inicio' }
             ],

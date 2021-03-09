@@ -315,7 +315,7 @@ const routes: Routes = [
       // compania
       {
         path: 'compania', component: CompaniasListadoComponent, data: {
-          title: 'Viacloud | Compañías',
+          title: 'Compañías',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Compañías' }
