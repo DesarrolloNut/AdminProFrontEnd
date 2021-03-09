@@ -173,6 +173,35 @@ export const ROUTES: RouteInfo[] = [
         permisos: ["mantenimientos"],
 
         submenu: [
+
+            {
+                path: '/mantenimientos/listasprecios',
+                label: '',
+                labelClass: '',
+                title: 'Lista de precios',
+                icon: '',
+                class: '',
+                extralink: false,
+                submenu: [],
+                permisos: ["mantenimientos_listas_precios"],
+            },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             {
                 path: '/mantenimientos/accesorio',
                 label: '',

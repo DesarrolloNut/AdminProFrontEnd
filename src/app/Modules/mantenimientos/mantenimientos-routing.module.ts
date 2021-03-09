@@ -43,11 +43,47 @@ import { RecallFormularioComponent } from './recall/recall-formulario/recall-for
 import { RecallListadoComponent } from './recall/recall-listado/recall-listado.component';
 import { OfertasFormularioComponent } from './ofertas/ofertas-formulario/ofertas-formulario.component';
 import { OfertasListadoComponent } from './ofertas/ofertas-listado/ofertas-listado.component';
+import { ListaPreciosListadoComponent } from './listaPrecios/lista-precios-listado/lista-precios-listado.component';
+import { ListaPreciosFormularioComponent } from './listaPrecios/lista-precios-formulario/lista-precios-formulario.component';
 
 const routes: Routes = [
   {
     path: '', component: MantenimientosComponent,
     children: [
+
+      // listas de precios
+      {
+        path: 'listasprecios', component: ListaPreciosListadoComponent, data: {
+          title: 'Listas de precios formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Listas de precios' },
+          ]
+        }
+      },
+
+      // listas de precios
+      {
+        path: 'listasprecios/:id', component: ListaPreciosFormularioComponent, data: {
+          title: 'Listas de precios',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Listas de precios' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+
+
+
+
+
+
+
+
+
+
 
 
       // comite
