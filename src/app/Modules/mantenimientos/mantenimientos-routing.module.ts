@@ -51,10 +51,12 @@ const routes: Routes = [
     path: '', component: MantenimientosComponent,
     children: [
 
+
+      
       // listas de precios
       {
-        path: 'listasprecios', component: ListaPreciosListadoComponent, data: {
-          title: 'Listas de precios formulario',
+        path: 'listaprecios', component: ListaPreciosListadoComponent, data: {
+          title: 'Listas de precios',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Listas de precios' },
@@ -62,10 +64,10 @@ const routes: Routes = [
         }
       },
 
-      // listas de precios
+      // listas de precios formulario
       {
-        path: 'listasprecios/:id', component: ListaPreciosFormularioComponent, data: {
-          title: 'Listas de precios',
+        path: 'listaprecios/:id', component: ListaPreciosFormularioComponent, data: {
+          title: 'Listas de precios formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Listas de precios' },
@@ -84,6 +86,9 @@ const routes: Routes = [
 
 
 
+
+
+      // ***************************************
 
 
       // comite

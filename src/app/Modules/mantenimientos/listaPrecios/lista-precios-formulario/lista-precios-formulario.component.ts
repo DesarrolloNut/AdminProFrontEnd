@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { Compania } from '../../companias/models/Compania';
+import { ListaPrecio } from '../models/ListaPrecio';
 
 @Component({
   selector: 'app-lista-precios-formulario',
@@ -44,6 +45,7 @@ export class ListaPreciosFormularioComponent implements OnInit {
       id: [0],
       nombre: [null, [Validators.required]],
       codigoReferencia: [null, [Validators.required]],
+      estadoID: [],
 
     });
   }
@@ -52,8 +54,8 @@ export class ListaPreciosFormularioComponent implements OnInit {
 
   getItem(id: number) {
     this.Cargando = true;
-    this.httpService.DoPostAny<Compania>(DataApi.Compania,
-      "GetCompaniaByID", id).subscribe(response => {
+    this.httpService.DoPostAny<ListaPrecio>(DataApi.ListaPrecio,
+      "GetListaPrecioByID", id).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
@@ -62,8 +64,8 @@ export class ListaPreciosFormularioComponent implements OnInit {
             let record = response.records[0]
             this.Formulario.setValue(record);
           } else {
-            this.toastService.warning("Compañia no encontrada");
-            this.router.navigateByUrl('/mantenimientos/compania');
+            this.toastService.warning("Lista de precio no encontrada");
+            this.router.navigateByUrl('/mantenimientos/listasprecios');
           }
         }
 
@@ -89,14 +91,14 @@ export class ListaPreciosFormularioComponent implements OnInit {
     let metodo: string = this.actualizando ? "Update" : "Registrar";
     this.btnGuardarCargando = true;
 
-    this.httpService.DoPostAny<Compania>(DataApi.Compania,
+    this.httpService.DoPostAny<ListaPreciosFormularioComponent>(DataApi.ListaPrecio,
       metodo, this.Formulario.value).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
         } else {
           this.toastService.success("Realizado", "OK");
-          this.router.navigateByUrl('/mantenimientos/compania');
+          this.router.navigateByUrl('/mantenimientos/listaprecios');
         }
 
         this.btnGuardarCargando = false;

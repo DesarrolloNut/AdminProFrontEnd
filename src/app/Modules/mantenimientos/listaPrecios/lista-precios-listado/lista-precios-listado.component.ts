@@ -32,14 +32,14 @@ export class ListaPreciosListadoComponent implements OnInit {
  
  
    ngOnInit(): void {
-    //  this.getData()
+     this.getData()
    }
    getData() {
      this.Cargando = true;
  
      let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
  
-     this.httpService.GetAllWithPagination<ListaPrecio>(DataApi.ListasPrecios, "GetCombustibleListado", "ID", this.paginaNumeroActual,
+     this.httpService.GetAllWithPagination<ListaPrecio>(DataApi.ListaPrecio, "GetListaPrecioListado", "ID", this.paginaNumeroActual,
        this.paginaSize, true, parametros).subscribe(x => {
  
          if (x.ok) {
