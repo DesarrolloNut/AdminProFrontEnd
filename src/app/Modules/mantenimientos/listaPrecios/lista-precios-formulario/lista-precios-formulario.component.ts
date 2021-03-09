@@ -45,7 +45,7 @@ export class ListaPreciosFormularioComponent implements OnInit {
       id: [0],
       nombre: [null, [Validators.required]],
       codigoReferencia: [null, [Validators.required]],
-      estadoID: [],
+      estadoID: [0],
 
     });
   }
@@ -91,7 +91,7 @@ export class ListaPreciosFormularioComponent implements OnInit {
     let metodo: string = this.actualizando ? "Update" : "Registrar";
     this.btnGuardarCargando = true;
 
-    this.httpService.DoPostAny<ListaPreciosFormularioComponent>(DataApi.ListaPrecio,
+    this.httpService.DoPostAny<ListaPrecio>(DataApi.ListaPrecio,
       metodo, this.Formulario.value).subscribe(response => {
 
         if (!response.ok) {

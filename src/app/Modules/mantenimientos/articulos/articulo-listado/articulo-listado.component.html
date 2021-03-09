@@ -33,8 +33,8 @@
                             <tr>
                                 <th></th>
                                 <th>Nombre</th>
-                                <th>Chasis</th>
-                                <th>Año</th>
+                                <!-- <th>Chasis</th> -->
+                                <th>Código de referencia</th>
 
                             </tr>
                         </thead>
@@ -45,20 +45,22 @@
                                 <td>
                                     <span> {{ item.nombre | titlecase }}</span>
                                 </td>
-                                <td>
+                                <!-- <td>
                                     <span>{{ item.chasis | uppercase }}</span>
-                                </td>
+                                </td> -->
                                 <td>
                                     <span>
-                                        <i class="fa fa-calendar text-light"></i> {{item.anio }}
+                                        {{item.codigoReferencia }}
                                     </span>
                                 </td>
                                 <td>
 
-                                    <button class="btn btn-sm btn-light m-1"
+                                    <!-- <button class="btn btn-sm btn-light m-1"
                                         (click)="abrirModalClientesPropietarios(item.id,modalPropietariosChasis)">
                                         <i class="fa fa-sm fa-user"></i>
-                                    </button>
+                                    </button> -->
+
+                               
 
                                     <button class="btn btn-sm btn-info" [routerLink]="[item.id]">
                                         <i class="fa fa-sm fa-edit"></i>

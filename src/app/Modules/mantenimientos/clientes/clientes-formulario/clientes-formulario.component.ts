@@ -147,8 +147,8 @@ export class ClientesFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0], "Error");
         } else {
           this.toastService.success("Realizado", "OK");
-          this.guardarClientesmart(this.Formulario.value);
-          // this.router.navigateByUrl('/mantenimientos/cliente');
+          // this.guardarClientesmart(this.Formulario.value);
+          this.router.navigateByUrl('/mantenimientos/cliente');
         }
 
         // this.btnGuardarCargando = false;

@@ -46,6 +46,8 @@ import { OfertasListadoComponent } from './ofertas/ofertas-listado/ofertas-lista
 import { OfertasFormularioComponent } from './ofertas/ofertas-formulario/ofertas-formulario.component';
 import { ListaPreciosListadoComponent } from './listaPrecios/lista-precios-listado/lista-precios-listado.component';
 import { ListaPreciosFormularioComponent } from './listaPrecios/lista-precios-formulario/lista-precios-formulario.component';
+import { ListaPreciosArticulosListadoComponent } from './listaPreciosArticulos/lista-precios-articulos-listado/lista-precios-articulos-listado.component';
+import { ListaPreciosArticulosFormularioComponent } from './listaPreciosArticulos/lista-precios-articulos-formulario/lista-precios-articulos-formulario.component';
 
 
 @NgModule({
@@ -59,7 +61,7 @@ import { ListaPreciosFormularioComponent } from './listaPrecios/lista-precios-fo
     CompaniasListadoComponent, CompaniasFormularioComponent, SucursalesListadoComponent, SucursalesFormularioComponent, CitaCategoriaListadoComponent,
     CitaCategoriaFormularioComponent, SintomasListadoComponent, SintomasFormularioComponent, AccesoriosListadoComponent,
     AccesoriosFormularioComponent, SintomasCategoriasListadoComponent, SintomasCategoriasFormularioComponent, ArticuloListadoComponent,
-    ArticuloFormularioComponent, RecallListadoComponent, RecallFormularioComponent, OfertasListadoComponent, OfertasFormularioComponent, ListaPreciosListadoComponent, ListaPreciosFormularioComponent],
+    ArticuloFormularioComponent, RecallListadoComponent, RecallFormularioComponent, OfertasListadoComponent, OfertasFormularioComponent, ListaPreciosListadoComponent, ListaPreciosFormularioComponent, ListaPreciosArticulosListadoComponent, ListaPreciosArticulosFormularioComponent],
   imports: [
     CommonModule,
     MantenimientosRoutingModule,

@@ -26,7 +26,7 @@
                 <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
                 <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
 
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-6">
                         <label for="codigoReferencia"> <i class="fa fa-hashtag"></i> Código de Referencia</label>
                         <input formControlName="codigoReferencia" type="text" name="codigoReferencia"
                             id="codigoReferencia"
@@ -36,7 +36,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-6">
                         <label for="nombre"> Nombre</label>
                         <input formControlName="nombre" type="text" name="nombre" id="nombre"
                             [ngClass]="{'is-invalid' : submitted && f.nombre.errors,  'form-control':true  }">
@@ -45,7 +45,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-6">
                         <label for="anio"> Año</label>
                         <input formControlName="anio" type="number" name="anio" id="anio"
                             [ngClass]="{'is-invalid' : submitted && f.anio.errors,  'form-control':true  }">
@@ -53,7 +53,7 @@
                             <div *ngIf="f.anio.errors.required">El campo es obligatorio</div>
                         </div>
                     </div>
-
+<!-- 
                     <div class="form-group col-md-6">
                         <label for="inputEmail4"> Marca</label>
                         <ng-select bindLabel="nombre" bindValue="codigo" (change)="onSelectMarca($event.codigo)"
@@ -87,18 +87,18 @@
                         <div class="invalid-feedback" *ngIf="submitted && f.chasis.errors">
                             <div *ngIf="f.chasis.errors.required">El campo es obligatorio</div>
                         </div>
-                    </div>
+                    </div> -->
 
-                    <div class="form-group col-md-6">
+                    <!-- <div class="form-group col-md-6">
                         <label for="placa"> <i class="fa fa-hashtag"></i> Placa</label>
                         <input formControlName="placa" type="text" name="placa" id="placa"
                             [ngClass]="{'is-invalid' : submitted && f.placa.errors,  'form-control':true  }">
                         <div class="invalid-feedback" *ngIf="submitted && f.placa.errors">
                             <div *ngIf="f.placa.errors.required">El campo es obligatorio</div>
                         </div>
-                    </div>
+                    </div> -->
 
-                    <div class="form-group col-md-6">
+                    <!-- <div class="form-group col-md-6">
                         <label for="precio"> Precio</label>
                         <input formControlName="precio" type="number" name="precio" id="precio"
                             [ngClass]="{'is-invalid' : submitted && f.precio.errors,  'form-control':true  }">
@@ -114,7 +114,7 @@
                         <div class="invalid-feedback" *ngIf="submitted && f.costo.errors">
                             <div *ngIf="f.costo.errors.required">El campo es obligatorio</div>
                         </div>
-                    </div>
+                    </div> -->
 
                     <div class="form-group col-md-6">
                         <label for="example-email">Compañia</label>

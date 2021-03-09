@@ -45,6 +45,8 @@ import { OfertasFormularioComponent } from './ofertas/ofertas-formulario/ofertas
 import { OfertasListadoComponent } from './ofertas/ofertas-listado/ofertas-listado.component';
 import { ListaPreciosListadoComponent } from './listaPrecios/lista-precios-listado/lista-precios-listado.component';
 import { ListaPreciosFormularioComponent } from './listaPrecios/lista-precios-formulario/lista-precios-formulario.component';
+import { ListaPreciosArticulosListadoComponent } from './listaPreciosArticulos/lista-precios-articulos-listado/lista-precios-articulos-listado.component';
+import { ListaPreciosArticulosFormularioComponent } from './listaPreciosArticulos/lista-precios-articulos-formulario/lista-precios-articulos-formulario.component';
 
 const routes: Routes = [
   {
@@ -52,7 +54,7 @@ const routes: Routes = [
     children: [
 
 
-      
+
       // listas de precios
       {
         path: 'listaprecios', component: ListaPreciosListadoComponent, data: {
@@ -77,7 +79,28 @@ const routes: Routes = [
       },
 
 
+      // listas de precios articulos
+      {
+        path: 'listapreciosarticulos', component: ListaPreciosArticulosListadoComponent, data: {
+          title: 'Listas de precios articulos',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Listas de precios articulos' },
+          ]
+        }
+      },
 
+      // listas de precios articulos
+      {
+        path: 'listapreciosarticulos/:id', component: ListaPreciosArticulosFormularioComponent, data: {
+          title: 'Listas de precios articulos',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Listas de precios articulos' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
 
 
 
