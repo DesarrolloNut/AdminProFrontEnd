@@ -10,7 +10,9 @@
         <div class="logo">
           <!--<span class="db"><img src="assets/images/logo-icon.png" alt="logo" /></span>-->
           <!-- <span class="db"><img src="https://www.exentia.com.mx/wp-content/uploads/2018/04/cloud.png" style="width:140px" alt="logo" /></span> -->
-          <h5 class="font-medium m-b-20">Ingresa a <b class="text-success">Nutriciosa Admin</b></h5>
+          <h5 class="font-medium m-b-20">Ingresa con tus credenciales
+            <!-- <b class="text-success">Nutriciosa Admin</b> -->
+          </h5>
         </div>
         <div *ngIf="error" class="alert alert-danger"> <i class="fa fa-info-circle"></i> {{ error }}</div>
         <!-- Form -->
@@ -49,7 +51,8 @@
               </div>
               <div class="form-group text-center">
                 <div class="col-xs-12 p-b-20">
-                  <button class="btn btn-block btn-lg btn-success" type="submit" [disabled]="loading || loginForm.invalid">
+                  <button class="btn btn-block btn-lg btn-success" type="submit"
+                    [disabled]="loading || loginForm.invalid">
                     Ingresar <i *ngIf="loading && submitted" class="fa fa-spin fa-spinner"></i>
                   </button>
                 </div>

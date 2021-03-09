@@ -1,4 +1,18 @@
 export enum DataApi {
+
+
+    ListaPrecio = 32,
+
+
+    
+
+
+
+
+
+
+
+
     Usuario = 1,
     Authentication = 2,
     ComboBox = 3,
@@ -34,6 +48,21 @@ export enum DataApi {
 
 
 export const dataApiRootMap: { [api: string]: string } = {
+
+    
+    "32": "api/ListaPrecio",
+
+
+
+
+
+
+
+
+
+
+
+
     "1": "api/Usuario",
     "2": "api/Authentication",
     "3": "api/ComboBox",

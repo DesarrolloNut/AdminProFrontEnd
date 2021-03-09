@@ -43,6 +43,8 @@ import { RecallFormularioComponent } from './recall/recall-formulario/recall-for
 import { RecallListadoComponent } from './recall/recall-listado/recall-listado.component';
 import { OfertasFormularioComponent } from './ofertas/ofertas-formulario/ofertas-formulario.component';
 import { OfertasListadoComponent } from './ofertas/ofertas-listado/ofertas-listado.component';
+import { ListaPreciosListadoComponent } from './listaPrecios/lista-precios-listado/lista-precios-listado.component';
+import { ListaPreciosFormularioComponent } from './listaPrecios/lista-precios-formulario/lista-precios-formulario.component';
 
 const routes: Routes = [
   {
@@ -50,10 +52,49 @@ const routes: Routes = [
     children: [
 
 
+      
+      // listas de precios
+      {
+        path: 'listaprecios', component: ListaPreciosListadoComponent, data: {
+          title: 'Listas de precios',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Listas de precios' },
+          ]
+        }
+      },
+
+      // listas de precios formulario
+      {
+        path: 'listaprecios/:id', component: ListaPreciosFormularioComponent, data: {
+          title: 'Listas de precios formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Listas de precios' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+
+
+
+
+
+
+
+
+
+
+
+
+      // ***************************************
+
+
       // comite
       {
         path: 'comite', component: ComiteComponent, data: {
-          title: 'Viacloud | Comites',
+          title: 'Comites',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Comites' }
@@ -65,7 +106,7 @@ const routes: Routes = [
       // usuario
       {
         path: 'usuario', component: UsuarioListadoComponent, data: {
-          title: 'Viacloud | Usuarios',
+          title: 'Usuarios',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Usuarios' }
@@ -75,7 +116,7 @@ const routes: Routes = [
 
       {
         path: 'usuario/:id', component: UsuarioFormularioComponent, data: {
-          title: 'Viacloud | Usuario Formulario',
+          title: 'Usuario Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Usuarios' },
@@ -88,7 +129,7 @@ const routes: Routes = [
       // cliente
       {
         path: 'cliente', component: ClientesListadoComponent, data: {
-          title: 'Viacloud | Clientes',
+          title: 'Clientes',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Clientes' }
@@ -98,7 +139,7 @@ const routes: Routes = [
 
       {
         path: 'cliente/:id', component: ClientesFormularioComponent, data: {
-          title: 'Viacloud | Clientes Formulario',
+          title: 'Clientes Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Clientes' },
@@ -112,7 +153,7 @@ const routes: Routes = [
       // marcas
       {
         path: 'marca', component: MarcasListadoComponent, data: {
-          title: 'Viacloud | Marcas',
+          title: 'Marcas',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Marcas' }
@@ -122,7 +163,7 @@ const routes: Routes = [
 
       {
         path: 'marca/:id', component: MarcasFormularioComponent, data: {
-          title: 'Viacloud | Marcas Formulario',
+          title: 'Marcas Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Marcas' },
@@ -136,7 +177,7 @@ const routes: Routes = [
       // modelo
       {
         path: 'modelo', component: ModelosListadoComponent, data: {
-          title: 'Viacloud | Modelos',
+          title: 'Modelos',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Modelos' }
@@ -146,7 +187,7 @@ const routes: Routes = [
 
       {
         path: 'modelo/:id', component: ModelosFormularioComponent, data: {
-          title: 'Viacloud | Modelos Formulario',
+          title: 'Modelos Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Modelos', },
@@ -158,7 +199,7 @@ const routes: Routes = [
       // dealers
       {
         path: 'dealer', component: DealersListadoComponent, data: {
-          title: 'Viacloud | Dealers',
+          title: 'Dealers',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Dealers' }
@@ -168,7 +209,7 @@ const routes: Routes = [
 
       {
         path: 'dealer/:id', component: DealersFormularioComponent, data: {
-          title: 'Viacloud | Dealers Formulario',
+          title: 'Dealers Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Dealers' },
@@ -180,7 +221,7 @@ const routes: Routes = [
       // almacenes
       {
         path: 'almacen', component: AlmacenesListadoComponent, data: {
-          title: 'Viacloud | Almacenes',
+          title: 'Almacenes',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Almacenes' }
@@ -190,7 +231,7 @@ const routes: Routes = [
 
       {
         path: 'almacen/:id', component: AlmacenesFormularioComponent, data: {
-          title: 'Viacloud | Almacenes Formulario',
+          title: 'Almacenes Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Almacenes' },
@@ -201,7 +242,7 @@ const routes: Routes = [
       // VehiculoTipo
       {
         path: 'vehiculotipo', component: VehiculoTiposListadoComponent, data: {
-          title: 'Viacloud | Vehículo Tipos',
+          title: 'Vehículo Tipos',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Vehículo Tipos' }
@@ -211,7 +252,7 @@ const routes: Routes = [
 
       {
         path: 'vehiculotipo/:id', component: VehiculoTiposFormularioComponent, data: {
-          title: 'Viacloud | Vehículo Tipos Formulario',
+          title: 'Vehículo Tipos Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Vehículo Tipos' },
@@ -224,7 +265,7 @@ const routes: Routes = [
       // combustible
       {
         path: 'combustible', component: CombustiblesListadoComponent, data: {
-          title: 'Viacloud | Combustibles',
+          title: 'Combustibles',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Combustibles' }
@@ -234,7 +275,7 @@ const routes: Routes = [
 
       {
         path: 'combustible/:id', component: CombustiblesFormularioComponent, data: {
-          title: 'Viacloud | Combustibles Formulario',
+          title: 'Combustibles Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Combustibles' },
@@ -247,7 +288,7 @@ const routes: Routes = [
       // vehiculo condiciones
       {
         path: 'vehiculocondicion', component: VehiculoCondicionesListadoComponent, data: {
-          title: 'Viacloud | Vehículo Condiciones',
+          title: 'Vehículo Condiciones',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Vehículo Condiciones' }
@@ -257,7 +298,7 @@ const routes: Routes = [
 
       {
         path: 'vehiculocondicion/:id', component: VehiculoCondicionesFormularioComponent, data: {
-          title: 'Viacloud | Vehículo Condiciones Formulario',
+          title: 'Vehículo Condiciones Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Vehículo Condiciones' },
@@ -270,7 +311,7 @@ const routes: Routes = [
       // tag
       {
         path: 'tag', component: TagsListadoComponent, data: {
-          title: 'Viacloud | Tags',
+          title: 'Tags',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Tags' }
@@ -280,7 +321,7 @@ const routes: Routes = [
 
       {
         path: 'tag/:id', component: TagsFormularioComponent, data: {
-          title: 'Viacloud | Tags Formulario',
+          title: 'Tags Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Tags' },
@@ -292,7 +333,7 @@ const routes: Routes = [
       // Receptores posiciones
       {
         path: 'receptor-posicion', component: ReceptoresPosicionesListadoComponent, data: {
-          title: 'Viacloud | Receptores Posiciones',
+          title: 'Receptores Posiciones',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Receptores Posiciones' }
@@ -302,7 +343,7 @@ const routes: Routes = [
 
       {
         path: 'receptor-posicion/:id', component: ReceptoresPosicionesFormularioComponent, data: {
-          title: 'Viacloud | Receptores Posiciones Formulario',
+          title: 'Receptores Posiciones Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Receptores Posiciones' },
@@ -325,7 +366,7 @@ const routes: Routes = [
 
       {
         path: 'compania/:id', component: CompaniasFormularioComponent, data: {
-          title: 'Viacloud | Compañías Formulario',
+          title: 'Compañías Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Compañías' },
@@ -338,7 +379,7 @@ const routes: Routes = [
       // sucursal
       {
         path: 'sucursal', component: SucursalesListadoComponent, data: {
-          title: 'Viacloud | Sucursales',
+          title: 'Sucursales',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Sucursales' }
@@ -348,7 +389,7 @@ const routes: Routes = [
 
       {
         path: 'sucursal/:id', component: SucursalesFormularioComponent, data: {
-          title: 'Viacloud | Sucursales Formulario',
+          title: 'Sucursales Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Sucursales' },
@@ -360,7 +401,7 @@ const routes: Routes = [
       //cita categoria
       {
         path: 'cita-categoria', component: CitaCategoriaListadoComponent, data: {
-          title: 'Viacloud | Cita Categorias',
+          title: 'Cita Categorias',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Cita Categorias' }
@@ -370,7 +411,7 @@ const routes: Routes = [
 
       {
         path: 'cita-categoria/:id', component: CitaCategoriaFormularioComponent, data: {
-          title: 'Viacloud | Cita Categorias Formulario',
+          title: 'Cita Categorias Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Cita Categorias' },
@@ -383,7 +424,7 @@ const routes: Routes = [
       // sintoma
       {
         path: 'sintoma', component: SintomasListadoComponent, data: {
-          title: 'Viacloud | Síntomas',
+          title: 'Síntomas',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Síntomas' }
@@ -393,7 +434,7 @@ const routes: Routes = [
 
       {
         path: 'sintoma/:id', component: SintomasFormularioComponent, data: {
-          title: 'Viacloud | Síntomas Formulario',
+          title: 'Síntomas Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Síntomas' },
@@ -405,7 +446,7 @@ const routes: Routes = [
       // sintoma categorias
       {
         path: 'sintoma-categoria', component: SintomasCategoriasListadoComponent, data: {
-          title: 'Viacloud | Síntoma Categorias',
+          title: 'Síntoma Categorias',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Síntoma Categorias' }
@@ -415,7 +456,7 @@ const routes: Routes = [
 
       {
         path: 'sintoma-categoria/:id', component: SintomasCategoriasFormularioComponent, data: {
-          title: 'Viacloud | Síntoma Categorias Formulario',
+          title: 'Síntoma Categorias Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Síntoma Categorias' },
@@ -427,7 +468,7 @@ const routes: Routes = [
       // accesorio
       {
         path: 'accesorio', component: AccesoriosListadoComponent, data: {
-          title: 'Viacloud | Accesorios',
+          title: 'Accesorios',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Accesorios' }
@@ -437,7 +478,7 @@ const routes: Routes = [
 
       {
         path: 'accesorio/:id', component: AccesoriosFormularioComponent, data: {
-          title: 'Viacloud | Accesorios Formulario',
+          title: 'Accesorios Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Accesorios' },
@@ -449,7 +490,7 @@ const routes: Routes = [
       // articulo
       {
         path: 'articulo', component: ArticuloListadoComponent, data: {
-          title: 'Viacloud | Artículos',
+          title: 'Artículos',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Artículos' }
@@ -459,7 +500,7 @@ const routes: Routes = [
 
       {
         path: 'articulo/:id', component: ArticuloFormularioComponent, data: {
-          title: 'Viacloud | Artículos Formulario',
+          title: 'Artículos Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Artículos' },
@@ -471,7 +512,7 @@ const routes: Routes = [
       // recall
       {
         path: 'recall', component: RecallListadoComponent, data: {
-          title: 'Viacloud | Recall',
+          title: 'Recall',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Recall' }
@@ -481,7 +522,7 @@ const routes: Routes = [
 
       {
         path: 'recall/:id', component: RecallFormularioComponent, data: {
-          title: 'Viacloud | Recall Formulario',
+          title: 'Recall Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Recall' },
@@ -493,7 +534,7 @@ const routes: Routes = [
       // ofertas
       {
         path: 'oferta', component: OfertasListadoComponent, data: {
-          title: 'Viacloud | Oferta',
+          title: 'Oferta',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Oferta' }
@@ -503,7 +544,7 @@ const routes: Routes = [
 
       {
         path: 'oferta/:id', component: OfertasFormularioComponent, data: {
-          title: 'Viacloud | Oferta Formulario',
+          title: 'Oferta Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Oferta' },

@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { MantenimientosRoutingModule } from './mantenimientos-routing.module';
 import { MantenimientosComponent } from './mantenimientos.component';
 import { ComiteComponent } from './comite/comite.component';
-import { FormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
 import { UsuarioListadoComponent } from './usuarios/usuario-listado/usuario-listado.component';
 import { UsuarioFormularioComponent } from './usuarios/usuario-formulario/usuario-formulario.component';
@@ -45,10 +44,22 @@ import { RecallListadoComponent } from './recall/recall-listado/recall-listado.c
 import { RecallFormularioComponent } from './recall/recall-formulario/recall-formulario.component';
 import { OfertasListadoComponent } from './ofertas/ofertas-listado/ofertas-listado.component';
 import { OfertasFormularioComponent } from './ofertas/ofertas-formulario/ofertas-formulario.component';
+import { ListaPreciosListadoComponent } from './listaPrecios/lista-precios-listado/lista-precios-listado.component';
+import { ListaPreciosFormularioComponent } from './listaPrecios/lista-precios-formulario/lista-precios-formulario.component';
 
 
 @NgModule({
-  declarations: [MantenimientosComponent, ComiteComponent, UsuarioListadoComponent, UsuarioFormularioComponent, ClientesListadoComponent, ClientesFormularioComponent, MarcasListadoComponent,  MarcasFormularioComponent, ModelosListadoComponent, ModelosFormularioComponent, DealersListadoComponent, DealersFormularioComponent, AlmacenesListadoComponent, AlmacenesFormularioComponent, VehiculoTiposListadoComponent, VehiculoTiposFormularioComponent, CombustiblesListadoComponent, CombustiblesFormularioComponent, VehiculoCondicionesListadoComponent, VehiculoCondicionesFormularioComponent, TagsListadoComponent, TagsFormularioComponent, ReceptoresPosicionesListadoComponent, ReceptoresPosicionesFormularioComponent, CompaniasListadoComponent, CompaniasFormularioComponent, SucursalesListadoComponent, SucursalesFormularioComponent, CitaCategoriaListadoComponent, CitaCategoriaFormularioComponent, SintomasListadoComponent, SintomasFormularioComponent, AccesoriosListadoComponent, AccesoriosFormularioComponent, SintomasCategoriasListadoComponent, SintomasCategoriasFormularioComponent, ArticuloListadoComponent, ArticuloFormularioComponent, RecallListadoComponent, RecallFormularioComponent, OfertasListadoComponent, OfertasFormularioComponent],
+  declarations: [MantenimientosComponent, ComiteComponent,
+    UsuarioListadoComponent, UsuarioFormularioComponent, ClientesListadoComponent,
+    ClientesFormularioComponent, MarcasListadoComponent, MarcasFormularioComponent,
+    ModelosListadoComponent, ModelosFormularioComponent, DealersListadoComponent, DealersFormularioComponent,
+    AlmacenesListadoComponent, AlmacenesFormularioComponent, VehiculoTiposListadoComponent, VehiculoTiposFormularioComponent,
+    CombustiblesListadoComponent, CombustiblesFormularioComponent, VehiculoCondicionesListadoComponent, VehiculoCondicionesFormularioComponent,
+    TagsListadoComponent, TagsFormularioComponent, ReceptoresPosicionesListadoComponent, ReceptoresPosicionesFormularioComponent,
+    CompaniasListadoComponent, CompaniasFormularioComponent, SucursalesListadoComponent, SucursalesFormularioComponent, CitaCategoriaListadoComponent,
+    CitaCategoriaFormularioComponent, SintomasListadoComponent, SintomasFormularioComponent, AccesoriosListadoComponent,
+    AccesoriosFormularioComponent, SintomasCategoriasListadoComponent, SintomasCategoriasFormularioComponent, ArticuloListadoComponent,
+    ArticuloFormularioComponent, RecallListadoComponent, RecallFormularioComponent, OfertasListadoComponent, OfertasFormularioComponent, ListaPreciosListadoComponent, ListaPreciosFormularioComponent],
   imports: [
     CommonModule,
     MantenimientosRoutingModule,
