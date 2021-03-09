@@ -1,4 +1,8 @@
 import { NgModule } from '@angular/core';
+
+import { AngularDualListBoxModule } from 'angular-dual-listbox';
+
+
 import { CommonModule } from '@angular/common';
 import { MantenimientosRoutingModule } from './mantenimientos-routing.module';
 import { MantenimientosComponent } from './mantenimientos.component';
@@ -62,6 +66,7 @@ import { ListaPreciosFormularioComponent } from './listaPrecios/lista-precios-fo
     ArticuloFormularioComponent, RecallListadoComponent, RecallFormularioComponent, OfertasListadoComponent, OfertasFormularioComponent, ListaPreciosListadoComponent, ListaPreciosFormularioComponent,],
   imports: [
     CommonModule,
+    AngularDualListBoxModule,
     MantenimientosRoutingModule,
     SharedModule
   ]
