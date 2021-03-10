@@ -54,7 +54,7 @@
                                 <td>
 
                                     <button class="btn btn-sm btn-success m-1"
-                                        (click)="openModal(modalArticuloAsignacion)">
+                                        (click)="openModal(modalArticuloAsignacion,item.id)">
                                         <i class=" fa fa-sm fa-boxes"></i>
                                     </button>
 
@@ -104,20 +104,30 @@
 
 <ng-template #modalArticuloAsignacion let-modal>
     <div class="modal-header">
-        <h4 class="modal-title">Modal title</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <h4 class="modal-title">Artículos de la lista</h4>
+        <!-- <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
-        </button>
+        </button> -->
     </div>
     <div class="modal-body">
         <div class="row">
-            <div class="col">
+            <div class="col-12" [hidden]="loadingArticulosSeleccionados">
                 <dual-list [sort]="keepSorted" [source]="source" [key]="key" [display]="display" [filter]="filter"
                     [(destination)]="confirmed" height="265px" [format]="format" [disabled]="disabled"></dual-list>
+            </div>
+
+            <div class="col-12">
+                <app-loading-listado [hidden]="!loadingArticulosSeleccionados"></app-loading-listado>
             </div>
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+        <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cancelar</button>
+        <button type="button" class="btn btn-success m-1" *ngIf="!guardandoArticulos"
+            (click)="guardarArticulosSeleccionados()">Guardar</button>
+        <!-- boton cargando -->
+        <button *ngIf="guardandoArticulos" disabled class="btn btn-success m-1" type="button">
+            <span class="spinner-border spinner-border-sm"></span> Guardando
+        </button>
     </div>
 </ng-template>

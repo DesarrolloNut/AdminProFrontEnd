@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { DualListComponent } from 'angular-dual-listbox';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
@@ -7,6 +7,7 @@ import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
+import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { Combustible } from '../../combustibles/models/Combustible';
 import { ListaPrecio } from '../models/ListaPrecio';
 
@@ -41,48 +42,15 @@ export class ListaPreciosListadoComponent implements OnInit {
   sourceLeft = true;
   // format: any = DualListComponent.DEFAULT_FORMAT;
   format = {
-    add: 'Agregar', remove: 'Remover', all: 'Todos', none: 'Ninguno',
+    add: 'Agregar', remove: 'Remover', all: 'Seleccionar Todos', none: 'Deseleccionar',
     direction: DualListComponent.LTR, draggable: true, locale: 'da'
   };
-  private sourceStations: Array<any>;
 
-  private confirmedStations: Array<any>;
-
-
-  private stations: Array<any> = [
-    { key: 1, station: 'Antonito', state: 'CO' },
-    { key: 2, station: 'Big Horn', state: 'NM' },
-    { key: 3, station: 'Sublette', state: 'NM' },
-    { key: 4, station: 'Toltec', state: 'NM' },
-    { key: 5, station: 'Osier', state: 'CO' },
-    { key: 6, station: 'Chama', state: 'NM' },
-    { key: 7, station: 'Monero', state: 'NM' },
-    { key: 8, station: 'Lumberton', state: 'NM' },
-    { key: 9, station: 'Duice', state: 'NM' },
-    { key: 10, station: 'Navajo', state: 'NM' },
-    { key: 11, station: 'Juanita', state: 'CO' },
-    { key: 12, station: 'Pagosa Jct', state: 'CO' },
-    { key: 13, station: 'Carracha', state: 'CO' },
-    { key: 14, station: 'Arboles', state: 'CO' },
-    { key: 15, station: 'Solidad', state: 'CO' },
-    { key: 16, station: 'Tiffany', state: 'CO' },
-    { key: 17, station: 'La Boca', state: 'CO' },
-    { key: 18, station: 'Ignacio', state: 'CO' },
-    { key: 19, station: 'Oxford', state: 'CO' },
-    { key: 20, station: 'Florida', state: 'CO' },
-    { key: 21, station: 'Bocea', state: 'CO' },
-    { key: 22, station: 'Carbon Jct', state: 'CO' },
-    { key: 23, station: 'Durango', state: 'CO' },
-    { key: 24, station: 'Home Ranch', state: 'CO' },
-    { key: 25, station: 'Trimble Springs', state: 'CO' },
-    { key: 26, station: 'Hermosa', state: 'CO' },
-    { key: 27, station: 'Rockwood', state: 'CO' },
-    { key: 28, station: 'Tacoma', state: 'CO' },
-    { key: 29, station: 'Needleton', state: 'CO' },
-    { key: 30, station: 'Elk Park', state: 'CO' },
-    { key: 31, station: 'Silverton', state: 'CO' },
-    { key: 32, station: 'Eureka', state: 'CO' }
-  ];
+  loadingArticulos: boolean;
+  articulos: ComboBox[];
+  listaSeleccionada: number;
+  loadingArticulosSeleccionados: boolean;
+  guardandoArticulos: boolean;
 
 
   constructor(private toastService: ToastrService,
@@ -93,31 +61,13 @@ export class ListaPreciosListadoComponent implements OnInit {
 
 
   ngOnInit(): void {
+
     this.getData()
-    this.doReset();
-  }
-
-  doReset() {
-    this.sourceStations = JSON.parse(JSON.stringify(this.stations));
-
-    this.confirmedStations = new Array<any>();
-
-    // Preconfirm some items.
-    this.confirmedStations.push(this.stations[31]);
-    this.confirmedStations.push(this.stations[30]);
-    this.confirmedStations.push(this.stations[29]);
-
-    this.useStations();
+    this.configDualList()
+    this.getArticulos()
   }
 
 
-  private useStations() {
-    this.key = 'key';
-    this.display = 'station'; // [ 'station', 'state' ];
-    this.keepSorted = true;
-    this.source = this.sourceStations;
-    this.confirmed = this.confirmedStations;
-  }
 
   getData() {
     this.Cargando = true;
@@ -159,8 +109,94 @@ export class ListaPreciosListadoComponent implements OnInit {
   }
 
 
-  openModal(content) {
-    this.modalService.open(content, { size: 'lg' });
+
+  openModal(content, listaId: number) {
+    this.listaSeleccionada = listaId;
+    this.getArticulosSeleccionadosLista(listaId);
+    this.modalService.open(content, { size: 'lg', backdrop: "static" });
+  }
+
+  getArticulosSeleccionadosLista(listaId: number) {
+    this.loadingArticulosSeleccionados = true;
+    let param: Parametro[] = [{ key: "listaID", value: listaId }]
+
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetArticulosListaPrecio", param).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.confirmed = response.records;
+        }
+        this.loadingArticulosSeleccionados = false;
+      }, error => {
+        this.loadingArticulosSeleccionados = false;
+        this.toastService.error("No se pudo obtener los articulos seleccionados", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getArticulosSeleccionadosLista(listaId)
+        }, 1000);
+
+      });
+  }
+
+  configDualList() {
+    this.key = 'codigo';
+    this.display = 'nombre';
+    this.keepSorted = true;
+  }
+
+
+  getArticulos() {
+    this.loadingArticulos = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetArticulos", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.articulos = response.records;
+          this.source = this.articulos
+          console.table(this.articulos)
+        }
+        this.loadingArticulos = false;
+      }, error => {
+        this.loadingArticulos = false;
+        this.toastService.error("No se pudo obtener todos los articulos", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getArticulos()
+        }, 1000);
+
+      });
+  }
+
+  guardarArticulosSeleccionados() {
+
+    if (this.confirmed.length < 1) {
+      this.toastService.warning("Selecciona uno o más artículos");
+      return;
+    }
+
+    let param = this.confirmed.map(x => { return { "ArticuloID": x.codigo, "ListaPrecioID": this.listaSeleccionada } })
+    this.guardandoArticulos = true;
+    this.httpService.DoPostAny<any>(DataApi.Articulo,
+      "RegistrarArticulosAListaPrecio", param).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+          this.modalService.dismissAll();
+          this.toastService.success("Realizado", "OK");
+        }
+        this.guardandoArticulos = false;
+      }, error => {
+        this.guardandoArticulos = false;
+        this.toastService.error("No se pudo guardar", "Error conexion al servidor");
+        console.error(error);
+      });
+
   }
 
 }
