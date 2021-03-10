@@ -185,6 +185,28 @@ export const ROUTES: RouteInfo[] = [
                 submenu: [],
                 permisos: ["mantenimientos_listas_precios"],
             },
+            {
+                path: '/mantenimientos/ofertas',
+                label: '',
+                labelClass: '',
+                title: 'Ofertas',
+                icon: '',
+                class: '',
+                extralink: false,
+                submenu: [],
+                permisos: ["mantenimientos_listas_precios"],
+            },
+            {
+                path: '/mantenimientos/descuentos',
+                label: '',
+                labelClass: '',
+                title: 'Descuento',
+                icon: '',
+                class: '',
+                extralink: false,
+                submenu: [],
+                permisos: ["mantenimientos_listas_precios"],
+            },
 
    
 
