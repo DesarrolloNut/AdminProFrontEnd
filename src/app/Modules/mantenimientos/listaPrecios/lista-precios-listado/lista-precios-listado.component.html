@@ -53,9 +53,16 @@
                                 </td> -->
                                 <td>
 
+
+
                                     <button class="btn btn-sm btn-success m-1"
                                         (click)="openModal(modalArticuloAsignacion,item.id)">
                                         <i class=" fa fa-sm fa-th-list"></i>
+                                    </button>
+
+                                    <button class="btn btn-sm btn-success m-1"
+                                        (click)="openModal(modalArticuloPrecio,item.id)">
+                                        <i class=" fa fa-sm fa-dollar-sign"></i>
                                     </button>
 
                                     <button class="btn btn-sm btn-info" [routerLink]="[item.id]">
@@ -104,7 +111,7 @@
 
 <ng-template #modalArticuloAsignacion let-modal>
     <div class="modal-header">
-        <h4 class="modal-title">Artículos de la lista</h4>
+        <h4 class="modal-title">Asignación de artículos a la lista</h4>
         <!-- <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button> -->
@@ -129,5 +136,75 @@
         <button *ngIf="guardandoArticulos" disabled class="btn btn-success m-1" type="button">
             <span class="spinner-border spinner-border-sm"></span> Guardando
         </button>
+    </div>
+</ng-template>
+
+
+
+
+
+
+
+
+<ng-template #modalArticuloPrecio let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Asignación de precio a artículos</h4>
+        <!-- <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button> -->
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12" [hidden]="loadingArticulosSeleccionados">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Artículo</th>
+                            <th scope="col">Precio</th>
+                            <th scope="col">Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>Queso</td>
+                            <td>
+                                <input type="text" class="form-control" prefix="$ " mask="separator"
+                                    thousandSeparator=",">
+                            </td>
+                            <td>14 Dic 2020</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>Salami</td>
+                            <td>205.00</td>
+                            <td>
+                                <ejs-datepicker [format]="'dd-MM-yyyy'"></ejs-datepicker>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">3</th>
+                            <td>Cherry</td>
+                            <td>495.00</td>
+                            <td>30 Sep 2020</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="col-12">
+                <app-loading-listado [hidden]="!loadingArticulosSeleccionados"></app-loading-listado>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cancelar</button>
+        <!-- <button type="button" class="btn btn-success m-1" *ngIf="!guardandoArticulos"
+            (click)="guardarArticulosSeleccionados()">Guardar</button> -->
+        <!-- boton cargando -->
+        <!-- <button *ngIf="guardandoArticulos" disabled class="btn btn-success m-1" type="button">
+            <span class="spinner-border spinner-border-sm"></span> Guardando
+        </button> -->
     </div>
 </ng-template>

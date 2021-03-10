@@ -8,7 +8,6 @@ import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
-import { Combustible } from '../../combustibles/models/Combustible';
 import { ListaPrecio } from '../models/ListaPrecio';
 
 @Component({
