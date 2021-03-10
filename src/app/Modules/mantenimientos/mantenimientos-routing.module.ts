@@ -1,3 +1,5 @@
+import { RutasFormularioComponent } from './rutas/rutas-formulario/rutas-formulario.component';
+import { RutasListadoComponent } from './rutas/rutas-listado/rutas-listado.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
@@ -76,9 +78,27 @@ const routes: Routes = [
         }
       },
 
-     
+       // ruta
+       {
+        path: 'ruta', component: RutasListadoComponent, data: {
+          title: 'Rutas',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Rutas' }
+          ]
+        }
+      },
 
-
+      {
+        path: 'ruta/:id', component: RutasFormularioComponent, data: {
+          title: 'Ruta Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Rutas' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
 
 
 
