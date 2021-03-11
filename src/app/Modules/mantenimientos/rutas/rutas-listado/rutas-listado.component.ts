@@ -5,8 +5,7 @@ import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
-import { Cliente } from '../../clientes/models/Cliente';
-import { Sintoma } from '../../sintomas/models/Sintoma';
+import { Ruta } from '../models/Ruta';
 
 @Component({
   selector: 'app-rutas-listado',
@@ -38,9 +37,8 @@ getData() {
 
   let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
 
-  this.httpService.GetAllWithPagination<any>(DataApi.Ruta, "GetRutaListado", "ID", this.paginaNumeroActual,
+  this.httpService.GetAllWithPagination<Ruta>(DataApi.Ruta, "GetRutaListado", "ID", this.paginaNumeroActual,
     this.paginaSize, true, parametros).subscribe(x => {
-
       if (x.ok) {
         this.data = x.records;
         this.asignarPagination(x);
@@ -58,7 +56,7 @@ getData() {
 }
 
 
-asignarPagination(x: ResponseContenido<any>) {
+asignarPagination(x: ResponseContenido<Ruta>) {
 
   if (x.pagina != null) {
     this.totalPaginas = x.pagina.totalPaginas == null ? 0 : x.pagina.totalPaginas;

@@ -32,8 +32,11 @@
                       <thead>
                           <tr>
                               <th></th>
-                              <th>Nombre</th>
-                              <th>Descripción</th>
+                              <th>Ruta</th>
+                              <th>Tipo Ruta</th>
+                              <th>Entregador</th>
+                              <th>Supervisor</th>
+                              <th>Estado</th>
                               <!-- <th>Estado</th> -->
                           </tr>
                       </thead>
@@ -42,10 +45,19 @@
                           <tr *ngFor="let item of data">
                               <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
                               <td>
-                                  <span> {{item.nombre}}</span>
+                                  <span> {{item.numeroRuta}}</span>
                               </td>
                               <td>
-                                  <span> {{item.descripcion |  slice:0:60}} ...</span>
+                                  <span> {{item.tipoRuta |  slice:0:60}} ...</span>
+                              </td>
+                              <td>
+                                  <span> {{item.encargado |  slice:0:60}} ...</span>
+                              </td>
+                              <td>
+                                  <span> {{item.supervisor |  slice:0:60}} ...</span>
+                              </td>
+                              <td>
+                                  <span> {{item.estado ? 'Activo' : 'Inactivo' |  slice:0:60}} ...</span>
                               </td>
                               <td>
                                   <button class="btn btn-sm btn-info" [routerLink]="[item.id]">
