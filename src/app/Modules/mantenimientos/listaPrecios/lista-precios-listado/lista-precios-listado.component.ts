@@ -6,8 +6,8 @@ import { ToastrService } from 'ngx-toastr';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
+import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
-import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { ListaPrecio } from '../models/ListaPrecio';
 
 @Component({
@@ -46,7 +46,7 @@ export class ListaPreciosListadoComponent implements OnInit {
   };
 
   loadingArticulos: boolean;
-  articulos: ComboBox[];
+  // articulos: Articulo[];
   listaSeleccionada: number;
   loadingArticulosSeleccionados: boolean;
   guardandoArticulos: boolean;
@@ -112,20 +112,24 @@ export class ListaPreciosListadoComponent implements OnInit {
   openModal(content, listaId: number) {
     this.listaSeleccionada = listaId;
     this.getArticulosSeleccionadosLista(listaId);
-    this.modalService.open(content, { size: 'lg', backdrop: "static" });
+    this.modalService.open(content, { size: 'lg', backdrop: "static", });
   }
 
   getArticulosSeleccionadosLista(listaId: number) {
     this.loadingArticulosSeleccionados = true;
     let param: Parametro[] = [{ key: "listaID", value: listaId }]
 
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetArticulosListaPrecio", param).subscribe(response => {
+    this.httpService.DoPost<any>(DataApi.Articulo,
+      "GetArticulosAsignadosListaPrecio", param).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
           this.confirmed = response.records;
+          //  response.records.map(x => {
+          //   return { "id": x.id, "nombre": x.nombre }
+          // });
+          console.table(this.confirmed)
         }
         this.loadingArticulosSeleccionados = false;
       }, error => {
@@ -140,7 +144,7 @@ export class ListaPreciosListadoComponent implements OnInit {
   }
 
   configDualList() {
-    this.key = 'codigo';
+    this.key = 'id';
     this.display = 'nombre';
     this.keepSorted = true;
   }
@@ -148,15 +152,18 @@ export class ListaPreciosListadoComponent implements OnInit {
 
   getArticulos() {
     this.loadingArticulos = true;
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+    this.httpService.DoPost<Articulo>(DataApi.Articulo,
       "GetArticulos", null).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          this.articulos = response.records;
-          this.source = this.articulos
-          console.table(this.articulos)
+          // this.articulos = response.records;
+          this.source = response.records.map(x => {
+            return { "id": x.id, "nombre": x.nombre }
+          });
+
+          console.table(this.source)
         }
         this.loadingArticulos = false;
       }, error => {
@@ -177,7 +184,9 @@ export class ListaPreciosListadoComponent implements OnInit {
       return;
     }
 
-    let param = this.confirmed.map(x => { return { "ArticuloID": x.codigo, "ListaPrecioID": this.listaSeleccionada } })
+    let param = this.confirmed.map(x => {
+      return { "ArticuloID": x.id, "ListaPrecioID": this.listaSeleccionada }
+    })
     this.guardandoArticulos = true;
     this.httpService.DoPostAny<any>(DataApi.Articulo,
       "RegistrarArticulosAListaPrecio", param).subscribe(response => {
