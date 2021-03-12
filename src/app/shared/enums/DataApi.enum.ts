@@ -2,9 +2,10 @@ export enum DataApi {
 
 
     ListaPrecio = 32,
+    Ruta = 33,
 
 
-    
+
 
 
 
@@ -49,8 +50,9 @@ export enum DataApi {
 
 export const dataApiRootMap: { [api: string]: string } = {
 
-    
+
     "32": "api/ListaPrecio",
+    "33": "api/Ruta",
 
 
 

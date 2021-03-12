@@ -50,6 +50,8 @@ import { OfertasListadoComponent } from './ofertas/ofertas-listado/ofertas-lista
 import { OfertasFormularioComponent } from './ofertas/ofertas-formulario/ofertas-formulario.component';
 import { ListaPreciosListadoComponent } from './listaPrecios/lista-precios-listado/lista-precios-listado.component';
 import { ListaPreciosFormularioComponent } from './listaPrecios/lista-precios-formulario/lista-precios-formulario.component';
+import { RutasListadoComponent } from './rutas/rutas-listado/rutas-listado.component';
+import { RutasFormularioComponent } from './rutas/rutas-formulario/rutas-formulario.component';
 
 
 @NgModule({
@@ -63,7 +65,7 @@ import { ListaPreciosFormularioComponent } from './listaPrecios/lista-precios-fo
     CompaniasListadoComponent, CompaniasFormularioComponent, SucursalesListadoComponent, SucursalesFormularioComponent, CitaCategoriaListadoComponent,
     CitaCategoriaFormularioComponent, SintomasListadoComponent, SintomasFormularioComponent, AccesoriosListadoComponent,
     AccesoriosFormularioComponent, SintomasCategoriasListadoComponent, SintomasCategoriasFormularioComponent, ArticuloListadoComponent,
-    ArticuloFormularioComponent, RecallListadoComponent, RecallFormularioComponent, OfertasListadoComponent, OfertasFormularioComponent, ListaPreciosListadoComponent, ListaPreciosFormularioComponent,],
+    ArticuloFormularioComponent, RecallListadoComponent, RecallFormularioComponent, OfertasListadoComponent, OfertasFormularioComponent, ListaPreciosListadoComponent, ListaPreciosFormularioComponent, RutasListadoComponent, RutasFormularioComponent,],
   imports: [
     CommonModule,
     AngularDualListBoxModule,

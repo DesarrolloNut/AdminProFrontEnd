@@ -1,18 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { Sintoma } from '../models/Sintoma';
-import { ToastrService } from 'ngx-toastr';
-import { BackendService } from 'src/app/core/http/service/backend.service';
 import { NgxPermissionsService } from 'ngx-permissions';
+import { ToastrService } from 'ngx-toastr';
 import { Parametro } from 'src/app/core/http/model/Parametro';
-import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
+import { BackendService } from 'src/app/core/http/service/backend.service';
+import { DataApi } from 'src/app/shared/enums/DataApi.enum';
+import { Ruta } from '../models/Ruta';
 
 @Component({
-  selector: 'app-sintomas-listado',
-  templateUrl: './sintomas-listado.component.html',
-  styleUrls: ['./sintomas-listado.component.scss']
+  selector: 'app-rutas-listado',
+  templateUrl: './rutas-listado.component.html',
+  styleUrls: ['./rutas-listado.component.scss']
 })
-export class SintomasListadoComponent implements OnInit {
+export class RutasListadoComponent implements OnInit {
 // COPIAR AL CREAR UN LISTADO NUEVO
 Search: string = "";
 paginaNumeroActual = 1;
@@ -21,7 +21,7 @@ CargandoBar: boolean = false;
 totalPaginas: number = 0;
 paginaSize: number = 5;
 paginaTotalRecords: number = 0;
-data: Sintoma[] = [] //tu modelo
+data: any[] = [] //tu modelo
 
 constructor(private toastService: ToastrService,
   private httpService: BackendService,
@@ -37,9 +37,8 @@ getData() {
 
   let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
 
-  this.httpService.GetAllWithPagination<Sintoma>(DataApi.Sintoma, "GetRutaListado", "ID", this.paginaNumeroActual,
+  this.httpService.GetAllWithPagination<Ruta>(DataApi.Ruta, "GetRutaListado", "ID", this.paginaNumeroActual,
     this.paginaSize, true, parametros).subscribe(x => {
-
       if (x.ok) {
         this.data = x.records;
         this.asignarPagination(x);
@@ -57,7 +56,7 @@ getData() {
 }
 
 
-asignarPagination(x: ResponseContenido<any>) {
+asignarPagination(x: ResponseContenido<Ruta>) {
 
   if (x.pagina != null) {
     this.totalPaginas = x.pagina.totalPaginas == null ? 0 : x.pagina.totalPaginas;

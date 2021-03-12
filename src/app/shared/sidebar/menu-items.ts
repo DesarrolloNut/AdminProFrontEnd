@@ -207,8 +207,19 @@ export const ROUTES: RouteInfo[] = [
                 submenu: [],
                 permisos: ["mantenimientos_listas_precios"],
             },
+            {
+                path: '/mantenimientos/ruta',
+                label: '',
+                labelClass: '',
+                title: 'Rutas',
+                icon: '',
+                class: '',
+                extralink: false,
+                submenu: [],
+                permisos: ["mantenimientos_listas_precios"],
+            },
 
-   
+
 
 
 
