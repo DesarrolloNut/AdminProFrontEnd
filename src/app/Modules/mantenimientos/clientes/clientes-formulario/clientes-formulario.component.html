@@ -13,175 +13,253 @@
 
 
 <div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6 col-lg-6 col-12">
-                        <h4 class="card-title">Formulario de clientes</h4>
-                    </div>
-                    <div class="col-md-6 col-lg-6 col-12 text-right">
 
-                        <!-- <button class="btn btn-sm btn-light m-1" (click)="openModalCambiaContrasena()">
-                            <i class=" fa fa-sm fa-key"></i> Cambiar contraseña
-                        </button> -->
+  <div class="col-md-12">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Formulario de clientes</h4>
+            <!-- <h6 class="card-subtitle">This is basic Default pagination</h6> -->
+            <ngb-tabset>
+              <ngb-tab>
+                <ng-template ngbTabTitle><b>Generales</b></ng-template>
+                <ng-template ngbTabContent>
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="card">
+                          <div class="card-body">
+                              <div class="row">
+                                  <div class="col-md-6 col-lg-6 col-12">
+                                      <h4 class="card-title">Datos Generales</h4>
+                                  </div>
+                                  <div class="col-md-6 col-lg-6 col-12 text-right">
 
-                        <!-- <button class="btn btn-sm btn-light m-1" (click)="openModalCambiaContrasena()">
-                            <i class=" fa fa-sm fa-envelope-open"></i> Enviar correo
-                        </button> -->
+                                  </div>
+                              </div>
+                              <form class="form-row m-t-40" [formGroup]="FormGenerales" (ngSubmit)="onSubmit()">
 
-                        <!-- <button class="btn btn-sm btn-light" routerLink="">
-                            <i class=" fa fa-sm fa-key"></i>
-                        </button> -->
+                                  <div class="form-group col-md-6">
+                                      <label for="codigoReferencia"> <i class="fa fa-hashtag"></i> Código de Referencia</label>
+                                      <input [readonly]="true" formControlName="codigoReferencia"  type="text" name="codigoReferencia"
+                                          id="codigoReferencia"
+                                          [ngClass]="{'is-invalid' : submitted && f.codigoReferencia.errors,  'form-control':true  }">
+                                      <div class="invalid-feedback" *ngIf="submitted && f.codigoReferencia.errors">
+                                          <div *ngIf="f.codigoReferencia.errors.required">El campo es obligatorio</div>
+                                      </div>
+                                  </div>
 
-                    </div>
-                </div>
-                <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
-                <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
+                                  <div class="form-group col-md-6">
+                                      <label for="inputEmail4"> Tipo de Documento</label>
+                                      <ng-select bindLabel="nombre" bindValue="codigo" [items]="documentos"
+                                          [loading]="loadingDocumentos" [clearable]="false"
+                                          [ngClass]="{'form-control border-danger p-0' : submitted && f.documentoTipoID.errors }"
+                                          notFoundText="No resultados" formControlName="documentoTipoID">
+                                      </ng-select>
+                                      <div *ngIf="submitted && f.documentoTipoID.errors" class="text-danger small">
+                                          <div *ngIf="f.documentoTipoID.errors.required  ">El campo es obligatorio</div>
+                                      </div>
+                                  </div>
 
-                    <div class="form-group col-md-6">
-                        <label for="codigoReferencia"> <i class="fa fa-hashtag"></i> Código de Referencia</label>
-                        <input [readonly]="true" formControlName="codigoReferencia" type="text" name="codigoReferencia"
-                            id="codigoReferencia"
-                            [ngClass]="{'is-invalid' : submitted && f.codigoReferencia.errors,  'form-control':true  }">
-                        <div class="invalid-feedback" *ngIf="submitted && f.codigoReferencia.errors">
-                            <div *ngIf="f.codigoReferencia.errors.required">El campo es obligatorio</div>
-                        </div>
-                    </div>
-
-                    <div class="form-group col-md-6">
-                        <label for="inputEmail4"> Tipo de Documento</label>
-                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="documentos"
-                            [loading]="loadingDocumentos" [clearable]="false"
-                            [ngClass]="{'form-control border-danger p-0' : submitted && f.documentoTipoID.errors }"
-                            notFoundText="No resultados" formControlName="documentoTipoID">
-                        </ng-select>
-                        <div *ngIf="submitted && f.documentoTipoID.errors" class="text-danger small">
-                            <div *ngIf="f.documentoTipoID.errors.required  ">El campo es obligatorio</div>
-                        </div>
-                    </div>
-
-                    <div class="form-group col-md-6">
-                        <label for="documento"> <i class="fa fa-id-card"></i> Documento</label>
-                        <div class="input-group">
-                            <input (keyup)="onDocumentoKeyUp()" formControlName="documento" type="text" name="documento"
-                                cleareable="false" id="documento"
-                                [ngClass]="{'is-invalid' :f.documento.value && f.documento.errors,  'form-control':true  }">
-                            <div class="input-group-append" *ngIf="buscandoDocumento">
-                                <span class="input-group-text bg-white border-0"> <i
-                                        class="fa fa-spin fa-spinner"></i></span>
-                            </div>
-                        </div>
-                        <div class="text-danger pt-1" style="font-size:13px"
-                            *ngIf="f.documento.value && f.documento.errors">
-                            <div *ngIf="f.documento.errors.required">El campo es obligatorio</div>
-                            <div *ngIf="f.documento.errors.cedulaestructura">Documento no válido</div>
-                            <div *ngIf="f.documento.errors.minlength">Mínimo 9 caracteres</div>
-                        </div>
-                    </div>
+                                  <div class="form-group col-md-6">
+                                      <label for="documento"> <i class="fa fa-id-card"></i> Documento</label>
+                                      <div class="input-group">
+                                          <input (keyup)="onDocumentoKeyUp()" formControlName="documento" type="text" name="documento"
+                                              cleareable="false" id="documento"
+                                              [ngClass]="{'is-invalid' :f.documento.value && f.documento.errors,  'form-control':true  }">
+                                          <div class="input-group-append" *ngIf="buscandoDocumento">
+                                              <span class="input-group-text bg-white border-0"> <i
+                                                      class="fa fa-spin fa-spinner"></i></span>
+                                          </div>
+                                      </div>
+                                      <div class="text-danger pt-1" style="font-size:13px"
+                                          *ngIf="f.documento.value && f.documento.errors">
+                                          <div *ngIf="f.documento.errors.required">El campo es obligatorio</div>
+                                          <div *ngIf="f.documento.errors.cedulaestructura">Documento no válido</div>
+                                          <div *ngIf="f.documento.errors.minlength">Mínimo 9 caracteres</div>
+                                      </div>
+                                  </div>
 
 
-                    <div class="form-group col-md-6">
-                        <label for="nombres"><i class=""></i> Nombres</label>
-                        <input formControlName="nombres" type="text" name="nombres" id="nombres"
-                            [ngClass]="{'is-invalid' : submitted && f.nombres.errors,  'form-control':true  }">
-                        <div class="invalid-feedback" *ngIf="submitted && f.nombres.errors">
-                            <div *ngIf="f.nombres.errors.required">El campo es obligatorio</div>
-                        </div>
-                    </div>
+                                  <div class="form-group col-md-6">
+                                      <label for="nombres"><i class=""></i> Nombres</label>
+                                      <input formControlName="nombres" type="text" name="nombres" id="nombres"
+                                          [ngClass]="{'is-invalid' : submitted && f.nombres.errors,  'form-control':true  }">
+                                      <div class="invalid-feedback" *ngIf="submitted && f.nombres.errors">
+                                          <div *ngIf="f.nombres.errors.required">El campo es obligatorio</div>
+                                      </div>
+                                  </div>
 
-                    <div class="form-group col-md-6">
-                        <label for="apellidos">Apellidos</label>
-                        <input formControlName="apellidos" type="text" name="apellidos" id="apellidos"
-                            [ngClass]="{'is-invalid' : submitted && f.apellidos.errors,  'form-control':true  }">
-                        <div class="invalid-feedback" *ngIf="submitted && f.apellidos.errors">
-                            <div *ngIf="f.apellidos.errors.required">El campo es obligatorio</div>
-                        </div>
-                    </div>
+                                  <div class="form-group col-md-6">
+                                      <label for="apellidos">Apellidos</label>
+                                      <input formControlName="apellidos" type="text" name="apellidos" id="apellidos"
+                                          [ngClass]="{'is-invalid' : submitted && f.apellidos.errors,  'form-control':true  }">
+                                      <div class="invalid-feedback" *ngIf="submitted && f.apellidos.errors">
+                                          <div *ngIf="f.apellidos.errors.required">El campo es obligatorio</div>
+                                      </div>
+                                  </div>
 
-                    <div class="form-group col-md-6">
-                        <label for="email"> <i class="fa fa-envelope-open"></i> Email</label>
-                        <input formControlName="email" type="email" name="email" id="email"
-                            [ngClass]="{'is-invalid' : submitted && f.email.errors,  'form-control':true  }">
-                        <div class="invalid-feedback" *ngIf="submitted && f.email.errors">
-                            <div *ngIf="f.email.errors.required">El campo es obligatorio</div>
-                            <div *ngIf="f.email.errors.email"> Ingresa un email correcto</div>
-                        </div>
-                    </div>
+                                  <div class="form-group col-md-6">
+                                      <label for="email"> <i class="fa fa-envelope-open"></i> Email</label>
+                                      <input formControlName="email" type="email" name="email" id="email"
+                                          [ngClass]="{'is-invalid' : submitted && f.email.errors,  'form-control':true  }">
+                                      <div class="invalid-feedback" *ngIf="submitted && f.email.errors">
+                                          <div *ngIf="f.email.errors.required">El campo es obligatorio</div>
+                                          <div *ngIf="f.email.errors.email"> Ingresa un email correcto</div>
+                                      </div>
+                                  </div>
 
-                    <div class="form-group col-md-6">
-                        <label for="celular"><i class="fa fa-mobile"></i> Celular</label>
-                        <input formControlName="celular" type="text" name="celular" id="celular" mask="(000) 000-0000"
-                            [ngClass]="{'is-invalid' : submitted && f.celular.errors,  'form-control':true  }">
-                        <div class="invalid-feedback" *ngIf="submitted && f.celular.errors">
-                            <div *ngIf="f.celular.errors.required">El campo es obligatorio</div>
-                        </div>
-                    </div>
+                                  <div class="form-group col-md-6">
+                                      <label for="celular"><i class="fa fa-mobile"></i> Celular</label>
+                                      <input formControlName="celular" type="text" name="celular" id="celular" mask="(000) 000-0000"
+                                          [ngClass]="{'is-invalid' : submitted && f.celular.errors,  'form-control':true  }">
+                                      <div class="invalid-feedback" *ngIf="submitted && f.celular.errors">
+                                          <div *ngIf="f.celular.errors.required">El campo es obligatorio</div>
+                                      </div>
+                                  </div>
 
-                    <div class="form-group col-md-6">
-                        <label> <i class="fa fa-calendar"></i> Fecha de nacimiento</label>
-                        <ejs-datepicker formControlName="fechaNacimiento" [format]="'dd-MM-yyyy'"></ejs-datepicker>
-                        <div *ngIf="submitted && f.fechaNacimiento.errors"
-                            class="text-danger small animated animated--fade-in">
-                            <div *ngIf="f.fechaNacimiento.errors.required">El campo es obligatorio</div>
-                        </div>
-                    </div>
+                                  <div class="form-group col-md-6">
+                                      <label> <i class="fa fa-calendar"></i> Fecha de nacimiento</label>
+                                      <ejs-datepicker formControlName="fechaNacimiento" [format]="'dd-MM-yyyy'"></ejs-datepicker>
+                                      <div *ngIf="submitted && f.fechaNacimiento.errors"
+                                          class="text-danger small animated animated--fade-in">
+                                          <div *ngIf="f.fechaNacimiento.errors.required">El campo es obligatorio</div>
+                                      </div>
+                                  </div>
 
-                    <div class="form-group col-md-4">
-                        <label for="inputEmail4"> Provincia</label>
-                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="provincias"
-                            [loading]="loadingProvincias" [clearable]="false" (change)="onProvinciaChange()"
-                            [ngClass]="{'form-control border-danger p-0' : submitted && f.provinciaID.errors }"
-                            notFoundText="No resultados" formControlName="provinciaID">
-                        </ng-select>
-                        <div *ngIf="submitted && f.provinciaID.errors" class="text-danger small">
-                            <div *ngIf="f.provinciaID.errors.required  ">El campo es obligatorio</div>
-                        </div>
-                    </div>
+                                  <div class="form-group col-md-4">
+                                      <label for="inputEmail4"> Provincia</label>
+                                      <ng-select bindLabel="nombre" bindValue="codigo" [items]="provincias"
+                                          [loading]="loadingProvincias" [clearable]="false" (change)="onProvinciaChange()"
+                                          [ngClass]="{'form-control border-danger p-0' : submitted && f.provinciaID.errors }"
+                                          notFoundText="No resultados" formControlName="provinciaID">
+                                      </ng-select>
+                                      <div *ngIf="submitted && f.provinciaID.errors" class="text-danger small">
+                                          <div *ngIf="f.provinciaID.errors.required  ">El campo es obligatorio</div>
+                                      </div>
+                                  </div>
 
-                    <div class="form-group col-md-4">
-                        <label for="inputEmail4"> Ciudad</label>
-                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="ciudades" [loading]="loadingCiudades"
-                            [clearable]="false" (change)="getSectores()"
-                            [ngClass]="{'form-control border-danger p-0' : submitted && f.ciudadID.errors }"
-                            notFoundText="No resultados" formControlName="ciudadID">
-                        </ng-select>
-                        <div *ngIf="submitted && f.ciudadID.errors" class="text-danger small">
-                            <div *ngIf="f.ciudadID.errors.required  ">El campo es obligatorio</div>
-                        </div>
-                    </div>
+                                  <div class="form-group col-md-4">
+                                      <label for="inputEmail4"> Ciudad</label>
+                                      <ng-select bindLabel="nombre" bindValue="codigo" [items]="ciudades" [loading]="loadingCiudades"
+                                          [clearable]="false" (change)="getSectores()"
+                                          [ngClass]="{'form-control border-danger p-0' : submitted && f.ciudadID.errors }"
+                                          notFoundText="No resultados" formControlName="ciudadID">
+                                      </ng-select>
+                                      <div *ngIf="submitted && f.ciudadID.errors" class="text-danger small">
+                                          <div *ngIf="f.ciudadID.errors.required  ">El campo es obligatorio</div>
+                                      </div>
+                                  </div>
 
-                    <div class="form-group col-md-4">
-                        <label for="inputEmail4"> Sector</label>
-                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="sectores" [loading]="loadingSectores"
-                            [clearable]="false"
-                            [ngClass]="{'form-control border-danger p-0' : submitted && f.sectorID.errors }"
-                            notFoundText="No resultados" formControlName="sectorID">
-                        </ng-select>
-                        <div *ngIf="submitted && f.sectorID.errors" class="text-danger small">
-                            <div *ngIf="f.sectorID.errors.required  ">El campo es obligatorio</div>
-                        </div>
-                    </div>
+                                  <div class="form-group col-md-4">
+                                      <label for="inputEmail4"> Sector</label>
+                                      <ng-select bindLabel="nombre" bindValue="codigo" [items]="sectores" [loading]="loadingSectores"
+                                          [clearable]="false"
+                                          [ngClass]="{'form-control border-danger p-0' : submitted && f.sectorID.errors }"
+                                          notFoundText="No resultados" formControlName="sectorID">
+                                      </ng-select>
+                                      <div *ngIf="submitted && f.sectorID.errors" class="text-danger small">
+                                          <div *ngIf="f.sectorID.errors.required  ">El campo es obligatorio</div>
+                                      </div>
+                                  </div>
 
-                    <div class="form-group text-right col-md-12">
-                        <hr />
+                                  <div class="form-group text-right col-md-12">
+                                      <hr />
 
-                        <button class="btn btn-light m-1" routerLink="../" type="button">
-                            <i class="fas fa-times"></i> Cancelar
-                        </button>
+                                      <button class="btn btn-light m-1" routerLink="../" type="button">
+                                          <i class="fas fa-times"></i> Cancelar
+                                      </button>
 
-                        <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
-                            <i class="fas fa-check"></i> Guardar
-                        </button>
+                                      <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+                                          <i class="fas fa-check"></i> Guardar
+                                      </button>
 
-                        <!-- boton cargando -->
-                        <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
-                            <span class="spinner-border spinner-border-sm"></span> Guardando
-                        </button>
-                    </div>
+                                      <!-- boton cargando -->
+                                      <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                                          <span class="spinner-border spinner-border-sm"></span> Guardando
+                                      </button>
+                                  </div>
 
-                </form>
-            </div>
-        </div>
+                              </form>
+                          </div>
+                      </div>
+                  </div>
+                  </div>
+                </ng-template>
+              </ngb-tab>
+
+              <ngb-tab >
+                <ng-template ngbTabTitle><b>Visitas</b></ng-template>
+                <ng-template ngbTabContent>
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="card">
+                          <div class="card-body">
+                              <div class="row">
+                                  <div class="col-md-6 col-lg-6 col-12">
+                                      <h4 class="card-title">Visitas Clientes</h4>
+                                  </div>
+                                  <div class="col-md-6 col-lg-6 col-12 text-right">
+
+
+                                  </div>
+                              </div>
+                              <form class="form-row m-t-40" [formGroup]="FormGenerales" (ngSubmit)="onSubmit()">
+
+                                <div class="form-group col-md-6">
+                                  <label for="example-email">Tipo de Visita</label>
+                                  <ng-select [items]="FrecuenciaVisitas" bindLabel="nombre" bindValue="codigo" placeholder="Seleccionar tipo"
+                                      [loading]="Cargando" [clearable]="false"
+                                      [ngClass]="{'form-control border-danger p-0' : submitted && f.frecuenciaVisitaId.errors }"
+                                      notFoundText="No resultados" formControlName="frecuenciaVisitaId">
+                                  </ng-select>
+                                  <div *ngIf="submitted && f.frecuenciaVisitaId.errors"
+                                      class="text-danger small animated animated--fade-in">
+                                      <div *ngIf="f.frecuenciaVisitaId.errors.required  ">El campo es obligatorio</div>
+                                  </div>
+                              </div>
+
+
+                              <div class="form-group col-md-12">
+                                <label>Dia de Semana</label>
+                                <div class="btn-group btn-group-toggle col-md-12"  ngbRadioGroup name="radioBasic" formControlName="diaId">
+                                  <label ngbButtonLabel class="btn-dark" *ngFor="let Dia of DiaSemana">
+                                    <input ngbButton type="radio" [value]="Dia.id"> {{ Dia.nombre }}
+                                  </label>
+                                </div>
+                              </div>
+
+
+                                  <div class="form-group text-right col-md-12">
+                                      <hr />
+
+                                      <button class="btn btn-light m-1" routerLink="../" type="button">
+                                          <i class="fas fa-times"></i> Cancelar
+                                      </button>
+
+                                      <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+                                          <i class="fas fa-check"></i> Guardar
+                                      </button>
+
+                                      <!-- boton cargando -->
+                                      <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                                          <span class="spinner-border spinner-border-sm"></span> Guardando
+                                      </button>
+                                  </div>
+
+                              </form>
+                          </div>
+                      </div>
+                  </div>
+                  </div>
+                </ng-template>
+              </ngb-tab>
+
+            </ngb-tabset>
     </div>
+    </div>
+</div>
+
+
+
+
+
 </div>

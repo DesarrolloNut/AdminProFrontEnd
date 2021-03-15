@@ -1,3 +1,4 @@
+import { Dias } from './../models/Dias';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -23,7 +24,8 @@ export class ClientesFormularioComponent implements OnInit {
   documentos: ComboBox[];
 
   Cargando: boolean = false;
-  Formulario: FormGroup;
+  FormGenerales: FormGroup;
+  FormVisitas: FormGroup;
   submitted = false;
   btnGuardarCargando = false;
   actualizando = false;
@@ -39,7 +41,8 @@ export class ClientesFormularioComponent implements OnInit {
   ciudades: ComboBox[];
   sectores: ComboBox[];
   loadingSectores: boolean;
-
+  FrecuenciaVisitas: any[];
+  DiaSemana: Dias[];
 
   constructor(
     private toastService: ToastrService,
@@ -50,7 +53,9 @@ export class ClientesFormularioComponent implements OnInit {
     private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
-    this.CreateForm();
+    //CREACION DE FORMULARIO
+    this.CreateFormDatosGenerales();
+    // this.CreateFormVisitasClientes();
 
     let id = Number(this.route.snapshot.paramMap.get('id'));
     if (id > 0) {
@@ -58,15 +63,17 @@ export class ClientesFormularioComponent implements OnInit {
       this.actualizando = true;
 
     }
+    this.getDias();
+    this.getFrecuenciaVisitas();
     this.getProvincias()
     this.getDocumentosTipo();
   }
 
 
 
-  private CreateForm() {
+  private CreateFormDatosGenerales() {
 
-    this.Formulario = this.formBuilder.group({
+    this.FormGenerales = this.formBuilder.group({
       id: [0],
       sucursalID: [null, [Validators.required]],
       documento: [null, [Validators.required, Validators.minLength(9)]],
@@ -83,6 +90,9 @@ export class ClientesFormularioComponent implements OnInit {
       provinciaID: [null, Validators.required],
       ciudadID: [null, Validators.required],
       sectorID: [null, Validators.required],
+      visitaId: [0],
+      diaId: [null, [Validators.required]],
+      frecuenciaVisitaId: [null, [Validators.required]],
 
     },
       {
@@ -90,10 +100,34 @@ export class ClientesFormularioComponent implements OnInit {
       });
   }
 
-  get f() { return this.Formulario.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
+
+  // private CreateFormVisitasClientes() {
+
+  //   this.FormVisitas = this.formBuilder.group({
+  //     id: [0],
+  //     DiaId: [null, [Validators.required]],
+  //     FrecuenciaVisitaId: [null, [Validators.required]],
+  //     ClienteId: [null, [Validators.required]],
 
 
+  //   });
+  // }
+  get f() { return this.FormGenerales.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
+  // get f2() { return this.FormVisitas.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
 
+  onSubmit() {
+    this.submitted = true;
+
+    if (!this.actualizando)
+      this.f.sucursalID.setValue(Number(this.auth.tokenDecoded.groupsid))
+
+    if (this.FormGenerales.invalid)
+      return;
+
+    this.guardarCliente();
+  }
+
+//#region METODOS DATOS GENERALES
 
   getClienteByID(id: number) {
     this.Cargando = true;
@@ -106,7 +140,7 @@ export class ClientesFormularioComponent implements OnInit {
           if (response != null && response.records != null && response.records.length > 0) {
 
             let cliente = response.records[0]
-            this.Formulario.setValue(cliente);
+            this.FormGenerales.setValue(cliente);
             this.getCiudades()
             this.getSectores()
           } else {
@@ -122,36 +156,27 @@ export class ClientesFormularioComponent implements OnInit {
   }
 
 
-  onSubmit() {
-    this.submitted = true;
 
-    if (!this.actualizando)
-      this.f.sucursalID.setValue(Number(this.auth.tokenDecoded.groupsid))
-
-    if (this.Formulario.invalid)
-      return;
-
-    this.guardarCliente();
-  }
 
 
   guardarCliente() {
 
     let metodo: string = this.actualizando ? "UpdateCliente" : "CrearCliente";
     this.btnGuardarCargando = true;
-    console.table(this.Formulario.value)
+    console.table(this.FormGenerales.value)
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
-      metodo, this.Formulario.value).subscribe(response => {
+      metodo, this.FormGenerales.value).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
+          this.btnGuardarCargando = false;
         } else {
           this.toastService.success("Realizado", "OK");
           // this.guardarClientesmart(this.Formulario.value);
           this.router.navigateByUrl('/mantenimientos/cliente');
         }
 
-        // this.btnGuardarCargando = false;
+         this.btnGuardarCargando = false;
       }, error => {
         this.btnGuardarCargando = false;
         this.toastService.error("Error conexion al servidor");
@@ -335,5 +360,47 @@ export class ClientesFormularioComponent implements OnInit {
 
   }
 
+getFrecuenciaVisitas() {
+  this.Cargando = true;
+  this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+    "GetFrecuenciaVisitaComboBox", null).subscribe(response => {
 
+      if (!response.ok) {
+        this.toastService.error(response.errores[0]);
+      } else {
+        this.FrecuenciaVisitas = response.records;
+      }
+      this.Cargando = false;
+    }, error => {
+      this.Cargando = false;
+      this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
+
+      setTimeout(() => {
+        this.getFrecuenciaVisitas();
+      }, 1000);
+
+    });
+}
+getDias() {
+  this.Cargando = true;
+  this.httpService.DoPost<Dias>(DataApi.Cliente,
+    "GetDias", null).subscribe(response => {
+
+      if (!response.ok) {
+        this.toastService.error(response.errores[0]);
+      } else {
+        this.DiaSemana = response.records;
+      }
+      this.Cargando = false;
+    }, error => {
+      this.Cargando = false;
+      this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
+
+      setTimeout(() => {
+        this.getDias();
+      }, 1000);
+
+    });
+}
+//#endregion
 }

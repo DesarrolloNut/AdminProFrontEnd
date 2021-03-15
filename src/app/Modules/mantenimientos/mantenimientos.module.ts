@@ -52,10 +52,14 @@ import { ListaPreciosListadoComponent } from './listaPrecios/lista-precios-lista
 import { ListaPreciosFormularioComponent } from './listaPrecios/lista-precios-formulario/lista-precios-formulario.component';
 import { RutasListadoComponent } from './rutas/rutas-listado/rutas-listado.component';
 import { RutasFormularioComponent } from './rutas/rutas-formulario/rutas-formulario.component';
+import { NgbdtabsBasicComponent } from 'src/app/component/tabs/tabs.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
-  declarations: [MantenimientosComponent, ComiteComponent,
+  declarations: [
+    NgbdtabsBasicComponent,
+    MantenimientosComponent, ComiteComponent,
     UsuarioListadoComponent, UsuarioFormularioComponent, ClientesListadoComponent,
     ClientesFormularioComponent, MarcasListadoComponent, MarcasFormularioComponent,
     ModelosListadoComponent, ModelosFormularioComponent, DealersListadoComponent, DealersFormularioComponent,
@@ -70,7 +74,8 @@ import { RutasFormularioComponent } from './rutas/rutas-formulario/rutas-formula
     CommonModule,
     AngularDualListBoxModule,
     MantenimientosRoutingModule,
-    SharedModule
+    SharedModule,
+    NgbModule
   ]
 })
 export class MantenimientosModule { }
