@@ -1,6 +1,4 @@
-import { EstadosGeneralesListadoComponent } from './estadosgenerales/estados-generales-listado/estados-generales-listado.component';
-import { RutasFormularioComponent } from './rutas/rutas-formulario/rutas-formulario.component';
-import { RutasListadoComponent } from './rutas/rutas-listado/rutas-listado.component';
+
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
@@ -46,11 +44,16 @@ import { RecallFormularioComponent } from './recall/recall-formulario/recall-for
 import { RecallListadoComponent } from './recall/recall-listado/recall-listado.component';
 import { OfertasFormularioComponent } from './ofertas/ofertas-formulario/ofertas-formulario.component';
 import { OfertasListadoComponent } from './ofertas/ofertas-listado/ofertas-listado.component';
-import { ListaPreciosListadoComponent } from './listaPrecios/lista-precios-listado/lista-precios-listado.component';
 import { ListaPreciosFormularioComponent } from './listaPrecios/lista-precios-formulario/lista-precios-formulario.component';
-import { NivelAutorizacionListadoComponent } from './nivelautorizacion/nivel-autorizacion-listado/nivel-autorizacion-listado.component';
-import { NivelAutorizacionFormularioComponent } from './nivelautorizacion/nivel-autorizacion-formulario/nivel-autorizacion-formulario.component';
+
 import { EstadosGeneralesFormularioComponent } from './estadosgenerales/estados-generales-formulario/estados-generales-formulario.component';
+import { ListaPreciosListadoComponent } from './listaPrecios/lista-precios-listado/lista-precios-listado.component';
+import { NivelAutorizacionModuloListadoComponent } from './NivelAutorizacionModulo/nivel-autorizacion-modulo-listado/nivel-autorizacion-modulo-listado.component';
+import { NivelAutorizacionModuloFormularioComponent } from './NivelAutorizacionModulo/nivel-autorizacion-modulo-formulario/nivel-autorizacion-modulo-formulario.component';
+import { EstadosGeneralesListadoComponent } from './estadosgenerales/estados-generales-listado/estados-generales-listado.component';
+import { RutasFormularioComponent } from './rutas/rutas-formulario/rutas-formulario.component';
+import { RutasListadoComponent } from './rutas/rutas-listado/rutas-listado.component';
+
 
 const routes: Routes = [
   {
@@ -82,8 +85,8 @@ const routes: Routes = [
         }
       },
 
-       // ruta
-       {
+      // ruta
+      {
         path: 'ruta', component: RutasListadoComponent, data: {
           title: 'Rutas',
           urls: [
@@ -143,6 +146,29 @@ const routes: Routes = [
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Estados Generales' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+
+      // NivelAutorizacionModulo
+      {
+        path: 'nivelautorizacionmodulo', component: NivelAutorizacionModuloListadoComponent, data: {
+          title: 'Nivel Autorizacion Módulo',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Nivel Autorizacion Módulo' }
+          ]
+        }
+      },
+
+      {
+        path: 'nivelautorizacionmodulo/:id', component: NivelAutorizacionModuloFormularioComponent, data: {
+          title: 'Nivel Autorizacion Módulo Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Nivel Autorizacion Módulo' },
             { title: 'Formulario' }
           ]
         }

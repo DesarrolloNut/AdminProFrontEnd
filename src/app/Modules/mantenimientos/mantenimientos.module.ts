@@ -54,10 +54,13 @@ import { RutasListadoComponent } from './rutas/rutas-listado/rutas-listado.compo
 import { RutasFormularioComponent } from './rutas/rutas-formulario/rutas-formulario.component';
 import { NgbdtabsBasicComponent } from 'src/app/component/tabs/tabs.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
 import { NivelAutorizacionListadoComponent } from './nivelautorizacion/nivel-autorizacion-listado/nivel-autorizacion-listado.component';
 import { NivelAutorizacionFormularioComponent } from './nivelautorizacion/nivel-autorizacion-formulario/nivel-autorizacion-formulario.component';
 import { EstadosGeneralesListadoComponent } from './estadosgenerales/estados-generales-listado/estados-generales-listado.component';
 import { EstadosGeneralesFormularioComponent } from './estadosgenerales/estados-generales-formulario/estados-generales-formulario.component';
+
+
 
 
 @NgModule({
@@ -78,6 +81,7 @@ import { EstadosGeneralesFormularioComponent } from './estadosgenerales/estados-
    NivelAutorizacionListadoComponent, NivelAutorizacionFormularioComponent, EstadosGeneralesListadoComponent, EstadosGeneralesFormularioComponent,
 
   ],
+
   imports: [
     CommonModule,
     AngularDualListBoxModule,
