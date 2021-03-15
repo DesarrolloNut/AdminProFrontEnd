@@ -47,6 +47,8 @@ import { OfertasFormularioComponent } from './ofertas/ofertas-formulario/ofertas
 import { OfertasListadoComponent } from './ofertas/ofertas-listado/ofertas-listado.component';
 import { ListaPreciosListadoComponent } from './listaPrecios/lista-precios-listado/lista-precios-listado.component';
 import { ListaPreciosFormularioComponent } from './listaPrecios/lista-precios-formulario/lista-precios-formulario.component';
+import { NivelAutorizacionListadoComponent } from './nivelautorizacion/nivel-autorizacion-listado/nivel-autorizacion-listado.component';
+import { NivelAutorizacionFormularioComponent } from './nivelautorizacion/nivel-autorizacion-formulario/nivel-autorizacion-formulario.component';
 
 const routes: Routes = [
   {
@@ -95,6 +97,28 @@ const routes: Routes = [
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Rutas' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+       // NivelAutorizacion
+       {
+        path: 'nivelautorizacion', component: NivelAutorizacionListadoComponent, data: {
+          title: 'Nivel autorizacion',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Nivel autorizacion' }
+          ]
+        }
+      },
+
+      {
+        path: 'nivelautorizacion/:id', component: NivelAutorizacionFormularioComponent, data: {
+          title: 'Nivel autorizacion Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Nivel autorizacion' },
             { title: 'Formulario' }
           ]
         }
