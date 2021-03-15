@@ -1,4 +1,4 @@
-import { EstadoGenerales } from './../../../../shared/enums/EstadoGenerales';
+import { EstadoGeneralesKey } from './../../../../shared/enums/EstadoGeneralesKey';
 import { NivelAutorizacionFormulario } from './../models/NivelAutorizacion';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
@@ -140,7 +140,7 @@ export class NivelAutorizacionFormularioComponent implements OnInit {
 
   GetEstadoForKeyComboBox() {
     this.loadingEstadoCategorias = true;
-    let parametro: Parametro[] = [{ key: "NameKey", value: EstadoGenerales.LISTAPRECIO}];
+    let parametro: Parametro[] = [{ key: "NameKey", value: EstadoGeneralesKey.LISTAPRECIO}];
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
       "GetEstadoForKeyComboBox", parametro).subscribe(response => {
 

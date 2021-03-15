@@ -56,6 +56,8 @@ import { NgbdtabsBasicComponent } from 'src/app/component/tabs/tabs.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NivelAutorizacionListadoComponent } from './nivelautorizacion/nivel-autorizacion-listado/nivel-autorizacion-listado.component';
 import { NivelAutorizacionFormularioComponent } from './nivelautorizacion/nivel-autorizacion-formulario/nivel-autorizacion-formulario.component';
+import { EstadosGeneralesListadoComponent } from './estadosgenerales/estados-generales-listado/estados-generales-listado.component';
+import { EstadosGeneralesFormularioComponent } from './estadosgenerales/estados-generales-formulario/estados-generales-formulario.component';
 
 
 @NgModule({
@@ -73,7 +75,7 @@ import { NivelAutorizacionFormularioComponent } from './nivelautorizacion/nivel-
     AccesoriosFormularioComponent, SintomasCategoriasListadoComponent, SintomasCategoriasFormularioComponent, ArticuloListadoComponent,
     ArticuloFormularioComponent, RecallListadoComponent, RecallFormularioComponent, OfertasListadoComponent, OfertasFormularioComponent,
     ListaPreciosListadoComponent, ListaPreciosFormularioComponent, RutasListadoComponent, RutasFormularioComponent,
-   NivelAutorizacionListadoComponent, NivelAutorizacionFormularioComponent,
+   NivelAutorizacionListadoComponent, NivelAutorizacionFormularioComponent, EstadosGeneralesListadoComponent, EstadosGeneralesFormularioComponent,
 
   ],
   imports: [

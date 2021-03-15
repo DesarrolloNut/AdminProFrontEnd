@@ -1,4 +1,4 @@
-export enum EstadoGenerales {
+export enum EstadoGeneralesKey {
     LISTAPRECIO = 'LISTAPRECIO',
 
 }

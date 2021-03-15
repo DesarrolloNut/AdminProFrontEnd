@@ -1,3 +1,4 @@
+import { EstadosGeneralesListadoComponent } from './estadosgenerales/estados-generales-listado/estados-generales-listado.component';
 import { RutasFormularioComponent } from './rutas/rutas-formulario/rutas-formulario.component';
 import { RutasListadoComponent } from './rutas/rutas-listado/rutas-listado.component';
 import { NgModule } from '@angular/core';
@@ -49,6 +50,7 @@ import { ListaPreciosListadoComponent } from './listaPrecios/lista-precios-lista
 import { ListaPreciosFormularioComponent } from './listaPrecios/lista-precios-formulario/lista-precios-formulario.component';
 import { NivelAutorizacionListadoComponent } from './nivelautorizacion/nivel-autorizacion-listado/nivel-autorizacion-listado.component';
 import { NivelAutorizacionFormularioComponent } from './nivelautorizacion/nivel-autorizacion-formulario/nivel-autorizacion-formulario.component';
+import { EstadosGeneralesFormularioComponent } from './estadosgenerales/estados-generales-formulario/estados-generales-formulario.component';
 
 const routes: Routes = [
   {
@@ -119,6 +121,28 @@ const routes: Routes = [
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Nivel autorizacion' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+       // ESTADOS GENERALES
+       {
+        path: 'estadosgenerales', component: EstadosGeneralesListadoComponent, data: {
+          title: 'Estados Generales',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Estados Generales' }
+          ]
+        }
+      },
+
+      {
+        path: 'estadosgenerales/:id', component: EstadosGeneralesFormularioComponent, data: {
+          title: 'Estados Generales Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Estados Generales' },
             { title: 'Formulario' }
           ]
         }
