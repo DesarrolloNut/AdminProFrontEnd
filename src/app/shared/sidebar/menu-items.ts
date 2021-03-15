@@ -218,6 +218,17 @@ export const ROUTES: RouteInfo[] = [
                 submenu: [],
                 permisos: ["mantenimientos_listas_precios"],
             },
+            {
+                path: '/mantenimientos/nivelautorizacionmodulo',
+                label: '',
+                labelClass: '',
+                title: 'Nivel Autorizacion M.',
+                icon: '',
+                class: '',
+                extralink: false,
+                submenu: [],
+                permisos: ["mantenimientos_listas_precios"],
+            },
 
 
 

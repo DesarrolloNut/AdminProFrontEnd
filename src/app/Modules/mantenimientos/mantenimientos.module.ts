@@ -54,6 +54,8 @@ import { RutasListadoComponent } from './rutas/rutas-listado/rutas-listado.compo
 import { RutasFormularioComponent } from './rutas/rutas-formulario/rutas-formulario.component';
 import { NgbdtabsBasicComponent } from 'src/app/component/tabs/tabs.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NivelAutorizacionModuloListadoComponent } from './NivelAutorizacionModulo/nivel-autorizacion-modulo-listado/nivel-autorizacion-modulo-listado.component';
+import { NivelAutorizacionModuloFormularioComponent } from './NivelAutorizacionModulo/nivel-autorizacion-modulo-formulario/nivel-autorizacion-modulo-formulario.component';
 
 
 @NgModule({
@@ -69,7 +71,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     CompaniasListadoComponent, CompaniasFormularioComponent, SucursalesListadoComponent, SucursalesFormularioComponent, CitaCategoriaListadoComponent,
     CitaCategoriaFormularioComponent, SintomasListadoComponent, SintomasFormularioComponent, AccesoriosListadoComponent,
     AccesoriosFormularioComponent, SintomasCategoriasListadoComponent, SintomasCategoriasFormularioComponent, ArticuloListadoComponent,
-    ArticuloFormularioComponent, RecallListadoComponent, RecallFormularioComponent, OfertasListadoComponent, OfertasFormularioComponent, ListaPreciosListadoComponent, ListaPreciosFormularioComponent, RutasListadoComponent, RutasFormularioComponent,],
+    ArticuloFormularioComponent, RecallListadoComponent, RecallFormularioComponent, OfertasListadoComponent, OfertasFormularioComponent, ListaPreciosListadoComponent, ListaPreciosFormularioComponent, RutasListadoComponent, RutasFormularioComponent, NivelAutorizacionModuloListadoComponent, NivelAutorizacionModuloFormularioComponent,],
   imports: [
     CommonModule,
     AngularDualListBoxModule,
