@@ -11,6 +11,8 @@ import { cedulaestructura } from 'src/app/shared/validators/cedula-estructura.va
 import { ParametrosCita } from 'src/app/Modules/turno/models/ParametrosCita';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { Cliente } from '../../clientes/models/Cliente';
+import { DualListComponent } from 'angular-dual-listbox';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-usuario-formulario',
@@ -38,18 +40,45 @@ export class UsuarioFormularioComponent implements OnInit {
   supervisores: ComboBox[];
   loadingUsuarios: boolean;
 
+
+  // Dual List options 
+  tab = 1;
+  keepSorted = true;
+  key: string;
+  display: string;
+  filter = true;
+  source: Array<any>;
+  confirmed: Array<any> = [];
+  userAdd = '';
+  disabled = false;
+
+  sourceLeft = true;
+  // format: any = DualListComponent.DEFAULT_FORMAT;
+  format = {
+    add: 'Agregar', remove: 'Remover', all: 'Seleccionar Todos', none: 'Deseleccionar',
+    direction: DualListComponent.LTR, draggable: true, locale: 'da'
+  };
+
+  loadingNiveles: boolean;
+  usuarioID: number;
+  loadingNivelesSeleccionados: boolean;
+  guardandoNivelesAsignados: boolean;
+  searchText: string;
+
+
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
     private httpService: BackendService,
     private router: Router,
+    private modalService: NgbModal,
     private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
-    let usuarioID = Number(this.route.snapshot.paramMap.get('id'));
+    this.usuarioID = Number(this.route.snapshot.paramMap.get('id'));
 
-    if (usuarioID > 0) {
-      this.getUsuarioByID(usuarioID);
+    if (this.usuarioID > 0) {
+      this.getUsuarioByID(this.usuarioID);
       this.actualizandoUsuario = true;
     }
 
@@ -59,6 +88,13 @@ export class UsuarioFormularioComponent implements OnInit {
     this.getSucursales();
 
     this.CreateForm();
+
+    this.configDualList()
+  }
+  configDualList() {
+    this.key = 'codigo';
+    this.display = 'nombre';
+    this.keepSorted = true;
   }
 
   private CreateForm() {
@@ -315,8 +351,92 @@ export class UsuarioFormularioComponent implements OnInit {
   }
 
 
-  openModalCambiaContrasena() {
+  openModalNivelAutorizacion(content) {
+    this.getNivelesAutorizacion()
+    this.getNivelesAutorizacionPorUsuario()
+    this.modalService.open(content, { size: 'lg', backdrop: "static", });
+  }
+
+  getNivelesAutorizacion() {
+    this.loadingNiveles = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetNivelAutorizacionComboBox", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+          this.source = response.records;
+          console.table(this.source)
+        }
+
+        this.loadingNiveles = false;
+      }, error => {
+        this.loadingNiveles = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
+
+  getNivelesAutorizacionPorUsuario() {
+    this.loadingNiveles = true;
+    let parametros: Parametro[] = [{ key: "usuarioID", value: this.usuarioID }]
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetNivelAutorizacionPorUsuarioComboBox", parametros).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+          this.confirmed = response.records;
+          console.table(this.confirmed)
+        }
+
+        this.loadingNiveles = false;
+      }, error => {
+        this.loadingNiveles = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
+  guardarNivelesAutorizacionSeleccionados() {
+
+    if (this.confirmed.length < 1) {
+      this.toastService.warning("Selecciona uno o más");
+      return;
+    }
+
+    let param = this.confirmed.map(x => { return { "UsuarioID": this.usuarioID, "NivelAutorizacionID": x.codigo } })
+    console.table(param)
+    this.guardandoNivelesAsignados = true;
+    this.httpService.DoPostAny<any>(DataApi.NivelAutorizacionModulo,
+      "RegistrarNivelAutorizacionAUsario", param).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+          this.modalService.dismissAll();
+          this.toastService.success("Realizado", "OK");
+        }
+        this.guardandoNivelesAsignados = false;
+      }, error => {
+        this.guardandoNivelesAsignados = false;
+        this.toastService.error("No se pudo guardar", "Error conexion al servidor");
+        console.error(error);
+      });
 
   }
 
+
+
+
+
+
 }
+
+
+
+
+
+

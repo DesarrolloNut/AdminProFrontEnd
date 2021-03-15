@@ -46,7 +46,6 @@ export class ListaPreciosListadoComponent implements OnInit {
   };
 
   loadingArticulos: boolean;
-  // articulos: Articulo[];
   listaSeleccionada: number;
   loadingArticulosSeleccionados: boolean;
   guardandoArticulos: boolean;

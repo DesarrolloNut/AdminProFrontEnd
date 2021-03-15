@@ -20,11 +20,12 @@
                     <div class="col-md-6 col-lg-6 col-12">
                         <h4 class="card-title">Formulario de usuarios</h4>
                     </div>
-                    <div class="col-md-6 col-lg-6 col-12 text-right">
+                    <div class="col-md-6 col-lg-6 col-12 text-right" *ngIf="actualizandoUsuario">
 
-                        <!-- <button class="btn btn-sm btn-light m-1" (click)="openModalCambiaContrasena()">
-                            <i class=" fa fa-sm fa-key"></i> Cambiar contraseña
-                        </button> -->
+                        <button class="btn btn-sm btn-light m-1"
+                            (click)="openModalNivelAutorizacion(modalNivelAutorizacion)">
+                            <i class=" fa fa-sm fa-lock"></i> Nivel autorización
+                        </button>
 
                         <!-- <button class="btn btn-sm btn-light m-1" (click)="openModalCambiaContrasena()">
                             <i class=" fa fa-sm fa-envelope-open"></i> Enviar correo
@@ -39,7 +40,7 @@
                 <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
                 <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
 
-                   
+
 
                     <div class="form-group col-md-6">
                         <label for="userName"> <i class="fa fa-user-circle"></i> Usuario</label>
@@ -133,7 +134,8 @@
 
                     <div class="form-group col-md-6 col-8">
                         <label for="telefono"><i class="fa fa-phone"></i> Teléfono</label>
-                        <input formControlName="telefono" type="text" name="telefono" id="telefono" mask="(000) 000-0000"
+                        <input formControlName="telefono" type="text" name="telefono" id="telefono"
+                            mask="(000) 000-0000"
                             [ngClass]="{'is-invalid' : submitted && f.telefono.errors,  'form-control':true  }">
                         <div class="invalid-feedback" *ngIf="submitted && f.telefono.errors">
                             <div *ngIf="f.telefono.errors.required">El campo es obligatorio</div>
@@ -161,7 +163,8 @@
 
                     <div class="form-group col-md-6">
                         <label for="inputEmail4"> Supervisor</label>
-                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="supervisores" [loading]="loadingUsuarios"
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="supervisores"
+                            [loading]="loadingUsuarios"
                             [ngClass]="{'form-control border-danger p-0' : submitted && f.idUsuarioSupervisor.errors }"
                             notFoundText="No resultados" formControlName="idUsuarioSupervisor">
                         </ng-select>
@@ -260,3 +263,36 @@
         </div>
     </div>
 </div>
+
+
+
+
+
+<ng-template #modalNivelAutorizacion let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Asignación de niveles de autorización</h4>
+        <!-- <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button> -->
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12" [hidden]="loadingNiveles">
+                <dual-list [sort]="keepSorted" [source]="source" [key]="key" [display]="display" [filter]="filter"
+                    [(destination)]="confirmed" height="265px" [format]="format" [disabled]="disabled"></dual-list>
+            </div>
+
+            <div class="col-12">
+                <app-loading-listado [hidden]="!loadingNiveles"></app-loading-listado>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cancelar</button>
+        <button type="button" class="btn btn-success m-1" *ngIf="!guardandoNivelesAsignados"
+            (click)="guardarNivelesAutorizacionSeleccionados()">Guardar</button>
+        <button *ngIf="guardandoNivelesAsignados" disabled class="btn btn-success m-1" type="button">
+            <span class="spinner-border spinner-border-sm"></span> Guardando
+        </button>
+    </div>
+</ng-template>
