@@ -45,8 +45,10 @@ import { RecallFormularioComponent } from './recall/recall-formulario/recall-for
 import { RecallListadoComponent } from './recall/recall-listado/recall-listado.component';
 import { OfertasFormularioComponent } from './ofertas/ofertas-formulario/ofertas-formulario.component';
 import { OfertasListadoComponent } from './ofertas/ofertas-listado/ofertas-listado.component';
-import { ListaPreciosListadoComponent } from './listaPrecios/lista-precios-listado/lista-precios-listado.component';
 import { ListaPreciosFormularioComponent } from './listaPrecios/lista-precios-formulario/lista-precios-formulario.component';
+import { ListaPreciosListadoComponent } from './listaPrecios/lista-precios-listado/lista-precios-listado.component';
+import { NivelAutorizacionModuloListadoComponent } from './NivelAutorizacionModulo/nivel-autorizacion-modulo-listado/nivel-autorizacion-modulo-listado.component';
+import { NivelAutorizacionModuloFormularioComponent } from './NivelAutorizacionModulo/nivel-autorizacion-modulo-formulario/nivel-autorizacion-modulo-formulario.component';
 
 const routes: Routes = [
   {
@@ -78,8 +80,8 @@ const routes: Routes = [
         }
       },
 
-       // ruta
-       {
+      // ruta
+      {
         path: 'ruta', component: RutasListadoComponent, data: {
           title: 'Rutas',
           urls: [
@@ -95,6 +97,29 @@ const routes: Routes = [
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Rutas' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+
+      // NivelAutorizacionModulo
+      {
+        path: 'nivelautorizacionmodulo', component: NivelAutorizacionModuloListadoComponent, data: {
+          title: 'Nivel Autorizacion Módulo',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Nivel Autorizacion Módulo' }
+          ]
+        }
+      },
+
+      {
+        path: 'nivelautorizacionmodulo/:id', component: NivelAutorizacionModuloFormularioComponent, data: {
+          title: 'Nivel Autorizacion Módulo Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Nivel Autorizacion Módulo' },
             { title: 'Formulario' }
           ]
         }

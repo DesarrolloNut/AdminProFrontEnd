@@ -3,6 +3,7 @@ export enum DataApi {
 
     ListaPrecio = 32,
     Ruta = 33,
+    NivelAutorizacionModulo = 34,
 
 
 
@@ -53,6 +54,7 @@ export const dataApiRootMap: { [api: string]: string } = {
 
     "32": "api/ListaPrecio",
     "33": "api/Ruta",
+    "34": "api/NivelAutorizacionModulo",
 
 
 
