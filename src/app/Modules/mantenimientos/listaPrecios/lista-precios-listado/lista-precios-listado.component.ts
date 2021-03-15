@@ -50,6 +50,7 @@ export class ListaPreciosListadoComponent implements OnInit {
   listaSeleccionada: number;
   loadingArticulosSeleccionados: boolean;
   guardandoArticulos: boolean;
+  searchText: string;
 
 
   constructor(private toastService: ToastrService,
@@ -190,6 +191,33 @@ export class ListaPreciosListadoComponent implements OnInit {
     this.guardandoArticulos = true;
     this.httpService.DoPostAny<any>(DataApi.Articulo,
       "RegistrarArticulosAListaPrecio", param).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+          this.modalService.dismissAll();
+          this.toastService.success("Realizado", "OK");
+        }
+        this.guardandoArticulos = false;
+      }, error => {
+        this.guardandoArticulos = false;
+        this.toastService.error("No se pudo guardar", "Error conexion al servidor");
+        console.error(error);
+      });
+
+  }
+
+  guardarArticulosSeleccionadosPrecios() {
+
+    if (this.confirmed.length < 1) {
+      this.toastService.warning("Selecciona uno o más artículos");
+      return;
+    }
+
+    this.guardandoArticulos = true;
+    this.httpService.DoPostAny<any>(DataApi.Articulo,
+      "RegistrarPreciosArticulosAsignados", this.confirmed).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
