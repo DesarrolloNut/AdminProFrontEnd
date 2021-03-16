@@ -32,7 +32,7 @@
                       <thead>
                           <tr>
                               <th></th>
-                              <th>Ruta</th>
+                              <th>Nombre</th>
                               <th>Tipo Ruta</th>
                               <th>Entregador</th>
                               <th>Supervisor</th>
@@ -45,7 +45,7 @@
                           <tr *ngFor="let item of data">
                               <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
                               <td>
-                                  <span> {{item.numeroRuta}}</span>
+                                  <span> {{item.nombre}}</span>
                               </td>
                               <td>
                                   <span> {{item.tipoRuta |  slice:0:60}} ...</span>

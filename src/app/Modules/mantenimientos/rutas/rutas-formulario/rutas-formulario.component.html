@@ -27,11 +27,11 @@
               <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
 
                 <div class="form-group col-md-6">
-                  <label for="rutas1"> Ruta</label>
-                  <input formControlName="rutas" type="number" name="rutas" id="rutas1"
-                      [ngClass]="{'is-invalid' : submitted && f.rutas.errors,  'form-control':true  }">
-                  <div class="invalid-feedback" *ngIf="submitted && f.rutas.errors">
-                      <div *ngIf="f.rutas.errors.required">El campo es obligatorio</div>
+                  <label for="nombre">Nombre Ruta</label>
+                  <input formControlName="nombre" type="text" name="nombre" id="nombre"
+                      [ngClass]="{'is-invalid' : submitted && f.nombre.errors,  'form-control':true  }">
+                  <div class="invalid-feedback" *ngIf="submitted && f.nombre.errors">
+                      <div *ngIf="f.nombre.errors.required">El campo es obligatorio</div>
                   </div>
               </div>
 
