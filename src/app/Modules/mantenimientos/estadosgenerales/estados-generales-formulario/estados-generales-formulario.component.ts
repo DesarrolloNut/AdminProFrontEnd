@@ -99,7 +99,7 @@ export class EstadosGeneralesFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0], "Error");
         } else {
           this.toastService.success("Realizado", "OK");
-          this.router.navigateByUrl('/mantenimientos/estadogenerales');
+          this.router.navigateByUrl('/mantenimientos/estadosgenerales');
         }
 
         this.btnGuardarCargando = false;

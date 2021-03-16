@@ -38,7 +38,7 @@ getData() {
 
   let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
 
-  this.httpService.GetAllWithPagination<EstadosGenerales>(DataApi.EstadoGenerales, "GetEstadosGeneralesListado", "ID", this.paginaNumeroActual,
+  this.httpService.GetAllWithPagination<EstadosGenerales>(DataApi.EstadoGenerales, "GetEstadosGeneralesListado", "Value", this.paginaNumeroActual,
     this.paginaSize, true, parametros).subscribe(x => {
 
       if (x.ok) {

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { DualListComponent } from 'angular-dual-listbox';
+import { timeHours } from 'd3-time';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { Parametro } from 'src/app/core/http/model/Parametro';
@@ -8,6 +9,8 @@ import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
+import { EstadoGeneralesKey } from 'src/app/shared/enums/EstadoGeneralesKey';
+import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { ListaPrecio } from '../models/ListaPrecio';
 
 @Component({
@@ -50,6 +53,9 @@ export class ListaPreciosListadoComponent implements OnInit {
   loadingArticulosSeleccionados: boolean;
   guardandoArticulos: boolean;
   searchText: string;
+  estadoIDAutorizacionDefault: number;
+  estadosAutorizacion: ComboBox[];
+  IsArticuloSeleccionado: boolean;
 
 
   constructor(private toastService: ToastrService,
@@ -64,6 +70,7 @@ export class ListaPreciosListadoComponent implements OnInit {
     this.getData()
     this.configDualList()
     this.getArticulos()
+    this.getEstadoAutorizacionDefault()
   }
 
 
@@ -149,6 +156,8 @@ export class ListaPreciosListadoComponent implements OnInit {
     this.keepSorted = true;
   }
 
+  //#region MODAL ASIGNACION ARTICULOS
+
 
   getArticulos() {
     this.loadingArticulos = true;
@@ -207,12 +216,22 @@ export class ListaPreciosListadoComponent implements OnInit {
 
   }
 
+
+
+  //#endregion
+
+
+  //#region MODAL ASIGNACION PRECIOS
+
   guardarArticulosSeleccionadosPrecios() {
 
     if (this.confirmed.length < 1) {
-      this.toastService.warning("Selecciona uno o más artículos");
+      this.toastService.warning("No hay artículos");
       return;
     }
+
+    this.confirmed.filter(x => x.alterado).
+      forEach(x => x.estadoID = this.estadoIDAutorizacionDefault)
 
     this.guardandoArticulos = true;
     this.httpService.DoPostAny<any>(DataApi.Articulo,
@@ -233,5 +252,68 @@ export class ListaPreciosListadoComponent implements OnInit {
       });
 
   }
+
+  autorizarArticulosSeleccionados() {
+
+    if (this.confirmed.filter(x => x.IsChecked).length < 1) {
+      this.toastService.warning("Selecciona uno o más artículos para autorizar");
+      return;
+    }
+
+
+  }
+
+  toggleSelection() {
+
+
+    this.IsArticuloSeleccionado = this.confirmed.filter(x => x.IsChecked).length > 0
+
+    this.confirmed.forEach(x => x.IsChecked = !this.IsArticuloSeleccionado)
+
+  }
+
+  onfechaChange(item, event) {
+    item.alterado = event.isInteracted
+  }
+
+
+  getEstadoAutorizacionDefault() {
+    let parametros: Parametro[] = [{
+      key: "NameKey",
+      value: EstadoGeneralesKey.LISTAPRECIO
+    }]
+
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetEstadoForKeyComboBox", parametros).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.estadosAutorizacion = response.records;
+          this.estadoIDAutorizacionDefault = response.records[0].codigo;
+          // console.log("Estado default autorizacion: " + this.estadoIDAutorizacionDefault)
+        }
+      }, error => {
+        this.toastService.error("No se pudo obtener el estado de autorización por defecto", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getEstadoAutorizacionDefault()
+        }, 1000);
+
+      });
+  }
+
+
+  autorizar() {
+    if (this.confirmed.filter(x => x.IsChecked).length < 1) {
+      this.toastService.warning("No hay artículos seleccionados");
+      return;
+    }
+
+  }
+
+
+  //#endregion
+
+
 
 }
