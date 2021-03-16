@@ -20,6 +20,7 @@
             <h4 class="card-title">Formulario de clientes</h4>
             <!-- <h6 class="card-subtitle">This is basic Default pagination</h6> -->
             <ngb-tabset>
+
               <ngb-tab>
                 <ng-template ngbTabTitle><b>Generales</b></ng-template>
                 <ng-template ngbTabContent>
@@ -39,11 +40,23 @@
 
                                   <div class="form-group col-md-6">
                                       <label for="codigoReferencia"> <i class="fa fa-hashtag"></i> Código de Referencia</label>
-                                      <input [readonly]="true" formControlName="codigoReferencia"  type="text" name="codigoReferencia"
+                                      <input  formControlName="codigoReferencia"  type="text" name="codigoReferencia"
                                           id="codigoReferencia"
                                           [ngClass]="{'is-invalid' : submitted && f.codigoReferencia.errors,  'form-control':true  }">
                                       <div class="invalid-feedback" *ngIf="submitted && f.codigoReferencia.errors">
                                           <div *ngIf="f.codigoReferencia.errors.required">El campo es obligatorio</div>
+                                      </div>
+                                  </div>
+
+                                  <div class="form-group col-md-6">
+                                      <label for="inputEmail4">Tipo Cliente</label>
+                                      <ng-select bindLabel="nombre" bindValue="codigo" [items]="TipoCliente"
+                                          [loading]="loadingTipoCliente" [clearable]="false"
+                                          [ngClass]="{'form-control border-danger p-0' : submitted && f.clienteTipoID.errors }"
+                                          notFoundText="No resultados" formControlName="clienteTipoID">
+                                      </ng-select>
+                                      <div *ngIf="submitted && f.clienteTipoID.errors" class="text-danger small">
+                                          <div *ngIf="f.clienteTipoID.errors.required  ">El campo es obligatorio</div>
                                       </div>
                                   </div>
 
@@ -116,7 +129,7 @@
                                       </div>
                                   </div>
 
-                                  <div class="form-group col-md-6">
+                                  <div class="form-group col-md-12">
                                       <label> <i class="fa fa-calendar"></i> Fecha de nacimiento</label>
                                       <ejs-datepicker formControlName="fechaNacimiento" [format]="'dd-MM-yyyy'"></ejs-datepicker>
                                       <div *ngIf="submitted && f.fechaNacimiento.errors"
@@ -160,6 +173,59 @@
                                           <div *ngIf="f.sectorID.errors.required  ">El campo es obligatorio</div>
                                       </div>
                                   </div>
+
+                                  <div class="form-group col-md-6">
+                                    <label for="calle"><i class="fa fa-street-view"></i> Calle</label>
+                                    <input formControlName="calle" type="text" name="calle" id="calle"
+                                        [ngClass]="{'is-invalid' : submitted && f.calle.errors,  'form-control':true  }">
+                                    <div class="invalid-feedback" *ngIf="submitted && f.calle.errors">
+                                        <div *ngIf="f.calle.errors.required">El campo es obligatorio</div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                  <label for="numero"><i class="fa fa-hashtag"></i> Numero</label>
+                                  <input formControlName="numero" type="number" name="numero" id="numero"
+                                      [ngClass]="{'is-invalid' : submitted && f.numero.errors,  'form-control':true  }">
+                                  <div class="invalid-feedback" *ngIf="submitted && f.numero.errors">
+                                      <div *ngIf="f.numero.errors.required">El campo es obligatorio</div>
+                                  </div>
+                              </div>
+
+                                <div class="form-group col-md-6">
+                                  <label for="limiteCredito"><i class="fa fa-hashtag"></i> Limite Credito</label>
+                                  <input formControlName="limiteCredito" type="text" prefix="$ " mask="separator" thousandSeparator="," name="limiteCredito" id="limiteCredito"
+                                      [ngClass]="{'is-invalid' : submitted && f.limiteCredito.errors,  'form-control':true  }">
+                                  <div class="invalid-feedback" *ngIf="submitted && f.limiteCredito.errors">
+                                      <div *ngIf="f.limiteCredito.errors.required">El campo es obligatorio</div>
+                                  </div>
+                              </div>
+
+                              <div class="form-group col-md-6">
+                                <label for="condicionPagoId"> Condicion de pago</label>
+                                <ng-select bindLabel="nombre" bindValue="codigo"
+                                [items]="TipoCondicionPagos" [loading]="loadingCondicionPagos" [clearable]="false"
+                                    [ngClass]="{'form-control border-danger p-0' : submitted && f.condicionPagoId.errors }"
+                                    notFoundText="No resultados" formControlName="condicionPagoId">
+                                </ng-select>
+                                <div *ngIf="submitted && f.condicionPagoId.errors" class="text-danger small">
+                                    <div *ngIf="f.condicionPagoId.errors.required  ">El campo es obligatorio</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-6">
+                              <label for="tipoComprobanteId"> Tipo Comprobante</label>
+                              <ng-select bindLabel="nombre" bindValue="codigo"
+                              [items]="TipoComprobantes" [loading]="loadingTipoComprobantes" [clearable]="false"
+                                  [ngClass]="{'form-control border-danger p-0' : submitted && f.tipoComprobanteId.errors }"
+                                  notFoundText="No resultados" formControlName="tipoComprobanteId">
+                              </ng-select>
+                              <div *ngIf="submitted && f.tipoComprobanteId.errors" class="text-danger small">
+                                  <div *ngIf="f.tipoComprobanteId.errors.required  ">El campo es obligatorio</div>
+                              </div>
+                          </div>
+
+
 
                                   <div class="form-group text-right col-md-12">
                                       <hr />
@@ -226,6 +292,74 @@
                                   </label>
                                 </div>
                               </div>
+
+
+                                  <div class="form-group text-right col-md-12">
+                                      <hr />
+
+                                      <button class="btn btn-light m-1" routerLink="../" type="button">
+                                          <i class="fas fa-times"></i> Cancelar
+                                      </button>
+
+                                      <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+                                          <i class="fas fa-check"></i> Guardar
+                                      </button>
+
+                                      <!-- boton cargando -->
+                                      <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                                          <span class="spinner-border spinner-border-sm"></span> Guardando
+                                      </button>
+                                  </div>
+
+                              </form>
+                          </div>
+                      </div>
+                  </div>
+                  </div>
+                </ng-template>
+              </ngb-tab>
+
+
+              <ngb-tab >
+                <ng-template ngbTabTitle><b>Rutas</b></ng-template>
+                <ng-template ngbTabContent>
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="card">
+                          <div class="card-body">
+                              <div class="row">
+                                  <div class="col-md-6 col-lg-6 col-12">
+                                      <h4 class="card-title">Ruta Cliente</h4>
+                                  </div>
+                                  <div class="col-md-6 col-lg-6 col-12 text-right">
+
+
+                                  </div>
+                              </div>
+                              <form class="form-row m-t-40" [formGroup]="FormGenerales" (ngSubmit)="onSubmit()">
+
+                                <div class="form-group col-md-6">
+                                  <label for="example-email"> Rutas </label>
+                                  <ng-select [items]="Rutas" bindLabel="nombre" bindValue="codigo" placeholder="Seleccionar tipo"
+                                      [loading]="loadingRutas" [clearable]="false"
+                                      [ngClass]="{'form-control border-danger p-0' : submitted && f.rutaId.errors }"
+                                      notFoundText="No resultados" formControlName="rutaId">
+                                  </ng-select>
+                                  <div *ngIf="submitted && f.rutaId.errors"
+                                      class="text-danger small animated animated--fade-in">
+                                      <div *ngIf="f.rutaId.errors.required  ">El campo es obligatorio</div>
+                                  </div>
+                              </div>
+
+
+                              <!-- <div class="form-group col-md-12">
+                                <label>Dia de Semana</label>
+                                <div class="btn-group btn-group-toggle col-md-12"  ngbRadioGroup name="radioBasic" formControlName="diaId">
+                                  <label ngbButtonLabel class="btn-dark" *ngFor="let Dia of DiaSemana">
+                                    <input ngbButton type="radio" [value]="Dia.id"> {{ Dia.nombre }}
+                                  </label>
+                                </div>
+                              </div> -->
 
 
                                   <div class="form-group text-right col-md-12">

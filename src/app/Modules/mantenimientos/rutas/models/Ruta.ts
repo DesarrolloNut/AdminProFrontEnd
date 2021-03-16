@@ -1,7 +1,7 @@
 export class Ruta {
   constructor() {
       this.id = 0;
-      this.numeroRuta = 0;
+      this.nombre = "";
       this.tipoRuta = 0;
       this.encargado = "";
       this.supervisor = "";
@@ -9,7 +9,7 @@ export class Ruta {
       this.estado = false;
   }
   id: number;
-  numeroRuta: number;
+  nombre: string;
   tipoRuta: number;
   encargado: string;
   supervisor: string;
@@ -21,7 +21,7 @@ export class Ruta {
 export class RutaFormulario {
   constructor() {
     this.id = 0;
-    this.ruta = 0;
+    this.nombre = "";
     this.tipoRutaId = 0;
     this.supervisorId = 0;
     this.usuarioId = 0;
@@ -29,7 +29,7 @@ export class RutaFormulario {
     this.estado = false;
   }
   id: number;
-  ruta: number;
+  nombre: string;
   tipoRutaId: number;
   supervisorId: number;
   usuarioId: number;

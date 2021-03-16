@@ -53,7 +53,7 @@ export class RutasFormularioComponent implements OnInit {
 
     this.Formulario = this.formBuilder.group({
       id: [0],
-      rutas: [0, [Validators.required]],
+      nombre: [null, [Validators.required]],
       tipoRutaId: [0,],
       supervisorId: [0, [Validators.required]],
       usuarioId: [0, [Validators.required]],
@@ -103,7 +103,7 @@ export class RutasFormularioComponent implements OnInit {
 
     let metodo: string = this.actualizando ? "Update" : "Registrar";
     this.btnGuardarCargando = true;
-    console.log(this.Formulario.value);
+    // console.log(this.Formulario.value);
     this.httpService.DoPostAny<Ruta>(DataApi.Ruta,
       metodo, this.Formulario.value).subscribe(response => {
 

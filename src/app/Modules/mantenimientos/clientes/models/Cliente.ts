@@ -17,6 +17,12 @@ export class Cliente {
         this.fechaRegistrado = ""
         this.email = ""
         this.codigoReferencia = ""
+        this.calle = ""
+        this.numero = 0
+        this.limiteCredito = 0
+        this.condicionPagoId = 0
+        this.tipoComprobanteId = 0
+        this.rutaId = 0
     }
 
 
@@ -36,4 +42,10 @@ export class Cliente {
     provinciaID: number
     ciudadID: number
     sectorID: number
+    calle: string
+    numero: number
+    limiteCredito: number
+    condicionPagoId: number
+    tipoComprobanteId: number
+    rutaId: number
 }

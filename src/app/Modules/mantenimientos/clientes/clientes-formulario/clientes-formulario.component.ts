@@ -42,6 +42,14 @@ export class ClientesFormularioComponent implements OnInit {
   sectores: ComboBox[];
   loadingSectores: boolean;
   FrecuenciaVisitas: any[];
+  TipoComprobantes: any[];
+  loadingTipoComprobantes: boolean;
+  TipoCondicionPagos: any[];
+  loadingCondicionPagos: boolean;
+  Rutas: any[];
+  loadingRutas: boolean;
+  TipoCliente: any[];
+  loadingTipoCliente: boolean;
   DiaSemana: Dias[];
 
   constructor(
@@ -67,6 +75,10 @@ export class ClientesFormularioComponent implements OnInit {
     this.getFrecuenciaVisitas();
     this.getProvincias()
     this.getDocumentosTipo();
+    this.getTipoComprobanteId();
+    this.getTipoCondicionPago();
+    this.getRutas();
+    this.getTipoCliente();
   }
 
 
@@ -75,24 +87,30 @@ export class ClientesFormularioComponent implements OnInit {
 
     this.FormGenerales = this.formBuilder.group({
       id: [0],
-      sucursalID: [null, [Validators.required]],
-      documento: [null, [Validators.required, Validators.minLength(9)]],
-      documentoTipoID: [1, [Validators.required]], //cedula por defecto
+      sucursalID: [0, [Validators.required]],
+      clienteTipoID: [0,[Validators.required]],
       nombres: [null, [Validators.required]],
       apellidos: [null, [Validators.required]],
-      email: [null, [Validators.required, Validators.email]],
       celular: [null, [Validators.required]],
-      clienteTipoID: [0,],
-      codigoReferencia: [null,],
+      email: [null, [Validators.required, Validators.email]],
+      documento: [null, [Validators.required, Validators.minLength(9)]],
+      documentoTipoID: [1, [Validators.required]], //cedula por defecto
       fechaNacimiento: [null, Validators.required],
       fechaRegistrado: [new Date(),],
       estadoID: [0,],
-      provinciaID: [null, Validators.required],
-      ciudadID: [null, Validators.required],
-      sectorID: [null, Validators.required],
+      codigoReferencia: [null,],
+      calle: [null, [Validators.required]],
+      numero: [0, [Validators.required]],
+      provinciaID: [0, Validators.required],
+      ciudadID: [0, Validators.required],
+      sectorID: [0, Validators.required],
       visitaId: [0],
-      diaId: [null, [Validators.required]],
-      frecuenciaVisitaId: [null, [Validators.required]],
+      diaId: [0, [Validators.required]],
+      frecuenciaVisitaId: [0, [Validators.required]],
+      limiteCredito: [0, [Validators.required]],
+      condicionPagoId: [0, [Validators.required]],
+      tipoComprobanteId: [0, [Validators.required]],
+      rutaId: [0, [Validators.required]],
 
     },
       {
@@ -141,8 +159,8 @@ export class ClientesFormularioComponent implements OnInit {
 
             let cliente = response.records[0]
             this.FormGenerales.setValue(cliente);
-            this.getCiudades()
-            this.getSectores()
+            this.getCiudades();
+            this.getSectores();
           } else {
             this.toastService.warning("Cliente no encontrado");
             this.router.navigateByUrl('/mantenimientos/cliente');
@@ -164,6 +182,7 @@ export class ClientesFormularioComponent implements OnInit {
     let metodo: string = this.actualizando ? "UpdateCliente" : "CrearCliente";
     this.btnGuardarCargando = true;
     console.table(this.FormGenerales.value)
+    console.log(this.FormGenerales.value)
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
       metodo, this.FormGenerales.value).subscribe(response => {
 
@@ -381,6 +400,96 @@ getFrecuenciaVisitas() {
 
     });
 }
+
+getTipoComprobanteId() {
+  this.loadingTipoComprobantes = true;
+  this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+    "GetTipoComprobante", null).subscribe(response => {
+
+      if (!response.ok) {
+        this.toastService.error(response.errores[0]);
+      } else {
+        this.TipoComprobantes = response.records;
+      }
+      this.loadingTipoComprobantes = false;
+    }, error => {
+      this.loadingTipoComprobantes = false;
+      this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
+
+      setTimeout(() => {
+        this.getTipoComprobanteId();
+      }, 1000);
+
+    });
+}
+
+getTipoCondicionPago() {
+  this.loadingCondicionPagos = true;
+  this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+    "GetTipoCondicionPago", null).subscribe(response => {
+
+      if (!response.ok) {
+        this.toastService.error(response.errores[0]);
+      } else {
+        this.TipoCondicionPagos = response.records;
+      }
+      this.loadingCondicionPagos = false;
+    }, error => {
+      this.loadingCondicionPagos = false;
+      this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
+
+      setTimeout(() => {
+        this.getTipoCondicionPago();
+      }, 1000);
+
+    });
+}
+
+getRutas() {
+  this.loadingRutas = true;
+  this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+    "GetRutasComboBox", null).subscribe(response => {
+
+      if (!response.ok) {
+        this.toastService.error(response.errores[0]);
+      } else {
+        this.Rutas = response.records;
+      }
+      this.loadingRutas = false;
+    }, error => {
+      this.loadingRutas = false;
+      this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
+
+      setTimeout(() => {
+        this.getTipoCondicionPago();
+      }, 1000);
+
+    });
+}
+
+getTipoCliente() {
+  this.loadingTipoCliente = true;
+  this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+    "GetTipoClienteComboBox", null).subscribe(response => {
+
+      if (!response.ok) {
+        this.toastService.error(response.errores[0]);
+      } else {
+        this.TipoCliente = response.records;
+      }
+      this.loadingTipoCliente = false;
+    }, error => {
+      this.loadingTipoCliente = false;
+      this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
+
+      setTimeout(() => {
+        this.getTipoCliente();
+      }, 1000);
+
+    });
+}
+
+
 getDias() {
   this.Cargando = true;
   this.httpService.DoPost<Dias>(DataApi.Cliente,
