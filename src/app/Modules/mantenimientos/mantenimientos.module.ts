@@ -61,6 +61,8 @@ import { EstadosGeneralesListadoComponent } from './estadosgenerales/estados-gen
 import { EstadosGeneralesFormularioComponent } from './estadosgenerales/estados-generales-formulario/estados-generales-formulario.component';
 import { NivelAutorizacionModuloFormularioComponent } from './NivelAutorizacionModulo/nivel-autorizacion-modulo-formulario/nivel-autorizacion-modulo-formulario.component';
 import { NivelAutorizacionModuloListadoComponent } from './NivelAutorizacionModulo/nivel-autorizacion-modulo-listado/nivel-autorizacion-modulo-listado.component';
+import { RolesListadoComponent } from './roles/roles-listado/roles-listado.component';
+import { RolesFormularioComponent } from './roles/roles-formulario/roles-formulario.component';
 
 
 
@@ -81,7 +83,7 @@ import { NivelAutorizacionModuloListadoComponent } from './NivelAutorizacionModu
     ArticuloFormularioComponent, RecallListadoComponent, RecallFormularioComponent, OfertasListadoComponent, OfertasFormularioComponent,
     ListaPreciosListadoComponent, ListaPreciosFormularioComponent, RutasListadoComponent, RutasFormularioComponent,
     NivelAutorizacionListadoComponent, NivelAutorizacionFormularioComponent, EstadosGeneralesListadoComponent, EstadosGeneralesFormularioComponent,
-    NivelAutorizacionModuloFormularioComponent, NivelAutorizacionModuloListadoComponent
+    NivelAutorizacionModuloFormularioComponent, NivelAutorizacionModuloListadoComponent, RolesListadoComponent, RolesFormularioComponent
   ],
 
   imports: [
