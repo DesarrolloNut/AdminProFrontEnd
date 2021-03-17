@@ -4,6 +4,7 @@ import { DualListComponent } from 'angular-dual-listbox';
 import { timeHours } from 'd3-time';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
+import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
@@ -53,14 +54,20 @@ export class ListaPreciosListadoComponent implements OnInit {
   loadingArticulosSeleccionados: boolean;
   guardandoArticulos: boolean;
   searchText: string;
+
   estadoIDAutorizacionDefault: number;
+  estadoAutorizacionUsuario: number;
+
   estadosAutorizacion: ComboBox[];
   IsArticuloSeleccionado: boolean;
+  estadoAutorizacionSiguiente: ComboBox;
+  estadoAutorizacionAnterior: ComboBox;
 
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private modalService: NgbModal,
+    private authService: AuthenticationService,
     public permissionsService: NgxPermissionsService,
   ) { }
 
@@ -136,7 +143,7 @@ export class ListaPreciosListadoComponent implements OnInit {
           //  response.records.map(x => {
           //   return { "id": x.id, "nombre": x.nombre }
           // });
-          console.table(this.confirmed)
+          // console.table(this.confirmed)
         }
         this.loadingArticulosSeleccionados = false;
       }, error => {
@@ -172,7 +179,6 @@ export class ListaPreciosListadoComponent implements OnInit {
             return { "id": x.id, "nombre": x.nombre }
           });
 
-          console.table(this.source)
         }
         this.loadingArticulos = false;
       }, error => {
@@ -230,8 +236,8 @@ export class ListaPreciosListadoComponent implements OnInit {
       return;
     }
 
-    this.confirmed.filter(x => x.alterado).
-      forEach(x => x.estadoID = this.estadoIDAutorizacionDefault)
+    // this.confirmed.filter(x => x.alterado).
+    //   forEach(x => x.estadoID = this.estadoIDAutorizacionDefault)
 
     this.guardandoArticulos = true;
     this.httpService.DoPostAny<any>(DataApi.Articulo,
@@ -260,20 +266,46 @@ export class ListaPreciosListadoComponent implements OnInit {
       return;
     }
 
+    console.table(this.confirmed.filter(x => x.IsChecked))
+
+
+  }
+
+  desautorizarArticulosSeleccionados() {
+
+    if (this.confirmed.filter(x => x.IsChecked).length < 1) {
+      this.toastService.warning("Selecciona uno o más artículos para autorizar");
+      return;
+    }
+
+    console.table(this.confirmed.filter(x => x.IsChecked))
+
 
   }
 
   toggleSelection() {
 
+    let articulosAutorizables = this.confirmed.filter(x =>
+      x.estadoID == this.estadoAutorizacionAnterior.codigo);
 
-    this.IsArticuloSeleccionado = this.confirmed.filter(x => x.IsChecked).length > 0
+    this.IsArticuloSeleccionado = articulosAutorizables.filter(x => x.IsChecked).length > 0
 
-    this.confirmed.forEach(x => x.IsChecked = !this.IsArticuloSeleccionado)
+    articulosAutorizables.forEach(x => x.IsChecked = !this.IsArticuloSeleccionado)
 
   }
 
-  onfechaChange(item, event) {
-    item.alterado = event.isInteracted
+  getSiguienteEstado() {
+    let estadoUsuario = this.estadosAutorizacion.find(x => x.codigo == this.estadoAutorizacionUsuario);
+    let estadoActualPosicion = this.estadosAutorizacion.indexOf(estadoUsuario);
+    this.estadoAutorizacionSiguiente = this.estadosAutorizacion[estadoActualPosicion + 1]
+    console.table(this.estadoAutorizacionSiguiente)
+  }
+
+  getAnteriorEstadoAutorizacion() {
+    let estadoUsuario = this.estadosAutorizacion.find(x => x.codigo == this.estadoAutorizacionUsuario);
+    let estadoActualPosicion = this.estadosAutorizacion.indexOf(estadoUsuario);
+    this.estadoAutorizacionAnterior = this.estadosAutorizacion[estadoActualPosicion - 1]
+    console.table(this.estadoAutorizacionAnterior)
   }
 
 
@@ -291,6 +323,9 @@ export class ListaPreciosListadoComponent implements OnInit {
         } else {
           this.estadosAutorizacion = response.records;
           this.estadoIDAutorizacionDefault = response.records[0].codigo;
+
+          this.getEstadoAutorizacionUsuario()
+
           // console.log("Estado default autorizacion: " + this.estadoIDAutorizacionDefault)
         }
       }, error => {
@@ -303,13 +338,30 @@ export class ListaPreciosListadoComponent implements OnInit {
   }
 
 
-  autorizar() {
-    if (this.confirmed.filter(x => x.IsChecked).length < 1) {
-      this.toastService.warning("No hay artículos seleccionados");
-      return;
-    }
+  getEstadoAutorizacionUsuario() {
+
+    this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
+      "GetEstadoAutorizacionUsuario", Number(this.authService.tokenDecoded.nameid)).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.estadoAutorizacionUsuario = response.valores[0];
+          this.getSiguienteEstado()//almacena en una variable el siguiente estado
+          this.getAnteriorEstadoAutorizacion()//almacena en una variable el anterior estado
+
+        }
+      }, error => {
+        this.toastService.error("No se pudo obtener el estado de autorización del usuario", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getEstadoAutorizacionUsuario()
+        }, 1000);
+
+      });
 
   }
+
+
 
 
   //#endregion

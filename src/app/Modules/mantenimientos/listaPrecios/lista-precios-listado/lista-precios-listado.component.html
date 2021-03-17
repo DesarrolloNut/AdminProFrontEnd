@@ -156,8 +156,12 @@
     <div class="modal-body">
         <div class="row">
             <div class="col-12 text-right">
-                <button class="btn btn-success" (click)="autorizar()">
+                <button class="btn btn-success mx-1" (click)="autorizarArticulosSeleccionados()">
                     <i class="fa fa-check"></i> Autorizar
+                </button>
+
+                <button class="btn btn-warning mx-1" (click)="desautorizarArticulosSeleccionados()">
+                    <i class="fa fa-times"></i> Desautorizar
                 </button>
             </div>
         </div>
@@ -204,7 +208,8 @@
 
 
                                 <td>
-                                    <div class="custom-control custom-checkbox">
+                                    <div class="custom-control custom-checkbox"
+                                        *ngIf="item.estadoID == estadoAutorizacionAnterior.codigo ">
                                         <input [(ngModel)]="item.IsChecked" type="checkbox" class="custom-control-input"
                                             [attr.id]="item.id">
                                         <label class="custom-control-label" [attr.for]="item.id">
@@ -219,12 +224,13 @@
                                     <span> {{item.nombre}}</span>
                                 </td>
                                 <td>
-                                    <input (keyup)="item.alterado = true" style="min-width: 150px;"
+                                    <input style="min-width: 150px;"
+                                        [disabled]="item.estadoID != estadoIDAutorizacionDefault"
                                         [(ngModel)]="item.precio" type="text" class="form-control" prefix="$ "
                                         mask="separator" thousandSeparator=",">
                                 </td>
                                 <td>
-                                    <ejs-datepicker (change)="onfechaChange(item, $event)"
+                                    <ejs-datepicker [readonly]="item.estadoID != estadoIDAutorizacionDefault"
                                         [(ngModel)]="item.fechaAplicacion" [format]="'dd-MM-yyyy'">
                                     </ejs-datepicker>
                                 </td>
