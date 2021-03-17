@@ -63,6 +63,8 @@ export class ListaPreciosListadoComponent implements OnInit {
   estadoAutorizacionSiguiente: ComboBox;
   estadoAutorizacionAnterior: ComboBox;
 
+  mostrarBtnCancelarAceptar: boolean
+  isAutorizando: boolean
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
@@ -259,30 +261,6 @@ export class ListaPreciosListadoComponent implements OnInit {
 
   }
 
-  autorizarArticulosSeleccionados() {
-
-    if (this.confirmed.filter(x => x.IsChecked).length < 1) {
-      this.toastService.warning("Selecciona uno o más artículos para autorizar");
-      return;
-    }
-
-    console.table(this.confirmed.filter(x => x.IsChecked))
-
-
-  }
-
-  desautorizarArticulosSeleccionados() {
-
-    if (this.confirmed.filter(x => x.IsChecked).length < 1) {
-      this.toastService.warning("Selecciona uno o más artículos para autorizar");
-      return;
-    }
-
-    console.table(this.confirmed.filter(x => x.IsChecked))
-
-
-  }
-
   toggleSelection() {
 
     let articulosAutorizables = this.confirmed.filter(x =>
@@ -363,8 +341,85 @@ export class ListaPreciosListadoComponent implements OnInit {
 
 
 
+  onBtnAutorizarClick() {
+    this.mostrarBtnCancelarAceptar = true;
+    this.isAutorizando = true;
+    this.confirmed.forEach(x => x.IsChecked = false)
+  }
+
+  onBtnDesautorizarClick() {
+    this.mostrarBtnCancelarAceptar = true;
+    this.isAutorizando = false;
+    this.confirmed.forEach(x => x.IsChecked = false)
+  }
+
+  onBtnCancelarClick() {
+    this.mostrarBtnCancelarAceptar = false;
+  }
+
+  onBtnAceptarClick() {
+    this.isAutorizando ?
+      this.autorizarArticulosSeleccionados() : this.desautorizarArticulosSeleccionados();
+  }
+
+  autorizarArticulosSeleccionados() {
+
+    if (this.confirmed.filter(x => x.IsChecked).length < 1) {
+      this.toastService.warning("Selecciona uno o más artículos para autorizar");
+      return;
+    }
+
+
+    let param = {
+      "EstadoID": this.estadoAutorizacionUsuario,
+      "Seleccion": this.confirmed.filter(x => x.IsChecked).
+        map(x => { return { "ListaPrecioID": x.listaPrecioID, "ArticuloID": x.id } })
+    }
+    console.log(param)
+
+    this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
+      "ActualizarArticuloPrecioEstadoID", param).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+
+        }
+
+        this.mostrarBtnCancelarAceptar = false;
+
+      }, error => {
+        this.toastService.error("No se pudo obtener el estado de autorización del usuario", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getEstadoAutorizacionUsuario()
+        }, 1000);
+
+      });
+
+
+  }
+
+  desautorizarArticulosSeleccionados() {
+
+    if (this.confirmed.filter(x => x.IsChecked).length < 1) {
+      this.toastService.warning("Selecciona uno o más artículos para autorizar");
+      return;
+    }
+
+    console.table(this.confirmed.filter(x => x.IsChecked))
+    this.mostrarBtnCancelarAceptar = false;
+
+  }
+
+
+
+
 
   //#endregion
+
+
+
+
 
 
 

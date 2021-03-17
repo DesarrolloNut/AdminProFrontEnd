@@ -156,14 +156,36 @@
     <div class="modal-body">
         <div class="row">
             <div class="col-12 text-right">
-                <button class="btn btn-success mx-1" (click)="autorizarArticulosSeleccionados()">
-                    <i class="fa fa-check"></i> Autorizar
-                </button>
 
-                <button class="btn btn-warning mx-1" (click)="desautorizarArticulosSeleccionados()">
-                    <i class="fa fa-times"></i> Desautorizar
-                </button>
+
+                <ng-template [ngIf]="!mostrarBtnCancelarAceptar" [ngIfElse]="botonesAceptarCancelar">
+
+                    <button class="btn btn-success mx-1" (click)="onBtnAutorizarClick()">
+                        Autorizar
+                    </button>
+
+                    <button class="btn btn-warning mx-1" (click)="onBtnDesautorizarClick()">
+                        Desautorizar
+                    </button>
+
+                </ng-template>
+
+                <ng-template #botonesAceptarCancelar>
+
+                    <button class="btn btn-success mx-1" (click)="onBtnAceptarClick()">
+                        <i class="fa fa-check"></i> Aceptar
+                    </button>
+
+                    <button class="btn btn-light mx-1" (click)="onBtnCancelarClick()">
+                        <i class="fa fa-times"></i> Cancelar
+                    </button>
+
+                </ng-template>
+
             </div>
+
+
+
         </div>
         <div class="row">
             <div class="col-md-12 p-2">
@@ -182,12 +204,12 @@
 
             <div class="col-12" [hidden]="loadingArticulosSeleccionados">
 
-                <div class="table-responsive" style="height: 450px;">
+                <div class="table-responsive" style="height: 400px;">
                     <table class="table table-hover mb-0 no-wrap v-middle">
                         <thead>
                             <tr>
                                 <th scope="col">
-                                    <div class="custom-control custom-checkbox">
+                                    <div class="custom-control custom-checkbox" *ngIf="mostrarBtnCancelarAceptar">
                                         <input (change)="toggleSelection()" type="checkbox" class="custom-control-input"
                                             id="checkAll">
                                         <label class="custom-control-label" for="checkAll">
@@ -209,7 +231,7 @@
 
                                 <td>
                                     <div class="custom-control custom-checkbox"
-                                        *ngIf="item.estadoID == estadoAutorizacionAnterior.codigo ">
+                                        *ngIf=" mostrarBtnCancelarAceptar && item.estadoID == estadoAutorizacionAnterior.codigo  ">
                                         <input [(ngModel)]="item.IsChecked" type="checkbox" class="custom-control-input"
                                             [attr.id]="item.id">
                                         <label class="custom-control-label" [attr.for]="item.id">
