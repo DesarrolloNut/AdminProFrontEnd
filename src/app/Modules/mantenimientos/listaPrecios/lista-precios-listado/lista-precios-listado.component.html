@@ -230,8 +230,11 @@
 
 
                                 <td>
-                                    <div class="custom-control custom-checkbox"
-                                        *ngIf=" mostrarBtnCancelarAceptar && item.estadoID == estadoAutorizacionAnterior.codigo  ">
+                                    <div class="custom-control custom-checkbox" *ngIf="
+                                         (mostrarBtnCancelarAceptar && item.estadoID == estadoAutorizacionAnterior.codigo && isAutorizando)
+                                         ||   
+                                         (mostrarBtnCancelarAceptar && item.estadoID == estadoAutorizacionUsuario && !isAutorizando)
+                                           ">
                                         <input [(ngModel)]="item.IsChecked" type="checkbox" class="custom-control-input"
                                             [attr.id]="item.id">
                                         <label class="custom-control-label" [attr.for]="item.id">
@@ -272,7 +275,7 @@
             </div>
         </div>
     </div>
-    <div class="modal-footer">
+    <div class="modal-footer" *ngIf="!mostrarBtnCancelarAceptar">
         <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cancelar</button>
         <button type="button" class="btn btn-success m-1" *ngIf="!guardandoArticulos"
             (click)="guardarArticulosSeleccionadosPrecios()">Guardar</button>

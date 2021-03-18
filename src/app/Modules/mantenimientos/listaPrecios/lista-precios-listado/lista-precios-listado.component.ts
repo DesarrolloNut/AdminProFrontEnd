@@ -263,8 +263,13 @@ export class ListaPreciosListadoComponent implements OnInit {
 
   toggleSelection() {
 
-    let articulosAutorizables = this.confirmed.filter(x =>
-      x.estadoID == this.estadoAutorizacionAnterior.codigo);
+    let articulosAutorizables = this.isAutorizando ?
+      this.confirmed.filter(x =>
+        x.estadoID == this.estadoAutorizacionAnterior.codigo
+      ) :
+      this.confirmed.filter(x =>
+        x.estadoID == this.estadoAutorizacionUsuario
+      );
 
     this.IsArticuloSeleccionado = articulosAutorizables.filter(x => x.IsChecked).length > 0
 
@@ -358,24 +363,25 @@ export class ListaPreciosListadoComponent implements OnInit {
   }
 
   onBtnAceptarClick() {
-    this.isAutorizando ?
-      this.autorizarArticulosSeleccionados() : this.desautorizarArticulosSeleccionados();
+    // this.isAutorizando ?
+    //   this.autorizarArticulosSeleccionados() : this.desautorizarArticulosSeleccionados();
+
+    this.actualizarEstadoArticulos();
+
   }
 
-  autorizarArticulosSeleccionados() {
+  actualizarEstadoArticulos() {
 
     if (this.confirmed.filter(x => x.IsChecked).length < 1) {
-      this.toastService.warning("Selecciona uno o más artículos para autorizar");
+      this.toastService.warning("Selecciona uno o más artículos para actualizar");
       return;
     }
 
-
     let param = {
-      "EstadoID": this.estadoAutorizacionUsuario,
+      "EstadoID": this.isAutorizando ? this.estadoAutorizacionUsuario : this.estadoIDAutorizacionDefault,
       "Seleccion": this.confirmed.filter(x => x.IsChecked).
         map(x => { return { "ListaPrecioID": x.listaPrecioID, "ArticuloID": x.id } })
     }
-    console.log(param)
 
     this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
       "ActualizarArticuloPrecioEstadoID", param).subscribe(response => {
@@ -383,37 +389,18 @@ export class ListaPreciosListadoComponent implements OnInit {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-
+          this.getArticulosSeleccionadosLista(this.listaSeleccionada);
+          this.toastService.success("Realizado", "OK");
+          this.mostrarBtnCancelarAceptar = false;
         }
 
-        this.mostrarBtnCancelarAceptar = false;
-
       }, error => {
-        this.toastService.error("No se pudo obtener el estado de autorización del usuario", "Error conexion al servidor");
-        setTimeout(() => {
-          this.getEstadoAutorizacionUsuario()
-        }, 1000);
-
+        this.toastService.error("No se pudo actualizar el estado.",
+          "Error conexion al servidor");
       });
 
 
   }
-
-  desautorizarArticulosSeleccionados() {
-
-    if (this.confirmed.filter(x => x.IsChecked).length < 1) {
-      this.toastService.warning("Selecciona uno o más artículos para autorizar");
-      return;
-    }
-
-    console.table(this.confirmed.filter(x => x.IsChecked))
-    this.mostrarBtnCancelarAceptar = false;
-
-  }
-
-
-
-
 
   //#endregion
 
