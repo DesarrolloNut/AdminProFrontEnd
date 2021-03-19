@@ -27,7 +27,7 @@ import { OrdenListadoViewModel } from '../../ordenes/models/OrdenListadoViewMode
 })
 export class RecepcionEditComponent implements OnInit {
 
-  //CITA 
+  //CITA
   FormularioCita: FormGroup;
   submitted = false;
 
@@ -609,7 +609,7 @@ export class RecepcionEditComponent implements OnInit {
 
             this.fc.nombres.setValue(cliente.nombres);
             this.fc.apellidos.setValue(cliente.apellidos);
-            this.fc.celular.setValue(cliente.celular);
+            // this.fc.celular.setValue(cliente.celular);
 
           } else {
             this.toastService.warning("Cliente no encontrado");
@@ -745,7 +745,7 @@ export class RecepcionEditComponent implements OnInit {
 
     let clienteEntregaVehiculo = new Cliente();
     clienteEntregaVehiculo.documentoTipoID = Number(this.fc.documentoTipoID.value)
-    clienteEntregaVehiculo.celular = this.fc.celular.value + ""
+    // clienteEntregaVehiculo.celular = this.fc.celular.value + ""
     clienteEntregaVehiculo.nombres = this.fc.nombres.value
     clienteEntregaVehiculo.apellidos = this.fc.apellidos.value
     clienteEntregaVehiculo.documento = this.fc.documento.value

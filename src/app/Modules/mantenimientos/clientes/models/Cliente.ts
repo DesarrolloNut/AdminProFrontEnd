@@ -1,3 +1,4 @@
+import { ClienteContactos } from './ClienteContactos';
 export class Cliente {
 
     constructor() {
@@ -11,18 +12,20 @@ export class Cliente {
         this.sectorID = 0
         this.nombres = ""
         this.apellidos = ""
-        this.celular = ""
         this.documento = ""
         this.fechaNacimiento = ""
         this.fechaRegistrado = ""
-        this.email = ""
         this.codigoReferencia = ""
         this.calle = ""
         this.numero = 0
         this.limiteCredito = 0
         this.condicionPagoId = 0
-        this.tipoComprobanteId = 0
         this.rutaId = 0
+        this.sexo = ""
+        this.longitud = ""
+        this.latitud = ""
+        this.contactos = new Array<ClienteContactos>();
+
     }
 
 
@@ -31,13 +34,11 @@ export class Cliente {
     documentoTipoID: number
     nombres: string
     apellidos: string
-    celular: string
     documento: string
     fechaNacimiento: string
     fechaRegistrado: string
     estadoID: number
     sucursalID: number
-    email: string
     codigoReferencia: string
     provinciaID: number
     ciudadID: number
@@ -46,6 +47,9 @@ export class Cliente {
     numero: number
     limiteCredito: number
     condicionPagoId: number
-    tipoComprobanteId: number
     rutaId: number
+    sexo: string
+    longitud: string
+    latitud: string
+    contactos:Array<ClienteContactos>
 }

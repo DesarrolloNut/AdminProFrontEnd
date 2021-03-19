@@ -176,7 +176,7 @@ export class OfertasConsultasFacturasComponent implements OnInit {
 
             this.f.nombres.setValue(this.cliente.nombres);
             this.f.apellidos.setValue(this.cliente.apellidos);
-            this.f.celular.setValue(this.cliente.celular);
+            // this.f.celular.setValue(this.cliente.celular);
 
           } else {
             this.toastService.warning("Cliente no encontrado");
