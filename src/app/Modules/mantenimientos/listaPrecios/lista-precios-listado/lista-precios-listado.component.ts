@@ -379,6 +379,7 @@ export class ListaPreciosListadoComponent implements OnInit {
 
     let param = {
       "EstadoID": this.isAutorizando ? this.estadoAutorizacionUsuario : this.estadoIDAutorizacionDefault,
+      "EstadoUsuariosNotificacion": this.isAutorizando ? this.estadoAutorizacionSiguiente.codigo : this.estadoIDAutorizacionDefault,
       "Seleccion": this.confirmed.filter(x => x.IsChecked).
         map(x => { return { "ListaPrecioID": x.listaPrecioID, "ArticuloID": x.id } })
     }
