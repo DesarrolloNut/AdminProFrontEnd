@@ -63,6 +63,8 @@ import { NivelAutorizacionModuloFormularioComponent } from './NivelAutorizacionM
 import { NivelAutorizacionModuloListadoComponent } from './NivelAutorizacionModulo/nivel-autorizacion-modulo-listado/nivel-autorizacion-modulo-listado.component';
 import { RolesListadoComponent } from './roles/roles-listado/roles-listado.component';
 import { RolesFormularioComponent } from './roles/roles-formulario/roles-formulario.component';
+import { SapconnectionListadoComponent } from './sapconnection/sapconnection-listado/sapconnection-listado.component';
+import { SapconnectionFormularioComponent } from './sapconnection/sapconnection-formulario/sapconnection-formulario.component';
 
 
 
@@ -83,7 +85,8 @@ import { RolesFormularioComponent } from './roles/roles-formulario/roles-formula
     ArticuloFormularioComponent, RecallListadoComponent, RecallFormularioComponent, OfertasListadoComponent, OfertasFormularioComponent,
     ListaPreciosListadoComponent, ListaPreciosFormularioComponent, RutasListadoComponent, RutasFormularioComponent,
     NivelAutorizacionListadoComponent, NivelAutorizacionFormularioComponent, EstadosGeneralesListadoComponent, EstadosGeneralesFormularioComponent,
-    NivelAutorizacionModuloFormularioComponent, NivelAutorizacionModuloListadoComponent, RolesListadoComponent, RolesFormularioComponent
+    NivelAutorizacionModuloFormularioComponent, NivelAutorizacionModuloListadoComponent, RolesListadoComponent, RolesFormularioComponent,
+    SapconnectionListadoComponent, SapconnectionFormularioComponent
   ],
 
   imports: [

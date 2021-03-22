@@ -252,6 +252,17 @@ export const ROUTES: RouteInfo[] = [
                 submenu: [],
                 permisos: ["mantenimientos_listas_precios"],
             },
+            {
+                path: '/mantenimientos/sapconnection',
+                label: '',
+                labelClass: '',
+                title: 'SAP Conexiones',
+                icon: '',
+                class: '',
+                extralink: false,
+                submenu: [],
+                permisos: ["mantenimientos_listas_precios"],
+            },
 
 
 
