@@ -1,6 +1,8 @@
+import { FrecuenciaVisita } from './../models/FrecuenciaVisita';
+import { Ruta } from './../../rutas/models/Ruta';
 import { Dias } from './../models/Dias';
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormArray, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BackendService } from 'src/app/core/http/service/backend.service';
@@ -11,6 +13,9 @@ import { ParametrosCita } from 'src/app/Modules/turno/models/ParametrosCita';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { Cliente } from '../models/Cliente';
 import { Parametro } from 'src/app/core/http/model/Parametro';
+import * as _ from "lodash";
+import { ClienteFrecuencia } from '../models/ClienteFrecuencia';
+import { ClienteContactos } from '../models/ClienteContactos';
 
 @Component({
   selector: 'app-clientes-formulario',
@@ -42,7 +47,7 @@ export class ClientesFormularioComponent implements OnInit {
   sectores: ComboBox[];
   loadingSectores: boolean;
   FrecuenciaVisitas: any[];
-  TipoComprobantes: any[];
+  TipoSexo: any[] = [{codigo:'H', nombre: 'Hombre'}, {codigo:'M', nombre: 'Mujer'}];
   loadingTipoComprobantes: boolean;
   TipoCondicionPagos: any[];
   loadingCondicionPagos: boolean;
@@ -50,7 +55,12 @@ export class ClientesFormularioComponent implements OnInit {
   loadingRutas: boolean;
   TipoCliente: any[];
   loadingTipoCliente: boolean;
-  DiaSemana: Dias[];
+  ListaPrecio: any[];
+  loadingListaPrecio: boolean;
+  DiaSemana: Dias[] = new Array<Dias>();
+  FrecuenciaVisita: FrecuenciaVisita[] = new Array<FrecuenciaVisita>();
+  Ruta: any;
+  hasDetalleRuta:Boolean;
 
   constructor(
     private toastService: ToastrService,
@@ -71,14 +81,15 @@ export class ClientesFormularioComponent implements OnInit {
       this.actualizando = true;
 
     }
-    this.getDias();
-    this.getFrecuenciaVisitas();
+
+    this.getDias(id);
     this.getProvincias()
     this.getDocumentosTipo();
-    this.getTipoComprobanteId();
     this.getTipoCondicionPago();
     this.getRutas();
     this.getTipoCliente();
+    this.getListaPrecio();
+    this.getFrecuenciaVisitas();
   }
 
 
@@ -91,47 +102,37 @@ export class ClientesFormularioComponent implements OnInit {
       clienteTipoID: [0,[Validators.required]],
       nombres: [null, [Validators.required]],
       apellidos: [null, [Validators.required]],
-      celular: [null, [Validators.required]],
-      email: [null, [Validators.required, Validators.email]],
       documento: [null, [Validators.required, Validators.minLength(9)]],
       documentoTipoID: [1, [Validators.required]], //cedula por defecto
       fechaNacimiento: [null, Validators.required],
       fechaRegistrado: [new Date(),],
       estadoID: [0,],
+      sexo: [null, Validators.required],
       codigoReferencia: [null,],
       calle: [null, [Validators.required]],
       numero: [0, [Validators.required]],
       provinciaID: [0, Validators.required],
       ciudadID: [0, Validators.required],
       sectorID: [0, Validators.required],
-      visitaId: [0],
-      diaId: [0, [Validators.required]],
       frecuenciaVisitaId: [0, [Validators.required]],
       limiteCredito: [0, [Validators.required]],
       condicionPagoId: [0, [Validators.required]],
-      tipoComprobanteId: [0, [Validators.required]],
       rutaId: [0, [Validators.required]],
+      listaPrecioId: [0, [Validators.required]],
+      longitud: [null, [Validators.required]],
+      latitud: [null, [Validators.required]],
+      contactos: new FormArray([])
+
 
     },
       {
         validator: cedulaestructura('documento', 'documentoTipoID')
       });
+
   }
 
-
-  // private CreateFormVisitasClientes() {
-
-  //   this.FormVisitas = this.formBuilder.group({
-  //     id: [0],
-  //     DiaId: [null, [Validators.required]],
-  //     FrecuenciaVisitaId: [null, [Validators.required]],
-  //     ClienteId: [null, [Validators.required]],
-
-
-  //   });
-  // }
   get f() { return this.FormGenerales.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
-  // get f2() { return this.FormVisitas.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
+  get c() { return this.f.contactos as FormArray; }
 
   onSubmit() {
     this.submitted = true;
@@ -149,7 +150,7 @@ export class ClientesFormularioComponent implements OnInit {
 
   getClienteByID(id: number) {
     this.Cargando = true;
-    this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
+    this.httpService.DoPostAny<ClienteFrecuencia>(DataApi.Cliente,
       "GetClienteByID", id).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
@@ -157,10 +158,15 @@ export class ClientesFormularioComponent implements OnInit {
           //validar que existe
           if (response != null && response.records != null && response.records.length > 0) {
 
-            let cliente = response.records[0]
-            this.FormGenerales.setValue(cliente);
+            let cliente = response.records[0].cliente;
+            this.FrecuenciaVisita = response.records[0].visita;
+            this.FormGenerales.patchValue(cliente);
+            this.onAddContacts(cliente.contactos);
+
             this.getCiudades();
             this.getSectores();
+            this.getRutaByID(cliente.rutaId);
+
           } else {
             this.toastService.warning("Cliente no encontrado");
             this.router.navigateByUrl('/mantenimientos/cliente');
@@ -174,24 +180,184 @@ export class ClientesFormularioComponent implements OnInit {
   }
 
 
+  onAddContacts(contacts:Array<ClienteContactos> = new Array<ClienteContactos>()) {
 
+    if(contacts.length > 0){
+      for (const item of contacts) {
+
+        this.c.push(this.formBuilder.group({
+          telefono: [item.telefono, Validators.required],
+          celular: [item.celular, Validators.required],
+          email: [item.email, [Validators.required, Validators.email]]
+      }));
+
+      }
+    }else{
+      this.c.push(this.formBuilder.group({
+        telefono: [null, Validators.required],
+        celular: [null, Validators.required],
+        email: [null, [Validators.required, Validators.email]]
+    }));
+    }
+
+
+
+
+    // const numberOfTickets = e.target.value || 0;
+    // if (this.c.length < numberOfTickets) {
+    //     for (let i = this.c.length; i < numberOfTickets; i++) {
+
+    //         this.c.push(this.formBuilder.group({
+    //             telefono: [null, Validators.required],
+    //             celular: [null, Validators.required],
+    //             email: [null, [Validators.required, Validators.email]]
+    //         }));
+    //     }
+    // } else {
+    //     for (let i = this.c.length; i >= numberOfTickets; i--) {
+    //         this.c.removeAt(i);
+    //     }
+    // }
+}
+
+
+onRemoveContact() {
+
+let index = this.c.length - 1;
+if(index > 0){
+  this.c.removeAt(index);
+}
+
+
+
+    // const numberOfTickets = e.target.value || 0;
+    // if (this.c.length < numberOfTickets) {
+    //     for (let i = this.c.length; i < numberOfTickets; i++) {
+
+    //         this.c.push(this.formBuilder.group({
+    //             telefono: [null, Validators.required],
+    //             celular: [null, Validators.required],
+    //             email: [null, [Validators.required, Validators.email]]
+    //         }));
+    //     }
+    // } else {
+    //     for (let i = this.c.length; i >= numberOfTickets; i--) {
+    //         this.c.removeAt(i);
+    //     }
+    // }
+}
+onChangeRuta(value){
+this.getRutaByID(value.codigo);
+}
+
+getRutaByID(id: number) {
+  this.httpService.DoPostAny<Ruta>(DataApi.Ruta,
+    "GetRutaByIDWithName", id).subscribe(response => {
+      if (!response.ok) {
+        this.toastService.error(response.errores[0]);
+      } else {
+        //validar que existe
+        if (response != null && response.records != null && response.records.length > 0) {
+
+          this.Ruta = response.records[0];
+          this.hasDetalleRuta = true;
+        } else {
+          this.hasDetalleRuta = false;
+          this.toastService.warning("Cliente no encontrado");
+          this.router.navigateByUrl('/mantenimientos/cliente');
+        }
+      }
+
+    }, error => {
+      this.hasDetalleRuta = false;
+      this.toastService.error("Error conexion al servidor");
+    });
+}
+
+
+getDias(id: number) {
+  this.Cargando = true;
+  this.httpService.DoPost<Dias>(DataApi.Cliente,
+    "GetDias", null).subscribe(response => {
+
+      if (!response.ok) {
+        this.toastService.error(response.errores[0]);
+      } else {
+        // console.log("api data",response.records);
+        this.DiaSemana = response.records;
+        this.setValueDiaSemana(id);
+      }
+      this.Cargando = false;
+    }, error => {
+      this.Cargando = false;
+      this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
+
+      // setTimeout(() => {
+      //   this.getDias();
+      // }, 1000);
+
+    });
+}
+
+setValueDiaSemana(id: number){
+let dias = this.DiaSemana;
+
+if(dias != undefined){
+  this.httpService.DoPostAny<ClienteFrecuencia>(DataApi.Cliente,
+    "GetClienteByID", id).subscribe(response => {
+      if (!response.ok) {
+        this.toastService.error(response.errores[0]);
+      } else {
+        //validar que existe
+        if (response != null && response.records != null && response.records.length > 0) {
+
+          let visitas = response.records[0].visita
+
+          for (let i = 0; i < dias.length; i++) {
+            let dia = dias[i];
+
+            if(visitas){
+              for (let x = 0; x < visitas.length; x++) {
+                let visita = visitas[x];
+
+                if(dia.dia == visita.diaId){
+                  dia.select = true;
+                }
+
+              }
+            }
+
+          }
+        }
+      }
+
+    }, error => {
+      this.toastService.error("Error conexion al servidor");
+    });
+
+
+}
+
+
+}
 
 
   guardarCliente() {
 
     let metodo: string = this.actualizando ? "UpdateCliente" : "CrearCliente";
     this.btnGuardarCargando = true;
-    console.table(this.FormGenerales.value)
-    console.log(this.FormGenerales.value)
+
+    // console.log(this.FormGenerales.value);
+
+    let param = {"Cliente":this.FormGenerales.value, "Dias":this.DiaSemana}
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
-      metodo, this.FormGenerales.value).subscribe(response => {
+      metodo, param).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
           this.btnGuardarCargando = false;
         } else {
           this.toastService.success("Realizado", "OK");
-          // this.guardarClientesmart(this.Formulario.value);
           this.router.navigateByUrl('/mantenimientos/cliente');
         }
 
@@ -209,7 +375,7 @@ export class ClientesFormularioComponent implements OnInit {
     console.table(cliente)
     this.httpService.DoPostSmartWebService("InsertaCliente", "insertaclientes", cliente).subscribe(response => {
       let mensajeRespuesta = response.d + '';
-      console.log(response.d)
+      // console.log(response.d)
 
       if (mensajeRespuesta.includes("Error")) {
         this.btnGuardarCargando = false;
@@ -335,7 +501,7 @@ export class ClientesFormularioComponent implements OnInit {
 
     this.f.nombres.setValue(null);
     this.f.apellidos.setValue(null);
-    this.f.celular.setValue(null);
+    // this.f.celular.setValue(null);
 
     if (this.f.documento.valid) {
       this.buscarCliente(this.f.documento.value);
@@ -358,13 +524,13 @@ export class ClientesFormularioComponent implements OnInit {
 
             this.f.nombres.setValue(cliente.nombres);
             this.f.apellidos.setValue(cliente.apellidos);
-            this.f.celular.setValue(cliente.celular);
+            // this.f.celular.setValue(cliente.celular);
 
           } else {
             this.toastService.warning("Datos no encontrados");
             this.f.nombres.setValue(null);
             this.f.apellidos.setValue(null);
-            this.f.celular.setValue(null);
+            // this.f.celular.setValue(null);
           }
 
         } else {
@@ -401,27 +567,27 @@ getFrecuenciaVisitas() {
     });
 }
 
-getTipoComprobanteId() {
-  this.loadingTipoComprobantes = true;
-  this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-    "GetTipoComprobante", null).subscribe(response => {
+// getTipoComprobanteId() {
+//   this.loadingTipoComprobantes = true;
+//   this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+//     "GetTipoComprobante", null).subscribe(response => {
 
-      if (!response.ok) {
-        this.toastService.error(response.errores[0]);
-      } else {
-        this.TipoComprobantes = response.records;
-      }
-      this.loadingTipoComprobantes = false;
-    }, error => {
-      this.loadingTipoComprobantes = false;
-      this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
+//       if (!response.ok) {
+//         this.toastService.error(response.errores[0]);
+//       } else {
+//         this.TipoComprobantes = response.records;
+//       }
+//       this.loadingTipoComprobantes = false;
+//     }, error => {
+//       this.loadingTipoComprobantes = false;
+//       this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
 
-      setTimeout(() => {
-        this.getTipoComprobanteId();
-      }, 1000);
+//       setTimeout(() => {
+//         this.getTipoComprobanteId();
+//       }, 1000);
 
-    });
-}
+//     });
+// }
 
 getTipoCondicionPago() {
   this.loadingCondicionPagos = true;
@@ -489,27 +655,29 @@ getTipoCliente() {
     });
 }
 
-
-getDias() {
-  this.Cargando = true;
-  this.httpService.DoPost<Dias>(DataApi.Cliente,
-    "GetDias", null).subscribe(response => {
+getListaPrecio() {
+  this.loadingListaPrecio = true;
+  this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+    "GetListaPreciosComboBox", null).subscribe(response => {
 
       if (!response.ok) {
         this.toastService.error(response.errores[0]);
       } else {
-        this.DiaSemana = response.records;
+        this.ListaPrecio = response.records;
       }
-      this.Cargando = false;
+      this.loadingListaPrecio = false;
     }, error => {
-      this.Cargando = false;
+      this.loadingListaPrecio = false;
       this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
 
       setTimeout(() => {
-        this.getDias();
+        this.getListaPrecio();
       }, 1000);
 
     });
 }
+
+
+
 //#endregion
 }

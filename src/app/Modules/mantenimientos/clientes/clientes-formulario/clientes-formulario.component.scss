@@ -1,0 +1,19 @@
+.custom-btns .btn-dark:not(:disabled):not(.disabled).active,
+.custom-btns .btn-dark:not(:disabled):not(.disabled):active,.custom-btns .show>.btn-dark.dropdown-toggle {
+    color: #fff;
+    background-color: #028ee1;
+    border-color: #028ee1;
+}
+// .custom-btns .btn-primary {
+//     color: #fff;
+//     background-color: #4CAF50;
+//     border-color: #4CAF50;
+// }
+// .custom-btns .btn-primary:hover {
+//     color: #fff;
+//     background-color: #3e9941;
+//     border-color: #3e9941;
+// }
+.custom-btns .btn-dark.focus, .btn-dark:focus {
+    box-shadow: 0 0 0 0.2rem #028ee1;
+}

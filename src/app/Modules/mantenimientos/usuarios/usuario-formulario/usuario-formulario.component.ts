@@ -41,7 +41,7 @@ export class UsuarioFormularioComponent implements OnInit {
   loadingUsuarios: boolean;
 
 
-  // Dual List options 
+  // Dual List options
   tab = 1;
   keepSorted = true;
   key: string;
@@ -273,7 +273,7 @@ export class UsuarioFormularioComponent implements OnInit {
     let parametros: Parametro[] = [
       {
         key: "CompaniaID",
-        // value: this.authService.tokenDecoded.primarygroupsid 
+        // value: this.authService.tokenDecoded.primarygroupsid
         value: 0
       }
     ];
@@ -329,7 +329,7 @@ export class UsuarioFormularioComponent implements OnInit {
 
             this.f.nombres.setValue(cliente.nombres);
             this.f.apellidos.setValue(cliente.apellidos);
-            this.f.celular.setValue(cliente.celular);
+            // this.f.celular.setValue(cliente.celular);
 
           } else {
             this.toastService.warning("Datos no encontrados");
