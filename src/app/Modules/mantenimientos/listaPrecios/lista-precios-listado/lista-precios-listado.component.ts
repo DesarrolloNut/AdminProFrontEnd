@@ -238,9 +238,6 @@ export class ListaPreciosListadoComponent implements OnInit {
       return;
     }
 
-    // this.confirmed.filter(x => x.alterado).
-    //   forEach(x => x.estadoID = this.estadoIDAutorizacionDefault)
-
     this.guardandoArticulos = true;
     this.httpService.DoPostAny<any>(DataApi.Articulo,
       "RegistrarPreciosArticulosAsignados", this.confirmed).subscribe(response => {
@@ -363,8 +360,6 @@ export class ListaPreciosListadoComponent implements OnInit {
   }
 
   onBtnAceptarClick() {
-    // this.isAutorizando ?
-    //   this.autorizarArticulosSeleccionados() : this.desautorizarArticulosSeleccionados();
 
     this.actualizarEstadoArticulos();
 
@@ -377,9 +372,22 @@ export class ListaPreciosListadoComponent implements OnInit {
       return;
     }
 
+    let EstadoUsuariosNotificacion: number;
+
+    if (this.isAutorizando) {
+      EstadoUsuariosNotificacion = this.estadoAutorizacionSiguiente ? this.estadoAutorizacionSiguiente.codigo : 0
+    } else {
+      EstadoUsuariosNotificacion = this.estadoIDAutorizacionDefault
+    }
+    
+    let ultimoEstado = this.estadosAutorizacion[this.estadosAutorizacion.length - 1].codigo;
+
     let param = {
-      "EstadoID": this.isAutorizando ? this.estadoAutorizacionUsuario : this.estadoIDAutorizacionDefault,
-      "EstadoUsuariosNotificacion": this.isAutorizando ? this.estadoAutorizacionSiguiente.codigo : this.estadoIDAutorizacionDefault,
+      "IsAprobado": this.estadoAutorizacionUsuario == ultimoEstado,
+      "IsAutorizando": this.isAutorizando,
+      "EstadoAutorizacion": this.isAutorizando ? this.estadoAutorizacionUsuario : this.estadoIDAutorizacionDefault,
+      "EstadoDefault": this.estadoIDAutorizacionDefault,
+      "EstadoUsuariosNotificacion": EstadoUsuariosNotificacion,
       "Seleccion": this.confirmed.filter(x => x.IsChecked).
         map(x => { return { "ListaPrecioID": x.listaPrecioID, "ArticuloID": x.id } })
     }
