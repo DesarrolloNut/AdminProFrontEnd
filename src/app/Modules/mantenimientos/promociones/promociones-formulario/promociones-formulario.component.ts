@@ -1,11 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
+import { Parametro } from 'src/app/core/http/model/Parametro';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
+import { EstadoGeneralesKey } from 'src/app/shared/enums/EstadoGeneralesKey';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
+import { Oferta } from '../../ofertas/models/Oferta';
 import { Promocion } from '../models/Promocion';
 
 @Component({
@@ -15,9 +19,6 @@ import { Promocion } from '../models/Promocion';
 })
 export class PromocionesFormularioComponent implements OnInit {
 
-  companias: ComboBox[] = [];
-
-  loadingCompanias = false;
 
   Cargando: boolean = false;
   Formulario: FormGroup;
@@ -28,25 +29,30 @@ export class PromocionesFormularioComponent implements OnInit {
   articulos: any[];
   listasPrecios: ComboBox[];
   loadingListasPrecios: boolean;
+  id: number;
+  cargandoAutorizacion: boolean;
+  estados: ComboBox[];
 
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
     private httpService: BackendService,
     private router: Router,
+    private modalService: NgbModal,
     private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
 
-    let id = Number(this.route.snapshot.paramMap.get('id'));
+    this.id = Number(this.route.snapshot.paramMap.get('id'));
 
-    if (id > 0) {
-      this.getItem(id);
+    if (this.id > 0) {
+      this.getItem(this.id);
       this.actualizando = true;
     }
     this.getArticulos()
     this.getListaPreciosComboBox()
     this.CreateForm();
+    this.getEstados()
   }
 
 
@@ -123,6 +129,7 @@ export class PromocionesFormularioComponent implements OnInit {
       });
   }
 
+
   getArticulos() {
     this.loadingArticulos = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
@@ -167,6 +174,67 @@ export class PromocionesFormularioComponent implements OnInit {
 
       });
   }
+
+
+
+  getEstados() {
+    let parametros: Parametro[] = [{
+      key: "NameKey",
+      value: EstadoGeneralesKey.PROMOCIONES
+    }]
+
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetEstadoForKeyComboBox", parametros).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.estados = response.records;
+          console.table(this.estados)
+        }
+      }, error => {
+        this.toastService.error("No se pudo obtener los estados", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getEstados()
+        }, 1000);
+
+      });
+  }
+
+
+
+  openModal(content, id: number) {
+
+    this.modalService.open(content, { size: 'sm' });
+  }
+
+
+  autorizar() {
+    this.cargandoAutorizacion = true;
+
+    this.httpService.DoPostAny<Promocion>(DataApi.Promocion,
+      "Autorizar", this.id).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+        } else {
+          this.toastService.success("Realizado", "OK");
+          this.modalService.dismissAll()
+          // this.getData()
+        }
+
+        this.cargandoAutorizacion = false;
+      }, error => {
+        this.cargandoAutorizacion = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+
+  }
+
+
+
+
+
 
 
 

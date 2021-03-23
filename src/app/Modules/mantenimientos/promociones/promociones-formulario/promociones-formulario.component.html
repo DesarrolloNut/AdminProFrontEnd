@@ -20,9 +20,24 @@
                     <div class="col-md-6 col-lg-6 col-12">
                         <h4 class="card-title">Formulario de promociones</h4>
                     </div>
-                    <div class="col-md-6 col-lg-6 col-12 text-right">
+                    <div class="col-md-6 col-lg-6 col-12 text-right" *ngIf="actualizando">
+
+                        <ng-template [ngxPermissionsOnly]="'mantenimientos_promocion_solicitar_autorizacion'">
+                            <button class="btn btn-sm btn-light m-1" (click)="openModal(modalConfirmAutorizacion)">
+                                <i class=" fa fa-sm fa-paper-plane"></i> Solicitar autorización
+                            </button>
+                        </ng-template>
+
+                        <ng-template [ngxPermissionsOnly]="'mantenimientos_promocion_autorizacion'">
+                            <button class="btn btn-sm btn-success m-1" (click)="openModal(modalConfirmAutorizacion)">
+                                <i class=" fa fa-sm fa-check"></i> Autorizar
+                            </button>
+                        </ng-template>
+
                     </div>
                 </div>
+
+
                 <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
                 <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
 
@@ -47,7 +62,7 @@
                             <div *ngIf="f.listaPrecioID.errors.required  ">El campo es obligatorio</div>
                         </div>
                     </div>
-                    
+
                     <div class="form-group col-md-6">
                         <label for="example-email">Artículo promoción</label>
                         <ng-select [items]="articulos" bindLabel="nombre" bindValue="codigo"
@@ -143,7 +158,39 @@
                     </div>
 
                 </form>
+
+
             </div>
         </div>
     </div>
 </div>
+
+
+
+<ng-template #modalConfirmAutorizacion let-modal>
+    <div class="container-fluid">
+        <div class="row" *ngIf="!cargandoAutorizacion">
+            <div class="col">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modal-title">Confirmación</h4>
+                    <button type="button" class="close" aria-describedby="modal-title"
+                        (click)="modal.dismiss('Cross click')">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <i class="fa fa-question fa-3x text-info"></i>
+                    <p class="mt-2"><strong>¿Estás seguro?</strong></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary"
+                        (click)="modal.close('Close click')">Cancel</button>
+                    <button type="button" class="btn btn-info" (click)="autorizar()">Ok</button>
+                </div>
+            </div>
+        </div>
+
+        <app-loading-listado [hidden]="!cargandoAutorizacion"></app-loading-listado>
+
+    </div>
+</ng-template>
