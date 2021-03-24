@@ -37,14 +37,16 @@
 
                     <div class="form-group col-md-6">
                         <label for="example-email">Compañia</label>
-                        <ng-select [items]="companias" bindLabel="nombre" bindValue="codigo" [loading]="loadingCompanias"
-                          [ngClass]="{'form-control border-danger p-0' : submitted && f.companiaID.errors }"
-                          notFoundText="No resultados" formControlName="companiaID">
+                        <ng-select [items]="companias" bindLabel="nombre" bindValue="codigo"
+                            [loading]="loadingCompanias"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.companiaID.errors }"
+                            notFoundText="No resultados" formControlName="companiaID">
                         </ng-select>
-                        <div *ngIf="submitted && f.companiaID.errors" class="text-danger small animated animated--fade-in">
-                          <div *ngIf="f.companiaID.errors.required  ">El campo es obligatorio</div>
+                        <div *ngIf="submitted && f.companiaID.errors"
+                            class="text-danger small animated animated--fade-in">
+                            <div *ngIf="f.companiaID.errors.required  ">El campo es obligatorio</div>
                         </div>
-                      </div>
+                    </div>
 
                     <div class="form-group col-md-12">
                         <label for="descripcion"> Descripción</label>

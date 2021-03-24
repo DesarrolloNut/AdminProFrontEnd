@@ -57,6 +57,8 @@ import { ListaPreciosListadoComponent } from './listaPrecios/lista-precios-lista
 import { NivelAutorizacionModuloFormularioComponent } from './NivelAutorizacionModulo/nivel-autorizacion-modulo-formulario/nivel-autorizacion-modulo-formulario.component';
 import { NivelAutorizacionModuloListadoComponent } from './NivelAutorizacionModulo/nivel-autorizacion-modulo-listado/nivel-autorizacion-modulo-listado.component';
 import { SapconnectionFormularioComponent } from './sapconnection/sapconnection-formulario/sapconnection-formulario.component';
+import { PromocionesListadoComponent } from './promociones/promociones-listado/promociones-listado.component';
+import { PromocionesFormularioComponent } from './promociones/promociones-formulario/promociones-formulario.component';
 
 
 const routes: Routes = [
@@ -111,8 +113,8 @@ const routes: Routes = [
         }
       },
 
-       // NivelAutorizacion
-       {
+      // NivelAutorizacion
+      {
         path: 'nivelautorizacion', component: NivelAutorizacionListadoComponent, data: {
           title: 'Nivel autorizacion',
           urls: [
@@ -133,8 +135,8 @@ const routes: Routes = [
         }
       },
 
-       // ESTADOS GENERALES
-       {
+      // ESTADOS GENERALES
+      {
         path: 'estadosgenerales', component: EstadosGeneralesListadoComponent, data: {
           title: 'Estados Generales',
           urls: [
@@ -188,13 +190,35 @@ const routes: Routes = [
           ]
         }
       },
-
-      {
+      
+     {
         path: 'sapconnection/:id', component: SapconnectionFormularioComponent, data: {
           title: 'SAP Conexiones Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'SAP Conexiones' },
+          ]
+        }
+      },
+
+      // promocion
+      {
+        path: 'promocion', component: PromocionesListadoComponent, data: {
+          title: 'Promociones',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Promociones' },
+          ]
+        }
+      },
+
+ 
+      {
+        path: 'promocion/:id', component: PromocionesFormularioComponent, data: {
+          title: 'Promociones Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Promociones' },
             { title: 'Formulario' }
           ]
         }
