@@ -29,6 +29,7 @@ export class PromocionesFormularioComponent implements OnInit {
   articulos: any[];
   listasPrecios: ComboBox[];
   loadingListasPrecios: boolean;
+  IsFormDisabled: boolean;
   id: number;
   cargandoAutorizacion: boolean;
   estados: ComboBox[];
@@ -88,6 +89,7 @@ export class PromocionesFormularioComponent implements OnInit {
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0]
             this.Formulario.setValue(record);
+            this.IsFormDisabled = record.estadoID > 1;
           } else {
             this.toastService.warning("Promoción no encontrada");
             this.router.navigateByUrl('/mantenimientos/promocion');
@@ -242,6 +244,7 @@ export class PromocionesFormularioComponent implements OnInit {
           this.toastService.success("Realizado", "OK");
           this.modalService.dismissAll()
           this.f.estadoID.setValue(1);
+          this.IsFormDisabled = false;
 
         }
 
@@ -264,6 +267,7 @@ export class PromocionesFormularioComponent implements OnInit {
           this.toastService.success("Realizado", "OK");
           this.modalService.dismissAll()
           this.f.estadoID.setValue(2);
+          this.IsFormDisabled = true;
         }
 
         this.cargandoAutorizacion = false;
@@ -290,6 +294,7 @@ export class PromocionesFormularioComponent implements OnInit {
           this.toastService.success("Realizado", "OK");
           this.modalService.dismissAll()
           this.f.estadoID.setValue(3);
+          this.IsFormDisabled = true;
         }
 
         this.cargandoAutorizacion = false;

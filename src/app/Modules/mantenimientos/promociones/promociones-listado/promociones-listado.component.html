@@ -33,6 +33,7 @@
                             <tr>
                                 <th></th>
                                 <th>Nombre</th>
+                                <th></th>
 
                             </tr>
                         </thead>
@@ -42,6 +43,12 @@
                                 <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
                                 <td>
                                     <span> {{item.nombre}}</span>
+                                </td>
+                                <td>
+                                    <span *ngIf="item.estadoID==1" class="badge badge-light">Desautorizado</span>
+                                    <span *ngIf="item.estadoID==2" class="badge badge-info">Solicitud
+                                        autorización</span>
+                                    <span *ngIf="item.estadoID==3" class="badge badge-success">Autorizado</span>
                                 </td>
                                 <td>
                                     <button class="btn btn-sm btn-info" [routerLink]="[item.id]">
