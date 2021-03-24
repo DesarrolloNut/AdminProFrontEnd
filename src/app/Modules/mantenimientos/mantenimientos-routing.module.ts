@@ -44,17 +44,19 @@ import { RecallFormularioComponent } from './recall/recall-formulario/recall-for
 import { RecallListadoComponent } from './recall/recall-listado/recall-listado.component';
 import { OfertasFormularioComponent } from './ofertas/ofertas-formulario/ofertas-formulario.component';
 import { OfertasListadoComponent } from './ofertas/ofertas-listado/ofertas-listado.component';
-import { ListaPreciosFormularioComponent } from './listaPrecios/lista-precios-formulario/lista-precios-formulario.component';
 
 import { RutasFormularioComponent } from './rutas/rutas-formulario/rutas-formulario.component';
 import { RutasListadoComponent } from './rutas/rutas-listado/rutas-listado.component';
 import { NivelAutorizacionFormularioComponent } from './nivelautorizacion/nivel-autorizacion-formulario/nivel-autorizacion-formulario.component';
 import { NivelAutorizacionListadoComponent } from './nivelautorizacion/nivel-autorizacion-listado/nivel-autorizacion-listado.component';
+import { SapconnectionListadoComponent } from './sapconnection/sapconnection-listado/sapconnection-listado.component';
 import { EstadosGeneralesFormularioComponent } from './estadosgenerales/estados-generales-formulario/estados-generales-formulario.component';
 import { EstadosGeneralesListadoComponent } from './estadosgenerales/estados-generales-listado/estados-generales-listado.component';
+import { ListaPreciosFormularioComponent } from './listaPrecios/lista-precios-formulario/lista-precios-formulario.component';
 import { ListaPreciosListadoComponent } from './listaPrecios/lista-precios-listado/lista-precios-listado.component';
 import { NivelAutorizacionModuloFormularioComponent } from './NivelAutorizacionModulo/nivel-autorizacion-modulo-formulario/nivel-autorizacion-modulo-formulario.component';
 import { NivelAutorizacionModuloListadoComponent } from './NivelAutorizacionModulo/nivel-autorizacion-modulo-listado/nivel-autorizacion-modulo-listado.component';
+import { SapconnectionFormularioComponent } from './sapconnection/sapconnection-formulario/sapconnection-formulario.component';
 import { PromocionesListadoComponent } from './promociones/promociones-listado/promociones-listado.component';
 import { PromocionesFormularioComponent } from './promociones/promociones-formulario/promociones-formulario.component';
 
@@ -178,6 +180,27 @@ const routes: Routes = [
         }
       },
 
+      // SAPCONNECTION
+      {
+        path: 'sapconnection', component: SapconnectionListadoComponent, data: {
+          title: 'SAP Conexiones',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'SAP Conexiones' }
+          ]
+        }
+      },
+      
+     {
+        path: 'sapconnection/:id', component: SapconnectionFormularioComponent, data: {
+          title: 'SAP Conexiones Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'SAP Conexiones' },
+          ]
+        }
+      },
+
       // promocion
       {
         path: 'promocion', component: PromocionesListadoComponent, data: {
@@ -189,6 +212,7 @@ const routes: Routes = [
         }
       },
 
+ 
       {
         path: 'promocion/:id', component: PromocionesFormularioComponent, data: {
           title: 'Promociones Formulario',

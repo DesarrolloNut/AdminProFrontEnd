@@ -63,6 +63,8 @@ import { NivelAutorizacionModuloFormularioComponent } from './NivelAutorizacionM
 import { NivelAutorizacionModuloListadoComponent } from './NivelAutorizacionModulo/nivel-autorizacion-modulo-listado/nivel-autorizacion-modulo-listado.component';
 import { RolesListadoComponent } from './roles/roles-listado/roles-listado.component';
 import { RolesFormularioComponent } from './roles/roles-formulario/roles-formulario.component';
+import { SapconnectionListadoComponent } from './sapconnection/sapconnection-listado/sapconnection-listado.component';
+import { SapconnectionFormularioComponent } from './sapconnection/sapconnection-formulario/sapconnection-formulario.component';
 import { PromocionesListadoComponent } from './promociones/promociones-listado/promociones-listado.component';
 import { PromocionesFormularioComponent } from './promociones/promociones-formulario/promociones-formulario.component';
 
@@ -85,7 +87,8 @@ import { PromocionesFormularioComponent } from './promociones/promociones-formul
     ArticuloFormularioComponent, RecallListadoComponent, RecallFormularioComponent, OfertasListadoComponent, OfertasFormularioComponent,
     ListaPreciosListadoComponent, ListaPreciosFormularioComponent, RutasListadoComponent, RutasFormularioComponent,
     NivelAutorizacionListadoComponent, NivelAutorizacionFormularioComponent, EstadosGeneralesListadoComponent, EstadosGeneralesFormularioComponent,
-    NivelAutorizacionModuloFormularioComponent, NivelAutorizacionModuloListadoComponent, RolesListadoComponent, RolesFormularioComponent, PromocionesListadoComponent, PromocionesFormularioComponent
+    NivelAutorizacionModuloFormularioComponent, NivelAutorizacionModuloListadoComponent, RolesListadoComponent, RolesFormularioComponent,
+    SapconnectionListadoComponent, SapconnectionFormularioComponent ,PromocionesListadoComponent, PromocionesFormularioComponent
   ],
 
   imports: [
