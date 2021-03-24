@@ -38,7 +38,7 @@ export class SapconnectionFormularioComponent implements OnInit {
       this.getItem(id);
       this.actualizando = true;
     }
-    this.ServerTypeCategorias = this.GetEnumToKeyValue(ServerTypes);
+    this.ServerTypeCategorias = this.ConvertEnumToArrayObject(ServerTypes);
     this.CreateForm();
   }
 
@@ -51,7 +51,8 @@ export class SapconnectionFormularioComponent implements OnInit {
       companyDB: [null, [Validators.required]],
       userDB: [null, [Validators.required]],
       passwordDB: [null, [Validators.required]],
-      dbServerType: [null, [Validators.required]],
+      dbServerType: [0, [Validators.required]],
+      inUse: [false, [Validators.required]],
     });
   }
 
@@ -114,17 +115,18 @@ export class SapconnectionFormularioComponent implements OnInit {
   }
 
 
-  GetEnumToKeyValue(stringEnum) {
+  ConvertEnumToArrayObject(NameEnum) {
     const keyValue = [];
-    console.log(Object.keys(stringEnum));
-    const keys = Object.keys(stringEnum).filter((value, index) => {
-        return !(index % 2);
-    });
 
-    for (const k of keys) {
-        keyValue.push({codigo: k, nombre: stringEnum[k]});
+    const keys = Object.keys(NameEnum);
+    let data =  keys.slice(keys.length / 2);
+
+
+    for (const i in data) {
+        const value = data[i];
+        let codigonumber = Number(i) + 1;
+        keyValue.push({codigo: codigonumber, nombre: value});
     }
-
     return keyValue;
 }
 

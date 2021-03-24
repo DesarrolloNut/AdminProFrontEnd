@@ -41,7 +41,11 @@
                       <tbody [hidden]="Cargando">
 
                           <tr *ngFor="let item of data">
-                              <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
+                              <td>
+                                <span [ngClass]="item.inUse ? 'badge badge-success': 'badge badge-secondary'">{{item.inUse ? 'Default': 'Conexion'}}</span>
+                                <span class="badge badge-light text-info ">{{item.id}}</span>
+                              </td>
+
                               <td>
                                   <span> {{item.server}}</span>
                               </td>

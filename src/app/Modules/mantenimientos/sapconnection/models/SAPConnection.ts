@@ -5,12 +5,14 @@ export class SAPConnection {
       this.companyDB = ""
       this.userDB = ""
       this.passwordDB = ""
-      this.dbServerType = ""
+      this.dbServerType = 0
+      this.inUse = false;
   }
   id: number;
   server: string;
   companyDB: string;
   userDB: string;
   passwordDB: string;
-  dbServerType: string;
+  dbServerType: number;
+  inUse: boolean;
 }
