@@ -205,7 +205,7 @@ export const ROUTES: RouteInfo[] = [
                 class: '',
                 extralink: false,
                 submenu: [],
-                permisos: ["mantenimientos_listas_precios"],
+                permisos: ["mantenimientos_descuento"],
             },
             {
                 path: '/mantenimientos/ruta',
@@ -216,7 +216,7 @@ export const ROUTES: RouteInfo[] = [
                 class: '',
                 extralink: false,
                 submenu: [],
-                permisos: ["mantenimientos_listas_precios"],
+                permisos: ["mantenimientos_ruta"],
             },
             {
                 path: '/mantenimientos/nivelautorizacion',
@@ -227,7 +227,7 @@ export const ROUTES: RouteInfo[] = [
                 class: '',
                 extralink: false,
                 submenu: [],
-                permisos: ["mantenimientos_listas_precios"],
+                permisos: ["mantenimientos_nivel_autorizacion"],
             },
             {
 
@@ -239,7 +239,7 @@ export const ROUTES: RouteInfo[] = [
                 class: '',
                 extralink: false,
                 submenu: [],
-                permisos: ["mantenimientos_listas_precios"],
+                permisos: ["mantenimientos_nivel_autorizacion_modulo"],
             },
             {
                 path: '/mantenimientos/estadosgenerales',
@@ -250,7 +250,7 @@ export const ROUTES: RouteInfo[] = [
                 class: '',
                 extralink: false,
                 submenu: [],
-                permisos: ["mantenimientos_listas_precios"],
+                permisos: ["mantenimientos_estado_general"],
             },
             {
                 path: '/mantenimientos/sapconnection',
@@ -261,7 +261,7 @@ export const ROUTES: RouteInfo[] = [
                 class: '',
                 extralink: false,
                 submenu: [],
-                permisos: ["mantenimientos_listas_precios"],
+                permisos: ["mantenimientos_sap_conexion"],
             },
             {
                 path: '/mantenimientos/roles',
@@ -272,7 +272,7 @@ export const ROUTES: RouteInfo[] = [
                 class: '',
                 extralink: false,
                 submenu: [],
-                permisos: ["mantenimientos_listas_precios"],
+                permisos: ["mantenimientos_rol"],
             },
             {
                 path: '/mantenimientos/permisos',
@@ -283,7 +283,7 @@ export const ROUTES: RouteInfo[] = [
                 class: '',
                 extralink: false,
                 submenu: [],
-                permisos: ["mantenimientos_listas_precios"],
+                permisos: ["mantenimientos_permiso"],
             },
 
 
