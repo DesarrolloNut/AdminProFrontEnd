@@ -33,6 +33,8 @@ export class PromocionesFormularioComponent implements OnInit {
   cargandoAutorizacion: boolean;
   estados: ComboBox[];
 
+  btnClicked: number = 0
+
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
@@ -109,6 +111,10 @@ export class PromocionesFormularioComponent implements OnInit {
 
 
   guardar() {
+    if (!this.actualizando) {
+      this.f.estadoID.setValue(1)
+    }
+
     let metodo: string = this.actualizando ? "Update" : "Registrar";
     this.btnGuardarCargando = true;
 
@@ -203,24 +209,87 @@ export class PromocionesFormularioComponent implements OnInit {
 
 
 
-  openModal(content, id: number) {
-
+  openModal(content, btnClicked: number) {
     this.modalService.open(content, { size: 'sm' });
+    this.btnClicked = btnClicked
   }
 
+  onBtnModalOk() {
 
-  autorizar() {
+    if (this.btnClicked == 1) {
+      this.desautorizar()
+      return;
+    }
+    if (this.btnClicked == 2) {
+      this.solicitarAutorizacion()
+      return;
+    }
+    if (this.btnClicked == 3) {
+      this.autorizar()
+      return;
+    }
+
+  }
+
+  desautorizar() {
     this.cargandoAutorizacion = true;
-
     this.httpService.DoPostAny<Promocion>(DataApi.Promocion,
-      "Autorizar", this.id).subscribe(response => {
+      "Desautorizar", this.Formulario.value).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
         } else {
           this.toastService.success("Realizado", "OK");
           this.modalService.dismissAll()
-          // this.getData()
+          this.f.estadoID.setValue(1);
+
+        }
+
+        this.cargandoAutorizacion = false;
+      }, error => {
+        this.cargandoAutorizacion = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
+
+  solicitarAutorizacion() {
+    this.cargandoAutorizacion = true;
+    this.httpService.DoPostAny<Promocion>(DataApi.Promocion,
+      "SolicitarAutorizacion", this.Formulario.value).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+        } else {
+          this.toastService.success("Realizado", "OK");
+          this.modalService.dismissAll()
+          this.f.estadoID.setValue(2);
+        }
+
+        this.cargandoAutorizacion = false;
+      }, error => {
+        this.cargandoAutorizacion = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
+  onBtnModalCancel() {
+
+    this.modalService.dismissAll()
+
+  }
+
+  autorizar() {
+    this.cargandoAutorizacion = true;
+    this.httpService.DoPostAny<Promocion>(DataApi.Promocion,
+      "Autorizar", this.Formulario.value).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+        } else {
+          this.toastService.success("Realizado", "OK");
+          this.modalService.dismissAll()
+          this.f.estadoID.setValue(3);
         }
 
         this.cargandoAutorizacion = false;
@@ -230,11 +299,6 @@ export class PromocionesFormularioComponent implements OnInit {
       });
 
   }
-
-
-
-
-
 
 
 

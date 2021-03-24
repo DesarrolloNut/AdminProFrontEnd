@@ -23,14 +23,24 @@
                     <div class="col-md-6 col-lg-6 col-12 text-right" *ngIf="actualizando">
 
                         <ng-template [ngxPermissionsOnly]="'mantenimientos_promocion_solicitar_autorizacion'">
-                            <button class="btn btn-sm btn-light m-1" (click)="openModal(modalConfirmAutorizacion)">
+
+                            <button *ngIf="f.estadoID.value == 1" class="btn btn-sm btn-light m-1"
+                                (click)="openModal(modalConfirm, 2)">
                                 <i class=" fa fa-sm fa-paper-plane"></i> Solicitar autorización
                             </button>
+
                         </ng-template>
 
                         <ng-template [ngxPermissionsOnly]="'mantenimientos_promocion_autorizacion'">
-                            <button class="btn btn-sm btn-success m-1" (click)="openModal(modalConfirmAutorizacion)">
+
+                            <button *ngIf="f.estadoID.value == 2" class="btn btn-sm btn-success m-1"
+                                (click)="openModal(modalConfirm, 3)">
                                 <i class=" fa fa-sm fa-check"></i> Autorizar
+                            </button>
+
+                            <button *ngIf="f.estadoID.value == 3" class="btn btn-sm btn-warning m-1"
+                                (click)="openModal(modalConfirm, 1)">
+                                <i class=" fa fa-sm fa-times"></i> Desautorizar
                             </button>
                         </ng-template>
 
@@ -167,7 +177,7 @@
 
 
 
-<ng-template #modalConfirmAutorizacion let-modal>
+<ng-template #modalConfirm let-modal>
     <div class="container-fluid">
         <div class="row" *ngIf="!cargandoAutorizacion">
             <div class="col">
@@ -185,7 +195,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary"
                         (click)="modal.close('Close click')">Cancel</button>
-                    <button type="button" class="btn btn-info" (click)="autorizar()">Ok</button>
+                    <button type="button" class="btn btn-info" (click)="onBtnModalOk()">Ok</button>
                 </div>
             </div>
         </div>
