@@ -5,14 +5,15 @@ import { ToastrService } from 'ngx-toastr';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
-import { Roles } from '../models/Roles';
+import { Permisos } from '../models/Permisos';
 
 @Component({
-  selector: 'app-roles-formulario',
-  templateUrl: './roles-formulario.component.html',
-  styleUrls: ['./roles-formulario.component.scss']
+  selector: 'app-permisos-formulario',
+  templateUrl: './permisos-formulario.component.html',
+  styleUrls: ['./permisos-formulario.component.scss']
 })
-export class RolesFormularioComponent implements OnInit {
+export class PermisosFormularioComponent implements OnInit {
+
 
 
   Cargando: boolean = false;
@@ -20,8 +21,8 @@ export class RolesFormularioComponent implements OnInit {
   submitted = false;
   btnGuardarCargando = false;
   actualizando = false;
-  loadingSintomaCategorias: boolean;
-  sintomaCategorias: any[];
+  loadingPermisosCategorias: boolean;
+  PermisosCategorias: any[];
 
   constructor(
     private toastService: ToastrService,
@@ -37,6 +38,7 @@ export class RolesFormularioComponent implements OnInit {
       this.getItem(id);
       this.actualizando = true;
     }
+    this.getPermisosCategorias()
     this.CreateForm();
   }
 
@@ -47,6 +49,7 @@ export class RolesFormularioComponent implements OnInit {
       id: [0],
       nombre: [null, [Validators.required]],
       descripcion: [null,],
+      permisoPadreId: [null,  [Validators.required]],
     });
   }
 
@@ -54,8 +57,8 @@ export class RolesFormularioComponent implements OnInit {
 
   getItem(id: number) {
     this.Cargando = true;
-    this.httpService.DoPostAny<Roles>(DataApi.Rol,
-      "GetRolByID", id).subscribe(response => {
+    this.httpService.DoPostAny<Permisos>(DataApi.Permisos,
+      "GetPermisosByID", id).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
@@ -64,8 +67,8 @@ export class RolesFormularioComponent implements OnInit {
             let record = response.records[0]
             this.Formulario.setValue(record);
           } else {
-            this.toastService.warning("Roles no encontrado");
-            this.router.navigateByUrl('/mantenimientos/Roles');
+            this.toastService.warning("Permisos no encontrado");
+            this.router.navigateByUrl('/mantenimientos/permisos');
           }
         }
 
@@ -91,20 +94,44 @@ export class RolesFormularioComponent implements OnInit {
     let metodo: string = this.actualizando ? "Update" : "Registrar";
     this.btnGuardarCargando = true;
 
-    this.httpService.DoPostAny<Roles>(DataApi.Rol,
+    this.httpService.DoPostAny<Permisos>(DataApi.Permisos,
       metodo, this.Formulario.value).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
         } else {
           this.toastService.success("Realizado", "OK");
-          this.router.navigateByUrl('/mantenimientos/Roles');
+          this.router.navigateByUrl('/mantenimientos/permisos');
         }
 
         this.btnGuardarCargando = false;
       }, error => {
         this.btnGuardarCargando = false;
         this.toastService.error("Error conexion al servidor");
+      });
+  }
+
+
+  getPermisosCategorias() {
+    this.loadingPermisosCategorias = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetListaPremisosPadre", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.PermisosCategorias = response.records;
+          this.PermisosCategorias.unshift({codigo: 0, nombre: 'Es Padre'})
+        }
+        this.loadingPermisosCategorias = false;
+      }, error => {
+        this.loadingPermisosCategorias = false;
+        this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getPermisosCategorias()
+        }, 1000);
+
       });
   }
 

@@ -11,6 +11,8 @@ export enum DataApi {
     Promocion = 37,
 
     SAPConnection = 38,
+    Rol = 39,
+    Permisos = 40,
 
 
 
@@ -67,6 +69,8 @@ export const dataApiRootMap: { [api: string]: string } = {
     "37": "api/Promocion",
     "34": "api/NivelAutorizacionModulo",
     "38": "api/SAPConnection",
+    "39": "api/Rol",
+    "40": "api/Permisos",
 
 
 
