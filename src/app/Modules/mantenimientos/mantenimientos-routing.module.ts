@@ -1,3 +1,7 @@
+import { PermisosFormularioComponent } from './permisos/permisos-formulario/permisos-formulario.component';
+import { PermisosListadoComponent } from './permisos/permisos-listado/permisos-listado.component';
+import { RolesFormularioComponent } from './roles/roles-formulario/roles-formulario.component';
+import { RolesListadoComponent } from './roles/roles-listado/roles-listado.component';
 
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
@@ -190,7 +194,7 @@ const routes: Routes = [
           ]
         }
       },
-      
+
      {
         path: 'sapconnection/:id', component: SapconnectionFormularioComponent, data: {
           title: 'SAP Conexiones Formulario',
@@ -212,13 +216,59 @@ const routes: Routes = [
         }
       },
 
- 
+
       {
         path: 'promocion/:id', component: PromocionesFormularioComponent, data: {
           title: 'Promociones Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Promociones' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+      // Roles
+      {
+        path: 'roles', component: RolesListadoComponent, data: {
+          title: 'Roles',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Roles' },
+          ]
+        }
+      },
+
+
+      {
+        path: 'roles/:id', component: RolesFormularioComponent, data: {
+          title: 'Roles Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Roles' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+      // Permisos
+      {
+        path: 'permisos', component: PermisosListadoComponent, data: {
+          title: 'Permisos',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Permisos' },
+          ]
+        }
+      },
+
+
+      {
+        path: 'permisos/:id', component: PermisosFormularioComponent, data: {
+          title: 'Permisos Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Permisos' },
             { title: 'Formulario' }
           ]
         }

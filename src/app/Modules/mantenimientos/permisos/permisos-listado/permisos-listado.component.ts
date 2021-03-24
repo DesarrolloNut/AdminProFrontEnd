@@ -5,14 +5,15 @@ import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
-import { Roles } from '../models/Roles';
+import { Permisos } from '../models/Permisos';
 
 @Component({
-  selector: 'app-roles-listado',
-  templateUrl: './roles-listado.component.html',
-  styleUrls: ['./roles-listado.component.scss']
+  selector: 'app-permisos-listado',
+  templateUrl: './permisos-listado.component.html',
+  styleUrls: ['./permisos-listado.component.scss']
 })
-export class RolesListadoComponent implements OnInit {
+export class PermisosListadoComponent implements OnInit {
+
 // COPIAR AL CREAR UN LISTADO NUEVO
 Search: string = "";
 paginaNumeroActual = 1;
@@ -21,7 +22,7 @@ CargandoBar: boolean = false;
 totalPaginas: number = 0;
 paginaSize: number = 5;
 paginaTotalRecords: number = 0;
-data: Roles[] = [] //tu modelo
+data: Permisos[] = [] //tu modelo
 
 constructor(private toastService: ToastrService,
   private httpService: BackendService,
@@ -37,7 +38,7 @@ getData() {
 
   let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
 
-  this.httpService.GetAllWithPagination<Roles>(DataApi.Rol, "GetRolListado", "ID", this.paginaNumeroActual,
+  this.httpService.GetAllWithPagination<Permisos>(DataApi.Permisos, "GetPermisosListado", "ID", this.paginaNumeroActual,
     this.paginaSize, true, parametros).subscribe(x => {
 
       if (x.ok) {
