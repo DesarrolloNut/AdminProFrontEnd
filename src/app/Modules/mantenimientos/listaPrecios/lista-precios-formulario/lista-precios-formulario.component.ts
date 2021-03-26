@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
-import { Compania } from '../../companias/models/Compania';
+import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { ListaPrecio } from '../models/ListaPrecio';
 
 @Component({
@@ -21,6 +21,11 @@ export class ListaPreciosFormularioComponent implements OnInit {
   btnGuardarCargando = false;
   actualizando = false;
 
+  grupos: ComboBox[] = []
+  estados: ComboBox[] = []
+  loadingListasPrecios: boolean;
+  listasPrecios: ComboBox[];
+
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
@@ -36,8 +41,31 @@ export class ListaPreciosFormularioComponent implements OnInit {
       this.actualizando = true;
     }
     this.CreateForm();
+    this.getListasPrecios()
+    this.llenarCombobox()
   }
 
+
+  llenarCombobox() {
+
+    for (let i = 0; i < 4; i++) {
+      let g = new ComboBox();
+      g.codigo = i + 1;
+      g.nombre = "Grupo " + g.codigo
+      this.grupos.push(g)
+    }
+
+    let e1 = new ComboBox()
+    e1.codigo = 0;
+    e1.nombre = "Desactivado"
+    this.estados.push(e1)
+
+    let e2 = new ComboBox()
+    e2.codigo = 1;
+    e2.nombre = "Activado"
+    this.estados.push(e2)
+
+  }
 
   private CreateForm() {
 
@@ -45,8 +73,11 @@ export class ListaPreciosFormularioComponent implements OnInit {
       id: [0],
       nombre: [null, [Validators.required]],
       codigoReferencia: [null, [Validators.required]],
-      estadoID: [0],
-
+      estadoID: [null, [Validators.required]],
+      listaBaseID: [null, [Validators.required]],
+      monedaDeterminadaID: [null, [Validators.required]],
+      grupoID: [null, [Validators.required]],
+      factor: [null, [Validators.required]],
     });
   }
 
@@ -108,6 +139,28 @@ export class ListaPreciosFormularioComponent implements OnInit {
       });
   }
 
+
+  getListasPrecios() {
+    this.loadingListasPrecios = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetListaPreciosComboBox", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.listasPrecios = response.records;
+        }
+        this.loadingListasPrecios = false;
+      }, error => {
+        this.loadingListasPrecios = false;
+        this.toastService.error("No se pudo obtener las listas de precio", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getListasPrecios()
+        }, 1000);
+
+      });
+  }
 
 
 }

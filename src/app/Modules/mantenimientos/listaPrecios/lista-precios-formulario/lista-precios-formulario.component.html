@@ -45,6 +45,65 @@
                             <div *ngIf="f.codigoReferencia.errors.required">El campo es obligatorio</div>
                         </div>
                     </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="inputEmail4">Estado</label>
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="estados"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.estadoID.errors }"
+                            notFoundText="No resultados" formControlName="estadoID">
+                        </ng-select>
+                        <div *ngIf="submitted && f.estadoID.errors"
+                            class="text-danger small animated animated--fade-in">
+                            <div *ngIf="f.estadoID.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="inputEmail4">Lista Base</label>
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="listasPrecios"
+                            [loading]="loadingListasPrecios"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.listaBaseID.errors }"
+                            notFoundText="No resultados" formControlName="listaBaseID">
+                        </ng-select>
+                        <div *ngIf="submitted && f.listaBaseID.errors"
+                            class="text-danger small animated animated--fade-in">
+                            <div *ngIf="f.listaBaseID.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="inputEmail4">Grupo</label>
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="grupos"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.grupoID.errors }"
+                            notFoundText="No resultados" formControlName="grupoID">
+                        </ng-select>
+                        <div *ngIf="submitted && f.grupoID.errors" class="text-danger small animated animated--fade-in">
+                            <div *ngIf="f.grupoID.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="nombre"> Factor</label>
+                        <input formControlName="factor" type="number" name="factor" id="factor"
+                            [ngClass]="{'is-invalid' : submitted && f.factor.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.factor.errors">
+                            <div *ngIf="f.factor.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group col-md-6">
+                        <label for="nombre"> Moneda</label>
+                        <input formControlName="monedaDeterminadaID" type="number" name="monedaDeterminadaID"
+                            id="monedaDeterminadaID"
+                            [ngClass]="{'is-invalid' : submitted && f.factor.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.monedaDeterminadaID.errors">
+                            <div *ngIf="f.monedaDeterminadaID.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+
+
                     <div class="form-group text-right col-md-12">
                         <hr />
 
