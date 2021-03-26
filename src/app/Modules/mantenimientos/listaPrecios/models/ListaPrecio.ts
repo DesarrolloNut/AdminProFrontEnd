@@ -7,5 +7,9 @@ export class ListaPrecio {
     id: number;
     nombre: string;
     estadoID: number
+    listaBaseID: number
+    monedaDeterminadaID: number
+    grupoID: number
+    factor: number
 
 }
