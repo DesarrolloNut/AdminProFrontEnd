@@ -596,6 +596,36 @@ export const ROUTES: RouteInfo[] = [
         extralink: false,
         permisos: ["configuraciones"],
         submenu: [
+
+
+            {
+                path: '/configuraciones/sap-panel-sincronizacion',
+                label: '',
+                labelClass: '',
+                title: 'SAP Sincronización',
+                icon: '',
+                class: '',
+                extralink: false,
+                submenu: [],
+                permisos: ["configuraciones_sap_panel_sincronizacion"],
+            },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             {
                 path: '/configuraciones/horario-citas',
                 label: '',

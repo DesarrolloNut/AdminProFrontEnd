@@ -1,0 +1,33 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-md-6 align-middle">
+                        <!-- <h4 class="card-title">Panel de sincronización SAP</h4> -->
+                    </div>
+                    <div class="col-md-6 text-right">
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-6">
+                        <button (click)="sincronizarListasPrecios()" *ngIf="!loadingSincronizacionListaPrecios"
+                            type="button" class="btn btn-primary btn-lg btn-block">SINCRONIZAR LISTA DE
+                            PRECIOS</button>
+
+                        <!-- boton cargando -->
+                        <button *ngIf="loadingSincronizacionListaPrecios" disabled
+                            class="btn btn-primary btn-lg btn-block" type="button">
+                            <span class="spinner-border spinner-border-sm"></span> SINCRONIZANDO
+                        </button>
+                    </div>
+                </div>
+
+                <!-- <app-loading-listado [hidden]="!Cargando"></app-loading-listado> -->
+
+            </div>
+        </div>
+    </div>
+</div>

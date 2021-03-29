@@ -6,10 +6,11 @@ import { ConfiguracionesComponent } from './configuraciones.component';
 import { SharedModule } from '../shared/shared.module';
 import { ControlHorarioCitasComponent } from './control-horario-citas/control-horario-citas.component';
 import { NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
+import { SapSincronizacionPanelComponent } from './sap-sincronizacion/sap-sincronizacion-panel/sap-sincronizacion-panel.component';
 
 
 @NgModule({
-  declarations: [ConfiguracionesComponent, ControlHorarioCitasComponent],
+  declarations: [ConfiguracionesComponent, ControlHorarioCitasComponent, SapSincronizacionPanelComponent],
   imports: [
     CommonModule,
     ConfiguracionesRoutingModule,
