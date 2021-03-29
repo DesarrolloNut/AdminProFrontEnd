@@ -12,7 +12,9 @@ import { ParametrosCita } from 'src/app/Modules/turno/models/ParametrosCita';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { Cliente } from '../../clientes/models/Cliente';
 import { DualListComponent } from 'angular-dual-listbox';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ValidatorLogic } from 'src/app/shared/validators/ValidatorLogic';
+
 
 @Component({
   selector: 'app-usuario-formulario',
@@ -21,6 +23,11 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class UsuarioFormularioComponent implements OnInit {
 
+
+  loadingButtonCambiar = false;
+  FormularioChangePassword: FormGroup;
+  submittedPassword = false;
+  closeResult: string;
 
 
   sucursales: ComboBox[] = [];
@@ -72,6 +79,7 @@ export class UsuarioFormularioComponent implements OnInit {
     private httpService: BackendService,
     private router: Router,
     private modalService: NgbModal,
+    private auth: AuthenticationService,
     private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
@@ -80,6 +88,7 @@ export class UsuarioFormularioComponent implements OnInit {
     if (this.usuarioID > 0) {
       this.getUsuarioByID(this.usuarioID);
       this.actualizandoUsuario = true;
+      this.CreateFormChangePassword();
     }
 
     this.getDocumentosTipo();
@@ -91,6 +100,39 @@ export class UsuarioFormularioComponent implements OnInit {
 
     this.configDualList()
   }
+
+  private CreateFormChangePassword() {
+
+    this.FormularioChangePassword = this.formBuilder.group({
+      passwordActual: [null, [Validators.required]],
+      password: [null, [Validators.required]],
+      passwordConfirm: [null, [Validators.required]],
+      userName: [this.auth.tokenDecoded.unique_name]
+    }, {
+      validator: this.MustMatch('password', 'passwordConfirm')
+    })
+
+  }
+
+  MustMatch(controlName: string, matchingControlName: string) {
+    return (formGroup: FormGroup) => {
+      const control = formGroup.controls[controlName];
+      const matchingControl = formGroup.controls[matchingControlName];
+
+      if (matchingControl.errors && !matchingControl.errors.mustMatch) {
+        // return if another validator has already found an error on the matchingControl
+        return;
+      }
+
+      // set error on matchingControl if validation fails
+      if (control.value !== matchingControl.value) {
+        matchingControl.setErrors({ mustMatch: true });
+      } else {
+        matchingControl.setErrors(null);
+      }
+    }
+  }
+
   configDualList() {
     this.key = 'codigo';
     this.display = 'nombre';
@@ -127,7 +169,55 @@ export class UsuarioFormularioComponent implements OnInit {
   }
 
   get f() { return this.Formulario.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
+  get fC() { return this.FormularioChangePassword.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
 
+  onSubmitChangePassword() {
+    this.submittedPassword = true;
+    console.log(this.FormularioChangePassword.controls)
+    if (this.FormularioChangePassword.invalid) {
+      return;
+    }
+    console.log('ready')
+    this.changePassword()
+  }
+
+  changePassword() {
+    this.loadingButtonCambiar = true;
+    this.httpService.DoPostAny<any>(DataApi.Usuario,
+      'ChangePassword', this.FormularioChangePassword.value).subscribe(response => {
+        this.loadingButtonCambiar = false;
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+        } else {
+          this.modalService.dismissAll();
+          this.FormularioChangePassword.reset();
+
+          this.submittedPassword = false;
+          this.toastService.success("Realizado", "OK");
+
+        }
+      }, error => {
+        this.loadingButtonCambiar = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
+  open1(content1) {
+    this.modalService.open(content1, { ariaLabelledBy: 'modal-basic-title' }).result.then((result) => {
+      this.closeResult = `Closed with: ${result}`;
+    }, (reason) => {
+      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
+  }
+  private getDismissReason(reason: any): string {
+    if (reason === ModalDismissReasons.ESC) {
+      return 'by pressing ESC';
+    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+      return 'by clicking on a backdrop';
+    } else {
+      return `with: ${reason}`;
+    }
+  }
 
   getUsuarioByID(usuarioID: number) {
     this.Cargando = true;

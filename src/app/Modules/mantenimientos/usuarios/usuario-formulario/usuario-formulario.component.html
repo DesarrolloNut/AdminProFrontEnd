@@ -24,8 +24,11 @@
 
                         <button class="btn btn-sm btn-light m-1"
                             (click)="openModalNivelAutorizacion(modalNivelAutorizacion)">
-                            <i class=" fa fa-sm fa-lock"></i> Nivel autorización
+                            Nivel autorización
                         </button>
+ 
+                        <button class="btn btn-sm btn-light m-1" (click)="open1(content1)">
+                            Cambiar contraseña</button>
 
                         <!-- <button class="btn btn-sm btn-light m-1" (click)="openModalCambiaContrasena()">
                             <i class=" fa fa-sm fa-envelope-open"></i> Enviar correo
@@ -187,59 +190,6 @@
 
 
 
-                    <!-- <div class="form-group col-12">
-                        <label for="inputEmail4"> Dealer <small class="text-muted"> (opcional)</small> </label>
-                        <ng-select class="">
-                        </ng-select>
-                        <div *ngIf="submitted && f.clienteID.errors"
-                            class="text-danger small animated animated--fade-in">
-                            <div *ngIf="f.clienteID.errors.required  ">El campo es obligatorio</div>
-                        </div>
-                    </div> -->
-
-                    <!-- <div class="form-group col-12">
-                        <label for="inputEmail4"> Estado </label>
-                        <ng-select class="">
-                        </ng-select>
-                        <div *ngIf="submitted && f.clienteID.errors"
-                            class="text-danger small animated animated--fade-in">
-                            <div *ngIf="f.clienteID.errors.required  ">El campo es obligatorio</div>
-                        </div>
-                    </div> -->
-
-                    <!-- <div class="form-group col-12 ">
-                        <h5>Permisos extras</h5>
-                    </div> -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
                     <div class="form-group text-right col-md-12">
                         <hr />
@@ -265,6 +215,52 @@
 </div>
 
 
+<ng-template #content1 let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Cambiar mi Contraseña</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="FormularioChangePassword" (ngSubmit)="onSubmitChangePassword()">
+            <div class="form-group col-md-10">
+                <label for="password"> <i class="fa fa-key"></i> Contraseña actual</label>
+                <input formControlName="passwordActual" type="password" name="passwordActual"  
+                    autocomplete="off"
+                    [ngClass]="{'is-invalid' : submittedPassword && fC.passwordActual.errors,  'form-control':true  }">
+                <div class="invalid-feedback" *ngIf="submittedPassword && fC.passwordActual.errors">
+                    <div *ngIf="fC.passwordActual.errors.required">El campo es obligatorio</div>
+                </div>
+            </div>
+            <div class="form-group col-md-10">
+                <label for="password"> <i class="fa fa-key"></i> Nueva contraseña</label>
+                <input formControlName="password" type="password" name="password" 
+                    [ngClass]="{'is-invalid' : submittedPassword && fC.password.errors,  'form-control':true  }">
+                <div class="invalid-feedback" *ngIf="submittedPassword && fC.password.errors">
+                    <div *ngIf="fC.password.errors.required">El campo es obligatorio</div>
+                </div>
+            </div>
+            <div class="form-group col-md-10">
+                <label for="password"> <i class="fa fa-key"></i>Confirma contraseña</label>
+                <input formControlName="passwordConfirm" type="password" name="passwordConfirm"
+                    [ngClass]="{'is-invalid' : submittedPassword && fC.passwordConfirm.errors,  'form-control':true  }">
+                <div class="invalid-feedback" *ngIf="submittedPassword && fC.passwordConfirm.errors">
+                    <div *ngIf="fC.passwordConfirm.errors.required  ">Confirma tu clave</div>
+                    <div *ngIf="fC.passwordConfirm.errors.mustMatch  ">Las claves deben ser iguales</div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modal.close('Save click')">Cancelar</button>
+        <button class="btn btn-primary w-100  text-white" type="submit" (click)="onSubmitChangePassword()"
+            [disabled]="loadingButtonCambiar">
+            Cambiar
+            <i *ngIf="loadingButtonCambiar && submittedPassword" class="fa fa-spin fa-spinner"></i>
+        </button>
+    </div>
+</ng-template>
 
 
 
