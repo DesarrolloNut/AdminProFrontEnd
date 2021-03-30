@@ -241,7 +241,7 @@ export class ListaPreciosListadoComponent implements OnInit {
       return;
     }
 
-    this.confirmed.forEach(x => x.estadoID = this.estadoIDAutorizacionDefault)
+    this.confirmed.filter(x => x.estadoID < this.estadoIDAutorizacionDefault).forEach(x => x.estadoID = this.estadoIDAutorizacionDefault)
 
     this.guardandoArticulos = true;
     this.httpService.DoPostAny<any>(DataApi.Articulo,
@@ -283,7 +283,6 @@ export class ListaPreciosListadoComponent implements OnInit {
     let estadoUsuario = this.estadosAutorizacion.find(x => x.codigo == this.estadoAutorizacionUsuario);
     let estadoActualPosicion = this.estadosAutorizacion.indexOf(estadoUsuario);
     this.estadoAutorizacionSiguiente = this.estadosAutorizacion[estadoActualPosicion + 1]
-    console.table(this.estadoAutorizacionSiguiente)
   }
 
   getAnteriorEstadoAutorizacion() {
