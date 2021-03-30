@@ -65,6 +65,7 @@ export class ListaPreciosListadoComponent implements OnInit {
 
   mostrarBtnCancelarAceptar: boolean
   isAutorizando: boolean
+  fechaActual: Date;
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
@@ -80,6 +81,7 @@ export class ListaPreciosListadoComponent implements OnInit {
     this.configDualList()
     this.getArticulos()
     this.getEstadoAutorizacionDefault()
+    this.getHoraActual()
   }
 
 
@@ -142,6 +144,7 @@ export class ListaPreciosListadoComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.confirmed = response.records;
+          // console.table(this.confirmed)
           //  response.records.map(x => {
           //   return { "id": x.id, "nombre": x.nombre }
           // });
@@ -238,6 +241,8 @@ export class ListaPreciosListadoComponent implements OnInit {
       return;
     }
 
+    this.confirmed.forEach(x => x.estadoID = this.estadoIDAutorizacionDefault)
+
     this.guardandoArticulos = true;
     this.httpService.DoPostAny<any>(DataApi.Articulo,
       "RegistrarPreciosArticulosAsignados", this.confirmed).subscribe(response => {
@@ -285,7 +290,6 @@ export class ListaPreciosListadoComponent implements OnInit {
     let estadoUsuario = this.estadosAutorizacion.find(x => x.codigo == this.estadoAutorizacionUsuario);
     let estadoActualPosicion = this.estadosAutorizacion.indexOf(estadoUsuario);
     this.estadoAutorizacionAnterior = this.estadosAutorizacion[estadoActualPosicion - 1]
-    console.table(this.estadoAutorizacionAnterior)
   }
 
 
@@ -379,7 +383,7 @@ export class ListaPreciosListadoComponent implements OnInit {
     } else {
       EstadoUsuariosNotificacion = this.estadoIDAutorizacionDefault
     }
-    
+
     let ultimoEstado = this.estadosAutorizacion[this.estadosAutorizacion.length - 1].codigo;
 
     let param = {
@@ -414,7 +418,23 @@ export class ListaPreciosListadoComponent implements OnInit {
   //#endregion
 
 
+  getHoraActual() {
+    this.Cargando = true;
+    this.httpService.DoPost<ComboBox>(DataApi.Public,
+      "GetHoraActual", null).subscribe(response => {
 
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.fechaActual = new Date(response.valores[0]);
+        }
+
+        this.Cargando = false;
+      }, error => {
+        this.Cargando = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
 
 
 

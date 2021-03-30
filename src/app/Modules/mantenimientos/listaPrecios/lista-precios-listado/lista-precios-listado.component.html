@@ -250,13 +250,13 @@
                                 </td>
                                 <td>
                                     <input style="min-width: 150px;"
-                                        [disabled]="item.estadoID != estadoIDAutorizacionDefault"
+                                        [disabled]="item.estadoID > estadoIDAutorizacionDefault"
                                         [(ngModel)]="item.precio" type="text" class="form-control" prefix="$ "
                                         mask="separator" thousandSeparator=",">
                                 </td>
                                 <td>
-                                    <ejs-datepicker [readonly]="item.estadoID != estadoIDAutorizacionDefault"
-                                        [(ngModel)]="item.fechaAplicacion" [format]="'dd-MM-yyyy'">
+                                    <ejs-datepicker [readonly]="item.estadoID > estadoIDAutorizacionDefault"
+                                        [(ngModel)]="item.fechaAplicacion" [format]="'dd-MM-yyyy'" [min]="fechaActual">
                                     </ejs-datepicker>
                                 </td>
 
