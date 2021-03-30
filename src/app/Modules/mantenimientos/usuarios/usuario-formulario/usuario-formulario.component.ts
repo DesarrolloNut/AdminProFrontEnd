@@ -173,6 +173,7 @@ export class UsuarioFormularioComponent implements OnInit {
 
   onSubmitChangePassword() {
     this.submittedPassword = true;
+    this.fC.userName.setValue(this.auth.tokenDecoded.unique_name)
     console.log(this.FormularioChangePassword.controls)
     if (this.FormularioChangePassword.invalid) {
       return;
