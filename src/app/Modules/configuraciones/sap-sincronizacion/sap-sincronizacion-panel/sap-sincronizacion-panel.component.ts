@@ -13,6 +13,7 @@ import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 export class SapSincronizacionPanelComponent implements OnInit {
 
   loadingSincronizacionListaPrecios: boolean = false;
+  loadingSincronizacionArticulos: boolean;
 
   constructor(
     private toastService: ToastrService,
@@ -43,7 +44,27 @@ export class SapSincronizacionPanelComponent implements OnInit {
         this.loadingSincronizacionListaPrecios = false;
       }, error => {
         this.loadingSincronizacionListaPrecios = false;
-        this.toastService.error("No se pudo actualizar.", "Error conexion al servidor");
+        this.toastService.error("No se pudo actualizar listas de precios.", "Error conexion al servidor");
+      });
+  }
+
+  sincronizarArticulos() {
+    this.loadingSincronizacionArticulos = true;
+
+    this.httpService.DoPostAny<any>(DataApi.Articulo,
+      "SincronizarArticulosFromSAP", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0])
+        } else {
+          this.toastService.success("Actualizado", "OK")
+        }
+
+        this.loadingSincronizacionArticulos = false;
+      }, error => {
+        this.loadingSincronizacionArticulos = false;
+        this.toastService.error("No se pudo actualizar los artículos.", "Error conexion al servidor");
       });
   }
 
