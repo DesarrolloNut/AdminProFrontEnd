@@ -71,7 +71,7 @@ import { PermisosListadoComponent } from './permisos/permisos-listado/permisos-l
 import { PermisosFormularioComponent } from './permisos/permisos-formulario/permisos-formulario.component';
 import { PerfilFormularioComponent } from './perfil-formulario/perfil-formulario.component';
 
-
+import { TreeviewModule } from 'ngx-treeview';
 
 
 @NgModule({
@@ -91,7 +91,14 @@ import { PerfilFormularioComponent } from './perfil-formulario/perfil-formulario
     ListaPreciosListadoComponent, ListaPreciosFormularioComponent, RutasListadoComponent, RutasFormularioComponent,
     NivelAutorizacionListadoComponent, NivelAutorizacionFormularioComponent, EstadosGeneralesListadoComponent, EstadosGeneralesFormularioComponent,
     NivelAutorizacionModuloFormularioComponent, NivelAutorizacionModuloListadoComponent, RolesListadoComponent, RolesFormularioComponent,
-    SapconnectionListadoComponent, SapconnectionFormularioComponent ,PromocionesListadoComponent, PromocionesFormularioComponent, PermisosListadoComponent, PermisosFormularioComponent, PerfilFormularioComponent
+
+    SapconnectionListadoComponent, 
+    SapconnectionFormularioComponent ,
+    PromocionesListadoComponent,
+    PromocionesFormularioComponent, 
+    PermisosListadoComponent, 
+    PermisosFormularioComponent, 
+    PerfilFormularioComponent
   ],
 
   imports: [
@@ -99,7 +106,8 @@ import { PerfilFormularioComponent } from './perfil-formulario/perfil-formulario
     AngularDualListBoxModule,
     MantenimientosRoutingModule,
     SharedModule,
-    NgbModule
+    NgbModule,
+    TreeviewModule.forRoot()
   ]
 })
 export class MantenimientosModule { }
