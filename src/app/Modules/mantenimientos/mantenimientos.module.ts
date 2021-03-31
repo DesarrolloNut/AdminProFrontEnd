@@ -69,6 +69,7 @@ import { PromocionesListadoComponent } from './promociones/promociones-listado/p
 import { PromocionesFormularioComponent } from './promociones/promociones-formulario/promociones-formulario.component';
 import { PermisosListadoComponent } from './permisos/permisos-listado/permisos-listado.component';
 import { PermisosFormularioComponent } from './permisos/permisos-formulario/permisos-formulario.component';
+import { PerfilFormularioComponent } from './perfil-formulario/perfil-formulario.component';
 
 
 
@@ -90,7 +91,7 @@ import { PermisosFormularioComponent } from './permisos/permisos-formulario/perm
     ListaPreciosListadoComponent, ListaPreciosFormularioComponent, RutasListadoComponent, RutasFormularioComponent,
     NivelAutorizacionListadoComponent, NivelAutorizacionFormularioComponent, EstadosGeneralesListadoComponent, EstadosGeneralesFormularioComponent,
     NivelAutorizacionModuloFormularioComponent, NivelAutorizacionModuloListadoComponent, RolesListadoComponent, RolesFormularioComponent,
-    SapconnectionListadoComponent, SapconnectionFormularioComponent ,PromocionesListadoComponent, PromocionesFormularioComponent, PermisosListadoComponent, PermisosFormularioComponent
+    SapconnectionListadoComponent, SapconnectionFormularioComponent ,PromocionesListadoComponent, PromocionesFormularioComponent, PermisosListadoComponent, PermisosFormularioComponent, PerfilFormularioComponent
   ],
 
   imports: [

@@ -63,6 +63,7 @@ import { NivelAutorizacionModuloListadoComponent } from './NivelAutorizacionModu
 import { SapconnectionFormularioComponent } from './sapconnection/sapconnection-formulario/sapconnection-formulario.component';
 import { PromocionesListadoComponent } from './promociones/promociones-listado/promociones-listado.component';
 import { PromocionesFormularioComponent } from './promociones/promociones-formulario/promociones-formulario.component';
+import { PerfilFormularioComponent } from './perfil-formulario/perfil-formulario.component';
 
 
 const routes: Routes = [
@@ -740,6 +741,16 @@ const routes: Routes = [
             { title: 'Mantenimientos' },
             { title: 'Oferta' },
             { title: 'Formulario' }
+          ]
+        }
+      },
+
+      {
+        path: 'perfil', component: PerfilFormularioComponent, data: {
+          title: 'Perfil',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Perfil' }
           ]
         }
       },

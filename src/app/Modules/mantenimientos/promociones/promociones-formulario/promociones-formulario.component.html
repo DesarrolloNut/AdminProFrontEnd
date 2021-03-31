@@ -33,12 +33,12 @@
 
                         <ng-template [ngxPermissionsOnly]="'mantenimientos_promocion_autorizacion'">
 
-                            <button *ngIf="f.estadoID.value == 2" class="btn btn-sm btn-success m-1"
+                            <button *ngIf="f.estadoID.value > 1" class="btn btn-sm btn-success m-1"
                                 (click)="openModal(modalConfirm, 3)">
                                 <i class=" fa fa-sm fa-check"></i> Autorizar
                             </button>
 
-                            <button *ngIf="f.estadoID.value == 3" class="btn btn-sm btn-warning m-1"
+                            <button *ngIf="f.estadoID.value > 1" class="btn btn-sm btn-warning m-1"
                                 (click)="openModal(modalConfirm, 1)">
                                 <i class=" fa fa-sm fa-times"></i> Desautorizar
                             </button>
@@ -123,7 +123,7 @@
 
                     <div class="form-group col-md-6">
                         <label>Desde</label>
-                        <ejs-datepicker [readonly]="IsFormDisabled" formControlName="fechaDesde"
+                        <ejs-datepicker [readonly]="IsFormDisabled" formControlName="fechaDesde" [min]="fechaActual"
                             [format]="'dd-MM-yyyy'">
                         </ejs-datepicker>
                         <div *ngIf="submitted && f.fechaDesde.errors"
@@ -134,7 +134,7 @@
 
                     <div class="form-group col-md-6">
                         <label>Hasta</label>
-                        <ejs-datepicker [readonly]="IsFormDisabled" formControlName="fechaHasta"
+                        <ejs-datepicker [readonly]="IsFormDisabled" formControlName="fechaHasta" [min]="fechaActual"
                             [format]="'dd-MM-yyyy'">
                         </ejs-datepicker>
                         <div *ngIf="submitted && f.fechaHasta.errors"
