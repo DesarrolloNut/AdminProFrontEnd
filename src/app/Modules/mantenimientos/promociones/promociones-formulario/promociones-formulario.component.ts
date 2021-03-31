@@ -36,6 +36,9 @@ export class PromocionesFormularioComponent implements OnInit {
 
   btnClicked: number = 0
 
+  fechaActual: Date;
+
+
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
@@ -56,6 +59,7 @@ export class PromocionesFormularioComponent implements OnInit {
     this.getListaPreciosComboBox()
     this.CreateForm();
     this.getEstados()
+    this.getHoraActual()
   }
 
 
@@ -304,6 +308,26 @@ export class PromocionesFormularioComponent implements OnInit {
       });
 
   }
+
+
+  getHoraActual() {
+    this.Cargando = true;
+    this.httpService.DoPost<ComboBox>(DataApi.Public,
+      "GetHoraActual", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.fechaActual = new Date(response.valores[0]);
+        }
+
+        this.Cargando = false;
+      }, error => {
+        this.Cargando = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
 
 
 

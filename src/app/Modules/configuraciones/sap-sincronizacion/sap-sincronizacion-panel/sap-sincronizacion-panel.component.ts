@@ -14,6 +14,7 @@ export class SapSincronizacionPanelComponent implements OnInit {
 
   loadingSincronizacionListaPrecios: boolean = false;
   loadingSincronizacionArticulos: boolean;
+  loadingSincronizacionPrecioArticulos: boolean;
 
   constructor(
     private toastService: ToastrService,
@@ -65,6 +66,27 @@ export class SapSincronizacionPanelComponent implements OnInit {
       }, error => {
         this.loadingSincronizacionArticulos = false;
         this.toastService.error("No se pudo actualizar los artículos.", "Error conexion al servidor");
+      });
+  }
+
+  
+  sincronizarPrecioArticulos() {
+    this.loadingSincronizacionPrecioArticulos = true;
+
+    this.httpService.DoPostAny<any>(DataApi.Articulo,
+      "ActualizaArticuloPrecioSAP", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0])
+        } else {
+          this.toastService.success("Actualizado", "OK")
+        }
+
+        this.loadingSincronizacionPrecioArticulos = false;
+      }, error => {
+        this.loadingSincronizacionPrecioArticulos = false;
+        this.toastService.error("No se pudo actualizar los precios.", "Error conexion al servidor");
       });
   }
 
