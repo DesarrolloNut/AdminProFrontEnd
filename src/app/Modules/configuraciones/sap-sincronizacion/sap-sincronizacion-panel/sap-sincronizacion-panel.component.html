@@ -15,15 +15,15 @@
 
 
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                        <div class="box-part text-center border rounded border-secondary">
-                            <i class="fa fa-list fa-3x" aria-hidden="true"></i>
+                        <div class="box-part text-center border rounded border-primary">
+                            <i class="fa text-primary  fa-list fa-3x" aria-hidden="true"></i>
                             <div class="title">
                                 <h4>Listas de precios</h4>
                             </div>
                             <div class="text">
                                 <span>Actualiza SAP desde el Admin Web.</span>
                             </div>
-                            <button type="button" class="btn btn-info" (click)="sincronizarListasPrecios()"
+                            <button type="button" class="btn btn-primary" (click)="sincronizarListasPrecios()"
                                 *ngIf="!loadingSincronizacionListaPrecios">
                                 Sincronizar
                             </button>
@@ -37,7 +37,7 @@
 
 
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                        <div class="box-part text-center border rounded border-secondary">
+                        <div class="box-part text-center border rounded border-info">
                             <i class="fa fa-shopping-cart fa-3x" aria-hidden="true"></i>
                             <div class="title">
                                 <h4>Artículos</h4>
@@ -55,6 +55,31 @@
                             </button>
                         </div>
                     </div>
+
+
+
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                        <div class="box-part text-center border rounded border-success">
+                            <i class="fa text-success fa-dollar-sign fa-3x" aria-hidden="true"></i>
+                            <div class="title">
+                                <h4>Precios Artículos</h4>
+                            </div>
+                            <div class="text">
+                                <span>Actualiza SAP desde el Admin Web.</span>
+                            </div>
+                            <button type="button" class="btn btn-success" (click)="sincronizarPrecioArticulos()"
+                                *ngIf="!loadingSincronizacionPrecioArticulos">
+                                Sincronizar
+                            </button>
+                            <button *ngIf="loadingSincronizacionPrecioArticulos" disabled class="btn btn-success"
+                                type="button">
+                                <span class="spinner-border spinner-border-sm"></span> Sincronizando
+                            </button>
+                        </div>
+                    </div>
+
+
+
 
                 </div>
 
