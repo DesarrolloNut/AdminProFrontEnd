@@ -48,6 +48,12 @@
                                   <span> {{item.descripcion |  slice:0:60}} ...</span>
                               </td>
                               <td>
+
+                                <button class="btn btn-sm btn-success m-1"
+                                (click)="openModal(modalRolPermisoAsignacion,item.id)">
+                                <i class=" fa fa-sm fa-th-list"></i>
+                               </button>
+
                                   <button class="btn btn-sm btn-info" [routerLink]="[item.id]">
                                       <i class="fa fa-sm fa-edit"></i>
                                   </button>
@@ -85,3 +91,40 @@
       </div>
   </div>
 </div>
+
+
+
+<ng-template #modalRolPermisoAsignacion let-modal>
+  <div class="modal-header">
+      <h4 class="modal-title">Asignación de permisos a Rol</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">&times;</span>
+      </button>
+  </div>
+  <div class="modal-body">
+      <div class="row justify-content-start align-items-center">
+
+        <div class="col-sm-6">
+          <ngx-treeview
+          [config]="config"
+          [items]="items"
+          (selectedChange)="onSelectedChange($event)"
+        >
+        </ngx-treeview>
+        </div>
+
+
+
+      </div>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cancelar</button>
+      <button type="button" class="btn btn-success m-1" *ngIf="!guardandoPermisos"
+          (click)="getPermisosSeleccionadosLista()">Guardar</button>
+      <!-- boton cargando -->
+      <button *ngIf="guardandoPermisos" disabled class="btn btn-success m-1" type="button">
+          <span class="spinner-border spinner-border-sm"></span> Guardando
+      </button>
+  </div>
+</ng-template>
+

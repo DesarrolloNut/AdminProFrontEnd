@@ -70,6 +70,7 @@
     "ngx-permissions": "^7.0.3",
     "ngx-quill": "^7.0.2",
     "ngx-toastr": "^8.10.2",
+    "ngx-treeview": "^10.0.2",
     "ngx-webcam": "^0.3.0",
     "node-sass": "^4.14.1",
     "pace-js": "^1.0.2",
