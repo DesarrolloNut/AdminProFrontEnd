@@ -3,10 +3,10 @@ export class Permisos {
       this.id = 0;
       this.nombre = ""
       this.descripcion = ""
-      this.PermisoPadreID = 0
+      this.permisoPadreId = 0
   }
   id: number;
   nombre: string;
   descripcion: string
-  PermisoPadreID: number
+  permisoPadreId: number
 }
