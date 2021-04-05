@@ -386,7 +386,7 @@ export class ListaPreciosListadoComponent implements OnInit {
     let ultimoEstado = this.estadosAutorizacion[this.estadosAutorizacion.length - 1].codigo;
 
     let param = {
-      "IsAprobado": this.estadoAutorizacionUsuario == ultimoEstado,
+      "IsAprobado": this.estadoAutorizacionUsuario == ultimoEstado && this.isAutorizando,
       "IsAutorizando": this.isAutorizando,
       "EstadoAutorizacion": this.isAutorizando ? this.estadoAutorizacionUsuario : this.estadoIDAutorizacionDefault,
       "EstadoDefault": this.estadoIDAutorizacionDefault,
