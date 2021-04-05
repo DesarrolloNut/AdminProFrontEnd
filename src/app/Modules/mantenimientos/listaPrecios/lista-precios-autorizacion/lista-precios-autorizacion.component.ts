@@ -21,9 +21,9 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   paginaNumeroActual = 1;
   Cargando: boolean = false;
   totalPaginas: number = 0;
-  paginaSize: number = 5;
+  paginaSize: number = 10;
   paginaTotalRecords: number = 0;
-  data: Accesorio[] = [] //tu modelo
+  data: any[] = [] //tu modelo
   estadoAutorizacionUsuario: any;
   estadosAutorizacion: ComboBox[];
   estadoIDAutorizacionDefault: number;
@@ -46,7 +46,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
 
     let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
 
-    this.httpService.GetAllWithPagination<Accesorio>(DataApi.Accesorio, "GetAccesorioListado", "NOMBRE", this.paginaNumeroActual,
+    this.httpService.GetAllWithPagination<any>(DataApi.Articulo, "GetArticulosAsignadosListaPrecioPagination", "ListaPrecio", this.paginaNumeroActual,
       this.paginaSize, true, parametros).subscribe(x => {
 
         if (x.ok) {
