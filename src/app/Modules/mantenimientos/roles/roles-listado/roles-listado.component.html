@@ -116,7 +116,7 @@
     <div class="modal-footer">
         <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cancelar</button>
         <button type="button" class="btn btn-success m-1" *ngIf="!guardandoPermisos"
-            (click)="getPermisosSeleccionadosLista()">Guardar</button>
+            (click)="guardarPermisosSeleccionados()">Guardar</button>
         <!-- boton cargando -->
         <button *ngIf="guardandoPermisos" disabled class="btn btn-success m-1" type="button">
             <span class="spinner-border spinner-border-sm"></span> Guardando
