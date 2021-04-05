@@ -186,6 +186,17 @@ export const ROUTES: RouteInfo[] = [
                 permisos: ["mantenimientos_listas_precios"],
             },
             {
+                path: '/mantenimientos/autorizacionprecios',
+                label: '',
+                labelClass: '',
+                title: 'Autorización de precios',
+                icon: '',
+                class: '',
+                extralink: false,
+                submenu: [],
+                permisos: ["mantenimientos_autorizacion_precios"],
+            },
+            {
                 path: '/mantenimientos/promocion',
                 label: '',
                 labelClass: '',

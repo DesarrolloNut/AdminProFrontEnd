@@ -64,6 +64,7 @@ import { SapconnectionFormularioComponent } from './sapconnection/sapconnection-
 import { PromocionesListadoComponent } from './promociones/promociones-listado/promociones-listado.component';
 import { PromocionesFormularioComponent } from './promociones/promociones-formulario/promociones-formulario.component';
 import { PerfilFormularioComponent } from './perfil-formulario/perfil-formulario.component';
+import { ListaPreciosAutorizacionComponent } from './listaPrecios/lista-precios-autorizacion/lista-precios-autorizacion.component';
 
 
 const routes: Routes = [
@@ -751,6 +752,16 @@ const routes: Routes = [
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Perfil' }
+          ]
+        }
+      },
+
+      {
+        path: 'autorizacionprecios', component: ListaPreciosAutorizacionComponent, data: {
+          title: 'Autorización de Precios',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Autorización de Precios' }
           ]
         }
       },
