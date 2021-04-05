@@ -97,6 +97,7 @@ export class RolesListadoComponent implements OnInit {
 
   }
 
+ 
 
   asignarPagination(x: ResponseContenido<any>) {
 
@@ -109,10 +110,8 @@ export class RolesListadoComponent implements OnInit {
       this.paginaTotalRecords = 0;
       this.paginaSize = 0;
     }
-
+ 
   }
-
-
   openModal(content, rolID: number) {
     this.RolID = rolID;
     this.getPermisosSeleccionados();
@@ -144,7 +143,7 @@ export class RolesListadoComponent implements OnInit {
       });
   }
 
-  getPermisosSeleccionados() {
+ getPermisosSeleccionados() {
     let param: Parametro[] = [{ key: "rolID", value: this.RolID }]
     this.loadingPermisos = true;
     this.httpService.DoPost<Permisos>(DataApi.Permisos,
@@ -169,6 +168,34 @@ export class RolesListadoComponent implements OnInit {
 
       });
   }
+
+ 
+  getPermisos() {
+    this.loadingPermisos = true;
+    this.httpService.DoPost<Permisos>(DataApi.Permisos,
+      "GetAllPermisos", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.permisos = response.records;
+          this.source = response.records.map(x => {
+            return { "id": x.id, "nombre": x.nombre }
+          });
+        }
+        this.loadingPermisos = false;
+      }, error => {
+        this.loadingPermisos = false;
+        this.toastService.error("No se pudo obtener todos los Permisos", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getPermisos()
+        }, 1000);
+
+      });
+  }
+
+ 
 
 
   guardarPermisosSeleccionados() {
