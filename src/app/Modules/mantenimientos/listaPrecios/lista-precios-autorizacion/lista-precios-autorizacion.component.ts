@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
@@ -24,7 +25,9 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   paginaSize: number = 10;
   paginaTotalRecords: number = 0;
   data: any[] = [] //tu modelo
-  estadoAutorizacionUsuario: any;
+
+  estadoAutorizacionComboModel: number;
+  estadoAutorizacionUsuario: number;
   estadosAutorizacion: ComboBox[];
   estadoIDAutorizacionDefault: number;
   estadoAutorizacionSiguiente: ComboBox;
@@ -33,18 +36,29 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private authService: AuthenticationService,
+    private modalService: NgbModal,
     public permissionsService: NgxPermissionsService,
   ) { }
 
 
   ngOnInit(): void {
-    this.getData()
-    this.getEstadoAutorizacionDefault()
+    // this.getData()
+    this.getEstadoAutorizacionUsuario()
+    this.getEstadosAutorizacion()
   }
+
+  // onEstadoComboChange() {
+  //   this.getData()
+  // }
+
+
   getData() {
     this.Cargando = true;
 
-    let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
+    let parametros: Parametro[] = [
+      { key: "EstadoAutorizacionID", value: this.estadoAutorizacionComboModel },
+      { key: "Search", value: this.Search },
+    ]
 
     this.httpService.GetAllWithPagination<any>(DataApi.Articulo, "GetArticulosAsignadosListaPrecioPagination", "ListaPrecio", this.paginaNumeroActual,
       this.paginaSize, true, parametros).subscribe(x => {
@@ -66,7 +80,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   }
 
 
-  getEstadoAutorizacionDefault() {
+  getEstadosAutorizacion() {
     let parametros: Parametro[] = [{
       key: "NameKey",
       value: EstadoGeneralesKey.LISTAPRECIO
@@ -80,15 +94,14 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
         } else {
           this.estadosAutorizacion = response.records;
           this.estadoIDAutorizacionDefault = response.records[0].codigo;
-
-          this.getEstadoAutorizacionUsuario()
-
-          // console.log("Estado default autorizacion: " + this.estadoIDAutorizacionDefault)
+          this.getSiguienteEstado()//almacena en una variable el siguiente estado
+          this.getAnteriorEstadoAutorizacion()//almacena en una variable el anterior estado
+          this.getData()
         }
       }, error => {
-        this.toastService.error("No se pudo obtener el estado de autorización por defecto", "Error conexion al servidor");
+        this.toastService.error("No se pudo obtener los estados.", "Error conexion al servidor");
         setTimeout(() => {
-          this.getEstadoAutorizacionDefault()
+          this.getEstadosAutorizacion()
         }, 1000);
 
       });
@@ -103,9 +116,6 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.estadoAutorizacionUsuario = response.valores[0];
-          this.getSiguienteEstado()//almacena en una variable el siguiente estado
-          this.getAnteriorEstadoAutorizacion()//almacena en una variable el anterior estado
-
         }
       }, error => {
         this.toastService.error("No se pudo obtener el estado de autorización del usuario", "Error conexion al servidor");
@@ -127,6 +137,8 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
     let estadoUsuario = this.estadosAutorizacion.find(x => x.codigo == this.estadoAutorizacionUsuario);
     let estadoActualPosicion = this.estadosAutorizacion.indexOf(estadoUsuario);
     this.estadoAutorizacionAnterior = this.estadosAutorizacion[estadoActualPosicion - 1]
+    this.estadoAutorizacionComboModel = this.estadoAutorizacionAnterior.codigo;
+
   }
 
 
@@ -144,4 +156,32 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
     }
 
   }
+
+  openModal(content, btnClicked: number) {
+    this.modalService.open(content, { size: 'sm' });
+    // this.btnClicked = btnClicked
+  }
+
+  onBtnModalOk() {
+
+    // if (this.btnClicked == 1) {
+    //   this.desautorizar()
+    //   return;
+    // }
+    // if (this.btnClicked == 2) {
+    //   this.solicitarAutorizacion()
+    //   return;
+    // }
+    // if (this.btnClicked == 3) {
+    //   this.autorizar()
+    //   return;
+    // }
+
+    this.modalService.dismissAll()
+
+
+
+  }
+
+
 }
