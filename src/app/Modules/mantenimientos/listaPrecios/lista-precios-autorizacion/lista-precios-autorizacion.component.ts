@@ -32,6 +32,9 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   estadoIDAutorizacionDefault: number;
   estadoAutorizacionSiguiente: ComboBox;
   estadoAutorizacionAnterior: ComboBox;
+  btnClicked: number;
+  isAutorizando: boolean;
+  articuloSeleccionado: any;
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
@@ -91,6 +94,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
         } else {
           this.estadosAutorizacion = response.records;
           this.estadoIDAutorizacionDefault = response.records[0].codigo;
@@ -114,6 +118,8 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+
         } else {
           this.estadoAutorizacionUsuario = response.valores[0];
         }
@@ -157,27 +163,85 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
 
   }
 
-  openModal(content, btnClicked: number) {
+  openModal(content, btnClicked: number, item: any) {
     this.modalService.open(content, { size: 'sm' });
-    // this.btnClicked = btnClicked
+    this.btnClicked = btnClicked
+    this.articuloSeleccionado = item
   }
 
   onBtnModalOk() {
 
-    // if (this.btnClicked == 1) {
-    //   this.desautorizar()
-    //   return;
-    // }
-    // if (this.btnClicked == 2) {
-    //   this.solicitarAutorizacion()
-    //   return;
-    // }
-    // if (this.btnClicked == 3) {
-    //   this.autorizar()
+    if (this.btnClicked == 1) {
+      this.autorizar()
+      // this.desautorizar()
+      return;
+    }
+    if (this.btnClicked == 2) {
+      // this.solicitarAutorizacion()
+      return;
+    }
+    if (this.btnClicked == 3) {
+      return;
+    }
+
+    this.modalService.dismissAll()
+
+
+
+  }
+
+
+  autorizar() {
+
+    this.isAutorizando = true;
+    // if (this.confirmed.filter(x => x.IsChecked).length < 1) {
+    //   this.toastService.warning("Selecciona uno o más artículos para actualizar");
     //   return;
     // }
 
-    this.modalService.dismissAll()
+    let EstadoUsuariosNotificacion: number;
+
+    if (this.isAutorizando) {
+      EstadoUsuariosNotificacion = this.estadoAutorizacionSiguiente ? this.estadoAutorizacionSiguiente.codigo : 0
+    } else {
+      EstadoUsuariosNotificacion = this.estadoIDAutorizacionDefault
+    }
+
+    let ultimoEstado = this.estadosAutorizacion[this.estadosAutorizacion.length - 1].codigo;
+    let articulos = []
+    articulos.push(this.articuloSeleccionado)
+    let param = {
+      "IsAprobado": this.estadoAutorizacionUsuario == ultimoEstado && this.isAutorizando,
+      "IsAutorizando": this.isAutorizando,
+      "EstadoAutorizacion": this.isAutorizando ? this.estadoAutorizacionUsuario : this.estadoIDAutorizacionDefault,
+      "EstadoDefault": this.estadoIDAutorizacionDefault,
+      "EstadoUsuariosNotificacion": EstadoUsuariosNotificacion,
+      "Seleccion": articulos.
+        map(x => { return { "ListaPrecioID": x.listaPrecioID, "ArticuloID": x.id } })
+      // "Seleccion": this.confirmed.filter(x => x.IsChecked).
+      //   map(x => { return { "ListaPrecioID": x.listaPrecioID, "ArticuloID": x.id } })
+    }
+
+
+    console.log(param)
+
+    this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
+      "ActualizarArticuloPrecioEstadoID", param).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+
+        } else {
+          this.toastService.success("Realizado", "OK");
+          this.getData()
+        }
+
+      }, error => {
+        this.toastService.error("No se pudo actualizar el estado.",
+          "Error conexion al servidor");
+      });
+
 
 
 

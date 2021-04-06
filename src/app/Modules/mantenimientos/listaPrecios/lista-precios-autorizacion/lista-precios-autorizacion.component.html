@@ -55,19 +55,19 @@
                                 <td>
                                     <button class="btn btn-sm btn-success m-1"
                                         *ngIf="item.estadoID == estadoAutorizacionAnterior.codigo"
-                                        (click)="openModal(modalConfirm, 1)">
+                                        (click)="openModal(modalConfirm, 1, item)">
                                         <i class="fa fa-sm fa-check"></i>
                                     </button>
 
                                     <button class="btn btn-sm btn-warning m-1"
                                         *ngIf="item.estadoID == estadoAutorizacionUsuario "
-                                        (click)="openModal(modalConfirm, 2)">
+                                        (click)="openModal(modalConfirm, 2, item)">
                                         <i class="fa fa-sm fa-times"></i>
                                     </button>
 
                                     <button
                                         *ngxPermissionsOnly="['mantenimientos_listas_precios_autorizacion_puede_reiniciar_precio']"
-                                        class="btn btn-sm btn-light m-1" (click)="openModal(modalConfirm, 3)">
+                                        class="btn btn-sm btn-light m-1" (click)="openModal(modalConfirm, 3, item)">
                                         <i class="fa fa-sm fa-redo-alt"></i>
                                     </button>
 
