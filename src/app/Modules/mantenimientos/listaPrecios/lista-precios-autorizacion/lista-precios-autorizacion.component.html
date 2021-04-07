@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row" *ngxPermissionsOnly="['mantenimientos_autorizacion_precios']">
     <div class="col-12">
         <div class="card">
             <div class="card-body">
@@ -53,23 +53,57 @@
 
                             <tr *ngFor="let item of data">
                                 <td>
-                                    <button class="btn btn-sm btn-success m-1"
-                                        *ngIf="item.estadoID == estadoAutorizacionAnterior.codigo"
-                                        (click)="openModal(modalConfirm, 1, item)">
-                                        <i class="fa fa-sm fa-check"></i>
-                                    </button>
 
-                                    <button class="btn btn-sm btn-warning m-1"
-                                        *ngIf="item.estadoID == estadoAutorizacionUsuario "
-                                        (click)="openModal(modalConfirm, 2, item)">
-                                        <i class="fa fa-sm fa-times"></i>
-                                    </button>
+                                    <ng-template [ngIf]="item.estadoID == estadoAutorizacionAnterior.codigo">
 
-                                    <button
-                                        *ngxPermissionsOnly="['mantenimientos_listas_precios_autorizacion_puede_reiniciar_precio']"
-                                        class="btn btn-sm btn-light m-1" (click)="openModal(modalConfirm, 3, item)">
-                                        <i class="fa fa-sm fa-redo-alt"></i>
-                                    </button>
+                                        <button class="btn btn-sm btn-success m-1" *ngIf="!item.cargando"
+                                            (click)="autorizar(item)">
+                                            <i class="fa fa-sm fa-check"></i>
+                                        </button>
+
+                                        <!-- boton cargando -->
+                                        <button *ngIf="item.cargando && isAutorizando" disabled
+                                            class="btn btn-success m-1" type="button">
+                                            <span class="spinner-border spinner-border-sm"></span>
+                                        </button>
+
+
+                                    </ng-template>
+
+
+                                    <ng-template [ngIf]="item.estadoID == estadoAutorizacionUsuario">
+
+                                        <button *ngIf="!item.cargando" class="btn btn-sm btn-warning m-1"
+                                            (click)="desautorizar(item)">
+                                            <i class="fa fa-sm fa-times"></i>
+                                        </button>
+
+                                        <!-- boton cargando -->
+                                        <button *ngIf="item.cargando && !isAutorizando " disabled
+                                            class="btn btn-warning m-1" type="button">
+                                            <span class="spinner-border spinner-border-sm"></span>
+                                        </button>
+
+                                    </ng-template>
+
+
+
+                                    <ng-template
+                                        ngxPermissionsOnly="mantenimientos_listas_precios_autorizacion_puede_reiniciar_precio">
+
+                                        <button *ngIf="!item.cargando && item.estadoID != estadoIDAutorizacionDefault"
+                                            class="btn btn-sm btn-light m-1" (click)="desautorizar(item)">
+                                            <i class="fa fa-sm fa-redo-alt"></i>
+                                        </button>
+
+                                        <!-- boton cargando -->
+                                        <button *ngIf="item.cargando && !isAutorizando " disabled
+                                            class="btn btn-light m-1" type="button">
+                                            <span class="spinner-border spinner-border-sm"></span>
+                                        </button>
+
+                                    </ng-template>
+
 
                                 </td>
                                 <!-- <td><span class="badge badge-light text-info ">{{item.id}}</span></td> -->

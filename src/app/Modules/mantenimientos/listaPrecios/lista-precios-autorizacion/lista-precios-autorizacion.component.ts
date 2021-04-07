@@ -26,7 +26,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   paginaTotalRecords: number = 0;
   data: any[] = [] //tu modelo
 
-  estadoAutorizacionComboModel: number;
+  estadoAutorizacionComboModel: number = 0;
   estadoAutorizacionUsuario: number;
   estadosAutorizacion: ComboBox[];
   estadoIDAutorizacionDefault: number;
@@ -34,7 +34,6 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   estadoAutorizacionAnterior: ComboBox;
   btnClicked: number;
   isAutorizando: boolean;
-  articuloSeleccionado: any;
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
@@ -47,7 +46,6 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   ngOnInit(): void {
     // this.getData()
     this.getEstadoAutorizacionUsuario()
-    this.getEstadosAutorizacion()
   }
 
   // onEstadoComboChange() {
@@ -97,6 +95,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
           console.error(response.errores[0]);
         } else {
           this.estadosAutorizacion = response.records;
+          console.table(this.estadosAutorizacion)
           this.estadoIDAutorizacionDefault = response.records[0].codigo;
           this.getSiguienteEstado()//almacena en una variable el siguiente estado
           this.getAnteriorEstadoAutorizacion()//almacena en una variable el anterior estado
@@ -122,6 +121,8 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
 
         } else {
           this.estadoAutorizacionUsuario = response.valores[0];
+          this.getEstadosAutorizacion()
+
         }
       }, error => {
         this.toastService.error("No se pudo obtener el estado de autorización del usuario", "Error conexion al servidor");
@@ -142,9 +143,14 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   getAnteriorEstadoAutorizacion() {
     let estadoUsuario = this.estadosAutorizacion.find(x => x.codigo == this.estadoAutorizacionUsuario);
     let estadoActualPosicion = this.estadosAutorizacion.indexOf(estadoUsuario);
-    this.estadoAutorizacionAnterior = this.estadosAutorizacion[estadoActualPosicion - 1]
-    this.estadoAutorizacionComboModel = this.estadoAutorizacionAnterior.codigo;
+    // console.table({ "estadoUsuario": estadoUsuario })
+    // console.table({ "estadoActualPosicion": estadoActualPosicion })
+    // console.log(this.estadosAutorizacion)
 
+    this.estadoAutorizacionAnterior = this.estadosAutorizacion[estadoActualPosicion - 1]
+    if (this.estadoAutorizacionAnterior) {
+      this.estadoAutorizacionComboModel = this.estadoAutorizacionAnterior.codigo;
+    }
   }
 
 
@@ -166,13 +172,13 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   openModal(content, btnClicked: number, item: any) {
     this.modalService.open(content, { size: 'sm' });
     this.btnClicked = btnClicked
-    this.articuloSeleccionado = item
+    // this.articuloSeleccionado = item
   }
 
   onBtnModalOk() {
 
     if (this.btnClicked == 1) {
-      this.autorizar()
+      // this.autorizar()
       // this.desautorizar()
       return;
     }
@@ -190,10 +196,20 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
 
   }
 
-
-  autorizar() {
-
+  autorizar(item: any) {
     this.isAutorizando = true;
+    this.actualizarEstadoArticulos(item)
+  }
+
+  desautorizar(item: any) {
+    this.isAutorizando = false;
+    this.actualizarEstadoArticulos(item)
+  }
+
+
+
+  actualizarEstadoArticulos(item: any) {
+    item.cargando = true;
     // if (this.confirmed.filter(x => x.IsChecked).length < 1) {
     //   this.toastService.warning("Selecciona uno o más artículos para actualizar");
     //   return;
@@ -209,7 +225,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
 
     let ultimoEstado = this.estadosAutorizacion[this.estadosAutorizacion.length - 1].codigo;
     let articulos = []
-    articulos.push(this.articuloSeleccionado)
+    articulos.push(item)
     let param = {
       "IsAprobado": this.estadoAutorizacionUsuario == ultimoEstado && this.isAutorizando,
       "IsAutorizando": this.isAutorizando,
