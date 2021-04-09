@@ -12,11 +12,12 @@ import { NgxPermissionsModule } from 'ngx-permissions';
 import { NgxMaskModule, IConfig } from 'ngx-mask'
 import { FilterPipe } from 'src/app/shared/pipes/filter.pipe';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
+import { ErrorPermissionDeniedComponent } from 'src/app/shared/error-permission-denied/error-permission-denied.component';
 
 export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
 
 @NgModule({
-    declarations: [LoadingListadoComponent, ErrorConnectionInternetComponent, FilterPipe],
+    declarations: [LoadingListadoComponent, ErrorConnectionInternetComponent, ErrorPermissionDeniedComponent , FilterPipe],
     imports: [
         NgxPermissionsModule.forChild(),
         NgSelectModule,
@@ -37,6 +38,7 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
         NgbPaginationModule,
         LoadingListadoComponent,
         ErrorConnectionInternetComponent,
+        ErrorPermissionDeniedComponent,
         FilterPipe,
         PerfectScrollbarModule
     ]

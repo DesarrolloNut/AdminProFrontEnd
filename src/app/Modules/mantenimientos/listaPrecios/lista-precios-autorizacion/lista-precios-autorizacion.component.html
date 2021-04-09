@@ -1,4 +1,4 @@
-<div class="row" *ngxPermissionsOnly="['mantenimientos_autorizacion_precios']">
+<div class="row" *ngxPermissionsOnly="['mantenimientos_autorizacion_precios'] ; else PermissionDenied;">
     <div class="col-12">
         <div class="card">
             <div class="card-body">
@@ -184,6 +184,12 @@
 </div>
 
 
+
+<ng-template #PermissionDenied>
+ 
+    <app-error-permission-denied></app-error-permission-denied>
+
+</ng-template>
 
 
 <ng-template #modalConfirm let-modal>
