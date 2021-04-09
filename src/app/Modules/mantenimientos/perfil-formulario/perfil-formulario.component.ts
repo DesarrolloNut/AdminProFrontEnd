@@ -49,19 +49,19 @@ export class PerfilFormularioComponent implements OnInit {
     private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
-    let usuarioID = Number(this.auth.tokenDecoded.nameid);
-    console.log(this.auth.tokenDecoded);
+    // let usuarioID = Number(this.auth.tokenDecoded.nameid);
+    // console.log(this.auth.tokenDecoded);
 
-    if (usuarioID > 0) {
-      this.getUsuarioByID(usuarioID);
-      this.actualizandoUsuario = true;
-    }
+    // if (usuarioID > 0) {
+    //   this.getUsuarioByID(usuarioID);
+    //   this.actualizandoUsuario = true;
+    // }
 
-    this.getDocumentosTipo();
-    // this.getRoles();
-    // this.getSucursales();
+    // this.getDocumentosTipo();
+    // // this.getRoles();
+    // // this.getSucursales();
 
-    this.CreateForm();
+    // this.CreateForm();
     this.CreateFormChangePassword();
   }
 
