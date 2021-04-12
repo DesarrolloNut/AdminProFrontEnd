@@ -72,6 +72,7 @@ import { PermisosFormularioComponent } from './permisos/permisos-formulario/perm
 import { PerfilFormularioComponent } from './perfil-formulario/perfil-formulario.component';
 
 import { TreeviewModule } from 'ngx-treeview';
+import { ListaPreciosAutorizacionComponent } from './listaPrecios/lista-precios-autorizacion/lista-precios-autorizacion.component';
 
 
 @NgModule({
@@ -98,7 +99,7 @@ import { TreeviewModule } from 'ngx-treeview';
     PromocionesFormularioComponent, 
     PermisosListadoComponent, 
     PermisosFormularioComponent, 
-    PerfilFormularioComponent
+    PerfilFormularioComponent, ListaPreciosAutorizacionComponent
   ],
 
   imports: [
