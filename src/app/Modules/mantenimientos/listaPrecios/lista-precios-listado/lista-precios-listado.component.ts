@@ -144,11 +144,7 @@ export class ListaPreciosListadoComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.confirmed = response.records;
-          // console.table(this.confirmed)
-          //  response.records.map(x => {
-          //   return { "id": x.id, "nombre": x.nombre }
-          // });
-          // console.table(this.confirmed)
+      
         }
         this.loadingArticulosSeleccionados = false;
       }, error => {

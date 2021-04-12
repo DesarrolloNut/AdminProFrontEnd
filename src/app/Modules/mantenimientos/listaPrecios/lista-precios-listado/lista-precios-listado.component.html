@@ -157,7 +157,7 @@
         <div class="row">
             <div class="col-12 text-right">
 
-<!-- 
+                <!-- 
                 <ng-template [ngIf]="!mostrarBtnCancelarAceptar" [ngIfElse]="botonesAceptarCancelar">
 
                     <button class="btn btn-success mx-1" (click)="onBtnAutorizarClick()">
@@ -217,7 +217,7 @@
                                     </div>
                                 </th>
                                 <!-- <th scope="col">#</th> -->
-                                <th scope="col">Estado</th>
+                                <!-- <th scope="col">Estado</th> -->
                                 <th scope="col">Artículo</th>
                                 <th scope="col">Precio</th>
                                 <th scope="col">Fecha de aplicación</th>
@@ -241,15 +241,15 @@
                                         </label>
                                     </div>
                                 </td>
+                                <!-- <td>
+                                    <span class="badge badge-info"> {{item.estado}}</span>
+                                </td> -->
                                 <td>
                                     <span class="badge badge-info"> {{item.estado}}</span>
-                                </td>
-                                <!-- <td><span class="badge badge-light text-info ">{{item.id}}</span></td> -->
-                                <td>
                                     <span> {{item.nombre}}</span>
                                 </td>
                                 <td>
-                                    <input style="min-width: 150px;"
+                                    <input style="width: 100px;"
                                         [disabled]="item.estadoID > estadoIDAutorizacionDefault"
                                         [(ngModel)]="item.precio" type="text" class="form-control" prefix="$ "
                                         mask="separator" thousandSeparator=",">
