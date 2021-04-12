@@ -307,8 +307,11 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
       "ArticuloID": this.itemSeleccionado.id,
       "UsuarioID": Number(this.authService.tokenDecoded.nameid),
       "Fecha": new Date(),
-      "Usuario": "",
+      "Usuario": this.authService.tokenDecoded.given_name,
+      "ListaPrecio": this.itemSeleccionado.listaPrecio,
+      "Articulo": this.itemSeleccionado.nombre
     }
+
     this.cargandoModal = true;
     this.httpService.DoPostAny<any>(DataApi.ListaPrecio,
       "InsertarListaPrecioArticuloComentario", parametros).subscribe(response => {
