@@ -35,6 +35,12 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   btnClicked: number;
   isAutorizando: boolean;
 
+  //comentarios
+  itemSeleccionado: any;
+  comentarios: ComboBox[];
+  comentario: string;
+  cargandoModal: boolean = false;
+
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private authService: AuthenticationService,
@@ -95,7 +101,6 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
           console.error(response.errores[0]);
         } else {
           this.estadosAutorizacion = response.records;
-          console.table(this.estadosAutorizacion)
           this.estadoIDAutorizacionDefault = response.records[0].codigo;
           this.getSiguienteEstado()//almacena en una variable el siguiente estado
           this.getAnteriorEstadoAutorizacion()//almacena en una variable el anterior estado
@@ -143,9 +148,6 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   getAnteriorEstadoAutorizacion() {
     let estadoUsuario = this.estadosAutorizacion.find(x => x.codigo == this.estadoAutorizacionUsuario);
     let estadoActualPosicion = this.estadosAutorizacion.indexOf(estadoUsuario);
-    // console.table({ "estadoUsuario": estadoUsuario })
-    // console.table({ "estadoActualPosicion": estadoActualPosicion })
-    // console.log(this.estadosAutorizacion)
 
     this.estadoAutorizacionAnterior = this.estadosAutorizacion[estadoActualPosicion - 1]
     if (this.estadoAutorizacionAnterior) {
@@ -234,13 +236,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
       "EstadoUsuariosNotificacion": EstadoUsuariosNotificacion,
       "Seleccion": articulos.
         map(x => { return { "ListaPrecioID": x.listaPrecioID, "ArticuloID": x.id } })
-      // "Seleccion": this.confirmed.filter(x => x.IsChecked).
-      //   map(x => { return { "ListaPrecioID": x.listaPrecioID, "ArticuloID": x.id } })
     }
-
-
-    console.log(param)
-
     this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
       "ActualizarArticuloPrecioEstadoID", param).subscribe(response => {
 
@@ -258,10 +254,81 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
           "Error conexion al servidor");
       });
 
+  }
 
 
+  openModalComments(content, item: any) {
+    console.table(item)
+    this.itemSeleccionado = item;
+    this.getComentarios()
+    this.modalService.open(content, { size: 'lg' });
+    // this.articuloSeleccionado = item
+  }
+
+
+  getComentarios() {
+    this.comentarios = []
+    this.comentario = ""
+    let parametros = { "ArticuloID": this.itemSeleccionado.id, "ListaPrecioID": this.itemSeleccionado.listaPrecioID }
+    this.cargandoModal = true;
+    this.httpService.DoPostAny<ComboBox>(DataApi.ListaPrecio,
+      "GetListaPrecioArticuloComentarios", parametros).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+          this.comentarios = response.records;
+        }
+        this.cargandoModal = false;
+
+      }, error => {
+        this.cargandoModal = false;
+        this.toastService.error("No se pudo obtener los comentarios.", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getEstadosAutorizacion()
+        }, 1000);
+
+      });
 
   }
 
+
+  guardarComentario() {
+
+    if (this.comentario.trim().length < 3) {
+      return
+    }
+
+    let parametros = {
+      "Id": 0,
+      "Comentario": this.comentario,
+      "ListaPrecioID": this.itemSeleccionado.listaPrecioID,
+      "ArticuloID": this.itemSeleccionado.id,
+      "UsuarioID": Number(this.authService.tokenDecoded.nameid),
+      "Fecha": new Date(),
+      "Usuario": "",
+    }
+    this.cargandoModal = true;
+    this.httpService.DoPostAny<any>(DataApi.ListaPrecio,
+      "InsertarListaPrecioArticuloComentario", parametros).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+
+        } else {
+          this.toastService.success("Realizado", "OK");
+          this.comentario = ""
+          this.getComentarios()
+        }
+      }, error => {
+        this.cargandoModal = false;
+        this.toastService.error("No se pudo actualizar el estado.",
+          "Error conexion al servidor");
+      });
+
+
+  }
 
 }

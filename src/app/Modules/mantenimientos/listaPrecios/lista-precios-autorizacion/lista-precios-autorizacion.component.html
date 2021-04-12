@@ -54,6 +54,12 @@
                             <tr *ngFor="let item of data">
                                 <td>
 
+                                    <button class="btn btn-sm btn-light m-1" *ngIf="!item.cargando"
+                                        (click)="openModalComments(modalComments,item)">
+                                        <i class="fa fa-sm fa-comment-dots"></i>
+                                    </button>
+
+
                                     <ng-template [ngIf]="item.estadoID == estadoAutorizacionAnterior.codigo">
 
                                         <button class="btn btn-sm btn-success m-1" *ngIf="!item.cargando"
@@ -186,7 +192,7 @@
 
 
 <ng-template #PermissionDenied>
- 
+
     <app-error-permission-denied></app-error-permission-denied>
 
 </ng-template>
@@ -211,6 +217,57 @@
                     <button type="button" class="btn btn-outline-secondary"
                         (click)="modal.close('Close click')">Cancel</button>
                     <button type="button" class="btn btn-info" (click)="onBtnModalOk()">Ok</button>
+                </div>
+            </div>
+        </div>
+
+        <app-loading-listado [hidden]="!cargandoAutorizacion"></app-loading-listado>
+
+    </div>
+</ng-template>
+
+
+
+
+<ng-template #modalComments let-modal>
+    <div class="container-fluid">
+        <div class="row" *ngIf="!cargandoAutorizacion">
+            <div class="col">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modal-title">Caja de comentarios</h4>
+                    <button type="button" class="close" aria-describedby="modal-title"
+                        (click)="modal.dismiss('Cross click')">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" *ngIf="!cargandoModal">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <!-- <label for="exampleFormControlTextarea1">Escribe tu comen</label> -->
+                                <textarea placeholder="Escribe tu comentario" class="form-control"
+                                    [(ngModel)]="comentario" id="exampleFormControlTextarea1" rows="3"></textarea>
+                            </div>
+                            <button type="submit" (click)="guardarComentario()" class="btn btn-info">Comentar</button>
+                        </div>
+                        <div class="col-md-12 ">
+                            <hr>
+                            <div class="row border-top p-2" *ngFor="let c of comentarios">
+                                <div class="col-2">
+                                    <i class="fa fa-user-circle fa-3x"></i>
+                                </div>
+                                <div class="col-10">
+                                    <h5>{{c.usuario | titlecase }}</h5>
+                                    <p>{{c.comentario}}</p>
+                                    <div>
+                                        <span class="text-muted float-md-right">{{c.fecha | date : 'medium' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <app-loading-listado [hidden]="!cargandoModal"></app-loading-listado>
                 </div>
             </div>
         </div>
