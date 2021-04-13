@@ -38,7 +38,7 @@
                                 <i class=" fa fa-sm fa-check"></i> Autorizar
                             </button>
 
-                            <button *ngIf="f.estadoID.value > 1" class="btn btn-sm btn-warning m-1"
+                            <button *ngIf="f.estadoID.value > 1 && f.estadoID.value < 4" class="btn btn-sm btn-warning m-1"
                                 (click)="openModal(modalConfirm, 1)">
                                 <i class=" fa fa-sm fa-times"></i> Desautorizar
                             </button>
