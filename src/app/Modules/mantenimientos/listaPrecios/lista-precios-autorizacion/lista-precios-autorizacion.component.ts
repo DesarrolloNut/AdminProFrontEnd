@@ -261,7 +261,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
     console.table(item)
     this.itemSeleccionado = item;
     this.getComentarios()
-    this.modalService.open(content, { size: 'lg' });
+    this.modalService.open(content, { size: 'lg', scrollable: true });
     // this.articuloSeleccionado = item
   }
 
@@ -323,6 +323,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
         } else {
           this.toastService.success("Realizado", "OK");
           this.comentario = ""
+          this.enviarNotificacionCorreoNuevoComentario(parametros)
           this.getComentarios()
         }
       }, error => {
@@ -330,7 +331,22 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
         this.toastService.error("No se pudo actualizar el estado.",
           "Error conexion al servidor");
       });
+  }
 
+  enviarNotificacionCorreoNuevoComentario(param: any) {
+
+    this.httpService.DoPostAny<any>(DataApi.ListaPrecio,
+      "EnviarCorreoNotificacionArticuloComentario", param).subscribe(response => {
+
+        if (!response.ok) {
+          // this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+          // this.toastService.success("Notificaciones enviadas", "OK");
+        }
+      }, error => {
+        console.error(error)
+      });
 
   }
 
