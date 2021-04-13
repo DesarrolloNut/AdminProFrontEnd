@@ -33,8 +33,8 @@
 
                         <ng-template [ngxPermissionsOnly]="'mantenimientos_promocion_autorizacion'">
 
-                            <button *ngIf="f.estadoID.value > 1" class="btn btn-sm btn-success m-1"
-                                (click)="openModal(modalConfirm, 3)">
+                            <button *ngIf="f.estadoID.value > 1 && f.estadoID.value !=3"
+                                class="btn btn-sm btn-success m-1" (click)="openModal(modalConfirm, 3)">
                                 <i class=" fa fa-sm fa-check"></i> Autorizar
                             </button>
 
