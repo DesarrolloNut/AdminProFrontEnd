@@ -104,7 +104,6 @@ export class UsuarioFormularioComponent implements OnInit {
   private CreateFormChangePassword() {
 
     this.FormularioChangePassword = this.formBuilder.group({
-      passwordActual: [null, [Validators.required]],
       password: [null, [Validators.required]],
       passwordConfirm: [null, [Validators.required]],
       userName: [this.auth.tokenDecoded.unique_name]
@@ -183,9 +182,12 @@ export class UsuarioFormularioComponent implements OnInit {
   }
 
   changePassword() {
+
+    let param = { "UsuarioId": this.usuarioID, "PasswordNueva": this.fC.passwordConfirm.value, }
+
     this.loadingButtonCambiar = true;
     this.httpService.DoPostAny<any>(DataApi.Usuario,
-      'ChangePassword', this.FormularioChangePassword.value).subscribe(response => {
+      'ResetPassword', param).subscribe(response => {
         this.loadingButtonCambiar = false;
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
