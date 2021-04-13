@@ -49,6 +49,8 @@
                                     <span *ngIf="item.estadoID==2" class="badge badge-info">Solicitud
                                         autorización</span>
                                     <span *ngIf="item.estadoID==3" class="badge badge-success">Autorizado</span>
+                                    <span *ngIf="item.estadoID==4" class="badge badge-success">Sincronizado SAP <i
+                                            class="fa fa-check"></i> </span>
                                 </td>
                                 <td>
                                     <button class="btn btn-sm btn-info" [routerLink]="[item.id]">
