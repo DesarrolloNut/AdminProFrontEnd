@@ -13,6 +13,7 @@ export class Promocion {
         this.articuloEntregaID = 0
         this.cantidadEntrega = 0
         this.listaPrecioID = 0
+        this.canalID = 0
         this.fechaDesde = new Date()
         this.fechaHasta = new Date()
     }
@@ -26,5 +27,7 @@ export class Promocion {
     cantidadEntrega: number;
     fechaDesde: Date;
     fechaHasta: Date;
-    listaPrecioID: 0;
+    listaPrecioID: number;
+    canalID: number;
+
 }

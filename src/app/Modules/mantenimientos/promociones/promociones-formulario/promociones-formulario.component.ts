@@ -29,6 +29,8 @@ export class PromocionesFormularioComponent implements OnInit {
   articulos: any[];
   listasPrecios: ComboBox[];
   loadingListasPrecios: boolean;
+  listasCanal: ComboBox[];
+  loadingCanal: boolean;
   IsFormDisabled: boolean;
   id: number;
   cargandoAutorizacion: boolean;
@@ -56,7 +58,8 @@ export class PromocionesFormularioComponent implements OnInit {
       this.actualizando = true;
     }
     this.getArticulos()
-    this.getListaPreciosComboBox()
+    this.getListaPreciosComboBox();
+    this.getCanalesComboBox();
     this.CreateForm();
     this.getEstados()
     this.getHoraActual()
@@ -76,6 +79,7 @@ export class PromocionesFormularioComponent implements OnInit {
       fechaDesde: [null, Validators.required],
       fechaHasta: [null, Validators.required],
       listaPrecioID: [null, Validators.required],
+      canalID: [null, Validators.required],
       estadoID: [0,],
     });
   }
@@ -123,6 +127,8 @@ export class PromocionesFormularioComponent implements OnInit {
 
     let metodo: string = this.actualizando ? "Update" : "Registrar";
     this.btnGuardarCargando = true;
+
+    console.table(this.Formulario.value)
 
     this.httpService.DoPostAny<Promocion>(DataApi.Promocion,
       metodo, this.Formulario.value).subscribe(response => {
@@ -181,12 +187,33 @@ export class PromocionesFormularioComponent implements OnInit {
         this.toastService.error("No se pudo obtener las listas de precios", "Error conexion al servidor");
 
         setTimeout(() => {
-          this.getArticulos()
+          this.getListaPreciosComboBox();
         }, 1000);
 
       });
   }
 
+  getCanalesComboBox() {
+    this.loadingCanal = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetCanalesComboBox", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.listasCanal = response.records
+        }
+        this.loadingCanal = false;
+      }, error => {
+        this.loadingCanal = false;
+        this.toastService.error("No se pudo obtener las listas de precios", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getCanalesComboBox();
+        }, 1000);
+
+      });
+  }
 
 
   getEstados() {

@@ -62,7 +62,7 @@
                     </div>
 
                     <div class="form-group col-md-6">
-                        <label for="example-email">Canal (Lista precio)</label>
+                        <label for="example-email">Lista precio</label>
                         <ng-select [readonly]="IsFormDisabled" [items]="listasPrecios" bindLabel="nombre"
                             bindValue="codigo" [loading]="loadingListasPrecios"
                             [ngClass]="{'form-control border-danger p-0' : submitted && f.listaPrecioID.errors }"
@@ -73,6 +73,19 @@
                             <div *ngIf="f.listaPrecioID.errors.required  ">El campo es obligatorio</div>
                         </div>
                     </div>
+
+                    <div class="form-group col-md-6">
+                      <label for="example-email">Canales</label>
+                      <ng-select [readonly]="IsFormDisabled" [items]="listasCanal" bindLabel="nombre"
+                          bindValue="codigo" [loading]="loadingCanal"
+                          [ngClass]="{'form-control border-danger p-0' : submitted && f.canalID.errors }"
+                          notFoundText="No resultados" formControlName="canalID">
+                      </ng-select>
+                      <div *ngIf="submitted && f.canalID.errors"
+                          class="text-danger small animated animated--fade-in">
+                          <div *ngIf="f.canalID.errors.required  ">El campo es obligatorio</div>
+                      </div>
+                  </div>
 
                     <div class="form-group col-md-6">
                         <label for="example-email">Artículo promoción</label>
