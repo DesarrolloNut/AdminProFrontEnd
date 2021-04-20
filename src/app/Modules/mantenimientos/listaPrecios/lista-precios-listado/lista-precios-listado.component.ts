@@ -128,9 +128,9 @@ export class ListaPreciosListadoComponent implements OnInit {
 
  
   openModal(content, listaId: number) {
+    this.modalService.open(content, { size: 'xl', backdrop: "static", });
     this.listaSeleccionada = listaId;
     this.getArticulosSeleccionadosLista(listaId);
-    this.modalService.open(content, { size: 'xl', backdrop: "static", });
   }
 
   getArticulosSeleccionadosLista(listaId: number) {

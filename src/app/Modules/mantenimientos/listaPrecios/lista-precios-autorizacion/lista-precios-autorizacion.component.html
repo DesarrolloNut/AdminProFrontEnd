@@ -141,9 +141,23 @@
                                             <p class="font-bold mb-0">
                                                 <span> {{item.fechaAplicacion | date:'dd/MM/yy' }}</span>
                                             </p>
-                                            <small class="text-info">
-                                                {{item.diasRestantes }} días restantes
-                                            </small>
+
+
+                                            <span>
+                                                <small class="text-danger" *ngIf="item.diasRestantes < 0">
+                                                    {{item.diasRestantes }} días pasados.
+                                                </small>
+
+                                                <small class="text-info" *ngIf="item.diasRestantes > 0">
+                                                    {{item.diasRestantes }} días faltantes.
+                                                </small>
+
+
+                                                <small class="badge badge-success" *ngIf="item.diasRestantes == 0">
+                                                    Hoy
+                                                </small>
+                                            </span>
+
                                         </div>
                                     </div>
                                 </td>
