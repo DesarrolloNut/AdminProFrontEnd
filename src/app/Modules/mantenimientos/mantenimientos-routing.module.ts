@@ -65,6 +65,7 @@ import { PromocionesListadoComponent } from './promociones/promociones-listado/p
 import { PromocionesFormularioComponent } from './promociones/promociones-formulario/promociones-formulario.component';
 import { PerfilFormularioComponent } from './perfil-formulario/perfil-formulario.component';
 import { ListaPreciosAutorizacionComponent } from './listaPrecios/lista-precios-autorizacion/lista-precios-autorizacion.component';
+import { CargaMasivaPanelComponent } from './cargaMasiva/carga-masiva-panel/carga-masiva-panel.component';
 
 
 const routes: Routes = [
@@ -197,7 +198,7 @@ const routes: Routes = [
         }
       },
 
-     {
+      {
         path: 'sapconnection/:id', component: SapconnectionFormularioComponent, data: {
           title: 'SAP Conexiones Formulario',
           urls: [
@@ -272,6 +273,16 @@ const routes: Routes = [
             { title: 'Mantenimientos' },
             { title: 'Permisos' },
             { title: 'Formulario' }
+          ]
+        }
+      },
+
+      {
+        path: 'cargamasiva', component: CargaMasivaPanelComponent, data: {
+          title: 'Carga Masiva',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Carga Masiva' },
           ]
         }
       },

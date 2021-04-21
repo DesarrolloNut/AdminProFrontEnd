@@ -1,0 +1,112 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-md-6 align-middle">
+                        <!-- <h4 class="card-title">Panel de sincronización SAP</h4> -->
+                    </div>
+                    <div class="col-md-6 text-right">
+
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                        <div class="box-part text-center border rounded border-success" (click)="file.click()"
+                            style="cursor: pointer;">
+                            <i class="fa text-success  fa-dollar-sign fa-3x" aria-hidden="true"></i>
+                            <div class="title mt-2">
+                                <h4>Precios de artículos</h4>
+                            </div>
+                            <div class="text">
+                                <span>Actualiza precios de artículos desde un archivo excel.</span>
+                            </div>
+                            <input accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                class="d-none" (change)="onFileChange($event,modalUploadExcel,1)" #file multiple
+                                type="file" />
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<ng-template #modalUploadExcel let-modal>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <div class="modal-header">
+                    <!-- <h4 class="modal-title" id="modal-title">Artículo</h4> -->
+                    <button type="button" class="close" aria-describedby="modal-title"
+                        (click)="modal.dismiss('Cross click')">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" *ngIf="!dataExcel">
+
+
+                    </div>
+
+                    <div class="row" *ngIf="dataExcel && !guardandoDataExcel">
+
+                        <div class="col-12">
+                            <div class="table-responsive" style="height: 300px;">
+                                <table class="table table-hover mb-0 no-wrap v-middle">
+
+                                    <thead>
+                                        <tr>
+                                            <th *ngFor="let p of propiedades">{{p | titlecase}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of dataExcel">
+                                            <td *ngFor="let prop of propiedades"> {{item[prop]}} </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-12 mt-2 ">
+                            <h5 class="text-right"><span class="badge badge-light">{{dataExcel.length}}
+                                    records
+                                </span></h5>
+                        </div>
+                    </div>
+
+                    <div class="row" *ngIf="guardandoDataExcel">
+                        <div class="col">
+                            <div class="text-center">
+                                <h5> <i class="fa fa-sync fa-spin"></i> Subiendo a la nube</h5>
+                            </div>
+                            <div class="progress" style="height: 20px;">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-info"
+                                    role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"
+                                    style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="modal-footer" *ngIf="dataExcel && !guardandoDataExcel">
+                    <button type="button" class="btn btn-outline-secondary"
+                        (click)="modal.close('Close click')">Cancelar</button>
+                    <button type="button" class="btn btn-info" (click)="subirDatosExcel()">Guardar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- <app-loading-listado [hidden]="!CargandoDelete"></app-loading-listado> -->
+
+    </div>
+</ng-template>

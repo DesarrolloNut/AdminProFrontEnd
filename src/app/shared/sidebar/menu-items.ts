@@ -197,6 +197,17 @@ export const ROUTES: RouteInfo[] = [
                 permisos: ["mantenimientos_autorizacion_precios"],
             },
             {
+                path: '/mantenimientos/cargamasiva',
+                label: '',
+                labelClass: '',
+                title: 'Carga Masiva',
+                icon: '',
+                class: '',
+                extralink: false,
+                submenu: [],
+                permisos: ["mantenimientos_carga_masiva"],
+            },
+            {
                 path: '/mantenimientos/promocion',
                 label: '',
                 labelClass: '',

@@ -73,6 +73,7 @@ import { PerfilFormularioComponent } from './perfil-formulario/perfil-formulario
 
 import { TreeviewModule } from 'ngx-treeview';
 import { ListaPreciosAutorizacionComponent } from './listaPrecios/lista-precios-autorizacion/lista-precios-autorizacion.component';
+import { CargaMasivaPanelComponent } from './cargaMasiva/carga-masiva-panel/carga-masiva-panel.component';
 
 
 @NgModule({
@@ -99,7 +100,7 @@ import { ListaPreciosAutorizacionComponent } from './listaPrecios/lista-precios-
     PromocionesFormularioComponent, 
     PermisosListadoComponent, 
     PermisosFormularioComponent, 
-    PerfilFormularioComponent, ListaPreciosAutorizacionComponent
+    PerfilFormularioComponent, ListaPreciosAutorizacionComponent, CargaMasivaPanelComponent
   ],
 
   imports: [
