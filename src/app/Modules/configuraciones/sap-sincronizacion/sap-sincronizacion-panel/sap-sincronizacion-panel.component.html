@@ -16,7 +16,7 @@
 
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                         <div class="box-part text-center border rounded border-primary">
-                            <i class="fa text-primary  fa-list fa-3x" aria-hidden="true"></i>
+                            <i class="fa text-primary  fa-list fa-3x my-3" aria-hidden="true"></i>
                             <div class="title">
                                 <h4>Listas de precios</h4>
                             </div>
@@ -38,7 +38,7 @@
 
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                         <div class="box-part text-center border rounded border-info">
-                            <i class="fa fa-shopping-cart fa-3x" aria-hidden="true"></i>
+                            <i class="fa fa-shopping-cart fa-3x my-3" aria-hidden="true"></i>
                             <div class="title">
                                 <h4>Artículos</h4>
                             </div>
@@ -60,7 +60,7 @@
 
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                         <div class="box-part text-center border rounded border-success">
-                            <i class="fa text-success fa-dollar-sign fa-3x" aria-hidden="true"></i>
+                            <i class="fa text-success fa-dollar-sign fa-3x my-3" aria-hidden="true"></i>
                             <div class="title">
                                 <h4>Precios Artículos</h4>
                             </div>
@@ -74,6 +74,27 @@
                             <button *ngIf="loadingSincronizacionPrecioArticulos" disabled class="btn btn-success"
                                 type="button">
                                 <span class="spinner-border spinner-border-sm"></span> Sincronizando
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                        <div class="box-part text-center border rounded border-warning">
+                            <i class="text-warning fas fa-credit-card fa-3x my-3" aria-hidden="true"></i>
+                            <div class="title">
+                                <h4>Notas de Credito - Pronto Pago</h4>
+                            </div>
+                            <div class="text">
+                                <span>Crea las notas de credito relacionadas a pronto pago.</span>
+                            </div>
+                            <button type="button" class="btn btn-warning" (click)="procesarNotaCreditoProntoPago()"
+                                *ngIf="!loadingProcesarNotaCreditoProntoPago">
+                                Procesar
+                            </button>
+                            <button *ngIf="loadingProcesarNotaCreditoProntoPago" disabled class="btn btn-warning"
+                                type="button">
+                                <span class="spinner-border spinner-border-sm"></span> Procesando
                             </button>
                         </div>
                     </div>

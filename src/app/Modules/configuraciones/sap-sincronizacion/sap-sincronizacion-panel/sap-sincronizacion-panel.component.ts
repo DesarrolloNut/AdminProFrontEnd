@@ -15,6 +15,7 @@ export class SapSincronizacionPanelComponent implements OnInit {
   loadingSincronizacionListaPrecios: boolean = false;
   loadingSincronizacionArticulos: boolean;
   loadingSincronizacionPrecioArticulos: boolean;
+  loadingProcesarNotaCreditoProntoPago: boolean;
 
   constructor(
     private toastService: ToastrService,
@@ -86,6 +87,26 @@ export class SapSincronizacionPanelComponent implements OnInit {
         this.loadingSincronizacionPrecioArticulos = false;
       }, error => {
         this.loadingSincronizacionPrecioArticulos = false;
+        this.toastService.error("No se pudo actualizar los precios.", "Error conexion al servidor");
+      });
+  }
+
+  procesarNotaCreditoProntoPago() {
+    this.loadingProcesarNotaCreditoProntoPago = true;
+
+    this.httpService.DoPostAny<any>(DataApi.NotaCredito,
+      "SAPProntoPago", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0])
+        } else {
+          this.toastService.success("Actualizado", "OK")
+        }
+
+        this.loadingProcesarNotaCreditoProntoPago = false;
+      }, error => {
+        this.loadingProcesarNotaCreditoProntoPago = false;
         this.toastService.error("No se pudo actualizar los precios.", "Error conexion al servidor");
       });
   }
