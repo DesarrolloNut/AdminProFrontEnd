@@ -20,6 +20,9 @@ export class CargaMasivaPanelComponent implements OnInit {
   dataTransformed: any[];
   propiedades: string[] = []
   accionId: number = 0;
+  guardandoDataExcel: boolean;
+  metodoEndPoint: string;
+  dataApi: DataApi;
 
   constructor(
     private toastService: ToastrService,
@@ -32,9 +35,9 @@ export class CargaMasivaPanelComponent implements OnInit {
 
 
   onFileChange(event, modal, accionID: number) {
-    this.accionId = accionID;
+    // this.accionId = accionID;
     this.openModal(modal)
-    this.processFile(event)
+    // this.processFile(event)
   }
 
   openModal(content) {
@@ -69,6 +72,74 @@ export class CargaMasivaPanelComponent implements OnInit {
   }
 
 
+
+
+  transformData() {
+
+    this.getPropiedadesExcel()
+
+    if (this.accionId == 1) { //precios articulos
+      if (this.validarCargaArticuloPrecios()) {
+
+        this.dataTransformed = this.dataExcel.map(x => {
+          let arrayValues = Object.values(x);
+          return {
+            "ArticuloCodigoReferencia": arrayValues[0] + '',
+            "ListaPrecioCodigoReferencia": arrayValues[1] + '',
+            "Precio": arrayValues[2],
+            "FechaAplicacion": arrayValues[3]
+          };
+        });
+
+        console.table(this.dataTransformed)
+        this.dataApi = DataApi.Articulo;
+        this.metodoEndPoint = "UploadExcelFilePreciosArticulos"
+      }
+      return;
+    }
+
+    this.toastService.success("Subiendo Data", "OK");
+    // this.subirDatosExcel();
+  }
+
+  subirDatosExcel() {
+
+    if (this.dataExcel.length <= 0) {
+      this.toastService.warning("No hay records para subir.")
+      return
+    }
+
+    this.guardandoDataExcel = true;
+
+    this.httpService.DoPostAny<any>(this.dataApi,
+      this.metodoEndPoint, this.dataTransformed).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+        } else {
+          this.toastService.success("Realizado", "OK");
+          this.modalService.dismissAll()
+        }
+
+        this.guardandoDataExcel = false;
+      }, error => {
+        this.guardandoDataExcel = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+
+  }
+
+  validarCargaArticuloPrecios(): boolean {
+
+    // if (this.dataExcel.some(x => !x.codigoReferencia)) {
+    //   this.toastService.warning("Hay records sin código de referencia")
+    //   return false;
+    // }
+
+    return true;
+  }
+
+
   private getPropiedadesExcel(): void {
     if (this.dataExcel != null && this.dataExcel.length > 0) {
       let objeto = this.dataExcel[0];
@@ -76,17 +147,6 @@ export class CargaMasivaPanelComponent implements OnInit {
     }
   }
 
-  transformData() {
-
-    this.getPropiedadesExcel()
-
-    if (this.accionId == 1) { //precios articulos
-      this.dataTransformed = this.dataExcel;
-      return;
-    }
-
-
-  }
 
 
 }
