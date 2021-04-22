@@ -12,7 +12,118 @@ export const ROUTES: RouteInfo[] = [
         extralink: false,
         submenu: [],
         permisos: [],
-    }, {
+    },
+
+    // ******************************************************
+    {
+        path: '/',
+        title: 'CRM',
+        label: '',
+        icon: 'mdi mdi-account-multiple',
+        class: 'has-arrow',
+        labelClass: '',
+        extralink: false,
+        submenu: [],
+        permisos: [],
+    },
+
+    {
+        path: '/',
+        title: 'Ventas',
+        label: '',
+        icon: 'mdi mdi-tag',
+        class: 'has-arrow',
+        labelClass: '',
+        extralink: false,
+        submenu: [
+            {
+                path: '/mantenimientos/notacredito',
+                label: '',
+                labelClass: '',
+                title: 'Nota Credito',
+                icon: '',
+                class: '',
+                extralink: false,
+                submenu: [],
+                permisos: ["mantenimientos_permiso"],
+            },
+        ],
+        permisos: [],
+    },
+    {
+        path: '/',
+        title: 'Compras',
+        label: '',
+        icon: 'mdi mdi-basket',
+        class: 'has-arrow',
+        labelClass: '',
+        extralink: false,
+        submenu: [],
+        permisos: [],
+    },
+    {
+        path: '/',
+        title: 'Finanzas',
+        label: '',
+        icon: 'mdi mdi-chart-bar',
+        class: 'has-arrow',
+        labelClass: '',
+        extralink: false,
+        submenu: [],
+        permisos: [],
+    },
+    {
+        path: '/',
+        title: 'Recursos Humanos',
+        label: '',
+        icon: 'mdi mdi-account-box',
+        class: 'has-arrow',
+        labelClass: '',
+        extralink: false,
+        submenu: [],
+        permisos: [],
+    },
+    {
+        path: '/',
+        title: 'Inventario',
+        label: '',
+        icon: 'mdi mdi-package-variant-closed',
+        class: 'has-arrow',
+        labelClass: '',
+        extralink: false,
+        submenu: [],
+        permisos: [],
+    },
+    {
+        path: '/',
+        title: 'Produccion',
+        label: '',
+        icon: 'mdi mdi-archive',
+        class: 'has-arrow',
+        labelClass: '',
+        extralink: false,
+        submenu: [],
+        permisos: [],
+    },
+    {
+        path: '/',
+        title: 'Servicios',
+        label: '',
+        icon: 'mdi mdi-view-module',
+        class: 'has-arrow',
+        labelClass: '',
+        extralink: false,
+        submenu: [],
+        permisos: [],
+    },
+
+
+    // ******************************************************
+
+
+
+
+    {
         path: '#',
         title: 'Turno',
         label: '',
@@ -162,6 +273,8 @@ export const ROUTES: RouteInfo[] = [
 
         ]
     },
+
+
     {
         path: '',
         title: 'Mantenimientos',
@@ -285,6 +398,7 @@ export const ROUTES: RouteInfo[] = [
                 submenu: [],
                 permisos: ["mantenimientos_rol"],
             },
+
             {
                 path: '/mantenimientos/permisos',
                 label: '',
@@ -296,6 +410,8 @@ export const ROUTES: RouteInfo[] = [
                 submenu: [],
                 permisos: ["mantenimientos_permiso"],
             },
+
+
 
 
 
