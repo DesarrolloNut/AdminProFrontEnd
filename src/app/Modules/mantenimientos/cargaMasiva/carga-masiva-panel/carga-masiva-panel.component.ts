@@ -23,6 +23,7 @@ export class CargaMasivaPanelComponent implements OnInit {
   guardandoDataExcel: boolean;
   metodoEndPoint: string;
   dataApi: DataApi;
+  filter: string;
 
   constructor(
     private toastService: ToastrService,
@@ -35,9 +36,9 @@ export class CargaMasivaPanelComponent implements OnInit {
 
 
   onFileChange(event, modal, accionID: number) {
-    // this.accionId = accionID;
+    this.accionId = accionID;
     this.openModal(modal)
-    // this.processFile(event)
+    this.processFile(event)
   }
 
   openModal(content) {
@@ -65,9 +66,8 @@ export class CargaMasivaPanelComponent implements OnInit {
       const data = XLSX.utils.sheet_to_json(ws); // to get 2d array pass 2nd parameter as object {header: 1}
 
       this.dataExcel = data
+      this.getPropiedadesExcel()
       console.table(this.dataExcel)
-
-      this.transformData()
     };
   }
 
@@ -76,30 +76,29 @@ export class CargaMasivaPanelComponent implements OnInit {
 
   transformData() {
 
-    this.getPropiedadesExcel()
 
     if (this.accionId == 1) { //precios articulos
       if (this.validarCargaArticuloPrecios()) {
 
-        this.dataTransformed = this.dataExcel.map(x => {
+        this.dataTransformed = this.dataExcel.map((x) => {
           let arrayValues = Object.values(x);
+          var parts = String(arrayValues[3]).split('-')
           return {
             "ArticuloCodigoReferencia": arrayValues[0] + '',
             "ListaPrecioCodigoReferencia": arrayValues[1] + '',
             "Precio": arrayValues[2],
-            "FechaAplicacion": arrayValues[3]
+            "FechaAplicacion": new Date(+parts[2], +parts[1] - 1, +parts[0])
           };
         });
 
         console.table(this.dataTransformed)
         this.dataApi = DataApi.Articulo;
         this.metodoEndPoint = "UploadExcelFilePreciosArticulos"
+        this.subirDatosExcel()
       }
       return;
     }
 
-    this.toastService.success("Subiendo Data", "OK");
-    // this.subirDatosExcel();
   }
 
   subirDatosExcel() {

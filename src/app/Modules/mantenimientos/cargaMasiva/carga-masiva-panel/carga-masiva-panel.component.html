@@ -59,6 +59,21 @@
                     <div class="row" *ngIf="dataExcel && !guardandoDataExcel">
 
                         <div class="col-12">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <label for="search" class="input-group-text bg-white">
+                                        <span class="bg-white" style="border-right:none">
+                                            <i class="ti-search"></i>
+                                        </span>
+                                    </label>
+                                </div>
+                                <input [(ngModel)]="filter" type="text" style="border-left:none !important;"
+                                    class="form-control" placeholder="Buscar">
+                            </div>
+                        </div>
+
+
+                        <div class="col-12">
                             <div class="table-responsive" style="height: 300px;">
                                 <table class="table table-hover mb-0 no-wrap v-middle">
 
@@ -68,7 +83,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr *ngFor="let item of dataExcel">
+                                        <tr *ngFor="let item of dataExcel  | filter:filter">
                                             <td *ngFor="let prop of propiedades"> {{item[prop]}} </td>
                                         </tr>
                                     </tbody>
@@ -101,7 +116,7 @@
                 <div class="modal-footer" *ngIf="dataExcel && !guardandoDataExcel">
                     <button type="button" class="btn btn-outline-secondary"
                         (click)="modal.close('Close click')">Cancelar</button>
-                    <button type="button" class="btn btn-info" (click)="subirDatosExcel()">Guardar</button>
+                    <button type="button" class="btn btn-info" (click)="transformData()">Subir</button>
                 </div>
             </div>
         </div>
