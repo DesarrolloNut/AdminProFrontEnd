@@ -14,8 +14,7 @@
                 <div class="row">
 
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                        <div class="box-part text-center border rounded border-success" (click)="file.click()"
-                            style="cursor: pointer;">
+                        <div class="box-part text-center border rounded border-success" style="cursor: pointer;">
                             <i class="fa text-success  fa-dollar-sign fa-3x" aria-hidden="true"></i>
                             <div class="title mt-2">
                                 <h4>Precios de artículos</h4>
@@ -26,6 +25,15 @@
                             <input accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                                 class="d-none" (change)="onFileChange($event,modalUploadExcel,1)" #file multiple
                                 type="file" />
+
+                            <button class="btn btn-success" (click)="file.click()"> <i
+                                    class="fa fa-upload text-white"></i> Subir
+                                archivo</button>
+
+                            <a href="assets/files/excel/ArticuloPrecioCargaMasivaTemplate.xlsx" class="btn btn-light">
+                                <i class="fa fa-download text-dark"></i> Descargar plantilla
+                            </a>
+
                         </div>
                     </div>
 
@@ -51,12 +59,14 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="row" *ngIf="!dataExcel">
-
+                    <div class="row" *ngIf="!dataExcel || dataExcel.length == 0">
+                        <div class="col text-center">
+                            <h1>EL ARCHIVO ESTÁ VACÍO</h1>
+                        </div>
 
                     </div>
 
-                    <div class="row" *ngIf="dataExcel && !guardandoDataExcel">
+                    <div class="row" *ngIf="dataExcel && !guardandoDataExcel &&  dataExcel.length > 0">
 
                         <div class="col-12">
                             <div class="input-group">
@@ -113,7 +123,7 @@
 
                 </div>
 
-                <div class="modal-footer" *ngIf="dataExcel && !guardandoDataExcel">
+                <div class="modal-footer" *ngIf="dataExcel && !guardandoDataExcel && dataExcel.length > 0">
                     <button type="button" class="btn btn-outline-secondary"
                         (click)="modal.close('Close click')">Cancelar</button>
                     <button type="button" class="btn btn-info" (click)="transformData()">Subir</button>
