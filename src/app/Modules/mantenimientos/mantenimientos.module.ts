@@ -73,6 +73,7 @@ import { PerfilFormularioComponent } from './perfil-formulario/perfil-formulario
 
 import { TreeviewModule } from 'ngx-treeview';
 import { ListaPreciosAutorizacionComponent } from './listaPrecios/lista-precios-autorizacion/lista-precios-autorizacion.component';
+import { CargaMasivaPanelComponent } from './cargaMasiva/carga-masiva-panel/carga-masiva-panel.component';
 import { NotacreditoListadoComponent } from './notacredito/notacredito-listado/notacredito-listado.component';
 import { NotacreditoFormularioComponent } from './notacredito/notacredito-formulario/notacredito-formulario.component';
 
@@ -98,10 +99,14 @@ import { NotacreditoFormularioComponent } from './notacredito/notacredito-formul
     SapconnectionListadoComponent,
     SapconnectionFormularioComponent ,
     PromocionesListadoComponent,
-    PromocionesFormularioComponent,
-    PermisosListadoComponent,
-    PermisosFormularioComponent,
-    PerfilFormularioComponent, ListaPreciosAutorizacionComponent, NotacreditoListadoComponent, NotacreditoFormularioComponent
+    PromocionesFormularioComponent, 
+    PermisosListadoComponent, 
+    PermisosFormularioComponent, 
+    PerfilFormularioComponent, 
+    ListaPreciosAutorizacionComponent, 
+    CargaMasivaPanelComponent,
+    NotacreditoListadoComponent,
+    NotacreditoFormularioComponent
   ],
 
   imports: [
