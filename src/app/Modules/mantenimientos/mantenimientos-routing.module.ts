@@ -66,6 +66,8 @@ import { PromocionesFormularioComponent } from './promociones/promociones-formul
 import { PerfilFormularioComponent } from './perfil-formulario/perfil-formulario.component';
 import { ListaPreciosAutorizacionComponent } from './listaPrecios/lista-precios-autorizacion/lista-precios-autorizacion.component';
 import { CargaMasivaPanelComponent } from './cargaMasiva/carga-masiva-panel/carga-masiva-panel.component';
+import { NotacreditoListadoComponent } from './notacredito/notacredito-listado/notacredito-listado.component';
+import { NotacreditoFormularioComponent } from './notacredito/notacredito-formulario/notacredito-formulario.component';
 
 
 const routes: Routes = [
@@ -286,6 +288,32 @@ const routes: Routes = [
           ]
         }
       },
+
+
+      // Nota Credito
+      {
+        path: 'notacredito', component: NotacreditoListadoComponent, data: {
+          title: 'Nota Credito',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Nota Credito' },
+          ]
+        }
+      },
+
+
+      {
+        path: 'notacredito/:id', component: NotacreditoFormularioComponent, data: {
+          title: 'Nota Credito Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Nota Credito' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+
 
 
 
