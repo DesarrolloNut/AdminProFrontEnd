@@ -16,6 +16,7 @@ export class SapSincronizacionPanelComponent implements OnInit {
   loadingSincronizacionArticulos: boolean;
   loadingSincronizacionPrecioArticulos: boolean;
   loadingProcesarNotaCreditoProntoPago: boolean;
+  loadingProcesarReconciliaProntoPago: boolean;
 
   constructor(
     private toastService: ToastrService,
@@ -70,7 +71,7 @@ export class SapSincronizacionPanelComponent implements OnInit {
       });
   }
 
-  
+
   sincronizarPrecioArticulos() {
     this.loadingSincronizacionPrecioArticulos = true;
 
@@ -107,7 +108,27 @@ export class SapSincronizacionPanelComponent implements OnInit {
         this.loadingProcesarNotaCreditoProntoPago = false;
       }, error => {
         this.loadingProcesarNotaCreditoProntoPago = false;
-        this.toastService.error("No se pudo actualizar los precios.", "Error conexion al servidor");
+        this.toastService.error("No se pudo Procesar Nota Credito Pronto Pago.", "Error conexion al servidor");
+      });
+  }
+
+  procesarReconciliacionProntoPago() {
+    this.loadingProcesarReconciliaProntoPago = true;
+
+    this.httpService.DoPostAny<any>(DataApi.ReconciliacionInterna,
+      "ReconciliacionPorClientes", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0])
+        } else {
+          this.toastService.success("Actualizado", "OK")
+        }
+
+        this.loadingProcesarReconciliaProntoPago = false;
+      }, error => {
+        this.loadingProcesarReconciliaProntoPago = false;
+        this.toastService.error("No se pudo Procesar Reconcilia ProntoPago.", "Error conexion al servidor");
       });
   }
 

@@ -43,7 +43,7 @@
                                 <h4>Artículos</h4>
                             </div>
                             <div class="text">
-                                <span>Actualiza el Admin Web desde SAP.</span> 
+                                <span>Actualiza el Admin Web desde SAP.</span>
                             </div>
                             <button type="button" class="btn btn-info" (click)="sincronizarArticulos()"
                                 *ngIf="!loadingSincronizacionArticulos">
@@ -93,6 +93,27 @@
                                 Procesar
                             </button>
                             <button *ngIf="loadingProcesarNotaCreditoProntoPago" disabled class="btn btn-warning"
+                                type="button">
+                                <span class="spinner-border spinner-border-sm"></span> Procesando
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                        <div class="box-part text-center border rounded border-info">
+                            <i class="text-info fas fa-credit-card fa-3x my-3" aria-hidden="true"></i>
+                            <div class="title">
+                                <h4>Reconciliacion - Pronto Pago</h4>
+                            </div>
+                            <div class="text">
+                                <span>Reconcilia las notas de credito relacionadas a pronto pago.</span>
+                            </div>
+                            <button type="button" class="btn btn-info" (click)="procesarReconciliacionProntoPago()"
+                                *ngIf="!loadingProcesarReconciliaProntoPago">
+                                Procesar
+                            </button>
+                            <button *ngIf="loadingProcesarReconciliaProntoPago" disabled class="btn btn-info"
                                 type="button">
                                 <span class="spinner-border spinner-border-sm"></span> Procesando
                             </button>

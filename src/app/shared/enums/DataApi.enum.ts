@@ -74,7 +74,7 @@ export const dataApiRootMap: { [api: string]: string } = {
     "39": "api/Rol",
     "40": "api/Permisos",
     "41": "api/SAPNotaCredito",
-    "42": "api/SAPReconciliacion",
+    "42": "api/SAPReconciliacionInterna",
 
 
 
