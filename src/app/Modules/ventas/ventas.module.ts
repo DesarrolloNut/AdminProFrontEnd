@@ -9,10 +9,12 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AngularDualListBoxModule } from 'angular-dual-listbox';
 import { NotacreditoListadoComponent } from './notacredito/notacredito-listado/notacredito-listado.component';
 import { NotacreditoFormularioComponent } from './notacredito/notacredito-formulario/notacredito-formulario.component';
+import { CotizacionesListadoComponent } from './cotizaciones/cotizaciones-listado/cotizaciones-listado.component';
+import { CotizacionesFormularioComponent } from './cotizaciones/cotizaciones-formulario/cotizaciones-formulario.component';
 
 
 @NgModule({
-  declarations: [VentasComponent, OfertasConsultasFacturasComponent, NotacreditoListadoComponent, NotacreditoFormularioComponent],
+  declarations: [VentasComponent, OfertasConsultasFacturasComponent, NotacreditoListadoComponent, NotacreditoFormularioComponent, CotizacionesListadoComponent, CotizacionesFormularioComponent],
   imports: [
     CommonModule,
     VentasRoutingModule,

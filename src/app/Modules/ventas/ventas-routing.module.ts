@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { CotizacionesFormularioComponent } from './cotizaciones/cotizaciones-formulario/cotizaciones-formulario.component';
+import { CotizacionesListadoComponent } from './cotizaciones/cotizaciones-listado/cotizaciones-listado.component';
 import { NotacreditoFormularioComponent } from './notacredito/notacredito-formulario/notacredito-formulario.component';
 import { NotacreditoListadoComponent } from './notacredito/notacredito-listado/notacredito-listado.component';
 import { OfertasConsultasFacturasComponent } from './ofertas/ofertas-consultas-facturas/ofertas-consultas-facturas.component';
@@ -25,28 +27,50 @@ const routes: Routes = [
 
       { path: 'reportes-de-ventas', loadChildren: () => import('./ventas-reportes/ventas-reportes.module').then(m => m.VentasReportesModule) },
 
-            // Nota Credito
-            {
-              path: 'notacredito', component: NotacreditoListadoComponent, data: {
-                title: 'Nota Credito',
-                urls: [
-                  { title: 'Mantenimientos' },
-                  { title: 'Nota Credito' },
-                ]
-              }
-            },
+      // Nota Credito
+      {
+        path: 'notacredito', component: NotacreditoListadoComponent, data: {
+          title: 'Notas de Crédito',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Notas de Crédito' },
+          ]
+        }
+      },
 
 
-            {
-              path: 'notacredito/:id', component: NotacreditoFormularioComponent, data: {
-                title: 'Nota Credito Formulario',
-                urls: [
-                  { title: 'Mantenimientos' },
-                  { title: 'Nota Credito' },
-                  { title: 'Formulario' }
-                ]
-              }
-            },
+      {
+        path: 'notacredito/:id', component: NotacreditoFormularioComponent, data: {
+          title: 'Nota Crédito Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Notas de Crédito' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+      // Cotizacion
+      {
+        path: 'cotizacion', component: CotizacionesListadoComponent, data: {
+          title: 'Cotizaciones',
+          urls: [
+            { title: 'Ventas' },
+            { title: 'Cotizaciones' },
+          ]
+        }
+      },
+      {
+        path: 'cotizacion/:id', component: CotizacionesFormularioComponent, data: {
+          title: 'Cotizaciones',
+          urls: [
+            { title: 'Ventas' },
+            { title: 'Cotizaciones' },
+            { title: 'Formulario' }
+
+          ]
+        }
+      },
 
     ]
 
