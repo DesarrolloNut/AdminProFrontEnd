@@ -13,6 +13,8 @@ export enum DataApi {
     SAPConnection = 38,
     Rol = 39,
     Permisos = 40,
+    NotaCredito = 41,
+    ReconciliacionInterna = 42,
 
 
 
@@ -71,6 +73,8 @@ export const dataApiRootMap: { [api: string]: string } = {
     "38": "api/SAPConnection",
     "39": "api/Rol",
     "40": "api/Permisos",
+    "41": "api/SAPNotaCredito",
+    "42": "api/SAPReconciliacionInterna",
 
 
 
