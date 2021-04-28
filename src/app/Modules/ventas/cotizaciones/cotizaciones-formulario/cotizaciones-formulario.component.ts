@@ -6,6 +6,7 @@ import { AuthenticationService } from 'src/app/core/authentication/service/authe
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Almacen } from 'src/app/Modules/mantenimientos/almacenes/models/Almacen';
+import { Cliente } from 'src/app/Modules/mantenimientos/clientes/models/Cliente';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 
@@ -27,6 +28,7 @@ export class CotizacionesFormularioComponent implements OnInit {
   actualizando = false;
   loadingClientes: boolean;
   clientes: ComboBox[];
+  cliente: Cliente;
 
   constructor(
     private toastService: ToastrService,
@@ -46,7 +48,7 @@ export class CotizacionesFormularioComponent implements OnInit {
     // }
 
     this.CreateForm();
-    // this.getClientes()
+    this.getClientes()
   }
 
 
@@ -148,6 +150,37 @@ export class CotizacionesFormularioComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
       });
   }
+
+  getClienteByID(id: number) {
+    this.Cargando = true;
+    this.httpService.DoPostAny<any>(DataApi.Cliente,
+      "GetClienteByID", id).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          //validar que existe
+          if (response != null && response.records != null && response.records.length > 0) {
+
+            this.cliente = response.records[0].cliente;
+            console.table(this.cliente)
+          } else {
+            this.toastService.warning("Cliente no encontrado");
+          }
+        }
+
+      }, error => {
+        this.Cargando = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
+  onSelectCliente(cliente: ComboBox) {
+    this.cliente = null
+    if (cliente) {
+      this.getClienteByID(cliente.codigo)
+    }
+  }
+
 
 
 
