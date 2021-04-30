@@ -5,7 +5,8 @@ import { ToastrService } from 'ngx-toastr';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
-import { NotaCredito } from '../models/NotaCredito';
+import { ArticuloFactura } from '../models/ArticuloFactura';
+import { NotaCreditoArticulos } from '../models/NotaCredito';
 
 @Component({
   selector: 'app-notacredito-formulario',
@@ -23,11 +24,14 @@ export class NotacreditoFormularioComponent implements OnInit {
   actualizando = false;
   TipoNotaCreditoId: string = 'A';
   loadingNotaCreditoCategorias: boolean;
-  tipoNotaCreditoCategorias: any[] = [{codigo: 'S', nombre: 'Servicio'}, {codigo: 'A', nombre: 'Articulo'}];
-  sinMovimientoInventarioCategorias: any[] = [{codigo: 0, nombre: 'Afectar Inventario'}, {codigo: 1, nombre: 'No Afectar Inventario'}];
+  tipoNotaCreditoCategorias: any[] = [{ codigo: 'S', nombre: 'Servicio' }, { codigo: 'A', nombre: 'Articulo' }];
+  sinMovimientoInventarioCategorias: any[] = [{ codigo: 0, nombre: 'Afectar Inventario' }, { codigo: 1, nombre: 'No Afectar Inventario' }];
   CuentasMayor: any[];
   IsReadonly: boolean = true;
   CodigoClienteId: string = "";
+  NombreCliente: string = "";
+  DireccionCliente: string = "";
+  articuloList: FormArray;
 
   constructor(
     private toastService: ToastrService,
@@ -56,61 +60,45 @@ export class NotacreditoFormularioComponent implements OnInit {
       cantidad: [0, [Validators.required]],
       descripcion: ["Pronto Pago 2%", [Validators.required]],
       codigoReferenciaDeudor: [null, [Validators.required]],
-      comentario: [null, ],
+      comentario: [null,],
     });
 
     this.FormularioArticulo = this.formBuilder.group({
-      codigoFactura: [null, [Validators.required]],
+      codigoReferencia: [null, [Validators.required]],
       comentario: [null,],
       articulos: new FormArray([])
     });
 
+    // set Articulolist to the form control containing Articulos
+    this.articuloList = this.FormularioArticulo.get('articulos') as FormArray;
 
   }
 
   get f() { return this.FormularioServicio.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
   get a() { return this.FormularioArticulo.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
+  get c() { return this.a.articulos as FormArray; }
 
-  // getItem(id: number) {
-  //   this.Cargando = true;
-  //   this.httpService.DoPostAny<NotaCredito>(DataApi.NotaCredito,
-  //     "GetNotaCreditoByID", id).subscribe(response => {
-  //       if (!response.ok) {
-  //         this.toastService.error(response.errores[0]);
-  //       } else {
-  //         //validar que existe
-  //         if (response != null && response.records != null && response.records.length > 0) {
-  //           let record = response.records[0]
-  //           this.FormularioServicio.setValue(record);
-  //         } else {
-  //           this.toastService.warning("NotaCredito no encontrado");
-  //           this.router.navigateByUrl('/mantenimientos/sintoma');
-  //         }
-  //       }
-
-  //     }, error => {
-  //       this.Cargando = false;
-  //       this.toastService.error("Error conexion al servidor");
-  //     });
-  // }
-
-
-  onChangeBuscarFactura(){
-        this.btnBuscarCargando = true;
-    this.httpService.DoPostAny<NotaCredito>(DataApi.NotaCredito,
-      "ListaArticuloPorFactura", this.CodigoClienteId).subscribe(response => {
+  onChangeBuscarFactura() {
+    this.btnBuscarCargando = true;
+    let CodigoClienteId = Number(this.CodigoClienteId);
+    this.onRemoveArticulos();
+    this.httpService.DoPostAny<ArticuloFactura>(DataApi.NotaCredito,
+      "ListaArticuloPorFactura", CodigoClienteId).subscribe(response => {
         if (!response.ok) {
           this.btnBuscarCargando = false;
           this.toastService.error(response.errores[0]);
         } else {
           //validar que existe
           if (response != null && response.records != null && response.records.length > 0) {
-            let record = response.records[0]
-            this.FormularioServicio.setValue(record);
+            let record = response.records[0];
+            this.NombreCliente = record.cardName + " - " + record.cardCode;
+            this.DireccionCliente = "Direccion: " + record.address;
+            this.onAddArticulos(response.records);
+            //this.FormularioServicio.setValue(record);
             this.btnBuscarCargando = false;
           } else {
             this.toastService.warning("NotaCredito no encontrado");
-            this.router.navigateByUrl('/mantenimientos/notacredito');
+            this.router.navigateByUrl('/ventas/notacredito');
           }
         }
 
@@ -121,18 +109,21 @@ export class NotacreditoFormularioComponent implements OnInit {
   }
 
 
-  onSubmit() {
+  onAddArticulos(contacts: Array<ArticuloFactura> = new Array<ArticuloFactura>()) {
 
-    this.submitted = true;
-    if (this.FormularioServicio.invalid) {
-      return;
-    }else{
-      console.log(this.TipoNotaCreditoId);
-      if(this.TipoNotaCreditoId == 'S'){
-        this.procesarServicio();
+    if (contacts.length > 0 && this.c.length == 0) {
+      for (const item of contacts) {
 
-      }else if(this.TipoNotaCreditoId == 'A'){
-        this.procesarArticulos();
+        this.c.push(this.formBuilder.group({
+          codigoCliente: [item.cardCode,],
+          codigoArticulo: [item.itemCode,],
+          nombreArticulo: [item.dscription,],
+          cantidad: [item.quantity,],
+          sinMovimientoInventario: [1,],
+          selecionado: [false,],
+
+        }));
+
       }
 
     }
@@ -140,9 +131,56 @@ export class NotacreditoFormularioComponent implements OnInit {
   }
 
 
+  onRemoveArticulos() {
+      let art = this.FormularioArticulo.get('articulos') as FormArray;
+      art.clear()
+  }
+
+  checkValue(values: any, index) {
+
+    if (!values.currentTarget.checked) {
+      this.getArticulosFormGroup(index).controls.cantidad.clearValidators();
+      this.getArticulosFormGroup(index).controls.sinMovimientoInventario.clearValidators();
+    } else {
+      this.getArticulosFormGroup(index).controls.cantidad.setValidators([Validators.required]);
+      this.getArticulosFormGroup(index).controls.sinMovimientoInventario.setValidators([Validators.required]);
+      this.getArticulosFormGroup(index).controls.cantidad.updateValueAndValidity();
+      this.getArticulosFormGroup(index).controls.sinMovimientoInventario.updateValueAndValidity();
+    }
+    //console.log(values.currentTarget.checked);
+  }
+
+  getArticulosFormGroup(index): FormGroup {
+    this.articuloList = this.FormularioArticulo.get('articulos') as FormArray;
+    const formGroup = this.articuloList.controls[index] as FormGroup;
+    return formGroup;
+  }
+
+
+  onSubmit() {
+   // this.submitted = true;
+    if (this.TipoNotaCreditoId == 'S') {
+      if (this.FormularioServicio.invalid) {
+        return;
+      }else{
+        this.procesarServicio();
+      }
+
+    } else if (this.TipoNotaCreditoId == 'A') {
+      if (this.FormularioArticulo.invalid) {
+        return;
+      }else{
+        console.log(this.FormularioArticulo.value)
+        this.procesarArticulos();
+      }
+    }
+
+
+
+  }
+
+
   procesarServicio() {
-    console.log('dentro');
-    console.table(this.FormularioServicio.value);
     this.btnGuardarCargando = true;
     this.httpService.DoPostAny<any>(DataApi.NotaCredito,
       "CrearNotaCreditoManualServicio", this.FormularioServicio.value).subscribe(response => {
@@ -151,7 +189,7 @@ export class NotacreditoFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0], "Error");
         } else {
           this.toastService.success("Realizado", "OK");
-          this.router.navigateByUrl('/mantenimientos/notacredito');
+          this.router.navigateByUrl('/ventas/notacredito');
         }
 
         this.btnGuardarCargando = false;
@@ -163,17 +201,16 @@ export class NotacreditoFormularioComponent implements OnInit {
 
   procesarArticulos() {
 
-    //let metodo: string = this.actualizando ? "Update" : "Registrar";
     this.btnGuardarCargando = true;
 
-    this.httpService.DoPostAny<NotaCredito>(DataApi.NotaCredito,
-      "CrearNotaCreditoManualArticulo", this.FormularioServicio.value).subscribe(response => {
+    this.httpService.DoPostAny<NotaCreditoArticulos>(DataApi.NotaCredito,
+      "CrearNotaCreditoManualArticulo", this.FormularioArticulo.value).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
         } else {
           this.toastService.success("Realizado", "OK");
-          this.router.navigateByUrl('/mantenimientos/notacredito');
+          this.router.navigateByUrl('/ventas/notacredito');
         }
 
         this.btnGuardarCargando = false;
@@ -184,27 +221,7 @@ export class NotacreditoFormularioComponent implements OnInit {
   }
 
 
-  getCuentaMayor() {
-    this.loadingNotaCreditoCategorias = true;
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetListaCuentas", null).subscribe(response => {
 
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          this.CuentasMayor = response.records;
-        }
-        this.loadingNotaCreditoCategorias = false;
-      }, error => {
-        this.loadingNotaCreditoCategorias = false;
-        this.toastService.error("No se pudo obtener las cuentas mayor", "Error conexion al servidor");
-
-        setTimeout(() => {
-          this.getCuentaMayor();
-        }, 1000);
-
-      });
-  }
 
 
 }
