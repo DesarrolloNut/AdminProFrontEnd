@@ -7,6 +7,7 @@ import { Parametro } from 'src/app/core/http/model/Parametro';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Almacen } from 'src/app/Modules/mantenimientos/almacenes/models/Almacen';
 import { Cliente } from 'src/app/Modules/mantenimientos/clientes/models/Cliente';
+import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 
@@ -29,6 +30,8 @@ export class CotizacionesFormularioComponent implements OnInit {
   loadingClientes: boolean;
   clientes: ComboBox[];
   cliente: Cliente;
+  loadingArticulos: boolean;
+  articulos: Articulo[];
 
   constructor(
     private toastService: ToastrService,
@@ -48,6 +51,7 @@ export class CotizacionesFormularioComponent implements OnInit {
     // }
 
     this.CreateForm();
+    this.getArticulos()
     this.getClientes()
   }
 
@@ -181,6 +185,29 @@ export class CotizacionesFormularioComponent implements OnInit {
     }
   }
 
+
+  getArticulos() {
+    this.loadingArticulos = true;
+    this.httpService.DoPost<Articulo>(DataApi.Articulo,
+      "GetArticulos", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.articulos = response.records
+          console.table(this.articulos)
+        }
+        this.loadingArticulos = false;
+      }, error => {
+        this.loadingArticulos = false;
+        this.toastService.error("No se pudo obtener todos los articulos", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getArticulos()
+        }, 1000);
+
+      });
+  }
 
 
 

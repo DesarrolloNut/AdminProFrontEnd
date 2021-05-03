@@ -28,10 +28,10 @@
 
 
                     <!--cliente-->
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-12">
                         <label for="inputEmail4">Cliente</label>
                         <ng-select bindLabel="nombre" bindValue="codigo" [items]="clientes" [loading]="loadingClientes"
-                            (search)="getClientes($event)" (change)="onSelectCliente($event)"
+                            [clearable]="false" (search)="getClientes($event)" (change)="onSelectCliente($event)"
                             [ngClass]="{'form-control border-danger p-0' : submitted && f.clienteID.errors }"
                             notFoundText="No resultados" formControlName="clienteID">
                         </ng-select>
@@ -41,13 +41,50 @@
                         </div>
                     </div>
 
-                    <div class="col-12" *ngIf="cliente">
-                        <h3 class="font-weight-bold">{{cliente.nombres +' '+ cliente.apellidos}}</h3>
-                        <p><i class="fa fa-id-card"></i> {{cliente.documento}} </p>
-                        <hr>
+                    <div class="col-12">
+                        <div class="row border border-light p-2" *ngIf="cliente">
+
+                            <div class="form-group col-md-6">
+                                <label for="nombre"><i class="fa fa-hashtag"></i> Código</label>
+                                <input [(ngModel)]="cliente.codigoReferencia" class="form-control" [readonly]="'true'"
+                                    type="text" [ngModelOptions]="{standalone: true}" name="nombre" id="nombre">
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label for="nombre"> <i class="fa fa-user"></i> Nombres</label>
+                                <input [(ngModel)]="cliente.nombres +' '+ cliente.apellidos" class="form-control"
+                                    [readonly]="'true'" type="text" [ngModelOptions]="{standalone: true}" name="nombre"
+                                    id="nombre">
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label for="nombre"> <i class="fa fa-id-card"></i> Documento</label>
+                                <input [(ngModel)]="cliente.documento" class="form-control" [readonly]="'true'"
+                                    type="text" [ngModelOptions]="{standalone: true}" name="nombre" id="nombre">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="nombre"> <i class="fa fa-map-marker"></i> Dirección</label>
+                                <input [(ngModel)]="cliente.documento" class="form-control" [readonly]="'true'"
+                                    type="text" [ngModelOptions]="{standalone: true}" name="nombre" id="nombre">
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="form-group col-md-6">
+                    <!-- <div class="col-md-12" *ngIf="cliente">
+                        <div class="card border border-info">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <span>{{cliente.nombres}}</span>
+                                    <span>{{ cliente.apellidos}}</span>
+                                </h5>
+                                <p><i class="fa fa-hashtag"></i> {{cliente.codigoReferencia}} </p>
+                                <p><i class="fa fa-id-card"></i> {{cliente.documento}} </p>
+                                <p><i class="fa fa-map-marker"></i> {{cliente.calle}} </p>
+                            </div>
+                        </div>
+                    </div> -->
+
+                    <!-- <div class="form-group col-md-6">
                         <label for="codigoReferencia"> Código de Referencia</label>
                         <input formControlName="codigoReferencia" type="text" name="codigoReferencia"
                             id="codigoReferencia"
@@ -55,7 +92,7 @@
                         <div class="invalid-feedback" *ngIf="submitted && f.codigoReferencia.errors">
                             <div *ngIf="f.codigoReferencia.errors.required">El campo es obligatorio</div>
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- <div class="col-12" [hidden]="loadingArticulosSeleccionados"> -->
                     <div class="col-12">
@@ -79,7 +116,10 @@
                                     <!-- <tr *ngFor="let item of confirmed | filter: searchText; let i  = index"> -->
                                     <tr>
                                         <td>
-                                            <ng-select style="width: 500px;" notFoundText="No resultados"> </ng-select>
+                                            <ng-select style="width: 500px;" [items]="articulos" bindLabel="nombre"
+                                                bindValue="codigo" [loading]="loadingArticulos"
+                                                notFoundText="No resultados">
+                                            </ng-select>
                                         </td>
                                         <td>
                                             <input style="width: 200px;" type="text" class="form-control" prefix="$ "
