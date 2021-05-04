@@ -70,32 +70,9 @@
                         </div>
                     </div>
 
-                    <!-- <div class="col-md-12" *ngIf="cliente">
-                        <div class="card border border-info">
-                            <div class="card-body">
-                                <h5 class="card-title">
-                                    <span>{{cliente.nombres}}</span>
-                                    <span>{{ cliente.apellidos}}</span>
-                                </h5>
-                                <p><i class="fa fa-hashtag"></i> {{cliente.codigoReferencia}} </p>
-                                <p><i class="fa fa-id-card"></i> {{cliente.documento}} </p>
-                                <p><i class="fa fa-map-marker"></i> {{cliente.calle}} </p>
-                            </div>
-                        </div>
-                    </div> -->
-
-                    <!-- <div class="form-group col-md-6">
-                        <label for="codigoReferencia"> Código de Referencia</label>
-                        <input formControlName="codigoReferencia" type="text" name="codigoReferencia"
-                            id="codigoReferencia"
-                            [ngClass]="{'is-invalid' : submitted && f.codigoReferencia.errors,  'form-control':true  }">
-                        <div class="invalid-feedback" *ngIf="submitted && f.codigoReferencia.errors">
-                            <div *ngIf="f.codigoReferencia.errors.required">El campo es obligatorio</div>
-                        </div>
-                    </div> -->
 
                     <!-- <div class="col-12" [hidden]="loadingArticulosSeleccionados"> -->
-                    <div class="col-12">
+                    <div class="col-12" *ngIf="cliente">
 
                         <div class="table-responsive" style="height: 400px;">
                             <table class="table table-hover mb-0 no-wrap v-middle">
@@ -114,52 +91,34 @@
                                 <tbody>
 
                                     <!-- <tr *ngFor="let item of confirmed | filter: searchText; let i  = index"> -->
-                                    <tr>
+                                    <tr *ngFor="let item of articulosCotizacion; let i=index">
                                         <td>
                                             <ng-select style="width: 500px;" [items]="articulos" bindLabel="nombre"
-                                                bindValue="codigo" [loading]="loadingArticulos"
-                                                notFoundText="No resultados">
+                                                [clearable]="false" bindValue="id" [loading]="loadingArticulos"
+                                                [(ngModel)]="item.id" [ngModelOptions]="{standalone: true}"
+                                                (change)="onSelectArticulo($event,i)" notFoundText="No resultados">
                                             </ng-select>
                                         </td>
                                         <td>
                                             <input style="width: 200px;" type="text" class="form-control" prefix="$ "
-                                                mask="separator" thousandSeparator=",">
+                                                [(ngModel)]="item.precio" [ngModelOptions]="{standalone: true}"
+                                                [readonly]="'true'" mask="separator" thousandSeparator=",">
                                         </td>
                                         <td>
                                             <input style="width: 100px;" type="text" class="form-control"
-                                                mask="separator" thousandSeparator=",">
+                                                (keyup)="calcularTotal()" mask="separator" thousandSeparator=","
+                                                [(ngModel)]="item.cantidad" [ngModelOptions]="{standalone: true}">
                                         </td>
                                         <td>
-                                            <span>$155.00</span>
+                                            <span>${{ item.precio * item.cantidad | number:'1.2-5'}}</span>
                                         </td>
                                         <td>
-                                            <button type="button" class="btn btn-outline-danger">
+                                            <button (click)="onDeleteitem(i)" type="button"
+                                                class="btn btn-outline-danger">
                                                 <i class="fa fa-times"></i>
                                             </button>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td>
-                                            <ng-select style="width: 500px;" notFoundText="No resultados"> </ng-select>
-                                        </td>
-                                        <td>
-                                            <input style="width: 200px;" type="text" class="form-control" prefix="$ "
-                                                mask="separator" thousandSeparator=",">
-                                        </td>
-                                        <td>
-                                            <input style="width: 100px;" type="text" class="form-control"
-                                                mask="separator" thousandSeparator=",">
-                                        </td>
-                                        <td>
-                                            <span>$155.00</span>
-                                        </td>
-                                        <td>
-                                            <button type="button" class="btn btn-outline-danger">
-                                                <i class="fa fa-times"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-
                                 </tbody>
                             </table>
                         </div>
@@ -170,6 +129,12 @@
                     <!-- <div class="col-12">
                         <app-loading-listado [hidden]="!loadingArticulosSeleccionados"></app-loading-listado>
                     </div> -->
+
+
+                    <div class="form-group text-right col-md-12" *ngIf="total > 0">
+                        <h1>$ {{total | number:'1.2-5' }}</h1>
+                        <hr />
+                    </div>
 
 
                     <div class="form-group text-right col-md-12">

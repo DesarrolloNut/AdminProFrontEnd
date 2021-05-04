@@ -7,6 +7,7 @@ import { Parametro } from 'src/app/core/http/model/Parametro';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Almacen } from 'src/app/Modules/mantenimientos/almacenes/models/Almacen';
 import { Cliente } from 'src/app/Modules/mantenimientos/clientes/models/Cliente';
+import { ListaPrecio } from 'src/app/Modules/mantenimientos/listaPrecios/models/ListaPrecio';
 import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
@@ -18,10 +19,6 @@ import { ComboBox } from 'src/app/shared/model/ComboBox';
 })
 export class CotizacionesFormularioComponent implements OnInit {
 
-  companias: ComboBox[] = [];
-
-  loadingCompanias = false;
-
   Cargando: boolean = false;
   Formulario: FormGroup;
   submitted = false;
@@ -31,7 +28,10 @@ export class CotizacionesFormularioComponent implements OnInit {
   clientes: ComboBox[];
   cliente: Cliente;
   loadingArticulos: boolean;
-  articulos: Articulo[];
+  articulos: any[];
+  listaPrecio: ListaPrecio;
+  articulosCotizacion: any[];
+  total: any;
 
   constructor(
     private toastService: ToastrService,
@@ -43,15 +43,7 @@ export class CotizacionesFormularioComponent implements OnInit {
 
   ngOnInit(): void {
 
-    // let id = Number(this.route.snapshot.paramMap.get('id'));
-
-    // if (id > 0) {
-    //   this.getItem(id);
-    //   this.actualizando = true;
-    // }
-
     this.CreateForm();
-    this.getArticulos()
     this.getClientes()
   }
 
@@ -70,29 +62,6 @@ export class CotizacionesFormularioComponent implements OnInit {
   }
 
   get f() { return this.Formulario.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
-
-  getItem(id: number) {
-    this.Cargando = true;
-    this.httpService.DoPostAny<Almacen>(DataApi.Almacen,
-      "GetAlmacenByID", id).subscribe(response => {
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          //validar que existe
-          if (response != null && response.records != null && response.records.length > 0) {
-            let record = response.records[0]
-            this.Formulario.setValue(record);
-          } else {
-            this.toastService.warning("Almacen no encontrado");
-            this.router.navigateByUrl('/mantenimientos/almacen');
-          }
-        }
-
-      }, error => {
-        this.Cargando = false;
-        this.toastService.error("Error conexion al servidor");
-      });
-  }
 
 
   onSubmit() {
@@ -166,6 +135,7 @@ export class CotizacionesFormularioComponent implements OnInit {
           if (response != null && response.records != null && response.records.length > 0) {
 
             this.cliente = response.records[0].cliente;
+            this.getArticulosPrecioActual()
             console.table(this.cliente)
           } else {
             this.toastService.warning("Cliente no encontrado");
@@ -183,32 +153,59 @@ export class CotizacionesFormularioComponent implements OnInit {
     if (cliente) {
       this.getClienteByID(cliente.codigo)
     }
+
+    //
+
+    this.articulosCotizacion = [{}]
+
   }
 
 
-  getArticulos() {
-    this.loadingArticulos = true;
-    this.httpService.DoPost<Articulo>(DataApi.Articulo,
-      "GetArticulos", null).subscribe(response => {
+  onSelectArticulo(item: any, index: number) {
+    this.articulosCotizacion[index].precio = item.precio;
 
+    if (!this.articulosCotizacion.some(x => x.id <= 0)) {
+      this.articulosCotizacion.push({ "id": 0 })
+    }
+    this.calcularTotal()
+
+  }
+
+
+  getArticulosPrecioActual() {
+    this.httpService.DoPostAny<any>(DataApi.Articulo,
+      "GetArticulosPrecioActual", this.cliente.listaPrecioId).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          this.articulos = response.records
-          console.table(this.articulos)
+          //validar que existe
+          if (response != null && response.records != null && response.records.length > 0) {
+            this.articulos = response.records
+          } else {
+            this.toastService.warning("La lista del cliente no tiene artículos");
+          }
         }
-        this.loadingArticulos = false;
+
       }, error => {
-        this.loadingArticulos = false;
-        this.toastService.error("No se pudo obtener todos los articulos", "Error conexion al servidor");
-
-        setTimeout(() => {
-          this.getArticulos()
-        }, 1000);
-
+        this.Cargando = false;
+        this.toastService.error("Error conexion al servidor");
       });
   }
 
+  onDeleteitem(index: number) {
+    this.articulosCotizacion.splice(index, 1);
+    if (!this.articulosCotizacion.some(x => x.id <= 0)) {
+      this.articulosCotizacion.push({ "id": 0 })
+    }
+    this.calcularTotal()
+  }
+
+  calcularTotal() {
+    this.total = 0
+    this.articulosCotizacion.forEach(x => {
+      this.total += x.cantidad ? (x.precio * x.cantidad) : 0
+    })
+  }
 
 
 }
