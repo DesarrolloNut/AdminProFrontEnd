@@ -49,7 +49,7 @@ export class Cliente {
     limiteCredito: number
     condicionPagoId: number
     rutaId: number
-    listaPrecioId: number
+    listaPrecioId: number;
     sexo: string
     longitud: string
     latitud: string

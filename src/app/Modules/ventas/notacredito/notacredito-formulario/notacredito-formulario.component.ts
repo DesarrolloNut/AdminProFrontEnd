@@ -28,9 +28,8 @@ export class NotacreditoFormularioComponent implements OnInit {
   sinMovimientoInventarioCategorias: any[] = [{ codigo: 0, nombre: 'Afectar Inventario' }, { codigo: 1, nombre: 'No Afectar Inventario' }];
   CuentasMayor: any[];
   IsReadonly: boolean = true;
+  cliente: any = { Codigo:'', Nombre:'', Direccion:'', Documento:'', Phone:''}
   CodigoClienteId: string = "";
-  NombreCliente: string = "";
-  DireccionCliente: string = "";
   articuloList: FormArray;
 
   constructor(
@@ -91,8 +90,11 @@ export class NotacreditoFormularioComponent implements OnInit {
           //validar que existe
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0];
-            this.NombreCliente = record.cardName + " - " + record.cardCode;
-            this.DireccionCliente = "Direccion: " + record.address;
+            this.cliente.Nombre = record.cardName;
+            this.cliente.Codigo = record.cardCode;
+            this.cliente.Direccion = record.address;
+            this.cliente.Phone = record.phone1;
+
             this.onAddArticulos(response.records);
             //this.FormularioServicio.setValue(record);
             this.btnBuscarCargando = false;
@@ -132,8 +134,8 @@ export class NotacreditoFormularioComponent implements OnInit {
 
 
   onRemoveArticulos() {
-      let art = this.FormularioArticulo.get('articulos') as FormArray;
-      art.clear()
+    let art = this.FormularioArticulo.get('articulos') as FormArray;
+    art.clear()
   }
 
   checkValue(values: any, index) {
@@ -158,18 +160,18 @@ export class NotacreditoFormularioComponent implements OnInit {
 
 
   onSubmit() {
-   // this.submitted = true;
+    // this.submitted = true;
     if (this.TipoNotaCreditoId == 'S') {
       if (this.FormularioServicio.invalid) {
         return;
-      }else{
+      } else {
         this.procesarServicio();
       }
 
     } else if (this.TipoNotaCreditoId == 'A') {
       if (this.FormularioArticulo.invalid) {
         return;
-      }else{
+      } else {
         console.log(this.FormularioArticulo.value)
         this.procesarArticulos();
       }

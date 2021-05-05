@@ -35,7 +35,8 @@
 
           <div class="form-group col-md-4" *ngIf="TipoNotaCreditoId == 'A'">
             <label for="codigoFactura"> Codigo Factura</label>
-            <input type="text" name="codigoFactura" id="codigoFactura" class="form-control" [(ngModel)]="CodigoClienteId">
+            <input type="text" name="codigoFactura" id="codigoFactura" class="form-control"
+              [(ngModel)]="CodigoClienteId">
           </div>
 
           <div class="form-group col-md-4 align-self-end" *ngIf="TipoNotaCreditoId == 'A'">
@@ -146,12 +147,36 @@
         <form *ngIf="TipoNotaCreditoId == 'A'" class="form-row m-t-40" [formGroup]="FormularioArticulo"
           (ngSubmit)="onSubmit()">
 
-          <div class="form-group">
-            <h3 class="font-weight-bold">{{ NombreCliente }}</h3>
-            <p>{{ DireccionCliente }}</p>
-          </div>
-
-
+          <div class="col-12">
+            <div class="row border border-light p-2" *ngIf="cliente">
+                <div class="form-group col-md-6">
+                    <label for="nombre"><i class="fa fa-hashtag"></i> Código</label>
+                    <input [(ngModel)]="cliente.Codigo" class="form-control" [readonly]="'true'"
+                        type="text" [ngModelOptions]="{standalone: true}" name="nombre" id="nombre">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="nombre"> <i class="fa fa-user"></i> Nombre</label>
+                    <input [(ngModel)]="cliente.Nombre" class="form-control"
+                        [readonly]="'true'" type="text" [ngModelOptions]="{standalone: true}" name="nombre"
+                        id="nombre">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="nombre"> <i class="fa fa-id-card"></i> Documento</label>
+                    <input [(ngModel)]="cliente.Documento" class="form-control" [readonly]="'true'"
+                        type="text" [ngModelOptions]="{standalone: true}" name="nombre" id="nombre">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="nombre"> <i class="fa fa-map-marker"></i> Dirección</label>
+                    <input [(ngModel)]="cliente.Direccion" class="form-control" [readonly]="'true'"
+                        type="text" [ngModelOptions]="{standalone: true}" name="nombre" id="nombre">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="nombre"> <i class="fa fa-map-marker"></i> Teléfono</label>
+                    <input [(ngModel)]="cliente.Phone" class="form-control" [readonly]="'true'"
+                        type="text" [ngModelOptions]="{standalone: true}" name="nombre" id="nombre">
+                </div>
+            </div>
+        </div>
 
           <div class="table-responsive">
             <table class="table table-hover mb-0 no-wrap v-middle" formArrayName="articulos">
