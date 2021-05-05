@@ -36,15 +36,15 @@
                     </div>
 
                     <div class="form-group col-md-6">
-                        <label for="example-email">Compañia</label>
+                        <label for="example-email">Sucursal</label>
                         <ng-select [items]="companias" bindLabel="nombre" bindValue="codigo"
                             [loading]="loadingCompanias"
-                            [ngClass]="{'form-control border-danger p-0' : submitted && f.companiaID.errors }"
-                            notFoundText="No resultados" formControlName="companiaID">
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.sucursalID.errors }"
+                            notFoundText="No resultados" formControlName="sucursalID">
                         </ng-select>
-                        <div *ngIf="submitted && f.companiaID.errors"
+                        <div *ngIf="submitted && f.sucursalID.errors"
                             class="text-danger small animated animated--fade-in">
-                            <div *ngIf="f.companiaID.errors.required  ">El campo es obligatorio</div>
+                            <div *ngIf="f.sucursalID.errors.required  ">El campo es obligatorio</div>
                         </div>
                     </div>
 
