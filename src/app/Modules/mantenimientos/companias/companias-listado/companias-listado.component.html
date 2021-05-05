@@ -35,7 +35,8 @@
                                 <th>Compañía</th>
                                 <th>Email</th>
                                 <th>Teléfono</th>
-                                <th>Dirección</th>
+                                <th>Impuesto</th>
+                                <!-- <th>Dirección</th> -->
 
                             </tr>
                         </thead>
@@ -66,10 +67,13 @@
                                     <span> <i class=" fa fa-phone text-muted"></i> {{item.telefono}}</span>
                                 </td>
                                 <td>
+                                    <span> {{item.impuesto}} <i class=" fa fa-percent text-muted"></i></span>
+                                </td>
+                                <!-- <td>
                                     <span> <i class="fa fa-map text-muted"></i>
                                         {{item.direccion |titlecase |  slice:0:60}}
                                         ...</span>
-                                </td>
+                                </td> -->
                                 <td>
                                     <button class="btn btn-sm btn-info" [routerLink]="[item.id]">
                                         <i class="fa fa-sm fa-edit"></i>

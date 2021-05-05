@@ -10,6 +10,8 @@ export class Compania {
         this.email = ""
         this.TipoCompaniaID = 0
         this.referencia = ""
+        this.impuesto = 0
+
     }
     id: number
     nombre: string
@@ -21,5 +23,6 @@ export class Compania {
     email: string
     TipoCompaniaID: number
     referencia: string
+    impuesto: number
 }
 
