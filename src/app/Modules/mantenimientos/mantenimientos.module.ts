@@ -74,6 +74,8 @@ import { PerfilFormularioComponent } from './perfil-formulario/perfil-formulario
 import { TreeviewModule } from 'ngx-treeview';
 import { ListaPreciosAutorizacionComponent } from './listaPrecios/lista-precios-autorizacion/lista-precios-autorizacion.component';
 import { CargaMasivaPanelComponent } from './cargaMasiva/carga-masiva-panel/carga-masiva-panel.component';
+import { MonedasListadoComponent } from './monedas/monedas-listado/monedas-listado.component';
+import { MonedasFormularioComponent } from './monedas/monedas-formulario/monedas-formulario.component';
 
 
 @NgModule({
@@ -102,7 +104,9 @@ import { CargaMasivaPanelComponent } from './cargaMasiva/carga-masiva-panel/carg
     PermisosFormularioComponent,
     PerfilFormularioComponent,
     ListaPreciosAutorizacionComponent,
-    CargaMasivaPanelComponent
+    CargaMasivaPanelComponent,
+    MonedasListadoComponent,
+    MonedasFormularioComponent
   ],
 
   imports: [

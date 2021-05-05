@@ -342,6 +342,17 @@ export const ROUTES: RouteInfo[] = [
         submenu: [
 
             {
+                path: '/mantenimientos/moneda',
+                label: '',
+                labelClass: '',
+                title: 'Moneda',
+                icon: '',
+                class: '',
+                extralink: false,
+                submenu: [],
+                permisos: ["mantenimientos_moneda"],
+            },
+            {
                 path: '/mantenimientos/listaprecios',
                 label: '',
                 labelClass: '',

@@ -66,6 +66,8 @@ import { PromocionesFormularioComponent } from './promociones/promociones-formul
 import { PerfilFormularioComponent } from './perfil-formulario/perfil-formulario.component';
 import { ListaPreciosAutorizacionComponent } from './listaPrecios/lista-precios-autorizacion/lista-precios-autorizacion.component';
 import { CargaMasivaPanelComponent } from './cargaMasiva/carga-masiva-panel/carga-masiva-panel.component';
+import { MonedasListadoComponent } from './monedas/monedas-listado/monedas-listado.component';
+import { MonedasFormularioComponent } from './monedas/monedas-formulario/monedas-formulario.component';
 
 
 
@@ -782,6 +784,29 @@ const routes: Routes = [
           ]
         }
       },
+
+
+          // Moneda
+          {
+            path: 'moneda', component: MonedasListadoComponent, data: {
+              title: 'Moneda',
+              urls: [
+                { title: 'Mantenimientos' },
+                { title: 'Moneda' }
+              ]
+            }
+          },
+    
+          {
+            path: 'moneda/:id', component: MonedasFormularioComponent, data: {
+              title: 'Moneda Formulario',
+              urls: [
+                { title: 'Mantenimientos' },
+                { title: 'Moneda' },
+                { title: 'Formulario' }
+              ]
+            }
+          },
 
     ]
 
