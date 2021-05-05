@@ -32,6 +32,8 @@ export class CotizacionesFormularioComponent implements OnInit {
   listaPrecio: ListaPrecio;
   articulosCotizacion: any[];
   total: any;
+  loadingCondicionPagos: boolean;
+  TipoCondicionPagos: ComboBox[];
 
   constructor(
     private toastService: ToastrService,
@@ -45,6 +47,7 @@ export class CotizacionesFormularioComponent implements OnInit {
 
     this.CreateForm();
     this.getClientes()
+    this.getTipoCondicionPago()
   }
 
 
@@ -56,6 +59,7 @@ export class CotizacionesFormularioComponent implements OnInit {
       companiaID: [null, Validators.required],
       clienteID: [null, Validators.required],
       codigoReferencia: [null, Validators.required],
+      condicionPagoId: [null, Validators.required],
       descripcion: [null,],
       estadoID: [0,],
     });
@@ -154,9 +158,8 @@ export class CotizacionesFormularioComponent implements OnInit {
       this.getClienteByID(cliente.codigo)
     }
 
-    //
-
     this.articulosCotizacion = [{}]
+    this.total = 0
 
   }
 
@@ -205,6 +208,28 @@ export class CotizacionesFormularioComponent implements OnInit {
     this.articulosCotizacion.forEach(x => {
       this.total += x.cantidad ? (x.precio * x.cantidad) : 0
     })
+  }
+
+  getTipoCondicionPago() {
+    this.loadingCondicionPagos = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetTipoCondicionPago", null).subscribe(response => {
+  
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.TipoCondicionPagos = response.records;
+        }
+        this.loadingCondicionPagos = false;
+      }, error => {
+        this.loadingCondicionPagos = false;
+        this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
+  
+        setTimeout(() => {
+          this.getTipoCondicionPago();
+        }, 1000);
+  
+      });
   }
 
 
