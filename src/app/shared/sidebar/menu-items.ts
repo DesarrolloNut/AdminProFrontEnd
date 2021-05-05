@@ -31,10 +31,11 @@ export const ROUTES: RouteInfo[] = [
         path: '/',
         title: 'Ventas',
         label: '',
-        icon: 'mdi mdi-tag',
+        icon: 'mdi mdi-chart-areaspline',
         class: 'has-arrow',
         labelClass: '',
         extralink: false,
+        permisos: ["ventas"],
         submenu: [
             {
                 path: '/ventas/notacredito',
@@ -58,8 +59,50 @@ export const ROUTES: RouteInfo[] = [
                 submenu: [],
                 permisos: ["ventas_cotizacion"],
             },
+
+
+
+
+
+
+
+            {
+                path: '/ventas/ofertas-consulta-factura',
+                label: '',
+                labelClass: '',
+                title: 'Consulta de ofertas',
+                icon: '',
+                class: '',
+                extralink: false,
+                submenu: [],
+                permisos: ["ventas_ofertas_consulta_factura"],
+            },
+            {
+                path: '',
+                title: 'Reportes de Ventas',
+                icon: 'mdi mdi-chart-areaspline',
+                labelClass: '',
+                label: '',
+                class: 'has-arrow',
+                extralink: false,
+                permisos: ["ventas_reportes"],
+                submenu: [
+                    {
+                        path: '/ventas/reportes-de-ventas/reporte-ofertas-otorgadas',
+                        label: '',
+                        labelClass: '',
+                        title: 'Ofertas Otorgadas',
+                        icon: '',
+                        class: '',
+                        extralink: false,
+                        submenu: [],
+                        permisos: ["ventas_reportes_ofertas_otorgadas"],
+                    },
+
+
+                ]
+            },
         ],
-        permisos: [],
     },
     {
         path: '/',
@@ -680,56 +723,6 @@ export const ROUTES: RouteInfo[] = [
                 extralink: false,
                 submenu: [],
                 permisos: ["mantenimientos_vehiculo_tipo"],
-            },
-
-
-        ]
-    },
-    {
-        path: '',
-        title: 'Ventas',
-        icon: 'mdi mdi-chart-areaspline',
-        labelClass: '',
-        label: '',
-        class: 'has-arrow',
-        extralink: false,
-        permisos: ["ventas"],
-        submenu: [
-            {
-                path: '/ventas/ofertas-consulta-factura',
-                label: '',
-                labelClass: '',
-                title: 'Consulta de ofertas',
-                icon: '',
-                class: '',
-                extralink: false,
-                submenu: [],
-                permisos: ["ventas_ofertas_consulta_factura"],
-            },
-            {
-                path: '',
-                title: 'Reportes de Ventas',
-                icon: 'mdi mdi-chart-areaspline',
-                labelClass: '',
-                label: '',
-                class: 'has-arrow',
-                extralink: false,
-                permisos: ["ventas_reportes"],
-                submenu: [
-                    {
-                        path: '/ventas/reportes-de-ventas/reporte-ofertas-otorgadas',
-                        label: '',
-                        labelClass: '',
-                        title: 'Ofertas Otorgadas',
-                        icon: '',
-                        class: '',
-                        extralink: false,
-                        submenu: [],
-                        permisos: ["ventas_reportes_ofertas_otorgadas"],
-                    },
-
-
-                ]
             },
 
 

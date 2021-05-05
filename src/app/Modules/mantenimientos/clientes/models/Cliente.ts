@@ -21,6 +21,7 @@ export class Cliente {
         this.limiteCredito = 0
         this.condicionPagoId = 0
         this.rutaId = 0
+        this.listaPrecioId = 0
         this.sexo = ""
         this.longitud = ""
         this.latitud = ""
@@ -52,5 +53,5 @@ export class Cliente {
     sexo: string
     longitud: string
     latitud: string
-    contactos:Array<ClienteContactos>
+    contactos: Array<ClienteContactos>
 }
