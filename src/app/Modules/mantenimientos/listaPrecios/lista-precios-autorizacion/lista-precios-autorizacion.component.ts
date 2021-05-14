@@ -34,10 +34,11 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   estadoAutorizacionAnterior: ComboBox;
   btnClicked: number;
   isAutorizando: boolean;
+  cargandoAutorizacion: boolean;
 
   //comentarios
   itemSeleccionado: any;
-  comentarios: ComboBox[];
+  comentarios: any[];
   comentario: string;
   cargandoModal: boolean = false;
 

@@ -166,7 +166,7 @@ export class CotizacionesFormularioComponent implements OnInit {
 
   onSelectArticulo(item: any, index: number) {
     this.articulosCotizacion[index].precio = item.precio;
-
+    console.table(item)
     if (!this.articulosCotizacion.some(x => x.id <= 0)) {
       this.articulosCotizacion.push({ "id": 0 })
     }
@@ -214,7 +214,7 @@ export class CotizacionesFormularioComponent implements OnInit {
     this.loadingCondicionPagos = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
       "GetTipoCondicionPago", null).subscribe(response => {
-  
+
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
@@ -224,11 +224,11 @@ export class CotizacionesFormularioComponent implements OnInit {
       }, error => {
         this.loadingCondicionPagos = false;
         this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
-  
+
         setTimeout(() => {
           this.getTipoCondicionPago();
         }, 1000);
-  
+
       });
   }
 
