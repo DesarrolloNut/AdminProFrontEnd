@@ -1,3 +1,4 @@
+import { DepartamentosFormularioComponent } from './departamentos/departamentos-formulario/departamentos-formulario.component';
 import { PermisosFormularioComponent } from './permisos/permisos-formulario/permisos-formulario.component';
 import { PermisosListadoComponent } from './permisos/permisos-listado/permisos-listado.component';
 import { RolesFormularioComponent } from './roles/roles-formulario/roles-formulario.component';
@@ -68,6 +69,7 @@ import { ListaPreciosAutorizacionComponent } from './listaPrecios/lista-precios-
 import { CargaMasivaPanelComponent } from './cargaMasiva/carga-masiva-panel/carga-masiva-panel.component';
 import { MonedasListadoComponent } from './monedas/monedas-listado/monedas-listado.component';
 import { MonedasFormularioComponent } from './monedas/monedas-formulario/monedas-formulario.component';
+import { DepartamentosListadoComponent } from './departamentos/departamentos-listado/departamentos-listado.component';
 
 
 
@@ -796,13 +798,34 @@ const routes: Routes = [
               ]
             }
           },
-    
+
           {
             path: 'moneda/:id', component: MonedasFormularioComponent, data: {
               title: 'Moneda Formulario',
               urls: [
                 { title: 'Mantenimientos' },
                 { title: 'Moneda' },
+                { title: 'Formulario' }
+              ]
+            }
+          },
+          // Moneda
+          {
+            path: 'departamento', component: DepartamentosListadoComponent, data: {
+              title: 'Departamento',
+              urls: [
+                { title: 'Mantenimientos' },
+                { title: 'Departamento' }
+              ]
+            }
+          },
+
+          {
+            path: 'departamento/:id', component: DepartamentosFormularioComponent, data: {
+              title: 'Departamento Formulario',
+              urls: [
+                { title: 'Mantenimientos' },
+                { title: 'Departamento' },
                 { title: 'Formulario' }
               ]
             }

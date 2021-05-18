@@ -76,6 +76,9 @@ export class ArticuloFormularioComponent implements OnInit {
       colorID: [0,],
       costo: [0,],
       precio: [0,],
+      articuloDeCompra: [false,],
+      articuloDeVenta: [false,],
+      articuloDeInventario: [false,],
     });
   }
 

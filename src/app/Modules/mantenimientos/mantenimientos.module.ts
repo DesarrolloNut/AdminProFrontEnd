@@ -76,6 +76,8 @@ import { ListaPreciosAutorizacionComponent } from './listaPrecios/lista-precios-
 import { CargaMasivaPanelComponent } from './cargaMasiva/carga-masiva-panel/carga-masiva-panel.component';
 import { MonedasListadoComponent } from './monedas/monedas-listado/monedas-listado.component';
 import { MonedasFormularioComponent } from './monedas/monedas-formulario/monedas-formulario.component';
+import { DepartamentosFormularioComponent } from './departamentos/departamentos-formulario/departamentos-formulario.component';
+import { DepartamentosListadoComponent } from './departamentos/departamentos-listado/departamentos-listado.component';
 
 
 @NgModule({
@@ -106,7 +108,9 @@ import { MonedasFormularioComponent } from './monedas/monedas-formulario/monedas
     ListaPreciosAutorizacionComponent,
     CargaMasivaPanelComponent,
     MonedasListadoComponent,
-    MonedasFormularioComponent
+    MonedasFormularioComponent,
+    DepartamentosFormularioComponent,
+    DepartamentosListadoComponent
   ],
 
   imports: [

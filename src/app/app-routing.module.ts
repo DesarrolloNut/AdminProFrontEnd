@@ -7,88 +7,89 @@ import { AuthGuard } from './core/guards/auth.guard';
 import { BlankComponent } from './core/layouts/blank/blank.component';
 
 export const Approutes: Routes = [
-    {
-        path: 'login',
-        data: {
-            title: 'Nutriciosa | Login',
-        },
-        component: LoginComponent
+  {
+    path: 'login',
+    data: {
+      title: 'Nutriciosa | Login',
     },
-    {
-        path: '',
-        component: FullComponent,
-        canActivate: [AuthGuard],
-        canActivateChild: [AuthGuard],
-        children: [
-            { path: '', redirectTo: 'home', pathMatch: 'full' },
-            {
-                path: 'home', loadChildren: () => import('./Modules/home/home.module').then(m => m.HomeModule),
-            },
-            {
-                path: 'servicios', loadChildren: () => import('./Modules/servicios/servicios.module').then(m => m.ServiciosModule)
-            },
-            {
-                path: 'herramientas', loadChildren: () => import('./Modules/herramientas/herramientas.module').then(m => m.HerramientasModule)
-            },
-            {
-                path: 'mantenimientos', loadChildren: () => import('./Modules/mantenimientos/mantenimientos.module').then(m => m.MantenimientosModule)
-            },
+    component: LoginComponent
+  },
+  {
+    path: '',
+    component: FullComponent,
+    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
+    children: [
+      { path: '', redirectTo: 'home', pathMatch: 'full' },
+      {
+        path: 'home', loadChildren: () => import('./Modules/home/home.module').then(m => m.HomeModule),
+      },
+      {
+        path: 'servicios', loadChildren: () => import('./Modules/servicios/servicios.module').then(m => m.ServiciosModule)
+      },
+      {
+        path: 'herramientas', loadChildren: () => import('./Modules/herramientas/herramientas.module').then(m => m.HerramientasModule)
+      },
+      {
+        path: 'mantenimientos', loadChildren: () => import('./Modules/mantenimientos/mantenimientos.module').then(m => m.MantenimientosModule)
+      },
+      { path: 'configuraciones', loadChildren: () => import('./Modules/configuraciones/configuraciones.module').then(m => m.ConfiguracionesModule) },
 
-            { path: 'configuraciones', loadChildren: () => import('./Modules/configuraciones/configuraciones.module').then(m => m.ConfiguracionesModule) },
+      { path: 'ventas', loadChildren: () => import('./Modules/ventas/ventas.module').then(m => m.VentasModule) },
 
-            { path: 'ventas', loadChildren: () => import('./Modules/ventas/ventas.module').then(m => m.VentasModule) },
-        ],
-    },
-
-
-
-    {
-        path: 'turno',
-        component: BlankComponent,
-        canActivate: [AuthGuard],
-        canActivateChild: [AuthGuard],
-        children: [
-            {
-                path: '', loadChildren: () => import('./Modules/turno/turno.module').then(m => m.TurnoModule)
-            },
-        ],
-    },
-    {
-        path: 'consultas',
-        component: BlankComponent,
-        // canActivate: [AuthGuard],
-        // canActivateChild: [AuthGuard],
-        children: [
-            {
-                path: '', loadChildren: () => import('./Modules/consulta-cliente/consulta-cliente.module').then(m => m.ConsultaClienteModule)
-            },
-        ],
-    },
+      { path: 'compras', loadChildren: () => import('./Modules/compras/compras-routing.module').then(m => m.ComprasRoutingModule) },
+    ],
+  },
 
 
 
+  {
+    path: 'turno',
+    component: BlankComponent,
+    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
+    children: [
+      {
+        path: '', loadChildren: () => import('./Modules/turno/turno.module').then(m => m.TurnoModule)
+      },
+    ],
+  },
+  {
+    path: 'consultas',
+    component: BlankComponent,
+    // canActivate: [AuthGuard],
+    // canActivateChild: [AuthGuard],
+    children: [
+      {
+        path: '', loadChildren: () => import('./Modules/consulta-cliente/consulta-cliente.module').then(m => m.ConsultaClienteModule)
+      },
+    ],
+  },
 
 
 
-    {
-        path: 'error',
-        component: BlankComponent,
-        // canActivate: [AuthGuard],
-        // canActivateChild: [AuthGuard],
-        children: [
-            {
-                path: '', loadChildren: () => import('./Modules/error/error.module').then(m => m.ErrorModule)
-            },
-        ],
-    },
-    {
-        path: '**',
-        redirectTo: 'error/404'
-    },
+
+
+
+  {
+    path: 'error',
+    component: BlankComponent,
+    // canActivate: [AuthGuard],
+    // canActivateChild: [AuthGuard],
+    children: [
+      {
+        path: '', loadChildren: () => import('./Modules/error/error.module').then(m => m.ErrorModule)
+      },
+    ],
+  },
+  {
+    path: '**',
+    redirectTo: 'error/404'
+  },
 
 ];
 @NgModule({
-    imports: [RouterModule.forRoot(Approutes)],
-    exports: [RouterModule]
+  imports: [RouterModule.forRoot(Approutes)],
+  exports: [RouterModule]
 })
 export class AppRoutingModule { }

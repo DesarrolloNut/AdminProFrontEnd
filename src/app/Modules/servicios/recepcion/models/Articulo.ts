@@ -20,4 +20,7 @@ export class Articulo {
     placa: string
     costo: number
     precio: number
+    articuloDeCompra: number
+    articuloDeVenta: number
+    articuloDeInventario: number
 }
