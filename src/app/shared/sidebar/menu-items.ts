@@ -497,6 +497,17 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ["mantenimientos_permiso"],
       },
+      {
+        path: '/mantenimientos/proveedor',
+        label: '',
+        labelClass: '',
+        title: 'Proveedores',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_proveedor"],
+      },
 
 
 

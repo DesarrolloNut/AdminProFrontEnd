@@ -1,3 +1,5 @@
+import { ProveedoresFormularioComponent } from './proveedores/proveedores-formulario/proveedores-formulario.component';
+import { ProveedoresListadoComponent } from './proveedores/proveedores-listado/proveedores-listado.component';
 import { DepartamentosFormularioComponent } from './departamentos/departamentos-formulario/departamentos-formulario.component';
 import { PermisosFormularioComponent } from './permisos/permisos-formulario/permisos-formulario.component';
 import { PermisosListadoComponent } from './permisos/permisos-listado/permisos-listado.component';
@@ -809,7 +811,7 @@ const routes: Routes = [
               ]
             }
           },
-          // Moneda
+          // departamento
           {
             path: 'departamento', component: DepartamentosListadoComponent, data: {
               title: 'Departamento',
@@ -826,6 +828,27 @@ const routes: Routes = [
               urls: [
                 { title: 'Mantenimientos' },
                 { title: 'Departamento' },
+                { title: 'Formulario' }
+              ]
+            }
+          },
+          // departamento
+          {
+            path: 'proveedor', component: ProveedoresListadoComponent, data: {
+              title: 'Proveedor',
+              urls: [
+                { title: 'Mantenimientos' },
+                { title: 'Proveedor' }
+              ]
+            }
+          },
+
+          {
+            path: 'proveedor/:id', component: ProveedoresFormularioComponent, data: {
+              title: 'Proveedor Formulario',
+              urls: [
+                { title: 'Mantenimientos' },
+                { title: 'Proveedor' },
                 { title: 'Formulario' }
               ]
             }

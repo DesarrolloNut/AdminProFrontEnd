@@ -78,6 +78,8 @@ import { MonedasListadoComponent } from './monedas/monedas-listado/monedas-lista
 import { MonedasFormularioComponent } from './monedas/monedas-formulario/monedas-formulario.component';
 import { DepartamentosFormularioComponent } from './departamentos/departamentos-formulario/departamentos-formulario.component';
 import { DepartamentosListadoComponent } from './departamentos/departamentos-listado/departamentos-listado.component';
+import { ProveedoresListadoComponent } from './proveedores/proveedores-listado/proveedores-listado.component';
+import { ProveedoresFormularioComponent } from './proveedores/proveedores-formulario/proveedores-formulario.component';
 
 
 @NgModule({
@@ -110,7 +112,9 @@ import { DepartamentosListadoComponent } from './departamentos/departamentos-lis
     MonedasListadoComponent,
     MonedasFormularioComponent,
     DepartamentosFormularioComponent,
-    DepartamentosListadoComponent
+    DepartamentosListadoComponent,
+    ProveedoresListadoComponent,
+    ProveedoresFormularioComponent
   ],
 
   imports: [
