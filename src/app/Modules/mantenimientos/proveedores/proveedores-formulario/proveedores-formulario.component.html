@@ -123,6 +123,34 @@
               </div>
             </div>
           </div>
+
+          <div class="form-group col-md-6">
+            <label for="condicionPagoID"> Condición de pago</label>
+            <ng-select bindLabel="nombre" bindValue="codigo" [items]="TipoCondicionPagos"
+              [loading]="loadingCondicionPagos" [clearable]="false"
+              [ngClass]="{'form-control border-danger p-0' : submitted && f.condicionPagoID.errors }"
+              notFoundText="No resultados" formControlName="condicionPagoID">
+            </ng-select>
+            <div *ngIf="submitted && f.condicionPagoID.errors" class="text-danger small">
+              <div *ngIf="f.condicionPagoID.errors.required  ">El campo es
+                obligatorio</div>
+            </div>
+          </div>
+
+          <div class="form-group col-md-6">
+            <label for="actividadEconomicaID"> Actividad económica</label>
+            <ng-select bindLabel="nombre" bindValue="codigo" [items]="actividadesEconomicas"
+              [loading]="loadingActividadesEconomicas" [clearable]="false"
+              [ngClass]="{'form-control border-danger p-0' : submitted && f.actividadEconomicaID.errors }"
+              notFoundText="No resultados" formControlName="actividadEconomicaID">
+            </ng-select>
+            <div *ngIf="submitted && f.actividadEconomicaID.errors" class="text-danger small">
+              <div *ngIf="f.actividadEconomicaID.errors.required  ">El campo es
+                obligatorio</div>
+            </div>
+          </div>
+
+
           <div class="col-12">
             <hr>
           </div>

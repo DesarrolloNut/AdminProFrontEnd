@@ -80,6 +80,8 @@ import { DepartamentosFormularioComponent } from './departamentos/departamentos-
 import { DepartamentosListadoComponent } from './departamentos/departamentos-listado/departamentos-listado.component';
 import { ProveedoresListadoComponent } from './proveedores/proveedores-listado/proveedores-listado.component';
 import { ProveedoresFormularioComponent } from './proveedores/proveedores-formulario/proveedores-formulario.component';
+import { ActividadesEconomicasListadoComponent } from './actividadesEconomicas/actividades-economicas-listado/actividades-economicas-listado.component';
+import { ActividadesEconomicasFormularioComponent } from './actividadesEconomicas/actividades-economicas-formulario/actividades-economicas-formulario.component';
 
 
 @NgModule({
@@ -114,7 +116,9 @@ import { ProveedoresFormularioComponent } from './proveedores/proveedores-formul
     DepartamentosFormularioComponent,
     DepartamentosListadoComponent,
     ProveedoresListadoComponent,
-    ProveedoresFormularioComponent
+    ProveedoresFormularioComponent,
+    ActividadesEconomicasListadoComponent,
+    ActividadesEconomicasFormularioComponent
   ],
 
   imports: [

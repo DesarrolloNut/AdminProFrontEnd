@@ -342,6 +342,17 @@ export const ROUTES: RouteInfo[] = [
     submenu: [
 
       {
+        path: '/mantenimientos/actividadEconomica',
+        label: '',
+        labelClass: '',
+        title: 'Actividad Económica',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_actividad_economica"],
+      },
+      {
         path: '/mantenimientos/moneda',
         label: '',
         labelClass: '',

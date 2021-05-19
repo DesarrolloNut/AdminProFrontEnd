@@ -40,6 +40,9 @@ export class ProveedoresFormularioComponent implements OnInit {
   loadingProvincias: boolean;
   provincias: ComboBox[];
 
+  loadingActividadesEconomicas: boolean;
+  actividadesEconomicas: ComboBox[];
+
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
@@ -50,16 +53,17 @@ export class ProveedoresFormularioComponent implements OnInit {
   ngOnInit(): void {
 
     let id = Number(this.route.snapshot.paramMap.get('id'));
+    this.CreateForm();
 
     if (id > 0) {
       this.getItem(id);
       this.actualizando = true;
     }
 
-    this.CreateForm();
     this.getProvincias()
     this.getDocumentosTipo();
     this.getTipoCondicionPago();
+    this.getActividadEconomica();
   }
 
 
@@ -76,9 +80,9 @@ export class ProveedoresFormularioComponent implements OnInit {
       tipoProveedorID: [0, []],
       calle: [null, [Validators.required]],
       numero: [null,],
-      sectorID: [0],
-      ciudadID: [0],
-      provinciaID: [0],
+      sectorID: [0, [Validators.required]],
+      ciudadID: [0, [Validators.required]],
+      provinciaID: [0, [Validators.required]],
       latitud: [null, []],
       longitud: [null, []],
       condicionPagoID: [0, [Validators.required]],
@@ -108,6 +112,9 @@ export class ProveedoresFormularioComponent implements OnInit {
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0]
             this.Formulario.setValue(record);
+
+            this.getCiudades();
+            this.getSectores();
           } else {
             this.toastService.warning("Proveedor no encontrado");
             this.router.navigateByUrl('/mantenimientos/proveedor');
@@ -319,6 +326,29 @@ export class ProveedoresFormularioComponent implements OnInit {
 
         setTimeout(() => {
           this.getSectores()
+        }, 1000);
+
+      });
+  }
+
+
+  getActividadEconomica() {
+    this.loadingActividadesEconomicas = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetActividadEconomica", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.actividadesEconomicas = response.records;
+        }
+        this.loadingActividadesEconomicas = false;
+      }, error => {
+        this.loadingActividadesEconomicas = false;
+        this.toastService.error("No se pudo obtener las actividadesEconomicas", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getProvincias()
         }, 1000);
 
       });

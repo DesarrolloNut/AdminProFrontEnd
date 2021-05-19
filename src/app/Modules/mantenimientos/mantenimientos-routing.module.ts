@@ -1,3 +1,5 @@
+import { ActividadesEconomicasFormularioComponent } from './actividadesEconomicas/actividades-economicas-formulario/actividades-economicas-formulario.component';
+import { ActividadesEconomicasListadoComponent } from './actividadesEconomicas/actividades-economicas-listado/actividades-economicas-listado.component';
 import { ProveedoresFormularioComponent } from './proveedores/proveedores-formulario/proveedores-formulario.component';
 import { ProveedoresListadoComponent } from './proveedores/proveedores-listado/proveedores-listado.component';
 import { DepartamentosFormularioComponent } from './departamentos/departamentos-formulario/departamentos-formulario.component';
@@ -790,69 +792,90 @@ const routes: Routes = [
       },
 
 
-          // Moneda
-          {
-            path: 'moneda', component: MonedasListadoComponent, data: {
-              title: 'Moneda',
-              urls: [
-                { title: 'Mantenimientos' },
-                { title: 'Moneda' }
-              ]
-            }
-          },
+      // Moneda
+      {
+        path: 'moneda', component: MonedasListadoComponent, data: {
+          title: 'Moneda',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Moneda' }
+          ]
+        }
+      },
 
-          {
-            path: 'moneda/:id', component: MonedasFormularioComponent, data: {
-              title: 'Moneda Formulario',
-              urls: [
-                { title: 'Mantenimientos' },
-                { title: 'Moneda' },
-                { title: 'Formulario' }
-              ]
-            }
-          },
-          // departamento
-          {
-            path: 'departamento', component: DepartamentosListadoComponent, data: {
-              title: 'Departamento',
-              urls: [
-                { title: 'Mantenimientos' },
-                { title: 'Departamento' }
-              ]
-            }
-          },
+      {
+        path: 'moneda/:id', component: MonedasFormularioComponent, data: {
+          title: 'Moneda Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Moneda' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+      // departamento
+      {
+        path: 'departamento', component: DepartamentosListadoComponent, data: {
+          title: 'Departamento',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Departamento' }
+          ]
+        }
+      },
 
-          {
-            path: 'departamento/:id', component: DepartamentosFormularioComponent, data: {
-              title: 'Departamento Formulario',
-              urls: [
-                { title: 'Mantenimientos' },
-                { title: 'Departamento' },
-                { title: 'Formulario' }
-              ]
-            }
-          },
-          // departamento
-          {
-            path: 'proveedor', component: ProveedoresListadoComponent, data: {
-              title: 'Proveedor',
-              urls: [
-                { title: 'Mantenimientos' },
-                { title: 'Proveedor' }
-              ]
-            }
-          },
+      {
+        path: 'departamento/:id', component: DepartamentosFormularioComponent, data: {
+          title: 'Departamento Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Departamento' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+      // proveedor
+      {
+        path: 'proveedor', component: ProveedoresListadoComponent, data: {
+          title: 'Proveedor',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Proveedor' }
+          ]
+        }
+      },
 
-          {
-            path: 'proveedor/:id', component: ProveedoresFormularioComponent, data: {
-              title: 'Proveedor Formulario',
-              urls: [
-                { title: 'Mantenimientos' },
-                { title: 'Proveedor' },
-                { title: 'Formulario' }
-              ]
-            }
-          },
+      {
+        path: 'proveedor/:id', component: ProveedoresFormularioComponent, data: {
+          title: 'Proveedor Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Proveedor' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+      // actividadEconomica
+      {
+        path: 'actividadEconomica', component: ActividadesEconomicasListadoComponent, data: {
+          title: 'Proveedor',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Proveedor' }
+          ]
+        }
+      },
+
+      {
+        path: 'actividadEconomica/:id', component: ActividadesEconomicasFormularioComponent, data: {
+          title: 'Actividad Económica Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Actividad Económica' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
 
     ]
 

@@ -9,7 +9,7 @@ export class Proveedor {
   documento: string
   documentoTipoID: number
   email: string
-  tipoProveedorID: number
+
   calle: string
   numero: string
   sectorID: number
@@ -17,9 +17,11 @@ export class Proveedor {
   provinciaID: number
   latitud: string
   longitud: string
-  condicionPagoID: number
   limiteCredito: number
   registroMercantil: string
+  condicionPagoID: number
+
+  tipoProveedorID: number
   actividadEconomicaID: number
   monedaID: number
   estadoID: number
