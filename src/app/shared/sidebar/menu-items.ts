@@ -65,7 +65,6 @@ export const ROUTES: RouteInfo[] = [
 
 
 
-
       {
         path: '/ventas/ofertas-consulta-factura',
         label: '',
@@ -97,6 +96,18 @@ export const ROUTES: RouteInfo[] = [
             extralink: false,
             submenu: [],
             permisos: ["ventas_reportes_ofertas_otorgadas"],
+          },
+
+          {
+            path: '/ventas/reporteprontopago',
+            label: '',
+            labelClass: '',
+            title: 'Pronto Pago',
+            icon: '',
+            class: '',
+            extralink: false,
+            submenu: [],
+            permisos: ["ventas_cotizacion"],
           },
 
 

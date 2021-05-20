@@ -11,10 +11,11 @@ import { NotacreditoListadoComponent } from './notacredito/notacredito-listado/n
 import { NotacreditoFormularioComponent } from './notacredito/notacredito-formulario/notacredito-formulario.component';
 import { CotizacionesListadoComponent } from './cotizaciones/cotizaciones-listado/cotizaciones-listado.component';
 import { CotizacionesFormularioComponent } from './cotizaciones/cotizaciones-formulario/cotizaciones-formulario.component';
+import { ReporteprontopagoComponent } from './reporteprontopago/reporteprontopago.component';
 
 
 @NgModule({
-  declarations: [VentasComponent, OfertasConsultasFacturasComponent, NotacreditoListadoComponent, NotacreditoFormularioComponent, CotizacionesListadoComponent, CotizacionesFormularioComponent],
+  declarations: [VentasComponent, OfertasConsultasFacturasComponent, NotacreditoListadoComponent, NotacreditoFormularioComponent, CotizacionesListadoComponent, CotizacionesFormularioComponent, ReporteprontopagoComponent],
   imports: [
     CommonModule,
     VentasRoutingModule,
