@@ -12,5 +12,6 @@ export class SolicitudCompras {
   fechaEntrega: Date;
   anexoURL: string;
   comentario: string;
+  codigoReferencia: string;
   proveedorID: number;
 }

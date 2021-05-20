@@ -1,4 +1,3 @@
-import { SolicitudCompras } from '../models/SolicitudCompra';
 import { Component, OnInit } from '@angular/core';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
@@ -6,13 +5,14 @@ import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
+import { SolicitudCompras } from '../models/SolicitudCompra';
 
 @Component({
-  selector: 'app-solicitud-compras-listado',
-  templateUrl: './solicitud-compras-listado.component.html',
-  styleUrls: ['./solicitud-compras-listado.component.scss']
+  selector: 'app-solicitudes-compras-listado',
+  templateUrl: './solicitudes-compras-listado.component.html',
+  styleUrls: ['./solicitudes-compras-listado.component.scss']
 })
-export class SolicitudComprasListadoComponent implements OnInit {
+export class SolicitudesComprasListadoComponent implements OnInit {
 
   // COPIAR AL CREAR UN LISTADO NUEVO
   Search: string = "";

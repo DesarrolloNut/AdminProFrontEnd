@@ -59,12 +59,6 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ["ventas_cotizacion"],
       },
-
-
-
-
-
-
       {
         path: '/ventas/ofertas-consulta-factura',
         label: '',
@@ -123,8 +117,20 @@ export const ROUTES: RouteInfo[] = [
     class: 'has-arrow',
     labelClass: '',
     extralink: false,
-    submenu: [],
-    permisos: [],
+    permisos: ["compras"],
+    submenu: [
+      {
+        path: '/compras/solicitudCompra',
+        label: '',
+        labelClass: '',
+        title: 'Solicitud de compras',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["compras_solicitud_compra"],
+      },
+    ],
   },
   {
     path: '/',
