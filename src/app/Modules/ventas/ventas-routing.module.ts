@@ -5,6 +5,7 @@ import { CotizacionesListadoComponent } from './cotizaciones/cotizaciones-listad
 import { NotacreditoFormularioComponent } from './notacredito/notacredito-formulario/notacredito-formulario.component';
 import { NotacreditoListadoComponent } from './notacredito/notacredito-listado/notacredito-listado.component';
 import { OfertasConsultasFacturasComponent } from './ofertas/ofertas-consultas-facturas/ofertas-consultas-facturas.component';
+import { ReporteprontopagoComponent } from './reporteprontopago/reporteprontopago.component';
 import { VentasComponent } from './ventas.component';
 
 
@@ -71,6 +72,29 @@ const routes: Routes = [
           ]
         }
       },
+
+      //  ReporteProntoPago
+      {
+        path: 'reporteprontopago', component: ReporteprontopagoComponent, data: {
+          title: 'ReporteProntoPago',
+          urls: [
+            { title: 'Ventas' },
+            { title: 'Reporte de Ventas' },
+            { title: 'ReporteProntoPago' },
+          ]
+        }
+      },
+      // {
+      //   path: 'cotizacion/:id', component: CotizacionesFormularioComponent, data: {
+      //     title: 'ReporteProntoPago',
+      //     urls: [
+      //       { title: 'Ventas' },
+      //       { title: 'ReporteProntoPago' },
+      //       { title: 'Formulario' }
+
+      //     ]
+      //   }
+      // },
 
     ]
 
