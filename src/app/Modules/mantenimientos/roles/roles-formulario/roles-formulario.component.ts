@@ -4,7 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
-import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { Roles } from '../models/Roles';
 
 @Component({
@@ -65,7 +64,7 @@ export class RolesFormularioComponent implements OnInit {
             this.Formulario.setValue(record);
           } else {
             this.toastService.warning("Roles no encontrado");
-            this.router.navigateByUrl('/mantenimientos/Roles');
+            this.router.navigateByUrl('/mantenimientos/roles');
           }
         }
 
@@ -98,7 +97,7 @@ export class RolesFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0], "Error");
         } else {
           this.toastService.success("Realizado", "OK");
-          this.router.navigateByUrl('/mantenimientos/Roles');
+          this.router.navigateByUrl('/mantenimientos/roles');
         }
 
         this.btnGuardarCargando = false;
