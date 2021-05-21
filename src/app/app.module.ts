@@ -79,17 +79,12 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   ],
   providers: [
     { provide: PERFECT_SCROLLBAR_CONFIG, useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG },
-    { provide: 'BASE_URL', useFactory: getBaseUrl }, AuthGuard,
+    { provide: 'BASE_URL', useFactory: getHost }, AuthGuard,
     { provide: LocationStrategy, useClass: HashLocationStrategy }
   ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
-
-export function getBaseUrl() {
-  return environment.apiUrl;
-}
-
 
 export function getHost() {
   return environment.apiUrl;
