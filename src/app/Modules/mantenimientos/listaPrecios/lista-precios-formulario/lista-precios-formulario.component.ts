@@ -25,6 +25,8 @@ export class ListaPreciosFormularioComponent implements OnInit {
   estados: ComboBox[] = []
   loadingListasPrecios: boolean;
   listasPrecios: ComboBox[];
+  monedas: ComboBox[];
+  loadingMonedas: boolean;
 
   constructor(
     private toastService: ToastrService,
@@ -42,6 +44,7 @@ export class ListaPreciosFormularioComponent implements OnInit {
     }
     this.CreateForm();
     this.getListasPrecios()
+    this.getMonedas()
     this.llenarCombobox()
   }
 
@@ -157,6 +160,28 @@ export class ListaPreciosFormularioComponent implements OnInit {
 
         setTimeout(() => {
           this.getListasPrecios()
+        }, 1000);
+
+      });
+  }
+
+  getMonedas() {
+    this.loadingMonedas = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetMonedas", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.monedas = response.records;
+        }
+        this.loadingMonedas = false;
+      }, error => {
+        this.loadingMonedas = false;
+        this.toastService.error("No se pudo obtener las monedas", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getMonedas()
         }, 1000);
 
       });

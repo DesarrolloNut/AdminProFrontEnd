@@ -91,18 +91,17 @@
                         </div>
                     </div>
 
-
                     <div class="form-group col-md-6">
-                        <label for="nombre"> Moneda</label>
-                        <input formControlName="monedaDeterminadaID" type="number" name="monedaDeterminadaID"
-                            id="monedaDeterminadaID"
-                            [ngClass]="{'is-invalid' : submitted && f.factor.errors,  'form-control':true  }">
-                        <div class="invalid-feedback" *ngIf="submitted && f.monedaDeterminadaID.errors">
-                            <div *ngIf="f.monedaDeterminadaID.errors.required">El campo es obligatorio</div>
+                        <label for="inputEmail4">Moneda</label>
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="monedas"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.monedaDeterminadaID.errors }"
+                            notFoundText="No resultados" formControlName="monedaDeterminadaID">
+                        </ng-select>
+                        <div *ngIf="submitted && f.monedaDeterminadaID.errors"
+                            class="text-danger small animated animated--fade-in">
+                            <div *ngIf="f.monedaDeterminadaID.errors.required  ">El campo es obligatorio</div>
                         </div>
                     </div>
-
-
 
                     <div class="form-group text-right col-md-12">
                         <hr />
