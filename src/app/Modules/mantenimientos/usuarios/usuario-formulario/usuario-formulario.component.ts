@@ -71,6 +71,9 @@ export class UsuarioFormularioComponent implements OnInit {
   loadingNivelesSeleccionados: boolean;
   guardandoNivelesAsignados: boolean;
   searchText: string;
+  loadingRutas: boolean;
+  MostrarRutas: boolean;
+  rutas: ComboBox[];
 
 
   constructor(
@@ -98,7 +101,7 @@ export class UsuarioFormularioComponent implements OnInit {
 
     this.CreateForm();
 
-    this.configDualList()
+    this.configDualList();
   }
 
   private CreateFormChangePassword() {
@@ -109,7 +112,7 @@ export class UsuarioFormularioComponent implements OnInit {
       userName: [this.auth.tokenDecoded.unique_name]
     }, {
       validator: this.MustMatch('password', 'passwordConfirm')
-    })
+    });
 
   }
 
@@ -129,7 +132,7 @@ export class UsuarioFormularioComponent implements OnInit {
       } else {
         matchingControl.setErrors(null);
       }
-    }
+    };
   }
 
   configDualList() {
@@ -161,6 +164,7 @@ export class UsuarioFormularioComponent implements OnInit {
       telefonoExtension: [null, [Validators.required]],
       codigoReferencia: [null, [Validators.required]],
       idUsuarioSupervisor: [null, [Validators.required]],
+      rutaId: [null, [Validators.required]],
     },
       {
         validator: cedulaestructura('documento', 'documentoTipoID')
@@ -172,18 +176,18 @@ export class UsuarioFormularioComponent implements OnInit {
 
   onSubmitChangePassword() {
     this.submittedPassword = true;
-    this.fC.userName.setValue(this.auth.tokenDecoded.unique_name)
-    console.log(this.FormularioChangePassword.controls)
+    this.fC.userName.setValue(this.auth.tokenDecoded.unique_name);
+    console.log(this.FormularioChangePassword.controls);
     if (this.FormularioChangePassword.invalid) {
       return;
     }
-    console.log('ready')
-    this.changePassword()
+    console.log('ready');
+    this.changePassword();
   }
 
   changePassword() {
 
-    let param = { "UsuarioId": this.usuarioID, "PasswordNueva": this.fC.passwordConfirm.value, }
+    let param = { "UsuarioId": this.usuarioID, "PasswordNueva": this.fC.passwordConfirm.value, };
 
     this.loadingButtonCambiar = true;
     this.httpService.DoPostAny<any>(DataApi.Usuario,
@@ -232,11 +236,12 @@ export class UsuarioFormularioComponent implements OnInit {
           //validar que existe
           if (response != null && response.records != null && response.records.length > 0) {
 
-            let usuario = response.records[0]
+            let usuario = response.records[0];
             delete usuario.passwordHash;
             delete usuario.passwordSalt;
 
             this.Formulario.setValue(usuario);
+            this.getRutasbyRol(usuario.rolID);
           } else {
             this.toastService.warning("Usuario no encontrado");
             this.router.navigateByUrl('/mantenimientos/usuario');
@@ -310,7 +315,7 @@ export class UsuarioFormularioComponent implements OnInit {
         this.toastService.error("No se pudo obtener los supervisores", "Error conexion al servidor");
 
         setTimeout(() => {
-          this.getUsuariosSupervisores()
+          this.getUsuariosSupervisores();
         }, 1000);
 
       });
@@ -333,7 +338,7 @@ export class UsuarioFormularioComponent implements OnInit {
         this.toastService.error("No se pudo obtener los documentos", "Error conexion al servidor");
 
         setTimeout(() => {
-          this.getDocumentosTipo()
+          this.getDocumentosTipo();
         }, 1000);
 
       });
@@ -445,8 +450,8 @@ export class UsuarioFormularioComponent implements OnInit {
 
 
   openModalNivelAutorizacion(content) {
-    this.getNivelesAutorizacion()
-    this.getNivelesAutorizacionPorUsuario()
+    this.getNivelesAutorizacion();
+    this.getNivelesAutorizacionPorUsuario();
     this.modalService.open(content, { size: 'lg', backdrop: "static", });
   }
 
@@ -460,7 +465,7 @@ export class UsuarioFormularioComponent implements OnInit {
           console.error(response.errores[0]);
         } else {
           this.source = response.records;
-          console.table(this.source)
+          console.table(this.source);
         }
 
         this.loadingNiveles = false;
@@ -473,7 +478,7 @@ export class UsuarioFormularioComponent implements OnInit {
 
   getNivelesAutorizacionPorUsuario() {
     this.loadingNiveles = true;
-    let parametros: Parametro[] = [{ key: "usuarioID", value: this.usuarioID }]
+    let parametros: Parametro[] = [{ key: "usuarioID", value: this.usuarioID }];
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
       "GetNivelAutorizacionPorUsuarioComboBox", parametros).subscribe(response => {
 
@@ -482,7 +487,7 @@ export class UsuarioFormularioComponent implements OnInit {
           console.error(response.errores[0]);
         } else {
           this.confirmed = response.records;
-          console.table(this.confirmed)
+          console.table(this.confirmed);
         }
 
         this.loadingNiveles = false;
@@ -499,8 +504,8 @@ export class UsuarioFormularioComponent implements OnInit {
       return;
     }
 
-    let param = this.confirmed.map(x => { return { "UsuarioID": this.usuarioID, "NivelAutorizacionID": x.codigo } })
-    console.table(param)
+    let param = this.confirmed.map(x => { return { "UsuarioID": this.usuarioID, "NivelAutorizacionID": x.codigo }; });
+    console.table(param);
     this.guardandoNivelesAsignados = true;
     this.httpService.DoPostAny<any>(DataApi.NivelAutorizacionModulo,
       "RegistrarNivelAutorizacionAUsario", param).subscribe(response => {
@@ -521,6 +526,63 @@ export class UsuarioFormularioComponent implements OnInit {
 
   }
 
+
+
+  getRutasbyRol(RolId :number = 0) {
+    this.loadingRutas = true;
+    this.MostrarRutas = false;
+    let parametros: Parametro[] = [{ key: "RolId", value: RolId == 0 ? RolId : this.f.rolID.value }];
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetRutasByRolComboBox", parametros).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+          this.MostrarRutas = false;
+        } else {
+          this.rutas = response.records;
+          if (response.records.length > 0){
+            this.MostrarRutas = true;
+
+          }
+          // console.table(this.confirmed)
+        }
+
+        this.loadingRutas = false;
+      }, error => {
+        this.loadingRutas = false;
+        this.MostrarRutas = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
+  VerificarRutaEnUso(ruta){
+
+    let RutaID:number = Number(ruta.codigo);
+
+    this.httpService.DoPostAny<any>(DataApi.Ruta,
+      "GetDisponiblesRutas", RutaID).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          //validar que existe
+          if (!response.ok) {
+            this.toastService.error(response.errores[0]);
+            console.error(response.errores[0]);
+
+          } else {
+            if(response.records.length > 0){
+              let usuario = response.records[0];
+              this.f.rutaId.setValue(null);
+              this.toastService.error("Lo sentimos, esta ruta esta en uso. Por el usuario: "+usuario.userName+" y la ruta: "+usuario.rutaId);
+            }
+          }
+        }
+
+      }, error => {
+        this.toastService.error("Error conexion al servidor");
+      });
+   }
 
 
 

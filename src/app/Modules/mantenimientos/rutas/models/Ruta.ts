@@ -3,8 +3,6 @@ export class Ruta {
       this.id = 0;
       this.nombre = "";
       this.tipoRuta = 0;
-      this.encargado = "";
-      this.supervisor = "";
       this.codigoReferencia = "";
       this.estado = false;
   }
@@ -23,8 +21,6 @@ export class RutaFormulario {
     this.id = 0;
     this.nombre = "";
     this.tipoRutaId = 0;
-    this.supervisorId = 0;
-    this.usuarioId = 0;
     this.codigoReferencia = "";
     this.estado = false;
   }

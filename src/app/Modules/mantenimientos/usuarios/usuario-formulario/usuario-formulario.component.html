@@ -26,7 +26,7 @@
                             (click)="openModalNivelAutorizacion(modalNivelAutorizacion)">
                             Nivel autorización
                         </button>
- 
+
                         <button class="btn btn-sm btn-light m-1" (click)="open1(content1)">
                             Actualizar contraseña</button>
 
@@ -68,10 +68,21 @@
                         <label for="inputEmail4"> Rol</label>
                         <ng-select bindLabel="nombre" bindValue="codigo" [items]="roles" [loading]="loadingRoles"
                             [ngClass]="{'form-control border-danger p-0' : submitted && f.rolID.errors }"
-                            notFoundText="No resultados" formControlName="rolID">
+                            notFoundText="No resultados" formControlName="rolID" (change)="getRutasbyRol()">
                         </ng-select>
                         <div *ngIf="submitted && f.rolID.errors" class="text-danger small">
                             <div *ngIf="f.rolID.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6" *ngIf="MostrarRutas">
+                        <label for="inputEmail4">Rutas</label>
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="rutas" [loading]="loadingRutas"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.rutaId.errors }"
+                            notFoundText="No resultados" formControlName="rutaId" (change)="VerificarRutaEnUso($event)">
+                        </ng-select>
+                        <div *ngIf="submitted && f.rutaId.errors" class="text-danger small">
+                            <div *ngIf="f.rutaId.errors.required  ">El campo es obligatorio</div>
                         </div>
                     </div>
 
@@ -226,7 +237,7 @@
         <form [formGroup]="FormularioChangePassword" (ngSubmit)="onSubmitChangePassword()">
             <!-- <div class="form-group col-md-10">
                 <label for="password"> <i class="fa fa-key"></i> Contraseña actual</label>
-                <input formControlName="passwordActual" type="password" name="passwordActual"  
+                <input formControlName="passwordActual" type="password" name="passwordActual"
                     autocomplete="off"
                     [ngClass]="{'is-invalid' : submittedPassword && fC.passwordActual.errors,  'form-control':true  }">
                 <div class="invalid-feedback" *ngIf="submittedPassword && fC.passwordActual.errors">
@@ -235,7 +246,7 @@
             </div> -->
             <div class="form-group col-md-10">
                 <label for="password"> <i class="fa fa-key"></i> Nueva contraseña</label>
-                <input formControlName="password" type="password" name="password" 
+                <input formControlName="password" type="password" name="password"
                     [ngClass]="{'is-invalid' : submittedPassword && fC.password.errors,  'form-control':true  }">
                 <div class="invalid-feedback" *ngIf="submittedPassword && fC.password.errors">
                     <div *ngIf="fC.password.errors.required">El campo es obligatorio</div>

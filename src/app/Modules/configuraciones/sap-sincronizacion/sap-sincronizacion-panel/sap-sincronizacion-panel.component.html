@@ -79,6 +79,8 @@
           </div>
 
 
+
+
           <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12"
             *ngxPermissionsOnly="['configuraciones_sap_panel_sincronizacion_puede_sincronizar_notas_de_credito']">
             <div class="box-part text-center border rounded border-warning">
@@ -120,6 +122,46 @@
             </div>
           </div>
 
+
+          <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12"
+          *ngxPermissionsOnly="['configuraciones_sap_panel_sincronizacion_puede_sincronizar_reconciliacion_pronto_pago']">
+          <div class="box-part text-center border rounded border-primary">
+            <i class="text-primary fas fa-map fa-3x my-3" aria-hidden="true"></i>
+            <div class="title">
+              <h4>Rutas</h4>
+            </div>
+            <div class="text">
+              <span>Actualiza todas las rutas el AdminWeb desde SAP.</span>
+            </div>
+            <button type="button" class="btn btn-primary" (click)="sincronizarRutas()"
+              *ngIf="!loadingSincronizacionRutas">
+              Sincronizar
+            </button>
+            <button *ngIf="loadingSincronizacionRutas" disabled class="btn btn-primary" type="button">
+              <span class="spinner-border spinner-border-sm"></span> Sincronizando
+            </button>
+          </div>
+        </div>
+
+          <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12"
+          *ngxPermissionsOnly="['configuraciones_sap_panel_sincronizacion_puede_sincronizar_reconciliacion_pronto_pago']">
+          <div class="box-part text-center border rounded border-success">
+            <i class="text-success fas fa-map fa-3x my-3" aria-hidden="true"></i>
+            <div class="title">
+              <h4>Clientes</h4>
+            </div>
+            <div class="text">
+              <span>Actualiza todas las clientes el AdminWeb desde SAP.</span>
+            </div>
+            <button type="button" class="btn btn-success" (click)="sincronizarClientes()"
+              *ngIf="!loadingSincronizacionClientes">
+              Sincronizar
+            </button>
+            <button *ngIf="loadingSincronizacionClientes" disabled class="btn btn-success" type="button">
+              <span class="spinner-border spinner-border-sm"></span> Sincronizando
+            </button>
+          </div>
+        </div>
 
 
 

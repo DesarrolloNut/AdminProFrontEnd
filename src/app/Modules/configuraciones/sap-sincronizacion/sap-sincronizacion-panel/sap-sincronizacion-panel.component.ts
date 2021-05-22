@@ -17,6 +17,8 @@ export class SapSincronizacionPanelComponent implements OnInit {
   loadingSincronizacionPrecioArticulos: boolean;
   loadingProcesarNotaCreditoProntoPago: boolean;
   loadingProcesarReconciliaProntoPago: boolean;
+  loadingSincronizacionRutas: boolean;
+  loadingSincronizacionClientes: boolean;
 
   constructor(
     private toastService: ToastrService,
@@ -132,6 +134,45 @@ export class SapSincronizacionPanelComponent implements OnInit {
       });
   }
 
+  sincronizarRutas() {
+    this.loadingSincronizacionRutas = true;
+
+    this.httpService.DoPostAny<any>(DataApi.Ruta,
+      "GetSapRutas", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0])
+        } else {
+          this.toastService.success("Actualizado", "OK")
+        }
+
+        this.loadingSincronizacionRutas = false;
+      }, error => {
+        this.loadingSincronizacionRutas = false;
+        this.toastService.error("No se pudo actualizar los precios.", "Error conexion al servidor");
+      });
+  }
+
+  sincronizarClientes() {
+    this.loadingSincronizacionClientes = true;
+
+    this.httpService.DoPostAny<any>(DataApi.Cliente,
+      "GetClientesFromSAP", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0])
+        } else {
+          this.toastService.success("Actualizado", "OK")
+        }
+
+        this.loadingSincronizacionClientes = false;
+      }, error => {
+        this.loadingSincronizacionClientes = false;
+        this.toastService.error("No se pudo actualizar los precios.", "Error conexion al servidor");
+      });
+  }
 
 
 }
