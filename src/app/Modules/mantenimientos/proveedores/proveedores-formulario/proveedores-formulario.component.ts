@@ -348,7 +348,7 @@ export class ProveedoresFormularioComponent implements OnInit {
         this.toastService.error("No se pudo obtener las actividadesEconomicas", "Error conexion al servidor");
 
         setTimeout(() => {
-          this.getProvincias()
+          this.getActividadEconomica()
         }, 1000);
 
       });

@@ -120,7 +120,7 @@ export const ROUTES: RouteInfo[] = [
     permisos: ["compras"],
     submenu: [
       {
-        path: '/compras/solicitudCompra',
+        path: '/compras/solicitud-compras',
         label: '',
         labelClass: '',
         title: 'Solicitud de compras',

@@ -37,6 +37,8 @@ export const Approutes: Routes = [
 
       { path: 'ventas', loadChildren: () => import('./Modules/ventas/ventas.module').then(m => m.VentasModule) },
 
+      { path: 'compras', loadChildren: () => import('./Modules/compras/compras.module').then(m => m.ComprasModule) },
+
     ],
   },
 
