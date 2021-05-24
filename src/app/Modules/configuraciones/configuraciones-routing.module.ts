@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { AdminWebSincronizacionComponent } from './admin-web-sincronizacion/admin-web-sincronizacion/admin-web-sincronizacion.component';
 
 import { ConfiguracionesComponent } from './configuraciones.component';
 import { ControlHorarioCitasComponent } from './control-horario-citas/control-horario-citas.component';
@@ -18,6 +19,17 @@ const routes: Routes = [
           urls: [
             { title: 'Configuraciones' },
             { title: 'SAP Sincronización' }
+          ]
+        }
+      },
+
+
+      {
+        path: 'admin-web-panel-sincronizacion', component: AdminWebSincronizacionComponent, data: {
+          title: 'Admin Sincronización',
+          urls: [
+            { title: 'Configuraciones' },
+            { title: 'Admin Sincronización' }
           ]
         }
       },

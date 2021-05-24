@@ -1,0 +1,83 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+
+                <div class="row mb-2">
+                    <div class="col-md-6 align-middle">
+                        <h4 class="card-title">Opciones para actualizar desde SAP</h4>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12"
+                        *ngxPermissionsOnly="['configuraciones_admin_panel_sincronizacion_puede_sincronizar_articulos']">
+                        <div class="box-part text-center border rounded border-info">
+                            <i class="fa fa-shopping-cart fa-3x my-3" aria-hidden="true"></i>
+                            <div class="title">
+                                <h4>Artículos</h4>
+                            </div>
+                            <div class="text">
+                                <span>Obtén los artículos desde SAP.</span>
+                            </div>
+                            <button type="button" class="btn btn-info" (click)="sincronizarArticulos()"
+                                *ngIf="!loadingSincronizacionArticulos">
+                                Sincronizar
+                            </button>
+                            <button *ngIf="loadingSincronizacionArticulos" disabled class="btn btn-primary"
+                                type="button">
+                                <span class="spinner-border spinner-border-sm"></span> Sincronizando
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12"
+                        *ngxPermissionsOnly="['configuraciones_admin_panel_sincronizacion_puede_sincronizar_rutas']">
+                        <div class="box-part text-center border rounded border-primary">
+                            <i class="text-primary fas fa-map fa-3x my-3" aria-hidden="true"></i>
+                            <div class="title">
+                                <h4>Rutas</h4>
+                            </div>
+                            <div class="text">
+                                <span>Obtén todas las rutas desde SAP.</span>
+                            </div>
+                            <button type="button" class="btn btn-primary" (click)="sincronizarRutas()"
+                                *ngIf="!loadingSincronizacionRutas">
+                                Sincronizar
+                            </button>
+                            <button *ngIf="loadingSincronizacionRutas" disabled class="btn btn-primary" type="button">
+                                <span class="spinner-border spinner-border-sm"></span> Sincronizando
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12"
+                        *ngxPermissionsOnly="['configuraciones_admin_panel_sincronizacion_puede_sincronizar_clientes']">
+                        <div class="box-part text-center border rounded border-success">
+                            <i class="text-success fas fa-map fa-3x my-3" aria-hidden="true"></i>
+                            <div class="title">
+                                <h4>Clientes</h4>
+                            </div>
+                            <div class="text">
+                                <span>Obtén todos los clientes desde SAP.</span>
+                            </div>
+                            <button type="button" class="btn btn-success" (click)="sincronizarClientes()"
+                                *ngIf="!loadingSincronizacionClientes">
+                                Sincronizar
+                            </button>
+                            <button *ngIf="loadingSincronizacionClientes" disabled class="btn btn-success"
+                                type="button">
+                                <span class="spinner-border spinner-border-sm"></span> Sincronizando
+                            </button>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

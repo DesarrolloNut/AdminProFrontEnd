@@ -2,17 +2,10 @@
   <div class="col-12">
     <div class="card">
       <div class="card-body">
-        <div class="row mb-2">
-          <div class="col-md-6 align-middle">
-            <!-- <h4 class="card-title">Panel de sincronización SAP</h4> -->
-          </div>
-          <div class="col-md-6 text-right">
 
-          </div>
-        </div>
+
 
         <div class="row">
-
 
           <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12"
             *ngxPermissionsOnly="['configuraciones_sap_panel_sincronizacion_puede_sincronizar_lista_precios']">
@@ -22,7 +15,7 @@
                 <h4>Listas de precios</h4>
               </div>
               <div class="text">
-                <span>Actualiza SAP desde el Admin Web.</span>
+                <span>Actualiza la maestra de lista de precios.</span>
               </div>
               <button type="button" class="btn btn-primary" (click)="sincronizarListasPrecios()"
                 *ngIf="!loadingSincronizacionListaPrecios">
@@ -35,29 +28,6 @@
             </div>
           </div>
 
-
-          <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12"
-            *ngxPermissionsOnly="['configuraciones_sap_panel_sincronizacion_puede_sincronizar_articulos']">
-            <div class="box-part text-center border rounded border-info">
-              <i class="fa fa-shopping-cart fa-3x my-3" aria-hidden="true"></i>
-              <div class="title">
-                <h4>Artículos</h4>
-              </div>
-              <div class="text">
-                <span>Actualiza el Admin Web desde SAP.</span>
-              </div>
-              <button type="button" class="btn btn-info" (click)="sincronizarArticulos()"
-                *ngIf="!loadingSincronizacionArticulos">
-                Sincronizar
-              </button>
-              <button *ngIf="loadingSincronizacionArticulos" disabled class="btn btn-primary" type="button">
-                <span class="spinner-border spinner-border-sm"></span> Sincronizando
-              </button>
-            </div>
-          </div>
-
-
-
           <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12"
             *ngxPermissionsOnly="['configuraciones_sap_panel_sincronizacion_puede_sincronizar_precios_articulos']">
             <div class="box-part text-center border rounded border-success">
@@ -66,7 +36,7 @@
                 <h4>Precios Artículos</h4>
               </div>
               <div class="text">
-                <span>Actualiza SAP desde el Admin Web.</span>
+                <span>Actualiza los precios en SAP.</span>
               </div>
               <button type="button" class="btn btn-success" (click)="sincronizarPrecioArticulos()"
                 *ngIf="!loadingSincronizacionPrecioArticulos">
@@ -122,46 +92,6 @@
             </div>
           </div>
 
-
-          <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12"
-          *ngxPermissionsOnly="['configuraciones_sap_panel_sincronizacion_puede_sincronizar_reconciliacion_pronto_pago']">
-          <div class="box-part text-center border rounded border-primary">
-            <i class="text-primary fas fa-map fa-3x my-3" aria-hidden="true"></i>
-            <div class="title">
-              <h4>Rutas</h4>
-            </div>
-            <div class="text">
-              <span>Actualiza todas las rutas el AdminWeb desde SAP.</span>
-            </div>
-            <button type="button" class="btn btn-primary" (click)="sincronizarRutas()"
-              *ngIf="!loadingSincronizacionRutas">
-              Sincronizar
-            </button>
-            <button *ngIf="loadingSincronizacionRutas" disabled class="btn btn-primary" type="button">
-              <span class="spinner-border spinner-border-sm"></span> Sincronizando
-            </button>
-          </div>
-        </div>
-
-          <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12"
-          *ngxPermissionsOnly="['configuraciones_sap_panel_sincronizacion_puede_sincronizar_reconciliacion_pronto_pago']">
-          <div class="box-part text-center border rounded border-success">
-            <i class="text-success fas fa-map fa-3x my-3" aria-hidden="true"></i>
-            <div class="title">
-              <h4>Clientes</h4>
-            </div>
-            <div class="text">
-              <span>Actualiza todas las clientes el AdminWeb desde SAP.</span>
-            </div>
-            <button type="button" class="btn btn-success" (click)="sincronizarClientes()"
-              *ngIf="!loadingSincronizacionClientes">
-              Sincronizar
-            </button>
-            <button *ngIf="loadingSincronizacionClientes" disabled class="btn btn-success" type="button">
-              <span class="spinner-border spinner-border-sm"></span> Sincronizando
-            </button>
-          </div>
-        </div>
 
 
 

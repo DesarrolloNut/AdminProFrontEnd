@@ -802,6 +802,17 @@ export const ROUTES: RouteInfo[] = [
     permisos: ["configuraciones"],
     submenu: [
 
+      {
+        path: '/configuraciones/admin-web-panel-sincronizacion',
+        label: '',
+        labelClass: '',
+        title: 'Admin Sincronización',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["configuraciones_admin_panel_sincronizacion"],
+      },
 
       {
         path: '/configuraciones/sap-panel-sincronizacion',
@@ -814,6 +825,7 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ["configuraciones_sap_panel_sincronizacion"],
       },
+
 
 
 
