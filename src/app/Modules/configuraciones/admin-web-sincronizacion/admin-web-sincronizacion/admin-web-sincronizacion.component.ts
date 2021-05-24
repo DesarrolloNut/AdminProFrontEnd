@@ -12,6 +12,7 @@ export class AdminWebSincronizacionComponent implements OnInit {
   loadingSincronizacionArticulos: boolean;
   loadingSincronizacionRutas: boolean;
   loadingSincronizacionClientes: boolean;
+  loadingSincronizacionArticulosEnrrolados: boolean;
 
   constructor(
     private toastService: ToastrService,
@@ -57,7 +58,7 @@ export class AdminWebSincronizacionComponent implements OnInit {
         this.loadingSincronizacionRutas = false;
       }, error => {
         this.loadingSincronizacionRutas = false;
-        this.toastService.error("No se pudo actualizar los precios.", "Error conexion al servidor");
+        this.toastService.error("No se pudo actualizar las rutas.", "Error conexion al servidor");
       });
   }
 
@@ -77,14 +78,32 @@ export class AdminWebSincronizacionComponent implements OnInit {
         this.loadingSincronizacionClientes = false;
       }, error => {
         this.loadingSincronizacionClientes = false;
-        this.toastService.error("No se pudo actualizar los precios.", "Error conexion al servidor");
+        this.toastService.error("No se pudo actualizar los clientes.", "Error conexion al servidor");
+      });
+  }
+
+  sincronizarArticulosEnrroladosListaPrecioFromSAP() {
+    this.loadingSincronizacionArticulosEnrrolados = true;
+
+    this.httpService.DoPostAny<any>(DataApi.Articulo,
+      "SincronizarArticulosEnrroladosListaPrecioFromSAP", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0])
+        } else {
+          this.toastService.success("Actualizado", "OK")
+        }
+
+        this.loadingSincronizacionArticulosEnrrolados = false;
+      }, error => {
+        this.loadingSincronizacionArticulosEnrrolados = false;
+        this.toastService.error("No se pudo actualizar los articulos enrrolados.", "Error conexion al servidor");
       });
   }
 
 
 
 
-
-  
 
 }
