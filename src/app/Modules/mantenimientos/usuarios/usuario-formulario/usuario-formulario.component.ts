@@ -13,8 +13,6 @@ import { Parametro } from 'src/app/core/http/model/Parametro';
 import { Cliente } from '../../clientes/models/Cliente';
 import { DualListComponent } from 'angular-dual-listbox';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ValidatorLogic } from 'src/app/shared/validators/ValidatorLogic';
-
 
 @Component({
   selector: 'app-usuario-formulario',
@@ -74,6 +72,8 @@ export class UsuarioFormularioComponent implements OnInit {
   loadingRutas: boolean;
   MostrarRutas: boolean;
   rutas: ComboBox[];
+  departamentos: ComboBox[];
+  loadingDepartamentos: boolean;
 
 
   constructor(
@@ -98,6 +98,7 @@ export class UsuarioFormularioComponent implements OnInit {
     this.getUsuariosSupervisores();
     this.getRoles();
     this.getSucursales();
+    this.getDepartamentos();
 
     this.CreateForm();
 
@@ -163,8 +164,9 @@ export class UsuarioFormularioComponent implements OnInit {
       sucursalID: [null, [Validators.required]],
       telefonoExtension: [null, [Validators.required]],
       codigoReferencia: [null, [Validators.required]],
-      idUsuarioSupervisor: [null, [Validators.required]],
+      idUsuarioSupervisor: [0,],
       rutaId: [null, [Validators.required]],
+      departamentoID: [null, [Validators.required]],
     },
       {
         validator: cedulaestructura('documento', 'documentoTipoID')
@@ -365,6 +367,27 @@ export class UsuarioFormularioComponent implements OnInit {
       });
   }
 
+  getDepartamentos() {
+    this.loadingDepartamentos = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetDepartamentos", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.departamentos = response.records;
+        }
+        this.loadingDepartamentos = false;
+      }, error => {
+        this.getRoles();
+        this.loadingDepartamentos = false;
+        this.toastService.error("No se pudo obtener los departamentos", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getRoles();
+        }, 1000);
+      });
+  }
+
 
   getSucursales() {
     this.loadingSucursales = true;
@@ -528,7 +551,7 @@ export class UsuarioFormularioComponent implements OnInit {
 
 
 
-  getRutasbyRol(RolId :number = 0) {
+  getRutasbyRol(RolId: number = 0) {
     this.loadingRutas = true;
     this.MostrarRutas = false;
     let parametros: Parametro[] = [{ key: "RolId", value: RolId == 0 ? RolId : this.f.rolID.value }];
@@ -541,7 +564,7 @@ export class UsuarioFormularioComponent implements OnInit {
           this.MostrarRutas = false;
         } else {
           this.rutas = response.records;
-          if (response.records.length > 0){
+          if (response.records.length > 0) {
             this.MostrarRutas = true;
 
           }
@@ -556,9 +579,9 @@ export class UsuarioFormularioComponent implements OnInit {
       });
   }
 
-  VerificarRutaEnUso(ruta){
+  VerificarRutaEnUso(ruta) {
 
-    let RutaID:number = Number(ruta.codigo);
+    let RutaID: number = Number(ruta.codigo);
 
     this.httpService.DoPostAny<any>(DataApi.Ruta,
       "GetDisponiblesRutas", RutaID).subscribe(response => {
@@ -571,10 +594,10 @@ export class UsuarioFormularioComponent implements OnInit {
             console.error(response.errores[0]);
 
           } else {
-            if(response.records.length > 0){
+            if (response.records.length > 0) {
               let usuario = response.records[0];
               this.f.rutaId.setValue(null);
-              this.toastService.error("Lo sentimos, esta ruta esta en uso. Por el usuario: "+usuario.userName+" y la ruta: "+usuario.rutaId);
+              this.toastService.error("Lo sentimos, esta ruta esta en uso. Por el usuario: " + usuario.userName + " y la ruta: " + usuario.rutaId);
             }
           }
         }
@@ -582,7 +605,7 @@ export class UsuarioFormularioComponent implements OnInit {
       }, error => {
         this.toastService.error("Error conexion al servidor");
       });
-   }
+  }
 
 
 

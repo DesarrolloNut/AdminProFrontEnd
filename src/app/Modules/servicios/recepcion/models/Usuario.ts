@@ -17,4 +17,6 @@ export class Usuario {
     telefonoExtension: string
     codigoReferencia: string
     idUsuarioSupervisor: number
+    rutaId: number
+    departamentoID: number
 }

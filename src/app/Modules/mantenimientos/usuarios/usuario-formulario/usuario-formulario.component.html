@@ -178,7 +178,7 @@
                     <div class="form-group col-md-6">
                         <label for="inputEmail4"> Supervisor</label>
                         <ng-select bindLabel="nombre" bindValue="codigo" [items]="supervisores"
-                            [loading]="loadingUsuarios"
+                            [loading]="loadingUsuarios" [clearable]="false"
                             [ngClass]="{'form-control border-danger p-0' : submitted && f.idUsuarioSupervisor.errors }"
                             notFoundText="No resultados" formControlName="idUsuarioSupervisor">
                         </ng-select>
@@ -200,7 +200,17 @@
                     </div>
 
 
-
+                    <div class="form-group col-md-6">
+                        <label for="departamentoID"> <i class="fa fa-map-marker"></i> Departamento </label>
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="departamentos"
+                            [loading]="loadingDepartamentos"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.departamentoID.errors }"
+                            notFoundText="No resultados" formControlName="departamentoID">
+                        </ng-select>
+                        <div *ngIf="submitted && f.departamentoID.errors" class="text-danger small">
+                            <div *ngIf="f.departamentoID.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
 
                     <div class="form-group text-right col-md-12">
                         <hr />

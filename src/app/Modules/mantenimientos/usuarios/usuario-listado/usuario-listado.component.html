@@ -51,7 +51,7 @@
                                         <i class="fa fa-user-circle fa-3x text-light"></i>
 
                                         <div _ngcontent-kgy-c224="" class="ml-3">
-                                            <p class="font-bold mb-0">{{usuario.nombres  | titlecase }}</p>
+                                            <p class="font-bold mb-0">{{usuario.nombres | titlecase }}</p>
                                             <small class="text-info">{{usuario.userName }}</small>
                                         </div>
                                     </div>
@@ -63,7 +63,7 @@
                                     <span> <i class="fa fa-id-card text-muted"></i> {{usuario.documento}}</span>
                                 </td>
                                 <td>
-                                    {{usuario.rol | uppercase}}
+                                    {{usuario.rol}}
                                 </td>
                                 <td>
                                     <button class="btn btn-sm btn-info" [routerLink]="[usuario.id]">
