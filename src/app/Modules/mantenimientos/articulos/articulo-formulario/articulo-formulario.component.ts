@@ -27,6 +27,8 @@ export class ArticuloFormularioComponent implements OnInit {
   loadingModelos: boolean;
   loadingMarcas: boolean;
   marcas: ComboBox[];
+  loadingArticuloTipos: boolean;
+  articuloTipos: ComboBox[];
 
 
 
@@ -48,6 +50,7 @@ export class ArticuloFormularioComponent implements OnInit {
 
     this.getCompanias()
     this.getMarcas()
+    this.getTipoArticulos()
     this.CreateForm();
   }
 
@@ -67,7 +70,7 @@ export class ArticuloFormularioComponent implements OnInit {
       placa: ['',],
       tipoVehiculoID: [0,],
       vehiculoVersionID: [0,],
-      tipoArticuloID: [0,],
+      tipoArticuloID: [1, Validators.required],
       fleteID: [0,],
       monedaID: ["",],
       paisID: [0,],
@@ -216,6 +219,27 @@ export class ArticuloFormularioComponent implements OnInit {
       });
   }
 
+  getTipoArticulos() {
+    this.loadingArticuloTipos = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetTipoArticulo", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.articuloTipos = response.records;
+        }
+        this.loadingArticuloTipos = false;
+      }, error => {
+        this.loadingArticuloTipos = false;
+        this.toastService.error("No se pudo obtener las articulos tipos", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getTipoArticulos()
+        }, 1000);
+
+      });
+  }
 
 
 }

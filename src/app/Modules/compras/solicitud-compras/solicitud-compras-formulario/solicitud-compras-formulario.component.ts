@@ -2,10 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Cliente } from 'src/app/Modules/mantenimientos/clientes/models/Cliente';
 import { Proveedor } from 'src/app/Modules/mantenimientos/proveedores/models/Proveedor';
+import { Usuario } from 'src/app/Modules/servicios/recepcion/models/Usuario';
 import { ParametrosCita } from 'src/app/Modules/turno/models/ParametrosCita';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
@@ -43,15 +45,32 @@ export class SolicitudComprasFormularioComponent implements OnInit {
   loadingActividadesEconomicas: boolean;
   actividadesEconomicas: ComboBox[];
 
+  departamentos: ComboBox[];
+  loadingDepartamentos: boolean;
+
+  sucursales: ComboBox[] = [];
+  loadingSucursales = false;
+
+  loadingProveedores: boolean;
+  proveedores: ComboBox[];
+
+  fechaActual: Date;
+
+  loadingCompradores: boolean;
+  compradores: ComboBox[];
+
+  usuario: Usuario;
+
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
+    private auth: AuthenticationService,
     private httpService: BackendService,
     private router: Router,
     private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
-
+    console.table(this.auth.tokenDecoded)
     let id = Number(this.route.snapshot.paramMap.get('id'));
     this.CreateForm();
 
@@ -59,7 +78,13 @@ export class SolicitudComprasFormularioComponent implements OnInit {
       this.getItem(id);
       this.actualizando = true;
     }
- 
+
+    this.getDepartamentos()
+    this.getSucursales()
+    this.getProveedores()
+    this.getCompradores()
+    this.getHoraActual()
+    this.getUsuarioByID(Number(this.auth.tokenDecoded.nameid))
   }
 
 
@@ -140,29 +165,140 @@ export class SolicitudComprasFormularioComponent implements OnInit {
       });
   }
 
- 
+  getUsuarioByID(usuarioID: number) {
+    this.Cargando = true;
+    this.httpService.DoPostAny<any>(DataApi.Usuario,
+      "GetUsuarioByID", usuarioID).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          //validar que existe
+          if (response != null && response.records != null && response.records.length > 0) {
 
-  // getActividadEconomica() {
-  //   this.loadingActividadesEconomicas = true;
-  //   this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-  //     "GetActividadEconomica", null).subscribe(response => {
+            let usuario = response.records[0];
+            delete usuario.passwordHash;
+            delete usuario.passwordSalt;
+            this.usuario = usuario;
+            console.table(this.usuario)
+          } else {
+            this.toastService.warning("Usuario no encontrado");
+            this.router.navigateByUrl('/compras/solicitud-compras');
+          }
+        }
 
-  //       if (!response.ok) {
-  //         this.toastService.error(response.errores[0]);
-  //       } else {
-  //         this.actividadesEconomicas = response.records;
-  //       }
-  //       this.loadingActividadesEconomicas = false;
-  //     }, error => {
-  //       this.loadingActividadesEconomicas = false;
-  //       this.toastService.error("No se pudo obtener las actividadesEconomicas", "Error conexion al servidor");
+      }, error => {
+        this.Cargando = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
 
-  //       setTimeout(() => {
-  //         this.getActividadEconomica()
-  //       }, 1000);
+  getDepartamentos() {
+    this.loadingDepartamentos = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetDepartamentos", null).subscribe(response => {
 
-  //     });
-  // }
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.departamentos = response.records;
+        }
+        this.loadingDepartamentos = false;
+      }, error => {
+        this.loadingDepartamentos = false;
+        this.toastService.error("No se pudo obtener los departamentos", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getDepartamentos();
+        }, 1000);
+      });
+  }
+
+  getProveedores() {
+    this.loadingProveedores = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetProveedores", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.proveedores = response.records;
+        }
+        this.loadingProveedores = false;
+      }, error => {
+        this.loadingProveedores = false;
+        this.toastService.error("No se pudo obtener los Proveedores", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getProveedores();
+        }, 1000);
+      });
+  }
+
+  getCompradores() {
+    this.loadingCompradores = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetCompradores", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.compradores = response.records;
+        }
+        this.loadingCompradores = false;
+      }, error => {
+        this.loadingCompradores = false;
+        this.toastService.error("No se pudo obtener los compradores", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getCompradores();
+        }, 1000);
+      });
+  }
+
+  getSucursales() {
+    this.loadingSucursales = true;
+    let parametros: Parametro[] = [
+      {
+        key: "CompaniaID",
+        // value: this.authService.tokenDecoded.primarygroupsid
+        value: 0
+      }
+    ];
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetSucursalesByCompania", parametros).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.sucursales = response.records;
+        }
+
+        this.loadingSucursales = false;
+      }, error => {
+        this.loadingSucursales = false;
+        this.toastService.error("No se pudo obtener las sucursales.", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getSucursales();
+        }, 1000);
+      });
+  }
+
+  getHoraActual() {
+    this.Cargando = true;
+    this.httpService.DoPost<ComboBox>(DataApi.Public,
+      "GetHoraActual", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.fechaActual = new Date(response.valores[0]);
+        }
+
+        this.Cargando = false;
+      }, error => {
+        this.Cargando = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
+
 
 
 

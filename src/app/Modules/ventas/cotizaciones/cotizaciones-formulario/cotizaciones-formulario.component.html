@@ -24,7 +24,6 @@
                     </div>
                 </div>
                 <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
-                    <!--cliente-->
                     <div class="form-group col-md-6">
                         <label for="inputEmail4">Cliente</label>
                         <ng-select bindLabel="nombre" bindValue="codigo" [items]="clientes" [loading]="loadingClientes"
@@ -40,7 +39,6 @@
 
                     <div class="form-group col-md-6">
                         <label for="codigoReferencia">
-                            <!-- <i class="fa fa-hashtag"></i>  -->
                             Código de Referencia
                         </label>
                         <input formControlName="codigoReferencia" type="text" name="codigoReferencia"
@@ -116,7 +114,6 @@
                                     </tr>
                                 </thead>
 
-                                <!-- <tbody [hidden]="loadingArticulosSeleccionados"> -->
                                 <tbody>
 
                                     <!-- <tr *ngFor="let item of confirmed | filter: searchText; let i  = index"> -->

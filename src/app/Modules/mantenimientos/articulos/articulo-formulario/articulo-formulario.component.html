@@ -26,6 +26,10 @@
         <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
         <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
 
+
+
+
+
           <div class="form-group col-md-6">
             <label for="codigoReferencia"> <i class="fa fa-hashtag"></i> Código de Referencia</label>
             <input formControlName="codigoReferencia" type="text" name="codigoReferencia" id="codigoReferencia"
@@ -33,32 +37,6 @@
             <div class="invalid-feedback" *ngIf="submitted && f.codigoReferencia.errors">
               <div *ngIf="f.codigoReferencia.errors.required">El campo es obligatorio</div>
             </div>
-          </div>
-
-          <div class="col-md-6  text-right">
-
-            <div class="form-check">
-              <input formControlName="articuloDeCompra" class="form-check-input" type="checkbox" id="articuloDeCompra">
-              <label class="form-check-label" for="articuloDeCompra">
-                Artículo de compra
-              </label>
-            </div>
-
-
-            <div class="form-check">
-              <input formControlName="articuloDeVenta" class="form-check-input" type="checkbox" id="articuloDeVenta">
-              <label class="form-check-label" for="articuloDeVenta">
-                Artículo de venta
-              </label>
-            </div>
-
-            <div class="form-check">
-              <input formControlName="articuloDeInventario" class="form-check-input" type="checkbox" id="articuloDeInventario">
-              <label class="form-check-label" for="articuloDeInventario">
-                Artículo de inventario
-              </label>
-            </div>
-
           </div>
 
           <div class="form-group col-md-6">
@@ -78,7 +56,19 @@
               <div *ngIf="f.anio.errors.required">El campo es obligatorio</div>
             </div>
           </div>
+          <div class="form-group col-md-6">
+            <label for="inputEmail4"> Tipo</label>
+            <ng-select bindLabel="nombre" bindValue="codigo" [items]="articuloTipos" [loading]="loadingArticuloTipos"
+              [clearable]="false" [ngClass]="{'form-control border-danger p-0' : submitted && f.tipoArticuloID.errors }"
+              notFoundText="No resultados" formControlName="tipoArticuloID">
+            </ng-select>
+            <div *ngIf="submitted && f.tipoArticuloID.errors" class="text-danger small">
+              <div *ngIf="f.tipoArticuloID.errors.required  ">El campo es obligatorio</div>
+            </div>
+          </div>
+
           <!--
+
                     <div class="form-group col-md-6">
                         <label for="inputEmail4"> Marca</label>
                         <ng-select bindLabel="nombre" bindValue="codigo" (change)="onSelectMarca($event.codigo)"
@@ -161,6 +151,46 @@
               rows="5"></textarea>
             <div class="invalid-feedback" *ngIf="submitted && f.descripcion.errors">
               <div *ngIf="f.descripcion.errors.required">El campo es obligatorio</div>
+            </div>
+          </div>
+
+
+          <div class="col-12 mt-2">
+            <div class="row border border-light p-2 bg bg-light">
+              <div class="col-md-4">
+
+                <div class="form-check">
+                  <input formControlName="articuloDeCompra" class="form-check-input" type="checkbox"
+                    id="articuloDeCompra">
+                  <label class="form-check-label" for="articuloDeCompra">
+                    Artículo de compra
+                  </label>
+                </div>
+
+              </div>
+
+              <div class="col-md-4">
+
+                <div class="form-check">
+                  <input formControlName="articuloDeVenta" class="form-check-input" type="checkbox"
+                    id="articuloDeVenta">
+                  <label class="form-check-label" for="articuloDeVenta">
+                    Artículo de venta
+                  </label>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+
+                <div class="form-check">
+                  <input formControlName="articuloDeInventario" class="form-check-input" type="checkbox"
+                    id="articuloDeInventario">
+                  <label class="form-check-label" for="articuloDeInventario">
+                    Artículo de inventario
+                  </label>
+                </div>
+
+              </div>
             </div>
           </div>
 

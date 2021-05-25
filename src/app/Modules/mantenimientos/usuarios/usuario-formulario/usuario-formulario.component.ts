@@ -29,6 +29,8 @@ export class UsuarioFormularioComponent implements OnInit {
 
 
   sucursales: ComboBox[] = [];
+  loadingSucursales = false;
+
   roles: ComboBox[] = [];
   documentos: ComboBox[];
 
@@ -38,7 +40,6 @@ export class UsuarioFormularioComponent implements OnInit {
   btnGuardarCargando = false;
   actualizandoUsuario = false;
 
-  loadingSucursales = false;
   loadingRoles = false;
   loadingDocumentos = false;
   buscandoDocumento: boolean;
@@ -165,7 +166,7 @@ export class UsuarioFormularioComponent implements OnInit {
       telefonoExtension: [null, [Validators.required]],
       codigoReferencia: [null, [Validators.required]],
       idUsuarioSupervisor: [0,],
-      rutaId: [null, [Validators.required]],
+      rutaId: [0, [Validators.required]],
       departamentoID: [null, [Validators.required]],
     },
       {
@@ -358,7 +359,6 @@ export class UsuarioFormularioComponent implements OnInit {
         }
         this.loadingRoles = false;
       }, error => {
-        this.getRoles();
         this.loadingRoles = false;
         this.toastService.error("No se pudo obtener los roles", "Error conexion al servidor");
         setTimeout(() => {
@@ -379,11 +379,10 @@ export class UsuarioFormularioComponent implements OnInit {
         }
         this.loadingDepartamentos = false;
       }, error => {
-        this.getRoles();
         this.loadingDepartamentos = false;
         this.toastService.error("No se pudo obtener los departamentos", "Error conexion al servidor");
         setTimeout(() => {
-          this.getRoles();
+          this.getDepartamentos();
         }, 1000);
       });
   }

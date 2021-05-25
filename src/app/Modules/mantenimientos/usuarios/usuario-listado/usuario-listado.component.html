@@ -32,10 +32,10 @@
                         <thead>
                             <tr>
                                 <th></th>
+                                <th></th>
                                 <th>Usuario</th>
                                 <th>Email</th>
                                 <th>Documento</th>
-                                <th>Rol</th>
                             </tr>
                         </thead>
                         <tbody [hidden]="Cargando">
@@ -52,9 +52,12 @@
 
                                         <div _ngcontent-kgy-c224="" class="ml-3">
                                             <p class="font-bold mb-0">{{usuario.nombres | titlecase }}</p>
-                                            <small class="text-info">{{usuario.userName }}</small>
+                                            <small class="text-info">{{usuario.rol | uppercase }}</small>
                                         </div>
                                     </div>
+                                </td>
+                                <td>
+                                    <span> {{usuario.userName}}</span>
                                 </td>
                                 <td>
                                     <span> <i class="fa fa-envelope text-muted"></i> {{usuario.email}}</span>
@@ -62,9 +65,7 @@
                                 <td>
                                     <span> <i class="fa fa-id-card text-muted"></i> {{usuario.documento}}</span>
                                 </td>
-                                <td>
-                                    {{usuario.rol}}
-                                </td>
+                
                                 <td>
                                     <button class="btn btn-sm btn-info" [routerLink]="[usuario.id]">
                                         <i class="fa fa-sm fa-edit"></i>

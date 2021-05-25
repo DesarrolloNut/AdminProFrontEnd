@@ -26,6 +26,85 @@
                 <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
                 <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
 
+                    <!-- <div class="form-group col-md-6">
+                        <label for="codigoReferencia"> <i class="fa fa-hashtag"></i> Código de Referencia</label>
+                        <input formControlName="codigoReferencia" type="text" name="codigoReferencia"
+                            id="codigoReferencia"
+                            [ngClass]="{'is-invalid' : submitted && f.codigoReferencia.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.codigoReferencia.errors">
+                            <div *ngIf="f.codigoReferencia.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div> -->
+
+                    <div class="form-group col-md-6">
+                        <label for="sucursalID"> Sucursal </label>
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="sucursales"
+                            [loading]="loadingSucursales"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.sucursalID.errors }"
+                            notFoundText="No resultados" formControlName="sucursalID">
+                        </ng-select>
+                        <div *ngIf="submitted && f.sucursalID.errors" class="text-danger small">
+                            <div *ngIf="f.sucursalID.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group col-md-6">
+                        <label for="departamentoID"> Departamento </label>
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="departamentos"
+                            [loading]="loadingDepartamentos"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.departamentoID.errors }"
+                            notFoundText="No resultados" formControlName="departamentoID">
+                        </ng-select>
+                        <div *ngIf="submitted && f.departamentoID.errors" class="text-danger small">
+                            <div *ngIf="f.departamentoID.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="proveedorID"> Proveedor </label>
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="proveedores"
+                            [loading]="loadingProveedores"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.proveedorID.errors }"
+                            notFoundText="No resultados" formControlName="proveedorID">
+                        </ng-select>
+                        <div *ngIf="submitted && f.proveedorID.errors" class="text-danger small">
+                            <div *ngIf="f.proveedorID.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="compradorID"> Comprador </label>
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="compradores"
+                            [loading]="loadingCompradores"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.compradorID.errors }"
+                            notFoundText="No resultados" formControlName="compradorID">
+                        </ng-select>
+                        <div *ngIf="submitted && f.compradorID.errors" class="text-danger small">
+                            <div *ngIf="f.compradorID.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-6">
+                        <label>Fecha de entrega</label>
+                        <ejs-datepicker formControlName="fechaEntrega" [format]="'dd-MM-yyyy'" [min]='fechaActual'>
+                        </ejs-datepicker>
+                        <div *ngIf="submitted && f.fechaEntrega.errors"
+                            class="text-danger small animated animated--fade-in">
+                            <div *ngIf="f.fechaEntrega.errors.required">El campo es obligatorio</div>
+                            <div *ngIf="f.fechaEntrega.errors.min">La fecha no puede ser menor a la actual</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-12">
+                        <label for="comentario"> Comentario</label>
+
+                        <textarea formControlName="comentario" class="form-control" name="comentario" id="comentario"
+                            rows="3"></textarea>
+                        <div class="invalid-feedback" *ngIf="submitted && f.comentario.errors">
+                            <div *ngIf="f.comentario.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
 
                     <div class="form-group text-right col-md-12">
                         <hr />
