@@ -36,67 +36,147 @@
                         </div>
                     </div> -->
 
-                    <div class="form-group col-md-6">
-                        <label for="sucursalID"> Sucursal </label>
-                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="sucursales"
-                            [loading]="loadingSucursales"
-                            [ngClass]="{'form-control border-danger p-0' : submitted && f.sucursalID.errors }"
-                            notFoundText="No resultados" formControlName="sucursalID">
-                        </ng-select>
-                        <div *ngIf="submitted && f.sucursalID.errors" class="text-danger small">
-                            <div *ngIf="f.sucursalID.errors.required  ">El campo es obligatorio</div>
+
+                    <div class="col-12 mb-2" *ngIf="usuario">
+                        <div class="row border border-light p-2">
+                            <div class="col-12">
+                                <h4 class="card-subtitle">
+                                    <span class="badge badge-info">Datos del solicitante</span>
+                                </h4>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="nombre"><i class="fa fa-hashtag"></i> Código</label>
+                                <input [(ngModel)]="usuario.codigoReferencia" class="form-control" [readonly]="'true'"
+                                    type="text" [ngModelOptions]="{standalone: true}" name="nombre" id="nombre">
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label for="nombre"> <i class="fa fa-user"></i> Nombres</label>
+                                <input [(ngModel)]="usuario.nombres +' '+ usuario.apellidos" class="form-control"
+                                    [readonly]="'true'" type="text" [ngModelOptions]="{standalone: true}" name="nombre"
+                                    id="nombre">
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label for="nombre"> <i class="fa fa-id-card"></i> Documento</label>
+                                <input [(ngModel)]="usuario.documento" class="form-control" [readonly]="'true'"
+                                    type="text" [ngModelOptions]="{standalone: true}" name="nombre" id="nombre">
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label for="departamentoID"> Departamento </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="departamentos"
+                                    [disabled]="true" [(ngModel)]="usuario.departamentoID"
+                                    [ngModelOptions]="{standalone: true}" [loading]="loadingDepartamentos"
+                                    notFoundText="No resultados">
+                                </ng-select>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="row border border-light p-2">
+                            <div class="col-12">
+                                <h4 class="card-subtitle">
+                                    <span class="badge badge-info">Destino de la compra</span>
+                                </h4>
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label for="sucursalID"> Sucursal </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="sucursales"
+                                    [loading]="loadingSucursales" [clearable]="false"
+                                    [ngClass]="{'form-control border-danger p-0' : submitted && f.sucursalID.errors }"
+                                    notFoundText="No resultados" formControlName="sucursalID">
+                                </ng-select>
+                                <div *ngIf="submitted && f.sucursalID.errors" class="text-danger small">
+                                    <div *ngIf="f.sucursalID.errors.required  ">El campo es obligatorio</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label for="departamentoID"> Departamento </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="departamentos"
+                                    [loading]="loadingDepartamentos" [clearable]="false"
+                                    [ngClass]="{'form-control border-danger p-0' : submitted && f.departamentoID.errors }"
+                                    notFoundText="No resultados" formControlName="departamentoID">
+                                </ng-select>
+                                <div *ngIf="submitted && f.departamentoID.errors" class="text-danger small">
+                                    <div *ngIf="f.departamentoID.errors.required  ">El campo es obligatorio</div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 
 
-                    <div class="form-group col-md-6">
-                        <label for="departamentoID"> Departamento </label>
-                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="departamentos"
-                            [loading]="loadingDepartamentos"
-                            [ngClass]="{'form-control border-danger p-0' : submitted && f.departamentoID.errors }"
-                            notFoundText="No resultados" formControlName="departamentoID">
-                        </ng-select>
-                        <div *ngIf="submitted && f.departamentoID.errors" class="text-danger small">
-                            <div *ngIf="f.departamentoID.errors.required  ">El campo es obligatorio</div>
+
+                    <div class="col-12">
+                        <div class="row border border-light p-2">
+                            <div class="col-12">
+                                <h4 class="card-subtitle">
+                                    <span class="badge badge-info">Otros datos</span>
+                                </h4>
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label for="proveedorID"> Proveedor </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="proveedores"
+                                    [loading]="loadingProveedores" [clearable]="false"
+                                    [ngClass]="{'form-control border-danger p-0' : submitted && f.proveedorID.errors }"
+                                    notFoundText="No resultados" formControlName="proveedorID">
+                                </ng-select>
+                                <div *ngIf="submitted && f.proveedorID.errors" class="text-danger small">
+                                    <div *ngIf="f.proveedorID.errors.required  ">El campo es obligatorio</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label for="compradorID"> Comprador </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="compradores"
+                                    [loading]="loadingCompradores" [clearable]="false"
+                                    [ngClass]="{'form-control border-danger p-0' : submitted && f.compradorID.errors }"
+                                    notFoundText="No resultados" formControlName="compradorID">
+                                </ng-select>
+                                <div *ngIf="submitted && f.compradorID.errors" class="text-danger small">
+                                    <div *ngIf="f.compradorID.errors.required  ">El campo es obligatorio</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-6">
+                                <label>Fecha de entrega</label>
+                                <ejs-datepicker formControlName="fechaEntrega" [format]="'dd-MM-yyyy'"
+                                    [min]='fechaActual'>
+                                </ejs-datepicker>
+                                <div *ngIf="submitted && f.fechaEntrega.errors"
+                                    class="text-danger small animated animated--fade-in">
+                                    <div *ngIf="f.fechaEntrega.errors.required">El campo es obligatorio</div>
+                                    <div *ngIf="f.fechaEntrega.errors.min">La fecha no puede ser menor a la actual</div>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group col-md-6">
+                                <label for="tipoSolicitudID"> Tipo </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="solicitudCompraTipos"
+                                    [loading]="loadingSolicitudCompraTipo" [clearable]="false"
+                                    [ngClass]="{'form-control border-danger p-0' : submitted && f.tipoSolicitudID.errors }"
+                                    notFoundText="No resultados" formControlName="tipoSolicitudID">
+                                </ng-select>
+                                <div *ngIf="submitted && f.tipoSolicitudID.errors" class="text-danger small">
+                                    <div *ngIf="f.tipoSolicitudID.errors.required  ">El campo es obligatorio</div>
+                                </div>
+                            </div>
+
+
                         </div>
                     </div>
 
-                    <div class="form-group col-md-6">
-                        <label for="proveedorID"> Proveedor </label>
-                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="proveedores"
-                            [loading]="loadingProveedores"
-                            [ngClass]="{'form-control border-danger p-0' : submitted && f.proveedorID.errors }"
-                            notFoundText="No resultados" formControlName="proveedorID">
-                        </ng-select>
-                        <div *ngIf="submitted && f.proveedorID.errors" class="text-danger small">
-                            <div *ngIf="f.proveedorID.errors.required  ">El campo es obligatorio</div>
-                        </div>
-                    </div>
 
-                    <div class="form-group col-md-6">
-                        <label for="compradorID"> Comprador </label>
-                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="compradores"
-                            [loading]="loadingCompradores"
-                            [ngClass]="{'form-control border-danger p-0' : submitted && f.compradorID.errors }"
-                            notFoundText="No resultados" formControlName="compradorID">
-                        </ng-select>
-                        <div *ngIf="submitted && f.compradorID.errors" class="text-danger small">
-                            <div *ngIf="f.compradorID.errors.required  ">El campo es obligatorio</div>
-                        </div>
-                    </div>
 
-                    <div class="form-group col-6">
-                        <label>Fecha de entrega</label>
-                        <ejs-datepicker formControlName="fechaEntrega" [format]="'dd-MM-yyyy'" [min]='fechaActual'>
-                        </ejs-datepicker>
-                        <div *ngIf="submitted && f.fechaEntrega.errors"
-                            class="text-danger small animated animated--fade-in">
-                            <div *ngIf="f.fechaEntrega.errors.required">El campo es obligatorio</div>
-                            <div *ngIf="f.fechaEntrega.errors.min">La fecha no puede ser menor a la actual</div>
-                        </div>
-                    </div>
-
-                    <div class="form-group col-md-12">
+                    <div class="form-group col-md-12" *ngIf="f.tipoSolicitudID.value == 2">
                         <label for="comentario"> Comentario</label>
 
                         <textarea formControlName="comentario" class="form-control" name="comentario" id="comentario"

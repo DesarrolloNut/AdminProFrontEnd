@@ -115,7 +115,7 @@ export class RolesListadoComponent implements OnInit {
   openModal(content, rolID: number) {
     this.RolID = rolID;
     this.getPermisosSeleccionados();
-    this.modalService.open(content, { size: 'lg', backdrop: "static", });
+    this.modalService.open(content, { size: 'xl', backdrop: "static", });
   }
 
   getPermisos() {

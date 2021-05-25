@@ -61,6 +61,9 @@ export class SolicitudComprasFormularioComponent implements OnInit {
 
   usuario: Usuario;
 
+  loadingSolicitudCompraTipo: boolean;
+  solicitudCompraTipos: ComboBox[];
+
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
@@ -70,7 +73,6 @@ export class SolicitudComprasFormularioComponent implements OnInit {
     private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
-    console.table(this.auth.tokenDecoded)
     let id = Number(this.route.snapshot.paramMap.get('id'));
     this.CreateForm();
 
@@ -83,6 +85,7 @@ export class SolicitudComprasFormularioComponent implements OnInit {
     this.getSucursales()
     this.getProveedores()
     this.getCompradores()
+    this.getSolicitudCompraTipo()
     this.getHoraActual()
     this.getUsuarioByID(Number(this.auth.tokenDecoded.nameid))
   }
@@ -93,7 +96,7 @@ export class SolicitudComprasFormularioComponent implements OnInit {
     this.Formulario = this.formBuilder.group({
       id: [0],
       codigoReferencia: [null,],
-      departamentoID: [0],
+      departamentoID: [null, [Validators.required]],
       solicitanteID: [0, [Validators.required]],
       sucursalID: [null, [Validators.required]],
       estadoID: [0,],
@@ -101,8 +104,9 @@ export class SolicitudComprasFormularioComponent implements OnInit {
       compradorID: [null, [Validators.required]],
       fechaEntrega: [null,],
       anexoUrl: [null,],
-      comentario: [null,],
       proveedorID: [null, [Validators.required]],
+      tipoSolicitudID: [1, [Validators.required]],
+      comentario: [null,],
     });
   }
 
@@ -139,7 +143,15 @@ export class SolicitudComprasFormularioComponent implements OnInit {
     if (this.Formulario.invalid) {
       return;
     }
-    this.guardar();
+
+    if (this.f.tipoSolicitudID.value == 2 && !this.f.comentario.value) {
+      this.toastService.warning("Si la solicitud es urgente debes de llenar el campo comentario.")
+      return;
+    }
+
+
+
+    // this.guardar();
   }
 
 
@@ -148,7 +160,7 @@ export class SolicitudComprasFormularioComponent implements OnInit {
     let metodo: string = this.actualizando ? "Update" : "Registrar";
     this.btnGuardarCargando = true;
 
-    this.httpService.DoPostAny<Proveedor>(DataApi.Proveedor,
+    this.httpService.DoPostAny<Proveedor>(DataApi.SolicitudCompra,
       metodo, this.Formulario.value).subscribe(response => {
 
         if (!response.ok) {
@@ -248,6 +260,26 @@ export class SolicitudComprasFormularioComponent implements OnInit {
         this.toastService.error("No se pudo obtener los compradores", "Error conexion al servidor");
         setTimeout(() => {
           this.getCompradores();
+        }, 1000);
+      });
+  }
+
+  getSolicitudCompraTipo() {
+    this.loadingSolicitudCompraTipo = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetSolicitudCompraTipo", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.solicitudCompraTipos = response.records;
+        }
+        this.loadingSolicitudCompraTipo = false;
+      }, error => {
+        this.loadingSolicitudCompraTipo = false;
+        this.toastService.error("No se pudo obtener los tipos de solicitudes", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getSolicitudCompraTipo();
         }, 1000);
       });
   }

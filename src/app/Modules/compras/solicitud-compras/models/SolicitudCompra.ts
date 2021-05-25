@@ -15,5 +15,6 @@ export class SolicitudCompra {
     anexoURL: string
     comentario: string
     proveedorID: number
+    tipoSolicitudID: number
 
 }

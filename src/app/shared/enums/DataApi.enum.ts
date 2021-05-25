@@ -17,11 +17,10 @@ export enum DataApi {
     ReconciliacionInterna = 42,
     Moneda = 43,
     Departamento = 44,
-    SolicitudCompras = 45,
+    SolicitudCompra = 45,
     Proveedor = 46,
     ActividadEconomica = 47,
     ReporteProntoPago = 48,
-    SolicitudCompra = 49,
 
 
 
@@ -84,11 +83,10 @@ export const dataApiRootMap: { [api: string]: string } = {
     "42": "api/SAPReconciliacionInterna",
     "43": "api/Moneda",
     "44": "api/Departamento",
-    "45": "api/SolicitudCompras",
+    "45": "api/SolicitudCompra",
     "46": "api/Proveedor",
     "47": "api/ActividadEconomica",
     "48": "api/ReporteProntoPago",
-    "49": "api/SolicitudCompra",
 
 
 
