@@ -101,7 +101,7 @@ export const ROUTES: RouteInfo[] = [
             class: '',
             extralink: false,
             submenu: [],
-            permisos: ["ventas_cotizacion"],
+            permisos: ["ventas_reporte_prontopago"]
           },
 
 

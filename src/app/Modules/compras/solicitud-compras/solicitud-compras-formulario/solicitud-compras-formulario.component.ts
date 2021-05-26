@@ -7,6 +7,7 @@ import { Parametro } from 'src/app/core/http/model/Parametro';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Cliente } from 'src/app/Modules/mantenimientos/clientes/models/Cliente';
 import { Proveedor } from 'src/app/Modules/mantenimientos/proveedores/models/Proveedor';
+import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
 import { Usuario } from 'src/app/Modules/servicios/recepcion/models/Usuario';
 import { ParametrosCita } from 'src/app/Modules/turno/models/ParametrosCita';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
@@ -26,6 +27,7 @@ export class SolicitudComprasFormularioComponent implements OnInit {
   submitted = false;
   btnGuardarCargando = false;
   actualizando = false;
+  cantidadEditable = true;
 
   documentos: ComboBox[];
   loadingDocumentos = false;
@@ -50,9 +52,10 @@ export class SolicitudComprasFormularioComponent implements OnInit {
   loadingSolicitudCompraTipo: boolean;
   solicitudCompraTipos: ComboBox[];
 
-  articulosDeCompra: ArticuloDeCompra[];
-  articulosSolicitud: ArticuloDeCompra[];
-  total: number; 
+  articulosDeCompra: Articulo[];
+  articulosSolicitud: ArticuloDeCompra[] = [new ArticuloDeCompra()];
+  total: number;
+  loadingArticulosDeCompra: boolean;
 
   constructor(
     private toastService: ToastrService,
@@ -76,6 +79,7 @@ export class SolicitudComprasFormularioComponent implements OnInit {
     this.getProveedores()
     this.getCompradores()
     this.getSolicitudCompraTipo()
+    this.getArticulosCompra()
     this.getHoraActual()
     this.getUsuarioByID(Number(this.auth.tokenDecoded.nameid))
   }
@@ -129,10 +133,10 @@ export class SolicitudComprasFormularioComponent implements OnInit {
 
 
   onSelectArticulo(item: any, index: number) {
-    this.articulosDeCompra[index].costo = item.costo;
+    this.articulosSolicitud[index].costo = item.costo;
     console.table(item)
-    if (!this.articulosDeCompra.some(x => x.id <= 0)) {
-      this.articulosDeCompra.push(new ArticuloDeCompra())
+    if (!this.articulosSolicitud.some(x => x.id <= 0)) {
+      this.articulosSolicitud.push(new ArticuloDeCompra())
     }
     this.calcularTotal()
 
@@ -140,32 +144,41 @@ export class SolicitudComprasFormularioComponent implements OnInit {
 
   calcularTotal() {
     this.total = 0
-    this.articulosDeCompra.forEach(x => {
+    this.articulosSolicitud.forEach(x => {
       this.total += x.cantidad ? (x.costo * x.cantidad) : 0
     })
   }
 
-  // getArticulosCompra() {
-  //   this.loadingCondicionPagos = true;
-  //   this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-  //     "GetTipoCondicionPago", null).subscribe(response => {
+  onDeleteitem(index: number) {
+    this.articulosSolicitud.splice(index, 1);
+    if (!this.articulosSolicitud.some(x => x.id <= 0)) {
+      this.articulosSolicitud.push(new ArticuloDeCompra())
+    }
+    this.calcularTotal()
+  }
 
-  //       if (!response.ok) {
-  //         this.toastService.error(response.errores[0]);
-  //       } else {
-  //         this.TipoCondicionPagos = response.records;
-  //       }
-  //       this.loadingCondicionPagos = false;
-  //     }, error => {
-  //       this.loadingCondicionPagos = false;
-  //       this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
+  getArticulosCompra() {
+    this.loadingArticulosDeCompra = true;
+    this.httpService.DoPost<Articulo>(DataApi.Articulo,
+      "GetArticulosDeCompra", null).subscribe(response => {
 
-  //       setTimeout(() => {
-  //         this.getTipoCondicionPago();
-  //       }, 1000);
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.articulosDeCompra = response.records;
+          console.table(this.articulosDeCompra)
+        }
+        this.loadingArticulosDeCompra = false;
+      }, error => {
+        this.loadingArticulosDeCompra = false;
+        this.toastService.error("No se pudo obtener los articulos", "Error conexion al servidor");
 
-  //     });
-  // }
+        setTimeout(() => {
+          this.getArticulosCompra();
+        }, 1000);
+
+      });
+  }
 
   onSubmit() {
     console.table(this.Formulario.value)
@@ -221,7 +234,6 @@ export class SolicitudComprasFormularioComponent implements OnInit {
             delete usuario.passwordHash;
             delete usuario.passwordSalt;
             this.usuario = usuario;
-            console.table(this.usuario)
           } else {
             this.toastService.warning("Usuario no encontrado");
             this.router.navigateByUrl('/compras/solicitud-compras');

@@ -37,7 +37,6 @@ export class CotizacionesFormularioComponent implements OnInit {
 
   constructor(
     private toastService: ToastrService,
-    private route: ActivatedRoute,
     private httpService: BackendService,
     private router: Router,
     private authService: AuthenticationService,
@@ -206,7 +205,7 @@ export class CotizacionesFormularioComponent implements OnInit {
   calcularTotal() {
     this.total = 0
     this.articulosCotizacion.forEach(x => {
-      this.total += x.cantidad ? (x.precio * x.cantidad) : 0
+      this.total += x.cantidad ? (x.costo * x.cantidad) : 0
     })
   }
 
