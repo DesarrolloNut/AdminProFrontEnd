@@ -12,6 +12,7 @@ import { ParametrosCita } from 'src/app/Modules/turno/models/ParametrosCita';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { cedulaestructura } from 'src/app/shared/validators/cedula-estructura.validator';
+import { ArticuloDeCompra } from '../models/ArticuloDeCompra';
 
 @Component({
   selector: 'app-solicitud-compras-formulario',
@@ -29,21 +30,6 @@ export class SolicitudComprasFormularioComponent implements OnInit {
   documentos: ComboBox[];
   loadingDocumentos = false;
   buscandoDocumento: boolean;
-
-  loadingCondicionPagos: boolean;
-  TipoCondicionPagos: ComboBox[];
-
-  sectores: any[];
-  loadingSectores: boolean;
-
-  loadingCiudades: boolean;
-  ciudades: ComboBox[];
-
-  loadingProvincias: boolean;
-  provincias: ComboBox[];
-
-  loadingActividadesEconomicas: boolean;
-  actividadesEconomicas: ComboBox[];
 
   departamentos: ComboBox[];
   loadingDepartamentos: boolean;
@@ -63,6 +49,10 @@ export class SolicitudComprasFormularioComponent implements OnInit {
 
   loadingSolicitudCompraTipo: boolean;
   solicitudCompraTipos: ComboBox[];
+
+  articulosDeCompra: ArticuloDeCompra[];
+  articulosSolicitud: ArticuloDeCompra[];
+  total: number; 
 
   constructor(
     private toastService: ToastrService,
@@ -136,6 +126,46 @@ export class SolicitudComprasFormularioComponent implements OnInit {
       });
   }
 
+
+
+  onSelectArticulo(item: any, index: number) {
+    this.articulosDeCompra[index].costo = item.costo;
+    console.table(item)
+    if (!this.articulosDeCompra.some(x => x.id <= 0)) {
+      this.articulosDeCompra.push(new ArticuloDeCompra())
+    }
+    this.calcularTotal()
+
+  }
+
+  calcularTotal() {
+    this.total = 0
+    this.articulosDeCompra.forEach(x => {
+      this.total += x.cantidad ? (x.costo * x.cantidad) : 0
+    })
+  }
+
+  // getArticulosCompra() {
+  //   this.loadingCondicionPagos = true;
+  //   this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+  //     "GetTipoCondicionPago", null).subscribe(response => {
+
+  //       if (!response.ok) {
+  //         this.toastService.error(response.errores[0]);
+  //       } else {
+  //         this.TipoCondicionPagos = response.records;
+  //       }
+  //       this.loadingCondicionPagos = false;
+  //     }, error => {
+  //       this.loadingCondicionPagos = false;
+  //       this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
+
+  //       setTimeout(() => {
+  //         this.getTipoCondicionPago();
+  //       }, 1000);
+
+  //     });
+  // }
 
   onSubmit() {
     console.table(this.Formulario.value)

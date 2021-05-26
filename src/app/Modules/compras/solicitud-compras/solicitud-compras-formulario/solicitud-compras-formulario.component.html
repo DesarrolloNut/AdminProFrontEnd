@@ -39,12 +39,13 @@
 
                     <div class="col-12 mb-2" *ngIf="usuario">
                         <div class="row border border-light p-2">
+
                             <div class="col-12">
                                 <h4 class="card-subtitle">
                                     <span class="badge badge-info">Datos del solicitante</span>
                                 </h4>
                             </div>
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-2">
                                 <label for="nombre"><i class="fa fa-hashtag"></i> Código</label>
                                 <input [(ngModel)]="usuario.codigoReferencia" class="form-control" [readonly]="'true'"
                                     type="text" [ngModelOptions]="{standalone: true}" name="nombre" id="nombre">
@@ -57,21 +58,20 @@
                                     id="nombre">
                             </div>
 
-                            <div class="form-group col-md-6">
-                                <label for="nombre"> <i class="fa fa-id-card"></i> Documento</label>
+                            <div class="form-group col-md-2">
+                                <label for="nombre"> <i class="fa fa-id-card"></i> Doc.</label>
                                 <input [(ngModel)]="usuario.documento" class="form-control" [readonly]="'true'"
                                     type="text" [ngModelOptions]="{standalone: true}" name="nombre" id="nombre">
                             </div>
 
-                            <div class="form-group col-md-6">
-                                <label for="departamentoID"> Departamento </label>
+                            <div class="form-group col-md-2">
+                                <label for="departamentoID"> <i class="fa fa-warehouse"></i> Dep. </label>
                                 <ng-select bindLabel="nombre" bindValue="codigo" [items]="departamentos"
                                     [disabled]="true" [(ngModel)]="usuario.departamentoID"
                                     [ngModelOptions]="{standalone: true}" [loading]="loadingDepartamentos"
                                     notFoundText="No resultados">
                                 </ng-select>
                             </div>
-
 
                         </div>
                     </div>
@@ -174,8 +174,6 @@
                         </div>
                     </div>
 
-
-
                     <div class="form-group col-md-12" *ngIf="f.tipoSolicitudID.value == 2">
                         <label for="comentario"> Comentario</label>
 
@@ -184,6 +182,63 @@
                         <div class="invalid-feedback" *ngIf="submitted && f.comentario.errors">
                             <div *ngIf="f.comentario.errors.required">El campo es obligatorio</div>
                         </div>
+                    </div>
+
+                    <div class="col-12">
+
+                        <div class="table-responsive" style="height: 400px;">
+                            <table class="table table-hover mb-0 no-wrap v-middle">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Artículo</th>
+                                        <!-- <th scope="col">Precio</th> -->
+                                        <th scope="col">Cantidad</th>
+                                        <!-- <th scope="col">Total</th> -->
+                                        <th scope="col"></th>
+                                        <!-- <th scope="col">Fecha de aplicación</th> -->
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                    <!-- <tr *ngFor="let item of confirmed | filter: searchText; let i  = index"> -->
+                                    <tr *ngFor="let item of articulosDeCompra; let i=index">
+                                        <td>
+                                            <ng-select style="width: 500px;" [items]="articulos" bindLabel="nombre"
+                                                [clearable]="false" bindValue="id" [loading]="loadingArticulos"
+                                                [(ngModel)]="item.id" [ngModelOptions]="{standalone: true}"
+                                                (change)="onSelectArticulo($event,i)" notFoundText="No resultados">
+                                            </ng-select>
+                                        </td>
+                                        <td>
+                                            <input style="width: 200px;" type="text" class="form-control" prefix="$ "
+                                                [(ngModel)]="item.precio" [ngModelOptions]="{standalone: true}"
+                                                [readonly]="'true'" mask="separator" thousandSeparator=",">
+                                        </td>
+                                        <td>
+                                            <input style="width: 100px;" type="text" class="form-control"
+                                                mask="separator" thousandSeparator="," [(ngModel)]="item.cantidad"
+                                                [ngModelOptions]="{standalone: true}">
+                                        </td>
+                                        <td>
+                                            <span>${{ item.costo * item.cantidad | number:'1.2-5'}}</span>
+                                        </td>
+                                        <td>
+                                            <button (click)="onDeleteitem(i)" type="button"
+                                                class="btn btn-outline-danger">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+
+                    </div>
+
+                    <div class="form-group text-right col-md-12" *ngIf="total > 0">
+                        <h1>$ {{total | number:'1.2-5' }}</h1>
                     </div>
 
                     <div class="form-group text-right col-md-12">
