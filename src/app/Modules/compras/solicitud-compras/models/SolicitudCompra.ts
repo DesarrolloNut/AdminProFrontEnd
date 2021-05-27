@@ -16,5 +16,7 @@ export class SolicitudCompra {
     comentario: string
     proveedorID: number
     tipoSolicitudID: number
+    solicitanteDepartamentoID: number
+    solicitanteSucursalID: number
 
 }

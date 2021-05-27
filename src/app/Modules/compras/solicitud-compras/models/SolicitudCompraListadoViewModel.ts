@@ -5,10 +5,14 @@ export class SolicitudCompraListadoViewModel {
 
     id: number
     codigoReferencia: string
-    departamento: string
+    departamentoDestino: string
+    sucursalDestino: string
+    departamentoSolicitante: string
+    sucursalSolicitante: string
     solicitante: string
-    sucursal: string
     estado: string
+    tipo: string
+    tipoID: number
     comprador: string
     proveedor: string
     fechaSolicitud: Date

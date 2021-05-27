@@ -32,45 +32,47 @@
             <thead>
               <tr>
                 <th></th>
-                <th>Comprador</th>
-                <th>Sucursal</th>
-                <th>Proveedor</th>
-                <th>Solicitud</th>
-                <th>Entrega</th>
+                <th>Solicitante</th>
+                <th>Destino</th>
+                <th></th>
+                <th></th>
+                <th></th>
               </tr>
             </thead>
             <tbody [hidden]="Cargando">
 
               <tr *ngFor="let item of data">
-                <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
+                <td>
+                  <span class="badge badge-light text-info ">{{item.id}}</span> |
+                  <small class="badge" [ngClass]="{'badge-danger': item.tipoID == 2}"> {{ item.tipo}}</small>
+                </td>
                 <td>
                   <div class="d-flex align-items-center">
-                    <!-- <img _ngcontent-kgy-c224="" height=" 50px" width="50px" class="rounded-circle"
-                                          src="https://img2.freepng.es/20180331/eow/kisspng-computer-icons-user-clip-art-user-5abf13db298934.2968784715224718991702.jpg">
-                                       -->
-
-                    <i class="fa fa-invoice fa-3x text-light"></i>
-
+                    <i class="fa fa-user fa-3x text-light"></i>
                     <div class="ml-3">
                       <p class="font-bold mb-0"><span>{{item.solicitante | titlecase }} </span></p>
-                      <small class="text-info">{{item.departamento }}</small>
+                      <small class="text-info"> <i class="fa fa-warehouse"></i> {{item.departamentoSolicitante
+                        }}</small> |
+                      <small class="text-info"><i class="fa fa-map-marker"></i> {{item.sucursalSolicitante }}</small>
                     </div>
                   </div>
                 </td>
                 <td>
-                  <span> <i class="fa fa-envelope text-muted"></i> {{item.comprador}}</span>
+                  <small> <i class="fa fa-warehouse"></i> {{item.departamentoDestino
+                    }}</small> <br>
+                  <small><i class="fa fa-map-marker"></i> {{item.sucursalDestino }}</small>
                 </td>
                 <td>
-                  <span> <i class="fa fa-id-card text-muted"></i> {{item.sucursal}}</span>
+                  <small> <i class="fa fa-user text-muted"></i> Comprador: {{item.comprador}}</small>
+                  <br>
+                  <small> <i class="fa fa-user-circle text-muted"></i> Proveedor: {{item.proveedor}}</small>
                 </td>
                 <td>
-                  <span> <i class="fa fa-id-card text-muted"></i> {{item.proveedor}}</span>
-                </td>
-                <td>
-                  <span> <i class="fa fa-id-card text-muted"></i> {{item.fechaSolicitud | date:'dd/MM/yy'}}</span>
-                </td>
-                <td>
-                  <span> <i class="fa fa-id-card text-muted"></i> {{item.fechaEntrega | date:'dd/MM/yy'}}</span>
+                  <small class="text-info font-weight-bold" > <i class="fa fa-clock "></i> Solicitud: {{item.fechaSolicitud|
+                    date:'M/d/yy, h:mm a'}}</small>
+                  <br>
+                  <small> <i class="fa fa-calendar-alt text-muted"></i> Entrega: {{item.fechaEntrega |
+                    date:'dd/MM/yyyy'}}</small>
                 </td>
                 <td>
                   <button class="btn btn-sm btn-info" [routerLink]="[item.id]">

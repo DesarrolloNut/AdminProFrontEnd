@@ -91,16 +91,18 @@ export class SolicitudComprasFormularioComponent implements OnInit {
       id: [0],
       codigoReferencia: [null,],
       departamentoID: [null, [Validators.required]],
-      solicitanteID: [0, [Validators.required]],
+      solicitanteID: [Number(this.auth.tokenDecoded.nameid), [Validators.required]],
       sucursalID: [null, [Validators.required]],
       estadoID: [0,],
-      fechaSolicitud: [null,],
+      fechaSolicitud: [new Date(),],
       compradorID: [null, [Validators.required]],
-      fechaEntrega: [null,],
-      anexoUrl: [null,],
+      fechaEntrega: [new Date(), [Validators.required]],
+      anexoURL: [null,],
       proveedorID: [null, [Validators.required]],
       tipoSolicitudID: [1, [Validators.required]],
       comentario: [null,],
+      solicitanteDepartamentoID: [0,],
+      solicitanteSucursalID: [0,],
     });
   }
 
@@ -134,7 +136,6 @@ export class SolicitudComprasFormularioComponent implements OnInit {
 
   onSelectArticulo(item: any, index: number) {
     this.articulosSolicitud[index].costo = item.costo;
-    console.table(item)
     if (!this.articulosSolicitud.some(x => x.id <= 0)) {
       this.articulosSolicitud.push(new ArticuloDeCompra())
     }
@@ -166,7 +167,6 @@ export class SolicitudComprasFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.articulosDeCompra = response.records;
-          console.table(this.articulosDeCompra)
         }
         this.loadingArticulosDeCompra = false;
       }, error => {
@@ -181,7 +181,6 @@ export class SolicitudComprasFormularioComponent implements OnInit {
   }
 
   onSubmit() {
-    console.table(this.Formulario.value)
     this.submitted = true;
     if (this.Formulario.invalid) {
       return;
@@ -192,19 +191,31 @@ export class SolicitudComprasFormularioComponent implements OnInit {
       return;
     }
 
-
-
-    // this.guardar();
+    if (!this.articulosSolicitud.some(x => x.id > 0)) {
+      this.toastService.warning("Debes de tener al menos un artículo.")
+      return;
+    }
+    if (this.articulosSolicitud.some(x => x.id > 0 && x.cantidad < 1)) {
+      this.toastService.warning("Tienes artículos sin cantidad.")
+      return;
+    }
+    this.guardar();
   }
 
 
   guardar() {
 
-    let metodo: string = this.actualizando ? "Update" : "Registrar";
+    let parametro: any = {
+      "solicitudCompra": this.Formulario.value,
+      "solicitudCompraDetalles": this.articulosSolicitud.filter(x => x.id > 0 && x.cantidad > 0)
+    }
+    console.log(parametro)
+
+    let metodo: string = "Registrar";
     this.btnGuardarCargando = true;
 
     this.httpService.DoPostAny<Proveedor>(DataApi.SolicitudCompra,
-      metodo, this.Formulario.value).subscribe(response => {
+      metodo, parametro).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
