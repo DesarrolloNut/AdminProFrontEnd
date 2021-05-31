@@ -42,7 +42,7 @@ export class NivelAutorizacionFormularioComponent implements OnInit {
       this.actualizando = true;
     }
     this.GetNivelAutorizacionModuloComboBox();
-    this.GetEstadoForKeyComboBox();
+    // this.GetEstadosGenerales()
     this.CreateForm();
   }
 
@@ -52,7 +52,7 @@ export class NivelAutorizacionFormularioComponent implements OnInit {
     this.Formulario = this.formBuilder.group({
       id: [0],
       nombre: [null, [Validators.required]],
-      nivelAutorizacionModuloId: [0, [Validators.required]] ,
+      nivelAutorizacionModuloId: [0, [Validators.required]],
       estadoId: [0],
     });
   }
@@ -70,6 +70,7 @@ export class NivelAutorizacionFormularioComponent implements OnInit {
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0]
             this.Formulario.setValue(record);
+            this.GetEstadosGeneralesByModuloID()
           } else {
             this.toastService.warning("NivelAutorizacion no encontrado");
             this.router.navigateByUrl('/mantenimientos/nivelautorizacion');
@@ -138,11 +139,40 @@ export class NivelAutorizacionFormularioComponent implements OnInit {
       });
   }
 
-  GetEstadoForKeyComboBox() {
+  onNivelModuloChange(modulo: ComboBox) {
+
+    this.GetEstadosGeneralesByModuloID()
+
+  }
+
+  // GetEstadoForKeyComboBox() {
+  //   this.loadingEstadoCategorias = true;
+  //   let parametro: Parametro[] = [{ key: "NameKey", value: this.f.namekey.value }];
+  //   this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+  //     "GetEstadoForKeyComboBox", parametro).subscribe(response => {
+
+  //       if (!response.ok) {
+  //         this.toastService.error(response.errores[0]);
+  //       } else {
+  //         this.EstadoCategorias = response.records;
+  //       }
+  //       this.loadingEstadoCategorias = false;
+  //     }, error => {
+  //       this.loadingEstadoCategorias = false;
+  //       this.toastService.error("No se pudo obtener los estados", "Error conexion al servidor");
+
+  //       setTimeout(() => {
+  //         this.GetEstadoForKeyComboBox()
+  //       }, 1000);
+
+  //     });
+  // }
+
+  GetEstadosGeneralesByModuloID() {
     this.loadingEstadoCategorias = true;
-    let parametro: Parametro[] = [{ key: "NameKey", value: EstadoGeneralesKey.LISTAPRECIO}];
+    let parametro: Parametro[] = [{ key: "moduloID", value: this.f.nivelAutorizacionModuloId.value }];
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetEstadoForKeyComboBox", parametro).subscribe(response => {
+      "GetEstadosGeneralesByModuloID", parametro).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
@@ -155,7 +185,7 @@ export class NivelAutorizacionFormularioComponent implements OnInit {
         this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
 
         setTimeout(() => {
-          this.GetEstadoForKeyComboBox()
+          this.GetEstadosGeneralesByModuloID()
         }, 1000);
 
       });

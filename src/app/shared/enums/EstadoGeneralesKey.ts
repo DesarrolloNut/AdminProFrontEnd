@@ -1,5 +1,6 @@
 export enum EstadoGeneralesKey {
     LISTAPRECIO = 'LISTAPRECIO',
     PROMOCIONES = 'PROMOCIONES',
+    SOLICITUDCOMPRAS = 'SOLICITUDCOMPRAS',
 
 }

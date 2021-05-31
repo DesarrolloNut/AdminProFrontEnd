@@ -27,14 +27,14 @@ export class NivelAutorizacionModuloFormularioComponent implements OnInit {
     private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
-    
+
     let id = Number(this.route.snapshot.paramMap.get('id'));
 
     if (id > 0) {
       this.getItem(id);
       this.actualizando = true;
     }
-    
+
     this.CreateForm();
   }
 
@@ -44,7 +44,7 @@ export class NivelAutorizacionModuloFormularioComponent implements OnInit {
     this.Formulario = this.formBuilder.group({
       id: [0],
       nombre: [null, [Validators.required]],
-      // descripcion: [null,],
+      keyName: [null, [Validators.required]],
       estadoID: [0,],
     });
   }
