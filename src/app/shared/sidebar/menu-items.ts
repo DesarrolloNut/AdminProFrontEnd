@@ -173,8 +173,20 @@ export const ROUTES: RouteInfo[] = [
     class: 'has-arrow',
     labelClass: '',
     extralink: false,
-    submenu: [],
-    permisos: [],
+    permisos: ["produccion"],
+    submenu: [
+      {
+        path: '/produccion/pesaje',
+        label: '',
+        labelClass: '',
+        title: 'Pesajes',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["produccion_pesaje"],
+      },
+    ],
   },
   {
     path: '/',
