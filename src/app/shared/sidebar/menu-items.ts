@@ -179,7 +179,7 @@ export const ROUTES: RouteInfo[] = [
         path: '/produccion/pesaje',
         label: '',
         labelClass: '',
-        title: 'Pesajes',
+        title: 'Sistema de Pesajes',
         icon: '',
         class: '',
         extralink: false,

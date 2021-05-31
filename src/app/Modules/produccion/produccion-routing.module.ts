@@ -15,20 +15,20 @@ const routes: Routes = [
 
       {
         path: 'pesaje', component: PesajeListadoComponent, data: {
-          title: 'Pesajes',
+          title: 'Sistema de Pesajes',
           urls: [
             { title: 'Producción' },
-            { title: 'Pesajes' },
+            { title: 'Sistema de Pesajes' },
           ]
         }
       },
 
       {
         path: 'pesaje/:id', component: PesajeFormularioComponent, data: {
-          title: 'Pesajes',
+          title: 'Sistema de Pesajes',
           urls: [
             { title: 'Producción' },
-            { title: 'Pesajes' },
+            { title: 'Sistema de Pesajes' },
             { title: 'Formulario' },
           ]
         }

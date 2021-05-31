@@ -1,1 +1,207 @@
-<p>pesaje-formulario works!</p>
+<div class="row">
+    <div class="control-section">
+        <div id="control_wrapper">
+        </div>
+    </div>
+</div>
+
+<div class="row mb-2">
+    <div class="col">
+        <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
+    </div>
+</div>
+<div class="row">
+
+    <div class="col-md-6">
+        <div class="card border-right border-danger">
+            <div class="card-body">
+                <div class="d-flex no-block align-items-center">
+                    <div><span class="text-danger display-6"><i class="ti-pie-chart"></i></span></div>
+                    <div class="ml-auto">
+                        <h1 class="font-weight-bold">2,725.82 Lbs</h1>
+                        <h2 class="text-danger">Peso Bruto</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card border-right border-success">
+            <div class="card-body">
+                <div class="d-flex no-block align-items-center">
+                    <div><span class="text-success display-6"><i class="ti-pie-chart"></i></span></div>
+                    <div class="ml-auto">
+                        <h1 class="font-weight-bold">2,645.52 Lbs</h1>
+                        <h2 class="text-success">Peso Neto</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 col-12">
+                        <!-- <h4 class="card-title">Formulario</h4> -->
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-12 text-right">
+                    </div>
+                </div>
+                <form class="form-row m-t-40">
+
+                    <div class="form-group col-md-4">
+                        <label for="codigoReferencia">
+                            <i class="fa fa-search"></i> Buscar código
+                        </label>
+                        <input class="form-control" type="text" name="codigoReferencia">
+                    </div>
+
+
+
+                    <hr>
+                    <div class="col-12">
+                        <div class="row border border-light p-2">
+                            <div class="col">
+                                <h1> <i class="fa fa-shopping-bag"></i> 1000350 | Salami Buen Dia</h1>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div class="col-12" [hidden]="loadingArticulosSeleccionados"> -->
+                    <div class="col-12">
+
+                        <div class="table-responsive" style="height: 300px;">
+                            <table class="table table-hover mb-0 no-wrap v-middle">
+                                <thead>
+                                    <tr>
+                                        <th scope="col"></th>
+                                        <th scope="col">Peso</th>
+                                        <th scope="col">Cantidad</th>
+                                        <th scope="col">Total Peso</th>
+                                        <th scope="col"></th>
+                                        <!-- <th scope="col">Fecha de aplicación</th> -->
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                    <!-- <tr *ngFor="let item of confirmed | filter: searchText; let i  = index"> -->
+                                    <!-- <tr *ngFor="let item of articulosCotizacion; let i=index"> -->
+                                    <tr>
+                                        <td>
+                                            <h2>
+                                                <span> Canasto La Nutriciosa</span>
+                                            </h2>
+                                        </td>
+                                        <td>
+                                            <!-- <ng-select style="width: 500px;" [items]="articulos" bindLabel="nombre"
+                                                [clearable]="false" bindValue="id" [loading]="loadingArticulos"
+                                                [(ngModel)]="item.id" [ngModelOptions]="{standalone: true}"
+                                                (change)="onSelectArticulo($event,i)" notFoundText="No resultados">
+                                            </ng-select> -->
+                                            <!-- <ng-select style="width: 200px;" [clearable]="false" [searchable]="false"
+                                                notFoundText="No resultados">
+                                            </ng-select> -->
+
+                                            <input type="text" value="4.06 Lbs" class="form-control"
+                                                style="width: 200px;">
+                                        </td>
+                                        <td>
+                                            <!-- <input style="width: 100px;" type="text" class="form-control"
+                                                (keyup)="calcularTotal()" mask="separator" thousandSeparator=","
+                                                [(ngModel)]="item.cantidad" [ngModelOptions]="{standalone: true}"> -->
+                                            <!-- <ng-select style="width: 150px;" bindLabel="nombre" [clearable]="false"
+                                                [searchable]="false" bindValue="id" notFoundText="No resultados">
+                                            </ng-select> -->
+
+                                            <input type="text" value="5" class="form-control" style="width: 150px;">
+                                        </td>
+                                        <td>
+                                            <h2>
+                                                <span>20.3 Lbs</span>
+                                            </h2>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-outline-danger">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <h2>
+                                                <span> Paleta La Nutriciosa</span>
+                                            </h2>
+                                        </td>
+                                        <td>
+                                            <!-- <ng-select style="width: 500px;" [items]="articulos" bindLabel="nombre"
+                                                [clearable]="false" bindValue="id" [loading]="loadingArticulos"
+                                                [(ngModel)]="item.id" [ngModelOptions]="{standalone: true}"
+                                                (change)="onSelectArticulo($event,i)" notFoundText="No resultados">
+                                            </ng-select> -->
+                                            <!-- <ng-select style="width: 200px;" [clearable]="false" [searchable]="false"
+                                                notFoundText="No resultados">
+                                            </ng-select> -->
+
+                                            <input type="text" value="60 Lbs" class="form-control"
+                                                style="width: 200px;">
+                                        </td>
+                                        <td>
+                                            <!-- <input style="width: 100px;" type="text" class="form-control"
+                                                (keyup)="calcularTotal()" mask="separator" thousandSeparator=","
+                                                [(ngModel)]="item.cantidad" [ngModelOptions]="{standalone: true}"> -->
+                                            <!-- <ng-select style="width: 150px;" bindLabel="nombre" [clearable]="false"
+                                                [searchable]="false" bindValue="id" notFoundText="No resultados">
+                                            </ng-select> -->
+
+                                            <input type="text" value="1" class="form-control" style="width: 150px;">
+                                        </td>
+                                        <td>
+                                            <h2>
+                                                <span>60 Lbs</span>
+                                            </h2>
+                                        <td>
+                                            <button type="button" class="btn btn-outline-danger">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+
+                    </div>
+
+                    <!-- <div class="col-12">
+                        <app-loading-listado [hidden]="!loadingArticulosSeleccionados"></app-loading-listado>
+                    </div> -->
+
+
+                    <div class="form-group text-right col-md-12">
+                        <hr />
+
+                        <button class="btn btn-light m-1" routerLink="../" type="button">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+
+                        <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+                            <i class="fas fa-check"></i> Guardar
+                        </button>
+
+                        <!-- boton cargando -->
+                        <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span> Guardando
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
