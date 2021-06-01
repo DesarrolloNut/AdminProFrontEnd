@@ -369,7 +369,17 @@ export const ROUTES: RouteInfo[] = [
     permisos: ["mantenimientos"],
 
     submenu: [
-
+      {
+        path: '/mantenimientos/articulo',
+        label: '',
+        labelClass: '',
+        title: 'Artículos',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_articulo"],
+      },
       {
         path: '/mantenimientos/actividadEconomica',
         label: '',
@@ -380,6 +390,28 @@ export const ROUTES: RouteInfo[] = [
         extralink: false,
         submenu: [],
         permisos: ["mantenimientos_actividad_economica"],
+      },
+      {
+        path: '/mantenimientos/almacen',
+        label: '',
+        labelClass: '',
+        title: 'Almacenes',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_almacen"],
+      },
+      {
+        path: '/mantenimientos/autorizacionprecios',
+        label: '',
+        labelClass: '',
+        title: 'Autorización de precios',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_autorizacion_precios"],
       },
       {
         path: '/mantenimientos/moneda',
@@ -403,17 +435,7 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ["mantenimientos_listas_precios"],
       },
-      {
-        path: '/mantenimientos/autorizacionprecios',
-        label: '',
-        labelClass: '',
-        title: 'Autorización de precios',
-        icon: '',
-        class: '',
-        extralink: false,
-        submenu: [],
-        permisos: ["mantenimientos_autorizacion_precios"],
-      },
+
       {
         path: '/mantenimientos/cargamasiva',
         label: '',
@@ -578,28 +600,8 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ["mantenimientos_accesorios"],
       },
-      {
-        path: '/mantenimientos/almacen',
-        label: '',
-        labelClass: '',
-        title: 'Almacenes',
-        icon: '',
-        class: '',
-        extralink: false,
-        submenu: [],
-        permisos: ["mantenimientos_almacen"],
-      },
-      {
-        path: '/mantenimientos/articulo',
-        label: '',
-        labelClass: '',
-        title: 'Artículos',
-        icon: '',
-        class: '',
-        extralink: false,
-        submenu: [],
-        permisos: ["mantenimientos_articulo"],
-      },
+
+
       {
         path: '/mantenimientos/cita-categoria',
         label: '',

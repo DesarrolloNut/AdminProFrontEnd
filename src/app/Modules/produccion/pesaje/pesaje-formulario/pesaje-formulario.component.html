@@ -10,14 +10,149 @@
         <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
     </div>
 </div>
+
+
 <div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 p-2">
+                        <div class="input-group">
+                            <!-- <div class="input-group-prepend">
+                                    <label for="search" class="input-group-text bg-white">
+                                        <span class="bg-white" style="border-right:none">
+                                            <i class="ti-search"></i>
+                                        </span>
+                                    </label>
+                                </div> -->
+                            <input [(ngModel)]="search" (keyup)="onSearchChange()" type="text" id="inputSearch"
+                                style="border-left:none !important;" class="form-control" placeholder="Buscar artículo">
+
+                            <div class="input-group-prepend">
+                                <label for="search" class="input-group-text bg-white" style="cursor: pointer;"
+                                    (click)="onClearSearch()">
+                                    <span class=" bg-white" style="border-right:none">
+                                        <i class="fa fa-times-circle"></i>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8 text-center p-2" *ngIf="searching">
+                        <h3> <span><i class="fa fa-spinner fa-spin"></i> Buscando</span> </h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" *ngIf="articulo">
+    <div class="col">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="row border border-light p-2">
+                            <div class="col">
+                                <h1> <i class="fa fa-shopping-bag"></i> {{articulo.codigoReferencia}} |
+                                    {{articulo.nombre}}</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" *ngIf="articulo">
+    <div class="col">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+
+                        <!-- <div class="table-responsive" style="height: 250px;"> -->
+                        <table class="table table-hover mb-0 no-wrap v-middle">
+                            <thead>
+                                <tr>
+                                    <th scope="col"></th>
+                                    <th scope="col">Peso</th>
+                                    <th scope="col">Cantidad</th>
+                                    <th scope="col">Total Peso</th>
+                                    <!-- <th scope="col"></th> -->
+                                    <!-- <th scope="col">Fecha de aplicación</th> -->
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <!-- <tr *ngFor="let item of confirmed | filter: searchText; let i  = index"> -->
+                                <tr *ngFor="let item of articulosExtrasViewRender; let i=index">
+                                    <td>
+                                        <h2>
+                                            <span> {{item.nombre}}</span>
+                                        </h2>
+                                    </td>
+                                    <td>
+                                        <!-- <ng-select style="width: 500px;" [items]="articulos" bindLabel="nombre"
+                                                [clearable]="false" bindValue="id" [loading]="loadingArticulos"
+                                                [(ngModel)]="item.id" [ngModelOptions]="{standalone: true}"
+                                                (change)="onSelectArticulo($event,i)" notFoundText="No resultados">
+                                            </ng-select> -->
+                                        <ng-select style="width: 200px;" [clearable]="false" [items]="item.pesos"
+                                            bindLabel="nombre" [searchable]="false" [(ngModel)]="item.peso"
+                                            notFoundText="No resultados">
+                                        </ng-select>
+                                    </td>
+                                    <td>
+                                        <!-- <input style="width: 100px;" type="text" class="form-control"
+                                                (keyup)="calcularTotal()" mask="separator" thousandSeparator=","
+                                                [(ngModel)]="item.cantidad" [ngModelOptions]="{standalone: true}"> -->
+                                        <!-- <ng-select style="width: 150px;" bindLabel="nombre" [clearable]="false"
+                                                [searchable]="false" bindValue="id" notFoundText="No resultados">
+                                            </ng-select> -->
+
+                                        <ng-select style="width: 150px;" [clearable]="false" [items]="cantidades"
+                                            [(ngModel)]="item.cantidad" [searchable]="false"
+                                            notFoundText="No resultados">
+                                        </ng-select>
+                                    </td>
+                                    <td>
+                                        <h2>
+                                            <span *ngIf="item.cantidad && item.peso">{{item.cantidad *
+                                                item.peso.valor}} {{item.peso.abreviatura}}</span>
+                                        </h2>
+                                    </td>
+                                    <!-- <td>
+                                        <button type="button" class="btn btn-outline-danger">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </td> -->
+                                </tr>
+                            </tbody>
+                        </table>
+                        <!-- </div> -->
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" *ngIf="articulo">
 
     <div class="col-md-6">
         <div class="card border-right border-danger">
             <div class="card-body">
                 <div class="d-flex no-block align-items-center">
                     <div><span class="text-danger display-6"><i class="ti-pie-chart"></i></span></div>
-                    <div class="ml-auto">
+                    <div class="ml-auto text-right">
                         <h1 class="font-weight-bold">2,725.82 Lbs</h1>
                         <h2 class="text-danger">Peso Bruto</h2>
                     </div>
@@ -31,7 +166,7 @@
             <div class="card-body">
                 <div class="d-flex no-block align-items-center">
                     <div><span class="text-success display-6"><i class="ti-pie-chart"></i></span></div>
-                    <div class="ml-auto">
+                    <div class="ml-auto text-right">
                         <h1 class="font-weight-bold">2,645.52 Lbs</h1>
                         <h2 class="text-success">Peso Neto</h2>
                     </div>
@@ -41,151 +176,12 @@
     </div>
 </div>
 
-<div class="row">
+<div class="row" *ngIf="articulo">
     <div class="col-12">
         <div class="card">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-6 col-lg-6 col-12">
-                        <!-- <h4 class="card-title">Formulario</h4> -->
-                    </div>
-                    <div class="col-md-6 col-lg-6 col-12 text-right">
-                    </div>
-                </div>
-                <form class="form-row m-t-40">
-
-                    <div class="form-group col-md-4">
-                        <label for="codigoReferencia">
-                            <i class="fa fa-search"></i> Buscar código
-                        </label>
-                        <input class="form-control" type="text" name="codigoReferencia">
-                    </div>
-
-
-
-                    <hr>
-                    <div class="col-12">
-                        <div class="row border border-light p-2">
-                            <div class="col">
-                                <h1> <i class="fa fa-shopping-bag"></i> 1000350 | Salami Buen Dia</h1>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- <div class="col-12" [hidden]="loadingArticulosSeleccionados"> -->
-                    <div class="col-12">
-
-                        <div class="table-responsive" style="height: 300px;">
-                            <table class="table table-hover mb-0 no-wrap v-middle">
-                                <thead>
-                                    <tr>
-                                        <th scope="col"></th>
-                                        <th scope="col">Peso</th>
-                                        <th scope="col">Cantidad</th>
-                                        <th scope="col">Total Peso</th>
-                                        <th scope="col"></th>
-                                        <!-- <th scope="col">Fecha de aplicación</th> -->
-                                    </tr>
-                                </thead>
-
-                                <tbody>
-
-                                    <!-- <tr *ngFor="let item of confirmed | filter: searchText; let i  = index"> -->
-                                    <!-- <tr *ngFor="let item of articulosCotizacion; let i=index"> -->
-                                    <tr>
-                                        <td>
-                                            <h2>
-                                                <span> Canasto La Nutriciosa</span>
-                                            </h2>
-                                        </td>
-                                        <td>
-                                            <!-- <ng-select style="width: 500px;" [items]="articulos" bindLabel="nombre"
-                                                [clearable]="false" bindValue="id" [loading]="loadingArticulos"
-                                                [(ngModel)]="item.id" [ngModelOptions]="{standalone: true}"
-                                                (change)="onSelectArticulo($event,i)" notFoundText="No resultados">
-                                            </ng-select> -->
-                                            <!-- <ng-select style="width: 200px;" [clearable]="false" [searchable]="false"
-                                                notFoundText="No resultados">
-                                            </ng-select> -->
-
-                                            <input type="text" value="4.06 Lbs" class="form-control"
-                                                style="width: 200px;">
-                                        </td>
-                                        <td>
-                                            <!-- <input style="width: 100px;" type="text" class="form-control"
-                                                (keyup)="calcularTotal()" mask="separator" thousandSeparator=","
-                                                [(ngModel)]="item.cantidad" [ngModelOptions]="{standalone: true}"> -->
-                                            <!-- <ng-select style="width: 150px;" bindLabel="nombre" [clearable]="false"
-                                                [searchable]="false" bindValue="id" notFoundText="No resultados">
-                                            </ng-select> -->
-
-                                            <input type="text" value="5" class="form-control" style="width: 150px;">
-                                        </td>
-                                        <td>
-                                            <h2>
-                                                <span>20.3 Lbs</span>
-                                            </h2>
-                                        </td>
-                                        <td>
-                                            <button type="button" class="btn btn-outline-danger">
-                                                <i class="fa fa-times"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <h2>
-                                                <span> Paleta La Nutriciosa</span>
-                                            </h2>
-                                        </td>
-                                        <td>
-                                            <!-- <ng-select style="width: 500px;" [items]="articulos" bindLabel="nombre"
-                                                [clearable]="false" bindValue="id" [loading]="loadingArticulos"
-                                                [(ngModel)]="item.id" [ngModelOptions]="{standalone: true}"
-                                                (change)="onSelectArticulo($event,i)" notFoundText="No resultados">
-                                            </ng-select> -->
-                                            <!-- <ng-select style="width: 200px;" [clearable]="false" [searchable]="false"
-                                                notFoundText="No resultados">
-                                            </ng-select> -->
-
-                                            <input type="text" value="60 Lbs" class="form-control"
-                                                style="width: 200px;">
-                                        </td>
-                                        <td>
-                                            <!-- <input style="width: 100px;" type="text" class="form-control"
-                                                (keyup)="calcularTotal()" mask="separator" thousandSeparator=","
-                                                [(ngModel)]="item.cantidad" [ngModelOptions]="{standalone: true}"> -->
-                                            <!-- <ng-select style="width: 150px;" bindLabel="nombre" [clearable]="false"
-                                                [searchable]="false" bindValue="id" notFoundText="No resultados">
-                                            </ng-select> -->
-
-                                            <input type="text" value="1" class="form-control" style="width: 150px;">
-                                        </td>
-                                        <td>
-                                            <h2>
-                                                <span>60 Lbs</span>
-                                            </h2>
-                                        <td>
-                                            <button type="button" class="btn btn-outline-danger">
-                                                <i class="fa fa-times"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-
-                    </div>
-
-                    <!-- <div class="col-12">
-                        <app-loading-listado [hidden]="!loadingArticulosSeleccionados"></app-loading-listado>
-                    </div> -->
-
-
-                    <div class="form-group text-right col-md-12">
-                        <hr />
-
+                    <div class="col text-right">
                         <button class="btn btn-light m-1" routerLink="../" type="button">
                             <i class="fas fa-times"></i> Cancelar
                         </button>
@@ -194,13 +190,12 @@
                             <i class="fas fa-check"></i> Guardar
                         </button>
 
-                        <!-- boton cargando -->
                         <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
                             <span class="spinner-border spinner-border-sm"></span> Guardando
                         </button>
                     </div>
+                </div>
 
-                </form>
             </div>
         </div>
     </div>
