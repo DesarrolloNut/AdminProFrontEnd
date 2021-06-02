@@ -6,7 +6,8 @@ import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
-import { ArticuloPesosExtrasViewModel } from '../models/ArticuloPesosExtrasViewModel';
+import { ArticuloPesosExtrasRenderViewModel } from '../models/ArticuloPesosExtrasRenderViewModel';
+import { ArticuloPesosExtrasViewModel } from '../models/ArticuloPesosExtrasViewModel copy';
 
 @Component({
   selector: 'app-pesaje-formulario',
@@ -22,18 +23,19 @@ export class PesajeFormularioComponent implements OnInit {
   almacenID: number;
   loadingArticulosExtras: boolean;
   articulosExtras: ArticuloPesosExtrasViewModel[];
-  articulosExtrasViewRender: any[];
+  articulosExtrasViewRender: ArticuloPesosExtrasRenderViewModel[];
   cantidades: number[] = [];
+
   loadingAlmacenes: boolean;
   almecenes: any[];
+  pesoArticuloBalanza: number
+  pesoBruto: number = 0;
+  pesoNeto: number = 0;
 
   constructor(
     private toastService: ToastrService,
-    private route: ActivatedRoute,
     private httpService: BackendService,
-    private router: Router,
-    private renderer: Renderer2,
-    private formBuilder: FormBuilder) { }
+    private renderer: Renderer2) { }
 
   ngOnInit(): void {
     for (let i = 1; i <= 100; i++) {
@@ -42,9 +44,36 @@ export class PesajeFormularioComponent implements OnInit {
     this.getAlmacenes()
   }
 
+  onSubmit() {
+    console.log(this.articulosExtrasViewRender)
+    // this.calcularTotales()
+  }
+
+  guardarDatos() {
+
+
+
+
+  }
+
+
+  calcularTotales() {
+    this.pesoBruto = 0;
+    this.articulosExtrasViewRender.forEach(a => {
+      if (a.cantidadSeleccionada && a.pesoSeleccionado) {
+        this.pesoBruto += a.cantidadSeleccionada * (a.pesoSeleccionado.valor * a.pesoSeleccionado.medidaValor)
+      }
+    })
+
+    this.pesoBruto += this.pesoNeto;
+
+  }
+
   onSearchChange() {
 
     if (this.search && this.search.length > 3) {
+      this.pesoBruto = 0;
+      this.pesoNeto = 0
       this.getArticuloByCodigoReferencia(this.search)
     } else {
       this.articulo = null;
@@ -54,6 +83,8 @@ export class PesajeFormularioComponent implements OnInit {
 
   onClearSearch() {
     this.search = ""
+    this.pesoBruto = 0;
+    this.pesoNeto = 0
     this.focusInputSearch()
     this.onSearchChange()
   }
@@ -113,10 +144,22 @@ export class PesajeFormularioComponent implements OnInit {
     this.articulosExtras.forEach(a => {
 
       if (!this.articulosExtrasViewRender.some(x => x.articuloID == a.articuloID)) {
-        let item: any = a;
-        item.pesos = this.articulosExtras.filter(ar => ar.articuloID == a.articuloID).map(art => {
-          return { "nombre": `${art.valor} ${art.abreviatura}`, "valor": art.valor, "abreviatura": art.abreviatura, "medidaValor": art.medidaValor }
-        });
+        let item: ArticuloPesosExtrasRenderViewModel = new ArticuloPesosExtrasRenderViewModel();
+
+        item.articuloID = a.articuloID
+        item.codigoReferencia = a.codigoReferencia
+        item.nombre = a.nombre
+
+        item.pesos = this.articulosExtras.
+          filter(ar => ar.articuloID == a.articuloID).
+          map(art => {
+            return {
+              "nombre": `${art.valor} ${art.abreviatura}`,
+              "valor": art.valor,
+              "abreviatura": art.abreviatura,
+              "medidaValor": art.medidaValor
+            }
+          });
         this.articulosExtrasViewRender.push(item)
       }
 
@@ -151,8 +194,8 @@ export class PesajeFormularioComponent implements OnInit {
   ngAfterViewInit() {
     setTimeout(() => {
       var elem = this.renderer.selectRootElement('#inputSearch');
-      this.renderer.listen(elem, "focus", () => { console.log('focus') });
-      this.renderer.listen(elem, "blur", () => { console.log('blur') });
+      // this.renderer.listen(elem, "focus", () => { console.log('focus') });
+      // this.renderer.listen(elem, "blur", () => { console.log('blur') });
       elem.focus();
 
     }, 1000);

@@ -40,8 +40,15 @@
                         </div>
                     </div>
 
-                    <div class="col-md-8 text-center p-2" *ngIf="searching">
+                    <div class="col-md-6 text-center p-2" *ngIf="searching">
                         <h3> <span><i class="fa fa-spinner fa-spin"></i> Buscando</span> </h3>
+                    </div>
+
+                    <div class="form-group col-md-12" *ngIf="articulo">
+                        <label for="inputEmail4">Almacen</label>
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="almecenes" [clearable]="false"
+                            [loading]="loadingAlmacenes" notFoundText="No resultados">
+                        </ng-select>
                     </div>
                 </div>
             </div>
@@ -75,7 +82,6 @@
                 <div class="row">
                     <div class="col-12">
 
-                        <!-- <div class="table-responsive" style="height: 250px;"> -->
                         <table class="table table-hover mb-0 no-wrap v-middle">
                             <thead>
                                 <tr>
@@ -83,8 +89,6 @@
                                     <th scope="col">Peso</th>
                                     <th scope="col">Cantidad</th>
                                     <th scope="col">Total Peso</th>
-                                    <!-- <th scope="col"></th> -->
-                                    <!-- <th scope="col">Fecha de aplicación</th> -->
                                 </tr>
                             </thead>
 
@@ -98,45 +102,28 @@
                                         </h2>
                                     </td>
                                     <td>
-                                        <!-- <ng-select style="width: 500px;" [items]="articulos" bindLabel="nombre"
-                                                [clearable]="false" bindValue="id" [loading]="loadingArticulos"
-                                                [(ngModel)]="item.id" [ngModelOptions]="{standalone: true}"
-                                                (change)="onSelectArticulo($event,i)" notFoundText="No resultados">
-                                            </ng-select> -->
                                         <ng-select style="width: 200px;" [clearable]="false" [items]="item.pesos"
-                                            bindLabel="nombre" [searchable]="false" [(ngModel)]="item.peso"
-                                            notFoundText="No resultados">
+                                            bindLabel="nombre" [searchable]="false" (change)="calcularTotales()"
+                                            [(ngModel)]="item.pesoSeleccionado" notFoundText="No resultados">
                                         </ng-select>
                                     </td>
                                     <td>
-                                        <!-- <input style="width: 100px;" type="text" class="form-control"
-                                                (keyup)="calcularTotal()" mask="separator" thousandSeparator=","
-                                                [(ngModel)]="item.cantidad" [ngModelOptions]="{standalone: true}"> -->
-                                        <!-- <ng-select style="width: 150px;" bindLabel="nombre" [clearable]="false"
-                                                [searchable]="false" bindValue="id" notFoundText="No resultados">
-                                            </ng-select> -->
-
                                         <ng-select style="width: 150px;" [clearable]="false" [items]="cantidades"
-                                            [(ngModel)]="item.cantidad" [searchable]="false"
-                                            notFoundText="No resultados">
+                                            [(ngModel)]="item.cantidadSeleccionada" [searchable]="false"
+                                            (change)="calcularTotales()" notFoundText="No resultados">
                                         </ng-select>
                                     </td>
                                     <td>
                                         <h2>
-                                            <span *ngIf="item.cantidad && item.peso">{{item.cantidad *
-                                                item.peso.valor}} {{item.peso.abreviatura}}</span>
+                                            <span *ngIf="item.cantidadSeleccionada && item.pesoSeleccionado">
+                                                {{item.cantidadSeleccionada * item.pesoSeleccionado.valor |
+                                                number:'1.2-5'}}
+                                                {{item.pesoSeleccionado.abreviatura}}</span>
                                         </h2>
                                     </td>
-                                    <!-- <td>
-                                        <button type="button" class="btn btn-outline-danger">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                    </td> -->
                                 </tr>
                             </tbody>
                         </table>
-                        <!-- </div> -->
-
 
                     </div>
                 </div>
@@ -153,7 +140,7 @@
                 <div class="d-flex no-block align-items-center">
                     <div><span class="text-danger display-6"><i class="ti-pie-chart"></i></span></div>
                     <div class="ml-auto text-right">
-                        <h1 class="font-weight-bold">2,725.82 Lbs</h1>
+                        <h1 class="font-weight-bold">{{pesoBruto | number:'1.2-5'}} Lbs</h1>
                         <h2 class="text-danger">Peso Bruto</h2>
                     </div>
                 </div>
@@ -167,7 +154,7 @@
                 <div class="d-flex no-block align-items-center">
                     <div><span class="text-success display-6"><i class="ti-pie-chart"></i></span></div>
                     <div class="ml-auto text-right">
-                        <h1 class="font-weight-bold">2,645.52 Lbs</h1>
+                        <h1 class="font-weight-bold">{{pesoNeto | number:'1.2-5'}} Lbs</h1>
                         <h2 class="text-success">Peso Neto</h2>
                     </div>
                 </div>
@@ -186,7 +173,7 @@
                             <i class="fas fa-times"></i> Cancelar
                         </button>
 
-                        <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+                        <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="button" (click)="onSubmit()">
                             <i class="fas fa-check"></i> Guardar
                         </button>
 

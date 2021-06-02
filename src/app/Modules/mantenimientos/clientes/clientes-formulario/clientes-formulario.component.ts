@@ -558,7 +558,7 @@ getFrecuenciaVisitas() {
       this.Cargando = false;
     }, error => {
       this.Cargando = false;
-      this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
+      this.toastService.error("No se pudo obtener las frecuencias", "Error conexion al servidor");
 
       setTimeout(() => {
         this.getFrecuenciaVisitas();
