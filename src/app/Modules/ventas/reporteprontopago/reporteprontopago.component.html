@@ -7,9 +7,17 @@
                         <h4 class="card-title">Reporte Pronto Pago</h4>
                     </div>
                     <div class="col-md-6 text-right">
-                        <!-- <button [routerLink]="[0]" class="btn btn-info"> <i class="fa fa-plus"></i> Nuevo
-                          síntoma
-                      </button> -->
+                        <button (click)="exportarReporteExcel()" *ngIf="data.length > 0 && !btnExportarCargando "
+                            type="button" class="btn btn-success">
+                            <i class="fa fa-file-excel"></i>
+                            Exportar
+                        </button>
+
+                        <!-- boton cargando -->
+                        <button *ngIf="btnExportarCargando" disabled class="btn btn-success" type="button">
+                            <span class="spinner-border spinner-border-sm"></span> Exportando
+                        </button>
+
                     </div>
                     <div class="col-md-12 p-2">
                         <div class="row">
@@ -28,17 +36,17 @@
 
 
                         </div>
-                        <!-- <div class="input-group">
-                          <div class="input-group-prepend">
-                              <label for="search" class="input-group-text bg-white">
-                                  <span class="bg-white" style="border-right:none">
-                                      <i class="ti-search"></i>
-                                  </span>
-                              </label>
-                          </div>
-                          <input [(ngModel)]="Search" (keyup)="getData()" type="text"
-                              style="border-left:none !important;" class="form-control" placeholder="Buscar">
-                      </div> -->
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <label for="search" class="input-group-text bg-white">
+                                    <span class="bg-white" style="border-right:none">
+                                        <i class="ti-search"></i>
+                                    </span>
+                                </label>
+                            </div>
+                            <input [(ngModel)]="Search" (keyup)="getData()" type="text"
+                                style="border-left:none !important;" class="form-control" placeholder="Buscar">
+                        </div>
 
                     </div>
                 </div>
@@ -49,10 +57,12 @@
                             <tr>
                                 <th>Cliente</th>
                                 <th>Factura</th>
+                                <th>Estados</th>
                                 <th>Importe</th>
                                 <th>Pendiente</th>
                                 <th>Ultimo Pago</th>
                                 <th>Monto Pago</th>
+                                <th>Fechas</th>
                                 <!-- <th>Estado</th> -->
                             </tr>
                         </thead>
@@ -60,8 +70,39 @@
 
                             <tr *ngFor="let item of data">
                                 <!-- <td><span class="badge badge-light text-info ">{{item.id}}</span></td> -->
-
                                 <td>
+                                    <span class="small"> {{item.cliente}} | {{item.cardCode}}</span>
+                                </td>
+                                <td>
+                                    <span class="small"> {{item.docNum}} | NCF : {{item.ncfafectado}}</span>
+                                </td>
+                                <td>
+                                    <ng-template [ngIf]="item.procesada" [ngIfElse]="NoProcesada">
+                                        <small class="badge badge-success">
+                                            <i class="fa fa-check"></i> Procesada
+                                        </small>
+                                    </ng-template>
+
+                                    <ng-template #NoProcesada>
+                                        <small class="badge badge-danger">
+                                            <i class="fa fa-times"></i> Sin procesar
+                                        </small>
+                                    </ng-template>
+                                    |
+                                    <ng-template [ngIf]="item.reconciliada" [ngIfElse]="NoReconciliada">
+                                        <small class="badge badge-success">
+                                            <i class="fa fa-check"></i> Reconciliada
+                                        </small>
+                                    </ng-template>
+
+                                    <ng-template #NoReconciliada>
+                                        <small class="badge badge-danger">
+                                            <i class="fa fa-times"></i> Sin reconciliar
+                                        </small>
+                                    </ng-template>
+                                </td>
+
+                                <!-- <td>
                                     <div class="d-flex align-items-center">
 
                                         <i class="fa fa-user fa-2x text-light"></i>
@@ -75,8 +116,8 @@
                                             </small>
                                         </div>
                                     </div>
-                                </td>
-                                <td>
+                                </td> -->
+                                <!-- <td>
                                     <div class="d-flex align-items-center">
 
                                         <i class="fa fa-file-alt fa-2x text-light"></i>
@@ -121,7 +162,7 @@
                                             </ng-template>
                                         </div>
                                     </div>
-                                </td>
+                                </td> -->
                                 <td>
                                     <span> {{item.importe}}</span>
                                 </td>
@@ -135,14 +176,21 @@
                                 <td>
                                     <span> {{item.montoPago}}</span>
                                 </td>
+                                <td>
+                                    <span class="small">
+                                        Fecha: <i class="fa fa-calendar"></i> {{item.fechaFactura | date:
+                                        'yyyy-MM-dd'}} |
+                                        Vence: <i class="fa fa-calendar"></i> {{item.fechaVenceFactura
+                                        | date:
+                                        'yyyy-MM-dd'}}</span>
+                                </td>
+
                                 <!-- <td>
-                                  <span> {{item.descripcion |  slice:0:60}} ...</span>
-                              </td> -->
-                                <!-- <td>
-                                  <button class="btn btn-sm btn-info" [routerLink]="[item.id]">
-                                      <i class="fa fa-sm fa-edit"></i>
-                                  </button>
-                              </td> -->
+                                    <button class="btn btn-sm btn-info" type="button"
+                                        (click)="enviarEmailCliente(item)">
+                                        <i class="fa fa-sm fa-envelope"></i>
+                                    </button>
+                                </td> -->
                             </tr>
 
                         </tbody>

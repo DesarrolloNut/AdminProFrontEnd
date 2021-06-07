@@ -1,9 +1,13 @@
 import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Router } from '@angular/router';
+import { json } from 'd3-request';
 import { ToastrService } from 'ngx-toastr';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
+import { ArticuloPesaje } from '../models/ArticuloPesaje';
+import { ArticuloPesajeRequestModel } from '../models/ArticuloPesajeRequestModel';
 import { ArticuloPesosExtrasRenderViewModel } from '../models/ArticuloPesosExtrasRenderViewModel';
 import { ArticuloPesosExtrasViewModel } from '../models/ArticuloPesosExtrasViewModel copy';
 
@@ -31,11 +35,13 @@ export class PesajeFormularioComponent implements OnInit {
   almecenes: any[];
   fechaActual: Date;
   fechaVencimiento: Date;
+  btnGuardarCargando: boolean;
 
 
   constructor(
     private toastService: ToastrService,
     private httpService: BackendService,
+    private router: Router,
     private renderer: Renderer2) { }
 
   ngOnInit(): void {
@@ -53,14 +59,40 @@ export class PesajeFormularioComponent implements OnInit {
 
 
     console.log(this.articulosExtrasViewRender)
-    this.guardarDatos()
+    this.guardar()
   }
 
-  guardarDatos() {
+  guardar() {
 
+    let request: ArticuloPesaje = {
+      id: 0,
+      almacenID: this.almacenID,
+      articuloID: this.articulo.id,
+      pesoBruto: this.pesoBruto,
+      pesoNeto: this.pesoNeto,
+      fechaVencimiento: this.fechaVencimiento,
+      detalleJSON: JSON.stringify(this.articulosExtrasViewRender),
+    };
 
+    console.log(request)
 
+    this.btnGuardarCargando = true;
 
+    this.httpService.DoPostAny<ArticuloPesajeRequestModel>(DataApi.ArticuloPesaje,
+      "Registrar", request).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+        } else {
+          this.toastService.success("Realizado", "OK");
+          this.router.navigateByUrl('/produccion/pesaje');
+        }
+
+        this.btnGuardarCargando = false;
+      }, error => {
+        this.btnGuardarCargando = false;
+        this.toastService.error("Error conexion al servidor");
+      });
   }
 
 

@@ -47,7 +47,7 @@ export class ClientesFormularioComponent implements OnInit {
   sectores: ComboBox[];
   loadingSectores: boolean;
   FrecuenciaVisitas: any[];
-  TipoSexo: any[] = [{codigo:'H', nombre: 'Hombre'}, {codigo:'M', nombre: 'Mujer'}];
+  TipoSexo: any[] = [{ codigo: 'H', nombre: 'Hombre' }, { codigo: 'M', nombre: 'Mujer' }];
   loadingTipoComprobantes: boolean;
   TipoCondicionPagos: any[];
   loadingCondicionPagos: boolean;
@@ -60,7 +60,7 @@ export class ClientesFormularioComponent implements OnInit {
   DiaSemana: Dias[] = new Array<Dias>();
   FrecuenciaVisita: FrecuenciaVisita[] = new Array<FrecuenciaVisita>();
   Ruta: any;
-  hasDetalleRuta:Boolean;
+  hasDetalleRuta: Boolean;
 
   constructor(
     private toastService: ToastrService,
@@ -99,7 +99,7 @@ export class ClientesFormularioComponent implements OnInit {
     this.FormGenerales = this.formBuilder.group({
       id: [0],
       sucursalID: [0, [Validators.required]],
-      clienteTipoID: [0,[Validators.required]],
+      clienteTipoID: [0, [Validators.required]],
       nombres: [null, [Validators.required]],
       apellidos: [null, [Validators.required]],
       documento: [null, [Validators.required, Validators.minLength(9)]],
@@ -146,7 +146,7 @@ export class ClientesFormularioComponent implements OnInit {
     this.guardarCliente();
   }
 
-//#region METODOS DATOS GENERALES
+  //#region METODOS DATOS GENERALES
 
   getClienteByID(id: number) {
     this.Cargando = true;
@@ -156,7 +156,7 @@ export class ClientesFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           //validar que existe
-          if (response != null && response.records != null && response.records.length > 0) {
+          if (response.records.length > 0) {
 
             let cliente = response.records[0].cliente;
             this.FrecuenciaVisita = response.records[0].visita;
@@ -166,7 +166,6 @@ export class ClientesFormularioComponent implements OnInit {
             this.getCiudades();
             this.getSectores();
             this.getRutaByID(cliente.rutaId);
-
           } else {
             this.toastService.warning("Cliente no encontrado");
             this.router.navigateByUrl('/mantenimientos/cliente');
@@ -180,24 +179,24 @@ export class ClientesFormularioComponent implements OnInit {
   }
 
 
-  onAddContacts(contacts:Array<ClienteContactos> = new Array<ClienteContactos>()) {
+  onAddContacts(contacts: Array<ClienteContactos> = new Array<ClienteContactos>()) {
 
-    if(contacts.length > 0){
+    if (contacts.length > 0) {
       for (const item of contacts) {
 
         this.c.push(this.formBuilder.group({
           telefono: [item.telefono, Validators.required],
           celular: [item.celular, Validators.required],
           email: [item.email, [Validators.required, Validators.email]]
-      }));
+        }));
 
       }
-    }else{
+    } else {
       this.c.push(this.formBuilder.group({
         telefono: [null, Validators.required],
         celular: [null, Validators.required],
         email: [null, [Validators.required, Validators.email]]
-    }));
+      }));
     }
 
 
@@ -218,15 +217,15 @@ export class ClientesFormularioComponent implements OnInit {
     //         this.c.removeAt(i);
     //     }
     // }
-}
+  }
 
 
-onRemoveContact() {
+  onRemoveContact() {
 
-let index = this.c.length - 1;
-if(index > 0){
-  this.c.removeAt(index);
-}
+    let index = this.c.length - 1;
+    if (index > 0) {
+      this.c.removeAt(index);
+    }
 
 
 
@@ -245,101 +244,101 @@ if(index > 0){
     //         this.c.removeAt(i);
     //     }
     // }
-}
-onChangeRuta(value){
-this.getRutaByID(value.codigo);
-}
+  }
+  onChangeRuta(value) {
+    this.getRutaByID(value.codigo);
+  }
 
-getRutaByID(id: number) {
-  this.httpService.DoPostAny<Ruta>(DataApi.Ruta,
-    "GetRutaByIDWithName", id).subscribe(response => {
-      if (!response.ok) {
-        this.toastService.error(response.errores[0]);
-      } else {
-        //validar que existe
-        if (response != null && response.records != null && response.records.length > 0) {
-
-          this.Ruta = response.records[0];
-          this.hasDetalleRuta = true;
+  getRutaByID(id: number) {
+    this.httpService.DoPostAny<Ruta>(DataApi.Ruta,
+      "GetRutaByIDWithName", id).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
         } else {
-          this.hasDetalleRuta = false;
-          this.toastService.warning("Cliente no encontrado");
-          this.router.navigateByUrl('/mantenimientos/cliente');
+          //validar que existe
+          if (response != null && response.records != null && response.records.length > 0) {
+
+            this.Ruta = response.records[0];
+            this.hasDetalleRuta = true;
+          } else {
+            this.hasDetalleRuta = false;
+            // this.toastService.warning("Ru no encontrado");
+            // this.router.navigateByUrl('/mantenimientos/cliente');
+          }
         }
-      }
 
-    }, error => {
-      this.hasDetalleRuta = false;
-      this.toastService.error("Error conexion al servidor");
-    });
-}
+      }, error => {
+        this.hasDetalleRuta = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
 
 
-getDias(id: number) {
-  this.Cargando = true;
-  this.httpService.DoPost<Dias>(DataApi.Cliente,
-    "GetDias", null).subscribe(response => {
+  getDias(id: number) {
+    this.Cargando = true;
+    this.httpService.DoPost<Dias>(DataApi.Cliente,
+      "GetDias", null).subscribe(response => {
 
-      if (!response.ok) {
-        this.toastService.error(response.errores[0]);
-      } else {
-        // console.log("api data",response.records);
-        this.DiaSemana = response.records;
-        this.setValueDiaSemana(id);
-      }
-      this.Cargando = false;
-    }, error => {
-      this.Cargando = false;
-      this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          // console.log("api data",response.records);
+          this.DiaSemana = response.records;
+          this.setValueDiaSemana(id);
+        }
+        this.Cargando = false;
+      }, error => {
+        this.Cargando = false;
+        this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
 
-      // setTimeout(() => {
-      //   this.getDias();
-      // }, 1000);
+        // setTimeout(() => {
+        //   this.getDias();
+        // }, 1000);
 
-    });
-}
+      });
+  }
 
-setValueDiaSemana(id: number){
-let dias = this.DiaSemana;
+  setValueDiaSemana(id: number) {
+    let dias = this.DiaSemana;
 
-if(dias != undefined){
-  this.httpService.DoPostAny<ClienteFrecuencia>(DataApi.Cliente,
-    "GetClienteByID", id).subscribe(response => {
-      if (!response.ok) {
-        this.toastService.error(response.errores[0]);
-      } else {
-        //validar que existe
-        if (response != null && response.records != null && response.records.length > 0) {
+    if (dias != undefined) {
+      this.httpService.DoPostAny<ClienteFrecuencia>(DataApi.Cliente,
+        "GetClienteByID", id).subscribe(response => {
+          if (!response.ok) {
+            this.toastService.error(response.errores[0]);
+          } else {
+            //validar que existe
+            if (response != null && response.records != null && response.records.length > 0) {
 
-          let visitas = response.records[0].visita
+              let visitas = response.records[0].visita
 
-          for (let i = 0; i < dias.length; i++) {
-            let dia = dias[i];
+              for (let i = 0; i < dias.length; i++) {
+                let dia = dias[i];
 
-            if(visitas){
-              for (let x = 0; x < visitas.length; x++) {
-                let visita = visitas[x];
+                if (visitas) {
+                  for (let x = 0; x < visitas.length; x++) {
+                    let visita = visitas[x];
 
-                if(dia.dia == visita.diaId){
-                  dia.select = true;
+                    if (dia.dia == visita.diaId) {
+                      dia.select = true;
+                    }
+
+                  }
                 }
 
               }
             }
-
           }
-        }
-      }
 
-    }, error => {
-      this.toastService.error("Error conexion al servidor");
-    });
+        }, error => {
+          this.toastService.error("Error conexion al servidor");
+        });
 
 
-}
+    }
 
 
-}
+  }
 
 
   guardarCliente() {
@@ -349,7 +348,7 @@ if(dias != undefined){
 
     // console.log(this.FormGenerales.value);
 
-    let param = {"Cliente":this.FormGenerales.value, "Dias":this.DiaSemana}
+    let param = { "Cliente": this.FormGenerales.value, "Dias": this.DiaSemana }
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
       metodo, param).subscribe(response => {
 
@@ -361,7 +360,7 @@ if(dias != undefined){
           this.router.navigateByUrl('/mantenimientos/cliente');
         }
 
-         this.btnGuardarCargando = false;
+        this.btnGuardarCargando = false;
       }, error => {
         this.btnGuardarCargando = false;
         this.toastService.error("Error conexion al servidor");
@@ -545,139 +544,139 @@ if(dias != undefined){
 
   }
 
-getFrecuenciaVisitas() {
-  this.Cargando = true;
-  this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-    "GetFrecuenciaVisitaComboBox", null).subscribe(response => {
+  getFrecuenciaVisitas() {
+    this.Cargando = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetFrecuenciaVisitaComboBox", null).subscribe(response => {
 
-      if (!response.ok) {
-        this.toastService.error(response.errores[0]);
-      } else {
-        this.FrecuenciaVisitas = response.records;
-      }
-      this.Cargando = false;
-    }, error => {
-      this.Cargando = false;
-      this.toastService.error("No se pudo obtener las frecuencias", "Error conexion al servidor");
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.FrecuenciaVisitas = response.records;
+        }
+        this.Cargando = false;
+      }, error => {
+        this.Cargando = false;
+        this.toastService.error("No se pudo obtener las frecuencias", "Error conexion al servidor");
 
-      setTimeout(() => {
-        this.getFrecuenciaVisitas();
-      }, 1000);
+        setTimeout(() => {
+          this.getFrecuenciaVisitas();
+        }, 1000);
 
-    });
-}
+      });
+  }
 
-// getTipoComprobanteId() {
-//   this.loadingTipoComprobantes = true;
-//   this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-//     "GetTipoComprobante", null).subscribe(response => {
+  // getTipoComprobanteId() {
+  //   this.loadingTipoComprobantes = true;
+  //   this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+  //     "GetTipoComprobante", null).subscribe(response => {
 
-//       if (!response.ok) {
-//         this.toastService.error(response.errores[0]);
-//       } else {
-//         this.TipoComprobantes = response.records;
-//       }
-//       this.loadingTipoComprobantes = false;
-//     }, error => {
-//       this.loadingTipoComprobantes = false;
-//       this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
+  //       if (!response.ok) {
+  //         this.toastService.error(response.errores[0]);
+  //       } else {
+  //         this.TipoComprobantes = response.records;
+  //       }
+  //       this.loadingTipoComprobantes = false;
+  //     }, error => {
+  //       this.loadingTipoComprobantes = false;
+  //       this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
 
-//       setTimeout(() => {
-//         this.getTipoComprobanteId();
-//       }, 1000);
+  //       setTimeout(() => {
+  //         this.getTipoComprobanteId();
+  //       }, 1000);
 
-//     });
-// }
+  //     });
+  // }
 
-getTipoCondicionPago() {
-  this.loadingCondicionPagos = true;
-  this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-    "GetTipoCondicionPago", null).subscribe(response => {
+  getTipoCondicionPago() {
+    this.loadingCondicionPagos = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetTipoCondicionPago", null).subscribe(response => {
 
-      if (!response.ok) {
-        this.toastService.error(response.errores[0]);
-      } else {
-        this.TipoCondicionPagos = response.records;
-      }
-      this.loadingCondicionPagos = false;
-    }, error => {
-      this.loadingCondicionPagos = false;
-      this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.TipoCondicionPagos = response.records;
+        }
+        this.loadingCondicionPagos = false;
+      }, error => {
+        this.loadingCondicionPagos = false;
+        this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
 
-      setTimeout(() => {
-        this.getTipoCondicionPago();
-      }, 1000);
+        setTimeout(() => {
+          this.getTipoCondicionPago();
+        }, 1000);
 
-    });
-}
+      });
+  }
 
-getRutas() {
-  this.loadingRutas = true;
-  this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-    "GetRutasComboBox", null).subscribe(response => {
+  getRutas() {
+    this.loadingRutas = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetRutasComboBox", null).subscribe(response => {
 
-      if (!response.ok) {
-        this.toastService.error(response.errores[0]);
-      } else {
-        this.Rutas = response.records;
-      }
-      this.loadingRutas = false;
-    }, error => {
-      this.loadingRutas = false;
-      this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.Rutas = response.records;
+        }
+        this.loadingRutas = false;
+      }, error => {
+        this.loadingRutas = false;
+        this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
 
-      setTimeout(() => {
-        this.getTipoCondicionPago();
-      }, 1000);
+        setTimeout(() => {
+          this.getTipoCondicionPago();
+        }, 1000);
 
-    });
-}
+      });
+  }
 
-getTipoCliente() {
-  this.loadingTipoCliente = true;
-  this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-    "GetTipoClienteComboBox", null).subscribe(response => {
+  getTipoCliente() {
+    this.loadingTipoCliente = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetTipoClienteComboBox", null).subscribe(response => {
 
-      if (!response.ok) {
-        this.toastService.error(response.errores[0]);
-      } else {
-        this.TipoCliente = response.records;
-      }
-      this.loadingTipoCliente = false;
-    }, error => {
-      this.loadingTipoCliente = false;
-      this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.TipoCliente = response.records;
+        }
+        this.loadingTipoCliente = false;
+      }, error => {
+        this.loadingTipoCliente = false;
+        this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
 
-      setTimeout(() => {
-        this.getTipoCliente();
-      }, 1000);
+        setTimeout(() => {
+          this.getTipoCliente();
+        }, 1000);
 
-    });
-}
+      });
+  }
 
-getListaPrecio() {
-  this.loadingListaPrecio = true;
-  this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-    "GetListaPreciosComboBox", null).subscribe(response => {
+  getListaPrecio() {
+    this.loadingListaPrecio = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetListaPreciosComboBox", null).subscribe(response => {
 
-      if (!response.ok) {
-        this.toastService.error(response.errores[0]);
-      } else {
-        this.ListaPrecio = response.records;
-      }
-      this.loadingListaPrecio = false;
-    }, error => {
-      this.loadingListaPrecio = false;
-      this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.ListaPrecio = response.records;
+        }
+        this.loadingListaPrecio = false;
+      }, error => {
+        this.loadingListaPrecio = false;
+        this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
 
-      setTimeout(() => {
-        this.getListaPrecio();
-      }, 1000);
+        setTimeout(() => {
+          this.getListaPrecio();
+        }, 1000);
 
-    });
-}
+      });
+  }
 
 
 
-//#endregion
+  //#endregion
 }
