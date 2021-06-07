@@ -20,4 +20,6 @@ export class Usuario {
     idUsuarioSupervisor: number
     rutaId: number
     departamentoID: number
+    descuentoVenta: number
+    descuentoCompra: number
 }

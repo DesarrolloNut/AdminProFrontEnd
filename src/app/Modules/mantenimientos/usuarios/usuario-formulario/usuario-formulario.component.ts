@@ -168,6 +168,8 @@ export class UsuarioFormularioComponent implements OnInit {
       idUsuarioSupervisor: [0,],
       rutaId: [0, [Validators.required]],
       departamentoID: [null, [Validators.required]],
+      descuentoVenta: [0,],
+      descuentoCompra: [0,],
     },
       {
         validator: cedulaestructura('documento', 'documentoTipoID')

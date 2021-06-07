@@ -175,7 +175,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-4">
                         <label for="inputEmail4"> Supervisor</label>
                         <ng-select bindLabel="nombre" bindValue="codigo" [items]="supervisores"
                             [loading]="loadingUsuarios" [clearable]="false"
@@ -187,7 +187,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-4">
                         <label for="sucursalID"> <i class="fa fa-map-marker"></i> Sucursal </label>
                         <ng-select bindLabel="nombre" bindValue="codigo" [items]="sucursales"
                             [loading]="loadingSucursales"
@@ -200,7 +200,7 @@
                     </div>
 
 
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-4">
                         <label for="departamentoID"> <i class="fa fa-map-marker"></i> Departamento </label>
                         <ng-select bindLabel="nombre" bindValue="codigo" [items]="departamentos"
                             [loading]="loadingDepartamentos"
@@ -211,6 +211,26 @@
                             <div *ngIf="f.departamentoID.errors.required  ">El campo es obligatorio</div>
                         </div>
                     </div>
+
+
+                    <div class="form-group col-md-6">
+                        <label for="descuentoVenta"> Descuento venta</label>
+                        <input formControlName="descuentoVenta" type="number" name="descuentoVenta" id="descuentoVenta"
+                            [ngClass]="{'is-invalid' : submitted && f.descuentoVenta.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.descuentoVenta.errors">
+                            <div *ngIf="f.descuentoVenta.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="descuentoCompra"> Descuento compra</label>
+                        <input formControlName="descuentoCompra" type="number" name="descuentoCompra" id="descuentoCompra"
+                            [ngClass]="{'is-invalid' : submitted && f.descuentoCompra.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.descuentoCompra.errors">
+                            <div *ngIf="f.descuentoCompra.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
 
                     <div class="form-group text-right col-md-12">
                         <hr />
