@@ -1,6 +1,4 @@
 import { Component, OnInit, Renderer2 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
@@ -15,12 +13,15 @@ import { ArticuloPesosExtrasViewModel } from '../models/ArticuloPesosExtrasViewM
   styleUrls: ['./pesaje-formulario.component.scss']
 })
 export class PesajeFormularioComponent implements OnInit {
-  cargando: boolean;
   articulo: Articulo;
+  almacenID: number;
+  pesoArticuloBalanza: number
+  pesoBruto: number = 0;
+  pesoNeto: number = 0;
 
+  cargando: boolean;
   search: string;
   searching: boolean;
-  almacenID: number;
   loadingArticulosExtras: boolean;
   articulosExtras: ArticuloPesosExtrasViewModel[];
   articulosExtrasViewRender: ArticuloPesosExtrasRenderViewModel[];
@@ -28,9 +29,9 @@ export class PesajeFormularioComponent implements OnInit {
 
   loadingAlmacenes: boolean;
   almecenes: any[];
-  pesoArticuloBalanza: number
-  pesoBruto: number = 0;
-  pesoNeto: number = 0;
+  fechaActual: Date;
+  fechaVencimiento: Date;
+
 
   constructor(
     private toastService: ToastrService,
@@ -38,6 +39,7 @@ export class PesajeFormularioComponent implements OnInit {
     private renderer: Renderer2) { }
 
   ngOnInit(): void {
+    this.getHoraActual()
     for (let i = 1; i <= 100; i++) {
       this.cantidades.push(i)
     }
@@ -45,8 +47,13 @@ export class PesajeFormularioComponent implements OnInit {
   }
 
   onSubmit() {
+
+    //validaciones
+
+
+
     console.log(this.articulosExtrasViewRender)
-    // this.calcularTotales()
+    this.guardarDatos()
   }
 
   guardarDatos() {
@@ -187,6 +194,24 @@ export class PesajeFormularioComponent implements OnInit {
           this.getAlmacenes();
         }, 1000);
 
+      });
+  }
+
+  getHoraActual() {
+    this.cargando = true;
+    this.httpService.DoPost<ComboBox>(DataApi.Public,
+      "GetHoraActual", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.fechaActual = new Date(response.valores[0]);
+        }
+
+        this.cargando = false;
+      }, error => {
+        this.cargando = false;
+        this.toastService.error("Error conexion al servidor");
       });
   }
 

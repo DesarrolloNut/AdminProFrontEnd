@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { PesajeFormularioComponent } from './pesaje/pesaje-formulario/pesaje-formulario.component';
 import { PesajeListadoComponent } from './pesaje/pesaje-listado/pesaje-listado.component';
+import { PesajeResultadoComponent } from './pesaje/pesaje-resultado/pesaje-resultado.component';
 import { ProduccionComponent } from './produccion.component';
 
 
@@ -30,6 +31,17 @@ const routes: Routes = [
             { title: 'Producción' },
             { title: 'Sistema de Pesajes' },
             { title: 'Formulario' },
+          ]
+        }
+      },
+
+      {
+        path: 'pesaje/:id/resultado', component: PesajeResultadoComponent, data: {
+          title: 'Sistema de Pesajes',
+          urls: [
+            { title: 'Producción' },
+            { title: 'Sistema de Pesajes' },
+            { title: 'Resultados' },
           ]
         }
       },
