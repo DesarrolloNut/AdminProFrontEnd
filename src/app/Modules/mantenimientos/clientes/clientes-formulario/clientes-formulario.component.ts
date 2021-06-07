@@ -103,6 +103,7 @@ export class ClientesFormularioComponent implements OnInit {
       nombres: [null, [Validators.required]],
       apellidos: [null, [Validators.required]],
       documento: [null, [Validators.required, Validators.minLength(9)]],
+      email: [null, [Validators.required, Validators.email]],
       documentoTipoID: [1, [Validators.required]], //cedula por defecto
       fechaNacimiento: [null, Validators.required],
       fechaRegistrado: [new Date(),],

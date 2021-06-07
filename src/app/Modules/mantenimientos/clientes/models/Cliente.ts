@@ -13,6 +13,7 @@ export class Cliente {
         this.nombres = ""
         this.apellidos = ""
         this.documento = ""
+        this.email = ""
         this.fechaNacimiento = ""
         this.fechaRegistrado = ""
         this.codigoReferencia = ""
@@ -36,6 +37,7 @@ export class Cliente {
     nombres: string
     apellidos: string
     documento: string
+    email: string
     fechaNacimiento: string
     fechaRegistrado: string
     estadoID: number

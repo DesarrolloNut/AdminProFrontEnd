@@ -26,6 +26,7 @@ export class ReporteprontopagoComponent implements OnInit {
   paginaTotalRecords: number = 0;
   data: ReporteProntoPago[] = [] //tu modelo
   btnExportarCargando: boolean;
+  btnEnviarCorreoClienteCargando: boolean;
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
@@ -115,6 +116,7 @@ export class ReporteprontopagoComponent implements OnInit {
 
 
   enviarEmailCliente(item: ReporteProntoPago) {
+    this.btnEnviarCorreoClienteCargando = true;
 
     this.httpService.DoPostAny<ReporteProntoPago>(DataApi.ReporteProntoPago,
       "EnviarReporteProntoPagoCliente", item).subscribe(response => {
@@ -126,9 +128,9 @@ export class ReporteprontopagoComponent implements OnInit {
         }
 
 
-        this.btnExportarCargando = false;
+        this.btnEnviarCorreoClienteCargando = false;
       }, error => {
-        this.btnExportarCargando = false;
+        this.btnEnviarCorreoClienteCargando = false;
         this.toastService.error("No se pudo obtener los datos", "Error conexion al servidor");
       });
 
