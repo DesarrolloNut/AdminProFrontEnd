@@ -24,7 +24,7 @@
                     </div>
                 </div>
                 <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-12">
                         <label for="inputEmail4">Cliente</label>
                         <ng-select bindLabel="nombre" bindValue="codigo" [items]="clientes" [loading]="loadingClientes"
                             [clearable]="false" (search)="getClientes($event)" (change)="onSelectCliente($event)"
@@ -37,17 +37,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group col-md-6">
-                        <label for="codigoReferencia">
-                            Código de Referencia
-                        </label>
-                        <input formControlName="codigoReferencia" type="text" name="codigoReferencia"
-                            id="codigoReferencia"
-                            [ngClass]="{'is-invalid' : submitted && f.codigoReferencia.errors,  'form-control':true  }">
-                        <div class="invalid-feedback" *ngIf="submitted && f.codigoReferencia.errors">
-                            <div *ngIf="f.codigoReferencia.errors.required">El campo es obligatorio</div>
-                        </div>
-                    </div>
+
 
 
 
@@ -97,59 +87,83 @@
                         </div>
                     </div>
 
+                    <div class="form-group col-md-6" *ngIf="cliente">
+                        <label for="codigoReferencia">
+                            Código de Referencia Cotización
+                        </label>
+                        <input formControlName="codigoReferencia" type="text" name="codigoReferencia"
+                            id="codigoReferencia"
+                            [ngClass]="{'is-invalid' : submitted && f.codigoReferencia.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.codigoReferencia.errors">
+                            <div *ngIf="f.codigoReferencia.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6" *ngIf="cliente">
+                        <label for="inputEmail4">Moneda</label>
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="monedaTipos"
+                            [loading]="loadingMonedaTipos" [clearable]="false"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.monedaID.errors }"
+                            notFoundText="No resultados" formControlName="monedaID">
+                        </ng-select>
+                        <div *ngIf="submitted && f.monedaID.errors"
+                            class="text-danger small animated animated--fade-in">
+                            <div *ngIf="f.monedaID.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
 
                     <!-- <div class="col-12" [hidden]="loadingArticulosSeleccionados"> -->
                     <div class="col-12" *ngIf="cliente">
+                        <table class="table table-sm table-hover mb-0 no-wrap v-middle">
+                            <thead>
+                                <tr>
+                                    <th>Artículo</th>
+                                    <th>Precio</th>
+                                    <th>Cantidad</th>
+                                    <th>Total</th>
+                                    <th></th>
+                                    <!-- <th scope="col">Fecha de aplicación</th> -->
+                                </tr>
+                            </thead>
 
-                        <div class="table-responsive" style="height: 400px;">
-                            <table class="table table-hover mb-0 no-wrap v-middle">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Artículo</th>
-                                        <th scope="col">Precio</th>
-                                        <th scope="col">Cantidad</th>
-                                        <th scope="col">Total</th>
-                                        <th scope="col"></th>
-                                        <!-- <th scope="col">Fecha de aplicación</th> -->
-                                    </tr>
-                                </thead>
+                            <tbody>
 
-                                <tbody>
-
-                                    <!-- <tr *ngFor="let item of confirmed | filter: searchText; let i  = index"> -->
-                                    <tr *ngFor="let item of articulosCotizacion; let i=index">
-                                        <td>
-                                            <ng-select style="width: 500px;" [items]="articulos" bindLabel="nombre"
-                                                [clearable]="false" bindValue="id" [loading]="loadingArticulos"
-                                                [(ngModel)]="item.id" [ngModelOptions]="{standalone: true}"
-                                                (change)="onSelectArticulo($event,i)" notFoundText="No resultados">
-                                            </ng-select>
-                                        </td>
-                                        <td>
-                                            <input style="width: 200px;" type="text" class="form-control" prefix="$ "
-                                                [(ngModel)]="item.precio" [ngModelOptions]="{standalone: true}"
-                                                [readonly]="'true'" mask="separator" thousandSeparator=",">
-                                        </td>
-                                        <td>
-                                            <input style="width: 100px;" type="text" class="form-control"
-                                                (keyup)="calcularTotal()" mask="separator" thousandSeparator=","
-                                                [(ngModel)]="item.cantidad" [ngModelOptions]="{standalone: true}">
-                                        </td>
-                                        <td>
-                                            <span>${{ item.precio * item.cantidad | number:'1.2-5'}}</span>
-                                        </td>
-                                        <td>
-                                            <button (click)="onDeleteitem(i)" type="button"
-                                                class="btn btn-outline-danger">
-                                                <i class="fa fa-times"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-
+                                <!-- <tr *ngFor="let item of confirmed | filter: searchText; let i  = index"> -->
+                                <tr *ngFor="let item of articulosCotizacion; let i=index">
+                                    <td>
+                                        <ng-select style="width: 500px;" [items]="articulosCombobox" bindLabel="nombre"
+                                            [clearable]="false" bindValue="id" [loading]="loadingArticulos"
+                                            [(ngModel)]="item.id" [ngModelOptions]="{standalone: true}"
+                                            (change)="onSelectArticulo($event,i)" notFoundText="No resultados">
+                                        </ng-select>
+                                    </td>
+                                    <td>
+                                        <input style="width: 200px;" type="text" class="form-control" prefix="$ "
+                                            [(ngModel)]="item.precio" [ngModelOptions]="{standalone: true}"
+                                            [readonly]="'true'" mask="separator" thousandSeparator=",">
+                                    </td>
+                                    <td>
+                                        <input style="width: 100px;" type="text" class="form-control"
+                                            (keyup)="calcularTotal()" mask="separator" thousandSeparator=","
+                                            [(ngModel)]="item.cantidad" [ngModelOptions]="{standalone: true}">
+                                    </td>
+                                    <td>
+                                        <input style="width: 100px;" type="text" class="form-control"
+                                            (keyup)="calcularTotal()" mask="separator" thousandSeparator=","
+                                            [(ngModel)]="item.cantidad" [ngModelOptions]="{standalone: true}">
+                                    </td>
+                                    <td>
+                                        <span>${{ item.precio * item.cantidad | number:'1.2-5'}}</span>
+                                    </td>
+                                    <td>
+                                        <button (click)="onDeleteitem(i)" type="button" class="btn btn-outline-danger">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
 
                     <!-- <div class="col-12">
@@ -158,7 +172,7 @@
 
 
                     <div class="form-group text-right col-md-12" *ngIf="total > 0">
-                        <h1>$ {{total | number:'1.2-5' }}</h1>
+                        <h1>Total: $ {{total | number:'1.2-5' }}</h1>
                     </div>
 
 

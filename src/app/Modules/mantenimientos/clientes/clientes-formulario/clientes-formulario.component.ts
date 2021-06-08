@@ -151,7 +151,7 @@ export class ClientesFormularioComponent implements OnInit {
 
   getClienteByID(id: number) {
     this.Cargando = true;
-    this.httpService.DoPostAny<ClienteFrecuencia>(DataApi.Cliente,
+    this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
       "GetClienteByID", id).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
@@ -159,10 +159,10 @@ export class ClientesFormularioComponent implements OnInit {
           //validar que existe
           if (response.records.length > 0) {
 
-            let cliente = response.records[0].cliente;
-            this.FrecuenciaVisita = response.records[0].visita;
-            this.FormGenerales.patchValue(cliente);
-            this.onAddContacts(cliente.contactos);
+            let cliente = response.records[0];
+            // this.FrecuenciaVisita = response.records[0].visita;
+            this.FormGenerales.setValue(cliente);
+            // this.onAddContacts(cliente.contactos);
 
             this.getCiudades();
             this.getSectores();

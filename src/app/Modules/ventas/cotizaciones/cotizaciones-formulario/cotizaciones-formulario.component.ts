@@ -27,13 +27,15 @@ export class CotizacionesFormularioComponent implements OnInit {
   loadingClientes: boolean;
   clientes: ComboBox[];
   cliente: Cliente;
-  loadingArticulos: boolean;
-  articulos: any[];
+  loadingArticulosCombobox: boolean;
+  articulosCombobox: any[];
   listaPrecio: ListaPrecio;
   articulosCotizacion: any[];
   total: any;
   loadingCondicionPagos: boolean;
   TipoCondicionPagos: ComboBox[];
+  loadingMonedaTipos: boolean;
+  monedaTipos: ComboBox[];
 
   constructor(
     private toastService: ToastrService,
@@ -47,6 +49,7 @@ export class CotizacionesFormularioComponent implements OnInit {
     this.CreateForm();
     this.getClientes()
     this.getTipoCondicionPago()
+    this.getMonedaTipos()
   }
 
 
@@ -59,6 +62,7 @@ export class CotizacionesFormularioComponent implements OnInit {
       clienteID: [null, Validators.required],
       codigoReferencia: [null, Validators.required],
       condicionPagoId: [null, Validators.required],
+      monedaID: [null, Validators.required],
       descripcion: [null,],
       estadoID: [0,],
     });
@@ -69,11 +73,13 @@ export class CotizacionesFormularioComponent implements OnInit {
 
   onSubmit() {
 
+    console.log(this.articulosCotizacion)
+
     this.submitted = true;
     if (this.Formulario.invalid) {
       return;
     }
-    this.guardar();
+    // this.guardar();
   }
 
 
@@ -129,7 +135,7 @@ export class CotizacionesFormularioComponent implements OnInit {
 
   getClienteByID(id: number) {
     this.Cargando = true;
-    this.httpService.DoPostAny<any>(DataApi.Cliente,
+    this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
       "GetClienteByID", id).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
@@ -137,7 +143,7 @@ export class CotizacionesFormularioComponent implements OnInit {
           //validar que existe
           if (response != null && response.records != null && response.records.length > 0) {
 
-            this.cliente = response.records[0].cliente;
+            this.cliente = response.records[0];
             this.getArticulosPrecioActual()
             console.table(this.cliente)
           } else {
@@ -182,7 +188,7 @@ export class CotizacionesFormularioComponent implements OnInit {
         } else {
           //validar que existe
           if (response != null && response.records != null && response.records.length > 0) {
-            this.articulos = response.records
+            this.articulosCombobox = response.records
           } else {
             this.toastService.warning("La lista del cliente no tiene artículos");
           }
@@ -205,7 +211,7 @@ export class CotizacionesFormularioComponent implements OnInit {
   calcularTotal() {
     this.total = 0
     this.articulosCotizacion.forEach(x => {
-      this.total += x.cantidad ? (x.costo * x.cantidad) : 0
+      this.total += x.cantidad ? (x.precio * x.cantidad) : 0
     })
   }
 
@@ -222,10 +228,33 @@ export class CotizacionesFormularioComponent implements OnInit {
         this.loadingCondicionPagos = false;
       }, error => {
         this.loadingCondicionPagos = false;
-        this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
+        this.toastService.error("No se pudo obtener las condiciones de pago", "Error conexion al servidor");
 
         setTimeout(() => {
           this.getTipoCondicionPago();
+        }, 1000);
+
+      });
+  }
+
+
+  getMonedaTipos() {
+    this.loadingMonedaTipos = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetMonedas", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.monedaTipos = response.records;
+        }
+        this.loadingMonedaTipos = false;
+      }, error => {
+        this.loadingMonedaTipos = false;
+        this.toastService.error("No se pudo obtener los tipos de monedas", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getMonedaTipos();
         }, 1000);
 
       });

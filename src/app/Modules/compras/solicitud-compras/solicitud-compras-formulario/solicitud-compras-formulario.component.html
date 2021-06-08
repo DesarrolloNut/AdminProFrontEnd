@@ -186,57 +186,51 @@
 
                     <div class="col-12">
 
-                        <div class="table-responsive" style="height: 400px;">
-                            <table class="table table-hover mb-0 no-wrap v-middle">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Artículo</th>
-                                        <th scope="col">Costo</th>
-                                        <th scope="col">Cantidad</th>
-                                        <!-- <th scope="col">Total</th> -->
-                                        <th scope="col"></th>
-                                        <!-- <th scope="col">Fecha de aplicación</th> -->
-                                    </tr>
-                                </thead>
+                        <table class="table table-hover mb-0 no-wrap v-middle">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Artículo</th>
+                                    <th scope="col">Costo</th> 
+                                    <th scope="col">Cantidad</th>
+                                    <!-- <th scope="col">Total</th> -->
+                                    <th scope="col"></th>
+                                    <!-- <th scope="col">Fecha de aplicación</th> -->
+                                </tr>
+                            </thead>
 
-                                <tbody>
+                            <tbody>
 
-                                    <!-- <tr *ngFor="let item of confirmed | filter: searchText; let i  = index"> -->
-                                    <tr *ngFor="let item of articulosSolicitud; let i=index">
-                                        <td>
-                                            <ng-select style="width: 500px;" [items]="articulosDeCompra"
-                                                bindLabel="nombre" [clearable]="false" bindValue="id"
-                                                [loading]="loadingArticulos" [(ngModel)]="item.id"
-                                                [ngModelOptions]="{standalone: true}"
-                                                (change)="onSelectArticulo($event,i)" notFoundText="No resultados">
-                                            </ng-select>
-                                        </td>
-                                        <td>
-                                            <input style="width: 200px;" type="text" class="form-control" prefix="$ "
-                                                [(ngModel)]="item.costo" [ngModelOptions]="{standalone: true}"
-                                                [readonly]="'true'" mask="separator" thousandSeparator=",">
-                                        </td>
-                                        <td>
-                                            <input style="width: 100px;" type="text" class="form-control"
-                                                [disabled]="!cantidadEditable" (keyup)="calcularTotal()"
-                                                mask="separator" thousandSeparator="," [(ngModel)]="item.cantidad"
-                                                [ngModelOptions]="{standalone: true}">
-                                        </td>
-                                        <td>
-                                            <span>${{ item.costo * item.cantidad | number:'1.2-5'}}</span>
-                                        </td>
-                                        <td>
-                                            <button (click)="onDeleteitem(i)" type="button"
-                                                class="btn btn-outline-danger">
-                                                <i class="fa fa-times"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-
+                                <!-- <tr *ngFor="let item of confirmed | filter: searchText; let i  = index"> -->
+                                <tr *ngFor="let item of articulosSolicitud; let i=index">
+                                    <td>
+                                        <ng-select style="width: 500px;" [items]="articulosDeCompra" bindLabel="nombre"
+                                            [clearable]="false" bindValue="id" [loading]="loadingArticulos"
+                                            [(ngModel)]="item.id" [ngModelOptions]="{standalone: true}"
+                                            (change)="onSelectArticulo($event,i)" notFoundText="No resultados">
+                                        </ng-select>
+                                    </td>
+                                    <td>
+                                        <input style="width: 200px;" type="text" class="form-control" prefix="$ "
+                                            [(ngModel)]="item.costo" [ngModelOptions]="{standalone: true}"
+                                            [readonly]="'true'" mask="separator" thousandSeparator=",">
+                                    </td>
+                                    <td>
+                                        <input style="width: 100px;" type="text" class="form-control"
+                                            [disabled]="!cantidadEditable" (keyup)="calcularTotal()" mask="separator"
+                                            thousandSeparator="," [(ngModel)]="item.cantidad"
+                                            [ngModelOptions]="{standalone: true}">
+                                    </td>
+                                    <td>
+                                        <span>${{ item.costo * item.cantidad | number:'1.2-5'}}</span>
+                                    </td>
+                                    <td>
+                                        <button (click)="onDeleteitem(i)" type="button" class="btn btn-outline-danger">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
 
                     <div class="form-group text-right col-md-12" *ngIf="total > 0">
