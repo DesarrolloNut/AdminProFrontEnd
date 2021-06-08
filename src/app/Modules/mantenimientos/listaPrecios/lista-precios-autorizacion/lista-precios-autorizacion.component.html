@@ -60,7 +60,7 @@
                                     </button>
 
 
-                                    <ng-template [ngIf]="item.estadoID == estadoAutorizacionAnterior.codigo">
+                                    <ng-template [ngIf]="estadoAutorizacionAnterior && item.estadoID == estadoAutorizacionAnterior.codigo">
 
                                         <button class="btn btn-sm btn-success m-1" *ngIf="!item.cargando"
                                             (click)="autorizar(item)">

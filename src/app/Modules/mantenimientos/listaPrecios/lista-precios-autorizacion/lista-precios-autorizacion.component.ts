@@ -117,18 +117,20 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   }
 
   getEstadoAutorizacionUsuario() {
+    let parametro = {
+      "UsuarioID": Number(this.authService.tokenDecoded.nameid),
+      "KeynameModule": EstadoGeneralesKey.LISTAPRECIO,
+    }
 
     this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
-      "GetEstadoAutorizacionUsuario", Number(this.authService.tokenDecoded.nameid)).subscribe(response => {
+      "GetEstadoAutorizacionUsuario", parametro).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
           console.error(response.errores[0]);
-
         } else {
           this.estadoAutorizacionUsuario = response.valores[0];
           this.getEstadosAutorizacion()
-
         }
       }, error => {
         this.toastService.error("No se pudo obtener el estado de autorización del usuario", "Error conexion al servidor");
@@ -149,7 +151,8 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   getAnteriorEstadoAutorizacion() {
     let estadoUsuario = this.estadosAutorizacion.find(x => x.codigo == this.estadoAutorizacionUsuario);
     let estadoActualPosicion = this.estadosAutorizacion.indexOf(estadoUsuario);
-
+    console.log(estadoUsuario)
+    console.log(estadoActualPosicion)
     this.estadoAutorizacionAnterior = this.estadosAutorizacion[estadoActualPosicion - 1]
     if (this.estadoAutorizacionAnterior) {
       this.estadoAutorizacionComboModel = this.estadoAutorizacionAnterior.codigo;
