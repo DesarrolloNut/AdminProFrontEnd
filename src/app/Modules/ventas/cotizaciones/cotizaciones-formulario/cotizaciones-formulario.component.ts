@@ -31,11 +31,15 @@ export class CotizacionesFormularioComponent implements OnInit {
   articulosCombobox: any[];
   listaPrecio: ListaPrecio;
   articulosCotizacion: any[];
-  total: any;
   loadingCondicionPagos: boolean;
   TipoCondicionPagos: ComboBox[];
   loadingMonedaTipos: boolean;
   monedaTipos: ComboBox[];
+
+  totalNetoCotizacion: number = 0;
+  subTotalCotizacion: number = 0;
+  totalDescuentoCotizacion: number = 0;
+  totalImpuestoCotizacion: number = 0;
 
   constructor(
     private toastService: ToastrService,
@@ -164,7 +168,7 @@ export class CotizacionesFormularioComponent implements OnInit {
     }
 
     this.articulosCotizacion = [{}]
-    this.total = 0
+    this.limpiarTotales()
 
   }
 
@@ -175,7 +179,7 @@ export class CotizacionesFormularioComponent implements OnInit {
     if (!this.articulosCotizacion.some(x => x.id <= 0)) {
       this.articulosCotizacion.push({ "id": 0 })
     }
-    this.calcularTotal()
+    this.calcularTotales()
 
   }
 
@@ -205,14 +209,29 @@ export class CotizacionesFormularioComponent implements OnInit {
     if (!this.articulosCotizacion.some(x => x.id <= 0)) {
       this.articulosCotizacion.push({ "id": 0 })
     }
-    this.calcularTotal()
+    this.calcularTotales()
   }
 
-  calcularTotal() {
-    this.total = 0
+  calcularTotales() {
+    this.limpiarTotales()
+
     this.articulosCotizacion.forEach(x => {
-      this.total += x.cantidad ? (x.precio * x.cantidad) : 0
+      x.subTotal = x.cantidad ? (x.precio * x.cantidad) : 0;
+      x.totalDescuento = x.descuento ? (x.subTotal * x.descuento / 100) : 0;
+      x.totalNeto = x.subTotal - x.totalDescuento;
+
+      this.totalDescuentoCotizacion += x.totalDescuento;
+      this.subTotalCotizacion += x.subTotal;
+      this.totalNetoCotizacion = this.subTotalCotizacion - this.totalDescuentoCotizacion;
+
     })
+  }
+
+  limpiarTotales() {
+    this.subTotalCotizacion = 0;
+    this.totalDescuentoCotizacion = 0;
+    this.totalImpuestoCotizacion = 0;
+    this.totalNetoCotizacion = 0;
   }
 
   getTipoCondicionPago() {
