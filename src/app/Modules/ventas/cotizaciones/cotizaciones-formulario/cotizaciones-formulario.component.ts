@@ -266,6 +266,11 @@ export class CotizacionesFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.monedaTipos = response.records;
+
+          if (this.monedaTipos && this.monedaTipos.length > 0) {
+            this.f.monedaID.setValue(this.monedaTipos[0].codigo)
+          }
+
         }
         this.loadingMonedaTipos = false;
       }, error => {

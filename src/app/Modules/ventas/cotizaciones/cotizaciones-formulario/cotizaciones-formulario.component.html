@@ -87,7 +87,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group col-md-6" *ngIf="cliente">
+                    <!-- <div class="form-group col-md-6" *ngIf="cliente">
                         <label for="codigoReferencia">
                             Código de Referencia Cotización
                         </label>
@@ -97,7 +97,7 @@
                         <div class="invalid-feedback" *ngIf="submitted && f.codigoReferencia.errors">
                             <div *ngIf="f.codigoReferencia.errors.required">El campo es obligatorio</div>
                         </div>
-                    </div>
+                    </div> -->
 
                     <div class="form-group col-md-6" *ngIf="cliente">
                         <label for="inputEmail4">Moneda</label>
@@ -114,7 +114,7 @@
 
 
                     <!-- <div class="col-12" [hidden]="loadingArticulosSeleccionados"> -->
-                    <div class="col-12" *ngIf="cliente">
+                    <div class="col-12 overflow-scroll" *ngIf="cliente">
                         <table class="table table-sm table-hover mb-0 no-wrap v-middle">
                             <thead>
                                 <tr>
@@ -178,10 +178,10 @@
 
                     <div class="form-group text-right col-md-12" *ngIf="cliente">
                         <hr>
-                        <h2>Subtotal: $ {{subTotalCotizacion | number:'1.2-2' }}</h2>
-                        <h2>Total Imp.: $ {{totalImpuestoCotizacion | number:'1.2-2' }}</h2>
-                        <h2>Total desc.: $ {{totalDescuentoCotizacion | number:'1.2-2' }}</h2>
-                        <h2>Total Neto: $ {{totalNetoCotizacion | number:'1.2-2' }}</h2>
+                        <h4>Subtotal: $ {{subTotalCotizacion | number:'1.2-2' }}</h4>
+                        <h4>Descuento: $ {{totalDescuentoCotizacion | number:'1.2-2' }}</h4>
+                        <h4>Impuesto: $ {{totalImpuestoCotizacion | number:'1.2-2' }}</h4>
+                        <h4 class="font-weight-bold">Total Neto: $ {{totalNetoCotizacion | number:'1.2-2' }}</h4>
                     </div>
 
 
