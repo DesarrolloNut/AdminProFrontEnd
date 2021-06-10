@@ -114,15 +114,18 @@
 
 
                     <!-- <div class="col-12" [hidden]="loadingArticulosSeleccionados"> -->
-                    <div class="col-12 overflow-scroll" *ngIf="cliente">
+                    <div class="col-12" *ngIf="cliente">
                         <table class="table table-sm table-hover mb-0 no-wrap v-middle">
                             <thead>
                                 <tr>
                                     <th>Artículo</th>
                                     <th>Precio</th>
+                                    <th>Almacen</th>
                                     <th>Cant.</th>
                                     <th>% Desc.</th>
                                     <th>SubTotal</th>
+                                    <th>Desc.</th>
+                                    <th>ITBIS</th>
                                     <th>Total Neto</th>
                                     <th></th>
                                     <!-- <th scope="col">Fecha de aplicación</th> -->
@@ -141,22 +144,37 @@
                                         </ng-select>
                                     </td>
                                     <td>
-                                        <input style="width: 200px;" type="text" class="form-control" prefix="$ "
+                                        <input style="width: 100px;" type="text" class="form-control" prefix="$ "
                                             [(ngModel)]="item.precio" [ngModelOptions]="{standalone: true}"
                                             [readonly]="'true'" mask="separator" thousandSeparator=",">
                                     </td>
                                     <td>
-                                        <input style="width: 100px;" type="text" class="form-control"
-                                            (keyup)="calcularTotales()" mask="separator" thousandSeparator=","
-                                            [(ngModel)]="item.cantidad" [ngModelOptions]="{standalone: true}">
+                                        <ng-select [items]="almacenes" bindLabel="codigo" bindValue="codigo"
+                                            [loading]="loadingAlmacenes" [(ngModel)]="item.almacenID"
+                                            [readonly]="!item.id" [clearable]="false"
+                                            [ngModelOptions]="{standalone: true}" notFoundText="No resultados">
+                                        </ng-select>
                                     </td>
                                     <td>
-                                        <input style="width: 80px;" type="number" class="form-control"
-                                            (keyup)="calcularTotales()" [(ngModel)]="item.descuento"
+                                        <input style="width: 70px;" type="text" class="form-control"
+                                            [readonly]="!item.id" (keyup)="calcularTotales()" mask="separator"
+                                            thousandSeparator="," [(ngModel)]="item.cantidad"
                                             [ngModelOptions]="{standalone: true}">
+                                    </td>
+
+                                    <td>
+                                        <input style="width: 50px;" type="number" class="form-control"
+                                            [readonly]="!item.id" (keyup)="calcularTotales()"
+                                            [(ngModel)]="item.descuento" [ngModelOptions]="{standalone: true}">
                                     </td>
                                     <td>
                                         <span>${{ item.subTotal | number:'1.2-2'}}</span>
+                                    </td>
+                                    <td>
+                                        <span>${{ item.totalDescuento | number:'1.2-2'}}</span>
+                                    </td>
+                                    <td>
+                                        <span>${{ item.totalImpuesto | number:'1.2-2'}}</span>
                                     </td>
                                     <td>
                                         <span>${{ item.totalNeto | number:'1.2-2'}}</span>

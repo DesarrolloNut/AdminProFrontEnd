@@ -10,6 +10,7 @@ import { Cliente } from 'src/app/Modules/mantenimientos/clientes/models/Cliente'
 import { ListaPrecio } from 'src/app/Modules/mantenimientos/listaPrecios/models/ListaPrecio';
 import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
+import { EstadoGeneralesKey } from 'src/app/shared/enums/EstadoGeneralesKey';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 
 @Component({
@@ -30,7 +31,7 @@ export class CotizacionesFormularioComponent implements OnInit {
   loadingArticulosCombobox: boolean;
   articulosCombobox: any[];
   listaPrecio: ListaPrecio;
-  articulosCotizacion: any[];
+  articulosCotizacion: any[] = [{}];
   loadingCondicionPagos: boolean;
   TipoCondicionPagos: ComboBox[];
   loadingMonedaTipos: boolean;
@@ -40,6 +41,8 @@ export class CotizacionesFormularioComponent implements OnInit {
   subTotalCotizacion: number = 0;
   totalDescuentoCotizacion: number = 0;
   totalImpuestoCotizacion: number = 0;
+  loadingAlmacenes: boolean;
+  almacenes: ComboBox[];
 
   constructor(
     private toastService: ToastrService,
@@ -51,6 +54,7 @@ export class CotizacionesFormularioComponent implements OnInit {
   ngOnInit(): void {
 
     this.CreateForm();
+    this.getAlmacenes()
     this.getClientes()
     this.getTipoCondicionPago()
     this.getMonedaTipos()
@@ -62,7 +66,6 @@ export class CotizacionesFormularioComponent implements OnInit {
     this.Formulario = this.formBuilder.group({
       id: [0],
       nombre: [null, [Validators.required]],
-      companiaID: [null, Validators.required],
       clienteID: [null, Validators.required],
       codigoReferencia: [null, Validators.required],
       condicionPagoId: [null, Validators.required],
@@ -168,6 +171,7 @@ export class CotizacionesFormularioComponent implements OnInit {
     }
 
     this.articulosCotizacion = [{}]
+    this.articulosCotizacion[0].almacenID = this.almacenes[0].codigo
     this.limpiarTotales()
 
   }
@@ -177,7 +181,7 @@ export class CotizacionesFormularioComponent implements OnInit {
     this.articulosCotizacion[index].precio = item.precio;
     console.table(item)
     if (!this.articulosCotizacion.some(x => x.id <= 0)) {
-      this.articulosCotizacion.push({ "id": 0 })
+      this.articulosCotizacion.push({ "id": 0, "almacenID": this.almacenes[0].codigo })
     }
     this.calcularTotales()
 
@@ -207,7 +211,7 @@ export class CotizacionesFormularioComponent implements OnInit {
   onDeleteitem(index: number) {
     this.articulosCotizacion.splice(index, 1);
     if (!this.articulosCotizacion.some(x => x.id <= 0)) {
-      this.articulosCotizacion.push({ "id": 0 })
+      this.articulosCotizacion.push({ "id": 0, "almacenID": this.almacenes[0].codigo })
     }
     this.calcularTotales()
   }
@@ -216,15 +220,18 @@ export class CotizacionesFormularioComponent implements OnInit {
     this.limpiarTotales()
 
     this.articulosCotizacion.forEach(x => {
-      x.subTotal = x.cantidad ? (x.precio * x.cantidad) : 0;
+      x.subTotal = x.cantidad && x.id ? (x.precio * x.cantidad) : 0;
       x.totalDescuento = x.descuento ? (x.subTotal * x.descuento / 100) : 0;
       x.totalNeto = x.subTotal - x.totalDescuento;
+      x.totalImpuesto = (x.subTotal - x.totalDescuento) * 0.18;
+
 
       this.totalDescuentoCotizacion += x.totalDescuento;
       this.subTotalCotizacion += x.subTotal;
-      this.totalNetoCotizacion = this.subTotalCotizacion - this.totalDescuentoCotizacion;
-
     })
+    this.totalNetoCotizacion = this.subTotalCotizacion - this.totalDescuentoCotizacion;
+    this.totalImpuestoCotizacion = this.totalNetoCotizacion * 0.18;
+    this.totalNetoCotizacion += this.totalImpuestoCotizacion;
   }
 
   limpiarTotales() {
@@ -284,5 +291,35 @@ export class CotizacionesFormularioComponent implements OnInit {
       });
   }
 
+  getAlmacenes() {
+    let parametros: Parametro[] = [
+      { key: "usuarioID", value: this.authService.tokenDecoded.nameid },
+      { key: "ModuloKey", value: EstadoGeneralesKey.COTIZACION },
+    ]
+    this.loadingAlmacenes = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetUsuarioAlmacenesModulo", parametros).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.almacenes = response.records;
+
+          console.table(this.almacenes)
+
+          if (this.almacenes && this.almacenes.length > 0) {
+          }
+        }
+        this.loadingAlmacenes = false;
+      }, error => {
+        this.loadingAlmacenes = false;
+        this.toastService.error("No se pudo obtener los almacenes", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getAlmacenes()
+        }, 1000);
+
+      });
+  }
 
 }
