@@ -126,10 +126,8 @@ import { UsuarioAlmacenEnrrollFormularioComponent } from './usuarioAlmacenEnrrol
     ProveedoresFormularioComponent,
     ActividadesEconomicasListadoComponent,
     ActividadesEconomicasFormularioComponent,
-
     EnrrollvendedorentregasupervisorListadoComponent,
-    EnrrollvendedorentregasupervisorFormularioComponent
-
+    EnrrollvendedorentregasupervisorFormularioComponent,
     UsuarioAlmacenEnrrollListadoComponent,
     UsuarioAlmacenEnrrollFormularioComponent
 
