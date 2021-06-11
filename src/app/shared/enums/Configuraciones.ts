@@ -1,0 +1,11 @@
+export enum Configuraciones {
+    URL_REPORTE_RECEPCION = '1',
+    URL_REPORTE_ORDEN_SERVICIO = '2',
+    EMPRESA_NOMBRE = '15',
+    URL_AUTORIZACION_PRECIOS = '16',
+    EMAIL_APP = '17',
+    EMAIL_PASSWORD_APP = '18',
+    USER_PASSWORD_DEFAULT = '19',
+    IMPUESTO_PORCIENTO = '20',
+
+}

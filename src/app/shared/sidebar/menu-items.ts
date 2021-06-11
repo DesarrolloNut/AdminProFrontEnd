@@ -791,6 +791,17 @@ export const ROUTES: RouteInfo[] = [
         permisos: ["mantenimientos_usuario"],
       },
       {
+        path: '/mantenimientos/usuario-almacen-enrroll',
+        label: '',
+        labelClass: '',
+        title: 'Usuarios Almacen Enrroll',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_usuario_almacen_enrroll"],
+      },
+      {
         path: '/mantenimientos/vehiculocondicion',
         label: '',
         labelClass: '',

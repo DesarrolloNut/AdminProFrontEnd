@@ -76,6 +76,9 @@ import { MonedasFormularioComponent } from './monedas/monedas-formulario/monedas
 import { DepartamentosListadoComponent } from './departamentos/departamentos-listado/departamentos-listado.component';
 import { EnrrollvendedorentregasupervisorListadoComponent } from './enrrollvendedorentregasupervisor/enrrollvendedorentregasupervisor-listado/enrrollvendedorentregasupervisor-listado.component';
 import { EnrrollvendedorentregasupervisorFormularioComponent } from './enrrollvendedorentregasupervisor/enrrollvendedorentregasupervisor-formulario/enrrollvendedorentregasupervisor-formulario.component';
+import { UsuarioAlmacenEnrrollListadoComponent } from './usuarioAlmacenEnrroll/usuario-almacen-enrroll-listado/usuario-almacen-enrroll-listado.component';
+import { UsuarioAlmacenEnrrollFormularioComponent } from './usuarioAlmacenEnrroll/usuario-almacen-enrroll-formulario/usuario-almacen-enrroll-formulario.component';
+
 
 
 
@@ -363,6 +366,28 @@ const routes: Routes = [
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Usuarios' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+      // usuario
+      {
+        path: 'usuario-almacen-enrroll', component: UsuarioAlmacenEnrrollListadoComponent, data: {
+          title: 'Usuario Almacen Enrroll',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Usuario Almacen Enrroll' }
+          ]
+        }
+      },
+
+      {
+        path: 'usuario-almacen-enrroll/:id', component: UsuarioAlmacenEnrrollFormularioComponent, data: {
+          title: 'Usuario Almacen Enrroll Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Usuario Almacen Enrroll' },
             { title: 'Formulario' }
           ]
         }
