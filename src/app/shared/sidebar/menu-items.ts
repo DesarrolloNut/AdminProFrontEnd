@@ -570,6 +570,17 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ["mantenimientos_proveedor"],
       },
+      {
+        path: '/mantenimientos/enrrollvendedorentregasupervisor',
+        label: '',
+        labelClass: '',
+        title: 'Comisiones',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: [""],
+      },
 
 
 

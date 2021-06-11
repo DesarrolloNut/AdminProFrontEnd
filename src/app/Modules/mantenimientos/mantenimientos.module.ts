@@ -82,6 +82,8 @@ import { ProveedoresListadoComponent } from './proveedores/proveedores-listado/p
 import { ProveedoresFormularioComponent } from './proveedores/proveedores-formulario/proveedores-formulario.component';
 import { ActividadesEconomicasListadoComponent } from './actividadesEconomicas/actividades-economicas-listado/actividades-economicas-listado.component';
 import { ActividadesEconomicasFormularioComponent } from './actividadesEconomicas/actividades-economicas-formulario/actividades-economicas-formulario.component';
+import { EnrrollvendedorentregasupervisorListadoComponent } from './enrrollvendedorentregasupervisor/enrrollvendedorentregasupervisor-listado/enrrollvendedorentregasupervisor-listado.component';
+import { EnrrollvendedorentregasupervisorFormularioComponent } from './enrrollvendedorentregasupervisor/enrrollvendedorentregasupervisor-formulario/enrrollvendedorentregasupervisor-formulario.component';
 
 
 @NgModule({
@@ -118,7 +120,9 @@ import { ActividadesEconomicasFormularioComponent } from './actividadesEconomica
     ProveedoresListadoComponent,
     ProveedoresFormularioComponent,
     ActividadesEconomicasListadoComponent,
-    ActividadesEconomicasFormularioComponent
+    ActividadesEconomicasFormularioComponent,
+    EnrrollvendedorentregasupervisorListadoComponent,
+    EnrrollvendedorentregasupervisorFormularioComponent
   ],
 
   imports: [
