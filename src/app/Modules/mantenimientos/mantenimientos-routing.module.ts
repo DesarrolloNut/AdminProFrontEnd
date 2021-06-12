@@ -74,8 +74,11 @@ import { CargaMasivaPanelComponent } from './cargaMasiva/carga-masiva-panel/carg
 import { MonedasListadoComponent } from './monedas/monedas-listado/monedas-listado.component';
 import { MonedasFormularioComponent } from './monedas/monedas-formulario/monedas-formulario.component';
 import { DepartamentosListadoComponent } from './departamentos/departamentos-listado/departamentos-listado.component';
+import { EnrrollvendedorentregasupervisorListadoComponent } from './enrrollvendedorentregasupervisor/enrrollvendedorentregasupervisor-listado/enrrollvendedorentregasupervisor-listado.component';
+import { EnrrollvendedorentregasupervisorFormularioComponent } from './enrrollvendedorentregasupervisor/enrrollvendedorentregasupervisor-formulario/enrrollvendedorentregasupervisor-formulario.component';
 import { UsuarioAlmacenEnrrollListadoComponent } from './usuarioAlmacenEnrroll/usuario-almacen-enrroll-listado/usuario-almacen-enrroll-listado.component';
 import { UsuarioAlmacenEnrrollFormularioComponent } from './usuarioAlmacenEnrroll/usuario-almacen-enrroll-formulario/usuario-almacen-enrroll-formulario.component';
+
 
 
 
@@ -193,6 +196,29 @@ const routes: Routes = [
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Nivel Autorizacion Módulo' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+
+      // EnrrollVendedorEntregaSupervisor
+      {
+        path: 'enrrollvendedorentregasupervisor', component: EnrrollvendedorentregasupervisorListadoComponent, data: {
+          title: 'Enrrollvendedorentregasupervisor',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Enrrollvendedorentregasupervisor' }
+          ]
+        }
+      },
+
+      {
+        path: 'enrrollvendedorentregasupervisor/:id', component: EnrrollvendedorentregasupervisorFormularioComponent, data: {
+          title: 'Enrrollvendedorentregasupervisor Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Enrrollvendedorentregasupervisor' },
             { title: 'Formulario' }
           ]
         }
