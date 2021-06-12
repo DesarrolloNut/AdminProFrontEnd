@@ -212,6 +212,24 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
     this.actualizarEstadoArticulos(item)
   }
 
+  autorizarMasiva() {
+
+    this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
+      "AutorizarArticulosMasivoSegunNivelUsuario", Number(this.authService.tokenDecoded.nameid)).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+          this.toastService.success("Realizado", "OK");
+          this.getData()
+        }
+      }, error => {
+        this.toastService.error("No se pudo realizar", "Error conexion al servidor");
+        console.error(error)
+      });
+
+  }
 
 
   actualizarEstadoArticulos(item: any) {
@@ -296,6 +314,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
       });
 
   }
+
 
 
   guardarComentario() {

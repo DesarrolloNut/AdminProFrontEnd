@@ -7,9 +7,9 @@
                         <h4 class="card-title">Listado de artículos por autorizar</h4>
                     </div>
                     <div class="col-md-6 text-right">
-                        <!-- <button [routerLink]="[0]" class="btn btn-info"> <i class="fa fa-plus"></i> Nuevo
-                            accesorio
-                        </button> -->
+                        <button type="button" (click)="autorizarMasiva()" class="btn btn-info"> <i
+                                class="fa fa-check"></i> Autorizar todos
+                        </button>
                     </div>
                     <div class="col-md-8 p-2">
 
@@ -60,7 +60,8 @@
                                     </button>
 
 
-                                    <ng-template [ngIf]="estadoAutorizacionAnterior && item.estadoID == estadoAutorizacionAnterior.codigo">
+                                    <ng-template
+                                        [ngIf]="estadoAutorizacionAnterior && item.estadoID == estadoAutorizacionAnterior.codigo">
 
                                         <button class="btn btn-sm btn-success m-1" *ngIf="!item.cargando"
                                             (click)="autorizar(item)">
