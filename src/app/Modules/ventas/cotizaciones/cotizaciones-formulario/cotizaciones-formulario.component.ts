@@ -86,23 +86,29 @@ export class CotizacionesFormularioComponent implements OnInit {
     if (this.Formulario.invalid) {
       return;
     }
-    // this.guardar();
+    this.guardar();
   }
 
 
   guardar() {
 
-    let metodo: string = this.actualizando ? "Update" : "Registrar";
+    let parametro: any = {
+      "Cotizacion": this.Formulario.value,
+      "CotizacionDetalles": this.articulosCotizacion.filter(x => x.id > 0 && x.cantidad > 0)
+    }
+    console.log(parametro)
+
+    let metodo: string = "Registrar";
     this.btnGuardarCargando = true;
 
-    this.httpService.DoPostAny<Almacen>(DataApi.Almacen,
-      metodo, this.Formulario.value).subscribe(response => {
+    this.httpService.DoPostAny<any>(DataApi.Cotizacion,
+      metodo, parametro).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
         } else {
           this.toastService.success("Realizado", "OK");
-          this.router.navigateByUrl('/mantenimientos/almacen');
+          this.router.navigateByUrl('/ventas/cotizacion');
         }
 
         this.btnGuardarCargando = false;
