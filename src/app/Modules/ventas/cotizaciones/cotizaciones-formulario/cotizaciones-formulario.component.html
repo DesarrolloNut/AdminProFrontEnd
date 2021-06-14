@@ -23,18 +23,14 @@
                     <div class="col-md-6 col-lg-6 col-12 text-right">
                     </div>
                 </div>
-                <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
+                <div class="form-row m-t-40">
                     <div class="form-group col-md-12">
                         <label for="inputEmail4">Cliente</label>
-                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="clientes" [loading]="loadingClientes"
-                            [clearable]="false" (search)="getClientes($event)" (change)="onSelectCliente($event)"
-                            [ngClass]="{'form-control border-danger p-0' : submitted && f.clienteID.errors }"
-                            notFoundText="No resultados" formControlName="clienteID">
+                        <ng-select [ngModelOptions]="{standalone: true}" [(ngModel)]="clienteID" bindLabel="nombre"
+                            bindValue="codigo" [items]="clientes" [loading]="loadingClientes" [clearable]="false"
+                            (search)="getClientes($event)" (change)="onSelectCliente($event)"
+                            notFoundText="No resultados">
                         </ng-select>
-                        <div *ngIf="submitted && f.clienteID.errors"
-                            class="text-danger small animated animated--fade-in">
-                            <div *ngIf="f.clienteID.errors.required  ">El campo es obligatorio</div>
-                        </div>
                     </div>
 
 
@@ -50,20 +46,19 @@
                             <div class="form-group col-md-6">
                                 <label for="nombre"><i class="fa fa-hashtag"></i> Código</label>
                                 <input [(ngModel)]="cliente.codigoReferencia" class="form-control" [readonly]="'true'"
-                                    type="text" [ngModelOptions]="{standalone: true}" name="nombre" id="nombre">
+                                    type="text" [ngModelOptions]="{standalone: true}" >
                             </div>
 
                             <div class="form-group col-md-6">
                                 <label for="nombre"> <i class="fa fa-user"></i> Nombres</label>
                                 <input [(ngModel)]="cliente.nombres +' '+ cliente.apellidos" class="form-control"
-                                    [readonly]="'true'" type="text" [ngModelOptions]="{standalone: true}" name="nombre"
-                                    id="nombre">
+                                    [readonly]="'true'" type="text" [ngModelOptions]="{standalone: true}" >
                             </div>
 
                             <div class="form-group col-md-6">
                                 <label for="nombre"> <i class="fa fa-id-card"></i> Documento</label>
                                 <input [(ngModel)]="cliente.documento" class="form-control" [readonly]="'true'"
-                                    type="text" [ngModelOptions]="{standalone: true}" name="nombre" id="nombre">
+                                    type="text" [ngModelOptions]="{standalone: true}" >
                             </div>
 
                             <div class="form-group col-md-6">
@@ -78,7 +73,7 @@
                             <div class="form-group col-md-12">
                                 <label for="nombre"> <i class="fa fa-map-marker"></i> Dirección</label>
                                 <input [(ngModel)]="cliente.calle" class="form-control" [readonly]="'true'" type="text"
-                                    [ngModelOptions]="{standalone: true}" name="nombre" id="nombre">
+                                    [ngModelOptions]="{standalone: true}" >
                             </div>
 
 
@@ -102,14 +97,9 @@
                     <div class="form-group col-md-6" *ngIf="cliente">
                         <label for="inputEmail4">Moneda</label>
                         <ng-select bindLabel="nombre" bindValue="codigo" [items]="monedaTipos"
-                            [loading]="loadingMonedaTipos" [clearable]="false"
-                            [ngClass]="{'form-control border-danger p-0' : submitted && f.monedaID.errors }"
-                            notFoundText="No resultados" formControlName="monedaID">
+                            [ngModelOptions]="{standalone: true}" [(ngModel)]="monedaID" [loading]="loadingMonedaTipos"
+                            [clearable]="false" notFoundText="No resultados">
                         </ng-select>
-                        <div *ngIf="submitted && f.monedaID.errors"
-                            class="text-danger small animated animated--fade-in">
-                            <div *ngIf="f.monedaID.errors.required  ">El campo es obligatorio</div>
-                        </div>
                     </div>
 
 
@@ -163,10 +153,9 @@
                                         </ng-select>
                                     </td>
                                     <td>
-                                        <input style="width: 70px;" type="text" class="form-control"
-                                            [readonly]="!item.id" (keyup)="calcularTotales()" mask="separator"
-                                            thousandSeparator="," [(ngModel)]="item.cantidad"
-                                            [ngModelOptions]="{standalone: true}">
+                                        <input style="width: 70px;" type="number" class="form-control"
+                                            [readonly]="!item.id" (keyup)="calcularTotales()"
+                                            [(ngModel)]="item.cantidad" [ngModelOptions]="{standalone: true}">
                                     </td>
 
                                     <td>
@@ -228,7 +217,7 @@
                         </button>
                     </div>
 
-                </form>
+                </div>
             </div>
         </div>
     </div>
@@ -248,7 +237,7 @@
             <div class="col-12" [hidden]="loadingArticuloBalance">
 
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0 no-wrap v-middle">
+                    <table class="table table-sm table-hover mb-0 no-wrap v-middle">
                         <thead>
                             <tr>
                                 <th></th>
@@ -266,7 +255,7 @@
                                     <span> {{item.articulo}}</span>
                                 </td>
                                 <td>
-                                    <span> {{item.almacen}}</span>
+                                    <span> #{{item.almacenID}} {{item.almacen}} </span>
                                 </td>
                                 <td>
                                     <span> {{item.existencia}}</span>

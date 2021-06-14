@@ -23,8 +23,6 @@ import { ComboBox } from 'src/app/shared/model/ComboBox';
 export class CotizacionesFormularioComponent implements OnInit {
 
   Cargando: boolean = false;
-  Formulario: FormGroup;
-  submitted = false;
   btnGuardarCargando = false;
   actualizando = false;
   loadingClientes: boolean;
@@ -48,6 +46,8 @@ export class CotizacionesFormularioComponent implements OnInit {
   loadingArticuloBalance: boolean;
   articuloBalance: ArticuloBalanceViewModel[];
   totalCantidadExistencia: number;
+  monedaID: number;
+  clienteID: number;
 
   constructor(
     private toastService: ToastrService,
@@ -59,45 +59,34 @@ export class CotizacionesFormularioComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.CreateForm();
     this.getAlmacenes()
     this.getClientes()
     this.getTipoCondicionPago()
     this.getMonedaTipos()
   }
 
-
-  private CreateForm() {
-
-    this.Formulario = this.formBuilder.group({
-      id: [0],
-      nombre: [null, [Validators.required]],
-      clienteID: [null, Validators.required],
-      codigoReferencia: [null, Validators.required],
-      condicionPagoId: [null, Validators.required],
-      monedaID: [null, Validators.required],
-      descripcion: [null,],
-      estadoID: [0,],
-    });
-  }
-
-  get f() { return this.Formulario.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
-
-
   onSubmit() {
 
-    this.submitted = true;
-    if (this.Formulario.invalid) {
-      return;
+    // this.submitted = true;
+    // if (this.Formulario.invalid) {
+    //   return;
+    // }
+
+
+    let parametro: any = {
+      "Cotizacion": {},
+      "CotizacionDetalles": this.articulosCotizacion.filter(x => x.id > 0 && x.cantidad > 0)
     }
-    this.guardar();
+    console.log(parametro)
+
+    // this.guardar();
   }
 
 
   guardar() {
 
     let parametro: any = {
-      "Cotizacion": this.Formulario.value,
+      "Cotizacion": {},
       "CotizacionDetalles": this.articulosCotizacion.filter(x => x.id > 0 && x.cantidad > 0)
     }
     console.log(parametro)
@@ -230,9 +219,8 @@ export class CotizacionesFormularioComponent implements OnInit {
     this.articulosCotizacion.forEach(x => {
       x.subTotal = x.cantidad && x.id ? (x.precio * x.cantidad) : 0;
       x.totalDescuento = x.descuento ? (x.subTotal * x.descuento / 100) : 0;
-      x.totalNeto = x.subTotal - x.totalDescuento;
       x.totalImpuesto = (x.subTotal - x.totalDescuento) * 0.18;
-
+      x.totalNeto = x.subTotal - x.totalDescuento + x.totalImpuesto;
 
       this.totalDescuentoCotizacion += x.totalDescuento;
       this.subTotalCotizacion += x.subTotal;
@@ -283,7 +271,7 @@ export class CotizacionesFormularioComponent implements OnInit {
           this.monedaTipos = response.records;
 
           if (this.monedaTipos && this.monedaTipos.length > 0) {
-            this.f.monedaID.setValue(this.monedaTipos[0].codigo)
+            this.monedaID = this.monedaTipos[0].codigo
           }
 
         }
@@ -342,7 +330,7 @@ export class CotizacionesFormularioComponent implements OnInit {
         } else {
           this.articuloBalance = response.records;
           this.totalCantidadExistencia = 0;
-          
+
           if (this.articuloBalance) {
             this.articuloBalance.forEach(ab => this.totalCantidadExistencia += ab.existencia)
           }
