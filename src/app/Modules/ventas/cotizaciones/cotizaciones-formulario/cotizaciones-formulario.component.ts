@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Almacen } from 'src/app/Modules/mantenimientos/almacenes/models/Almacen';
+import { ArticuloBalanceViewModel } from 'src/app/Modules/mantenimientos/articulos/models/ArticuloBalanceViewModel';
 import { Cliente } from 'src/app/Modules/mantenimientos/clientes/models/Cliente';
 import { ListaPrecio } from 'src/app/Modules/mantenimientos/listaPrecios/models/ListaPrecio';
 import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
@@ -43,11 +45,15 @@ export class CotizacionesFormularioComponent implements OnInit {
   totalImpuestoCotizacion: number = 0;
   loadingAlmacenes: boolean;
   almacenes: ComboBox[];
+  loadingArticuloBalance: boolean;
+  articuloBalance: ArticuloBalanceViewModel[];
+  totalCantidadExistencia: number;
 
   constructor(
     private toastService: ToastrService,
     private httpService: BackendService,
     private router: Router,
+    private modalService: NgbModal,
     private authService: AuthenticationService,
     private formBuilder: FormBuilder) { }
 
@@ -79,8 +85,6 @@ export class CotizacionesFormularioComponent implements OnInit {
 
 
   onSubmit() {
-
-    console.log(this.articulosCotizacion)
 
     this.submitted = true;
     if (this.Formulario.invalid) {
@@ -158,7 +162,6 @@ export class CotizacionesFormularioComponent implements OnInit {
 
             this.cliente = response.records[0];
             this.getArticulosPrecioActual()
-            console.table(this.cliente)
           } else {
             this.toastService.warning("Cliente no encontrado");
           }
@@ -185,7 +188,6 @@ export class CotizacionesFormularioComponent implements OnInit {
 
   onSelectArticulo(item: any, index: number) {
     this.articulosCotizacion[index].precio = item.precio;
-    console.table(item)
     if (!this.articulosCotizacion.some(x => x.id <= 0)) {
       this.articulosCotizacion.push({ "id": 0, "almacenID": this.almacenes[0].codigo })
     }
@@ -310,11 +312,6 @@ export class CotizacionesFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.almacenes = response.records;
-
-          console.table(this.almacenes)
-
-          if (this.almacenes && this.almacenes.length > 0) {
-          }
         }
         this.loadingAlmacenes = false;
       }, error => {
@@ -325,6 +322,35 @@ export class CotizacionesFormularioComponent implements OnInit {
           this.getAlmacenes()
         }, 1000);
 
+      });
+  }
+
+  openModal(content, articuloID: number) {
+    this.articuloBalance = [];
+    this.getArticuloBalanceAlmacenes(articuloID);
+    this.modalService.open(content, { size: 'lg', backdrop: "static", });
+  }
+
+
+  getArticuloBalanceAlmacenes(articuloID: number) {
+    this.loadingArticuloBalance = true;
+    this.httpService.DoPostAny<ArticuloBalanceViewModel>(DataApi.Articulo,
+      "GetArticuloBalanceAlmacenes", articuloID).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.articuloBalance = response.records;
+          this.totalCantidadExistencia = 0;
+          
+          if (this.articuloBalance) {
+            this.articuloBalance.forEach(ab => this.totalCantidadExistencia += ab.existencia)
+          }
+        }
+        this.loadingArticuloBalance = false;
+      }, error => {
+        this.loadingArticuloBalance = false;
+        this.toastService.error("No se pudo obtener la existencia", "Error conexion al servidor");
       });
   }
 
