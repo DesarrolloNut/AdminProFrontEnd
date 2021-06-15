@@ -46,19 +46,19 @@
                             <div class="form-group col-md-6">
                                 <label for="nombre"><i class="fa fa-hashtag"></i> Código</label>
                                 <input [(ngModel)]="cliente.codigoReferencia" class="form-control" [readonly]="'true'"
-                                    type="text" [ngModelOptions]="{standalone: true}" >
+                                    type="text" [ngModelOptions]="{standalone: true}">
                             </div>
 
                             <div class="form-group col-md-6">
                                 <label for="nombre"> <i class="fa fa-user"></i> Nombres</label>
                                 <input [(ngModel)]="cliente.nombres +' '+ cliente.apellidos" class="form-control"
-                                    [readonly]="'true'" type="text" [ngModelOptions]="{standalone: true}" >
+                                    [readonly]="'true'" type="text" [ngModelOptions]="{standalone: true}">
                             </div>
 
                             <div class="form-group col-md-6">
                                 <label for="nombre"> <i class="fa fa-id-card"></i> Documento</label>
                                 <input [(ngModel)]="cliente.documento" class="form-control" [readonly]="'true'"
-                                    type="text" [ngModelOptions]="{standalone: true}" >
+                                    type="text" [ngModelOptions]="{standalone: true}">
                             </div>
 
                             <div class="form-group col-md-6">
@@ -73,7 +73,7 @@
                             <div class="form-group col-md-12">
                                 <label for="nombre"> <i class="fa fa-map-marker"></i> Dirección</label>
                                 <input [(ngModel)]="cliente.calle" class="form-control" [readonly]="'true'" type="text"
-                                    [ngModelOptions]="{standalone: true}" >
+                                    [ngModelOptions]="{standalone: true}">
                             </div>
 
 
@@ -98,6 +98,14 @@
                         <label for="inputEmail4">Moneda</label>
                         <ng-select bindLabel="nombre" bindValue="codigo" [items]="monedaTipos"
                             [ngModelOptions]="{standalone: true}" [(ngModel)]="monedaID" [loading]="loadingMonedaTipos"
+                            [clearable]="false" notFoundText="No resultados">
+                        </ng-select>
+                    </div>
+
+                    <div class="form-group col-md-6" *ngIf="cliente">
+                        <label for="inputEmail4">Vendedor</label>
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="vendedores"
+                            [ngModelOptions]="{standalone: true}" [(ngModel)]="vendedorId" [loading]="loadingVendedores"
                             [clearable]="false" notFoundText="No resultados">
                         </ng-select>
                     </div>
@@ -147,7 +155,7 @@
                                     </td>
                                     <td>
                                         <ng-select [items]="almacenes" bindLabel="codigo" bindValue="codigo"
-                                            [loading]="loadingAlmacenes" [(ngModel)]="item.almacenID"
+                                            [loading]="loadingAlmacenes" [(ngModel)]="item.almacenId"
                                             [readonly]="!item.id" [clearable]="false"
                                             [ngModelOptions]="{standalone: true}" notFoundText="No resultados">
                                         </ng-select>
@@ -161,10 +169,10 @@
                                     <td>
                                         <input style="width: 50px;" type="number" class="form-control"
                                             [readonly]="!item.id" (keyup)="calcularTotales()"
-                                            [(ngModel)]="item.descuento" [ngModelOptions]="{standalone: true}">
+                                            [(ngModel)]="item.porcientoDescuento" [ngModelOptions]="{standalone: true}">
                                     </td>
                                     <td>
-                                        <span>${{ item.subTotal | number:'1.2-2'}}</span>
+                                        <span>${{ item.subtotal | number:'1.2-2'}}</span>
                                     </td>
                                     <td>
                                         <span>${{ item.totalDescuento | number:'1.2-2'}}</span>
@@ -207,7 +215,7 @@
                             <i class="fas fa-times"></i> Cancelar
                         </button>
 
-                        <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+                        <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="button" (click)="onSubmit()">
                             <i class="fas fa-check"></i> Guardar
                         </button>
 

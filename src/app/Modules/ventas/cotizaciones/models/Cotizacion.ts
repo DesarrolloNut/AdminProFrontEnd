@@ -1,20 +1,20 @@
- export interface Cotizacion {
+export interface Cotizacion {
     id: number;
-    sucursalID: number;
-    condicionPagoID: number;
+    sucursalId: number;
+    condicionPagoId: number;
     codigoReferencia: string;
-    clienteID: number;
+    clienteId: number;
     fechaCreacion: string;
-    vendedorID: number;
-    plazoID: number;
+    vendedorId: number;
+    plazoId: number;
     costoTotal: number;
-    subTotal: number;
+    subtotal: number;
     descuentoTotal: number;
-    impuesto: number;
-    total: number;
-    monedaID: number;
+    impuestoTotal: number;
+    totalNeto: number;
+    monedaId: number;
     tasa: number;
-    estadoID: number;
-    usuarioID: number;
+    estadoId: number;
+    usuarioId: number;
     listaPrecioID: number;
 }

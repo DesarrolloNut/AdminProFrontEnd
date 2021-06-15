@@ -1,13 +1,14 @@
 export interface CotizacionDetalle {
     id: number;
-    cotizacionID: number;
-    articuloID: number;
-    almacenID: number;
+    cotizacionId: number;
+    articuloId: number;
+    almacenId: number;
     cantidad: number;
     costo: number;
     precio: number;
-    subTotal: number;
+    subtotal: number;
     porcientoDescuento: number;
-    descuento: number;
-    total: number;
+    totalDescuento: number;
+    totalImpuesto: number;
+    totalNeto: number;
 }
