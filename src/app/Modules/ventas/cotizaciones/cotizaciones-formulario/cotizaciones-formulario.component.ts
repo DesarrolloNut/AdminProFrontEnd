@@ -143,7 +143,7 @@ export class CotizacionesFormularioComponent implements OnInit {
       return;
     }
 
-    // this.guardar();
+    this.guardar();
   }
 
 

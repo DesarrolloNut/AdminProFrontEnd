@@ -143,7 +143,7 @@
                                     </td>
                                     <td>
                                         <ng-select style="width: 500px;" [items]="articulosCombobox" bindLabel="nombre"
-                                            [clearable]="false" bindValue="id" [loading]="loadingArticulos"
+                                            [clearable]="false" bindValue="id" [loading]="loadingArticulosCombobox"
                                             [(ngModel)]="item.articuloId" [ngModelOptions]="{standalone: true}"
                                             (change)="onSelectArticulo($event,i)" notFoundText="No resultados">
                                         </ng-select>
@@ -258,7 +258,7 @@
                         <tbody>
 
                             <tr *ngFor="let item of articuloBalance">
-                                <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
+                                <td><span class="badge badge-light text-info ">{{item.articuloID}}</span></td>
                                 <td>
                                     <span> {{item.articulo}}</span>
                                 </td>

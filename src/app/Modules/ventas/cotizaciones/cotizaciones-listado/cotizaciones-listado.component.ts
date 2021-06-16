@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
+import { CotizacionDetalleViewModel } from '../models/CotizacionDetalleViewModel';
+import { CotizacionListadoViewModel } from '../models/CotizacionListadoViewModel';
 
 @Component({
   selector: 'app-cotizaciones-listado',
@@ -13,7 +16,7 @@ import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 })
 export class CotizacionesListadoComponent implements OnInit {
 
- 
+
   // COPIAR AL CREAR UN LISTADO NUEVO
   Search: string = "";
   paginaNumeroActual = 1;
@@ -22,24 +25,28 @@ export class CotizacionesListadoComponent implements OnInit {
   totalPaginas: number = 0;
   paginaSize: number = 5;
   paginaTotalRecords: number = 0;
-  data: any[] = [] //tu modelo
+  data: CotizacionListadoViewModel[] = [] //tu modelo
+
+  cotizacionDetalles: CotizacionDetalleViewModel[];
+  loadingCotizacionDetalle: boolean;
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
+    private modalService: NgbModal,
     public permissionsService: NgxPermissionsService,
   ) { }
 
 
   ngOnInit(): void {
-    // this.getData()
+    this.getData()
   }
   getData() {
     this.Cargando = true;
 
     let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
 
-    this.httpService.GetAllWithPagination<any>(DataApi.Almacen, "GetAlmacenListado", "ID", this.paginaNumeroActual,
-      this.paginaSize, true, parametros).subscribe(x => {
+    this.httpService.GetAllWithPagination<CotizacionListadoViewModel>(DataApi.Cotizacion, "GetCotizacionListado", "ID", this.paginaNumeroActual,
+      this.paginaSize, false, parametros).subscribe(x => {
 
         if (x.ok) {
           this.data = x.records;
@@ -71,4 +78,29 @@ export class CotizacionesListadoComponent implements OnInit {
     }
 
   }
+
+
+  openModal(content, cotizacionID: number) {
+    this.cotizacionDetalles = [];
+    this.getCotizacionDetalle(cotizacionID);
+    this.modalService.open(content, { size: 'xl', backdrop: "static", });
+  }
+
+  getCotizacionDetalle(cotizacionID: number) {
+    this.loadingCotizacionDetalle = true;
+    this.httpService.DoPostAny<CotizacionDetalleViewModel>(DataApi.Cotizacion,
+      "GetCotizacionDetalles", cotizacionID).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.cotizacionDetalles = response.records;
+        }
+        this.loadingCotizacionDetalle = false;
+      }, error => {
+        this.loadingCotizacionDetalle = false;
+        this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
+      });
+  }
+
 }
