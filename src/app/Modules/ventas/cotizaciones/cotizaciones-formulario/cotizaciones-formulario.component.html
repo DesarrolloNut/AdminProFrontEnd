@@ -144,7 +144,7 @@
                                     <td>
                                         <ng-select style="width: 500px;" [items]="articulosCombobox" bindLabel="nombre"
                                             [clearable]="false" bindValue="id" [loading]="loadingArticulos"
-                                            [(ngModel)]="item.id" [ngModelOptions]="{standalone: true}"
+                                            [(ngModel)]="item.articuloId" [ngModelOptions]="{standalone: true}"
                                             (change)="onSelectArticulo($event,i)" notFoundText="No resultados">
                                         </ng-select>
                                     </td>
@@ -162,13 +162,13 @@
                                     </td>
                                     <td>
                                         <input style="width: 70px;" type="number" class="form-control"
-                                            [readonly]="!item.id" (keyup)="calcularTotales()"
+                                            [readonly]="!item.articuloId" (keyup)="calcularTotales()"
                                             [(ngModel)]="item.cantidad" [ngModelOptions]="{standalone: true}">
                                     </td>
 
                                     <td>
                                         <input style="width: 50px;" type="number" class="form-control"
-                                            [readonly]="!item.id" (keyup)="calcularTotales()"
+                                            [readonly]="!item.articuloId" (keyup)="calcularTotales()"
                                             [(ngModel)]="item.porcientoDescuento" [ngModelOptions]="{standalone: true}">
                                     </td>
                                     <td>

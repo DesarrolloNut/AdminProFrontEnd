@@ -10,6 +10,7 @@ import { Accesorio } from 'src/app/Modules/servicios/recepcion/models/Accesorio'
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { EstadoGeneralesKey } from 'src/app/shared/enums/EstadoGeneralesKey';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
+import { ArticuloListaPrecioViewModel } from '../../articulos/models/ArticuloListaPrecioViewModel';
 
 @Component({
   selector: 'app-lista-precios-autorizacion',
@@ -24,7 +25,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   totalPaginas: number = 0;
   paginaSize: number = 10;
   paginaTotalRecords: number = 0;
-  data: any[] = [] //tu modelo
+  data: ArticuloListaPrecioViewModel[] = [] //tu modelo
 
   estadoAutorizacionComboModel: number = 0;
   estadoAutorizacionUsuario: number;
@@ -68,7 +69,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
       { key: "Search", value: this.Search },
     ]
 
-    this.httpService.GetAllWithPagination<any>(DataApi.Articulo, "GetArticulosAsignadosListaPrecioPagination", "ListaPrecio", this.paginaNumeroActual,
+    this.httpService.GetAllWithPagination<ArticuloListaPrecioViewModel>(DataApi.Articulo, "GetArticulosAsignadosListaPrecioPagination", "ListaPrecio", this.paginaNumeroActual,
       this.paginaSize, true, parametros).subscribe(x => {
 
         if (x.ok) {

@@ -8,9 +8,12 @@ import { Parametro } from 'src/app/core/http/model/Parametro';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Almacen } from 'src/app/Modules/mantenimientos/almacenes/models/Almacen';
 import { ArticuloBalanceViewModel } from 'src/app/Modules/mantenimientos/articulos/models/ArticuloBalanceViewModel';
+import { ArticuloListaPrecioViewModel } from 'src/app/Modules/mantenimientos/articulos/models/ArticuloListaPrecioViewModel';
 import { Cliente } from 'src/app/Modules/mantenimientos/clientes/models/Cliente';
 import { ListaPrecio } from 'src/app/Modules/mantenimientos/listaPrecios/models/ListaPrecio';
 import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
+import { Usuario } from 'src/app/Modules/servicios/recepcion/models/Usuario';
+import { Configuraciones } from 'src/app/shared/enums/Configuraciones';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { EstadoGeneralesKey } from 'src/app/shared/enums/EstadoGeneralesKey';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
@@ -30,7 +33,7 @@ export class CotizacionesFormularioComponent implements OnInit {
   clientes: ComboBox[];
   cliente: Cliente;
   loadingArticulosCombobox: boolean;
-  articulosCombobox: any[];
+  articulosCombobox: ArticuloListaPrecioViewModel[];
   listaPrecio: ListaPrecio;
   articulosCotizacion: CotizacionDetalle[] = [];
   loadingCondicionPagos: boolean;
@@ -52,7 +55,9 @@ export class CotizacionesFormularioComponent implements OnInit {
   vendedorId: number;
   vendedores: ComboBox[];
   loadingVendedores: boolean;
-  ITBIS: number = 0.18;
+  ITBIS: number = 0;
+  totalCostoCotizacion: number;
+  usuario: Usuario;
 
   constructor(
     private toastService: ToastrService,
@@ -63,11 +68,38 @@ export class CotizacionesFormularioComponent implements OnInit {
     private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
+    this.getUsuarioByID(Number(this.authService.tokenDecoded.nameid));
+    this.getITBIS()
     this.getAlmacenes()
     this.getClientes()
     this.getTipoCondicionPago()
     this.getMonedaTipos()
     this.getVendedores()
+  }
+
+
+  getUsuarioByID(usuarioID: number) {
+    this.Cargando = true;
+    this.httpService.DoPostAny<Usuario>(DataApi.Usuario,
+      "GetUsuarioByID", usuarioID).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          //validar que existe
+          if (response != null && response.records != null && response.records.length > 0) {
+
+            this.usuario = response.records[0];
+
+          } else {
+            this.toastService.warning("Usuario no encontrado");
+            this.router.navigateByUrl('/ventas/cotizacion');
+          }
+        }
+
+      }, error => {
+        this.Cargando = false;
+        this.toastService.error("Error conexion al servidor");
+      });
   }
 
   agregarDetalleVacio() {
@@ -81,13 +113,37 @@ export class CotizacionesFormularioComponent implements OnInit {
 
   onSubmit() {
 
-    // this.submitted = true;
-    // if (this.Formulario.invalid) {
-    //   return;
-    // }
+    console.log({ "Vendedor": this.vendedorId })
+    console.log({ "monedaID": this.monedaID })
+    console.log({ "articulosCotizacion": this.articulosCotizacion })
 
+    if (!this.vendedorId || this.vendedorId < 1) {
+      this.toastService.warning("Selecciona un vendedor")
+      return;
+    }
 
-    this.guardar();
+    if (this.monedaID < 1) {
+      this.toastService.warning("Selecciona una moneda")
+      return;
+    }
+
+    if (!this.articulosCotizacion.some(x => x.articuloId > 0)) {
+      this.toastService.warning("No puedes hacer una cotización sin artículos")
+      return;
+    }
+
+    if (this.articulosCotizacion.filter(x => x.articuloId > 0)
+      .some(x => !x.cantidad || x.cantidad <= 0 || !x.precio || x.precio <= 0)) {
+      this.toastService.warning("Artículos con datos incompletos.")
+      return;
+    }
+
+    if (this.articulosCotizacion.some(x => x.porcientoDescuento > this.usuario.descuentoVenta)) {
+      this.toastService.warning(`Solo puedes autorizar un descuento del ${this.usuario.descuentoVenta}%.`)
+      return;
+    }
+
+    // this.guardar();
   }
 
 
@@ -102,12 +158,12 @@ export class CotizacionesFormularioComponent implements OnInit {
         "DescuentoTotal": this.totalDescuentoCotizacion,
         "ImpuestoTotal": this.totalImpuestoCotizacion,
         "TotalNeto": this.totalNetoCotizacion,
+        "CostoTotal": this.totalCostoCotizacion,
         "monedaID": this.monedaID,
         "UsuarioId": Number(this.authService.tokenDecoded.nameid),
       },
-      "CotizacionDetalles": this.articulosCotizacion.filter(x => x.id > 0 && x.cantidad > 0)
+      "CotizacionDetalles": this.articulosCotizacion.filter(x => x.articuloId > 0 && x.cantidad > 0 && x.precio > 0)
     }
-    console.log(parametro)
 
     let metodo: string = "Registrar";
     this.btnGuardarCargando = true;
@@ -185,16 +241,17 @@ export class CotizacionesFormularioComponent implements OnInit {
     if (cliente) {
       this.getClienteByID(cliente.codigo)
     }
+    this.articulosCotizacion = []
     this.agregarDetalleVacio()
-    this.articulosCotizacion[0].almacenId = this.almacenes[0].codigo
     this.limpiarTotales()
 
   }
 
 
-  onSelectArticulo(item: any, index: number) {
+  onSelectArticulo(item: ArticuloListaPrecioViewModel, index: number) {
     this.articulosCotizacion[index].precio = item.precio;
-    if (!this.articulosCotizacion.some(x => x.id <= 0)) {
+    this.articulosCotizacion[index].costo = item.costo;
+    if (!this.articulosCotizacion.some(x => x.articuloId <= 0)) {
       this.agregarDetalleVacio()
     }
     this.calcularTotales()
@@ -203,7 +260,7 @@ export class CotizacionesFormularioComponent implements OnInit {
 
 
   getArticulosPrecioActual() {
-    this.httpService.DoPostAny<any>(DataApi.Articulo,
+    this.httpService.DoPostAny<ArticuloListaPrecioViewModel>(DataApi.Articulo,
       "GetArticulosPrecioActual", this.cliente.listaPrecioId).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
@@ -234,16 +291,17 @@ export class CotizacionesFormularioComponent implements OnInit {
     this.limpiarTotales()
 
     this.articulosCotizacion.forEach(x => {
-      x.subtotal = x.cantidad && x.id ? (x.precio * x.cantidad) : 0;
+      x.subtotal = x.cantidad && x.articuloId ? (x.precio * x.cantidad) : 0;
       x.totalDescuento = x.porcientoDescuento ? (x.subtotal * x.porcientoDescuento / 100) : 0;
-      x.totalImpuesto = (x.subtotal - x.totalDescuento) * this.ITBIS;
+      x.totalImpuesto = (x.subtotal - x.totalDescuento) * (this.ITBIS / 100);
       x.totalNeto = x.subtotal - x.totalDescuento + x.totalImpuesto;
 
       this.totalDescuentoCotizacion += x.totalDescuento;
       this.subTotalCotizacion += x.subtotal;
+      this.totalCostoCotizacion += x.cantidad && x.costo ? (x.costo * x.cantidad) : 0;
     })
     this.totalNetoCotizacion = this.subTotalCotizacion - this.totalDescuentoCotizacion;
-    this.totalImpuestoCotizacion = this.totalNetoCotizacion * this.ITBIS;
+    this.totalImpuestoCotizacion = this.totalNetoCotizacion * (this.ITBIS / 100);
     this.totalNetoCotizacion += this.totalImpuestoCotizacion;
   }
 
@@ -252,6 +310,36 @@ export class CotizacionesFormularioComponent implements OnInit {
     this.totalDescuentoCotizacion = 0;
     this.totalImpuestoCotizacion = 0;
     this.totalNetoCotizacion = 0;
+    this.totalCostoCotizacion = 0;
+  }
+
+  getITBIS() {
+    this.loadingCondicionPagos = true;
+    this.httpService.DoPostAny<any>(DataApi.Configuracion,
+      "GetConfiguracionValor", Number(Configuraciones.IMPUESTO_PORCIENTO)).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+
+          if (response.records.length == 0 || response.records[0] < 1) {
+            this.toastService.error("No hay impuesto configurado");
+            console.error("No hay impuesto configurado")
+          } else {
+            this.ITBIS = Number(response.records[0]);
+          }
+
+        }
+        this.loadingCondicionPagos = false;
+      }, error => {
+        this.loadingCondicionPagos = false;
+        this.toastService.error("No se pudo obtener las condiciones de pago", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getTipoCondicionPago();
+        }, 1000);
+
+      });
   }
 
   getTipoCondicionPago() {
