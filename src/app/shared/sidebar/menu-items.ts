@@ -155,16 +155,29 @@ export const ROUTES: RouteInfo[] = [
     permisos: [],
   },
   {
-    path: '/',
+    path: '',
     title: 'Inventario',
     label: '',
     icon: 'mdi mdi-package-variant-closed',
     class: 'has-arrow',
     labelClass: '',
     extralink: false,
-    submenu: [],
-    permisos: [],
+    submenu: [
+      {
+        path: '/inventario/devoluciones',
+        title: 'Devoluciones',
+        label: '',
+        icon: '',
+        class: '',
+        labelClass: '',
+        extralink: false,
+        submenu: [],
+        permisos: ['inventario_devoluciones'],
+      },
+    ],
+    permisos: ['inventario'],
   },
+
   {
     path: '/',
     title: 'Produccion',
