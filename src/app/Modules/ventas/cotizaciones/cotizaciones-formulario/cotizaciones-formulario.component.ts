@@ -1,23 +1,23 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { BackendService } from 'src/app/core/http/service/backend.service';
-import { Almacen } from 'src/app/Modules/mantenimientos/almacenes/models/Almacen';
 import { ArticuloBalanceViewModel } from 'src/app/Modules/mantenimientos/articulos/models/ArticuloBalanceViewModel';
 import { ArticuloListaPrecioViewModel } from 'src/app/Modules/mantenimientos/articulos/models/ArticuloListaPrecioViewModel';
 import { Cliente } from 'src/app/Modules/mantenimientos/clientes/models/Cliente';
 import { ListaPrecio } from 'src/app/Modules/mantenimientos/listaPrecios/models/ListaPrecio';
-import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
 import { Usuario } from 'src/app/Modules/servicios/recepcion/models/Usuario';
 import { Configuraciones } from 'src/app/shared/enums/Configuraciones';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { EstadoGeneralesKey } from 'src/app/shared/enums/EstadoGeneralesKey';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
+import { Cotizacion } from '../models/Cotizacion';
 import { CotizacionDetalle } from '../models/CotizacionDetalle';
+import { CotizacionDetalleViewModel } from '../models/CotizacionDetalleViewModel';
 
 @Component({
   selector: 'app-cotizaciones-formulario',
@@ -32,42 +32,51 @@ export class CotizacionesFormularioComponent implements OnInit {
   loadingClientes: boolean;
   clientes: ComboBox[];
   cliente: Cliente;
+
   loadingArticulosCombobox: boolean;
   articulosCombobox: ArticuloListaPrecioViewModel[];
   listaPrecio: ListaPrecio;
-  articulosCotizacion: CotizacionDetalle[] = [];
+
   loadingCondicionPagos: boolean;
   TipoCondicionPagos: ComboBox[];
+
   loadingMonedaTipos: boolean;
   monedaTipos: ComboBox[];
 
-  totalNetoCotizacion: number = 0;
-  subTotalCotizacion: number = 0;
-  totalDescuentoCotizacion: number = 0;
-  totalImpuestoCotizacion: number = 0;
   loadingAlmacenes: boolean;
   almacenes: ComboBox[];
+
+  vendedores: ComboBox[];
+  loadingVendedores: boolean;
+
+  usuario: Usuario;
+  ITBIS: number = 0;
+
+  cotizacion: Cotizacion = new Cotizacion();
+  cotizacionDetalles: CotizacionDetalle[] = [];
+
   loadingArticuloBalance: boolean;
   articuloBalance: ArticuloBalanceViewModel[];
   totalCantidadExistencia: number;
-  monedaID: number;
-  clienteID: number;
-  vendedorId: number;
-  vendedores: ComboBox[];
-  loadingVendedores: boolean;
-  ITBIS: number = 0;
-  totalCostoCotizacion: number;
-  usuario: Usuario;
+  loadingCotizacionDetalle: boolean;
 
   constructor(
     private toastService: ToastrService,
     private httpService: BackendService,
     private router: Router,
+    private route: ActivatedRoute,
     private modalService: NgbModal,
     private authService: AuthenticationService,
-    private formBuilder: FormBuilder) { }
+  ) { }
 
   ngOnInit(): void {
+
+    let id = Number(this.route.snapshot.paramMap.get('id'));
+    if (id > 0) {
+      this.getCotizacion(id);
+      this.actualizando = true;
+    }
+
     this.getUsuarioByID(Number(this.authService.tokenDecoded.nameid));
     this.getITBIS()
     this.getAlmacenes()
@@ -77,6 +86,49 @@ export class CotizacionesFormularioComponent implements OnInit {
     this.getVendedores()
   }
 
+  getCotizacion(id: number) {
+    this.Cargando = true;
+    this.httpService.DoPostAny<Cotizacion>(DataApi.Cotizacion,
+      "GetCotizacionByID", id).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          //validar que existe
+          if (response != null && response.records != null && response.records.length > 0) {
+            let record = response.records[0]
+            this.cotizacion = record;
+            this.getClienteByID(this.cotizacion.clienteId)
+            this.getCotizacionDetalles(this.cotizacion.id)
+          } else {
+            this.toastService.warning("Cotizacion no encontrada");
+            this.router.navigateByUrl('/ventas/cotizacion');
+          }
+        }
+
+      }, error => {
+        this.Cargando = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
+  getCotizacionDetalles(cotizacionID: number) {
+    this.loadingCotizacionDetalle = true;
+    this.httpService.DoPostAny<CotizacionDetalleViewModel>(DataApi.Cotizacion,
+      "GetCotizacionDetalles", cotizacionID).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.cotizacionDetalles = response.records;
+          this.agregarDetalleVacio()
+        }
+        this.loadingCotizacionDetalle = false;
+      }, error => {
+        this.loadingCotizacionDetalle = false;
+        this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
+        this.router.navigateByUrl('/ventas/cotizacion');
+      });
+  }
 
   getUsuarioByID(usuarioID: number) {
     this.Cargando = true;
@@ -103,7 +155,7 @@ export class CotizacionesFormularioComponent implements OnInit {
   }
 
   agregarDetalleVacio() {
-    this.articulosCotizacion.push({
+    this.cotizacionDetalles.push({
       almacenId: this.almacenes[0].codigo, articuloId: 0, cantidad: undefined, costo: 0,
       cotizacionId: 0, id: 0,
       porcientoDescuento: undefined, precio: 0,
@@ -113,32 +165,28 @@ export class CotizacionesFormularioComponent implements OnInit {
 
   onSubmit() {
 
-    console.log({ "Vendedor": this.vendedorId })
-    console.log({ "monedaID": this.monedaID })
-    console.log({ "articulosCotizacion": this.articulosCotizacion })
-
-    if (!this.vendedorId || this.vendedorId < 1) {
+    if (!this.cotizacion.vendedorId || this.cotizacion.vendedorId < 1) {
       this.toastService.warning("Selecciona un vendedor")
       return;
     }
 
-    if (this.monedaID < 1) {
+    if (this.cotizacion.monedaId < 1) {
       this.toastService.warning("Selecciona una moneda")
       return;
     }
 
-    if (!this.articulosCotizacion.some(x => x.articuloId > 0)) {
+    if (!this.cotizacionDetalles.some(x => x.articuloId > 0)) {
       this.toastService.warning("No puedes hacer una cotización sin artículos")
       return;
     }
 
-    if (this.articulosCotizacion.filter(x => x.articuloId > 0)
+    if (this.cotizacionDetalles.filter(x => x.articuloId > 0)
       .some(x => !x.cantidad || x.cantidad <= 0 || !x.precio || x.precio <= 0)) {
-      this.toastService.warning("Artículos con datos incompletos.")
+      this.toastService.warning("Artículos con datos incompletos, revisa precios y cantidades.")
       return;
     }
 
-    if (this.articulosCotizacion.some(x => x.porcientoDescuento > this.usuario.descuentoVenta)) {
+    if (this.cotizacionDetalles.some(x => x.porcientoDescuento > this.usuario.descuentoVenta)) {
       this.toastService.warning(`Solo puedes autorizar un descuento del ${this.usuario.descuentoVenta}%.`)
       return;
     }
@@ -148,24 +196,16 @@ export class CotizacionesFormularioComponent implements OnInit {
 
 
   guardar() {
+    let metodo: string = this.actualizando ? "Update" : "Registrar";
+
+    this.cotizacion.sucursalId = Number(this.authService.tokenDecoded.groupsid)
+    this.cotizacion.usuarioId = Number(this.authService.tokenDecoded.nameid)
 
     let parametro: any = {
-      "Cotizacion": {
-        "sucursalID": Number(this.authService.tokenDecoded.groupsid),
-        "clienteID": this.clienteID,
-        "VendedorId": this.vendedorId,
-        "Subtotal": this.subTotalCotizacion,
-        "DescuentoTotal": this.totalDescuentoCotizacion,
-        "ImpuestoTotal": this.totalImpuestoCotizacion,
-        "TotalNeto": this.totalNetoCotizacion,
-        "CostoTotal": this.totalCostoCotizacion,
-        "monedaID": this.monedaID,
-        "UsuarioId": Number(this.authService.tokenDecoded.nameid),
-      },
-      "CotizacionDetalles": this.articulosCotizacion.filter(x => x.articuloId > 0 && x.cantidad > 0 && x.precio > 0)
+      "Cotizacion": this.cotizacion,
+      "CotizacionDetalles": this.cotizacionDetalles.filter(x => x.articuloId > 0 && x.cantidad > 0 && x.precio > 0)
     }
 
-    let metodo: string = "Registrar";
     this.btnGuardarCargando = true;
 
     this.httpService.DoPostAny<any>(DataApi.Cotizacion,
@@ -241,7 +281,7 @@ export class CotizacionesFormularioComponent implements OnInit {
     if (cliente) {
       this.getClienteByID(cliente.codigo)
     }
-    this.articulosCotizacion = []
+    this.cotizacionDetalles = []
     this.agregarDetalleVacio()
     this.limpiarTotales()
 
@@ -249,9 +289,9 @@ export class CotizacionesFormularioComponent implements OnInit {
 
 
   onSelectArticulo(item: ArticuloListaPrecioViewModel, index: number) {
-    this.articulosCotizacion[index].precio = item.precio;
-    this.articulosCotizacion[index].costo = item.costo;
-    if (!this.articulosCotizacion.some(x => x.articuloId <= 0)) {
+    this.cotizacionDetalles[index].precio = item.precio;
+    this.cotizacionDetalles[index].costo = item.costo;
+    if (!this.cotizacionDetalles.some(x => x.articuloId <= 0)) {
       this.agregarDetalleVacio()
     }
     this.calcularTotales()
@@ -280,8 +320,8 @@ export class CotizacionesFormularioComponent implements OnInit {
   }
 
   onDeleteitem(index: number) {
-    this.articulosCotizacion.splice(index, 1);
-    if (!this.articulosCotizacion.some(x => x.id <= 0)) {
+    this.cotizacionDetalles.splice(index, 1);
+    if (!this.cotizacionDetalles.some(x => x.id <= 0)) {
       this.agregarDetalleVacio()
     }
     this.calcularTotales()
@@ -290,27 +330,27 @@ export class CotizacionesFormularioComponent implements OnInit {
   calcularTotales() {
     this.limpiarTotales()
 
-    this.articulosCotizacion.forEach(x => {
+    this.cotizacionDetalles.forEach(x => {
       x.subtotal = x.cantidad && x.articuloId ? (x.precio * x.cantidad) : 0;
       x.totalDescuento = x.porcientoDescuento ? (x.subtotal * x.porcientoDescuento / 100) : 0;
       x.totalImpuesto = (x.subtotal - x.totalDescuento) * (this.ITBIS / 100);
       x.totalNeto = x.subtotal - x.totalDescuento + x.totalImpuesto;
 
-      this.totalDescuentoCotizacion += x.totalDescuento;
-      this.subTotalCotizacion += x.subtotal;
-      this.totalCostoCotizacion += x.cantidad && x.costo ? (x.costo * x.cantidad) : 0;
+      this.cotizacion.descuentoTotal += x.totalDescuento;
+      this.cotizacion.subtotal += x.subtotal;
+      this.cotizacion.costoTotal += x.cantidad && x.costo ? (x.costo * x.cantidad) : 0;
     })
-    this.totalNetoCotizacion = this.subTotalCotizacion - this.totalDescuentoCotizacion;
-    this.totalImpuestoCotizacion = this.totalNetoCotizacion * (this.ITBIS / 100);
-    this.totalNetoCotizacion += this.totalImpuestoCotizacion;
+    this.cotizacion.totalNeto = this.cotizacion.subtotal - this.cotizacion.descuentoTotal;
+    this.cotizacion.impuestoTotal = this.cotizacion.totalNeto * (this.ITBIS / 100);
+    this.cotizacion.totalNeto += this.cotizacion.impuestoTotal;
   }
 
   limpiarTotales() {
-    this.subTotalCotizacion = 0;
-    this.totalDescuentoCotizacion = 0;
-    this.totalImpuestoCotizacion = 0;
-    this.totalNetoCotizacion = 0;
-    this.totalCostoCotizacion = 0;
+    this.cotizacion.subtotal = 0;
+    this.cotizacion.descuentoTotal = 0;
+    this.cotizacion.impuestoTotal = 0;
+    this.cotizacion.totalNeto = 0;
+    this.cotizacion.costoTotal = 0;
   }
 
   getITBIS() {
@@ -398,7 +438,7 @@ export class CotizacionesFormularioComponent implements OnInit {
           this.monedaTipos = response.records;
 
           if (this.monedaTipos && this.monedaTipos.length > 0) {
-            this.monedaID = this.monedaTipos[0].codigo
+            this.cotizacion.monedaId = this.monedaTipos[0].codigo
           }
 
         }
@@ -443,7 +483,7 @@ export class CotizacionesFormularioComponent implements OnInit {
   openModal(content, articuloID: number) {
     this.articuloBalance = [];
     this.getArticuloBalanceAlmacenes(articuloID);
-    this.modalService.open(content, { size: 'lg', backdrop: "static", });
+    this.modalService.open(content, { size: 'lg', });
   }
 
 
@@ -470,3 +510,5 @@ export class CotizacionesFormularioComponent implements OnInit {
   }
 
 }
+
+

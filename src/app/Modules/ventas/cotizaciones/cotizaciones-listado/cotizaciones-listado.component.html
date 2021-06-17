@@ -32,19 +32,31 @@
                         <thead>
                             <tr>
                                 <th></th>
+                                <th></th>
                                 <th>Cliente</th>
                                 <th>SubTotal</th>
-                                <th>Descuento</th>
-                                <th>Impuesto</th>
+                                <th>Desc.</th>
+                                <th>Imp.</th>
                                 <th>Total Neto</th>
                                 <th>Fecha</th>
                                 <th>Cotizador</th>
-                                <th>Sucursal</th>
+                                <th>Estado</th>
                             </tr>
                         </thead>
                         <tbody [hidden]="Cargando">
 
-                            <tr *ngFor="let item of data">
+                            <tr *ngFor="let item of data; let i = index">
+                                <td>
+                                    <button class="btn btn-sm btn-light"
+                                        (click)="openModal(modalDetalleCotizacion,item)">
+                                        <i class="fa fa-sm fa-eye"></i>
+                                    </button>
+
+                                    <button class="btn btn-sm btn-info m-1" [routerLink]="[item.id]">
+                                        <i class="fa fa-sm fa-edit"></i>
+                                    </button>
+
+                                </td>
                                 <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
                                 <td>
                                     <div class="d-flex align-items-center">
@@ -74,17 +86,23 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <span> {{item.cotizador}}</span>
+                                    <div class="d-flex align-items-center">
+                                        <!-- <i class="fa fa-user-circle fa-3x text-light"></i> -->
+                                        <div class="ml-3">
+                                            <p class="mb-0">{{item.cotizador | titlecase }}</p>
+                                            <small class="text-info"> <i class="fa fa-map-marker"></i>
+                                                Sucursal: {{item.sucursal | uppercase }}</small>
+                                        </div>
+                                    </div>
                                 </td>
                                 <td>
-                                    <span> {{item.sucursal}}</span>
+                                    <ng-select style="width: 120px;" [items]="estados" bindLabel="nombre"
+                                        [clearable]="false" bindValue="codigo" [loading]="loadingEstados"
+                                        [(ngModel)]="item.estadoID" [ngModelOptions]="{standalone: true}"
+                                        (change)="onChangeEstado(item,i)" notFoundText="No resultados">
+                                    </ng-select>
                                 </td>
-                                <td>
-                                    <button class="btn btn-sm btn-light"
-                                        (click)="openModal(modalDetalleCotizacion,item.id)">
-                                        <i class="fa fa-sm fa-eye"></i>
-                                    </button>
-                                </td>
+
                             </tr>
 
                         </tbody>
@@ -134,6 +152,18 @@
     </div>
     <div class="modal-body">
         <div class="row">
+
+            <div class="col-12">
+                <h5 class="text-info"> <i class="fa fa-user"></i> Cliente: {{cotizacionSeleccionada.cliente}}</h5>
+                <h5> <i class="fa fa-id-card"></i> Documento: {{cotizacionSeleccionada.clienteDocumento}}</h5>
+                <h5> <i class="fa fa-calendar"></i> Fecha: {{cotizacionSeleccionada.fechaCreacion |
+                    date:'dd/MM/yy'}}</h5>
+                <hr>
+                <h5> <i class="fa fa-user-circle"></i> Cotizador: {{cotizacionSeleccionada.cotizador}}</h5>
+                <h5> <i class="fa fa-map-marker"></i> Sucursal: {{cotizacionSeleccionada.sucursal}}</h5>
+                <h5> <i class="fa fa-user-circle"></i>Vendedor: {{cotizacionSeleccionada.vendedor}}</h5>
+            </div>
+
             <div class="col-12" [hidden]="loadingCotizacionDetalle">
 
                 <div class="table-responsive">
@@ -188,6 +218,14 @@
                 </div>
 
 
+            </div>
+
+            <div class="col-12 text-right">
+                <hr>
+                <h4>Subtotal: $ {{cotizacionSeleccionada.subTotal | number:'1.2-2' }}</h4>
+                <h4>Descuento: $ {{cotizacionSeleccionada.descuentoTotal | number:'1.2-2' }}</h4>
+                <h4>Impuesto: $ {{cotizacionSeleccionada.impuestoTotal | number:'1.2-2' }}</h4>
+                <h4 class="font-weight-bold">Total Neto: $ {{cotizacionSeleccionada.totalNeto | number:'1.2-2' }}</h4>
             </div>
 
             <div class="col-12">

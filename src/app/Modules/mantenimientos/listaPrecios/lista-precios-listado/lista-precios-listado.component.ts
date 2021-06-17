@@ -126,7 +126,7 @@ export class ListaPreciosListadoComponent implements OnInit {
   }
 
 
- 
+
   openModal(content, listaId: number) {
     this.modalService.open(content, { size: 'xl', backdrop: "static", });
     this.listaSeleccionada = listaId;
@@ -144,7 +144,7 @@ export class ListaPreciosListadoComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.confirmed = response.records;
-      
+
         }
         this.loadingArticulosSeleccionados = false;
       }, error => {
@@ -318,9 +318,12 @@ export class ListaPreciosListadoComponent implements OnInit {
 
 
   getEstadoAutorizacionUsuario() {
-
+    let parametro = {
+      "UsuarioID": Number(this.authService.tokenDecoded.nameid),
+      "KeynameModule": EstadoGeneralesKey.LISTAPRECIO,
+    }
     this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
-      "GetEstadoAutorizacionUsuario", Number(this.authService.tokenDecoded.nameid)).subscribe(response => {
+      "GetEstadoAutorizacionUsuario", parametro).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);

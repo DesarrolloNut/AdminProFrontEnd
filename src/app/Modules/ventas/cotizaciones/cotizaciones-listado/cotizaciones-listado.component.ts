@@ -6,6 +6,7 @@ import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
+import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { CotizacionDetalleViewModel } from '../models/CotizacionDetalleViewModel';
 import { CotizacionListadoViewModel } from '../models/CotizacionListadoViewModel';
 
@@ -29,6 +30,9 @@ export class CotizacionesListadoComponent implements OnInit {
 
   cotizacionDetalles: CotizacionDetalleViewModel[];
   loadingCotizacionDetalle: boolean;
+  estados: ComboBox[] = []
+  loadingEstados: boolean;
+  cotizacionSeleccionada: CotizacionListadoViewModel;
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
@@ -38,6 +42,7 @@ export class CotizacionesListadoComponent implements OnInit {
 
 
   ngOnInit(): void {
+    this.getEstados()
     this.getData()
   }
   getData() {
@@ -80,10 +85,11 @@ export class CotizacionesListadoComponent implements OnInit {
   }
 
 
-  openModal(content, cotizacionID: number) {
+  openModal(content, cotizacion: CotizacionListadoViewModel) {
     this.cotizacionDetalles = [];
-    this.getCotizacionDetalle(cotizacionID);
-    this.modalService.open(content, { size: 'xl', backdrop: "static", });
+    this.getCotizacionDetalle(cotizacion.id);
+    this.cotizacionSeleccionada = cotizacion;
+    this.modalService.open(content, { size: 'lg', });
   }
 
   getCotizacionDetalle(cotizacionID: number) {
@@ -102,5 +108,49 @@ export class CotizacionesListadoComponent implements OnInit {
         this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
       });
   }
+
+
+  getEstados() {
+    this.loadingEstados = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetEstadosCotizacion", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.estados = response.records;
+        }
+        this.loadingEstados = false;
+      }, error => {
+        this.loadingEstados = false;
+        this.toastService.error("No se pudo obtener los estados", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getEstados();
+        }, 1000);
+
+      });
+  }
+
+
+  onChangeEstado(cotizacion: CotizacionListadoViewModel, index: number) {
+
+    this.httpService.DoPostAny<ComboBox>(DataApi.Cotizacion,
+      "UpdateCotizacionEstado", cotizacion).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+          this.toastService.success("Estado actualizado", "OK");
+        }
+      }, error => {
+        this.getData()
+        this.toastService.error("No se actualizar el estado", "Error conexion al servidor");
+      });
+
+  }
+
+
 
 }

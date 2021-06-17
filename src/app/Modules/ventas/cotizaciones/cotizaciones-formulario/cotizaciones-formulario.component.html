@@ -26,17 +26,12 @@
                 <div class="form-row m-t-40">
                     <div class="form-group col-md-12">
                         <label for="inputEmail4">Cliente</label>
-                        <ng-select [ngModelOptions]="{standalone: true}" [(ngModel)]="clienteID" bindLabel="nombre"
-                            bindValue="codigo" [items]="clientes" [loading]="loadingClientes" [clearable]="false"
-                            (search)="getClientes($event)" (change)="onSelectCliente($event)"
+                        <ng-select [ngModelOptions]="{standalone: true}" [(ngModel)]="cotizacion.clienteId"
+                            bindLabel="nombre" bindValue="codigo" [items]="clientes" [loading]="loadingClientes"
+                            [clearable]="false" (search)="getClientes($event)" (change)="onSelectCliente($event)"
                             notFoundText="No resultados">
                         </ng-select>
                     </div>
-
-
-
-
-
                     <hr>
                     <div class="col-12">
                         <div class="row border border-light p-2" *ngIf="cliente">
@@ -97,16 +92,16 @@
                     <div class="form-group col-md-6" *ngIf="cliente">
                         <label for="inputEmail4">Moneda</label>
                         <ng-select bindLabel="nombre" bindValue="codigo" [items]="monedaTipos"
-                            [ngModelOptions]="{standalone: true}" [(ngModel)]="monedaID" [loading]="loadingMonedaTipos"
-                            [clearable]="false" notFoundText="No resultados">
+                            [ngModelOptions]="{standalone: true}" [(ngModel)]="cotizacion.monedaId"
+                            [loading]="loadingMonedaTipos" [clearable]="false" notFoundText="No resultados">
                         </ng-select>
                     </div>
 
                     <div class="form-group col-md-6" *ngIf="cliente">
                         <label for="inputEmail4">Vendedor</label>
                         <ng-select bindLabel="nombre" bindValue="codigo" [items]="vendedores"
-                            [ngModelOptions]="{standalone: true}" [(ngModel)]="vendedorId" [loading]="loadingVendedores"
-                            [clearable]="false" notFoundText="No resultados">
+                            [ngModelOptions]="{standalone: true}" [(ngModel)]="cotizacion.vendedorId"
+                            [loading]="loadingVendedores" [clearable]="false" notFoundText="No resultados">
                         </ng-select>
                     </div>
 
@@ -134,10 +129,10 @@
                             <tbody>
 
                                 <!-- <tr *ngFor="let item of confirmed | filter: searchText; let i  = index"> -->
-                                <tr *ngFor="let item of articulosCotizacion; let i=index">
+                                <tr *ngFor="let item of cotizacionDetalles; let i=index">
                                     <td>
-                                        <button *ngIf="item.id" class="btn btn-sm btn-light m-1"
-                                            (click)="openModal(modalExistenciaArticuloAlmacenes,item.id)">
+                                        <button *ngIf="item.articuloId" class="btn btn-sm btn-light m-1"
+                                            (click)="openModal(modalExistenciaArticuloAlmacenes,item.articuloId)">
                                             <i class=" fa fa-sm fa-warehouse"></i>
                                         </button>
                                     </td>
@@ -156,7 +151,7 @@
                                     <td>
                                         <ng-select [items]="almacenes" bindLabel="codigo" bindValue="codigo"
                                             [loading]="loadingAlmacenes" [(ngModel)]="item.almacenId"
-                                            [readonly]="!item.id" [clearable]="false"
+                                            [readonly]="!item.articuloId" [clearable]="false"
                                             [ngModelOptions]="{standalone: true}" notFoundText="No resultados">
                                         </ng-select>
                                     </td>
@@ -194,17 +189,13 @@
                         </table>
                     </div>
 
-                    <!-- <div class="col-12">
-                        <app-loading-listado [hidden]="!loadingArticulosSeleccionados"></app-loading-listado>
-                    </div> -->
-
 
                     <div class="form-group text-right col-md-12" *ngIf="cliente">
                         <hr>
-                        <h4>Subtotal: $ {{subTotalCotizacion | number:'1.2-2' }}</h4>
-                        <h4>Descuento: $ {{totalDescuentoCotizacion | number:'1.2-2' }}</h4>
-                        <h4>Impuesto: $ {{totalImpuestoCotizacion | number:'1.2-2' }}</h4>
-                        <h4 class="font-weight-bold">Total Neto: $ {{totalNetoCotizacion | number:'1.2-2' }}</h4>
+                        <h4>Subtotal: $ {{cotizacion.subtotal | number:'1.2-2' }}</h4>
+                        <h4>Descuento: $ {{cotizacion.descuentoTotal | number:'1.2-2' }}</h4>
+                        <h4>Impuesto: $ {{cotizacion.impuestoTotal | number:'1.2-2' }}</h4>
+                        <h4 class="font-weight-bold">Total Neto: $ {{cotizacion.totalNeto | number:'1.2-2' }}</h4>
                     </div>
 
 
