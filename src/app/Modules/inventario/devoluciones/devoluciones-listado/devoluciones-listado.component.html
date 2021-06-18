@@ -154,13 +154,14 @@
 
                 <tr *ngFor="let item of dataDetalle">
                   <td>
-                    <button class="btn btn-sm btn-info mx-2" *ngIf="EditarCantidadConfirmado" (click)="cambiarCantidadConfirmado()">
+                    <button class="btn btn-sm btn-info mx-2" *ngIf="EditarCantidadConfirmado" (click)="cambiarCantidadConfirmado(item)">
                       <i class="fa fa-sm fa-edit"></i>
                     </button>
-                    <button class="btn btn-sm btn-danger mx-2" *ngIf="CancelarEditarCantidadConfirmado" (click)="cambiarCantidadConfirmado()" >
+                    <button class="btn btn-sm btn-danger mx-2" *ngIf="CancelarEditarCantidadConfirmado" (click)="cambiarCantidadConfirmado(item)" >
                       <i class="fa fa-sm fa-times"></i>
                     </button>
-                    <button class="btn btn-sm btn-success mx-2" *ngIf="CancelarEditarCantidadConfirmado" (click)="cambiarCantidadConfirmado()">
+                    <button class="btn btn-sm btn-success mx-2" *ngIf="CambioCantidadConfirmado" (click)="cambiarCantidadConfirmado(item)"
+                    >
                       <i class="fa fa-sm fa-check"></i>
                     </button>
                   </td>
@@ -176,7 +177,7 @@
                   <span> {{item.cantidadConfirmado  | currency}}</span>
               </td>
               <td *ngIf="CancelarEditarCantidadConfirmado">
-                  <input type="number" class="form-control" [value]="item.cantidadConfirmado">
+                  <input type="number" class="form-control" [(ngModel)]="item.cantidadConfirmado">
             </td>
                 <td>
                   <span> {{item.precio | currency}}</span>
@@ -205,8 +206,11 @@
   </div>
   <div class="modal-footer">
       <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cancelar</button>
-      <button type="button" class="btn btn-success m-1" >Enviar a autorizacion</button>
+      <button type="button" *ngIf="!btnGuardarCargando" class="btn btn-info m-1" (click)="SaveDevolucionDetalleVista()" >Guardar</button>
       <!-- boton cargando -->
+      <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+        <span class="spinner-border spinner-border-sm"></span> Guardando
+    </button>
   </div>
 </ng-template>
 

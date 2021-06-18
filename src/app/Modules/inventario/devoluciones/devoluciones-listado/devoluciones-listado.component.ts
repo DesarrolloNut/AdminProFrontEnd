@@ -1,4 +1,3 @@
-import { Devolucion } from './../models/Devolucion';
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsService } from 'ngx-permissions';
@@ -22,6 +21,7 @@ Search: string = "";
 paginaNumeroActual = 1;
 Cargando: boolean = false;
 CargandoDetalle: boolean = false;
+btnGuardarCargando: boolean = false;
 CargandoBar: boolean = false;
 totalPaginas: number = 0;
 paginaSize: number = 5;
@@ -31,7 +31,8 @@ dataDetalle: DevolucionDetalleVista[] = [] //tu modelo
 
 EditarCantidadConfirmado: boolean = true;
 CancelarEditarCantidadConfirmado: boolean = false;
-devolucionSelected: DevolucionVista = new DevolucionVista()
+CambioCantidadConfirmado: boolean = false;
+devolucionSelected: DevolucionVista = new DevolucionVista();
 
 constructor(private toastService: ToastrService,
   private httpService: BackendService,
@@ -91,6 +92,24 @@ getDataDetalle(DevolucionID:number) {
     });
 
 }
+SaveDevolucionDetalleVista() {
+  this.btnGuardarCargando = true;
+
+  this.httpService.DoPostAny<DevolucionDetalleVista>(DataApi.DevolucionDetalle, "UpdateDevolucionDetalleCantidadConfirmado", this.dataDetalle).subscribe(x => {
+
+      if (x.ok) {
+      } else {
+        this.toastService.error(x.errores[0]);
+        console.error(x.errores[0]);
+      }
+      this.btnGuardarCargando = false;
+    }, error => {
+      console.error(error);
+      this.toastService.error("Error conexion al servidor");
+      this.btnGuardarCargando = false;
+    });
+
+}
 
 openModal(content, DevolucionSelect: DevolucionVista) {
   this.devolucionSelected = DevolucionSelect;
@@ -98,9 +117,10 @@ openModal(content, DevolucionSelect: DevolucionVista) {
   this.modalService.open(content, { size: 'xl', backdrop: "static", });
 }
 
-cambiarCantidadConfirmado(){
+cambiarCantidadConfirmado(item:DevolucionDetalleVista){
   this.EditarCantidadConfirmado = !this.EditarCantidadConfirmado;
   this.CancelarEditarCantidadConfirmado = !this.CancelarEditarCantidadConfirmado;
+  this.CambioCantidadConfirmado = this.EditarCantidadConfirmado ? false : true;
 }
 
 
