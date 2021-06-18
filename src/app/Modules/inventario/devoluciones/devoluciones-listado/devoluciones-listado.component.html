@@ -154,13 +154,13 @@
 
                 <tr *ngFor="let item of dataDetalle">
                   <td>
-                    <button class="btn btn-sm btn-info mx-2" *ngIf="EditarCantidadConfirmado" (click)="cambiarCantidadConfirmado(item)">
+                    <button class="btn btn-sm btn-info mx-2" *ngIf="EditarCantidadConfirmado" (click)="cambiarCantidadConfirmado()">
                       <i class="fa fa-sm fa-edit"></i>
                     </button>
-                    <button class="btn btn-sm btn-danger mx-2" *ngIf="CancelarEditarCantidadConfirmado" (click)="cambiarCantidadConfirmado(item)" >
+                    <button class="btn btn-sm btn-danger mx-2" *ngIf="CancelarEditarCantidadConfirmado" (click)="cambiarCantidadConfirmado()" >
                       <i class="fa fa-sm fa-times"></i>
                     </button>
-                    <button class="btn btn-sm btn-success mx-2" *ngIf="CambioCantidadConfirmado" (click)="cambiarCantidadConfirmado(item)"
+                    <button class="btn btn-sm btn-success mx-2" *ngIf="CambioCantidadConfirmado" (click)="cambiarCantidadConfirmado()"
                     >
                       <i class="fa fa-sm fa-check"></i>
                     </button>

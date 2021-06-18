@@ -117,7 +117,7 @@ openModal(content, DevolucionSelect: DevolucionVista) {
   this.modalService.open(content, { size: 'xl', backdrop: "static", });
 }
 
-cambiarCantidadConfirmado(item:DevolucionDetalleVista){
+cambiarCantidadConfirmado(){
   this.EditarCantidadConfirmado = !this.EditarCantidadConfirmado;
   this.CancelarEditarCantidadConfirmado = !this.CancelarEditarCantidadConfirmado;
   this.CambioCantidadConfirmado = this.EditarCantidadConfirmado ? false : true;
