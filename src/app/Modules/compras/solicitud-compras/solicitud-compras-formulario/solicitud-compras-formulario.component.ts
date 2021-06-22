@@ -5,15 +5,13 @@ import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { BackendService } from 'src/app/core/http/service/backend.service';
-import { Cliente } from 'src/app/Modules/mantenimientos/clientes/models/Cliente';
 import { Proveedor } from 'src/app/Modules/mantenimientos/proveedores/models/Proveedor';
 import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
 import { Usuario } from 'src/app/Modules/servicios/recepcion/models/Usuario';
-import { ParametrosCita } from 'src/app/Modules/turno/models/ParametrosCita';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
-import { cedulaestructura } from 'src/app/shared/validators/cedula-estructura.validator';
-import { ArticuloDeCompra } from '../models/ArticuloDeCompra';
+import { SolicitudCompra } from '../models/SolicitudCompra';
+import { SolicitudCompraDetalle } from '../models/SolicitudCompraDetalle';
 
 @Component({
   selector: 'app-solicitud-compras-formulario',
@@ -53,9 +51,10 @@ export class SolicitudComprasFormularioComponent implements OnInit {
   solicitudCompraTipos: ComboBox[];
 
   articulosDeCompra: Articulo[];
-  articulosSolicitud: ArticuloDeCompra[] = [new ArticuloDeCompra()];
+  solicitudCompraDetalles: SolicitudCompraDetalle[] = [new SolicitudCompraDetalle()];
   total: number;
   loadingArticulosDeCompra: boolean;
+  loadingCotizacionDetalle: boolean;
 
   constructor(
     private toastService: ToastrService,
@@ -70,8 +69,10 @@ export class SolicitudComprasFormularioComponent implements OnInit {
     this.CreateForm();
 
     if (id > 0) {
-      this.getItem(id);
+      this.getSolicitudCompra(id);
       this.actualizando = true;
+    } else {
+      this.getUsuarioByID(Number(this.auth.tokenDecoded.nameid))
     }
 
     this.getDepartamentos()
@@ -81,7 +82,6 @@ export class SolicitudComprasFormularioComponent implements OnInit {
     this.getSolicitudCompraTipo()
     this.getArticulosCompra()
     this.getHoraActual()
-    this.getUsuarioByID(Number(this.auth.tokenDecoded.nameid))
   }
 
 
@@ -106,12 +106,11 @@ export class SolicitudComprasFormularioComponent implements OnInit {
     });
   }
 
-
   get f() { return this.Formulario.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
 
-  getItem(id: number) {
+  getSolicitudCompra(id: number) {
     this.Cargando = true;
-    this.httpService.DoPostAny<Proveedor>(DataApi.SolicitudCompra,
+    this.httpService.DoPostAny<SolicitudCompra>(DataApi.SolicitudCompra,
       "GetSolicitudCompraByID", id).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
@@ -120,6 +119,9 @@ export class SolicitudComprasFormularioComponent implements OnInit {
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0]
             this.Formulario.setValue(record);
+            this.getSolicitudCompraDetalles(record.id)
+            this.getUsuarioByID(record.solicitanteID)
+            
           } else {
             this.toastService.warning("no encontrado");
             this.router.navigateByUrl('/compras/solicitud-compras');
@@ -132,28 +134,50 @@ export class SolicitudComprasFormularioComponent implements OnInit {
       });
   }
 
+  getSolicitudCompraDetalles(id: number) {
+    this.loadingCotizacionDetalle = true;
+    this.httpService.DoPostAny<SolicitudCompraDetalle>(DataApi.SolicitudCompra,
+      "GetSolicitudCompraDetalles", id).subscribe(response => {
 
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.solicitudCompraDetalles = response.records;
+          this.agregarDetalleVacio()
+          this.calcularTotal()
+        }
+        this.loadingCotizacionDetalle = false;
+      }, error => {
+        this.loadingCotizacionDetalle = false;
+        this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
+        this.router.navigateByUrl('/compras/solicitud-compras');
+      });
+  }
 
   onSelectArticulo(item: any, index: number) {
-    this.articulosSolicitud[index].costo = item.costo;
-    if (!this.articulosSolicitud.some(x => x.id <= 0)) {
-      this.articulosSolicitud.push(new ArticuloDeCompra())
+    this.solicitudCompraDetalles[index].costo = item.costo;
+    if (!this.solicitudCompraDetalles.some(x => x.articuloID <= 0)) {
+      this.agregarDetalleVacio()
     }
     this.calcularTotal()
 
   }
 
+  agregarDetalleVacio() {
+    this.solicitudCompraDetalles.push(new SolicitudCompraDetalle())
+  }
+
   calcularTotal() {
     this.total = 0
-    this.articulosSolicitud.forEach(x => {
+    this.solicitudCompraDetalles.forEach(x => {
       this.total += x.cantidad ? (x.costo * x.cantidad) : 0
     })
   }
 
   onDeleteitem(index: number) {
-    this.articulosSolicitud.splice(index, 1);
-    if (!this.articulosSolicitud.some(x => x.id <= 0)) {
-      this.articulosSolicitud.push(new ArticuloDeCompra())
+    this.solicitudCompraDetalles.splice(index, 1);
+    if (!this.solicitudCompraDetalles.some(x => x.articuloID <= 0)) {
+      this.agregarDetalleVacio()
     }
     this.calcularTotal()
   }
@@ -191,14 +215,15 @@ export class SolicitudComprasFormularioComponent implements OnInit {
       return;
     }
 
-    if (!this.articulosSolicitud.some(x => x.id > 0)) {
+    if (!this.solicitudCompraDetalles.some(x => x.articuloID > 0)) {
       this.toastService.warning("Debes de tener al menos un artículo.")
       return;
     }
-    if (this.articulosSolicitud.some(x => x.id > 0 && x.cantidad < 1)) {
+    if (this.solicitudCompraDetalles.some(x => x.articuloID > 0 && x.cantidad < 1)) {
       this.toastService.warning("Tienes artículos sin cantidad.")
       return;
     }
+
     this.guardar();
   }
 
@@ -207,11 +232,12 @@ export class SolicitudComprasFormularioComponent implements OnInit {
 
     let parametro: any = {
       "solicitudCompra": this.Formulario.value,
-      "solicitudCompraDetalles": this.articulosSolicitud.filter(x => x.id > 0 && x.cantidad > 0)
+      "solicitudCompraDetalles": this.solicitudCompraDetalles.filter(x => x.articuloID > 0 && x.cantidad > 0)
     }
     console.log(parametro)
 
-    let metodo: string = "Registrar";
+    let metodo: string = this.actualizando ? "Update" : "Registrar";
+
     this.btnGuardarCargando = true;
 
     this.httpService.DoPostAny<Proveedor>(DataApi.SolicitudCompra,

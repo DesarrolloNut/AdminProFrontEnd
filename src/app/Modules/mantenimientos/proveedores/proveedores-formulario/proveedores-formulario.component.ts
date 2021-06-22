@@ -77,21 +77,22 @@ export class ProveedoresFormularioComponent implements OnInit {
       documento: [null, [Validators.required, Validators.minLength(9)]],
       documentoTipoID: [1, [Validators.required]], //cedula por defecto
       email: [null, [Validators.required, Validators.email]],
-      tipoProveedorID: [0, []],
+
       calle: [null, [Validators.required]],
-      numero: [null,],
+      numero: [0,],
       sectorID: [0, [Validators.required]],
       ciudadID: [0, [Validators.required]],
       provinciaID: [0, [Validators.required]],
       latitud: [null, []],
       longitud: [null, []],
-      condicionPagoID: [0, [Validators.required]],
       limiteCredito: [0],
       registroMercantil: [null, [Validators.required]],
+      condicionPagoID: [0, [Validators.required]],
+
+      tipoProveedorID: [0, []],
       actividadEconomicaID: [0],
       monedaID: [0],
       estadoID: [0],
-      fechaRegistrado: [null,],
     },
       {
         validator: cedulaestructura('documento', 'documentoTipoID')
@@ -131,9 +132,15 @@ export class ProveedoresFormularioComponent implements OnInit {
   onSubmit() {
     console.table(this.Formulario.value)
     this.submitted = true;
+
     if (this.Formulario.invalid) {
       return;
     }
+
+    if (this.f.numero.value < 1) {
+      this.f.numero.setValue(0)
+    }
+
     this.guardar();
   }
 

@@ -2,7 +2,7 @@ import { FrecuenciaVisita } from './../models/FrecuenciaVisita';
 import { Ruta } from './../../rutas/models/Ruta';
 import { Dias } from './../models/Dias';
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BackendService } from 'src/app/core/http/service/backend.service';

@@ -190,7 +190,7 @@
                             <thead>
                                 <tr>
                                     <th scope="col">Artículo</th>
-                                    <th scope="col">Costo</th> 
+                                    <th scope="col">Costo</th>
                                     <th scope="col">Cantidad</th>
                                     <!-- <th scope="col">Total</th> -->
                                     <th scope="col"></th>
@@ -201,11 +201,11 @@
                             <tbody>
 
                                 <!-- <tr *ngFor="let item of confirmed | filter: searchText; let i  = index"> -->
-                                <tr *ngFor="let item of articulosSolicitud; let i=index">
+                                <tr *ngFor="let item of solicitudCompraDetalles let i=index">
                                     <td>
                                         <ng-select style="width: 500px;" [items]="articulosDeCompra" bindLabel="nombre"
-                                            [clearable]="false" bindValue="id" [loading]="loadingArticulos"
-                                            [(ngModel)]="item.id" [ngModelOptions]="{standalone: true}"
+                                            [clearable]="false" bindValue="id" [loading]="loadingArticulosDeCompra"
+                                            [(ngModel)]="item.articuloID" [ngModelOptions]="{standalone: true}"
                                             (change)="onSelectArticulo($event,i)" notFoundText="No resultados">
                                         </ng-select>
                                     </td>
@@ -258,4 +258,4 @@
             </div>
         </div>
     </div>
-</div>
+</div>  
