@@ -7,6 +7,7 @@ export class DevolucionVista {
     this.clienteDocumento = '';
     this.fechaCreacion = '';
     this.estado = '';
+    this.estadoId = 0;
     this.sucursal = '';
     this.costoTotal = 0;
     this.subtotal = 0;
@@ -20,6 +21,7 @@ export class DevolucionVista {
   vendedor: string;
   clienteDocumento: string;
   fechaCreacion: string;
+  estadoId: number;
   estado: string;
   sucursal: string;
   costoTotal: number;

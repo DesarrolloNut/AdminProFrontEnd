@@ -57,10 +57,10 @@
                               <td>
                                 <h5 class="font-weight-bold"> {{item.cliente}} | {{item.clienteDocumento}}</h5>
                                 <span class="small"> Vendedor: {{item.vendedor}}</span>
-                                <span class="small d-block">Estado: <span class="badge badge-warning">{{item.estado}} </span></span>
+                                <!-- <span class="small d-block">Estado: <span class="badge badge-secondary font-weight-bold">{{item.estado}} </span></span> -->
                             </td>
                             <td>
-                              <span> {{item.fechaCreacion | date:'medium'}}</span>
+                              <span> {{item.fechaCreacion | date: 'medium' }}</span>
                           </td>
                             <!-- <td>
                               <span> {{item.estado}}</span>
@@ -132,8 +132,7 @@
       <div class="col-12">
           <h3 class="text-info"> <i class="fa fa-user"></i> Cliente: {{devolucionSelected.cliente}}</h3>
           <h5> <i class="fa fa-id-card"></i> Documento: {{devolucionSelected.clienteDocumento}}</h5>
-          <h5> <i class="fa fa-calendar"></i> Fecha: {{devolucionSelected.fechaCreacion |
-              date:'medium'}}</h5>
+          <h5> <i class="fa fa-calendar"></i> Fecha: {{devolucionSelected.fechaCreacion | date:'medium' }}</h5>
           <h5> <i class="fa fa-map-marker"></i> Sucursal: {{devolucionSelected.sucursal}}</h5>
           <h5> <i class="fa fa-user-circle"></i>Vendedor: {{devolucionSelected.vendedor}}</h5>
       </div>
@@ -160,8 +159,11 @@
                     <button class="btn btn-sm btn-danger mx-2" *ngIf="CancelarEditarCantidadConfirmado" (click)="cambiarCantidadConfirmado()" >
                       <i class="fa fa-sm fa-times"></i>
                     </button>
-                    <button class="btn btn-sm btn-success mx-2" *ngIf="CambioCantidadConfirmado" (click)="cambiarCantidadConfirmado()"
-                    >
+                    <button class="btn btn-sm btn-success mx-2" *ngIf="CambioCantidadConfirmado && !btnGuardarCargando" (click)="SaveDevolucionDetalleVista()"
+                    >      <!-- boton cargando -->
+                    <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                      <span class="spinner-border spinner-border-sm"></span>
+                  </button>
                       <i class="fa fa-sm fa-check"></i>
                     </button>
                   </td>
@@ -206,10 +208,10 @@
   </div>
   <div class="modal-footer">
       <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cancelar</button>
-      <button type="button" *ngIf="!btnGuardarCargando" class="btn btn-info m-1" (click)="SaveDevolucionDetalleVista()" >Guardar</button>
+      <button type="button"  class="btn btn-info m-1" *ngIf="!btnEnviarCargando" (click)="SendAutorizar()" >Enviar a autorizar</button>
       <!-- boton cargando -->
-      <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
-        <span class="spinner-border spinner-border-sm"></span> Guardando
+      <button *ngIf="btnEnviarCargando" disabled  class="btn btn-info m-1" type="button">
+        <span class="spinner-border spinner-border-sm"></span> Enviando
     </button>
   </div>
 </ng-template>
