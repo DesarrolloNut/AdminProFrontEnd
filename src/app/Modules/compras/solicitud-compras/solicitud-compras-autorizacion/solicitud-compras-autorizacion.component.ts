@@ -203,7 +203,7 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
 
   }
 
-  autorizar(item: any) {
+  autorizar(item: SolicitudCompraListadoViewModel) {
     this.isAutorizando = true;
     this.actualizarEstadoArticulos(item)
   }
@@ -233,7 +233,7 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
   }
 
 
-  actualizarEstadoArticulos(item: any) {
+  actualizarEstadoArticulos(item: SolicitudCompraListadoViewModel) {
     item.cargando = true;
     // if (this.confirmed.filter(x => x.IsChecked).length < 1) {
     //   this.toastService.warning("Selecciona uno o más artículos para actualizar");
@@ -260,8 +260,8 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
       "Seleccion": articulos.
         map(x => { return { "ListaPrecioID": x.listaPrecioID, "ArticuloID": x.id } })
     }
-    this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
-      "ActualizarArticuloPrecioEstadoID", param).subscribe(response => {
+    this.httpService.DoPostAny<any>(DataApi.SolicitudCompra,
+      "NOMBRE_METODO", param).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
