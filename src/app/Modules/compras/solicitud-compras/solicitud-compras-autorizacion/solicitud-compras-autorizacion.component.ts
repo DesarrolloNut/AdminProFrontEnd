@@ -10,6 +10,7 @@ import { ArticuloListaPrecioViewModel } from 'src/app/Modules/mantenimientos/art
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { EstadoGeneralesKey } from 'src/app/shared/enums/EstadoGeneralesKey';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
+import { SolicitudCompraListadoViewModel } from '../models/SolicitudCompraListadoViewModel';
 
 @Component({
   selector: 'app-solicitud-compras-autorizacion',
@@ -24,7 +25,7 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
   totalPaginas: number = 0;
   paginaSize: number = 10;
   paginaTotalRecords: number = 0;
-  data: ArticuloListaPrecioViewModel[] = [] //tu modelo
+  data: SolicitudCompraListadoViewModel[] = [] //tu modelo
 
   estadoAutorizacionComboModel: number = 0;
   estadoAutorizacionUsuario: number;
@@ -66,7 +67,8 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
       { key: "Search", value: this.Search },
     ]
 
-    this.httpService.GetAllWithPagination<ArticuloListaPrecioViewModel>(DataApi.Articulo, "GetArticulosAsignadosListaPrecioPagination", "ListaPrecio", this.paginaNumeroActual,
+    this.httpService.GetAllWithPagination<SolicitudCompraListadoViewModel>(DataApi.SolicitudCompra,
+      "GetSolicitudCompraListado", "ID", this.paginaNumeroActual,
       this.paginaSize, true, parametros).subscribe(x => {
 
         if (x.ok) {

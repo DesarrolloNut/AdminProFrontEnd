@@ -13,9 +13,11 @@ export class SolicitudCompraListadoViewModel {
     estado: string
     tipo: string
     tipoID: number
+    estadoID: number
     comprador: string
     proveedor: string
     fechaSolicitud: Date
     fechaEntrega: Date
+    cargando: boolean 
 
 }
