@@ -11,4 +11,5 @@ export interface ArticuloListaPrecioViewModel {
     estadoID: number;
     estado: string;
     diasRestantes: number;
+    cargando: boolean;
 }

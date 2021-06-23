@@ -33,7 +33,7 @@ const routes: Routes = [
         path: 'notacredito', component: NotacreditoListadoComponent, data: {
           title: 'Notas de Crédito',
           urls: [
-            { title: 'Mantenimientos' },
+            { title: 'Ventas' },
             { title: 'Notas de Crédito' },
           ]
         }
@@ -44,7 +44,7 @@ const routes: Routes = [
         path: 'notacredito/:id', component: NotacreditoFormularioComponent, data: {
           title: 'Nota Crédito Formulario',
           urls: [
-            { title: 'Mantenimientos' },
+            { title: 'Ventas' },
             { title: 'Notas de Crédito' },
             { title: 'Formulario' }
           ]

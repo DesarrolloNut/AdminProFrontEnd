@@ -29,4 +29,5 @@ export class DevolucionVista {
   descuento: number;
   impuesto: number;
   total: number;
+  cargando: boolean;
 }

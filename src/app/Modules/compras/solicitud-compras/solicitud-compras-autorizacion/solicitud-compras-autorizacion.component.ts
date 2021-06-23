@@ -6,17 +6,17 @@ import { AuthenticationService } from 'src/app/core/authentication/service/authe
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
+import { ArticuloListaPrecioViewModel } from 'src/app/Modules/mantenimientos/articulos/models/ArticuloListaPrecioViewModel';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { EstadoGeneralesKey } from 'src/app/shared/enums/EstadoGeneralesKey';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
-import { ArticuloListaPrecioViewModel } from '../../articulos/models/ArticuloListaPrecioViewModel';
 
 @Component({
-  selector: 'app-lista-precios-autorizacion',
-  templateUrl: './lista-precios-autorizacion.component.html',
-  styleUrls: ['./lista-precios-autorizacion.component.scss']
+  selector: 'app-solicitud-compras-autorizacion',
+  templateUrl: './solicitud-compras-autorizacion.component.html',
+  styleUrls: ['./solicitud-compras-autorizacion.component.scss']
 })
-export class ListaPreciosAutorizacionComponent implements OnInit {
+export class SolicitudComprasAutorizacionComponent implements OnInit {
   // COPIAR AL CREAR UN LISTADO NUEVO
   Search: string = "";
   paginaNumeroActual = 1;
@@ -42,6 +42,8 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   comentario: string;
   cargandoModal: boolean = false;
 
+  keyModule = EstadoGeneralesKey.SOLICITUDCOMPRAS;
+
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private authService: AuthenticationService,
@@ -51,14 +53,10 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
 
 
   ngOnInit(): void {
-    // this.getData()
     this.getEstadoAutorizacionUsuario()
+    console.log(this.keyModule)
+
   }
-
-  // onEstadoComboChange() {
-  //   this.getData()
-  // }
-
 
   getData() {
     this.Cargando = true;
@@ -91,7 +89,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   getEstadosAutorizacion() {
     let parametros: Parametro[] = [{
       key: "NameKey",
-      value: EstadoGeneralesKey.LISTAPRECIO
+      value: this.keyModule
     }]
 
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
@@ -102,6 +100,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
           console.error(response.errores[0]);
         } else {
           this.estadosAutorizacion = response.records;
+          console.table(this.estadosAutorizacion)
           this.estadoIDAutorizacionDefault = response.records[0].codigo;
           this.getSiguienteEstado()//almacena en una variable el siguiente estado
           this.getAnteriorEstadoAutorizacion()//almacena en una variable el anterior estado
@@ -119,7 +118,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   getEstadoAutorizacionUsuario() {
     let parametro = {
       "UsuarioID": Number(this.authService.tokenDecoded.nameid),
-      "KeynameModule": EstadoGeneralesKey.LISTAPRECIO,
+      "KeynameModule": this.keyModule
     }
 
     this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
@@ -315,62 +314,5 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
 
   }
 
-
-
-  guardarComentario() {
-
-    if (this.comentario.trim().length < 3) {
-      return
-    }
-
-    let parametros = {
-      "Id": 0,
-      "Comentario": this.comentario,
-      "ListaPrecioID": this.itemSeleccionado.listaPrecioID,
-      "ArticuloID": this.itemSeleccionado.id,
-      "UsuarioID": Number(this.authService.tokenDecoded.nameid),
-      "Fecha": new Date(),
-      "Usuario": this.authService.tokenDecoded.given_name,
-      "ListaPrecio": this.itemSeleccionado.listaPrecio,
-      "Articulo": this.itemSeleccionado.nombre
-    }
-
-    this.cargandoModal = true;
-    this.httpService.DoPostAny<any>(DataApi.ListaPrecio,
-      "InsertarListaPrecioArticuloComentario", parametros).subscribe(response => {
-
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-          console.error(response.errores[0]);
-
-        } else {
-          this.toastService.success("Realizado", "OK");
-          this.comentario = ""
-          this.enviarNotificacionCorreoNuevoComentario(parametros)
-          this.getComentarios()
-        }
-      }, error => {
-        this.cargandoModal = false;
-        this.toastService.error("No se pudo actualizar el estado.",
-          "Error conexion al servidor");
-      });
-  }
-
-  enviarNotificacionCorreoNuevoComentario(param: any) {
-
-    this.httpService.DoPostAny<any>(DataApi.ListaPrecio,
-      "EnviarCorreoNotificacionArticuloComentario", param).subscribe(response => {
-
-        if (!response.ok) {
-          // this.toastService.error(response.errores[0]);
-          console.error(response.errores[0]);
-        } else {
-          // this.toastService.success("Notificaciones enviadas", "OK");
-        }
-      }, error => {
-        console.error(error)
-      });
-
-  }
 
 }

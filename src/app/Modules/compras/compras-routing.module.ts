@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ComprasComponent } from './compras.component';
+import { SolicitudComprasAutorizacionComponent } from './solicitud-compras/solicitud-compras-autorizacion/solicitud-compras-autorizacion.component';
 import { SolicitudComprasFormularioComponent } from './solicitud-compras/solicitud-compras-formulario/solicitud-compras-formulario.component';
 import { SolicitudComprasListadoComponent } from './solicitud-compras/solicitud-compras-listado/solicitud-compras-listado.component';
 
@@ -17,7 +18,7 @@ const routes: Routes = [
         path: 'solicitud-compras', component: SolicitudComprasListadoComponent, data: {
           title: 'Solicitudes de compras',
           urls: [
-            { title: 'Mantenimientos' },
+            { title: 'Compras' },
             { title: 'Solicitudes de compras' },
           ]
         }
@@ -27,12 +28,23 @@ const routes: Routes = [
         path: 'solicitud-compras/:id', component: SolicitudComprasFormularioComponent, data: {
           title: 'Solicitudes de compras Formulario',
           urls: [
-            { title: 'Mantenimientos' },
+            { title: 'Compras' },
             { title: 'Solicitudes de compras' },
             { title: 'Formulario' }
           ]
         }
       },
+
+      {
+        path: 'solicitud-compras-autorizacion', component: SolicitudComprasAutorizacionComponent, data: {
+          title: 'Autorización solicitudes de compras',
+          urls: [
+            { title: 'Compras' },
+            { title: 'Autorización solicitudes de compras' },
+          ]
+        }
+      },
+
 
     ]
 
