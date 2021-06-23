@@ -33,6 +33,7 @@ EditarCantidadConfirmado: boolean = true;
 CancelarEditarCantidadConfirmado: boolean = false;
 CambioCantidadConfirmado: boolean = false;
 devolucionSelected: DevolucionVista = new DevolucionVista();
+  btnEnviarCargando: boolean;
 
 constructor(private toastService: ToastrService,
   private httpService: BackendService,
@@ -47,13 +48,16 @@ ngOnInit(): void {
 getData() {
   this.Cargando = true;
 
-  let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
+  let parametros: Parametro[] = [
+    { key: "Search", value: this.Search },
+  ]
 
   this.httpService.GetAllWithPagination<DevolucionVista>(DataApi.Devolucion, "GetDevolucionListado", "ID", this.paginaNumeroActual,
     this.paginaSize, true, parametros).subscribe(x => {
 
       if (x.ok) {
         this.data = x.records;
+        console.log(this.data);
         this.asignarPagination(x);
       } else {
         this.toastService.error(x.errores[0]);
@@ -98,6 +102,7 @@ SaveDevolucionDetalleVista() {
   this.httpService.DoPostAny<DevolucionDetalleVista>(DataApi.DevolucionDetalle, "UpdateDevolucionDetalleCantidadConfirmado", this.dataDetalle).subscribe(x => {
 
       if (x.ok) {
+        // this.modalService.dismissAll();
       } else {
         this.toastService.error(x.errores[0]);
         console.error(x.errores[0]);
@@ -107,6 +112,29 @@ SaveDevolucionDetalleVista() {
       console.error(error);
       this.toastService.error("Error conexion al servidor");
       this.btnGuardarCargando = false;
+    });
+
+    this.cambiarCantidadConfirmado();
+
+}
+SendAutorizar() {
+  this.btnEnviarCargando = true;
+  this.devolucionSelected.estadoId  = 1;
+
+  this.httpService.DoPostAny<DevolucionDetalleVista>(DataApi.Devolucion, "CambiarEstadoDevolucion", this.devolucionSelected).subscribe(x => {
+
+      if (x.ok) {
+        this.modalService.dismissAll();
+        this.getData();
+      } else {
+        this.toastService.error(x.errores[0]);
+        console.error(x.errores[0]);
+      }
+      this.btnEnviarCargando = false;
+    }, error => {
+      console.error(error);
+      this.toastService.error("Error conexion al servidor");
+      this.btnEnviarCargando = false;
     });
 
 }
