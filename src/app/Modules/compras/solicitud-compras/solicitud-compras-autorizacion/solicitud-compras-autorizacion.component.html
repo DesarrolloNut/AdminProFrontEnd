@@ -67,11 +67,11 @@
                                             <span class="spinner-border spinner-border-sm"></span>
                                         </button>
 
-
                                     </ng-template>
 
 
-                                    <ng-template [ngIf]="item.estadoID == estadoAutorizacionUsuario">
+                                    <ng-template
+                                        [ngIf]="item.estadoID == estadoAutorizacionUsuario && item.estadoID != estadoAutorizacionFinal">
 
                                         <button *ngIf="!item.cargando" class="btn btn-sm btn-warning m-1"
                                             (click)="desautorizar(item)">
@@ -91,16 +91,16 @@
                                     <ng-template
                                         ngxPermissionsOnly="mantenimientos_listas_precios_autorizacion_puede_reiniciar_precio">
 
-                                        <button *ngIf="!item.cargando && item.estadoID != estadoIDAutorizacionDefault"
+                                        <!-- <button *ngIf="!item.cargando && item.estadoID != estadoIDAutorizacionDefault"
                                             class="btn btn-sm btn-light m-1" (click)="desautorizar(item)">
                                             <i class="fa fa-sm fa-redo-alt"></i>
-                                        </button>
+                                        </button> -->
 
                                         <!-- boton cargando -->
-                                        <button *ngIf="item.cargando && !isAutorizando " disabled
+                                        <!-- <button *ngIf="item.cargando && !isAutorizando " disabled
                                             class="btn btn-light m-1" type="button">
                                             <span class="spinner-border spinner-border-sm"></span>
-                                        </button>
+                                        </button> -->
 
                                     </ng-template>
 
@@ -149,7 +149,7 @@
                                         <i class="fa fa-sm fa-edit"></i>
                                     </button>
                                 </td> -->
-     
+
                                 <td>
                                     <h3>
                                         <span class="badge badge-light"> {{item.estado}}</span>

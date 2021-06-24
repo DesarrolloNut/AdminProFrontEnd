@@ -44,6 +44,7 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
   cargandoModal: boolean = false;
 
   keyModule = EstadoGeneralesKey.SOLICITUDCOMPRAS;
+  estadoAutorizacionFinal: number;
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
@@ -55,8 +56,6 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
 
   ngOnInit(): void {
     this.getEstadoAutorizacionUsuario()
-    console.log(this.keyModule)
-
   }
 
   getData() {
@@ -102,10 +101,11 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
           console.error(response.errores[0]);
         } else {
           this.estadosAutorizacion = response.records;
-          console.table(this.estadosAutorizacion)
           this.estadoIDAutorizacionDefault = response.records[0].codigo;
+
           this.getSiguienteEstado()//almacena en una variable el siguiente estado
           this.getAnteriorEstadoAutorizacion()//almacena en una variable el anterior estado
+          this.getEstadoAutorizacionFinal()//almacena en una variable el final estado
           this.getData()
         }
       }, error => {
@@ -152,12 +152,15 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
   getAnteriorEstadoAutorizacion() {
     let estadoUsuario = this.estadosAutorizacion.find(x => x.codigo == this.estadoAutorizacionUsuario);
     let estadoActualPosicion = this.estadosAutorizacion.indexOf(estadoUsuario);
-    console.log(estadoUsuario)
-    console.log(estadoActualPosicion)
+
     this.estadoAutorizacionAnterior = this.estadosAutorizacion[estadoActualPosicion - 1]
     if (this.estadoAutorizacionAnterior) {
       this.estadoAutorizacionComboModel = this.estadoAutorizacionAnterior.codigo;
     }
+  }
+
+  getEstadoAutorizacionFinal() {
+    this.estadoAutorizacionFinal = this.estadosAutorizacion[this.estadosAutorizacion.length - 1].codigo;
   }
 
 
@@ -203,16 +206,6 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
 
   }
 
-  autorizar(item: SolicitudCompraListadoViewModel) {
-    this.isAutorizando = true;
-    this.actualizarEstadoArticulos(item)
-  }
-
-  desautorizar(item: any) {
-    this.isAutorizando = false;
-    this.actualizarEstadoArticulos(item)
-  }
-
   autorizarMasiva() {
 
     this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
@@ -233,35 +226,18 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
   }
 
 
-  actualizarEstadoArticulos(item: SolicitudCompraListadoViewModel) {
-    item.cargando = true;
-    // if (this.confirmed.filter(x => x.IsChecked).length < 1) {
-    //   this.toastService.warning("Selecciona uno o más artículos para actualizar");
-    //   return;
-    // }
+  autorizar(item: SolicitudCompraListadoViewModel) {
 
-    let EstadoUsuariosNotificacion: number;
 
-    if (this.isAutorizando) {
-      EstadoUsuariosNotificacion = this.estadoAutorizacionSiguiente ? this.estadoAutorizacionSiguiente.codigo : 0
-    } else {
-      EstadoUsuariosNotificacion = this.estadoIDAutorizacionDefault
+    let parametro = {
+      "SolicitudCompra": item,
+      "EstadoAutorizacion": this.estadoAutorizacionUsuario,
+      "EstadoAutorizacionSiguiente": this.estadoAutorizacionSiguiente ? this.estadoAutorizacionSiguiente.codigo : 0,
+      "IsAutorizacionFinal": this.estadoAutorizacionUsuario == this.estadoAutorizacionFinal,
     }
 
-    let ultimoEstado = this.estadosAutorizacion[this.estadosAutorizacion.length - 1].codigo;
-    let articulos = []
-    articulos.push(item)
-    let param = {
-      "IsAprobado": this.estadoAutorizacionUsuario == ultimoEstado && this.isAutorizando,
-      "IsAutorizando": this.isAutorizando,
-      "EstadoAutorizacion": this.isAutorizando ? this.estadoAutorizacionUsuario : this.estadoIDAutorizacionDefault,
-      "EstadoDefault": this.estadoIDAutorizacionDefault,
-      "EstadoUsuariosNotificacion": EstadoUsuariosNotificacion,
-      "Seleccion": articulos.
-        map(x => { return { "ListaPrecioID": x.listaPrecioID, "ArticuloID": x.id } })
-    }
     this.httpService.DoPostAny<any>(DataApi.SolicitudCompra,
-      "NOMBRE_METODO", param).subscribe(response => {
+      "AutorizaSolicitudCompra", parametro).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
@@ -280,38 +256,30 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
   }
 
 
-  openModalComments(content, item: any) {
-    console.table(item)
-    this.itemSeleccionado = item;
-    this.getComentarios()
-    this.modalService.open(content, { size: 'lg', scrollable: true });
-    // this.articuloSeleccionado = item
-  }
+  desautorizar(item: SolicitudCompraListadoViewModel) {
 
+    let parametro = {
+      "SolicitudCompra": item,
+      "EstadoAutorizacion": this.estadoIDAutorizacionDefault,
+      "EstadoAutorizacionSiguiente": 0,
+      "IsAutorizacionFinal": false,
+    }
 
-  getComentarios() {
-    this.comentarios = []
-    this.comentario = ""
-    let parametros = { "ArticuloID": this.itemSeleccionado.id, "ListaPrecioID": this.itemSeleccionado.listaPrecioID }
-    this.cargandoModal = true;
-    this.httpService.DoPostAny<ComboBox>(DataApi.ListaPrecio,
-      "GetListaPrecioArticuloComentarios", parametros).subscribe(response => {
+    this.httpService.DoPostAny<any>(DataApi.SolicitudCompra,
+      "AutorizaSolicitudCompra", parametro).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
           console.error(response.errores[0]);
+
         } else {
-          this.comentarios = response.records;
+          this.toastService.success("Realizado", "OK");
+          this.getData()
         }
-        this.cargandoModal = false;
 
       }, error => {
-        this.cargandoModal = false;
-        this.toastService.error("No se pudo obtener los comentarios.", "Error conexion al servidor");
-        setTimeout(() => {
-          this.getEstadosAutorizacion()
-        }, 1000);
-
+        this.toastService.error("No se pudo actualizar el estado.",
+          "Error conexion al servidor");
       });
 
   }
