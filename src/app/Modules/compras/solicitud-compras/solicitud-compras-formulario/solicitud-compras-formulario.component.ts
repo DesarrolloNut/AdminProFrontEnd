@@ -121,7 +121,7 @@ export class SolicitudComprasFormularioComponent implements OnInit {
             this.Formulario.setValue(record);
             this.getSolicitudCompraDetalles(record.id)
             this.getUsuarioByID(record.solicitanteID)
-            
+
           } else {
             this.toastService.warning("no encontrado");
             this.router.navigateByUrl('/compras/solicitud-compras');
@@ -247,6 +247,7 @@ export class SolicitudComprasFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0], "Error");
         } else {
           this.toastService.success("Realizado", "OK");
+          this.enviarCorreoAutorizacionPendiente(2)
           this.router.navigateByUrl('/compras/solicitud-compras');
         }
 
@@ -409,6 +410,22 @@ export class SolicitudComprasFormularioComponent implements OnInit {
       });
   }
 
+  enviarCorreoAutorizacionPendiente(estadoID: number) {
+
+    this.httpService.DoPostAny<any>(DataApi.SolicitudCompra,
+      "EnviarCorreoAutorizacionPendiente", estadoID).subscribe(response => {
+
+        if (!response.ok) {
+          // this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+          // this.toastService.success("Notificaciones enviadas", "OK");
+        }
+      }, error => {
+        console.error(error)
+      });
+
+  }
 
 
 

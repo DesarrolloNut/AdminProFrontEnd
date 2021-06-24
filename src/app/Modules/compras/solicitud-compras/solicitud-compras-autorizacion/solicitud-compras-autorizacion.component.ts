@@ -246,8 +246,9 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
         } else {
           this.toastService.success("Realizado", "OK");
           this.getData()
-          this.enviarCorreoAutorizacionPendiente(2)
-
+          if (!parametro.IsAutorizacionFinal) {
+            this.enviarCorreoAutorizacionPendiente(this.estadoAutorizacionSiguiente.codigo)
+          }
         }
 
       }, error => {
@@ -286,7 +287,7 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
   }
 
   enviarCorreoAutorizacionPendiente(estadoID: number) {
-
+    console.log(estadoID)
     this.httpService.DoPostAny<any>(DataApi.SolicitudCompra,
       "EnviarCorreoAutorizacionPendiente", estadoID).subscribe(response => {
 
