@@ -246,6 +246,8 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
         } else {
           this.toastService.success("Realizado", "OK");
           this.getData()
+          this.enviarCorreoAutorizacionPendiente(2)
+
         }
 
       }, error => {
@@ -271,7 +273,6 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
           console.error(response.errores[0]);
-
         } else {
           this.toastService.success("Realizado", "OK");
           this.getData()
@@ -283,6 +284,24 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
       });
 
   }
+
+  enviarCorreoAutorizacionPendiente(estadoID: number) {
+
+    this.httpService.DoPostAny<any>(DataApi.SolicitudCompra,
+      "EnviarCorreoAutorizacionPendiente", estadoID).subscribe(response => {
+
+        if (!response.ok) {
+          // this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+          // this.toastService.success("Notificaciones enviadas", "OK");
+        }
+      }, error => {
+        console.error(error)
+      });
+
+  }
+
 
 
 }
