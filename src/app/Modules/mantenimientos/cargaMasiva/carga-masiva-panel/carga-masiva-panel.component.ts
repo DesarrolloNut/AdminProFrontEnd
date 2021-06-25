@@ -36,6 +36,8 @@ export class CargaMasivaPanelComponent implements OnInit {
 
 
   onFileChange(event, modal, accionID: number) {
+    console.log("file change")
+    console.log(accionID)
     this.accionId = accionID;
     this.openModal(modal)
     this.processFile(event)
@@ -67,7 +69,6 @@ export class CargaMasivaPanelComponent implements OnInit {
 
       this.dataExcel = data
       this.getPropiedadesExcel()
-      console.table(this.dataExcel)
     };
   }
 
@@ -75,7 +76,8 @@ export class CargaMasivaPanelComponent implements OnInit {
 
 
   transformData() {
-
+    console.log("TransformDataFunc")
+    console.log(this.accionId)
 
     if (this.accionId == 1) { //precios articulos
       if (this.validarCargaArticuloPrecios()) {
@@ -90,13 +92,27 @@ export class CargaMasivaPanelComponent implements OnInit {
             "FechaAplicacion": new Date(+parts[2], +parts[1] - 1, +parts[0])
           };
         });
-
-        console.table(this.dataTransformed)
         this.dataApi = DataApi.Articulo;
         this.metodoEndPoint = "UploadExcelFilePreciosArticulos"
         this.subirDatosExcel()
       }
-      return;
+    } else if (this.accionId == 2) { //clientes rutas tipos
+      if (this.validarCargaClienteRutaTipo()) {
+
+        this.dataTransformed = this.dataExcel.map((x) => {
+          let arrayValues = Object.values(x);
+          return {
+            "ClienteID": Number(arrayValues[0]),
+            "RutaID": Number(arrayValues[1]),
+            "RutaTipoID": Number(arrayValues[2])
+          };
+        });
+
+        console.table(this.dataTransformed)
+        this.dataApi = DataApi.Cliente;
+        this.metodoEndPoint = "UploadExcelFileClienteActualizaRuta"
+        this.subirDatosExcel()
+      }
     }
 
   }
@@ -129,6 +145,15 @@ export class CargaMasivaPanelComponent implements OnInit {
   }
 
   validarCargaArticuloPrecios(): boolean {
+
+    // if (this.dataExcel.some(x => !x.codigoReferencia)) {
+    //   this.toastService.warning("Hay records sin código de referencia")
+    //   return false;
+    // }
+
+    return true;
+  }
+  validarCargaClienteRutaTipo(): boolean {
 
     // if (this.dataExcel.some(x => !x.codigoReferencia)) {
     //   this.toastService.warning("Hay records sin código de referencia")

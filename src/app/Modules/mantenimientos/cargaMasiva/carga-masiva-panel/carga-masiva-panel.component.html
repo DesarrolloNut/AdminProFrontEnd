@@ -37,6 +37,30 @@
                         </div>
                     </div>
 
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                        <div class="box-part text-center border rounded border-info">
+                            <i class="fa text-success  fa-road fa-3x" aria-hidden="true"></i>
+                            <div class="title mt-2">
+                                <h4>Cliente Rutas</h4>
+                            </div>
+                            <div class="text">
+                                <span>Actualiza las rutas de clientes desde un archivo excel.</span>
+                            </div>
+                            <input accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                class="d-none" (change)="onFileChange($event,modalUploadExcel,2)" #file2 multiple
+                                type="file" />
+
+                            <button class="btn btn-info" (click)="file2.click()"> <i
+                                    class="fa fa-upload text-white"></i> Subir
+                                archivo</button>
+
+                            <a href="assets/files/excel/ActualizaClienteRutaTipoTemplate.xlsx" class="btn btn-light">
+                                <i class="fa fa-download text-dark"></i> Descargar plantilla
+                            </a>
+ 
+                        </div>
+                    </div>
+
                 </div>
 
             </div>
