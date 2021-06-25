@@ -68,14 +68,15 @@
                   <small> <i class="fa fa-user-circle text-muted"></i> Proveedor: {{item.proveedor}}</small>
                 </td>
                 <td>
-                  <small class="text-info font-weight-bold" > <i class="fa fa-clock "></i> Solicitud: {{item.fechaSolicitud|
+                  <small class="text-info font-weight-bold"> <i class="fa fa-clock "></i> Solicitud:
+                    {{item.fechaSolicitud|
                     date:'M/d/yy, h:mm a'}}</small>
                   <br>
                   <small> <i class="fa fa-calendar-alt text-muted"></i> Entrega: {{item.fechaEntrega |
                     date:'dd/MM/yyyy'}}</small>
                 </td>
                 <td>
-                  <button class="btn btn-sm btn-info" [routerLink]="[item.id]">
+                  <button *ngIf="item.estadoID == 1" class="btn btn-sm btn-info" [routerLink]="[item.id]">
                     <i class="fa fa-sm fa-edit"></i>
                   </button>
                 </td>

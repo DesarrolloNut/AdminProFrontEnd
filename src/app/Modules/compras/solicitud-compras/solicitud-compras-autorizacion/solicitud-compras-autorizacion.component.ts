@@ -6,7 +6,6 @@ import { AuthenticationService } from 'src/app/core/authentication/service/authe
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
-import { ArticuloListaPrecioViewModel } from 'src/app/Modules/mantenimientos/articulos/models/ArticuloListaPrecioViewModel';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { EstadoGeneralesKey } from 'src/app/shared/enums/EstadoGeneralesKey';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
