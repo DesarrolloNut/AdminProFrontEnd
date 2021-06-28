@@ -32,12 +32,12 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
   estadoIDAutorizacionDefault: number;
   estadoAutorizacionSiguiente: ComboBox;
   estadoAutorizacionAnterior: ComboBox;
+  estadoAutorizacionFinal: number;
   btnClicked: number;
   isAutorizando: boolean;
   cargandoAutorizacion: boolean;
 
   keyModule = EstadoGeneralesKey.SOLICITUDCOMPRAS;
-  estadoAutorizacionFinal: number;
 
   itemSeleccionado: SolicitudCompraListadoViewModel
   comentario: string;
