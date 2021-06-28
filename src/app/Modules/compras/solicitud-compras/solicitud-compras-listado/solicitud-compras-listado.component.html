@@ -32,6 +32,7 @@
             <thead>
               <tr>
                 <th></th>
+                <th>Estado</th>
                 <th>Solicitante</th>
                 <th>Destino</th>
                 <th></th>
@@ -45,6 +46,9 @@
                 <td>
                   <span class="badge badge-light text-info ">{{item.id}}</span> |
                   <small class="badge" [ngClass]="{'badge-danger': item.tipoID == 2}"> {{ item.tipo}}</small>
+                </td>
+                <td>
+                  <span class="small badge badge-light"> {{item.estado}}</span>
                 </td>
                 <td>
                   <div class="d-flex align-items-center">
@@ -80,6 +84,7 @@
                     <i class="fa fa-sm fa-edit"></i>
                   </button>
                 </td>
+
               </tr>
 
             </tbody>

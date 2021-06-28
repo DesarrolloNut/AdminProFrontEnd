@@ -4,6 +4,8 @@ export class SolicitudCompraListadoViewModel {
     }
 
     id: number
+    solicitanteID: number
+    compradorID: number
     codigoReferencia: string
     departamentoDestino: string
     sucursalDestino: string
@@ -18,6 +20,6 @@ export class SolicitudCompraListadoViewModel {
     proveedor: string
     fechaSolicitud: Date
     fechaEntrega: Date
-    cargando: boolean 
+    cargando: boolean
 
 }

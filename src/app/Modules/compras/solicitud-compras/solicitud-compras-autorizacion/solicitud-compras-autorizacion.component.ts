@@ -36,14 +36,11 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
   isAutorizando: boolean;
   cargandoAutorizacion: boolean;
 
-  //comentarios
-  itemSeleccionado: any;
-  comentarios: any[];
-  comentario: string;
-  cargandoModal: boolean = false;
-
   keyModule = EstadoGeneralesKey.SOLICITUDCOMPRAS;
   estadoAutorizacionFinal: number;
+
+  itemSeleccionado: SolicitudCompraListadoViewModel
+  comentario: string;
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
@@ -162,8 +159,6 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
     this.estadoAutorizacionFinal = this.estadosAutorizacion[this.estadosAutorizacion.length - 1].codigo;
   }
 
-
-
   asignarPagination(x: ResponseContenido<any>) {
 
     if (x.pagina != null) {
@@ -177,53 +172,6 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
     }
 
   }
-
-  openModal(content, btnClicked: number, item: any) {
-    this.modalService.open(content, { size: 'sm' });
-    this.btnClicked = btnClicked
-    // this.articuloSeleccionado = item
-  }
-
-  onBtnModalOk() {
-
-    if (this.btnClicked == 1) {
-      // this.autorizar()
-      // this.desautorizar()
-      return;
-    }
-    if (this.btnClicked == 2) {
-      // this.solicitarAutorizacion()
-      return;
-    }
-    if (this.btnClicked == 3) {
-      return;
-    }
-
-    this.modalService.dismissAll()
-
-
-
-  }
-
-  autorizarMasiva() {
-
-    this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
-      "AutorizarArticulosMasivoSegunNivelUsuario", Number(this.authService.tokenDecoded.nameid)).subscribe(response => {
-
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-          console.error(response.errores[0]);
-        } else {
-          this.toastService.success("Realizado", "OK");
-          this.getData()
-        }
-      }, error => {
-        this.toastService.error("No se pudo realizar", "Error conexion al servidor");
-        console.error(error)
-      });
-
-  }
-
 
   autorizar(item: SolicitudCompraListadoViewModel) {
 
@@ -245,9 +193,13 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
         } else {
           this.toastService.success("Realizado", "OK");
           this.getData()
-          if (!parametro.IsAutorizacionFinal) {
-            this.enviarCorreoAutorizacionPendiente(this.estadoAutorizacionSiguiente.codigo)
+
+          if (parametro.IsAutorizacionFinal) {
+            this.enviarCorreosAutorizacionCompleta(parametro);
+            return;
           }
+
+          this.enviarCorreoAutorizacionPendiente(this.estadoAutorizacionSiguiente.codigo)
         }
 
       }, error => {
@@ -257,14 +209,14 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
 
   }
 
-
-  desautorizar(item: SolicitudCompraListadoViewModel) {
+  desautorizar() {
 
     let parametro = {
-      "SolicitudCompra": item,
+      "SolicitudCompra": this.itemSeleccionado,
       "EstadoAutorizacion": this.estadoIDAutorizacionDefault,
       "EstadoAutorizacionSiguiente": 0,
       "IsAutorizacionFinal": false,
+      "Comentario": this.comentario,
     }
 
     this.httpService.DoPostAny<any>(DataApi.SolicitudCompra,
@@ -275,6 +227,8 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
           console.error(response.errores[0]);
         } else {
           this.toastService.success("Realizado", "OK");
+          this.modalService.dismissAll()
+          this.enviarCorreosDesautorizacion(parametro)
           this.getData()
         }
 
@@ -286,7 +240,6 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
   }
 
   enviarCorreoAutorizacionPendiente(estadoID: number) {
-    console.log(estadoID)
     this.httpService.DoPostAny<any>(DataApi.SolicitudCompra,
       "EnviarCorreoAutorizacionPendiente", estadoID).subscribe(response => {
 
@@ -302,6 +255,56 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
 
   }
 
+  enviarCorreosAutorizacionCompleta(parametro: any) {
+    this.httpService.DoPostAny<any>(DataApi.SolicitudCompra,
+      "EnviarCorreosAutorizacionCompleta", parametro).subscribe(response => {
+
+        if (!response.ok) {
+          console.error(response.errores[0]);
+        } else {
+        }
+      }, error => {
+        console.error(error)
+      });
+  }
+
+  enviarCorreosDesautorizacion(parametro: any) {
+    this.httpService.DoPostAny<any>(DataApi.SolicitudCompra,
+      "EnviarCorreoDesautorizacion", parametro).subscribe(response => {
+
+        if (!response.ok) {
+          console.error(response.errores[0]);
+        } else {
+        }
+      }, error => {
+        console.error(error)
+      });
+  }
+
+
+
+
+  openModal(content, btnClicked: number, item: any) {
+    this.comentario = null
+    this.modalService.open(content, { size: 'lg' });
+    this.btnClicked = btnClicked
+    this.itemSeleccionado = item
+  }
+
+  onBtnModalOk() {
+
+    if (this.btnClicked == 1) {
+      if (this.comentario && this.comentario.trim().length > 0) {
+        this.desautorizar()
+      } else {
+        this.toastService.warning("Escribe un comentario válido")
+      }
+    } else if (this.btnClicked == 2) {
+      // this.solicitarAutorizacion()
+    } else if (this.btnClicked == 3) {
+
+    }
+  }
 
 
 }
