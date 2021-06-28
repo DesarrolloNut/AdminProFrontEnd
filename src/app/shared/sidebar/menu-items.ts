@@ -634,8 +634,6 @@ export const ROUTES: RouteInfo[] = [
 
 
 
-
-
       {
         path: '/mantenimientos/accesorio',
         label: '',
@@ -858,6 +856,17 @@ export const ROUTES: RouteInfo[] = [
         extralink: false,
         submenu: [],
         permisos: ["mantenimientos_vehiculo_tipo"],
+      },
+      {
+        path: '/mantenimientos/tomainventarioruta',
+        label: '',
+        labelClass: '',
+        title: 'Asignacion de rutas',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_asignaciones_rutas"],
       },
 
 

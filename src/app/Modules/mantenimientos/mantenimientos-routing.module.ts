@@ -78,6 +78,7 @@ import { EnrrollvendedorentregasupervisorListadoComponent } from './enrrollvende
 import { EnrrollvendedorentregasupervisorFormularioComponent } from './enrrollvendedorentregasupervisor/enrrollvendedorentregasupervisor-formulario/enrrollvendedorentregasupervisor-formulario.component';
 import { UsuarioAlmacenEnrrollListadoComponent } from './usuarioAlmacenEnrroll/usuario-almacen-enrroll-listado/usuario-almacen-enrroll-listado.component';
 import { UsuarioAlmacenEnrrollFormularioComponent } from './usuarioAlmacenEnrroll/usuario-almacen-enrroll-formulario/usuario-almacen-enrroll-formulario.component';
+import { TomainventarioRutaListadoComponent } from './tomainventarioruta/tomainventarioruta-listado/tomainventarioruta-listado.component';
 
 
 
@@ -328,6 +329,16 @@ const routes: Routes = [
 
 
 
+      // Permisos
+      {
+        path: 'tomainventarioruta', component: TomainventarioRutaListadoComponent, data: {
+          title: 'Toma Inventario Ruta',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Toma Inventario Ruta' },
+          ]
+        }
+      },
 
 
 
