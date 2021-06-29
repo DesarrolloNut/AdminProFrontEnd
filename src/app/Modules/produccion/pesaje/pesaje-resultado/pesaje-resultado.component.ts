@@ -13,7 +13,9 @@ export class PesajeResultadoComponent implements OnInit {
 
   ngOnInit(): void {
     let id = Number(this.route.snapshot.paramMap.get('id'));
-    console.log(id)
+    console.log({
+      id
+    })
   }
 
 }

@@ -247,7 +247,7 @@ export class SolicitudComprasFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0], "Error");
         } else {
           this.toastService.success("Realizado", "OK");
-          this.enviarCorreoAutorizacionPendiente(2)
+          this.enviarCorreoAutorizacionPendiente()
           this.router.navigateByUrl('/compras/solicitud-compras');
         }
 
@@ -410,10 +410,15 @@ export class SolicitudComprasFormularioComponent implements OnInit {
       });
   }
 
-  enviarCorreoAutorizacionPendiente(estadoID: number) {
+  enviarCorreoAutorizacionPendiente() {
+
+    let param = {
+      "EstadoAutorizacionSiguiente": 2,
+      "SolicitanteID": Number(this.f.solicitanteID.value)
+    }
 
     this.httpService.DoPostAny<any>(DataApi.SolicitudCompra,
-      "EnviarCorreoAutorizacionPendiente", estadoID).subscribe(response => {
+      "EnviarCorreoAutorizacionPendiente", param).subscribe(response => {
 
         if (!response.ok) {
           // this.toastService.error(response.errores[0]);
