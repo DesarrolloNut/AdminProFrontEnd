@@ -161,11 +161,11 @@
                     </button>
                     <button class="btn btn-sm btn-success mx-2" *ngIf="CambioCantidadConfirmado && !btnGuardarCargando" (click)="SaveDevolucionDetalleVista()"
                     >      <!-- boton cargando -->
-                    <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
-                      <span class="spinner-border spinner-border-sm"></span>
-                  </button>
                       <i class="fa fa-sm fa-check"></i>
                     </button>
+                    <button *ngIf="btnGuardarCargando" disabled class="btn btn-success m-1" type="button">
+                      <span class="spinner-border spinner-border-sm"></span>
+                  </button>
                   </td>
                   <td>
                     <h5> {{item.articulo}}</h5>
