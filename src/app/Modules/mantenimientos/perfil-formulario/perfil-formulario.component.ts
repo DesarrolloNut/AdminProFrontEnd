@@ -200,9 +200,7 @@ export class PerfilFormularioComponent implements OnInit {
 
 
   open1(content1) {
-    this.modalService.open(content1, { ariaLabelledBy: 'modal-basic-title' }).result.then((result) => {
-      this.closeResult = `Closed with: ${result}`;
-    });
+    this.modalService.open(content1, { ariaLabelledBy: 'modal-basic-title' });
   }
 
 

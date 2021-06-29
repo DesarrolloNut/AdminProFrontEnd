@@ -157,7 +157,7 @@
         <div class="modal-body">
             <form [formGroup]="FormularioChangePassword" (ngSubmit)="onSubmitChangePassword()">
                 <div class="form-group col-md-10">
-                    <label for="password"> <i class="fa fa-key"></i> Contraseña (Actual)</label>
+                    <label for="passwordActual"> <i class="fa fa-key"></i> Contraseña (Actual)</label>
                     <input formControlName="passwordActual" type="password" name="passwordActual" id="passwordActual"
                        autocomplete="off"  [ngClass]="{'is-invalid' : submittedPassword && fC.passwordActual.errors,  'form-control':true  }">
                     <div class="invalid-feedback" *ngIf="submittedPassword && fC.passwordActual.errors">
@@ -173,8 +173,8 @@
                         </div>
                     </div>
                     <div class="form-group col-md-10">
-                        <label for="password"> <i class="fa fa-key"></i>Confirmar Contraseña</label>
-                        <input formControlName="passwordConfirm" type="password" name="passwordConfirm" id="password"
+                        <label for="passwordConfirm"> <i class="fa fa-key"></i>Confirmar Contraseña</label>
+                        <input formControlName="passwordConfirm" type="password" name="passwordConfirm" id="passwordConfirm"
                              [ngClass]="{'is-invalid' : submittedPassword && fC.passwordConfirm.errors,  'form-control':true  }">
                         <div class="invalid-feedback" *ngIf="submittedPassword && fC.passwordConfirm.errors">
                             <div *ngIf="fC.passwordConfirm.errors.required  ">Confirma tu clave</div>
