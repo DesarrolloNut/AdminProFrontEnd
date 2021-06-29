@@ -63,7 +63,7 @@ getData() {
       if (x.ok) {
         x.records.forEach(x => x.editarUsuarioConfirmado = true);
         this.data = x.records;
-        console.log(x);
+        // console.log(x);
         this.asignarPagination(x);
       } else {
         this.toastService.error(x.errores[0]);
@@ -91,7 +91,7 @@ SaveChanges(value:TomaInventarioRuta) {
 
 
   this.btnGuardarCargando = true;
-  this.httpService.DoPostAny<any>(DataApi.TomaInventarioRuta, "Update", {UsuarioId: value.usuarioId, ClienteId: value.clienteId}).subscribe(x => {
+  this.httpService.DoPostAny<any>(DataApi.TomaInventarioRuta, "Update", value).subscribe(x => {
 
       if (x.ok) {
         this.getData();
@@ -104,6 +104,19 @@ SaveChanges(value:TomaInventarioRuta) {
       console.error(error);
       this.toastService.error("Error conexion al servidor");
       this.btnGuardarCargando = false;
+    });
+
+  this.httpService.DoPostAny<any>(DataApi.TomaInventarioRuta, "InsertOrUpdateFrecuenciaVisita", value).subscribe(x => {
+
+      if (x.ok) {
+        this.getData();
+      } else {
+        this.toastService.error(x.errores[0]);
+        console.error(x.errores[0]);
+      }
+    }, error => {
+      console.error(error);
+      this.toastService.error("Error conexion al servidor");
     });
     this.onChangeEdit(value);
 
