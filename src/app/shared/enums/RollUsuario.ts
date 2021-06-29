@@ -3,5 +3,6 @@ export enum RollUsuario {
     ADMINISTRADOR = 2,
     SUPERVISOR = 3,
     ENTREGADOR = 4,
-    VENDEDOR = 5
+    VENDEDOR = 5,
+    RECOGEDOR = 12
 }
