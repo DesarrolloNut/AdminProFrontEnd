@@ -1,4 +1,6 @@
+import { HttpEventType, HttpRequest } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
@@ -25,9 +27,17 @@ export class SolicitudComprasListadoComponent implements OnInit {
   paginaTotalRecords: number = 0;
   data: SolicitudCompraListadoViewModel[] = [] //tu modelo
 
+  //modal
+  cargandoCotizaciones: boolean
+  solicitudSeleccionada: SolicitudCompraListadoViewModel;
+  progress: number;
+
+
+
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private authService: AuthenticationService,
+    private modalService: NgbModal,
     public permissionsService: NgxPermissionsService,
   ) { }
 
@@ -76,4 +86,66 @@ export class SolicitudComprasListadoComponent implements OnInit {
     }
 
   }
+
+
+  openModal(content, item: SolicitudCompraListadoViewModel) {
+    this.modalService.open(content, { size: 'lg' });
+    this.solicitudSeleccionada = item
+  }
+
+
+  upload(files) {
+
+    console.log(files)
+
+    if (files.length === 0)
+      return;
+
+    const formData = new FormData();
+
+    for (let file of files)
+      formData.append(file.name, file);
+
+    // const uploadReq = new HttpRequest('POST', `api/Upload`, formData, {
+    //   reportProgress: true,
+    // });
+
+    // const uploadReq = new HttpRequest('POST', `api/Upload`,
+    //   { "SolicitudCompraID": this.solicitudSeleccionada.id, "Files": files }, {
+    //   reportProgress: true,
+    // });
+
+    // this.httpService.http.request(uploadReq).subscribe(event => {
+    //   if (event.type === HttpEventType.UploadProgress)
+    //     this.progress = Math.round(100 * event.loaded / event.total);
+    //   else if (event.type === HttpEventType.Response)
+    //     console.log(event.body);
+
+    //   // this.message = event.body.toString();
+    // });
+
+
+    this.httpService.DoPostAny<any>(DataApi.Upload,
+      "UploadCotizacionesDeSolicitudCompra", { "SolicitudCompraID": this.solicitudSeleccionada.id, "Files": files }).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+        } else {
+          this.toastService.success("Realizado", "OK");
+          // this.router.navigateByUrl('/mantenimientos/almacen');
+        }
+
+        // this.btnGuardarCargando = false;
+      }, error => {
+        // this.btnGuardarCargando = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+
+
+
+  }
 }
+
+
+
+

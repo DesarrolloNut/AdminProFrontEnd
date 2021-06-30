@@ -29,6 +29,7 @@ export enum DataApi {
     Devolucion = 54,
     DevolucionDetalle = 55,
     TomaInventarioRuta = 56,
+    Upload = 57,
 
 
 
@@ -104,6 +105,7 @@ export const dataApiRootMap: { [api: string]: string } = {
     "54": "api/Devolucion",
     "55": "api/DevolucionDetalle",
     "56": "api/TomaInventarioRuta",
+    "57": "api/Upload",
 
 
 

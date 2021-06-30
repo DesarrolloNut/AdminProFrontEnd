@@ -80,6 +80,10 @@
                     date:'dd/MM/yyyy'}}</small>
                 </td>
                 <td>
+                  <button class="btn btn-sm btn-light" type="button" (click)="openModal(modalUploadCotizaciones,item)">
+                    <i class="fa fa-sm fa-upload"></i>
+                  </button>
+
                   <button *ngIf="item.estadoID == 1" class="btn btn-sm btn-info" [routerLink]="[item.id]">
                     <i class="fa fa-sm fa-edit"></i>
                   </button>
@@ -117,3 +121,45 @@
     </div>
   </div>
 </div>
+
+
+
+
+<ng-template #modalUploadCotizaciones let-modal>
+  <div class="container-fluid">
+    <div class="row" *ngIf="!cargandoCotizaciones">
+      <div class="col">
+        <div class="modal-header">
+          <h4 class="modal-title" id="modal-title">Confirmación</h4>
+          <button type="button" class="close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+              <div class="box-part text-center border rounded border-success">
+                <!-- <i class="fa text-success  fa-dollar-sign fa-3x" aria-hidden="true"></i> -->
+                <input accept="application/pdf" class="d-none"
+                  (change)="upload(file.files)" #file multiple type="file" />
+
+                <button class="btn btn-success" (click)="file.click()"> <i class="fa fa-upload text-white"></i> Subir
+                  archivo</button>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" (click)="modal.close('Close click')">Cancel</button>
+          <!-- <button type="button" class="btn btn-info" (click)="onBtnModalOk()">Ok</button> -->
+        </div>
+      </div>
+    </div>
+
+    <app-loading-listado [hidden]="!cargandoCotizaciones"></app-loading-listado>
+
+  </div>
+</ng-template>
