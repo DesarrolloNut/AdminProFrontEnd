@@ -917,6 +917,46 @@ export const ROUTES: RouteInfo[] = [
       },
     ],
   },
+
+
+  {
+    path: '/',
+    title: 'Reportes',
+    label: '',
+    icon: 'mdi mdi-file-chart',
+    class: 'has-arrow',
+    labelClass: '',
+    extralink: false,
+    permisos: ["reportes"],
+    submenu: [
+      {
+        path: '/',
+        label: '',
+        labelClass: '',
+        title: 'Inventario',
+        icon: '',
+        class: 'has-arrow',
+        extralink: false,
+        permisos: ["reportes_inventario"],
+        submenu: [
+          {
+            path: '/reportes/inventario/canastos',
+            label: '',
+            labelClass: '',
+            title: 'Canastos',
+            icon: '',
+            class: '',
+            extralink: false,
+            permisos: ["reportes_inventario_canastos"],
+            submenu: [
+            ],
+          },
+        ],
+      },
+
+    ],
+  },
+
   {
     path: '',
     title: 'Configuraciones',
@@ -984,4 +1024,8 @@ export const ROUTES: RouteInfo[] = [
 
     ]
   },
+
+
+
+
 ];
