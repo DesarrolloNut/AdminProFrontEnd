@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
+import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
@@ -26,6 +27,7 @@ export class SolicitudComprasListadoComponent implements OnInit {
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
+    private authService: AuthenticationService,
     public permissionsService: NgxPermissionsService,
   ) { }
 
@@ -36,13 +38,16 @@ export class SolicitudComprasListadoComponent implements OnInit {
   getData() {
     this.Cargando = true;
 
-    let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
+    let parametros: Parametro[] = [
+      { key: "Search", value: this.Search },
+      { key: "usuarioID", value: this.authService.tokenDecoded.nameid },
+    ]
 
     this.httpService.GetAllWithPagination<SolicitudCompraListadoViewModel>(DataApi.SolicitudCompra, "GetSolicitudCompraListado", "ID", this.paginaNumeroActual,
       this.paginaSize, true, parametros).subscribe(x => {
 
         if (x.ok) {
-          this.data = x.records; 
+          this.data = x.records;
           this.asignarPagination(x);
         } else {
           this.toastService.error(x.errores[0]);
