@@ -102,9 +102,10 @@ export class SolicitudComprasListadoComponent implements OnInit {
       return;
 
     const formData = new FormData();
+    formData.append("solicitudCompraID", this.solicitudSeleccionada.id + '');
 
     for (let file of files)
-      formData.append(file.name, file);
+      formData.append("files", file);
 
     // const uploadReq = new HttpRequest('POST', `api/Upload`, formData, {
     //   reportProgress: true,
@@ -126,7 +127,7 @@ export class SolicitudComprasListadoComponent implements OnInit {
 
 
     this.httpService.DoPostAny<any>(DataApi.Upload,
-      "UploadCotizacionesDeSolicitudCompra", { "SolicitudCompraID": this.solicitudSeleccionada.id, "Files": files }).subscribe(response => {
+      "UploadCotizacionesDeSolicitudCompra", formData).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");

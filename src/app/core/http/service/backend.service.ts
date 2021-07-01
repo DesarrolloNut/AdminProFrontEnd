@@ -38,15 +38,21 @@ export class BackendService {
         return this.http.post<ResponseContenido<T>>(this.baseUrl + dataApiRootMap[api] + "/" + Method, request);
     }
 
-    public DoPostAny<T>(api: DataApi, Method: string, request: any): Observable<ResponseContenido<T>> {
+    public DoPostAny<T>(api: DataApi, Method: string, request: any, reportProgress = false): Observable<ResponseContenido<T>> {
         return this.http.post<ResponseContenido<T>>(this.baseUrl + dataApiRootMap[api] + "/" + Method, request);
-        //return this.http.post<ResponseContenido<T>>(this.baseUrl + this.dataApiRootMap[api] + "/" + Method, request, httpOptions);
     }
+
+    // public DoPostUpload<T>(api: DataApi, Method: string, files: File[]) {
+    //     const formData = new FormData();
+    //     files.forEach(f => { formData.append('file', f, f.name); })
+
+    //     return this.http.post(this.baseUrl + dataApiRootMap[api] + "/" + Method, formData, { reportProgress: true, observe: 'events' });
+    // }
 
     // public DoPostSmartWebService(Method: string, request: any): Observable<any> {
     //     const proxyurl = "https://cors-anywhere.herokuapp.com/";
     //     const url = "http://lacortina.ddns.net/wscontacto/InsertaServicioscitas.asmx"; // site that doesn’t send Access-Control-*
-      
+
     //     const headers = {
     //         method: "POST",
     //         headers: {
@@ -72,4 +78,4 @@ export class BackendService {
     }
 
 
-} 
+}
