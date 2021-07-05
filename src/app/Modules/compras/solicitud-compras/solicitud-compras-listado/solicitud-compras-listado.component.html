@@ -130,7 +130,7 @@
     <div class="row" *ngIf="!cargandoCotizaciones">
       <div class="col">
         <div class="modal-header">
-          <h4 class="modal-title" id="modal-title">Confirmación</h4>
+          <h4 class="modal-title" id="modal-title">Subida de cotizaciones</h4>
           <button type="button" class="close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -138,23 +138,80 @@
         <div class="modal-body">
 
           <div class="row">
-            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-              <div class="box-part text-center border rounded border-success">
+            <div class="col-12">
+              <div class="box-part text-center">
                 <!-- <i class="fa text-success  fa-dollar-sign fa-3x" aria-hidden="true"></i> -->
-                <input accept="application/pdf" class="d-none"
-                  (change)="upload(file.files)" #file multiple type="file" />
+                <input accept="application/pdf" class="d-none" (change)="setFiles(file.files)" #file multiple
+                  type="file" />
 
-                <button class="btn btn-success" (click)="file.click()"> <i class="fa fa-upload text-white"></i> Subir
-                  archivo</button>
+                <button class="btn btn-info" (click)="file.click()"> <i class="fa fa-upload text-white"></i>
+                  Seleccionar
+                  archivos</button>
 
               </div>
+              <hr>
             </div>
           </div>
+
+          <div class="row">
+
+            <div class="col-md-6 p-2 text-center border-light border rounded-sm"
+              *ngFor="let item of files; let i = index">
+
+              <div class="row">
+
+                <div class="col-12 text-right">
+                  <button class="btn btn-sm" (click)="onDeleteitem(i)"><i class="fa fa-times"></i></button>
+                </div>
+
+                <div class="col-12 text-center">
+                  <span>
+                    <i class="fa fa-file-pdf text-danger fa-3x"></i>
+                  </span>
+                  <h6 class="mt-2 text-info">{{item.name}}</h6>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="row">
+            <div class="col-12">
+              <h6>Archivos subidos</h6>
+            </div>
+            <div class="col-md-6 p-2 text-center border-light border rounded-sm"
+              *ngFor="let item of filesSubidos; let i = index">
+
+              <div class="row">
+
+                <div class="col-12 text-right">
+                  <a class="btn btn-sm btn-info"><i class="fa fa-download"></i></a>
+                  <button class="btn btn-sm" (click)="onDeleteitem(i)"><i class="fa fa-times"></i></button>
+                </div>
+
+                <div class="col-12 text-center">
+                  <span>
+                    <i class="fa fa-file-pdf text-danger fa-3x"></i>
+                  </span>
+                  <h6 class="mt-2 text-info">{{item.nombre}}</h6>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
 
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-secondary" (click)="modal.close('Close click')">Cancel</button>
-          <!-- <button type="button" class="btn btn-info" (click)="onBtnModalOk()">Ok</button> -->
+          <button type="button" class="btn btn-info" *ngIf="files.length > 0" (click)="subirArchivosAlServidor()">
+            <span>Subir {{files.length}} archivo</span> <span *ngIf="files.length > 1">s</span></button>
         </div>
       </div>
     </div>

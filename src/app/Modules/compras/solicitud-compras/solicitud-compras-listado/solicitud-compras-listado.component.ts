@@ -8,6 +8,7 @@ import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
+import { Archivo } from 'src/app/shared/model/Archivo';
 import { SolicitudCompraListadoViewModel } from '../models/SolicitudCompraListadoViewModel';
 
 @Component({
@@ -31,6 +32,8 @@ export class SolicitudComprasListadoComponent implements OnInit {
   cargandoCotizaciones: boolean
   solicitudSeleccionada: SolicitudCompraListadoViewModel;
   progress: number;
+  files: any[] = [];
+  filesSubidos: Archivo[];
 
 
 
@@ -91,40 +94,55 @@ export class SolicitudComprasListadoComponent implements OnInit {
   openModal(content, item: SolicitudCompraListadoViewModel) {
     this.modalService.open(content, { size: 'lg' });
     this.solicitudSeleccionada = item
+    this.files = []
+    this.getArchivosSubidos()
   }
 
 
-  upload(files) {
+  setFiles(files) {
 
-    console.log(files)
+    this.files = []
+    for (let i = 0; i < files.length; i++) {
+      const element = files[i];
+      this.files.push(element)
+    }
 
-    if (files.length === 0)
-      return;
+  }
+
+  onDeleteitem(index: number) {
+    this.files.splice(index, 1);
+  }
+
+  onDeleteitemSubido(id: number) {
+
+
+    this.httpService.DoPostAny<any>(DataApi.SolicitudCompra,
+      "GetSolicitudCompraCotizacionesArchivos", this.solicitudSeleccionada.id).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+        } else {
+          console.log(response.records)
+          this.filesSubidos = response.records;
+          // this.router.navigateByUrl('/mantenimientos/almacen');
+        }
+
+        // this.btnGuardarCargando = false;
+      }, error => {
+        // this.btnGuardarCargando = false; 
+        this.toastService.error("Error conexion al servidor");
+      });
+
+  }
+
+
+  subirArchivosAlServidor() {
 
     const formData = new FormData();
     formData.append("solicitudCompraID", this.solicitudSeleccionada.id + '');
 
-    for (let file of files)
+    for (let file of this.files)
       formData.append("files", file);
-
-    // const uploadReq = new HttpRequest('POST', `api/Upload`, formData, {
-    //   reportProgress: true,
-    // });
-
-    // const uploadReq = new HttpRequest('POST', `api/Upload`,
-    //   { "SolicitudCompraID": this.solicitudSeleccionada.id, "Files": files }, {
-    //   reportProgress: true,
-    // });
-
-    // this.httpService.http.request(uploadReq).subscribe(event => {
-    //   if (event.type === HttpEventType.UploadProgress)
-    //     this.progress = Math.round(100 * event.loaded / event.total);
-    //   else if (event.type === HttpEventType.Response)
-    //     console.log(event.body);
-
-    //   // this.message = event.body.toString();
-    // });
-
 
     this.httpService.DoPostAny<any>(DataApi.Upload,
       "UploadCotizacionesDeSolicitudCompra", formData).subscribe(response => {
@@ -133,18 +151,43 @@ export class SolicitudComprasListadoComponent implements OnInit {
           this.toastService.error(response.errores[0], "Error");
         } else {
           this.toastService.success("Realizado", "OK");
+          this.modalService.dismissAll()
           // this.router.navigateByUrl('/mantenimientos/almacen');
         }
 
         // this.btnGuardarCargando = false;
       }, error => {
-        // this.btnGuardarCargando = false;
+        // this.btnGuardarCargando = false; 
         this.toastService.error("Error conexion al servidor");
       });
 
 
+  }
+
+  getArchivosSubidos() {
+
+    this.httpService.DoPostAny<Archivo>(DataApi.SolicitudCompra,
+      "GetSolicitudCompraCotizacionesArchivos", this.solicitudSeleccionada.id).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+        } else {
+          console.log(response.records)
+          this.filesSubidos = response.records;
+          // this.router.navigateByUrl('/mantenimientos/almacen');
+        }
+
+        // this.btnGuardarCargando = false;
+      }, error => {
+        // this.btnGuardarCargando = false; 
+        this.toastService.error("Error conexion al servidor");
+      });
 
   }
+
+
+
+
 }
 
 
