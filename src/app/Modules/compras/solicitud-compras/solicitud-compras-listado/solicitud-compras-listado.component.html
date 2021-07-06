@@ -177,9 +177,17 @@
 
           </div>
 
-
           <div class="row">
+            <div class="col text-right">
+              <button type="button" class="btn btn-info" *ngIf="files.length > 0" (click)="subirArchivosAlServidor()">
+                <span>Subir {{files.length}} archivo</span> <span *ngIf="files.length > 1">s</span></button>
+            </div>
+          </div>
+
+
+          <div class="row" *ngIf="filesSubidos.length > 0">
             <div class="col-12">
+              <hr>
               <h6>Archivos subidos</h6>
             </div>
             <div class="col-md-6 p-2 text-center border-light border rounded-sm"
@@ -188,8 +196,12 @@
               <div class="row">
 
                 <div class="col-12 text-right">
-                  <a class="btn btn-sm btn-info"><i class="fa fa-download"></i></a>
-                  <button class="btn btn-sm" (click)="onDeleteitem(i)"><i class="fa fa-times"></i></button>
+
+                  <!-- <button (click)="downloadFile(item.id)" class="btn btn-sm btn-info"><i
+                      class="fa fa-download"></i></button> -->
+
+                  <button class="btn btn-sm" (click)="onDeleteitemSubido(item.id,i)"><i
+                      class="fa fa-times"></i></button>
                 </div>
 
                 <div class="col-12 text-center">
@@ -204,14 +216,6 @@
             </div>
 
           </div>
-
-
-
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" (click)="modal.close('Close click')">Cancel</button>
-          <button type="button" class="btn btn-info" *ngIf="files.length > 0" (click)="subirArchivosAlServidor()">
-            <span>Subir {{files.length}} archivo</span> <span *ngIf="files.length > 1">s</span></button>
         </div>
       </div>
     </div>

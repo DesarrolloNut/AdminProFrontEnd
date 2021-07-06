@@ -113,18 +113,16 @@ export class SolicitudComprasListadoComponent implements OnInit {
     this.files.splice(index, 1);
   }
 
-  onDeleteitemSubido(id: number) {
+  onDeleteitemSubido(id: number, index: number) {
 
-
-    this.httpService.DoPostAny<any>(DataApi.SolicitudCompra,
-      "GetSolicitudCompraCotizacionesArchivos", this.solicitudSeleccionada.id).subscribe(response => {
+    this.httpService.DoPostAny<any>(DataApi.Upload,
+      "DeleteFile", id).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
         } else {
-          console.log(response.records)
-          this.filesSubidos = response.records;
-          // this.router.navigateByUrl('/mantenimientos/almacen');
+
+
         }
 
         // this.btnGuardarCargando = false;
@@ -185,7 +183,29 @@ export class SolicitudComprasListadoComponent implements OnInit {
 
   }
 
+  // downloadFile(id: number) {
 
+  //   this.httpService.DoPostAny<Archivo>(DataApi.Upload,
+  //     "DownloadFile", id).subscribe(response => {
+
+  //       // if (!response.ok) {
+  //       //   this.toastService.error(response.errores[0], "Error");
+  //       // } else {
+  //       //   console.log(response)
+  //       //   // this.filesSubidos = response.records;
+  //       //   // this.router.navigateByUrl('/mantenimientos/almacen');
+  //       // }
+
+  //       console.log(response)
+
+
+  //       // this.btnGuardarCargando = false;
+  //     }, error => {
+  //       // this.btnGuardarCargando = false; 
+  //       this.toastService.error("Error conexion al servidor");
+  //     });
+
+  // }
 
 
 }
