@@ -97,7 +97,6 @@ export class SolicitudComprasFormularioComponent implements OnInit {
       fechaSolicitud: [new Date(),],
       compradorID: [null, [Validators.required]],
       fechaEntrega: [new Date(), [Validators.required]],
-      anexoURL: [null,],
       proveedorID: [null, [Validators.required]],
       tipoSolicitudID: [1, [Validators.required]],
       comentario: [null,],

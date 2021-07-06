@@ -12,7 +12,6 @@ export class SolicitudCompra {
     fechaSolicitud: Date
     compradorID: number
     fechaEntrega: Date
-    anexoURL: string
     comentario: string
     proveedorID: number
     tipoSolicitudID: number
