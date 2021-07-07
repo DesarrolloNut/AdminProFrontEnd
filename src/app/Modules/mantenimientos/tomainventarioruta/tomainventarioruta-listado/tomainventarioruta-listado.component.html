@@ -33,14 +33,14 @@
                           <tr>
                               <th></th>
                               <th>Nombre</th>
-                              <th>Cantidad Total</th>
-                              <th>Cantidad Disponible</th>
+                              <th>Total</th>
+                              <th>Disponible</th>
                               <th>Merchandising</th>
                               <th>Vendedor</th>
                               <th>Zona</th>
-                              <th>Recogedor</th>
+                              <th>Chofer</th>
                               <th>Dia Visita</th>
-                              <th>Orden Visita</th>
+                              <!-- <th>Orden Visita</th> -->
                           </tr>
                       </thead>
                       <tbody [hidden]="Cargando">
@@ -94,10 +94,10 @@
                                   [(ngModel)]="item.diaId" [clearable]="false" notFoundText="No resultados" [disabled]="item.editarUsuarioConfirmado">
                                 </ng-select>
                               </td>
-                              <td>
+                              <!-- <td>
                                   <span *ngIf="item.editarUsuarioConfirmado"> {{item.ordenVisita}}</span>
                                   <input type="number" class="form-control" [(ngModel)]="item.ordenVisita" *ngIf="!item.editarUsuarioConfirmado">
-                              </td>
+                              </td> -->
 
 
                           </tr>
@@ -124,6 +124,9 @@
                           <option [ngValue]="5">5 registro por pagina</option>
                           <option [ngValue]="10">10 registro por pagina</option>
                           <option [ngValue]="15">15 registro por pagina</option>
+                          <option [ngValue]="50">50 registro por pagina</option>
+                          <option [ngValue]="100">100 registro por pagina</option>
+                          <option [ngValue]="150">150 registro por pagina</option>
                       </select>
                   </div>
               </div>
