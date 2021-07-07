@@ -130,6 +130,17 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ["compras_solicitud_compra"],
       },
+      {
+        path: '/compras/orden-compras',
+        label: '',
+        labelClass: '',
+        title: 'Orden de compras',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["compras_orden_compra"],
+      },
       // {
       //   path: '/compras/solicitud-compras-autorizacion',
       //   label: '',

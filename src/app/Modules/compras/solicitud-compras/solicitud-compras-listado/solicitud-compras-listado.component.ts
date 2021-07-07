@@ -33,7 +33,7 @@ export class SolicitudComprasListadoComponent implements OnInit {
   solicitudSeleccionada: SolicitudCompraListadoViewModel;
   progress: number;
   files: any[] = [];
-  filesSubidos: Archivo[];
+  filesSubidos: Archivo[] = [];
 
 
 
@@ -170,7 +170,6 @@ export class SolicitudComprasListadoComponent implements OnInit {
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
         } else {
-          console.log(response.records)
           this.filesSubidos = response.records;
           // this.router.navigateByUrl('/mantenimientos/almacen');
         }
