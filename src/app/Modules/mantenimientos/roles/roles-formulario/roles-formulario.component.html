@@ -44,18 +44,18 @@
                       </div>
                   </div> -->
 
-                  <!-- <div class="form-group col-md-12">
-                      <label for="example-email">Categoria</label>
-                      <ng-select [items]="sintomaCategorias" bindLabel="nombre" bindValue="codigo"
-                          [loading]="loadingSintomaCategorias" [clearable]="false"
-                          [ngClass]="{'form-control border-danger p-0' : submitted && f.categoriaID.errors }"
-                          notFoundText="No resultados" formControlName="categoriaID">
+                  <div class="form-group col-md-6">
+                      <label for="example-email">Ruta Tipo</label>
+                      <ng-select [items]="rutas" bindLabel="nombre" bindValue="codigo"
+                          [loading]="loadingRutas" [clearable]="false"
+                          [ngClass]="{'form-control border-danger p-0' : submitted && f.rutaTipoId.errors }"
+                          notFoundText="No resultados" formControlName="rutaTipoId">
                       </ng-select>
-                      <div *ngIf="submitted && f.categoriaID.errors"
+                      <div *ngIf="submitted && f.rutaTipoId.errors"
                           class="text-danger small animated animated--fade-in">
-                          <div *ngIf="f.categoriaID.errors.required  ">El campo es obligatorio</div>
+                          <div *ngIf="f.rutaTipoId.errors.required  ">El campo es obligatorio</div>
                       </div>
-                  </div> -->
+                  </div>
 
                   <div class="form-group col-md-12">
                       <label for="descripcion"> Descripción</label>

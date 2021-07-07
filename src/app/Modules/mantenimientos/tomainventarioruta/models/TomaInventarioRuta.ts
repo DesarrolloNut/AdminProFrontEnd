@@ -13,6 +13,7 @@ export class TomaInventarioRuta {
     this.recogedor = '';
     this.diaId = 0;
     this.ordenVisita = 0;
+    this.zona = '';
     this.editarUsuarioConfirmado = true;
     this.cancelarUsuarioConfirmado = false;
     this.cambioUsuarioConfirmado = false;
@@ -31,6 +32,7 @@ export class TomaInventarioRuta {
   recogedor: string;
   diaId: number;
   ordenVisita: number;
+  zona: string;
   editarUsuarioConfirmado: boolean;
   cancelarUsuarioConfirmado: boolean;
   cambioUsuarioConfirmado: boolean;
