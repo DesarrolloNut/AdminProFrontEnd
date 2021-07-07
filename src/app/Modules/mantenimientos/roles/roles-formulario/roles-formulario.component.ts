@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
+import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { Roles } from '../models/Roles';
 
 @Component({
@@ -21,6 +22,8 @@ export class RolesFormularioComponent implements OnInit {
   actualizando = false;
   loadingSintomaCategorias: boolean;
   sintomaCategorias: any[];
+  loadingRutas: boolean;
+  rutas: ComboBox[];
 
   constructor(
     private toastService: ToastrService,
@@ -36,6 +39,7 @@ export class RolesFormularioComponent implements OnInit {
       this.getItem(id);
       this.actualizando = true;
     }
+    this.getRutas();
     this.CreateForm();
   }
 
@@ -46,6 +50,7 @@ export class RolesFormularioComponent implements OnInit {
       id: [0],
       nombre: [null, [Validators.required]],
       descripcion: [null,],
+      rutaTipoId: [null,],
     });
   }
 
@@ -73,6 +78,27 @@ export class RolesFormularioComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
       });
   }
+
+  getRutas() {
+    this.loadingRutas = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetRutaTipoComboBox", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+          this.rutas = response.records;
+          // console.table(this.confirmed)
+        }
+
+        this.loadingRutas = false;
+      }, error => {
+        this.loadingRutas = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
 
 
   onSubmit() {

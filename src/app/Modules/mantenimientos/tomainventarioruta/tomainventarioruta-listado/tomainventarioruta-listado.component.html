@@ -33,9 +33,11 @@
                           <tr>
                               <th></th>
                               <th>Nombre</th>
-                              <th>Cantidad</th>
+                              <th>Cantidad Total</th>
+                              <th>Cantidad Disponible</th>
                               <th>Merchandising</th>
                               <th>Vendedor</th>
+                              <th>Zona</th>
                               <th>Recogedor</th>
                               <th>Dia Visita</th>
                               <th>Orden Visita</th>
@@ -66,8 +68,10 @@
                                   <span class="small d-block fon font-weight-bold"> Fecha: {{item.fecha | date:'medium'}}</span>
                               </td>
                               <td>
-                                  <span class="d-block small"> Total: <span class="badge badge-secondary font-weight-bold">{{item.cantidad | number:'1.2-5'}} </span></span>
-                                  <span  class="d-block small"> Disponible: <span class="badge badge-secondary font-weight-bold">{{item.disponible | number:'1.2-5'}} </span></span>
+                                  <span class="d-block font-weight-bold"> {{item.cantidad | number:'1.2-5'}} </span>
+                              </td>
+                              <td>
+                                  <span  class="d-block font-weight-bold"> {{item.disponible | number:'1.2-5'}} </span>
                               </td>
                               <td>
                                   <span> {{item.merchandising}}</span>
@@ -75,6 +79,9 @@
                               <td>
                                   <span> {{item.vendedor}}</span>
                               </td>
+                              <td>
+                                <span> {{item.zona}}</span>
+                            </td>
                               <td>
                                 <span *ngIf="item.editarUsuarioConfirmado"> {{item.recogedor}}</span>
                                 <ng-select [items]="Usuarios" bindLabel="nombre" bindValue="codigo" style="width: 200px;" *ngIf="!item.editarUsuarioConfirmado"
