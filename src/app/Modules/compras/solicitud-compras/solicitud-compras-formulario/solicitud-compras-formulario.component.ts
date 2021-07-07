@@ -77,7 +77,7 @@ export class SolicitudComprasFormularioComponent implements OnInit {
 
     this.getDepartamentos()
     this.getSucursales()
-    this.getProveedores()
+    // this.getProveedores()
     this.getCompradores()
     this.getSolicitudCompraTipo()
     this.getArticulosCompra()
@@ -96,8 +96,8 @@ export class SolicitudComprasFormularioComponent implements OnInit {
       estadoID: [0,],
       fechaSolicitud: [new Date(),],
       compradorID: [null, [Validators.required]],
-      fechaEntrega: [new Date(), [Validators.required]],
-      proveedorID: [null, [Validators.required]],
+      // fechaEntrega: [new Date(), [Validators.required]],
+      proveedorID: [0],
       tipoSolicitudID: [1, [Validators.required]],
       comentario: [null,],
       solicitanteDepartamentoID: [0,],
@@ -303,25 +303,25 @@ export class SolicitudComprasFormularioComponent implements OnInit {
       });
   }
 
-  getProveedores() {
-    this.loadingProveedores = true;
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetProveedores", null).subscribe(response => {
+  // getProveedores() {
+  //   this.loadingProveedores = true;
+  //   this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+  //     "GetProveedores", null).subscribe(response => {
 
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          this.proveedores = response.records;
-        }
-        this.loadingProveedores = false;
-      }, error => {
-        this.loadingProveedores = false;
-        this.toastService.error("No se pudo obtener los Proveedores", "Error conexion al servidor");
-        setTimeout(() => {
-          this.getProveedores();
-        }, 1000);
-      });
-  }
+  //       if (!response.ok) {
+  //         this.toastService.error(response.errores[0]);
+  //       } else {
+  //         this.proveedores = response.records;
+  //       }
+  //       this.loadingProveedores = false;
+  //     }, error => {
+  //       this.loadingProveedores = false;
+  //       this.toastService.error("No se pudo obtener los Proveedores", "Error conexion al servidor");
+  //       setTimeout(() => {
+  //         this.getProveedores();
+  //       }, 1000);
+  //     });
+  // }
 
   getCompradores() {
     this.loadingCompradores = true;

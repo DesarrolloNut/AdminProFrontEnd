@@ -37,7 +37,6 @@
                 <th>Destino</th>
                 <th></th>
                 <th></th>
-                <th></th>
               </tr>
             </thead>
             <tbody [hidden]="Cargando">
@@ -54,7 +53,7 @@
                   <div class="d-flex align-items-center">
                     <i class="fa fa-user fa-3x text-light"></i>
                     <div class="ml-3">
-                      <p class="font-bold mb-0"><span>{{item.solicitante | titlecase }} </span></p>
+                      <p class="mb-0"><span class="small font-weight-bold">{{item.solicitante | titlecase }} </span></p>
                       <small class="text-info"> <i class="fa fa-warehouse"></i> {{item.departamentoSolicitante
                         }}</small> |
                       <small class="text-info"><i class="fa fa-map-marker"></i> {{item.sucursalSolicitante }}</small>
@@ -67,17 +66,12 @@
                   <small><i class="fa fa-map-marker"></i> {{item.sucursalDestino }}</small>
                 </td>
                 <td>
-                  <small> <i class="fa fa-user text-muted"></i> Comprador: {{item.comprador}}</small>
-                  <br>
-                  <small> <i class="fa fa-user-circle text-muted"></i> Proveedor: {{item.proveedor}}</small>
-                </td>
-                <td>
                   <small class="text-info font-weight-bold"> <i class="fa fa-clock "></i> Solicitud:
                     {{item.fechaSolicitud|
-                    date:'M/d/yy, h:mm a'}}</small>
-                  <br>
-                  <small> <i class="fa fa-calendar-alt text-muted"></i> Entrega: {{item.fechaEntrega |
-                    date:'dd/MM/yyyy'}}</small>
+                    date:'M/d/yy, h:mm a'}}</small> <br>
+                  <small> <i class="fa fa-user text-muted"></i> Comprador: {{item.comprador}}</small>
+                  <!-- <br>
+                  <small> <i class="fa fa-user-circle text-muted"></i> Proveedor: {{item.proveedor}}</small> -->
                 </td>
                 <td>
                   <button class="btn btn-sm btn-light" type="button" (click)="openModal(modalUploadCotizaciones,item)">
@@ -130,7 +124,7 @@
     <div class="row" *ngIf="!cargandoCotizaciones">
       <div class="col">
         <div class="modal-header">
-          <h4 class="modal-title" id="modal-title">Subida de cotizaciones</h4>
+          <h4 class="modal-title" id="modal-title">Subida de anexos</h4>
           <button type="button" class="close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
           </button>

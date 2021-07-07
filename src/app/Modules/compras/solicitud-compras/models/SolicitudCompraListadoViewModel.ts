@@ -19,7 +19,7 @@ export class SolicitudCompraListadoViewModel {
     comprador: string
     proveedor: string
     fechaSolicitud: Date
-    fechaEntrega: Date
+    // fechaEntrega: Date
     cargando: boolean
 
 }
