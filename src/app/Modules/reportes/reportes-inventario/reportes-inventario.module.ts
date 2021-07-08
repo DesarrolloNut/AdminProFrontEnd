@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 
 import { ReportesInventarioRoutingModule } from './reportes-inventario-routing.module';
 import { ReportesInventarioComponent } from './reportes-inventario.component';
-import { ReporteCanastosComponent } from './reporte-canastos/reporte-canastos.component';
 import { SharedModule } from '../../shared/shared.module';
+import { ReporteExistenciaComponent } from './reporte-existencia/reporte-existencia.component';
 
 
 @NgModule({
-  declarations: [ReportesInventarioComponent, ReporteCanastosComponent],
+  declarations: [ReportesInventarioComponent, ReporteExistenciaComponent],
   imports: [
     CommonModule,
     SharedModule,

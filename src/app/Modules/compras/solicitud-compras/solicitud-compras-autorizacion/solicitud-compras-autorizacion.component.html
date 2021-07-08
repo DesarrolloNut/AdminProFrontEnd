@@ -70,8 +70,7 @@
                                     </ng-template>
 
 
-                                    <ng-template
-                                        [ngIf]="item.estadoID == estadoAutorizacionUsuario && item.estadoID != estadoAutorizacionFinal">
+                                    <ng-template [ngIf]="item.estadoID == estadoAutorizacionUsuario ">
 
                                         <button *ngIf="!item.cargando" class="btn btn-sm btn-warning m-1"
                                             (click)="openModal(modalConfirm,1,item)">
@@ -86,25 +85,6 @@
                                         </button>
 
                                     </ng-template>
-
-
-
-                                    <ng-template
-                                        ngxPermissionsOnly="mantenimientos_listas_precios_autorizacion_puede_reiniciar_precio">
-
-                                        <!-- <button *ngIf="!item.cargando && item.estadoID != estadoIDAutorizacionDefault"
-                                            class="btn btn-sm btn-light m-1" (click)="desautorizar(item)">
-                                            <i class="fa fa-sm fa-redo-alt"></i>
-                                        </button> -->
-
-                                        <!-- boton cargando -->
-                                        <!-- <button *ngIf="item.cargando && !isAutorizando " disabled
-                                            class="btn btn-light m-1" type="button">
-                                            <span class="spinner-border spinner-border-sm"></span>
-                                        </button> -->
-
-                                    </ng-template>
-
 
                                 </td>
                                 <td>
@@ -141,9 +121,9 @@
                                     <small class="text-info font-weight-bold"> <i class="fa fa-clock "></i> Solicitud:
                                         {{item.fechaSolicitud|
                                         date:'M/d/yy, h:mm a'}}</small>
-                                    <br>
+                                    <!-- <br>
                                     <small> <i class="fa fa-calendar-alt text-muted"></i> Entrega: {{item.fechaEntrega |
-                                        date:'dd/MM/yyyy'}}</small>
+                                        date:'dd/MM/yyyy'}}</small> -->
                                 </td>
                                 <!-- <td>
                                     <button class="btn btn-sm btn-info" [routerLink]="[item.id]">

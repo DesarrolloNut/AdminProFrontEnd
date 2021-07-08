@@ -951,14 +951,14 @@ export const ROUTES: RouteInfo[] = [
         permisos: ["reportes_inventario"],
         submenu: [
           {
-            path: '/reportes/inventario/canastos',
+            path: '/reportes/inventario/existencia',
             label: '',
             labelClass: '',
-            title: 'Canastos',
+            title: 'Existencia',
             icon: '',
             class: '',
             extralink: false,
-            permisos: ["reportes_inventario_canastos"],
+            permisos: ["reportes_inventario_existencia"],
             submenu: [
             ],
           },

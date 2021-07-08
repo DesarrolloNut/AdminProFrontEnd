@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { ReporteCanastosComponent } from './reporte-canastos/reporte-canastos.component';
+import { Routes, RouterModule } from '@angular/router'; 
+import { ReporteExistenciaComponent } from './reporte-existencia/reporte-existencia.component';
 import { ReportesInventarioComponent } from './reportes-inventario.component';
 
 
@@ -11,12 +11,12 @@ const routes: Routes = [
     children: [
 
       {
-        path: 'canastos', component: ReporteCanastosComponent, data: {
-          title: 'Reporte de canastos',
+        path: 'existencia', component: ReporteExistenciaComponent, data: {
+          title: 'Reporte de existencia',
           urls: [
             { title: 'Reportes' },
-            { title: 'Reporte de canastos' },
-            { title: 'Canastos' },
+            { title: 'Reporte de inventario' },
+            { title: 'Existencia' },
           ]
         }
       },
