@@ -428,6 +428,17 @@ export const ROUTES: RouteInfo[] = [
         permisos: ["mantenimientos_articulo"],
       },
       {
+        path: '/mantenimientos/articulo-categoria',
+        label: '',
+        labelClass: '',
+        title: 'Artículos Categorias',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_articulo_categoria"],
+      },
+      {
         path: '/mantenimientos/actividadEconomica',
         label: '',
         labelClass: '',

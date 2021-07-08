@@ -89,6 +89,8 @@ import { EnrrollvendedorentregasupervisorFormularioComponent } from './enrrollve
 import { UsuarioAlmacenEnrrollListadoComponent } from './usuarioAlmacenEnrroll/usuario-almacen-enrroll-listado/usuario-almacen-enrroll-listado.component';
 import { UsuarioAlmacenEnrrollFormularioComponent } from './usuarioAlmacenEnrroll/usuario-almacen-enrroll-formulario/usuario-almacen-enrroll-formulario.component';
 import { TomainventarioRutaListadoComponent } from './tomainventarioruta/tomainventarioruta-listado/tomainventarioruta-listado.component';
+import { ArticulosCategoriasListadoComponent } from './articulosCategorias/articulos-categorias-listado/articulos-categorias-listado.component';
+import { ArticulosCategoriasFormularioComponent } from './articulosCategorias/articulos-categorias-formulario/articulos-categorias-formulario.component';
 
 
 
@@ -131,7 +133,9 @@ import { TomainventarioRutaListadoComponent } from './tomainventarioruta/tomainv
     EnrrollvendedorentregasupervisorFormularioComponent,
     UsuarioAlmacenEnrrollListadoComponent,
     UsuarioAlmacenEnrrollFormularioComponent,
-    TomainventarioRutaListadoComponent
+    TomainventarioRutaListadoComponent,
+    ArticulosCategoriasFormularioComponent,
+    ArticulosCategoriasListadoComponent
 
   ],
 

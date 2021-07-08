@@ -79,6 +79,8 @@ import { EnrrollvendedorentregasupervisorFormularioComponent } from './enrrollve
 import { UsuarioAlmacenEnrrollListadoComponent } from './usuarioAlmacenEnrroll/usuario-almacen-enrroll-listado/usuario-almacen-enrroll-listado.component';
 import { UsuarioAlmacenEnrrollFormularioComponent } from './usuarioAlmacenEnrroll/usuario-almacen-enrroll-formulario/usuario-almacen-enrroll-formulario.component';
 import { TomainventarioRutaListadoComponent } from './tomainventarioruta/tomainventarioruta-listado/tomainventarioruta-listado.component';
+import { ArticulosCategoriasListadoComponent } from './articulosCategorias/articulos-categorias-listado/articulos-categorias-listado.component';
+import { ArticulosCategoriasFormularioComponent } from './articulosCategorias/articulos-categorias-formulario/articulos-categorias-formulario.component';
 
 
 
@@ -938,6 +940,27 @@ const routes: Routes = [
         }
       },
 
+      // articulocategorias
+      {
+        path: 'articulo-categoria', component: ArticulosCategoriasListadoComponent, data: {
+          title: 'Articulo Categorias',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Articulo Categorias' }
+          ]
+        }
+      },
+
+      {
+        path: 'articulo-categoria/:id', component: ArticulosCategoriasFormularioComponent, data: {
+          title: 'Articulo Categorias Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Articulo Categorias' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
     ]
 
   }];
