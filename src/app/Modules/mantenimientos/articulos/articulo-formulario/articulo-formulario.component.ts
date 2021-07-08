@@ -82,6 +82,7 @@ export class ArticuloFormularioComponent implements OnInit {
       articuloDeCompra: [false,],
       articuloDeVenta: [false,],
       articuloDeInventario: [false,],
+      categoriaID: [0,],
     });
   }
 

@@ -29,13 +29,11 @@ export class SolicitudComprasListadoComponent implements OnInit {
   data: SolicitudCompraListadoViewModel[] = [] //tu modelo
 
   //modal
-  cargandoCotizaciones: boolean
+  cargandoAnexos: boolean
   solicitudSeleccionada: SolicitudCompraListadoViewModel;
   progress: number;
   files: any[] = [];
   filesSubidos: Archivo[] = [];
-
-
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
@@ -143,7 +141,7 @@ export class SolicitudComprasListadoComponent implements OnInit {
       formData.append("files", file);
 
     this.httpService.DoPostAny<any>(DataApi.Upload,
-      "UploadCotizacionesDeSolicitudCompra", formData).subscribe(response => {
+      "UploadSolicitudCompraAnexos", formData).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
@@ -165,7 +163,7 @@ export class SolicitudComprasListadoComponent implements OnInit {
   getArchivosSubidos() {
 
     this.httpService.DoPostAny<Archivo>(DataApi.SolicitudCompra,
-      "GetSolicitudCompraCotizacionesArchivos", this.solicitudSeleccionada.id).subscribe(response => {
+      "GetSolicitudCompraAnexosArchivos", this.solicitudSeleccionada.id).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");

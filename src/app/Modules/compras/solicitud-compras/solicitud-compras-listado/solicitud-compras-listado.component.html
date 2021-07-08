@@ -121,7 +121,7 @@
 
 <ng-template #modalUploadCotizaciones let-modal>
   <div class="container-fluid">
-    <div class="row" *ngIf="!cargandoCotizaciones">
+    <div class="row" *ngIf="!cargandoAnexos">
       <div class="col">
         <div class="modal-header">
           <h4 class="modal-title" id="modal-title">Subida de anexos</h4>
@@ -214,7 +214,7 @@
       </div>
     </div>
 
-    <app-loading-listado [hidden]="!cargandoCotizaciones"></app-loading-listado>
+    <app-loading-listado [hidden]="!cargandoAnexos"></app-loading-listado>
 
   </div>
 </ng-template>
