@@ -50,7 +50,7 @@ export class RolesFormularioComponent implements OnInit {
       id: [0],
       nombre: [null, [Validators.required]],
       descripcion: [null,],
-      rutaTipoId: [null,],
+      rutaTipoId: [0,],
     });
   }
 

@@ -57,7 +57,8 @@ getData() {
 
   let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
 
-  this.httpService.GetAllWithPagination<TomaInventarioRuta>(DataApi.TomaInventarioRuta, "GetTomaInventarioRutaListado", "Zona", this.paginaNumeroActual,
+  this.httpService.GetAllWithPagination<TomaInventarioRuta>(DataApi.TomaInventarioRuta, "GetTomaInventarioRutaListado", "zona", this.paginaNumeroActual,
+
     this.paginaSize, true, parametros).subscribe(x => {
 
       if (x.ok) {
