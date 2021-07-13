@@ -10,7 +10,7 @@ import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
-import { EstadoGeneralesKey } from 'src/app/shared/enums/EstadoGeneralesKey';
+import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { ListaPrecio } from '../models/ListaPrecio';
 
@@ -291,7 +291,7 @@ export class ListaPreciosListadoComponent implements OnInit {
   getEstadoAutorizacionDefault() {
     let parametros: Parametro[] = [{
       key: "NameKey",
-      value: EstadoGeneralesKey.LISTAPRECIO
+      value: EstadosGeneralesKeyEnum.LISTAPRECIO
     }]
 
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
@@ -320,7 +320,7 @@ export class ListaPreciosListadoComponent implements OnInit {
   getEstadoAutorizacionUsuario() {
     let parametro = {
       "UsuarioID": Number(this.authService.tokenDecoded.nameid),
-      "KeynameModule": EstadoGeneralesKey.LISTAPRECIO,
+      "KeynameModule": EstadosGeneralesKeyEnum.LISTAPRECIO,
     }
     this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
       "GetEstadoAutorizacionUsuario", parametro).subscribe(response => {

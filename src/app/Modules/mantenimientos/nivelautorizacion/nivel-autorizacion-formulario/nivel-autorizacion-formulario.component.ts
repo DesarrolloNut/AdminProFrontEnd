@@ -1,4 +1,3 @@
-import { EstadoGeneralesKey } from './../../../../shared/enums/EstadoGeneralesKey';
 import { NivelAutorizacionFormulario } from './../models/NivelAutorizacion';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';

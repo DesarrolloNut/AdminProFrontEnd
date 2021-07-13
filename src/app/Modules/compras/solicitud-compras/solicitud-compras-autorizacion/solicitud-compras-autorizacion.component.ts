@@ -7,7 +7,7 @@ import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
-import { EstadoGeneralesKey } from 'src/app/shared/enums/EstadoGeneralesKey';
+import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { SolicitudCompraListadoViewModel } from '../models/SolicitudCompraListadoViewModel';
 
@@ -37,7 +37,7 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
   isAutorizando: boolean;
   cargandoAutorizacion: boolean;
 
-  keyModule = EstadoGeneralesKey.SOLICITUDCOMPRAS;
+  keyModule = EstadosGeneralesKeyEnum.SOLICITUDCOMPRAS;
 
   itemSeleccionado: SolicitudCompraListadoViewModel
   comentario: string;

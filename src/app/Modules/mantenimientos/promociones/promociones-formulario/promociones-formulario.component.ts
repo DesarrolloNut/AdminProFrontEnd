@@ -5,9 +5,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { BackendService } from 'src/app/core/http/service/backend.service';
-import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
-import { EstadoGeneralesKey } from 'src/app/shared/enums/EstadoGeneralesKey';
+import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { Oferta } from '../../ofertas/models/Oferta';
 import { Promocion } from '../models/Promocion';
@@ -219,7 +218,7 @@ export class PromocionesFormularioComponent implements OnInit {
   getEstados() {
     let parametros: Parametro[] = [{
       key: "NameKey",
-      value: EstadoGeneralesKey.PROMOCIONES
+      value: EstadosGeneralesKeyEnum.PROMOCIONES
     }]
 
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,

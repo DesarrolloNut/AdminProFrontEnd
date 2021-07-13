@@ -13,7 +13,7 @@ import { ListaPrecio } from 'src/app/Modules/mantenimientos/listaPrecios/models/
 import { Usuario } from 'src/app/Modules/servicios/recepcion/models/Usuario';
 import { Configuraciones } from 'src/app/shared/enums/Configuraciones';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
-import { EstadoGeneralesKey } from 'src/app/shared/enums/EstadoGeneralesKey';
+import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { Cotizacion } from '../models/Cotizacion';
 import { CotizacionDetalle } from '../models/CotizacionDetalle';
@@ -457,7 +457,7 @@ export class CotizacionesFormularioComponent implements OnInit {
   getAlmacenes() {
     let parametros: Parametro[] = [
       { key: "usuarioID", value: this.authService.tokenDecoded.nameid },
-      { key: "ModuloKey", value: EstadoGeneralesKey.COTIZACION },
+      { key: "ModuloKey", value: EstadosGeneralesKeyEnum.COTIZACION },
     ]
     this.loadingAlmacenes = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
