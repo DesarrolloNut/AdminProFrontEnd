@@ -259,8 +259,11 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
       "EstadoDefault": this.estadoIDAutorizacionDefault,
       "EstadoUsuariosNotificacion": EstadoUsuariosNotificacion,
       "Seleccion": articulos.
-        map(x => { return { "ListaPrecioID": x.listaPrecioID, "ArticuloID": x.id } })
+        map(x => { return { "ListaPrecioID": x.listaPrecioID, "ArticuloID": x.id, "Precio": x.precio } })
     }
+
+    console.log(articulos)
+    console.log(param)
 
     this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
       "ActualizarArticuloPrecioEstadoID", param).subscribe(response => {
