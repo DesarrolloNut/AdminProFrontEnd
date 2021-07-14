@@ -250,8 +250,10 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
     let ultimoEstado = this.estadosAutorizacion[this.estadosAutorizacion.length - 1].codigo;
     let articulos = []
     articulos.push(item)
+
     let param = {
       "IsAprobado": this.estadoAutorizacionUsuario == ultimoEstado && this.isAutorizando,
+      "UsuarioID": Number(this.authService.tokenDecoded.nameid),
       "IsAutorizando": this.isAutorizando,
       "EstadoAutorizacion": this.isAutorizando ? this.estadoAutorizacionUsuario : this.estadoIDAutorizacionDefault,
       "EstadoDefault": this.estadoIDAutorizacionDefault,
@@ -259,6 +261,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
       "Seleccion": articulos.
         map(x => { return { "ListaPrecioID": x.listaPrecioID, "ArticuloID": x.id } })
     }
+
     this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
       "ActualizarArticuloPrecioEstadoID", param).subscribe(response => {
 
@@ -268,6 +271,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
 
         } else {
           this.toastService.success("Realizado", "OK");
+          this.enviarCorreoActualizacionEstadoPrecio(param);
           this.getData()
         }
 
@@ -276,6 +280,20 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
           "Error conexion al servidor");
       });
 
+  }
+
+
+  enviarCorreoActualizacionEstadoPrecio(param: any) {
+    this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
+      "EnviarCorreoActualizacionEstadoPrecio", param).subscribe(response => {
+        if (!response.ok) {
+          console.error(response.errores[0]);
+        } else {
+          console.log("Correo enviado");
+        }
+      }, error => {
+        console.error(error);
+      });
   }
 
 
