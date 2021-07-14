@@ -25,9 +25,6 @@ totalPaginas: number = 0;
 paginaSize: number = 5;
 paginaTotalRecords: number = 0;
 data: TomaInventarioRuta[] = [] //tu modelo
-EditarUsuarioConfirmado: boolean = true;
-CancelarUsuarioConfirmado: boolean = false;
-CambioUsuarioConfirmado: boolean = false;
 btnGuardarCargando: boolean = false;
 loadingUsuarios: boolean;
 loadingFrecuenciaVisita: boolean;
