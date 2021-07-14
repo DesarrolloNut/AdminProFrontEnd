@@ -905,6 +905,17 @@ export const ROUTES: RouteInfo[] = [
     permisos: ["autorizacion"],
     submenu: [
       {
+        path: '/mantenimientos/autorizacion-historico',
+        label: '',
+        labelClass: '',
+        title: 'Histórico',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["autorizacion_historico"],
+      },
+      {
         path: '/mantenimientos/autorizacionprecios',
         label: '',
         labelClass: '',

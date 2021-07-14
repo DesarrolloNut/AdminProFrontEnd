@@ -1,4 +1,4 @@
-import { DevolucionVista } from './../models/DevolucionVista';
+import { DevolucionVista } from '../../../inventario/devoluciones/models/DevolucionVista';
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsService } from 'ngx-permissions';
@@ -10,7 +10,7 @@ import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
-import { DevolucionDetalleVista } from '../models/DevolucionDetalleVista';
+import { DevolucionDetalleVista } from '../../../inventario/devoluciones/models/DevolucionDetalleVista';
 
 @Component({
   selector: 'app-autorizacion-devoluciones',

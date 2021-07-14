@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AutorizacionDevolucionesComponent } from './devoluciones/autorizacion-devoluciones/autorizacion-devoluciones.component';
+import { AutorizacionDevolucionesComponent } from '../mantenimientos/autorizacion/autorizacion-devoluciones/autorizacion-devoluciones.component';
 import { DevolucionesListadoComponent } from './devoluciones/devoluciones-listado/devoluciones-listado.component';
 import { InventarioComponent } from './inventario.component';
 
