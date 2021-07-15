@@ -1,4 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { json } from 'd3';
+import { NgxPermissionsService } from 'ngx-permissions';
+import { ToastrService } from 'ngx-toastr';
+import { Parametro } from 'src/app/core/http/model/Parametro';
+import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
+import { BackendService } from 'src/app/core/http/service/backend.service';
+import { DataApi } from 'src/app/shared/enums/DataApi.enum';
+import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
+import { AutorizacionHistoricoListadoViewModel } from '../models/AutorizacionHistoricoListadoViewModel';
 
 @Component({
   selector: 'app-autorizacion-historico',
@@ -15,7 +24,8 @@ export class AutorizacionHistoricoComponent implements OnInit {
   totalPaginas: number = 0;
   paginaSize: number = 5;
   paginaTotalRecords: number = 0;
-  data: AlmacenListadoViewModel[] = [] //tu modelo
+  data: AutorizacionHistoricoListadoViewModel[] = [] //tu modelo
+  ESTADOSGENERALES = EstadosGeneralesKeyEnum;
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
@@ -24,6 +34,7 @@ export class AutorizacionHistoricoComponent implements OnInit {
 
 
   ngOnInit(): void {
+    console.log(this.ESTADOSGENERALES.LISTAPRECIO)
     this.getData()
   }
   getData() {
@@ -31,11 +42,13 @@ export class AutorizacionHistoricoComponent implements OnInit {
 
     let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
 
-    this.httpService.GetAllWithPagination<AlmacenListadoViewModel>(DataApi.Almacen, "GetAlmacenListado", "ID", this.paginaNumeroActual,
-      this.paginaSize, true, parametros).subscribe(x => {
+    this.httpService.GetAllWithPagination<AutorizacionHistoricoListadoViewModel>(DataApi.AutorizacionHistorico, "GetAutorizacionHistoricoListado", "ID", this.paginaNumeroActual,
+      this.paginaSize, false, parametros).subscribe(x => {
 
         if (x.ok) {
           this.data = x.records;
+          this.data.forEach(d => d.jsonInfo = JSON.parse(d.jsonInfo)[0])
+          console.log(this.data)
           this.asignarPagination(x);
         } else {
           this.toastService.error(x.errores[0]);
