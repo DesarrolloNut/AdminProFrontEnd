@@ -47,6 +47,7 @@
                                 <th>Lista</th>
                                 <th>Aplicación</th>
                                 <th>Estado</th>
+                                <th>Usuario</th>
                             </tr>
                         </thead>
                         <tbody [hidden]="Cargando">
@@ -164,10 +165,13 @@
                                 </td>
 
                                 <td>
-                                    <h3>
+                                    <h5>
                                         <span class="badge badge-light"> {{item.estado}}</span>
-                                    </h3>
+                                    </h5>
                                 </td>
+                                <td>
+                                    <span> {{item.usuarioAutorizacion}}</span>
+                                </td> 
 
 
                             </tr>

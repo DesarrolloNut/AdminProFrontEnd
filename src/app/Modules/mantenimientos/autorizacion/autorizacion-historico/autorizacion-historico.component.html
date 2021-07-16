@@ -59,20 +59,19 @@
                                 </td>
                                 <td>
                                     <ng-template [ngIf]="item.moduloKey == ESTADOSGENERALES.LISTAPRECIO">
+                                      
                                         <span class="small font-weight-bold">Artículo: {{
                                             item.jsonInfo.articulo }}</span>
                                         <br>
                                         <span class="small">
-                                            Precio Autorizado:
+                                            Precio:
                                         </span> <span class="small font-weight-bold text-info"> {{
                                             item.jsonInfo.precioAutorizado
                                             | number
                                             }}</span>
                                         <br>
-
                                         <span class="small"> Lista Precio: {{
                                             item.jsonInfo.listaPrecio }}</span>
-
 
                                     </ng-template>
                                 </td>

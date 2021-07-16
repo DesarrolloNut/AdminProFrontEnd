@@ -34,7 +34,6 @@ export class AutorizacionHistoricoComponent implements OnInit {
 
 
   ngOnInit(): void {
-    console.log(this.ESTADOSGENERALES.LISTAPRECIO)
     this.getData()
   }
   getData() {
