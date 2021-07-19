@@ -948,6 +948,17 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ['autorizacion_devoluciones'],
       },
+      {
+        path: '/ventas/autorizacioncotizacion',
+        title: 'Cotizaciones',
+        label: '',
+        icon: '',
+        class: '',
+        labelClass: '',
+        extralink: false,
+        submenu: [],
+        permisos: ['autorizacion_cotizaciones'],
+      },
     ],
   },
 

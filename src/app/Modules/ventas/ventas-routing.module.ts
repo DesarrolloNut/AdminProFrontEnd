@@ -1,3 +1,4 @@
+import { AutorizacionCotizacionComponent } from './cotizaciones/autorizacion-cotizacion/autorizacion-cotizacion.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { CotizacionesFormularioComponent } from './cotizaciones/cotizaciones-formulario/cotizaciones-formulario.component';
@@ -81,6 +82,16 @@ const routes: Routes = [
             { title: 'Ventas' },
             { title: 'Reporte de Ventas' },
             { title: 'ReporteProntoPago' },
+          ]
+        }
+      },
+      //  Autorizacion Cotizacion
+      {
+        path: 'autorizacioncotizacion', component: AutorizacionCotizacionComponent, data: {
+          title: 'Autorizacion Cotizacion',
+          urls: [
+            { title: 'Autorizacion' },
+            { title: 'Autorizacion Cotizacion' },
           ]
         }
       },

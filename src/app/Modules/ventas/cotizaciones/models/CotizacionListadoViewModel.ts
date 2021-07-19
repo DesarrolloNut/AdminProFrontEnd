@@ -11,4 +11,6 @@ export interface CotizacionListadoViewModel {
     impuestoTotal: number;
     totalNeto: number;
     estadoID: number;
+    estadoAutorizacionId: number;
+    confirmado: number;
 }

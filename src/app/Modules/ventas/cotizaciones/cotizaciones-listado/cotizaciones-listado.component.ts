@@ -33,6 +33,7 @@ export class CotizacionesListadoComponent implements OnInit {
   estados: ComboBox[] = []
   loadingEstados: boolean;
   cotizacionSeleccionada: CotizacionListadoViewModel;
+  loadingEstadoAutorizacionCotizacion: boolean = false;
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
@@ -92,6 +93,13 @@ export class CotizacionesListadoComponent implements OnInit {
     this.modalService.open(content, { size: 'lg', });
   }
 
+  openModalAutorizar(content, cotizacion: CotizacionListadoViewModel) {
+    this.cotizacionDetalles = [];
+    this.getCotizacionDetalle(cotizacion.id);
+    this.cotizacionSeleccionada = cotizacion;
+    this.modalService.open(content, { size: 'lg', });
+  }
+
   getCotizacionDetalle(cotizacionID: number) {
     this.loadingCotizacionDetalle = true;
     this.httpService.DoPostAny<CotizacionDetalleViewModel>(DataApi.Cotizacion,
@@ -105,6 +113,25 @@ export class CotizacionesListadoComponent implements OnInit {
         this.loadingCotizacionDetalle = false;
       }, error => {
         this.loadingCotizacionDetalle = false;
+        this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
+      });
+  }
+
+  CambiarEstadoAutorizacionCotizacion(cotizacionID: number) {
+    this.loadingEstadoAutorizacionCotizacion = true;
+    this.httpService.DoPostAny<CotizacionDetalleViewModel>(DataApi.Cotizacion,
+      "CambiarEstadoAutorizacionCotizacion", cotizacionID).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          // this.cotizacionDetalles = response.records;
+          this.modalService.dismissAll();
+          this.getData()
+        }
+        this.loadingEstadoAutorizacionCotizacion = false;
+      }, error => {
+        this.loadingEstadoAutorizacionCotizacion = false;
         this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
       });
   }
