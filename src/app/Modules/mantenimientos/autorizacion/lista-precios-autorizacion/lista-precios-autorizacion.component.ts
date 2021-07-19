@@ -73,7 +73,6 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
 
         if (x.ok) {
           this.data = x.records;
-          console.table(this.data)
           this.asignarPagination(x);
         } else {
           this.toastService.error(x.errores[0]);

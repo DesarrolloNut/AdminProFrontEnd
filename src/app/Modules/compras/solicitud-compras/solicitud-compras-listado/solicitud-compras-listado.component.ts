@@ -8,7 +8,9 @@ import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
+import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { Archivo } from 'src/app/shared/model/Archivo';
+import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { SolicitudCompraListadoViewModel } from '../models/SolicitudCompraListadoViewModel';
 
 @Component({
@@ -35,6 +37,12 @@ export class SolicitudComprasListadoComponent implements OnInit {
   files: any[] = [];
   filesSubidos: Archivo[] = [];
 
+
+  keyModule = EstadosGeneralesKeyEnum.SOLICITUDCOMPRAS;
+  estadosAutorizacion: ComboBox[];
+  estadoAutorizacionFinal: number;
+
+
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private authService: AuthenticationService,
@@ -45,6 +53,7 @@ export class SolicitudComprasListadoComponent implements OnInit {
 
   ngOnInit(): void {
     this.getData()
+    this.getEstadosAutorizacion()
   }
   getData() {
     this.Cargando = true;
@@ -178,6 +187,36 @@ export class SolicitudComprasListadoComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
       });
 
+  }
+
+  getEstadosAutorizacion() {
+    let parametros: Parametro[] = [{
+      key: "NameKey",
+      value: this.keyModule
+    }]
+
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetEstadoForKeyComboBox", parametros).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+          this.estadosAutorizacion = response.records;
+          console.table(this.estadosAutorizacion)
+          this.estadoAutorizacionFinal = this.estadosAutorizacion[this.estadosAutorizacion.length - 1].codigo;
+        }
+      }, error => {
+        this.toastService.error("No se pudo obtener los estados.", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getEstadosAutorizacion()
+        }, 1000);
+
+      });
+  }
+
+  convertirAOrdenCompra(item: SolicitudCompraListadoViewModel) {
+    console.table(item)
   }
 
   // downloadFile(id: number) {

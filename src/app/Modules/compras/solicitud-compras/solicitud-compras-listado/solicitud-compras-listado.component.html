@@ -74,11 +74,22 @@
                   <small> <i class="fa fa-user-circle text-muted"></i> Proveedor: {{item.proveedor}}</small> -->
                 </td>
                 <td>
-                  <button class="btn btn-sm btn-light" type="button" (click)="openModal(modalUploadCotizaciones,item)">
+
+                  <!-- <ng-template #botonConvertirAOrdenCompra ngxPermissionsOnly=""> -->
+                  <!--  -->
+                  <div class="d-inline-block" *ngxPermissionsOnly="['compras_solicitud_compra_puede_convertir_ordencompra']">
+                    <button class="btn btn-sm btn-success m-1" type="button" (click)="convertirAOrdenCompra(item)"
+                      *ngIf="item.estadoID == estadoAutorizacionFinal">
+                      <i class="fa fa-sm fa-random"></i>
+                    </button>
+                  </div>
+
+                  <button class="btn btn-sm btn-light m-1" type="button"
+                    (click)="openModal(modalUploadCotizaciones,item)">
                     <i class="fa fa-sm fa-upload"></i>
                   </button>
 
-                  <button *ngIf="item.estadoID == 1" class="btn btn-sm btn-info" [routerLink]="[item.id]">
+                  <button *ngIf="item.estadoID == 1" class="btn btn-sm btn-info m-1" [routerLink]="[item.id]">
                     <i class="fa fa-sm fa-edit"></i>
                   </button>
                 </td>
