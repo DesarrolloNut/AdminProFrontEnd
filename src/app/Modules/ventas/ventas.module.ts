@@ -16,7 +16,8 @@ import { AutorizacionCotizacionComponent } from './cotizaciones/autorizacion-cot
 
 
 @NgModule({
-  declarations: [VentasComponent, OfertasConsultasFacturasComponent, NotacreditoListadoComponent, NotacreditoFormularioComponent, CotizacionesListadoComponent, CotizacionesFormularioComponent, ReporteprontopagoComponent, AutorizacionCotizacionComponent],
+  declarations: [VentasComponent, OfertasConsultasFacturasComponent, NotacreditoListadoComponent, NotacreditoFormularioComponent, CotizacionesListadoComponent, CotizacionesFormularioComponent, ReporteprontopagoComponent,
+    AutorizacionCotizacionComponent],
   imports: [
     CommonModule,
     SharedModule,
