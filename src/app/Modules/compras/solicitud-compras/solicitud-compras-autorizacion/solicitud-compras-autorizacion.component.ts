@@ -177,6 +177,7 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
 
 
     let parametro = {
+      "UsuarioID": Number(this.authService.tokenDecoded.nameid),
       "SolicitudCompra": item,
       "EstadoAutorizacion": this.estadoAutorizacionUsuario,
       "EstadoAutorizacionSiguiente": this.estadoAutorizacionSiguiente ? this.estadoAutorizacionSiguiente.codigo : 0,
@@ -212,6 +213,7 @@ export class SolicitudComprasAutorizacionComponent implements OnInit {
   desautorizar() {
 
     let parametro = {
+      "UsuarioID": Number(this.authService.tokenDecoded.nameid),
       "SolicitudCompra": this.itemSeleccionado,
       "EstadoAutorizacion": this.estadoIDAutorizacionDefault,
       "EstadoAutorizacionSiguiente": 0,

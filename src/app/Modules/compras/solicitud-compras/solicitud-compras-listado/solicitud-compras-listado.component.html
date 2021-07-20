@@ -79,6 +79,7 @@
                   </button>
 
                   <button class="btn btn-sm btn-light m-1" type="button"
+                    *ngIf="item.estadoID != estadoAutorizacionFinal"
                     (click)="openModalSolicitud(modalUploadAnexos,item)">
                     <i class="fa fa-sm fa-upload"></i>
                   </button>
