@@ -11,6 +11,7 @@ export interface OrdenCompra {
     fechaSolicitud: string;
     compradorID: number;
     fechaEntrega: string;
+    fechaConversion: string;
     comentario: string;
     proveedorID: number;
     tipoSolicitudID: number;

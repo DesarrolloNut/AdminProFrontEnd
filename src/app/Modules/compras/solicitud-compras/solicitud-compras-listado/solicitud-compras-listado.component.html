@@ -70,28 +70,23 @@
                     {{item.fechaSolicitud|
                     date:'M/d/yy, h:mm a'}}</small> <br>
                   <small> <i class="fa fa-user text-muted"></i> Comprador: {{item.comprador}}</small>
-                  <!-- <br>
-                  <small> <i class="fa fa-user-circle text-muted"></i> Proveedor: {{item.proveedor}}</small> -->
                 </td>
                 <td>
 
-                  <!-- <ng-template #botonConvertirAOrdenCompra ngxPermissionsOnly=""> -->
-                  <!--  -->
-                  <div class="d-inline-block" *ngxPermissionsOnly="['compras_solicitud_compra_puede_convertir_ordencompra']">
-                    <button class="btn btn-sm btn-success m-1" type="button" (click)="convertirAOrdenCompra(item)"
-                      *ngIf="item.estadoID == estadoAutorizacionFinal">
-                      <i class="fa fa-sm fa-random"></i>
-                    </button>
-                  </div>
+                  <button class="btn btn-sm btn-light m-1" type="button"
+                    (click)="openModalDetalle(modalDetalleSolicitud,item)">
+                    <i class="fa fa-sm fa-eye"></i>
+                  </button>
 
                   <button class="btn btn-sm btn-light m-1" type="button"
-                    (click)="openModal(modalUploadCotizaciones,item)">
+                    (click)="openModalSolicitud(modalUploadAnexos,item)">
                     <i class="fa fa-sm fa-upload"></i>
                   </button>
 
                   <button *ngIf="item.estadoID == 1" class="btn btn-sm btn-info m-1" [routerLink]="[item.id]">
                     <i class="fa fa-sm fa-edit"></i>
                   </button>
+
                 </td>
 
               </tr>
@@ -130,7 +125,7 @@
 
 
 
-<ng-template #modalUploadCotizaciones let-modal>
+<ng-template #modalUploadAnexos let-modal>
   <div class="container-fluid">
     <div class="row" *ngIf="!cargandoAnexos">
       <div class="col">
@@ -228,4 +223,78 @@
     <app-loading-listado [hidden]="!cargandoAnexos"></app-loading-listado>
 
   </div>
+</ng-template>
+
+
+
+
+<ng-template #modalDetalleSolicitud let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Detalle</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+
+      <div class="col-12">
+        <h5 class="text-info"> <i class="fa fa-user"></i> Solicitante: {{solicitudSeleccionada.solicitante}}</h5>
+        <h5> <i class="fa fa-warehouse"></i> {{solicitudSeleccionada.departamentoSolicitante}} | <i
+            class="fa fa-map-marker"></i> {{solicitudSeleccionada.sucursalSolicitante}}</h5>
+        <hr>
+        <h5> <i class="fa fa-user-circle"></i> Comprador: {{solicitudSeleccionada.comprador}}</h5>
+        <hr>
+        <h5>Destino</h5>
+        <h5> <i class="fa fa-warehouse"></i> {{solicitudSeleccionada.departamentoDestino}} | <i
+            class="fa fa-map-marker"></i> {{solicitudSeleccionada.sucursalDestino}}</h5>
+      </div>
+
+      <div class="col-12" [hidden]="loadingSolicitudDetalle">
+
+        <div class="table-responsive">
+          <table class="table table-sm table-hover mb-0 no-wrap v-middle">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Artículo</th>
+                <th>Cantidad</th>
+              </tr>
+            </thead>
+            <tbody>
+
+              <tr *ngFor="let item of solicitudCompraDetalles">
+                <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
+                <td>
+                  <span> {{item.nombre}}</span>
+                </td>
+                <td>
+                  <span> {{item.cantidad}}</span>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+
+        </div>
+
+      </div>
+
+      <div class="col-12">
+        <app-loading-listado [hidden]="!loadingSolicitudDetalle"></app-loading-listado>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer" *ngxPermissionsOnly="['compras_solicitud_compra_puede_convertir_ordencompra']">
+    <button *ngIf="!btnConvertirCargando" type="button" class="btn btn-success m-1" (click)="convertirAOrdenCompra()">
+      <i class="fa fa-sm fa-check"></i> Convertir en orden</button>
+
+    <!-- boton cargando -->
+    <button *ngIf="btnConvertirCargando" disabled class="btn btn-success m-1" type="button">
+      <span class="spinner-border spinner-border-sm"></span> Convirtiendo
+    </button>
+
+  </div>
+
 </ng-template>

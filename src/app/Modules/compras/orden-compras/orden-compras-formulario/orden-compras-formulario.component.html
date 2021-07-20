@@ -18,7 +18,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6 col-lg-6 col-12">
-                        <h4 class="card-title">Formulario de solicitudes de compras</h4>
+                        <h4 class="card-title">Formulario de ordenes de compras</h4>
                     </div>
                     <div class="col-md-6 col-lg-6 col-12 text-right">
                     </div>
@@ -87,13 +87,10 @@
                             <div class="form-group col-md-6">
                                 <label for="sucursalID"> Sucursal </label>
                                 <ng-select bindLabel="nombre" bindValue="codigo" [items]="sucursales"
-                                    [loading]="loadingSucursales" [clearable]="false"
-                                    [ngClass]="{'form-control border-danger p-0' : submitted && f.sucursalID.errors }"
-                                    notFoundText="No resultados" formControlName="sucursalID">
+                                    [loading]="loadingSucursales" [clearable]="false" notFoundText="No resultados"
+                                    formControlName="sucursalID">
                                 </ng-select>
-                                <div *ngIf="submitted && f.sucursalID.errors" class="text-danger small">
-                                    <div *ngIf="f.sucursalID.errors.required  ">El campo es obligatorio</div>
-                                </div>
+
                             </div>
 
                             <div class="form-group col-md-6">
@@ -201,7 +198,7 @@
                             <tbody>
 
                                 <!-- <tr *ngFor="let item of confirmed | filter: searchText; let i  = index"> -->
-                                <tr *ngFor="let item of solicitudCompraDetalles let i=index">
+                                <tr *ngFor="let item of ordenCompraDetalles let i=index">
                                     <td>
                                         <ng-select style="width: 500px;" [items]="articulosDeCompra" bindLabel="nombre"
                                             [clearable]="false" bindValue="id" [loading]="loadingArticulosDeCompra"

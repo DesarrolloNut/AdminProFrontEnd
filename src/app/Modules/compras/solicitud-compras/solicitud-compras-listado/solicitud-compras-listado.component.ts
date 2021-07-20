@@ -1,5 +1,6 @@
 import { HttpEventType, HttpRequest } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
@@ -11,6 +12,7 @@ import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { Archivo } from 'src/app/shared/model/Archivo';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
+import { SolicitudCompraDetalle } from '../models/SolicitudCompraDetalle';
 import { SolicitudCompraListadoViewModel } from '../models/SolicitudCompraListadoViewModel';
 
 @Component({
@@ -37,16 +39,20 @@ export class SolicitudComprasListadoComponent implements OnInit {
   files: any[] = [];
   filesSubidos: Archivo[] = [];
 
-
   keyModule = EstadosGeneralesKeyEnum.SOLICITUDCOMPRAS;
   estadosAutorizacion: ComboBox[];
   estadoAutorizacionFinal: number;
+  loadingSolicitudDetalle: boolean;
+  solicitudCompraDetalles: SolicitudCompraDetalle[];
+  total: number;
+  btnConvertirCargando: boolean;
 
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private authService: AuthenticationService,
     private modalService: NgbModal,
+    private router: Router,
     public permissionsService: NgxPermissionsService,
   ) { }
 
@@ -98,7 +104,7 @@ export class SolicitudComprasListadoComponent implements OnInit {
   }
 
 
-  openModal(content, item: SolicitudCompraListadoViewModel) {
+  openModalSolicitud(content, item: SolicitudCompraListadoViewModel) {
     this.modalService.open(content, { size: 'lg' });
     this.solicitudSeleccionada = item
     this.files = []
@@ -203,7 +209,6 @@ export class SolicitudComprasListadoComponent implements OnInit {
           console.error(response.errores[0]);
         } else {
           this.estadosAutorizacion = response.records;
-          console.table(this.estadosAutorizacion)
           this.estadoAutorizacionFinal = this.estadosAutorizacion[this.estadosAutorizacion.length - 1].codigo;
         }
       }, error => {
@@ -215,8 +220,63 @@ export class SolicitudComprasListadoComponent implements OnInit {
       });
   }
 
-  convertirAOrdenCompra(item: SolicitudCompraListadoViewModel) {
-    console.table(item)
+  openModalDetalle(content, item: SolicitudCompraListadoViewModel) {
+    this, this.solicitudSeleccionada = item;
+    this.modalService.open(content, { size: 'lg' });
+    this.solicitudCompraDetalles = [];
+    this.getSolicitudCompraDetalles(item.id);
+  }
+
+
+  getSolicitudCompraDetalles(id: number) {
+    this.loadingSolicitudDetalle = true;
+    this.httpService.DoPostAny<SolicitudCompraDetalle>(DataApi.SolicitudCompra,
+      "GetSolicitudCompraDetalles", id).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.solicitudCompraDetalles = response.records;
+          this.calcularTotal()
+        }
+        this.loadingSolicitudDetalle = false;
+      }, error => {
+        this.loadingSolicitudDetalle = false;
+        this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
+        this.modalService.dismissAll()
+      });
+  }
+
+  calcularTotal() {
+    this.total = 0
+    this.solicitudCompraDetalles.forEach(x => {
+      this.total += x.cantidad ? (x.costo * x.cantidad) : 0
+    })
+  }
+
+  convertirAOrdenCompra() {
+    this.btnConvertirCargando = true;
+    this.httpService.DoPostAny<number>(DataApi.SolicitudCompra,
+      "ConvertirSolicitudAOrdenDeCompra", this.solicitudSeleccionada).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+        } else {
+          this.toastService.success("Realizado", "OK");
+          this.modalService.dismissAll()
+
+          let ordenID: number = response.records[0];
+          console.table({ "Orden creada": ordenID })
+
+          this.router.navigateByUrl('/compras/orden-compras/' + ordenID);
+        }
+
+        this.btnConvertirCargando = false;
+      }, error => {
+        this.btnConvertirCargando = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+
   }
 
   // downloadFile(id: number) {
