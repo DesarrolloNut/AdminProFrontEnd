@@ -287,7 +287,8 @@
   </div>
 
   <div class="modal-footer" *ngxPermissionsOnly="['compras_solicitud_compra_puede_convertir_ordencompra']">
-    <button *ngIf="!btnConvertirCargando" type="button" class="btn btn-success m-1" (click)="convertirAOrdenCompra()">
+    <button *ngIf="!btnConvertirCargando && solicitudSeleccionada.estadoID == estadoAutorizacionFinal" type="button"
+      class="btn btn-success m-1" (click)="convertirAOrdenCompra()">
       <i class="fa fa-sm fa-check"></i> Convertir en orden</button>
 
     <!-- boton cargando -->
