@@ -9,5 +9,13 @@ export class OrdenCompraDetalle {
     articuloID: number;
     nombre: string;
     costo: number;
+    descuentoPorciento: number;
     cantidad: number;
+
+    subtotal: number;
+    totalDescuento: number;
+    // totalImpuesto: number;
+    totalNeto: number;
+
+
 }

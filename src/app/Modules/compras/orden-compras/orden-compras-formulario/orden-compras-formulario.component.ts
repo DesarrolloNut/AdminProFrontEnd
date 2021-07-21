@@ -26,7 +26,7 @@ export class OrdenComprasFormularioComponent implements OnInit {
   submitted = false;
   btnGuardarCargando = false;
   actualizando = false;
-  cantidadEditable = true;
+  cantidadEditable = false;
 
   documentos: ComboBox[];
   loadingDocumentos = false;
@@ -144,7 +144,7 @@ export class OrdenComprasFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.ordenCompraDetalles = response.records;
-          this.agregarDetalleVacio()
+          // this.agregarDetalleVacio()
           this.calcularTotal()
         }
         this.loadingCotizacionDetalle = false;
@@ -170,10 +170,33 @@ export class OrdenComprasFormularioComponent implements OnInit {
   }
 
   calcularTotal() {
-    this.total = 0
+    this.limpiarTotales()
+
     this.ordenCompraDetalles.forEach(x => {
-      this.total += x.cantidad ? (x.costo * x.cantidad) : 0
+      x.subtotal = x.cantidad && x.articuloID ? (x.costo * x.cantidad) : 0;
+      x.totalDescuento = x.descuentoPorciento ? (x.subtotal * x.descuentoPorciento / 100) : 0;
+      // x.totalImpuesto = (x.subtotal - x.totalDescuento) * (this.ITBIS / 100);
+      x.totalNeto = x.subtotal - x.totalDescuento
+      // + x.totalImpuesto;
+
+      // this.cotizacion.descuentoTotal += x.totalDescuento;
+      // this.cotizacion.subtotal += x.subtotal;
+      // this.cotizacion.costoTotal += x.cantidad && x.costo ? (x.costo * x.cantidad) : 0;
     })
+    // this.cotizacion.totalNeto = this.cotizacion.subtotal - this.cotizacion.descuentoTotal;
+    // this.cotizacion.impuestoTotal = this.cotizacion.totalNeto * (this.ITBIS / 100);
+    // this.cotizacion.totalNeto += this.cotizacion.impuestoTotal;
+
+  }
+
+  limpiarTotales() {
+    this.total = 0;
+
+    // this.cotizacion.subtotal = 0;
+    // this.cotizacion.descuentoTotal = 0;
+    // this.cotizacion.impuestoTotal = 0;
+    // this.cotizacion.totalNeto = 0;
+    // this.cotizacion.costoTotal = 0;
   }
 
   onDeleteitem(index: number) {
