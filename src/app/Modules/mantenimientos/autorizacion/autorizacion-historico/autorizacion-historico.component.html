@@ -28,6 +28,7 @@
                             <tr>
                                 <th></th>
                                 <th>Usuario</th>
+                                <th>Tipo Aut.</th>
                                 <th>Estado Autorizado</th>
                                 <th>Fecha Autorización</th>
                                 <th>Detalle</th>
@@ -50,6 +51,9 @@
                                     </div>
                                 </td>
                                 <td>
+                                    <span> {{item.moduloKey}}</span>
+                                </td>
+                                <td>
                                     <span> {{item.estadoAutorizacion}}</span>
                                 </td>
                                 <td>
@@ -59,7 +63,7 @@
                                 </td>
                                 <td>
                                     <ng-template [ngIf]="item.moduloKey == ESTADOSGENERALES.LISTAPRECIO">
-                                      
+
                                         <span class="small font-weight-bold">Artículo: {{
                                             item.jsonInfo.articulo }}</span>
                                         <br>
@@ -69,10 +73,70 @@
                                             item.jsonInfo.precioAutorizado
                                             | number
                                             }}</span>
-                                        <br>
-                                        <span class="small"> Lista Precio: {{
+                                        <span class="small"> | Lista Precio: {{
                                             item.jsonInfo.listaPrecio }}</span>
 
+                                    </ng-template>
+
+
+                                    <ng-template [ngIf]="item.moduloKey == ESTADOSGENERALES.SOLICITUDCOMPRAS">
+                                        <span class="small  ">
+                                            Solicitud por:
+                                        </span>
+                                        <span class="small font-weight-bold text-info">
+                                            {{ item.usuario }}
+                                        </span>
+                                        <span class="small"> | Comprador: {{
+                                            item.jsonInfo.comprador }}</span>
+                                        <br>
+                                        <span class="small  ">
+                                            De:
+                                        </span>
+                                        <span class="small font-weight-bold">
+                                            {{ item.jsonInfo.departamentoSolicitante }} ( {{
+                                            item.jsonInfo.sucursalSolicitante }} )
+                                        </span>
+                                        <span class=" text-success  ">
+                                            <i class="fa fa-arrow-circle-right"></i>
+                                        </span>
+                                        <span class="small font-weight-bold">
+                                            {{ item.jsonInfo.departamentoDestino }} ( {{
+                                            item.jsonInfo.sucursalDestino }} )
+                                        </span>
+
+
+
+                                        <!--   <span class="small  ">
+                                            Solicitante:
+                                        </span>
+                                        <span class="small font-weight-bold text-info">
+                                            {{ item.jsonInfo.solicitante }}
+                                        </span>
+                                        <br>
+                                        <span class="small">
+                                            Dep. :
+                                        </span>
+                                        <span class="small font-weight-bold  ">
+                                            {{ item.jsonInfo.departamentoSolicitante }}
+                                        </span>
+                                        <span class="small">
+                                            Suc. :
+                                        </span>
+                                        <span class="small font-weight-bold  ">
+                                            {{ item.jsonInfo.sucursalSolicitante }}
+                                        </span>
+                                        <br>
+                                        <span class="small"> Comprador: {{
+                                            item.jsonInfo.comprador }}</span>
+                                        <span class="small">
+                                            Destino:
+                                        </span>
+                                        <span class="small font-weight-bold  ">
+                                            {{ item.jsonInfo.departamentoDestino }} |
+                                        </span>
+                                        <span class="small font-weight-bold  ">
+                                            {{ item.jsonInfo.sucursalDestino }}
+                                        </span> -->
                                     </ng-template>
                                 </td>
                             </tr>
