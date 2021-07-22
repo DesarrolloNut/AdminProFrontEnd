@@ -233,6 +233,17 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ["produccion_pesaje"],
       },
+      {
+        path: '/produccion/ordenfabricacion',
+        label: '',
+        labelClass: '',
+        title: 'Orden Fabricación',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["produccion_ordenfabricacion"],
+      },
     ],
   },
   {

@@ -1,0 +1,234 @@
+<div class="row">
+  <div class="control-section">
+      <div id="control_wrapper">
+      </div>
+  </div>
+</div>
+
+<div class="row mb-2">
+  <div class="col">
+      <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col">
+      <div class="card">
+          <div class="card-body">
+              <div class="row">
+                  <div class="col-md-4 p-2">
+                      <div class="input-group">
+                          <!-- <div class="input-group-prepend">
+                                  <label for="search" class="input-group-text bg-white">
+                                      <span class="bg-white" style="border-right:none">
+                                          <i class="ti-search"></i>
+                                      </span>
+                                  </label>
+                              </div> -->
+                          <input [(ngModel)]="search" (keyup)="onSearchChange()" type="text" id="inputSearch"
+                              style="border-left:none !important;" class="form-control" placeholder="Buscar artículo">
+
+                          <div class="input-group-prepend">
+                              <label for="search" class="input-group-text bg-white" style="cursor: pointer;"
+                                  (click)="onClearSearch()">
+                                  <span class=" bg-white" style="border-right:none">
+                                      <i class="fa fa-times-circle"></i>
+                                  </span>
+                              </label>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="col-md-6 text-center p-2" *ngIf="searching">
+                      <h3> <span><i class="fa fa-spinner fa-spin"></i> Buscando</span> </h3>
+                  </div>
+
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="articulo">
+  <div class="col">
+      <div class="card">
+          <div class="card-body">
+              <div class="row">
+
+
+                  <div class="col-12 mb-1">
+                      <div class="row border border-light p-2">
+                          <div class="col">
+                              <h1> <i class="fa fa-shopping-bag"></i> {{articulo.codigoReferencia}} |
+                                  {{articulo.nombre}}</h1>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="form-group col-md-6" *ngIf="articulo">
+                      <label for="inputEmail4">Tipo</label>
+                      <ng-select bindLabel="nombre" bindValue="codigo" [(ngModel)]="TipoId" [items]="Tipos"
+                          [clearable]="false" [loading]="loadingTipo" notFoundText="No resultados">
+                      </ng-select>
+                  </div>
+
+                  <div class="form-group col-md-6" *ngIf="articulo">
+                      <label for="inputEmail4">Estado</label>
+                      <ng-select bindLabel="nombre" bindValue="codigo" [(ngModel)]="EstadoId" [items]="estadosAutorizacion"
+                          [clearable]="false" [loading]="loadingEstado" notFoundText="No resultados">
+                      </ng-select>
+                  </div>
+
+                  <div class="form-group col-md-6" *ngIf="articulo">
+                      <label>Cantidad Planificada</label>
+                      <input  type="number" name="CantidadPlanificada" [(ngModel)]="CantidadPlanificada" id="CantidadPlanificada" class="form-control">
+                  </div>
+
+                  <div class="form-group col-md-6" *ngIf="articulo">
+                    <label for="inputEmail4">Almacen</label>
+                    <ng-select bindLabel="nombre" bindValue="codigo" [(ngModel)]="almacenID" [items]="almecenes"
+                        [clearable]="false" [loading]="loadingAlmacenes" notFoundText="No resultados">
+                    </ng-select>
+                </div>
+
+                <div class="form-group col-md-6" *ngIf="articulo">
+                  <label>Fecha Inicio</label>
+                  <ejs-datepicker [(ngModel)]="fechaVencimiento" [format]="'dd-MM-yyyy'" [min]='fechaActual'>
+                  </ejs-datepicker>
+              </div>
+
+              <div class="form-group col-md-6" *ngIf="articulo">
+                <label>Fecha Cierre</label>
+                <ejs-datepicker [(ngModel)]="fechaVencimiento" [format]="'dd-MM-yyyy'" [min]='fechaActual'>
+                </ejs-datepicker>
+            </div>
+
+
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="articulo">
+  <div class="col">
+      <div class="card">
+          <div class="card-body">
+              <div class="row">
+                  <div class="col-12 table-responsive">
+
+
+                      <table class="table table-hover table-sm ">
+                          <thead>
+                              <tr>
+                                  <th scope="col">Articulo</th>
+                                  <th scope="col">Nombre</th>
+                                  <th scope="col">Base</th>
+                                  <th scope="col">Requerida</th>
+                                  <th scope="col">Consumido</th>
+                                  <th scope="col">Disponible</th>
+                                  <th scope="col">Unidad Medida</th>
+                                  <th scope="col">Almacen</th>
+                                  <th scope="col">Metodo Emision</th>
+                              </tr>
+                          </thead>
+
+                          <tbody>
+
+                            <tr>
+                              <th>100023</th>
+                              <td>Salami super especial 1.5LBS</td>
+                              <td>0.9874</td>
+                              <td>14.1392</td>
+                              <td>14.1392</td>
+                              <td>766.7174</td>
+                              <td>Kg</td>
+                              <td>16</td>
+                              <td>Manual</td>
+                            </tr>
+
+                            <tr>
+                              <th>100023</th>
+                              <td>Salami super especial 1.5LBS</td>
+                              <td>0.9874</td>
+                              <td>14.1392</td>
+                              <td>14.1392</td>
+                              <td>766.7174</td>
+                              <td>Kg</td>
+                              <td>16</td>
+                              <td>Manual</td>
+                            </tr>
+
+                            <tr>
+                              <th>100023</th>
+                              <td>Salami super especial 1.5LBS</td>
+                              <td>0.9874</td>
+                              <td>14.1392</td>
+                              <td>14.1392</td>
+                              <td>766.7174</td>
+                              <td>Kg</td>
+                              <td>16</td>
+                              <td>Manual</td>
+                            </tr>
+
+                            <tr>
+                              <th>100023</th>
+                              <td>Salami super especial 1.5LBS</td>
+                              <td>0.9874</td>
+                              <td>14.1392</td>
+                              <td>14.1392</td>
+                              <td>766.7174</td>
+                              <td>Kg</td>
+                              <td>16</td>
+                              <td>Manual</td>
+                            </tr>
+
+                            <tr>
+                              <th>100023</th>
+                              <td>Salami super especial 1.5LBS</td>
+                              <td>0.9874</td>
+                              <td>14.1392</td>
+                              <td>14.1392</td>
+                              <td>766.7174</td>
+                              <td>Kg</td>
+                              <td>16</td>
+                              <td>Manual</td>
+                            </tr>
+
+
+                          </tbody>
+                      </table>
+
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+<div class="row" *ngIf="articulo">
+  <div class="col-12">
+      <div class="card">
+          <div class="card-body">
+              <div class="row">
+                  <div class="col text-right">
+                      <button class="btn btn-light m-1" routerLink="../" type="button">
+                          <i class="fas fa-times"></i> Cancelar
+                      </button>
+
+                      <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="button" (click)="onSubmit()">
+                          <i class="fas fa-check"></i> Guardar
+                      </button>
+
+                      <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                          <span class="spinner-border spinner-border-sm"></span> Guardando
+                      </button>
+                  </div>
+              </div>
+
+          </div>
+      </div>
+  </div>
+</div>
