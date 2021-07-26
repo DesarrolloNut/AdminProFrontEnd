@@ -40,7 +40,7 @@ export class NivelAutorizacionModuloListadoComponent implements OnInit {
     let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
 
     this.httpService.GetAllWithPagination<NivelAutorizacionModulo>(DataApi.NivelAutorizacionModulo, "GetNivelAutorizacionModuloListado", "ID", this.paginaNumeroActual,
-      this.paginaSize, true, parametros).subscribe(x => {
+      this.paginaSize, false, parametros).subscribe(x => {
 
         if (x.ok) {
           this.data = x.records;
