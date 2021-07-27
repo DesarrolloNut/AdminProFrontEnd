@@ -21,9 +21,7 @@
                         <h4 class="card-title">Formulario de ordenes de compras</h4>
                     </div>
                     <div class="col-md-6 col-lg-6 col-12 text-right">
-                        <button (click)="openModal(modalUploadCotizaciones)" type="button" class="btn btn-light"><i
-                                class="fa fa-upload"></i> Subir
-                            cotizaciones</button>
+
                     </div>
                 </div>
                 <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
@@ -117,7 +115,7 @@
                                 </h4>
                             </div>
 
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-12">
                                 <label for="proveedorID"> Proveedor </label>
                                 <ng-select bindLabel="nombre" bindValue="codigo" [items]="proveedores"
                                     [(ngModel)]="ordenCompra.proveedorID" [loading]="loadingProveedores"
@@ -153,7 +151,7 @@
 
 
                             <div class="form-group col-md-6">
-                                <label for="tipoSolicitudID"> Tipo </label>
+                                <label for="tipoSolicitudID"> Tipo de solicitud </label>
                                 <ng-select bindLabel="nombre" bindValue="codigo" [items]="solicitudCompraTipos"
                                     [loading]="loadingSolicitudCompraTipo" [clearable]="false" [readonly]="true"
                                     [(ngModel)]="ordenCompra.tipoSolicitudID" notFoundText="No resultados">
@@ -170,8 +168,8 @@
                     <div class="form-group col-md-12" *ngIf="ordenCompra && ordenCompra.tipoSolicitudID == 2">
                         <label for="comentario"> Comentario</label>
 
-                        <textarea formControlName="comentario" class="form-control" name="comentario" id="comentario"
-                            rows="3">
+                        <textarea readonly="true" formControlName="comentario" class="form-control" name="comentario"
+                            id="comentario" rows="3">
                         </textarea>
                         <!-- <div class="invalid-feedback" *ngIf="submitted && f.comentario.errors">
                             <div *ngIf="f.comentario.errors.required">El campo es obligatorio</div>
@@ -255,6 +253,39 @@
                         <h4 class="font-weight-bold">Total Neto: $ {{ordenCompra.totalNeto | number:'1.2-2' }}</h4>
                     </div>
 
+                    <div class="col-12 text-right">
+                        <hr>
+                        <button (click)="openModal(modalUploadCotizaciones)" type="button" class="btn btn-light"><i
+                                class="fa fa-paperclip"></i> Adjuntar cotizaciones</button>
+                    </div>
+
+
+                    <div class="row" *ngIf="files.length > 0">
+                        <div class="col-12">
+                            <h6>Cotizaciones adjuntas</h6>
+                        </div>
+                        <div class="col-md-3 p-2 text-center border-light border rounded-sm"
+                            *ngFor="let item of files; let i = index">
+
+                            <div class="row">
+
+                                <div class="col-12 text-right">
+                                    <button class="btn btn-sm" (click)="onDeleteFileitem(i)"><i
+                                            class="fa fa-times"></i></button>
+                                </div>
+
+                                <div class="col-12 text-center">
+                                    <span>
+                                        <i class="fa fa-file-pdf text-danger fa-3x"></i>
+                                    </span>
+                                    <h6 class="mt-2 text-info">{{item.name}}</h6>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
                     <div class="form-group text-right col-md-12">
                         <hr />
 
@@ -285,10 +316,10 @@
 
 <ng-template #modalUploadCotizaciones let-modal>
     <div class="container-fluid">
-        <div class="row" *ngIf="!cargandoAnexos">
+        <div class="row" *ngIf="!cargandoCotizaciones">
             <div class="col">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="modal-title">Subida de anexos</h4>
+                    <h4 class="modal-title" id="modal-title">Subida de cotizaciones</h4>
                     <button type="button" class="close" aria-describedby="modal-title"
                         (click)="modal.dismiss('Cross click')">
                         <span aria-hidden="true">&times;</span>
@@ -303,17 +334,16 @@
                                 <input accept="application/pdf" class="d-none" (change)="setFiles(file.files)" #file
                                     multiple type="file" />
 
-                                <button class="btn btn-info" (click)="file.click()"> <i
-                                        class="fa fa-upload text-white"></i>
-                                    Seleccionar
-                                    archivos</button>
+                                <button class="btn btn-info" (click)="file.click()">
+                                    <i class="fa fa-upload text-white"></i>
+                                    Seleccionar archivos
+                                </button>
 
                             </div>
                             <hr>
                         </div>
                     </div>
-
-                    <div class="row">
+                    <!-- <div class="row">
 
                         <div class="col-md-6 p-2 text-center border-light border rounded-sm"
                             *ngFor="let item of files; let i = index">
@@ -336,16 +366,17 @@
 
                         </div>
 
-                    </div>
+                    </div> -->
 
-                    <div class="row">
+                    <!-- <div class="row mt-2">
                         <div class="col text-right">
                             <button type="button" class="btn btn-info" *ngIf="files.length > 0"
                                 (click)="subirArchivosAlServidor()">
-                                <span>Subir {{files.length}} archivo</span> <span
-                                    *ngIf="files.length > 1">s</span></button>
+                                <span>Subir {{files.length}} archivo</span>
+                                <span *ngIf="files.length > 1">s</span>
+                            </button>
                         </div>
-                    </div>
+                    </div> -->
 
 
                     <div class="row" *ngIf="filesSubidos.length > 0">
@@ -383,7 +414,7 @@
             </div>
         </div>
 
-        <app-loading-listado [hidden]="!cargandoAnexos"></app-loading-listado>
+        <app-loading-listado [hidden]="!cargandoCotizaciones"></app-loading-listado>
 
     </div>
 </ng-template>
