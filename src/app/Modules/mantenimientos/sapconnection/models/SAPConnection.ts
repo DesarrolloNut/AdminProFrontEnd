@@ -7,6 +7,7 @@ export class SAPConnection {
       this.passwordDB = ""
       this.dbServerType = 0
       this.inUse = false;
+      this.keyConnection ="";
   }
   id: number;
   server: string;
@@ -15,4 +16,5 @@ export class SAPConnection {
   passwordDB: string;
   dbServerType: number;
   inUse: boolean;
+  keyConnection:string;
 }
