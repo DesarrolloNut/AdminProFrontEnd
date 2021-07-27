@@ -8,8 +8,8 @@ import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Proveedor } from 'src/app/Modules/mantenimientos/proveedores/models/Proveedor';
 import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
 import { Usuario } from 'src/app/Modules/servicios/recepcion/models/Usuario';
+import { Configuraciones } from 'src/app/shared/enums/Configuraciones';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
-import { Archivo } from 'src/app/shared/model/Archivo';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { OrdenCompra } from '../models/OrdenCompra';
 import { OrdenCompraAnexoCotizaciones } from '../models/OrdenCompraAnexoCotizaciones';
@@ -66,6 +66,7 @@ export class OrdenComprasFormularioComponent implements OnInit {
   progress: number;
   files: any[] = [];
   filesSubidos: OrdenCompraAnexoCotizaciones[] = [];
+  ITBIS: number;
 
 
   constructor(
@@ -94,7 +95,7 @@ export class OrdenComprasFormularioComponent implements OnInit {
     this.getCompradores()
     this.getSolicitudCompraTipo()
     this.getArticulosCompra()
-    // this.getHoraActual()
+    this.getITBIS()
   }
 
   getOrdenCompra(id: number) {
@@ -167,9 +168,9 @@ export class OrdenComprasFormularioComponent implements OnInit {
     this.ordenCompraDetalles.forEach(x => {
       x.subTotal = x.cantidad && x.articuloID ? (x.costo * x.cantidad) : 0;
       x.descuentoTotal = x.descuentoPorciento ? (x.subTotal * x.descuentoPorciento / 100) : 0;
-      // x.totalImpuesto = (x.subtotal - x.totalDescuento) * (this.ITBIS / 100);
+      x.totalImpuesto = (x.subTotal - x.descuentoTotal) * (this.ITBIS / 100);
       x.totalNeto = x.subTotal - x.descuentoTotal
-      // + x.totalImpuesto;
+        + x.totalImpuesto;
 
       this.ordenCompra.descuentoTotal += x.descuentoTotal;
       this.ordenCompra.subTotal += x.subTotal;
@@ -177,8 +178,8 @@ export class OrdenComprasFormularioComponent implements OnInit {
     })
 
     this.ordenCompra.totalNeto = this.ordenCompra.subTotal - this.ordenCompra.descuentoTotal;
-    // this.ordenCompra.impuestoTotal = this.cotizacion.totalNeto * (this.ITBIS / 100);
-    // this.ordenCompra.totalNeto += this.ordenCompra.impuestoTotal;
+    this.ordenCompra.totalImpuesto = this.ordenCompra.totalNeto * (this.ITBIS / 100);
+    this.ordenCompra.totalNeto += this.ordenCompra.totalImpuesto;
 
   }
 
@@ -189,14 +190,6 @@ export class OrdenComprasFormularioComponent implements OnInit {
     this.ordenCompra.totalNeto = 0;
     // this.ordenCompra.costoTotal = 0;
   }
-
-  // onDeleteitem(index: number) {
-  //   this.ordenCompraDetalles.splice(index, 1);
-  //   if (!this.ordenCompraDetalles.some(x => x.articuloID <= 0)) {
-  //     this.agregarDetalleVacio()
-  //   }
-  //   this.calcularTotal()
-  // }
 
   getArticulosCompra() {
     this.loadingArticulosDeCompra = true;
@@ -230,20 +223,6 @@ export class OrdenComprasFormularioComponent implements OnInit {
       this.toastService.warning("Debes de seleccionar un comprador.")
       return;
     }
-
-    // if (this.f.tipoSolicitudID.value == 2 && !this.f.comentario.value) {
-    //   this.toastService.warning("Si la solicitud es urgente debes de llenar el campo comentario.")
-    //   return;
-    // }
-
-    // if (!this.solicitudCompraDetalles.some(x => x.articuloID > 0)) {
-    //   this.toastService.warning("Debes de tener al menos un artículo.")
-    //   return;
-    // }
-    // if (this.solicitudCompraDetalles.some(x => x.articuloID > 0 && x.cantidad < 1)) {
-    //   this.toastService.warning("Tienes artículos sin cantidad.")
-    //   return;
-    // }
 
     this.guardar();
   }
@@ -458,11 +437,34 @@ export class OrdenComprasFormularioComponent implements OnInit {
 
 
 
+  getITBIS() {
+    // this.loa = true;
+    this.httpService.DoPostAny<any>(DataApi.Configuracion,
+      "GetConfiguracionValor", Number(Configuraciones.IMPUESTO_PORCIENTO)).subscribe(response => {
 
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
 
+          if (response.records.length == 0 || response.records[0] < 1) {
+            this.toastService.error("No hay impuesto configurado");
+            console.error("No hay impuesto configurado")
+          } else {
+            this.ITBIS = Number(response.records[0]);
+          }
 
+        }
+        // this.loadingCondicionPagos = false;
+      }, error => {
+        // this.loadingCondicionPagos = false;
+        this.toastService.error("No se pudo obtener las condiciones de pago", "Error conexion al servidor");
 
+        setTimeout(() => {
+          this.getITBIS();
+        }, 1000);
 
+      });
+  }
 
 
 
@@ -473,8 +475,6 @@ export class OrdenComprasFormularioComponent implements OnInit {
 
   openModal(content) {
     this.modalService.open(content, { size: 'lg' });
-    // this.files = []
-    // this.getArchivosSubidos()
   }
 
 
@@ -495,26 +495,6 @@ export class OrdenComprasFormularioComponent implements OnInit {
   onDeleteFileitem(index: number) {
     this.files.splice(index, 1);
   }
-
-  // onDeleteitemSubido(id: number, index: number) {
-
-  //   this.httpService.DoPostAny<any>(DataApi.Upload,
-  //     "DeleteFile", id).subscribe(response => {
-
-  //       if (!response.ok) {
-  //         this.toastService.error(response.errores[0], "Error");
-  //       } else {
-
-
-  //       }
-
-  //       // this.btnGuardarCargando = false;
-  //     }, error => {
-  //       // this.btnGuardarCargando = false; 
-  //       this.toastService.error("Error conexion al servidor");
-  //     });
-
-  // }
 
 
   subirArchivosAlServidor() {

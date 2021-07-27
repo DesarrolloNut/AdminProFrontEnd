@@ -1,4 +1,4 @@
- 
+
 export interface OrdenCompra {
     id: number;
     solicitudCompraID: number;
@@ -21,6 +21,7 @@ export interface OrdenCompra {
     totalNeto: number;
     monedaID: number;
     tasa: number;
+    totalImpuesto: number;
 }
 
 

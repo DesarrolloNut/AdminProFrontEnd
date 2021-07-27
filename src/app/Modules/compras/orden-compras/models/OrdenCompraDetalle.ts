@@ -14,6 +14,6 @@ export class OrdenCompraDetalle {
 
     subTotal: number;
     descuentoTotal: number;
-    // totalImpuesto: number;
+    totalImpuesto: number;
     totalNeto: number;
 }
