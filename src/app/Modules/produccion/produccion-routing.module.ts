@@ -1,3 +1,5 @@
+import { OrdenfabricacionFormularioComponent } from './ordenfabricacion/ordenfabricacion-formulario/ordenfabricacion-formulario.component';
+import { OrdenfabricacionListadoComponent } from './ordenfabricacion/ordenfabricacion-listado/ordenfabricacion-listado.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { PesajeFormularioComponent } from './pesaje/pesaje-formulario/pesaje-formulario.component';
@@ -42,6 +44,28 @@ const routes: Routes = [
             { title: 'Producción' },
             { title: 'Sistema de Pesajes' },
             { title: 'Resultados' },
+          ]
+        }
+      },
+
+
+      {
+        path: 'ordenfabricacion', component: OrdenfabricacionListadoComponent, data: {
+          title: 'Orden Fabricación',
+          urls: [
+            { title: 'Producción' },
+            { title: 'Orden Fabricación' },
+          ]
+        }
+      },
+
+      {
+        path: 'ordenfabricacion/:id', component: OrdenfabricacionFormularioComponent, data: {
+          title: 'Orden Fabricación',
+          urls: [
+            { title: 'Producción' },
+            { title: 'Orden Fabricación' },
+            { title: 'Formulario' },
           ]
         }
       },

@@ -8,15 +8,19 @@ import { PesajeFormularioComponent } from './pesaje/pesaje-formulario/pesaje-for
 import { PesajeListadoComponent } from './pesaje/pesaje-listado/pesaje-listado.component';
 import { PesajeResultadoComponent } from './pesaje/pesaje-resultado/pesaje-resultado.component';
 import { NgxBarcodeModule } from 'ngx-barcode';
+import { OrdenfabricacionListadoComponent } from './ordenfabricacion/ordenfabricacion-listado/ordenfabricacion-listado.component';
+import { OrdenfabricacionFormularioComponent } from './ordenfabricacion/ordenfabricacion-formulario/ordenfabricacion-formulario.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
-  declarations: [ProduccionComponent,PesajeFormularioComponent,PesajeListadoComponent, PesajeResultadoComponent],
+  declarations: [ProduccionComponent,PesajeFormularioComponent,PesajeListadoComponent, PesajeResultadoComponent, OrdenfabricacionListadoComponent, OrdenfabricacionFormularioComponent],
   imports: [
     CommonModule,
     SharedModule,
     ProduccionRoutingModule,
     NgxBarcodeModule,
+    NgbModule
   ]
 })
 export class ProduccionModule { }
