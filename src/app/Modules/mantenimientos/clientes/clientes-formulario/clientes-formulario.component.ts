@@ -62,6 +62,7 @@ export class ClientesFormularioComponent implements OnInit {
   Ruta: any;
   hasDetalleRuta: Boolean;
 
+  clienteId:number;
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
@@ -76,20 +77,20 @@ export class ClientesFormularioComponent implements OnInit {
     // this.CreateFormVisitasClientes();
 
     let id = Number(this.route.snapshot.paramMap.get('id'));
+    this.clienteId=  id;
     if (id > 0) {
       this.getClienteByID(id);
       this.actualizando = true;
-
     }
 
-    this.getDias(id);
-    this.getProvincias()
-    this.getDocumentosTipo();
-    this.getTipoCondicionPago();
-    this.getRutas();
-    this.getTipoCliente();
-    this.getListaPrecio();
-    this.getFrecuenciaVisitas();
+    // this.getDias(id);
+    // this.getProvincias()
+    // this.getDocumentosTipo();
+    // this.getTipoCondicionPago();
+    // this.getRutas();
+    // this.getTipoCliente();
+    // this.getListaPrecio();
+    // this.getFrecuenciaVisitas();
   }
 
 
@@ -122,7 +123,7 @@ export class ClientesFormularioComponent implements OnInit {
       listaPrecioId: [0, [Validators.required]],
       longitud: [null, [Validators.required]],
       latitud: [null, [Validators.required]],
-      contactos: new FormArray([])
+      // contactos: new FormArray([])
 
 
     },
@@ -566,7 +567,7 @@ export class ClientesFormularioComponent implements OnInit {
 
       });
   }
-
+ 
   // getTipoComprobanteId() {
   //   this.loadingTipoComprobantes = true;
   //   this.httpService.DoPost<ComboBox>(DataApi.ComboBox,

@@ -1,0 +1,88 @@
+<p>
+  cliente-rutas works!
+</p>
+
+        
+        <!-- <div class="row">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-md-6 col-lg-6 col-12">
+                          <h4 class="card-title">Ruta Cliente</h4>
+                        </div>
+                        <div class="col-md-6 col-lg-6 col-12 text-right">
+
+
+                        </div>
+                      </div>
+                      <form class="form-row m-t-40" [formGroup]="FormGenerales" (ngSubmit)="onSubmit()">
+
+                        <div class="form-group col-md-6">
+                          <label for="example-email"> Rutas </label>
+                          <ng-select [items]="Rutas" bindLabel="nombre" bindValue="codigo"
+                            placeholder="Seleccionar tipo" [loading]="loadingRutas" [clearable]="false"
+                            (change)="onChangeRuta($event)"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.rutaId.errors }"
+                            notFoundText="No resultados" formControlName="rutaId">
+                          </ng-select>
+                          <div *ngIf="submitted && f.rutaId.errors"
+                            class="text-danger small animated animated--fade-in">
+                            <div *ngIf="f.rutaId.errors.required  ">El campo es obligatorio
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col-md-12" *ngIf="hasDetalleRuta">
+                          <h5 class="font-weight-bold">Detalles de rutas</h5>
+                          <hr>
+                          <div class="row">
+
+                            <div class="col-md-4">
+                              <h6 class="font-weight-bold">Nombre Ruta</h6>
+                              <p>{{ Ruta.nombreRuta}}</p>
+                            </div>
+
+                            <div class="col-md-4">
+                              <h6 class="font-weight-bold">Tipo Ruta</h6>
+                              <p>{{ Ruta.tipoRuta }}</p>
+                            </div>
+
+
+                            <div class="col-md-4">
+                              <h6 class="font-weight-bold">Codigo Referencia</h6>
+                              <p>{{ Ruta.codigoReferencia }}</p>
+                            </div>
+
+                            <div class="col-md-4">
+                              <h6 class="font-weight-bold">Estado</h6>
+                              <p>{{ Ruta.estado ? 'Activo' : 'Inactivo' }}</p>
+                            </div>
+
+                          </div>
+                        </div>
+
+
+                        <div class="form-group text-right col-md-12">
+                          <hr />
+
+                          <button class="btn btn-light m-1" routerLink="../" type="button">
+                            <i class="fas fa-times"></i> Cancelar
+                          </button>
+
+                          <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+                            <i class="fas fa-check"></i> Guardar
+                          </button>
+
+                          <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span> Guardando
+                          </button>
+                        </div>
+
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div> 
+          
+           -->

@@ -92,6 +92,11 @@ import { TomainventarioRutaListadoComponent } from './tomainventarioruta/tomainv
 import { ArticulosCategoriasListadoComponent } from './articulosCategorias/articulos-categorias-listado/articulos-categorias-listado.component';
 import { ArticulosCategoriasFormularioComponent } from './articulosCategorias/articulos-categorias-formulario/articulos-categorias-formulario.component';
 import { AutorizacionHistoricoComponent } from './autorizacion/autorizacion-historico/autorizacion-historico.component';
+import { ClienteRutasComponent } from './clientes/cliente-rutas/cliente-rutas.component';
+import { ClienteVisitasComponent } from './clientes/cliente-visitas/cliente-visitas.component';
+import { ClienteFinanzasComponent } from './clientes/cliente-finanzas/cliente-finanzas.component';
+import { ClienteContactosComponent } from './clientes/cliente-contactos/cliente-contactos.component';
+import { ClienteDatosGeneralesComponent } from './clientes/cliente-datos-generales/cliente-datos-generales.component';
 
 
 
@@ -100,7 +105,8 @@ import { AutorizacionHistoricoComponent } from './autorizacion/autorizacion-hist
     NgbdtabsBasicComponent,
     MantenimientosComponent, ComiteComponent,
     UsuarioListadoComponent, UsuarioFormularioComponent, ClientesListadoComponent,
-    ClientesFormularioComponent, MarcasListadoComponent, MarcasFormularioComponent,
+    ClientesFormularioComponent,ClienteRutasComponent,ClienteVisitasComponent,ClienteFinanzasComponent,
+    ClienteContactosComponent,ClienteDatosGeneralesComponent,MarcasListadoComponent, MarcasFormularioComponent,
     ModelosListadoComponent, ModelosFormularioComponent, DealersListadoComponent, DealersFormularioComponent,
     AlmacenesListadoComponent, AlmacenesFormularioComponent, VehiculoTiposListadoComponent, VehiculoTiposFormularioComponent,
     CombustiblesListadoComponent, CombustiblesFormularioComponent, VehiculoCondicionesListadoComponent, VehiculoCondicionesFormularioComponent,
