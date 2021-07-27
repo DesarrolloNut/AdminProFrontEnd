@@ -1,0 +1,488 @@
+<div class="row">
+  <div class="control-section">
+      <div id="control_wrapper">
+      </div>
+  </div>
+</div>
+
+<div class="row mb-2">
+  <div class="col">
+      <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
+  </div>
+</div>
+
+
+
+<div class="row" *ngIf="IsNewData">
+
+  <div class="col">
+
+      <div class="card">
+          <div class="card-body">
+
+
+              <div class="row" >
+                  <div class="col-md-4 p-2">
+                      <div class="input-group">
+                          <!-- <div class="input-group-prepend">
+                                  <label for="search" class="input-group-text bg-white">
+                                      <span class="bg-white" style="border-right:none">
+                                          <i class="ti-search"></i>
+                                      </span>
+                                  </label>
+                              </div> -->
+                          <input [(ngModel)]="search" (keyup)="onSearchChange()" type="text" id="inputSearch"
+                              style="border-left:none !important;" class="form-control" placeholder="Buscar artículo">
+
+                          <div class="input-group-prepend">
+                              <label for="search" class="input-group-text bg-white" style="cursor: pointer;"
+                                  (click)="onClearSearch()">
+                                  <span class=" bg-white" style="border-right:none">
+                                      <i class="fa fa-times-circle"></i>
+                                  </span>
+                              </label>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="col-md-6 text-center p-2" *ngIf="searching">
+                      <h3> <span><i class="fa fa-spinner fa-spin"></i> Buscando</span> </h3>
+                  </div>
+
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="articulo">
+
+  <div class="col">
+      <div class="card">
+          <div class="card-body">
+              <div class="row">
+
+
+                  <div class="col-12 mb-1">
+                      <div class="row border border-light p-2">
+                          <div class="col">
+                              <h3> <i class="fa fa-shopping-bag"></i> {{articulo.codigoReferencia}} |
+                                  {{articulo.nombre}}</h3>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="form-group col-md-6">
+                    <label for="tipoId"> Tipo</label>
+                    <ng-select bindLabel="nombre" bindValue="codigo" [items]="Tipos" [(ngModel)]="ofheader.tipoId"
+                    class ="form-control p-0" notFoundText="No resultados" >
+                    </ng-select>
+                  </div>
+
+                  <div class=" form-group col-md-6">
+                    <label for="estadoId"> Estado</label>
+                    <ng-select bindLabel="nombre" bindValue="codigo" [items]="estadosAutorizacion" [(ngModel)]="ofheader.estadoId"
+                    class ="form-control p-0" notFoundText="No resultados">
+                    </ng-select>
+                  </div>
+
+
+                  <div class=" form-group col-md-6">
+                    <label for="cantidadPlanificada"> Cantidad Planificada</label>
+                    <input  type="number" name="cantidadPlanificada" id="cantidadPlanificada" class ="form-control" [(ngModel)]="ofheader.cantidadPlanificada">
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="almacenId">Almacenes</label>
+                    <ng-select bindLabel="nombre" bindValue="codigo" [items]="almecenes" [(ngModel)]="ofheader.almacenId"
+                    class ="form-control p-0"  notFoundText="No resultados" >
+                    </ng-select>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label> <i class="fa fa-calendar"></i> Fecha de Inicio</label>
+                    <ejs-datepicker [(ngModel)]="ofheader.fechaInicio" [format]="'dd-MM-yyyy'" [disabled]="true" ></ejs-datepicker>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label> <i class="fa fa-calendar"></i> Fecha de Cierre</label>
+                    <ejs-datepicker [(ngModel)]="ofheader.fechaCierre"[format]="'dd-MM-yyyy'" [disabled]="true"></ejs-datepicker>
+                  </div>
+
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<ngb-tabset *ngIf="articulo">
+
+  <ngb-tab>
+    <ng-template ngbTabTitle><b>Componentes</b></ng-template>
+    <ng-template ngbTabContent>
+      <div class="row" >
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 table-responsive">
+
+
+                            <table class="table table-hover table-sm ">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Articulo</th>
+                                        <th scope="col">Nombre</th>
+                                        <th scope="col">Base</th>
+                                        <th scope="col">Requerida</th>
+                                        <th scope="col">Consumido</th>
+                                        <th scope="col">Disponible</th>
+                                        <th scope="col">Unidad</th>
+                                        <th scope="col">Almacen</th>
+                                        <th scope="col">Método
+                                        </th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                  <tr *ngFor="let articulext of articulosExtras">
+                                    <th style="font-size: 14px;">{{articulext.articulo}}</th>
+                                    <td  style="font-size: 14px;">{{articulext.nombre}}</td>
+                                    <td>{{articulext.cantidadBase  | number:'1.4-4'}}</td>
+                                    <td>{{(articulext.requerida *  ofheader.cantidadPlanificada) | number:'1.4-4'}}</td>
+                                    <td>0</td>
+                                    <td>{{articulext.disponible}}</td>
+                                    <td>{{articulext.unidadMedida}}</td>
+                                    <td>{{ofheader.almacenId}}</td>
+                                    <td>{{articulext.metodoEmision == "M" ? "Manual" : "Automático"}}</td>
+                                  </tr>
+
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </ng-template>
+  </ngb-tab>
+
+
+  <ngb-tab>
+    <ng-template ngbTabTitle><b>Resumen</b></ng-template>
+    <ng-template ngbTabContent>
+      <div class="row" *ngIf="articulo">
+
+        <div class="col-6">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title font-weight-bold">Costos</h3>
+              <!-- <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> -->
+              <h6>Costo de componente de artículo real:</h6>
+              <h2>5,911.28 RDP</h2>
+              <h6>Costo de componente de recurso real</h6>
+              <h2>5,911.28 RDP</h2>
+              <h6>Costo de componente de artículo real</h6>
+              <h2>5,911.28 RDP</h2>
+              <h6>Costo de componente de artículo real</h6>
+              <h2>5,911.28 RDP</h2>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title">Cantidades</h3>
+              <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <a href="#" class="card-link">Card link</a>
+              <a href="#" class="card-link">Another link</a>
+            </div>
+          </div>
+        </div>
+
+
+
+
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                  <fieldset>
+                    <legend class="font-weight-bold">Costos</legend>
+                    <div class="row">
+
+                      <div class="form-group col-md-6">
+                        <label for="costocomponentearticuloreal"> Costo de componente de artículo real</label>
+                        <input formControlName="costocomponentearticuloreal" type="number" name="costocomponentearticuloreal" id="costocomponentearticuloreal"
+                          [ngClass]="{'is-invalid' : submitted && h.costocomponentearticuloreal.errors,  'form-control':true}">
+                        <div class="invalid-feedback" *ngIf="submitted && h.costocomponentearticuloreal.errors">
+                          <div *ngIf="h.costocomponentearticuloreal.errors.required">El campo es obligatorio
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group col-md-6">
+                        <label for="costocomponenterecursoreal"> Costo de componente de recurso real</label>
+                        <input formControlName="costocomponenterecursoreal" type="number" name="costocomponenterecursoreal" id="costocomponenterecursoreal"
+                          [ngClass]="{'is-invalid' : submitted && h.costocomponenterecursoreal.errors,  'form-control':true}">
+                        <div class="invalid-feedback" *ngIf="submitted && h.costocomponenterecursoreal.errors">
+                          <div *ngIf="h.costocomponenterecursoreal.errors.required">El campo es obligatorio
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group col-md-6">
+                        <label for="costoadicionalreal"> Costo adicional real</label>
+                        <input formControlName="costoadicionalreal" type="number" name="costoadicionalreal" id="costoadicionalreal"
+                          [ngClass]="{'is-invalid' : submitted && h.costoadicionalreal.errors,  'form-control':true}">
+                        <div class="invalid-feedback" *ngIf="submitted && h.costoadicionalreal.errors">
+                          <div *ngIf="h.costoadicionalreal.errors.required">El campo es obligatorio
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group col-md-6">
+                        <label for="costoproductoreal"> Costo de producto real</label>
+                        <input formControlName="costoproductoreal" type="number" name="costoproductoreal" id="costoproductoreal"
+                          [ngClass]="{'is-invalid' : submitted && h.costoproductoreal.errors,  'form-control':true}">
+                        <div class="invalid-feedback" *ngIf="submitted && h.costoproductoreal.errors">
+                          <div *ngIf="h.costoproductoreal.errors.required">El campo es obligatorio
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group col-md-6">
+                        <label for="costerealsubproductos"> Coste real de subproductos</label>
+                        <input formControlName="costerealsubproductos" type="number" name="costerealsubproductos" id="costerealsubproductos"
+                          [ngClass]="{'is-invalid' : submitted && h.costerealsubproductos.errors,  'form-control':true}">
+                        <div class="invalid-feedback" *ngIf="submitted && h.costerealsubproductos.errors">
+                          <div *ngIf="h.costocomponenterecursoreal.errors.required">El campo es obligatorio
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group col-md-6">
+                        <label for="desviaciontotal"> Desviación total</label>
+                        <input formControlName="desviaciontotal" type="number" name="desviaciontotal" id="desviaciontotal"
+                          [ngClass]="{'is-invalid' : submitted && h.desviaciontotal.errors,  'form-control':true}">
+                        <div class="invalid-feedback" *ngIf="submitted && h.desviaciontotal.errors">
+                          <div *ngIf="h.desviaciontotal.errors.required">El campo es obligatorio
+                          </div>
+                        </div>
+                      </div>
+
+                  </div>
+                  </fieldset>
+
+                  <fieldset>
+                    <legend class="font-weight-bold">Cantidades</legend>
+                    <div class="row">
+
+                      <div class="form-group col-md-6">
+                        <label for="cantidadplanificada">Cantidad Planificada</label>
+                        <input formControlName="cantidadplanificada" type="number" name="cantidadplanificada" id="cantidadplanificada"
+                          [ngClass]="{'is-invalid' : submitted && h.cantidadplanificada.errors,  'form-control':true}">
+                        <div class="invalid-feedback" *ngIf="submitted && h.cantidadplanificada.errors">
+                          <div *ngIf="h.cantidadplanificada.errors.required">El campo es obligatorio
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group col-md-6">
+                        <label for="cantidadcompletada">Cantidad Completa</label>
+                        <input formControlName="cantidadcompletada" type="number" name="cantidadcompletada" id="cantidadcompletada"
+                          [ngClass]="{'is-invalid' : submitted && h.cantidadcompletada.errors,  'form-control':true}">
+                        <div class="invalid-feedback" *ngIf="submitted && h.cantidadcompletada.errors">
+                          <div *ngIf="h.cantidadcompletada.errors.required">El campo es obligatorio
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group col-md-6">
+                        <label for="cantidadrechazada">Cantidad Rechazada</label>
+                        <input formControlName="cantidadrechazada" type="number" name="cantidadrechazada" id="cantidadrechazada"
+                          [ngClass]="{'is-invalid' : submitted && h.cantidadrechazada.errors,  'form-control':true}">
+                        <div class="invalid-feedback" *ngIf="submitted && h.cantidadrechazada.errors">
+                          <div *ngIf="h.cantidadrechazada.errors.required">El campo es obligatorio
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group col-md-6">
+                        <label> <i class="fa fa-calendar"></i> Fecha Finalizacion</label>
+                        <ejs-datepicker formControlName="fechafinalizacion" [format]="'dd-MM-yyyy'"></ejs-datepicker>
+                        <div *ngIf="submitted && h.fechafinalizacion.errors"
+                          class="text-danger small animated animated--fade-in">
+                          <div *ngIf="h.fechafinalizacion.errors.required">El campo es
+                            obligatorio</div>
+                        </div>
+                      </div>
+
+                      <div class="form-group col-md-6">
+                        <label> <i class="fa fa-calendar"></i> Fecha Cierre Real</label>
+                        <ejs-datepicker formControlName="fechacierrereal" [format]="'dd-MM-yyyy'"></ejs-datepicker>
+                        <div *ngIf="submitted && h.fechacierrereal.errors"
+                          class="text-danger small animated animated--fade-in">
+                          <div *ngIf="h.fechacierrereal.errors.required">El campo es
+                            obligatorio</div>
+                        </div>
+                      </div>
+
+                      <div class="form-group col-md-6">
+                        <label> <i class="fa fa-calendar"></i> Vencido</label>
+                        <ejs-datepicker formControlName="vencido" [format]="'dd-MM-yyyy'"></ejs-datepicker>
+                        <div *ngIf="submitted && h.vencido.errors"
+                          class="text-danger small animated animated--fade-in">
+                          <div *ngIf="h.vencido.errors.required">El campo es
+                            obligatorio</div>
+                        </div>
+                      </div>
+
+                  </div>
+                  </fieldset>
+
+
+                  <fieldset>
+                    <legend class="font-weight-bold">Tiempos planificados</legend>
+                    <div class="row">
+
+
+                      <div class="form-group col-md-6">
+                        <label> <i class="fa fa-calendar"></i> Tiempo Produccion Total</label>
+                        <ejs-datepicker formControlName="tiempoproducciontotal" [format]="'dd-MM-yyyy'"></ejs-datepicker>
+                        <div *ngIf="submitted && h.tiempoproducciontotal.errors"
+                          class="text-danger small animated animated--fade-in">
+                          <div *ngIf="h.tiempoproducciontotal.errors.required">El campo es
+                            obligatorio</div>
+                        </div>
+                      </div>
+
+                      <div class="form-group col-md-6">
+                        <label> <i class="fa fa-calendar"></i>Tiempo Adicional Total</label>
+                        <ejs-datepicker formControlName="tiempoadicionaltotal" [format]="'dd-MM-yyyy'"></ejs-datepicker>
+                        <div *ngIf="submitted && h.tiempoadicionaltotal.errors"
+                          class="text-danger small animated animated--fade-in">
+                          <div *ngIf="h.tiempoadicionaltotal.errors.required">El campo es
+                            obligatorio</div>
+                        </div>
+                      </div>
+
+                      <div class="form-group col-md-6">
+                        <label> <i class="fa fa-calendar"></i> Tiempo Ejecucion Total</label>
+                        <ejs-datepicker formControlName="tiempoejecuciontotal" [format]="'dd-MM-yyyy'"></ejs-datepicker>
+                        <div *ngIf="submitted && h.tiempoejecuciontotal.errors"
+                          class="text-danger small animated animated--fade-in">
+                          <div *ngIf="h.tiempoejecuciontotal.errors.required">El campo es
+                            obligatorio</div>
+                        </div>
+                      </div>
+
+                      <div class="form-group col-md-6">
+                        <label> <i class="fa fa-calendar"></i>Total Dias Solicitados</label>
+                        <ejs-datepicker formControlName="totaldiassolicitados" [format]="'dd-MM-yyyy'"></ejs-datepicker>
+                        <div *ngIf="submitted && h.totaldiassolicitados.errors"
+                          class="text-danger small animated animated--fade-in">
+                          <div *ngIf="h.totaldiassolicitados.errors.required">El campo es
+                            obligatorio</div>
+                        </div>
+                      </div>
+
+                      <div class="form-group col-md-6">
+                        <label> <i class="fa fa-calendar"></i>Total Dias Espera</label>
+                        <ejs-datepicker formControlName="totaldiasespera" [format]="'dd-MM-yyyy'"></ejs-datepicker>
+                        <div *ngIf="submitted && h.totaldiasespera.errors"
+                          class="text-danger small animated animated--fade-in">
+                          <div *ngIf="h.totaldiasespera.errors.required">El campo es
+                            obligatorio</div>
+                        </div>
+                      </div>
+
+                      <div class="form-group col-md-6">
+                        <label> <i class="fa fa-calendar"></i>Dias Totales</label>
+                        <ejs-datepicker formControlName="diastotales" [format]="'dd-MM-yyyy'"></ejs-datepicker>
+                        <div *ngIf="submitted && h.diastotales.errors"
+                          class="text-danger small animated animated--fade-in">
+                          <div *ngIf="h.diastotales.errors.required">El campo es
+                            obligatorio</div>
+                        </div>
+                      </div>
+
+<!--
+                      <div class="form-group col-md-6" *ngIf="articulo">
+                          <label>Tiempo de producción total</label>
+                          <input  type="number" name="num1" [(ngModel)]="CantidadPlanificada" id="num1" class="form-control">
+                      </div>
+
+                      <div class="form-group col-md-6" *ngIf="articulo">
+                          <label>Tiempo adicional total</label>
+                          <input  type="number" name="num1" [(ngModel)]="CantidadPlanificada" id="num1" class="form-control">
+                      </div>
+
+                      <div class="form-group col-md-6" *ngIf="articulo">
+                          <label>Tiempo de ejecución total</label>
+                          <input  type="number" name="num1" [(ngModel)]="CantidadPlanificada" id="num1" class="form-control">
+                      </div>
+
+                      <div class="form-group col-md-6" *ngIf="articulo">
+                        <label>Total de días solicitados</label>
+                        <ejs-datepicker [(ngModel)]="fechaVencimiento" [format]="'dd-MM-yyyy'" [min]='fechaActual'>
+                        </ejs-datepicker>
+                    </div>
+                      <div class="form-group col-md-6" *ngIf="articulo">
+                        <label>Total de días de espera</label>
+                        <ejs-datepicker [(ngModel)]="fechaVencimiento" [format]="'dd-MM-yyyy'" [min]='fechaActual'>
+                        </ejs-datepicker>
+                    </div>
+                      <div class="form-group col-md-6" *ngIf="articulo">
+                        <label>Días totales</label>
+                        <ejs-datepicker [(ngModel)]="fechaVencimiento" [format]="'dd-MM-yyyy'" [min]='fechaActual'>
+                        </ejs-datepicker>
+                    </div> -->
+
+
+
+
+                  </div>
+                  </fieldset>
+
+                </div>
+            </div>
+        </div>
+      </div>
+
+    </ng-template>
+  </ngb-tab>
+
+
+  </ngb-tabset>
+
+
+
+<div class="row" *ngIf="articulo">
+  <div class="col-12">
+      <div class="card">
+          <div class="card-body">
+              <div class="row">
+                  <div class="col text-right">
+                      <button class="btn btn-light m-1" routerLink="../" type="button">
+                          <i class="fas fa-times"></i> Cancelar
+                      </button>
+
+                      <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="button" (click)="onSubmit()">
+                          <i class="fas fa-check"></i> Guardar
+                      </button>
+
+                      <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                          <span class="spinner-border spinner-border-sm"></span> Guardando
+                      </button>
+                  </div>
+              </div>
+
+          </div>
+      </div>
+  </div>
+</div>
