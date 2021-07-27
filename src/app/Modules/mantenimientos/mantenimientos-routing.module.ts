@@ -241,10 +241,10 @@ const routes: Routes = [
 
       {
         path: 'sapconnection/:id', component: SapconnectionFormularioComponent, data: {
-          title: 'SAP Conexiones Formulario',
+          title: 'Conexiones Formulario',
           urls: [
             { title: 'Mantenimientos' },
-            { title: 'SAP Conexiones' },
+            { title: 'Conexiones' },
           ]
         }
       },
