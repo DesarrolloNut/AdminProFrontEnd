@@ -53,6 +53,7 @@ export class SapconnectionFormularioComponent implements OnInit {
       passwordDB: [null, [Validators.required]],
       dbServerType: [0, [Validators.required]],
       inUse: [false, [Validators.required]],
+      keyConnection:[null, Validators.required]
     });
   }
 

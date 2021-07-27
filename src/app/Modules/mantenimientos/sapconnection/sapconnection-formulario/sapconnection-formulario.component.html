@@ -27,6 +27,15 @@
         <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
 
           <div class="form-group col-md-6">
+            <label for="keyConnection"> Key Conexion</label>
+            <input formControlName="keyConnection" type="text" name="keyConnection" id="keyConnection"
+              [ngClass]="{'is-invalid' : submitted && f.keyConnection.errors,  'form-control':true  }">
+            <div class="invalid-feedback" *ngIf="submitted && f.keyConnection.errors">
+              <div *ngIf="f.keyConnection.errors.required">El campo es obligatorio</div>
+            </div>
+          </div>
+          
+          <div class="form-group col-md-6">
             <label for="server"> Servidor</label>
             <input formControlName="server" type="text" name="server" id="server"
               [ngClass]="{'is-invalid' : submitted && f.server.errors,  'form-control':true  }">
@@ -34,6 +43,7 @@
               <div *ngIf="f.server.errors.required">El campo es obligatorio</div>
             </div>
           </div>
+
           <div class="form-group col-md-6">
             <label for="companyDB"> Base de Datos</label>
             <input formControlName="companyDB" type="text" name="companyDB" id="companyDB"
