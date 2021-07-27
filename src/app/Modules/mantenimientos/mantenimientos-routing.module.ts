@@ -231,10 +231,10 @@ const routes: Routes = [
       // SAPCONNECTION
       {
         path: 'sapconnection', component: SapconnectionListadoComponent, data: {
-          title: 'SAP Conexiones',
+          title: 'Conexiones',
           urls: [
             { title: 'Mantenimientos' },
-            { title: 'SAP Conexiones' }
+            { title: 'Conexiones' }
           ]
         }
       },

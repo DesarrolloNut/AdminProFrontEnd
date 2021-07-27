@@ -1007,7 +1007,7 @@ export const ROUTES: RouteInfo[] = [
         path: '/mantenimientos/sapconnection',
         label: '',
         labelClass: '',
-        title: 'SAP Conexiones',
+        title: 'Conexiones',
         icon: '',
         class: '',
         extralink: false,
