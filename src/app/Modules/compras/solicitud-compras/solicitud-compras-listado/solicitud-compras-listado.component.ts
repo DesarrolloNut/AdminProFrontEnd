@@ -166,6 +166,7 @@ export class SolicitudComprasListadoComponent implements OnInit {
         } else {
           this.toastService.success("Realizado", "OK");
           // this.modalService.dismissAll()
+          this.files = []
           this.filesSubidos = []
           this.getArchivosSubidos()
           // this.router.navigateByUrl('/mantenimientos/almacen');
@@ -295,6 +296,26 @@ export class SolicitudComprasListadoComponent implements OnInit {
         } else {
           this.urlCarpetaArchivos = response.records[0];
           console.log(this.urlCarpetaArchivos)
+        }
+        this.loadingSolicitudDetalle = false;
+      }, error => {
+        console.error(error)
+        this.loadingSolicitudDetalle = false;
+        this.toastService.error("No se pudo obtener la url de los archivos", "Error conexion al servidor");
+      });
+  }
+
+
+  deleteSolicitudCompraAnexoArchivoByID(id: number) {
+    this.loadingSolicitudDetalle = true;
+    this.httpService.DoPostAny<string>(DataApi.Upload,
+      "DeleteSolicitudCompraAnexoArchivoByID", id).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.toastService.success("Realizado");
+          this.getArchivosSubidos();
         }
         this.loadingSolicitudDetalle = false;
       }, error => {
