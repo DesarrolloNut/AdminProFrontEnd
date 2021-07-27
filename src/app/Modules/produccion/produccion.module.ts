@@ -10,6 +10,7 @@ import { PesajeResultadoComponent } from './pesaje/pesaje-resultado/pesaje-resul
 import { NgxBarcodeModule } from 'ngx-barcode';
 import { OrdenfabricacionListadoComponent } from './ordenfabricacion/ordenfabricacion-listado/ordenfabricacion-listado.component';
 import { OrdenfabricacionFormularioComponent } from './ordenfabricacion/ordenfabricacion-formulario/ordenfabricacion-formulario.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
@@ -19,6 +20,7 @@ import { OrdenfabricacionFormularioComponent } from './ordenfabricacion/ordenfab
     SharedModule,
     ProduccionRoutingModule,
     NgxBarcodeModule,
+    NgbModule
   ]
 })
 export class ProduccionModule { }

@@ -1,5 +1,5 @@
+import { OrdenFabricacion } from './../models/OrdenFabricacion';
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { BackendService } from 'src/app/core/http/service/backend.service';
@@ -7,8 +7,10 @@ import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
-import { ArticuloPesosExtrasRenderViewModel } from '../../pesaje/models/ArticuloPesosExtrasRenderViewModel';
-import { ArticuloPesosExtrasViewModel } from '../../pesaje/models/ArticuloPesosExtrasViewModel copy';
+import { OrdenFabricacionVista } from '../models/OrdenFabricacionVista';
+import { ListaMaterialesHeader } from '../models/ListaMaterialesHeader';
+import { OrdenFabricacionDetalle } from '../models/OrdenFabricacionDetalle';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-ordenfabricacion-formulario',
@@ -22,9 +24,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
   cargando: boolean;
   search: string;
   searching: boolean;
-  CantidadPlanificada: number = 0;
-
-
+  CantidadPlanificada: number = 1;
 
   loadingAlmacenes: boolean;
   almecenes: any[];
@@ -40,20 +40,39 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
   estadosAutorizacion: ComboBox[];
   EstadoId: number = 1;
 
+  loadingArticulosExtras: boolean;
+  articulosExtras: OrdenFabricacionVista[];
+  ofheader: ListaMaterialesHeader = new ListaMaterialesHeader();
+  ordenfabricacion: OrdenFabricacion = new OrdenFabricacion();
+  ordenfabricaciondetalle: OrdenFabricacionDetalle = new OrdenFabricacionDetalle();
+  IsNewData:boolean = true;
 
   constructor(
     private toastService: ToastrService,
     private httpService: BackendService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
+    )
+    //
     // private renderer: Renderer2
-    ) { }
+ { }
 
   ngOnInit(): void {
-
     this.getAlmacenes()
     this.getOrdenFabricacionTipo();
     this.getEstadosAutorizacion();
+
+    let id = Number(this.route.snapshot.paramMap.get('id'));
+    if (id > 0) {
+      this.IsNewData = false;
+      this.getOrdenFabricacion(id);
+}
+    //else{
+    //   this.IsNewData = true;
+    //   this.getArticuloByCodigoReferencia(id.toString());
+    // }
   }
+
 
   onSubmit() {
     this.guardar()
@@ -61,14 +80,108 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
 
   guardar() {
 
+    let OrdenFabricacion: OrdenFabricacion =  {
+      almacenId: this.ofheader.almacenId,
+      articuloId: this.articulo.id,
+      ordenFabricacionTipoId: this.ofheader.tipoId,
+      cantidad: this.ofheader.cantidadPlanificada,
+      estadoId: this.ofheader.estadoId,
+      codigoReferencia:"",
+      fechaCierre: new Date(),
+      fechaCreacion: new Date(),
+      fechaInicio: new Date(),
+      id: 0
+    };
+
+    let OrdenFabricacionDetalle: Array<OrdenFabricacionDetalle> = [];
+
+    this.articulosExtras.forEach(x => {
+      let ofd: OrdenFabricacionDetalle = {
+        almacenId: x.almacenId,
+        articuloId: x.articuloId,
+        cantidadBase: x.cantidadBase,
+        cantidadRequerida: (x.cantidadBase * OrdenFabricacion.cantidad),
+        consumido: 0,
+        disponible: x.disponible,
+        metodoEmisionId: x.metodoEmision == 'M' ? 1 : 2,
+        unidadMedida: x.unidadMedida,
+        id: 0,
+        ordenFabricacionId: 0
+
+      };
+      OrdenFabricacionDetalle.push(ofd);
+    });
+
+
+    // console.table(OrdenFabricacion);
+    // console.table(OrdenFabricacionDetalle);
+
+    this.httpService.DoPostAny<OrdenFabricacion>(DataApi.OrdenFabricacion,
+      "RegistrarOrdenFabricacionAndOrdenFabricacionDetalleViewModel", { OrdenFabricacion: OrdenFabricacion, OrdenFabricacionDetalles: OrdenFabricacionDetalle }).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          //validar que existe
+          if (response.ok) {
+            // let record = response.records[0]
+            // this.articulo = record;
+            // this.getArticulosDeMateriales();
+            this.toastService.success("Realizado", "OK");
+            this.router.navigateByUrl('/produccion/ordenfabricacion');
+          }
+          else {
+            // this.articulo = null;
+          }
+          this.searching = false;
+        }
+
+      }, error => {
+        this.searching = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+
+
   }
+
+
+
+
+
+  // private CreateFormDetalle() {
+
+  //   this.FormDetails = this.formBuilder.group({
+  //     costocomponentearticuloreal: [0, [Validators.required]],
+  //     costocomponenterecursoreal: [0, [Validators.required]],
+  //     costoadicionalreal: [0, [Validators.required]],
+  //     costoproductoreal: [0, [Validators.required]],
+  //     costerealsubproductos: [0, [Validators.required]],
+  //     desviaciontotal: [0, [Validators.required]],
+  //     cantidadplanificada: [null, [Validators.required]],
+  //     cantidadcompletada: [null, [Validators.required]],
+  //     cantidadrechazada: [null, [Validators.required]],
+  //     fechafinalizacion: [null, [Validators.required]],
+  //     fechacierrereal: [null, [Validators.required]],
+  //     vencido: [null, [Validators.required]],
+  //     tiempoproducciontotal: [null, [Validators.required]],
+  //     tiempoadicionaltotal: [null, [Validators.required]],
+  //     tiempoejecuciontotal: [null, [Validators.required]],
+  //     totaldiassolicitados: [null, [Validators.required]],
+  //     totaldiasespera: [null, [Validators.required]],
+  //     diastotales: [null, [Validators.required]],
+  //   },
+  //     {
+  //       validator: null
+  //     });
+
+  // }
 
 
 
   onSearchChange() {
 
     if (this.search && this.search.length > 3) {
-
+      this.IsNewData = true;
       this.getArticuloByCodigoReferencia(this.search)
     } else {
       this.articulo = null;
@@ -110,25 +223,80 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
 
 
    getArticulosDeMateriales() {
-  //   this.loadingArticulosExtras = true;
-  //   this.httpService.DoPost<ArticuloPesosExtrasViewModel>(DataApi.Articulo,
-  //     "GetArticulosDePesosExtras", null).subscribe(response => {
+    this.loadingArticulosExtras = true;
 
-  //       if (!response.ok) {
-  //         this.toastService.error(response.errores[0]);
-  //       } else {
-  //         this.articulosExtras = response.records;
-  //         this.formatArticulosExtras()
-  //       }
-  //       this.loadingArticulosExtras = false;
-  //     }, error => {
-  //       this.loadingArticulosExtras = false;
-  //       this.toastService.error("No se pudo obtener los articulos extras", "Error conexion al servidor");
+    this.httpService.DoPostAny<OrdenFabricacionVista>(DataApi.OrdenFabricacion,
+      "GetOrdenFabricacionListadoMateriales", {CodigoRefencia:this.articulo.codigoReferencia}).subscribe(response => {
 
-  //       setTimeout(() => {
-  //         this.getArticulosDePesosExtras();
-  //       }, 1000);
-  //     });
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.articulosExtras = response.records;
+          this.ofheader.almacenId = response.records[0].almacenId;
+          // this.FormHeader.setValue(response.records);
+          //this.formatArticulosExtras()
+        }
+        this.loadingArticulosExtras = false;
+      }, error => {
+        this.loadingArticulosExtras = false;
+        this.toastService.error("No se pudo obtener los articulos extras", "Error conexion al servidor");
+
+        setTimeout(() => {
+          //this.getArticulosDeMateriales();
+        }, 1000);
+      });
+  }
+
+
+   getOrdenFabricacion(id:number) {
+    this.loadingArticulosExtras = true;
+
+    this.httpService.DoPostAny<OrdenFabricacionVista>(DataApi.OrdenFabricacion,
+      "GetOrdenFabricacionByID", id).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.articulosExtras = response.records;
+          this.ofheader.almacenId = response.records[0].almacenId;
+          // this.FormHeader.setValue(response.records);
+          //this.formatArticulosExtras()
+        }
+        this.loadingArticulosExtras = false;
+      }, error => {
+        this.loadingArticulosExtras = false;
+        this.toastService.error("No se pudo obtener los articulos extras", "Error conexion al servidor");
+
+        setTimeout(() => {
+          //this.getArticulosDeMateriales();
+        }, 1000);
+      });
+  }
+
+
+  getOrdenFabricacionDetalle(id:number) {
+    this.loadingArticulosExtras = true;
+
+    this.httpService.DoPostAny<OrdenFabricacionVista>(DataApi.OrdenFabricacionDetalle,
+      "GetOrdenFabricacionListadoMateriales", {CodigoRefencia:this.articulo.codigoReferencia}).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.articulosExtras = response.records;
+          this.ofheader.almacenId = response.records[0].almacenId;
+          // this.FormHeader.setValue(response.records);
+          //this.formatArticulosExtras()
+        }
+        this.loadingArticulosExtras = false;
+      }, error => {
+        this.loadingArticulosExtras = false;
+        this.toastService.error("No se pudo obtener los articulos extras", "Error conexion al servidor");
+
+        setTimeout(() => {
+          //this.getArticulosDeMateriales();
+        }, 1000);
+      });
   }
 
 

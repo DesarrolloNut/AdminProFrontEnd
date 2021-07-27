@@ -32,8 +32,11 @@
                       <thead>
                           <tr>
                               <th></th>
-                              <th>Nombre</th>
-                              <th>Descripción</th>
+                              <th>Articulo</th>
+                              <th>Tipo</th>
+                              <th>Almacen</th>
+                              <th>Fecha Creación</th>
+                              <th>Cantidad Planificada</th>
                               <!-- <th>Estado</th> -->
                           </tr>
                       </thead>
@@ -42,11 +45,21 @@
                           <tr *ngFor="let item of data">
                               <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
                               <td>
-                                  <span> {{item.nombre}}</span>
+                                  <span> {{item.articulo}}</span>
                               </td>
                               <td>
-                                  <span> {{item.descripcion |  slice:0:60}} ...</span>
+                                  <span> {{item.tipo}}</span>
                               </td>
+                              <td>
+                                  <span> {{item.almacen}}</span>
+                              </td>
+                              <td>
+                                  <span> {{item.fechaCreacion | date:'medium'}}</span>
+                              </td>
+                              <td>
+                                  <span> {{item.cantidadPlanificada | number:'1.2-2'}}</span>
+                              </td>
+
                               <td>
                                   <button class="btn btn-sm btn-info" [routerLink]="[item.id]">
                                       <i class="fa fa-sm fa-edit"></i>

@@ -1,10 +1,10 @@
+import { OrdenFabricacionVista } from './../models/OrdenFabricacionVista';
 import { Component, OnInit } from '@angular/core';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
-import { Sintoma } from 'src/app/Modules/mantenimientos/sintomas/models/Sintoma';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 
 @Component({
@@ -22,7 +22,7 @@ CargandoBar: boolean = false;
 totalPaginas: number = 0;
 paginaSize: number = 5;
 paginaTotalRecords: number = 0;
-data: Sintoma[] = [] //tu modelo
+data: OrdenFabricacionVista[] = [] //tu modelo
 
 constructor(private toastService: ToastrService,
   private httpService: BackendService,
@@ -38,7 +38,7 @@ getData() {
 
   let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
 
-  this.httpService.GetAllWithPagination<Sintoma>(DataApi.Sintoma, "GetRutaListado", "ID", this.paginaNumeroActual,
+  this.httpService.GetAllWithPagination<OrdenFabricacionVista>(DataApi.OrdenFabricacion, "GetOrdenFabricacionListado", "ID", this.paginaNumeroActual,
     this.paginaSize, true, parametros).subscribe(x => {
 
       if (x.ok) {
