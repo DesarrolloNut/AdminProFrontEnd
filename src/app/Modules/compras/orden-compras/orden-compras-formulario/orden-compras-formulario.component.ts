@@ -12,6 +12,7 @@ import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { Archivo } from 'src/app/shared/model/Archivo';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { OrdenCompra } from '../models/OrdenCompra';
+import { OrdenCompraAnexoCotizaciones } from '../models/OrdenCompraAnexoCotizaciones';
 import { OrdenCompraDetalle } from '../models/OrdenCompraDetalle';
 
 @Component({
@@ -61,10 +62,10 @@ export class OrdenComprasFormularioComponent implements OnInit {
 
 
   //modal
-  cargandoAnexos: boolean
+  cargandoCotizaciones: boolean
   progress: number;
   files: any[] = [];
-  filesSubidos: Archivo[] = [];
+  filesSubidos: OrdenCompraAnexoCotizaciones[] = [];
 
 
   constructor(
@@ -472,18 +473,22 @@ export class OrdenComprasFormularioComponent implements OnInit {
 
   openModal(content) {
     this.modalService.open(content, { size: 'lg' });
-    this.files = []
-    this.getArchivosSubidos()
+    // this.files = []
+    // this.getArchivosSubidos()
   }
 
 
-  setFiles(files) {
+  setFiles(selectedfiles: any[]) {
 
-    this.files = []
-    for (let i = 0; i < files.length; i++) {
-      const element = files[i];
-      this.files.push(element)
+    if (selectedfiles && selectedfiles.length > 0) {
+      this.files = []
+      for (let i = 0; i < selectedfiles.length; i++) {
+        const element = selectedfiles[i];
+        this.files.push(element)
+      }
     }
+
+    this.modalService.dismissAll();
 
   }
 
@@ -491,25 +496,25 @@ export class OrdenComprasFormularioComponent implements OnInit {
     this.files.splice(index, 1);
   }
 
-  onDeleteitemSubido(id: number, index: number) {
+  // onDeleteitemSubido(id: number, index: number) {
 
-    this.httpService.DoPostAny<any>(DataApi.Upload,
-      "DeleteFile", id).subscribe(response => {
+  //   this.httpService.DoPostAny<any>(DataApi.Upload,
+  //     "DeleteFile", id).subscribe(response => {
 
-        if (!response.ok) {
-          this.toastService.error(response.errores[0], "Error");
-        } else {
+  //       if (!response.ok) {
+  //         this.toastService.error(response.errores[0], "Error");
+  //       } else {
 
 
-        }
+  //       }
 
-        // this.btnGuardarCargando = false;
-      }, error => {
-        // this.btnGuardarCargando = false; 
-        this.toastService.error("Error conexion al servidor");
-      });
+  //       // this.btnGuardarCargando = false;
+  //     }, error => {
+  //       // this.btnGuardarCargando = false; 
+  //       this.toastService.error("Error conexion al servidor");
+  //     });
 
-  }
+  // }
 
 
   subirArchivosAlServidor() {
@@ -542,7 +547,7 @@ export class OrdenComprasFormularioComponent implements OnInit {
 
   getArchivosSubidos() {
 
-    this.httpService.DoPostAny<Archivo>(DataApi.OrdenCompra,
+    this.httpService.DoPostAny<OrdenCompraAnexoCotizaciones>(DataApi.OrdenCompra,
       "GetOrdenCompraAnexosArchivos", this.ordenID).subscribe(response => {
 
         if (!response.ok) {
