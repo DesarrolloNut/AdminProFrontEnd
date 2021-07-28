@@ -168,13 +168,56 @@
                     <div class="form-group col-md-12" *ngIf="ordenCompra && ordenCompra.tipoSolicitudID == 2">
                         <label for="comentario"> Comentario</label>
 
-                        <textarea readonly="true" formControlName="comentario" class="form-control" name="comentario"
-                            id="comentario" rows="3">
+                        <textarea readonly="true" [(ngModel)]="ordenCompra.comentario" class="form-control"
+                            name="comentario" id="comentario" rows="3">
                         </textarea>
                         <!-- <div class="invalid-feedback" *ngIf="submitted && f.comentario.errors">
                             <div *ngIf="f.comentario.errors.required">El campo es obligatorio</div>
                         </div> -->
                     </div>
+
+                    <div class="col-12 mb-2">
+                        <div class="row" *ngIf="anexosArchivosSubidas.length > 0">
+                            <div class="col-12">
+                                <hr>
+                                <h4>Anexos subidos
+                                    <span class="badge badge-info badge-pill">{{anexosArchivosSubidas.length}}</span>
+                                </h4>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-sm mb-0 no-wrap v-middle">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody [hidden]="Cargando">
+                                            <tr *ngFor="let item of anexosArchivosSubidas">
+
+                                                <td> <i class="fa fa-file-pdf text-danger"></i></td>
+                                                <td>
+                                                    <span class=""> {{item.nombre}}.{{item.extension}}</span>
+                                                </td>
+                                                <td>
+                                                    <a target="_blank" [href]="urlCarpetaArchivosAnexos + 'SolicitudCompra-Anexos/Solicitud' 
+                                      + ordenCompra.solicitudCompraID +'/' + item.nombre +'.'+ item.extension"
+                                                        class="btn btn-sm btn-light m-1"><i
+                                                            class="fa fa-download"></i></a>
+
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
 
                     <div class="col-12 table-responsive">
 
@@ -222,14 +265,14 @@
                                             (keyup)="calcularTotal()">
                                     </td>
                                     <td>
-                                        <span>${{ item.subTotal | number:'1.2-2'}}</span>
+                                        <span>${{ item.subTotal | number:'1.2-4'}}</span>
                                     </td>
                                     <td>
-                                        <span>${{ item.descuentoTotal | number:'1.2-2'}}</span>
+                                        <span>${{ item.descuentoTotal | number:'1.2-4'}}</span>
                                     </td>
 
                                     <td>
-                                        <span>${{ item.totalNeto | number:'1.2-2'}}</span>
+                                        <span>${{ item.totalNeto | number:'1.2-4'}}</span>
                                     </td>
                                     <td>
 
@@ -255,31 +298,49 @@
                     </div>
 
 
-                    <div class="row" *ngIf="files.length > 0">
-                        <div class="col-12">
-                            <h6>Cotizaciones adjuntas</h6>
-                        </div>
-                        <div class="col-md-3 p-2 text-center border-light border rounded-sm"
-                            *ngFor="let item of files; let i = index">
 
-                            <div class="row">
 
-                                <div class="col-12 text-right">
-                                    <button class="btn btn-sm" (click)="onDeleteFileitem(i)"><i
-                                            class="fa fa-times"></i></button>
-                                </div>
 
-                                <div class="col-12 text-center">
-                                    <span>
-                                        <i class="fa fa-file-pdf text-danger fa-3x"></i>
-                                    </span>
-                                    <h6 class="mt-2 text-info">{{item.name}}</h6>
-                                </div>
-
+                    <div class="col-12 my-2">
+                        <div class="row" *ngIf="filesFromInput.length > 0">
+                            <div class="col-12">
+                                <hr>
+                                <h4>Cotizaciones seleccionadas
+                                    <span class="badge badge-info badge-pill">{{filesFromInput.length}}</span>
+                                </h4>
                             </div>
-                        </div>
 
+                            <div class="col-12">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-sm mb-0 no-wrap v-middle">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody [hidden]="Cargando">
+                                            <tr *ngFor="let item of filesFromInput; let i= index">
+
+                                                <td> <i class="fa fa-file-pdf text-danger"></i></td>
+                                                <td>
+                                                    <span class=""> {{item.name}} </span>
+                                                </td>
+                                                <td>
+                                                    <button (click)="onDeleteCotizacionSeleccionada(i)"
+                                                        class="btn btn-sm btn-light"> <i
+                                                            class="fa fa-times"></i></button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
+
 
                     <div class="form-group text-right col-md-12">
                         <hr />
@@ -338,73 +399,7 @@
                             <hr>
                         </div>
                     </div>
-                    <!-- <div class="row">
 
-                        <div class="col-md-6 p-2 text-center border-light border rounded-sm"
-                            *ngFor="let item of files; let i = index">
-
-                            <div class="row">
-
-                                <div class="col-12 text-right">
-                                    <button class="btn btn-sm" (click)="onDeleteFileitem(i)"><i
-                                            class="fa fa-times"></i></button>
-                                </div>
-
-                                <div class="col-12 text-center">
-                                    <span>
-                                        <i class="fa fa-file-pdf text-danger fa-3x"></i>
-                                    </span>
-                                    <h6 class="mt-2 text-info">{{item.name}}</h6>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div> -->
-
-                    <!-- <div class="row mt-2">
-                        <div class="col text-right">
-                            <button type="button" class="btn btn-info" *ngIf="files.length > 0"
-                                (click)="subirArchivosAlServidor()">
-                                <span>Subir {{files.length}} archivo</span>
-                                <span *ngIf="files.length > 1">s</span>
-                            </button>
-                        </div>
-                    </div> -->
-
-
-                    <div class="row" *ngIf="filesSubidos.length > 0">
-                        <div class="col-12">
-                            <hr>
-                            <h6>Archivos subidos</h6>
-                        </div>
-                        <div class="col-md-6 p-2 text-center border-light border rounded-sm"
-                            *ngFor="let item of filesSubidos; let i = index">
-
-                            <div class="row">
-
-                                <div class="col-12 text-right">
-
-                                    <!-- <button (click)="downloadFile(item.id)" class="btn btn-sm btn-info"><i
-                          class="fa fa-download"></i></button> -->
-
-                                    <!-- <button class="btn btn-sm" (click)="onDeleteitemSubido(item.id,i)"><i
-                          class="fa fa-times"></i></button> -->
-                                </div>
-
-                                <div class="col-12 text-center">
-                                    <span>
-                                        <i class="fa fa-file-pdf text-danger fa-3x"></i>
-                                    </span>
-                                    <h6 class="mt-2 text-info">{{item.nombre}}</h6>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
                 </div>
             </div>
         </div>

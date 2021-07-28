@@ -182,6 +182,7 @@ export class SolicitudComprasListadoComponent implements OnInit {
   }
 
   getArchivosSubidos() {
+    this.cargandoAnexos = true;
     this.httpService.DoPostAny<Archivo>(DataApi.SolicitudCompra,
       "GetSolicitudCompraAnexosArchivos", this.solicitudSeleccionada.id).subscribe(response => {
 
@@ -189,12 +190,12 @@ export class SolicitudComprasListadoComponent implements OnInit {
           this.toastService.error(response.errores[0], "Error");
         } else {
           this.filesSubidos = response.records;
-          // this.router.navigateByUrl('/mantenimientos/almacen');
         }
+        this.cargandoAnexos = false;
 
-        // this.btnGuardarCargando = false;
       }, error => {
-        // this.btnGuardarCargando = false; 
+        this.cargandoAnexos = false;
+        console.error(error)
         this.toastService.error("Error conexion al servidor");
       });
 
@@ -295,7 +296,6 @@ export class SolicitudComprasListadoComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.urlCarpetaArchivos = response.records[0];
-          console.log(this.urlCarpetaArchivos)
         }
         this.loadingSolicitudDetalle = false;
       }, error => {

@@ -10,6 +10,7 @@ import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
 import { Usuario } from 'src/app/Modules/servicios/recepcion/models/Usuario';
 import { Configuraciones } from 'src/app/shared/enums/Configuraciones';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
+import { Archivo } from 'src/app/shared/model/Archivo';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { OrdenCompra } from '../models/OrdenCompra';
 import { OrdenCompraAnexoCotizaciones } from '../models/OrdenCompraAnexoCotizaciones';
@@ -61,12 +62,18 @@ export class OrdenComprasFormularioComponent implements OnInit {
   loadingCotizacionDetalle: boolean;
 
 
+  //solicitud anexos
+  cargandoAnexos: boolean
+  anexosArchivosSubidas: Archivo[] = [];
+  urlCarpetaArchivosAnexos: string;
+
   //modal
   cargandoCotizaciones: boolean
   progress: number;
-  files: any[] = [];
-  filesSubidos: OrdenCompraAnexoCotizaciones[] = [];
+  filesFromInput: any[] = [];
+  cotizacionesArchivosSubidas: OrdenCompraAnexoCotizaciones[] = [];
   ITBIS: number;
+  loadingSolicitudDetalle: boolean;
 
 
   constructor(
@@ -88,7 +95,7 @@ export class OrdenComprasFormularioComponent implements OnInit {
     } else {
       this.getUsuarioByID(Number(this.auth.tokenDecoded.nameid))
     }
-
+    this.getUrlCarpetaAnexosArchivos();
     this.getDepartamentos()
     this.getSucursales()
     this.getProveedores()
@@ -112,7 +119,8 @@ export class OrdenComprasFormularioComponent implements OnInit {
             this.ordenCompra = record;
 
             this.getHoraActual();
-            this.getOrdenCompraDetalles(record.id)
+            this.getOrdenCompraDetalles(record.id);
+            this.getAnexosSolicitudSubidos();
             this.getUsuarioByID(record.solicitanteID)
 
           } else {
@@ -149,7 +157,6 @@ export class OrdenComprasFormularioComponent implements OnInit {
 
   onSelectArticulo(item: any, index: number) {
     this.ordenCompraDetalles[index].costo = item.costo;
-    console.table(this.ordenCompraDetalles)
     if (!this.ordenCompraDetalles.some(x => x.articuloID <= 0)) {
       this.agregarDetalleVacio()
     }
@@ -481,10 +488,10 @@ export class OrdenComprasFormularioComponent implements OnInit {
   setFiles(selectedfiles: any[]) {
 
     if (selectedfiles && selectedfiles.length > 0) {
-      this.files = []
+      this.filesFromInput = []
       for (let i = 0; i < selectedfiles.length; i++) {
         const element = selectedfiles[i];
-        this.files.push(element)
+        this.filesFromInput.push(element)
       }
     }
 
@@ -492,8 +499,8 @@ export class OrdenComprasFormularioComponent implements OnInit {
 
   }
 
-  onDeleteFileitem(index: number) {
-    this.files.splice(index, 1);
+  onDeleteCotizacionSeleccionada(index: number) {
+    this.filesFromInput.splice(index, 1);
   }
 
 
@@ -502,7 +509,7 @@ export class OrdenComprasFormularioComponent implements OnInit {
     const formData = new FormData();
     formData.append("OrdenCompraID", this.ordenID + '');
 
-    for (let file of this.files)
+    for (let file of this.filesFromInput)
       formData.append("files", file);
 
     this.httpService.DoPostAny<any>(DataApi.Upload,
@@ -533,7 +540,7 @@ export class OrdenComprasFormularioComponent implements OnInit {
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
         } else {
-          this.filesSubidos = response.records;
+          this.cotizacionesArchivosSubidas = response.records;
           // this.router.navigateByUrl('/mantenimientos/almacen');
         }
 
@@ -543,6 +550,45 @@ export class OrdenComprasFormularioComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
       });
 
+  }
+
+  getAnexosSolicitudSubidos() {
+    this.cargandoAnexos = true;
+    this.httpService.DoPostAny<Archivo>(DataApi.SolicitudCompra,
+      "GetSolicitudCompraAnexosArchivos", this.ordenCompra.solicitudCompraID).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+        } else {
+          this.anexosArchivosSubidas = response.records;
+          console.table(this.anexosArchivosSubidas)
+        }
+
+        this.cargandoAnexos = false;
+      }, error => {
+        this.cargandoAnexos = false;
+        console.error(error)
+        this.toastService.error("Error conexion al servidor");
+      });
+
+  }
+
+  getUrlCarpetaAnexosArchivos() {
+    this.loadingSolicitudDetalle = true;
+    this.httpService.DoPostAny<string>(DataApi.Configuracion,
+      "GetConfiguracionValor", Number(Configuraciones.URL_ARCHIVOS_COMPARTIDOS_WEB_ADMIN)).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.urlCarpetaArchivosAnexos = response.records[0];
+          console.log(this.urlCarpetaArchivosAnexos)
+        }
+        this.loadingSolicitudDetalle = false;
+      }, error => {
+        console.error(error)
+        this.loadingSolicitudDetalle = false;
+        this.toastService.error("No se pudo obtener la url de los archivos", "Error conexion al servidor");
+      });
   }
 
 
