@@ -67,10 +67,10 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
       this.IsNewData = false;
       this.getOrdenFabricacion(id);
 }
-    //else{
-    //   this.IsNewData = true;
-    //   this.getArticuloByCodigoReferencia(id.toString());
-    // }
+    else{
+      this.IsNewData = true;
+      // this.getArticuloByCodigoReferencia(id.toString());
+    }
   }
 
 
@@ -90,7 +90,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
       fechaCierre: new Date(),
       fechaCreacion: new Date(),
       fechaInicio: new Date(),
-      id: 0
+      id: this.ofheader.id
     };
 
     let OrdenFabricacionDetalle: Array<OrdenFabricacionDetalle> = [];
@@ -105,7 +105,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
         disponible: x.disponible,
         metodoEmisionId: x.metodoEmision == 'M' ? 1 : 2,
         unidadMedida: x.unidadMedida,
-        id: 0,
+        id: x.id,
         ordenFabricacionId: 0
 
       };
@@ -116,8 +116,10 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
     // console.table(OrdenFabricacion);
     // console.table(OrdenFabricacionDetalle);
 
+    let ActionName = this.IsNewData ? "RegistrarOrdenFabricacionAndOrdenFabricacionDetalleViewModel" : "UpdateOrdenFabricacionAndOrdenFabricacionDetalleViewModel";
+
     this.httpService.DoPostAny<OrdenFabricacion>(DataApi.OrdenFabricacion,
-      "RegistrarOrdenFabricacionAndOrdenFabricacionDetalleViewModel", { OrdenFabricacion: OrdenFabricacion, OrdenFabricacionDetalles: OrdenFabricacionDetalle }).subscribe(response => {
+      ActionName, { OrdenFabricacion: OrdenFabricacion, OrdenFabricacionDetalles: OrdenFabricacionDetalle }).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
@@ -221,6 +223,32 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
       });
   }
 
+  getArticuloById(ArticuloID: number) {
+    this.searching = true;
+    this.httpService.DoPostAny<Articulo>(DataApi.Articulo,
+      "GetArticuloByID", ArticuloID ).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          //validar que existe
+          if (response != null && response.records != null && response.records.length > 0) {
+            let record = response.records[0]
+            this.articulo = record;
+            this.getOrdenFabricacionDetalle(record.codigoReferencia);
+          }
+          else {
+            this.articulo = null;
+          }
+          this.searching = false;
+        }
+
+      }, error => {
+        this.searching = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
 
    getArticulosDeMateriales() {
     this.loadingArticulosExtras = true;
@@ -242,7 +270,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
         this.toastService.error("No se pudo obtener los articulos extras", "Error conexion al servidor");
 
         setTimeout(() => {
-          //this.getArticulosDeMateriales();
+          this.getArticulosDeMateriales();
         }, 1000);
       });
   }
@@ -251,16 +279,21 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
    getOrdenFabricacion(id:number) {
     this.loadingArticulosExtras = true;
 
-    this.httpService.DoPostAny<OrdenFabricacionVista>(DataApi.OrdenFabricacion,
+    this.httpService.DoPostAny<OrdenFabricacion>(DataApi.OrdenFabricacion,
       "GetOrdenFabricacionByID", id).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          this.articulosExtras = response.records;
+          this.getArticuloById(response.records[0].articuloId)
+          this.ofheader.tipoId = response.records[0].ordenFabricacionTipoId;
+          this.ofheader.estadoId = response.records[0].estadoId;
+          this.ofheader.cantidadPlanificada = response.records[0].cantidad;
           this.ofheader.almacenId = response.records[0].almacenId;
-          // this.FormHeader.setValue(response.records);
-          //this.formatArticulosExtras()
+          this.ofheader.fechaInicio = response.records[0].fechaInicio;
+          this.ofheader.fechaCierre = response.records[0].fechaCierre;
+          this.ofheader.id = response.records[0].id;
+          // this.getOrdenFabricacionDetalle(this.articulo.codigoReferencia);
         }
         this.loadingArticulosExtras = false;
       }, error => {
@@ -268,25 +301,23 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
         this.toastService.error("No se pudo obtener los articulos extras", "Error conexion al servidor");
 
         setTimeout(() => {
-          //this.getArticulosDeMateriales();
+          //this.getOrdenFabricacion();
         }, 1000);
       });
   }
 
 
-  getOrdenFabricacionDetalle(id:number) {
+  getOrdenFabricacionDetalle(codigoReferencia: string) {
     this.loadingArticulosExtras = true;
 
     this.httpService.DoPostAny<OrdenFabricacionVista>(DataApi.OrdenFabricacionDetalle,
-      "GetOrdenFabricacionListadoMateriales", {CodigoRefencia:this.articulo.codigoReferencia}).subscribe(response => {
+      "GetOrdenFabricacionDetalleVistaByID", {CodigoRefencia:codigoReferencia}).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          this.articulosExtras = response.records;
-          this.ofheader.almacenId = response.records[0].almacenId;
-          // this.FormHeader.setValue(response.records);
-          //this.formatArticulosExtras()
+         this.articulosExtras = response.records;
+         console.log(response.records)
         }
         this.loadingArticulosExtras = false;
       }, error => {
@@ -294,7 +325,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
         this.toastService.error("No se pudo obtener los articulos extras", "Error conexion al servidor");
 
         setTimeout(() => {
-          //this.getArticulosDeMateriales();
+          //this.getOrdenFabricacionDetalle();
         }, 1000);
       });
   }
