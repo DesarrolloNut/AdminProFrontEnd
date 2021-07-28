@@ -2,6 +2,7 @@ export class ValidatorLogic {
 
 
     public static ValidaCedulaFormacion(ced): boolean {
+        if(ced==null){return false}
         var c = ced.replace(/-/g, '');
         var cedula = c.substr(0, c.length - 1);
         var verificador = c.substr(c.length - 1, 1);

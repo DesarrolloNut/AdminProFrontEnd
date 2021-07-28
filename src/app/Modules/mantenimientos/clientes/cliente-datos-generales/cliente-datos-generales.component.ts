@@ -28,6 +28,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
   loadingCiudades    = false;
   loadingProvincias  = false;
   loadingSectores    = false;
+  loadingSubSectores = false;
   buscandoDocumento  = false;
   submitted          = false;
   loadingListaPrecio = false;
@@ -37,6 +38,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
   //LISTAS
   ciudades    : ComboBox[];
   sectores    : ComboBox[];
+  subSectores : ComboBox[];
   provincias  : ComboBox[];
   documentos  : ComboBox[];
   ListaPrecio : any[];
@@ -44,7 +46,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
 
   //OBJETOS Y DEMAS
   TipoSexo: any[] = [{ codigo: 'H', nombre: 'Hombre' }, { codigo: 'M', nombre: 'Mujer' }];
-
+ 
 
   constructor(
     private toastService: ToastrService,
@@ -68,9 +70,10 @@ export class ClienteDatosGeneralesComponent implements OnInit {
     this.getDocumentosTipo();
     this.getTipoCliente();
     this.getListaPrecio();
+    this.clearOrputValidatosSomeField();
   }
   onSubmit() {
-    this.submitted = true;
+    this.submitted = true; 
   
     if (!this.actualizando)
       this.f.sucursalID.setValue(Number(this.auth.tokenDecoded.groupsid))
@@ -87,21 +90,27 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       id: [0],
       sucursalID: [0, [Validators.required]],
       clienteTipoID: [0, [Validators.required]],
-      nombres: [null, [Validators.required]],
-      apellidos: [null, [Validators.required]],
+      nombres: [null,  [Validators.required]],
+      apellidos: [null,  [Validators.required] ],
       documento: [null, [Validators.required, Validators.minLength(9)]],
       email: [null, [Validators.required, Validators.email]],
       documentoTipoID: [1, [Validators.required]], //cedula por defecto
-      fechaNacimiento: [null, Validators.required],
+      fechaNacimiento: [null,  [Validators.required] ],
       fechaRegistrado: [new Date(),],
       estadoID: [0,],
-      sexo: [null, Validators.required],
+      sexo: [null,[Validators.required]],
       codigoReferencia: [null,],
+
       calle: [null, [Validators.required]],
       numero: [0, [Validators.required]],
+      residencial: [null, [Validators.required]],
+      apartamento: [null, [Validators.required]],
+      referencia: [null, [Validators.required]],
       provinciaID: [0, Validators.required],
       ciudadID: [0, Validators.required],
       sectorID: [0, Validators.required],
+      subSectorID: [0, Validators.required],
+      
       frecuenciaVisitaId: [0, [Validators.required]],
       limiteCredito: [0, [Validators.required]],
       condicionPagoId: [0, [Validators.required]],
@@ -125,12 +134,18 @@ export class ClienteDatosGeneralesComponent implements OnInit {
     let metodo: string = this.actualizando ? "UpdateCliente" : "CrearCliente";
     this.btnGuardarCargando = true;
 
-    // console.log(this.FormGenerales.value);
+    if(this.f.documentoTipoID.value==2){
+      this.f.apellidos.setValue('');
+      this.f.email.setValue('s');
+      this.f.fechaNacimiento.setValue(new Date());
+      this.f.sexo.setValue('');
+    }
 
-    let param = { "Cliente": this.FormGenerales.value }
+    let param = { "cliente": this.FormGenerales.value }
+    console.log( this.FormGenerales.value )
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
-      metodo, param).subscribe(response => {
-
+      metodo, this.FormGenerales.value).subscribe(response => {
+           
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
           this.btnGuardarCargando = false;
@@ -159,12 +174,14 @@ export class ClienteDatosGeneralesComponent implements OnInit {
           if (response.records.length > 0) {
 
             let cliente = response.records[0];
+            
             // this.FrecuenciaVisita = response.records[0].visita;
             this.FormGenerales.setValue(cliente);
+         
             // this.onAddContacts(cliente.contactos);
-
             this.getCiudades();
             this.getSectores();
+            this.getSubSectores();
          //   this.getRutaByID(cliente.rutaId);
           } else {
             this.toastService.warning("Cliente no encontrado");
@@ -237,6 +254,28 @@ getSectores() {
       this.loadingSectores = false;
     }, error => {
       this.loadingSectores = false;
+      this.toastService.error("No se pudo obtener los sectores", "Error conexion al servidor");
+
+      setTimeout(() => {
+        this.getSectores()
+      }, 1000);
+
+    });
+}
+getSubSectores() {
+  let parametros: Parametro[] = [{ key: "sectorId", value: this.f.sectorID.value }]
+  this.loadingSubSectores = true;
+  this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+    "GetSubSectores", parametros).subscribe(response => {
+
+      if (!response.ok) {
+        this.toastService.error(response.errores[0]);
+      } else {
+        this.subSectores = response.records;
+      }
+      this.loadingSubSectores = false;
+    }, error => {
+      this.loadingSubSectores = false;
       this.toastService.error("No se pudo obtener los sectores", "Error conexion al servidor");
 
       setTimeout(() => {
@@ -325,14 +364,15 @@ buscarCliente(documento: string) {
     });
 
 }
-buscarClienteByRnc(documento: string) {
+buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
   this.buscandoDocumento = true;
 
   let parametros = new ParametrosCita();
   parametros.clienteDocumento = documento;
+  parametros.documentoTipoID = documentoTipoID;
 
   this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
-    "GetClienteByRnc", parametros).subscribe(response => {
+    "GetClientePadronDatosOByRnc", parametros).subscribe(response => {
 
       if (response.ok) {
         if (response != null && response.ok && response.records != null && response.records.length > 0) {
@@ -388,11 +428,7 @@ onDocumentoKeyUp() {
   // this.f.celular.setValue(null);
 
   if (this.f.documento.valid) {
-    if(this.f.documentoTipoID.value==1){
-      this.buscarCliente(this.f.documento.value);
-    }else if(this.f.documentoTipoID.value ==2){
-      this.buscarClienteByRnc(this.f.documento.value)
-    }
+    this.buscarClienteByRncOCedula(this.f.documento.value,this.f.documentoTipoID.value);
   }
 }
 onProvinciaChange() {
@@ -401,16 +437,42 @@ onProvinciaChange() {
   this.sectores = []
   this.getCiudades()
 }
+onSectorChange() {
+  this.f.subSectorID.setValue(null)
+  this.subSectores = []
+  this.getSubSectores()
+}
+
+
 onTipoDocumentoChange(tipo:ComboBox) {
-  console.log(tipo);
+  
  // this.f.documento.setValue(null)
-  this.f.nombres.setValue(null)
-  this.f.apellidos.setValue(null)
-  if(tipo.codigo==1){
-    this.buscarCliente(this.f.documento.value);
-  }else if(tipo.codigo ==2){
-    this.buscarClienteByRnc(this.f.documento.value)
-  }
- 
+  this.f.apellidos.setValue(null);
+  this.f.documento.setErrors(null);
+  this.buscarClienteByRncOCedula(this.f.documento.value,tipo.codigo);
+  this.clearOrputValidatosSomeField();
+}
+
+clearOrputValidatosSomeField(){
+
+  this.FormGenerales.get('documentoTipoID').valueChanges.subscribe(documentoTipo => {
+     if(documentoTipo ==1){
+      this.f.apellidos.setValidators([Validators.required]);
+      this.f.email.setValidators([Validators.required, Validators.email]);
+      this.f.fechaNacimiento.setValidators([Validators.required] );
+     }else if (documentoTipo==2){
+      this.f.apellidos.setValidators(null);
+      this.f.email.setValidators(null);
+      this.f.fechaNacimiento.setValidators(null);
+      this.f.sexo.setValidators(null);
+     } 
+
+     this.f.apellidos.updateValueAndValidity();
+     this.f.email.updateValueAndValidity();
+     this.f.fechaNacimiento.updateValueAndValidity();
+     this.f.sexo.updateValueAndValidity();
+
+  })
 }
 }
+
