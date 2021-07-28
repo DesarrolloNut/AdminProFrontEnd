@@ -142,11 +142,7 @@
                                 <ejs-datepicker [showClearButton]="false" [(ngModel)]="ordenCompra.fechaEntrega"
                                     [format]="'dd-MM-yyyy'" [min]='fechaActual'>
                                 </ejs-datepicker>
-                                <!-- <div *ngIf="submitted && f.fechaEntrega.errors"
-                                    class="text-danger small animated animated--fade-in">
-                                    <div *ngIf="f.fechaEntrega.errors.required">El campo es obligatorio</div>
-                                    <div *ngIf="f.fechaEntrega.errors.min">La fecha no puede ser menor a la actual</div>
-                                </div> -->
+
                             </div>
 
 
@@ -156,9 +152,7 @@
                                     [loading]="loadingSolicitudCompraTipo" [clearable]="false" [readonly]="true"
                                     [(ngModel)]="ordenCompra.tipoSolicitudID" notFoundText="No resultados">
                                 </ng-select>
-                                <!-- <div *ngIf="submitted && f.tipoSolicitudID.errors" class="text-danger small">
-                                    <div *ngIf="f.tipoSolicitudID.errors.required  ">El campo es obligatorio</div>
-                                </div> -->
+
                             </div>
 
 
@@ -171,51 +165,143 @@
                         <textarea readonly="true" [(ngModel)]="ordenCompra.comentario" class="form-control"
                             name="comentario" id="comentario" rows="3">
                         </textarea>
-                        <!-- <div class="invalid-feedback" *ngIf="submitted && f.comentario.errors">
-                            <div *ngIf="f.comentario.errors.required">El campo es obligatorio</div>
-                        </div> -->
+
                     </div>
 
-                    <div class="col-12 mb-2">
-                        <div class="row" *ngIf="anexosArchivosSubidas.length > 0">
-                            <div class="col-12">
-                                <hr>
-                                <h4>Anexos subidos
-                                    <span class="badge badge-info badge-pill">{{anexosArchivosSubidas.length}}</span>
-                                </h4>
-                            </div>
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <hr>
+                                        <h6 class="font-weight-bold">Anexos subidos
+                                            <span
+                                                class="badge badge-info badge-pill">{{anexosArchivosSubidas.length}}</span>
+                                        </h6>
+                                    </div>
 
-                            <div class="col-12">
-                                <div class="table-responsive">
-                                    <table class="table table-hover table-sm mb-0 no-wrap v-middle">
-                                        <thead>
-                                            <tr>
-                                                <th></th>
-                                                <th></th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody [hidden]="Cargando">
-                                            <tr *ngFor="let item of anexosArchivosSubidas">
+                                    <ng-container *ngIf="anexosArchivosSubidas.length>0; else elseTemplate">
 
-                                                <td> <i class="fa fa-file-pdf text-danger"></i></td>
-                                                <td>
-                                                    <span class=""> {{item.nombre}}.{{item.extension}}</span>
-                                                </td>
-                                                <td>
-                                                    <a target="_blank" [href]="urlCarpetaArchivosAnexos + 'SolicitudCompra-Anexos/Solicitud' 
-                                      + ordenCompra.solicitudCompraID +'/' + item.nombre +'.'+ item.extension"
-                                                        class="btn btn-sm btn-light m-1"><i
-                                                            class="fa fa-download"></i></a>
+                                        <div class="col-12">
+                                            <table class="table table-hover table-sm mb-0 no-wrap v-middle">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th></th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody [hidden]="Cargando">
+                                                    <tr *ngFor="let item of anexosArchivosSubidas">
 
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                                        <td> <i class="fa fa-file-pdf text-danger"></i></td>
+                                                        <td>
+                                                            <span class="small">
+                                                                {{item.nombre}}.{{item.extension}}</span>
+                                                        </td>
+                                                        <td>
+                                                            <a target="_blank" [href]="urlCarpetaArchivosAnexos + 'SolicitudCompra-Anexos/Solicitud' 
+                                          + ordenCompra.solicitudCompraID +'/' + item.nombre +'.'+ item.extension"
+                                                                class="btn btn-sm btn-light m-1"><i
+                                                                    class="fa fa-download"></i></a>
+
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                    </ng-container>
+                                    <ng-template #elseTemplate>
+                                        <div class="col-12 text-center">
+                                            <i class="fa fa-info-circle text-info fa-3x"></i>
+                                            <h3>No hay anexos</h3>
+                                        </div>
+                                    </ng-template>
+
+
+
+
                                 </div>
                             </div>
 
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <hr>
+                                        <h6 class="font-weight-bold">Cotizaciones subidas
+                                            <span class="badge badge-info badge-pill">{{filesFromInput.length}}</span>
+                                        </h6>
+                                    </div>
+                                    <div class="col-4 text-right">
+                                        <hr>
+                                        <input accept="application/pdf" class="d-none" (change)="setFiles(file.files)"
+                                            #file multiple type="file" />
+                                        <button (click)="file.click()" type="button" class="btn btn-light btn-sm"><i
+                                                class="fa fa-upload"></i>
+                                        </button>
+                                    </div>
+
+                                    <ng-container *ngIf="filesFromInput.length>0; else elseTemplate2">
+
+                                        <div class="col-md-12">
+                                            <table class="table table-hover table-sm mb-0 no-wrap v-middle">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th></th>
+                                                        <th></th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody [hidden]="Cargando">
+                                                    <tr *ngFor="let item of filesFromInput; let i= index">
+                                                        <td [ngClass]="{'table-success': item.seleccionada}">
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input (click)="onSelectCotizacion(item,i)"
+                                                                    [(ngModel)]="item.seleccionada" type="checkbox"
+                                                                    class="custom-control-input" [attr.id]="'option'+i"
+                                                                    name="cotizacionCheck">
+                                                                <label class="custom-control-label"
+                                                                    [attr.for]="'option'+i"></label>
+                                                            </div>
+                                                        </td>
+                                                        <td [ngClass]="{'table-success': item.seleccionada}">
+
+                                                            <i class="fa fa-file-pdf text-danger"></i>
+                                                        </td>
+                                                        <td [ngClass]="{'table-success': item.seleccionada}">
+
+                                                            <span class="small"
+                                                                [ngClass]="{'font-weight-bold': item.seleccionada}">
+                                                                {{item.name}} </span>
+                                                        </td>
+                                                        <td [ngClass]="{'table-success': item.seleccionada}">
+                                                            <button (click)="onDeleteCotizacionSeleccionada(i)"
+                                                                class="btn btn-sm btn-light"> <i
+                                                                    class="fa fa-times"></i></button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                    </ng-container>
+                                    <ng-template #elseTemplate2>
+
+                                        <div class="col-12 text-center">
+                                            <i class="fa fa-info-circle text-info fa-3x"></i>
+                                            <h3>No hay cotizaciones</h3>
+                                        </div>
+
+                                    </ng-template>
+
+
+
+                                </div>
+                            </div>
                         </div>
+
                     </div>
 
 
@@ -291,57 +377,6 @@
                         <h4 class="font-weight-bold">Total Neto: $ {{ordenCompra.totalNeto | number:'1.2-2' }}</h4>
                     </div>
 
-                    <div class="col-12 text-right">
-                        <hr>
-                        <button (click)="openModal(modalUploadCotizaciones)" type="button" class="btn btn-light"><i
-                                class="fa fa-paperclip"></i> Adjuntar cotizaciones</button>
-                    </div>
-
-
-
-
-
-                    <div class="col-12 my-2">
-                        <div class="row" *ngIf="filesFromInput.length > 0">
-                            <div class="col-12">
-                                <hr>
-                                <h4>Cotizaciones seleccionadas
-                                    <span class="badge badge-info badge-pill">{{filesFromInput.length}}</span>
-                                </h4>
-                            </div>
-
-                            <div class="col-12">
-                                <div class="table-responsive">
-                                    <table class="table table-hover table-sm mb-0 no-wrap v-middle">
-                                        <thead>
-                                            <tr>
-                                                <th></th>
-                                                <th></th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody [hidden]="Cargando">
-                                            <tr *ngFor="let item of filesFromInput; let i= index">
-
-                                                <td> <i class="fa fa-file-pdf text-danger"></i></td>
-                                                <td>
-                                                    <span class=""> {{item.name}} </span>
-                                                </td>
-                                                <td>
-                                                    <button (click)="onDeleteCotizacionSeleccionada(i)"
-                                                        class="btn btn-sm btn-light"> <i
-                                                            class="fa fa-times"></i></button>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-
                     <div class="form-group text-right col-md-12">
                         <hr />
 
@@ -364,47 +399,3 @@
         </div>
     </div>
 </div>
-
-
-
-
-
-
-<ng-template #modalUploadCotizaciones let-modal>
-    <div class="container-fluid">
-        <div class="row" *ngIf="!cargandoCotizaciones">
-            <div class="col">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="modal-title">Subida de cotizaciones</h4>
-                    <button type="button" class="close" aria-describedby="modal-title"
-                        (click)="modal.dismiss('Cross click')">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="box-part text-center">
-                                <!-- <i class="fa text-success  fa-dollar-sign fa-3x" aria-hidden="true"></i> -->
-                                <input accept="application/pdf" class="d-none" (change)="setFiles(file.files)" #file
-                                    multiple type="file" />
-
-                                <button class="btn btn-info" (click)="file.click()">
-                                    <i class="fa fa-upload text-white"></i>
-                                    Seleccionar archivos
-                                </button>
-
-                            </div>
-                            <hr>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-        <app-loading-listado [hidden]="!cargandoCotizaciones"></app-loading-listado>
-
-    </div>
-</ng-template>

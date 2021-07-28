@@ -474,43 +474,36 @@ export class OrdenComprasFormularioComponent implements OnInit {
   }
 
 
-
-  //modal
-
-
-
-
-  openModal(content) {
-    this.modalService.open(content, { size: 'lg' });
-  }
-
+  // COTIZACIONES UPLOAD
 
   setFiles(selectedfiles: any[]) {
 
     if (selectedfiles && selectedfiles.length > 0) {
-      this.filesFromInput = []
+      // this.filesFromInput = []
       for (let i = 0; i < selectedfiles.length; i++) {
         const element = selectedfiles[i];
         this.filesFromInput.push(element)
       }
     }
-
-    this.modalService.dismissAll();
-
+    // this.modalService.dismissAll();
   }
 
   onDeleteCotizacionSeleccionada(index: number) {
     this.filesFromInput.splice(index, 1);
+    // console.log(this.filesFromInput)
   }
 
 
-  subirArchivosAlServidor() {
+  subirCotizacionesAlServidor() {
 
     const formData = new FormData();
     formData.append("OrdenCompraID", this.ordenID + '');
 
     for (let file of this.filesFromInput)
-      formData.append("files", file);
+      formData.append("cotizaciones", file);
+
+    for (let file of this.filesFromInput)
+      formData.append("cotizaciones", file);
 
     this.httpService.DoPostAny<any>(DataApi.Upload,
       "UploadOrdenCompraAnexos", formData).subscribe(response => {
@@ -532,7 +525,7 @@ export class OrdenComprasFormularioComponent implements OnInit {
 
   }
 
-  getArchivosSubidos() {
+  getCotizacionesSubidas() {
 
     this.httpService.DoPostAny<OrdenCompraAnexoCotizaciones>(DataApi.OrdenCompra,
       "GetOrdenCompraAnexosArchivos", this.ordenID).subscribe(response => {
@@ -560,7 +553,6 @@ export class OrdenComprasFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0], "Error");
         } else {
           this.anexosArchivosSubidas = response.records;
-          console.table(this.anexosArchivosSubidas)
         }
 
         this.cargandoAnexos = false;
@@ -591,7 +583,12 @@ export class OrdenComprasFormularioComponent implements OnInit {
       });
   }
 
+  onSelectCotizacion(item: any, index: number) {
 
+    this.filesFromInput.forEach(x => x.seleccionada = false);
+    this.filesFromInput[index].seleccionada = true;
+
+  }
 
 
 
