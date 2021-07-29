@@ -75,6 +75,8 @@ export class OrdenComprasFormularioComponent implements OnInit {
   cotizacionesArchivosSubidas: OrdenCompraAnexoCotizaciones[] = [];
   ITBIS: number;
   loadingSolicitudDetalle: boolean;
+  loadingMonedasTipo: boolean;
+  monedasTipos: ComboBox[];
 
 
   constructor(
@@ -106,7 +108,7 @@ export class OrdenComprasFormularioComponent implements OnInit {
     this.getITBIS()
 
     this.llenarTipoOrdenCombo();
-
+    this.getMonedasTipo()
   }
 
   llenarTipoOrdenCombo() {
@@ -244,10 +246,17 @@ export class OrdenComprasFormularioComponent implements OnInit {
       this.toastService.warning("Debes de seleccionar un comprador.")
       return;
     }
+
+    if (this.ordenCompra.monedaID <= 0) {
+      this.toastService.warning("Debes de seleccionar una moneda.")
+      return;
+    }
+
     if (this.filesFromInput.length <= 0) {
       this.toastService.warning("Debes de subir las cotizaciones.")
       return;
     }
+
     //que una cotizacion este seleccionada
     if (!this.filesFromInput.some(x => x.seleccionada)) {
       this.toastService.warning("Debes de marcar la cotización escogida.")
@@ -611,6 +620,23 @@ export class OrdenComprasFormularioComponent implements OnInit {
     this.filesFromInput.forEach(x => x.seleccionada = false);
     this.filesFromInput[index].seleccionada = true;
 
+  }
+
+  getMonedasTipo() {
+    this.loadingMonedasTipo = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetMonedas", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.monedasTipos = response.records;
+        }
+        this.loadingMonedasTipo = false;
+      }, error => {
+        this.loadingMonedasTipo = false;
+        this.toastService.error("No se pudo obtener los tipos de moneda", "Error conexion al servidor");
+      });
   }
 
 

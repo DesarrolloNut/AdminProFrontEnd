@@ -333,6 +333,19 @@
                     </div>
 
 
+                    <div class="col-12">
+                        <hr>
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <label for="moneda"> Moneda </label>
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="monedasTipos"
+                            [loading]="loadingMonedasTipo" [clearable]="false" [(ngModel)]="ordenCompra.monedaID"
+                            notFoundText="No resultados">
+                        </ng-select>
+                    </div>
+
+
                     <div class="col-12 table-responsive">
 
                         <table class="table table-hover mb-0 no-wrap v-middle">
