@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -18,6 +18,8 @@ import { Cliente } from '../models/Cliente';
 })
 export class ClienteDatosGeneralesComponent implements OnInit {
   @Input() clientId = 0;
+  @Output() clienteIdCreado = new EventEmitter();
+  
   FormGenerales: FormGroup;
 
   //BOOLEANOS
@@ -136,22 +138,25 @@ export class ClienteDatosGeneralesComponent implements OnInit {
 
     if(this.f.documentoTipoID.value==2){
       this.f.apellidos.setValue('');
-      this.f.email.setValue('s');
+      this.f.email.setValue('');
       this.f.fechaNacimiento.setValue(new Date());
       this.f.sexo.setValue('');
     }
-
     let param = { "cliente": this.FormGenerales.value }
     console.log( this.FormGenerales.value )
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
       metodo, this.FormGenerales.value).subscribe(response => {
-           
+        this.clientId=response.records[0].id;
+
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
           this.btnGuardarCargando = false;
         } else {
           this.toastService.success("Realizado", "OK");
-          this.router.navigateByUrl('/mantenimientos/cliente');
+          if(!this.actualizando){
+            this.onClienteCreado(this.clientId);
+          }
+          this.router.navigateByUrl('/mantenimientos/cliente/'+this.clientId);
         }
 
         this.btnGuardarCargando = false;
@@ -162,7 +167,9 @@ export class ClienteDatosGeneralesComponent implements OnInit {
 
   }
 
-
+  onClienteCreado(id:number) {
+    this.clienteIdCreado.emit(id);
+  }
   getClienteByID(id: number) {
     this.cargando = true;
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,

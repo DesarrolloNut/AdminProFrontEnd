@@ -55,7 +55,7 @@ export class ClientesFormularioComponent implements OnInit {
   loadingRutas: boolean;
   TipoCliente: any[];
   loadingTipoCliente: boolean;
-  ListaPrecio: any[];
+  ListaPrecio: any[]; 
   loadingListaPrecio: boolean;
   DiaSemana: Dias[] = new Array<Dias>();
   FrecuenciaVisita: FrecuenciaVisita[] = new Array<FrecuenciaVisita>();
@@ -94,7 +94,9 @@ export class ClientesFormularioComponent implements OnInit {
   }
 
 
-
+  setClienteIdGuardado(id:number) {
+    this.clienteId= id;
+ }
   // private CreateFormDatosGenerales() {
 
   //   this.FormGenerales = this.formBuilder.group({
