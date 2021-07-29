@@ -27,17 +27,6 @@
                 <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
                 <div class="form-row m-t-40">
 
-                    <!-- <div class="form-group col-md-6">
-                        <label for="codigoReferencia"> <i class="fa fa-hashtag"></i> Código de Referencia</label>
-                        <input formControlName="codigoReferencia" type="text" name="codigoReferencia"
-                            id="codigoReferencia"
-                            [ngClass]="{'is-invalid' : submitted && f.codigoReferencia.errors,  'form-control':true  }">
-                        <div class="invalid-feedback" *ngIf="submitted && f.codigoReferencia.errors">
-                            <div *ngIf="f.codigoReferencia.errors.required">El campo es obligatorio</div>
-                        </div>
-                    </div> -->
-
-
                     <div class="col-12 mb-2" *ngIf="usuario">
                         <div class="row border border-light p-2">
 
@@ -126,7 +115,7 @@
                                 </div> -->
                             </div>
 
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-4">
                                 <label for="compradorID"> Comprador </label>
                                 <ng-select bindLabel="nombre" bindValue="codigo" [items]="compradores"
                                     [loading]="loadingCompradores" [clearable]="false"
@@ -137,7 +126,7 @@
                                 </div> -->
                             </div>
 
-                            <div class="form-group col-6">
+                            <div class="form-group col-4">
                                 <label>Fecha de entrega</label>
                                 <ejs-datepicker [showClearButton]="false" [(ngModel)]="ordenCompra.fechaEntrega"
                                     [format]="'dd-MM-yyyy'" [min]='fechaActual'>
@@ -145,25 +134,64 @@
 
                             </div>
 
-
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-4">
                                 <label for="tipoSolicitudID"> Tipo de solicitud </label>
                                 <ng-select bindLabel="nombre" bindValue="codigo" [items]="solicitudCompraTipos"
                                     [loading]="loadingSolicitudCompraTipo" [clearable]="false" [readonly]="true"
                                     [(ngModel)]="ordenCompra.tipoSolicitudID" notFoundText="No resultados">
                                 </ng-select>
-
+                                <hr>
                             </div>
+
+                            <div class="form-group col-md-4" *ngIf="ordenCompra">
+                                <label for="tipoOrden"> Tipo de orden </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="tipoOrdenCombo"
+                                    [clearable]="false" [(ngModel)]="ordenCompra.tipoID" notFoundText="No resultados">
+                                </ng-select>
+                            </div>
+
+                            <ng-template [ngIf]="ordenCompra.tipoID == 2">
+
+                                <div class="form-group col-md-4">
+                                    <label>Abierta desde</label>
+                                    <ejs-datepicker [showClearButton]="false"
+                                        [(ngModel)]="ordenCompra.fechaAbiertaDesde" [format]="'dd-MM-yyyy'"
+                                        [min]='fechaActual'>
+                                    </ejs-datepicker>
+
+                                </div>
+
+                                <div class="form-group col-md-4">
+                                    <label>Abierta hasta</label>
+                                    <ejs-datepicker [showClearButton]="false"
+                                        [(ngModel)]="ordenCompra.fechaAbiertaHasta" [format]="'dd-MM-yyyy'"
+                                        [min]='fechaActual'>
+                                    </ejs-datepicker>
+
+                                </div>
+
+
+                            </ng-template>
+
+
 
 
                         </div>
                     </div>
 
                     <div class="form-group col-md-12" *ngIf="ordenCompra && ordenCompra.tipoSolicitudID == 2">
-                        <label for="comentario"> Comentario</label>
+                        <label for="comentario"> Comentario solicitud de compras</label>
 
-                        <textarea readonly="true" [(ngModel)]="ordenCompra.comentario" class="form-control"
-                            name="comentario" id="comentario" rows="3">
+                        <textarea readonly="true" [(ngModel)]="ordenCompra.comentarioSolicitudCompra"
+                            class="form-control" name="comentario" id="comentario" rows="3">
+                        </textarea>
+
+                    </div>
+
+                    <div class="form-group col-md-12" *ngIf="ordenCompra">
+                        <label for="comentario"> Comentario orden de compras</label>
+
+                        <textarea [(ngModel)]="ordenCompra.comentarioOrdenCompra" class="form-control" rows="3">
                         </textarea>
 
                     </div>

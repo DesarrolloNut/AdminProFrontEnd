@@ -12,7 +12,7 @@ export interface OrdenCompra {
     fechaSolicitud: string;
     compradorID: number;
     fechaEntrega: Date;
-    comentario: string;
+    comentarioSolicitudCompra: string;
     proveedorID: number;
     tipoSolicitudID: number;
     fechaConversion: Date;
@@ -22,6 +22,11 @@ export interface OrdenCompra {
     monedaID: number;
     tasa: number;
     totalImpuesto: number;
+    comentarioOrdenCompra: string;
+    tipoID: number;
+    fechaAbiertaDesde: Date;
+    fechaAbiertaHasta: Date;
+
 }
 
 

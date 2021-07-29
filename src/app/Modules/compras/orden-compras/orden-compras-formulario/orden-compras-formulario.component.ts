@@ -61,6 +61,7 @@ export class OrdenComprasFormularioComponent implements OnInit {
   loadingArticulosDeCompra: boolean;
   loadingCotizacionDetalle: boolean;
 
+  tipoOrdenCombo: ComboBox[] = [];
 
   //solicitud anexos
   cargandoAnexos: boolean
@@ -103,6 +104,19 @@ export class OrdenComprasFormularioComponent implements OnInit {
     this.getSolicitudCompraTipo()
     this.getArticulosCompra()
     this.getITBIS()
+
+    this.llenarTipoOrdenCombo();
+
+  }
+
+  llenarTipoOrdenCombo() {
+
+    let tipo1: ComboBox = { codigo: 1, grupo: "", grupoID: "", nombre: "Normal" };
+    let tipo2: ComboBox = { codigo: 2, grupo: "", grupoID: "", nombre: "Abierta" };
+
+    this.tipoOrdenCombo.push(tipo1)
+    this.tipoOrdenCombo.push(tipo2)
+
   }
 
   getOrdenCompra(id: number) {
@@ -230,6 +244,15 @@ export class OrdenComprasFormularioComponent implements OnInit {
       this.toastService.warning("Debes de seleccionar un comprador.")
       return;
     }
+    if (this.filesFromInput.length <= 0) {
+      this.toastService.warning("Debes de subir las cotizaciones.")
+      return;
+    }
+    //que una cotizacion este seleccionada
+    if (!this.filesFromInput.some(x => x.seleccionada)) {
+      this.toastService.warning("Debes de marcar la cotización escogida.")
+      return;
+    }
 
     this.guardar();
   }
@@ -254,8 +277,9 @@ export class OrdenComprasFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0], "Error");
         } else {
           this.toastService.success("Realizado", "OK");
-          this.enviarCorreoAutorizacionPendiente()
-          this.router.navigateByUrl('/compras/orden-compras');
+          this.subirCotizacionesAlServidor();
+          // this.enviarCorreoAutorizacionPendiente()
+          // this.router.navigateByUrl('/compras/orden-compras');
         }
 
         this.btnGuardarCargando = false;
@@ -500,13 +524,13 @@ export class OrdenComprasFormularioComponent implements OnInit {
     formData.append("OrdenCompraID", this.ordenID + '');
 
     for (let file of this.filesFromInput)
-      formData.append("cotizaciones", file);
+      formData.append("files", file);
 
-    for (let file of this.filesFromInput)
-      formData.append("cotizaciones", file);
+    let cotizacionEscogidaFileName: string = this.filesFromInput.find(x => x.seleccionada).name;
+    formData.append("CotizacionSeleccionadaFileName", cotizacionEscogidaFileName);
 
     this.httpService.DoPostAny<any>(DataApi.Upload,
-      "UploadOrdenCompraAnexos", formData).subscribe(response => {
+      "UploadOrdenComprasCotizacionesArchivos", formData).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
@@ -573,7 +597,6 @@ export class OrdenComprasFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.urlCarpetaArchivosAnexos = response.records[0];
-          console.log(this.urlCarpetaArchivosAnexos)
         }
         this.loadingSolicitudDetalle = false;
       }, error => {

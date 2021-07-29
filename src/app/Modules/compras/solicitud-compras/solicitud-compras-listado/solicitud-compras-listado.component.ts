@@ -231,6 +231,7 @@ export class SolicitudComprasListadoComponent implements OnInit {
     this.modalService.open(content, { size: 'lg' });
     this.solicitudCompraDetalles = [];
     this.getSolicitudCompraDetalles(item.id);
+    this.filesSubidos = []
     this.getArchivosSubidos()
   }
 
