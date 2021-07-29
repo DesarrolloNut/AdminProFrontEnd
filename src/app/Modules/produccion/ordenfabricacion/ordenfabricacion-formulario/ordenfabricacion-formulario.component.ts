@@ -235,7 +235,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0]
             this.articulo = record;
-            this.getOrdenFabricacionDetalle(record.codigoReferencia);
+
           }
           else {
             this.articulo = null;
@@ -285,7 +285,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          this.getArticuloById(response.records[0].articuloId)
+          this.getArticuloById(response.records[0].articuloId);
           this.ofheader.tipoId = response.records[0].ordenFabricacionTipoId;
           this.ofheader.estadoId = response.records[0].estadoId;
           this.ofheader.cantidadPlanificada = response.records[0].cantidad;
@@ -293,7 +293,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
           this.ofheader.fechaInicio = response.records[0].fechaInicio;
           this.ofheader.fechaCierre = response.records[0].fechaCierre;
           this.ofheader.id = response.records[0].id;
-          // this.getOrdenFabricacionDetalle(this.articulo.codigoReferencia);
+          this.getOrdenFabricacionDetalle(response.records[0].id);
         }
         this.loadingArticulosExtras = false;
       }, error => {
@@ -307,11 +307,11 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
   }
 
 
-  getOrdenFabricacionDetalle(codigoReferencia: string) {
+  getOrdenFabricacionDetalle(ordenFabricacionId: number) {
     this.loadingArticulosExtras = true;
 
     this.httpService.DoPostAny<OrdenFabricacionVista>(DataApi.OrdenFabricacionDetalle,
-      "GetOrdenFabricacionDetalleVistaByID", {CodigoRefencia:codigoReferencia}).subscribe(response => {
+      "GetOrdenFabricacionDetalleVistaByID", ordenFabricacionId).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
