@@ -2,6 +2,7 @@ export class ListaMaterialesHeader {
 
   constructor() {
     this.id = 1;
+    this.tipoId = 1;
     this.estadoId = 1;
     this.cantidadPlanificada = 1;
     this.almacenId = 0;

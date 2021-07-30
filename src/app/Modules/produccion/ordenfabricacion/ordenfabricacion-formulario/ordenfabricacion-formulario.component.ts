@@ -78,6 +78,10 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
     this.guardar()
   }
 
+  OnlyInterger(){
+    this.ofheader.cantidadPlanificada = this.ofheader.cantidadPlanificada > 0 ? parseInt(this.ofheader.cantidadPlanificada.toString()) : this.ofheader.cantidadPlanificada ;
+  }
+
   guardar() {
 
     let OrdenFabricacion: OrdenFabricacion =  {
@@ -105,6 +109,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
         disponible: x.disponible,
         metodoEmisionId: x.metodoEmision == 'M' ? 1 : 2,
         unidadMedida: x.unidadMedida,
+        costoArticulo: x.costoArticulo,
         id: x.id,
         ordenFabricacionId: 0
 
@@ -260,6 +265,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.articulosExtras = response.records;
+          console.log()
           this.ofheader.almacenId = response.records[0].almacenId;
           // this.FormHeader.setValue(response.records);
           //this.formatArticulosExtras()
@@ -317,7 +323,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
          this.articulosExtras = response.records;
-         console.log(response.records)
+         //console.log(response.records)
         }
         this.loadingArticulosExtras = false;
       }, error => {

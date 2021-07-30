@@ -77,26 +77,45 @@ OnChangeIsPesaje(articulosExtras: OrdenFabricacionVista){
 }
 
 OnSaveConsumido(articulosExtras: OrdenFabricacionVista){
-  this.loadingSaveConsumido = true;
-  console.log(articulosExtras);
-  this.httpService.DoPostAny<OrdenFabricacionVista>(DataApi.OrdenFabricacionDetalle,
-    "UpdateConsumidoYCostoReal", articulosExtras).subscribe(response => {
 
-      if (!response.ok) {
-        this.toastService.error(response.errores[0]);
-      } else {
-        articulosExtras.isPesaje = !articulosExtras.isPesaje;
+  let requeridad = (articulosExtras.cantidadBase * this.ofheader.cantidadPlanificada);
+  let consumido = articulosExtras.consumido;
+  if(consumido > requeridad){
+    this.loadingSaveConsumido = true;
+    console.log(articulosExtras);
+    this.httpService.DoPostAny<OrdenFabricacionVista>(DataApi.OrdenFabricacionDetalle,
+      "UpdateConsumidoYCostoReal", articulosExtras).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          articulosExtras.isPesaje = !articulosExtras.isPesaje;
+          this.getOrdenFabricacion(articulosExtras.ordenFabricacionId);
+        }
+        this.loadingSaveConsumido = false;
+      }, error => {
+        this.loadingSaveConsumido = false;
+        this.toastService.error("No se pudo obtener los articulos extras", "Error conexion al servidor");
+
+        setTimeout(() => {
+          //this.getOrdenFabricacion();
+        }, 1000);
+      });
+  }else{
+    this.toastService.error("El valor consumido de ser mayor a la cantidad requerida", "Error Cantidad");
+  }
+
+
+
+
+}
+
+OnChangeConsumido(articulosExtras: OrdenFabricacionVista, ofheader: ListaMaterialesHeader){
+      let requeridad = (articulosExtras.cantidadBase * ofheader.cantidadPlanificada);
+      let consumido = articulosExtras.consumido;
+      if(consumido < requeridad){
+        this.toastService.error("El valor consumido de ser mayor a la cantidad requerida", "Error Cantidad");
       }
-      this.loadingSaveConsumido = false;
-    }, error => {
-      this.loadingSaveConsumido = false;
-      this.toastService.error("No se pudo obtener los articulos extras", "Error conexion al servidor");
-
-      setTimeout(() => {
-        //this.getOrdenFabricacion();
-      }, 1000);
-    });
-
 
 }
 

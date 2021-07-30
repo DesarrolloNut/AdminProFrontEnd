@@ -135,6 +135,7 @@
                 <th scope="col">Requerida</th>
                 <th scope="col">Consumido</th>
                 <th scope="col">Disponible</th>
+                <th scope="col">Costo Real</th>
                 <th scope="col">Unidad</th>
                 <th scope="col">Almacén</th>
                 <th scope="col">Método</th>
@@ -152,6 +153,7 @@
                 <td *ngIf="!articulext.isPesaje">{{articulext.consumido}}</td>
                 <td *ngIf="articulext.isPesaje"><input type="number" class="form-control" [(ngModel)]="articulext.consumido"></td>
                 <td>{{articulext.disponible}}</td>
+                <td>{{articulext.costoReal}}</td>
                 <td>{{articulext.unidadMedida}}</td>
                 <td>{{ofheader.almacenId}}</td>
                 <td>{{articulext.metodoEmision == "M" ? "Manual" : "Automático"}}</td>

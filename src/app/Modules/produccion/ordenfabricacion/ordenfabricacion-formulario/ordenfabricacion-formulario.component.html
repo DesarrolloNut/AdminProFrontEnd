@@ -89,7 +89,7 @@
 
                   <div class=" form-group col-md-6">
                     <label for="cantidadPlanificada"> Cantidad Planificada</label>
-                    <input  type="number" name="cantidadPlanificada" id="cantidadPlanificada" class ="form-control" [(ngModel)]="ofheader.cantidadPlanificada">
+                    <input  type="number" name="cantidadPlanificada" id="cantidadPlanificada" class ="form-control" (keyup)="OnlyInterger()" [(ngModel)]="ofheader.cantidadPlanificada">
                   </div>
 
                   <div class="col-md-6">

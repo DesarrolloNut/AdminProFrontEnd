@@ -17,6 +17,8 @@ export class OrdenFabricacionVista {
     this.fechaCreacion = new Date();
     this.cantidadPlanificada = 0;
     this.consumido = 0;
+    this.costoReal = 0;
+    this.costoArticulo = 0;
     this.ordenFabricacionId = 0;
     this.isPesaje = false;
   }
@@ -37,6 +39,8 @@ export class OrdenFabricacionVista {
   fechaCreacion: Date;
   cantidadPlanificada: number;
   consumido: number;
+  costoReal: number;
+  costoArticulo: number;
   ordenFabricacionId: number;
   isPesaje: boolean;
 }
