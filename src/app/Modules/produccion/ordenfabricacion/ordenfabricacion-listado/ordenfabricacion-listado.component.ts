@@ -36,7 +36,8 @@ articulo: Articulo = new Articulo();
 
 //Eliminar cuando el pesaje este listo
 IsPesaje: boolean = false;
-  loadingSaveConsumido: boolean;
+loadingSaveConsumido: boolean;
+IsClose: boolean = false;
 
 constructor(private toastService: ToastrService,
   private httpService: BackendService,
@@ -58,6 +59,10 @@ getData() {
 
       if (x.ok) {
         this.data = x.records;
+        let estado = x.records[0].estadoId;
+        if(estado == 3){
+          this.IsClose = true;
+        }
         this.asignarPagination(x);
       } else {
         this.toastService.error(x.errores[0]);
@@ -78,11 +83,15 @@ OnChangeIsPesaje(articulosExtras: OrdenFabricacionVista){
 
 OnSaveConsumido(articulosExtras: OrdenFabricacionVista){
 
-  let requeridad = (articulosExtras.cantidadBase * this.ofheader.cantidadPlanificada);
+  // let requeridad = Number((articulosExtras.cantidadBase * this.ofheader.cantidadPlanificada).toFixed(6));
+  let requeridad = articulosExtras.cantidadRequerida;
   let consumido = articulosExtras.consumido;
-  if(consumido > requeridad){
+  console.log(requeridad);
+  console.log(consumido);
+
+  if(consumido >= requeridad){
     this.loadingSaveConsumido = true;
-    console.log(articulosExtras);
+    // console.log(articulosExtras);
     this.httpService.DoPostAny<OrdenFabricacionVista>(DataApi.OrdenFabricacionDetalle,
       "UpdateConsumidoYCostoReal", articulosExtras).subscribe(response => {
 
@@ -102,7 +111,7 @@ OnSaveConsumido(articulosExtras: OrdenFabricacionVista){
         }, 1000);
       });
   }else{
-    this.toastService.error("El valor consumido de ser mayor a la cantidad requerida", "Error Cantidad");
+    this.toastService.error("El valor consumido de ser igual a la cantidad requerida", "Error Cantidad");
   }
 
 
@@ -110,14 +119,14 @@ OnSaveConsumido(articulosExtras: OrdenFabricacionVista){
 
 }
 
-OnChangeConsumido(articulosExtras: OrdenFabricacionVista, ofheader: ListaMaterialesHeader){
-      let requeridad = (articulosExtras.cantidadBase * ofheader.cantidadPlanificada);
-      let consumido = articulosExtras.consumido;
-      if(consumido < requeridad){
-        this.toastService.error("El valor consumido de ser mayor a la cantidad requerida", "Error Cantidad");
-      }
+// OnChangeConsumido(articulosExtras: OrdenFabricacionVista){
+//       let requeridad = (articulosExtras.cantidadBase * this.ofheader.cantidadPlanificada);
+//       let consumido = articulosExtras.consumido;
+//       if(consumido < requeridad){
+//         this.toastService.error("El valor consumido de ser mayor a la cantidad requerida", "Error Cantidad");
+//       }
 
-}
+// }
 
 
 
@@ -172,6 +181,7 @@ getOrdenFabricacionDetalle(ordenFabricacionId: number) {
         this.toastService.error(response.errores[0]);
       } else {
        this.articulosExtras = response.records;
+       this.articulosExtras.forEach(x => x.cantidadRequerida = Number((x.cantidadBase * this.ofheader.cantidadPlanificada).toFixed(6)));
       // console.log(response.records)
       }
       this.loadingArticulosExtras = false;

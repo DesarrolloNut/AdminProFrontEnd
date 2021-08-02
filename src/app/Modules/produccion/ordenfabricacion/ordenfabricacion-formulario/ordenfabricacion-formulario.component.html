@@ -74,14 +74,14 @@
 
                   <div class="form-group col-md-6">
                     <label for="tipoId"> Tipo</label>
-                    <ng-select bindLabel="nombre" bindValue="codigo" [items]="Tipos" [(ngModel)]="ofheader.tipoId"
+                    <ng-select bindLabel="nombre" bindValue="codigo" [items]="Tipos" [(ngModel)]="ofheader.tipoId" [disabled]="IsClose"
                     class ="form-control p-0" notFoundText="No resultados" >
                     </ng-select>
                   </div>
 
                   <div class=" form-group col-md-6">
                     <label for="estadoId"> Estado</label>
-                    <ng-select bindLabel="nombre" bindValue="codigo" [items]="estadosAutorizacion" [(ngModel)]="ofheader.estadoId"
+                    <ng-select bindLabel="nombre" bindValue="codigo" [items]="estadosAutorizacion" [(ngModel)]="ofheader.estadoId" [disabled]="IsClose"
                     class ="form-control p-0" notFoundText="No resultados">
                     </ng-select>
                   </div>
@@ -89,12 +89,12 @@
 
                   <div class=" form-group col-md-6">
                     <label for="cantidadPlanificada"> Cantidad Planificada</label>
-                    <input  type="number" name="cantidadPlanificada" id="cantidadPlanificada" class ="form-control" (keyup)="OnlyInterger()" [(ngModel)]="ofheader.cantidadPlanificada">
+                    <input  type="number" name="cantidadPlanificada" id="cantidadPlanificada" class ="form-control" (keyup)="OnlyInterger()" [(ngModel)]="ofheader.cantidadPlanificada" [disabled]="IsClose">
                   </div>
 
                   <div class="col-md-6">
                     <label for="almacenId">Almacenes</label>
-                    <ng-select bindLabel="nombre" bindValue="codigo" [items]="almecenes" [(ngModel)]="ofheader.almacenId"
+                    <ng-select bindLabel="nombre" bindValue="codigo" [items]="almecenes" [(ngModel)]="ofheader.almacenId" [disabled]="IsClose"
                     class ="form-control p-0"  notFoundText="No resultados" >
                     </ng-select>
                   </div>
@@ -182,17 +182,18 @@
               <h3 class="card-title font-weight-bold">Costos</h3>
               <!-- <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> -->
               <h6>Costo de componente de artículo real:</h6>
-              <h2>$25,550.49</h2>
+              <h2>{{ordenfabricacion.costoReal | currency }}</h2>
+              <!-- <h2>$25,550.49</h2> -->
               <h6>Costo de componente de recurso real: </h6>
-              <h2>$00.00 RDP</h2>
+              <h2>$0.00 RDP</h2>
               <h6>Costo adicional real:</h6>
-              <h2>$00.00 RDP</h2>
+              <h2>$0.00 RDP</h2>
               <h6>Costo de producto real:</h6>
-              <h2>$25,550.49</h2>
+              <h2>{{ ((ordenfabricacion.costoReal / ordenfabricacion.cantidad) * ordenfabricacion.cantidadProducida) | currency }}</h2>
               <h6>Coste real de subproductos:</h6>
-              <h2>$00.00</h2>
+              <h2>$0.00</h2>
               <h6>Desviación total:</h6>
-              <h2>$00.00</h2>
+              <h2>{{ (((ordenfabricacion.costoReal / ordenfabricacion.cantidad) * ordenfabricacion.cantidadProducida) - ordenfabricacion.costoReal) | currency}}</h2>
             </div>
           </div>
         </div>
@@ -203,11 +204,11 @@
               <h3 class="card-title font-weight-bold">Cantidades</h3>
               <!-- <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> -->
               <h6>Cantidad planificada:</h6>
-              <h2>289.0000</h2>
+              <h2>{{ordenfabricacion.cantidad| number: '1.2-2'}}</h2>
               <h6>Cantidad completada:</h6>
-              <h2>289.0000</h2>
+              <h2>{{ordenfabricacion.cantidadProducida| number: '1.2-2'}}</h2>
               <h6>Cantidad rechazada</h6>
-              <h2>00.00</h2>
+              <h2>0.00</h2>
             </div>
           </div>
         </div>
@@ -248,7 +249,7 @@
                           <i class="fas fa-times"></i> Cancelar
                       </button>
 
-                      <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="button" (click)="onSubmit()">
+                      <button *ngIf="!btnGuardarCargando && !IsClose" class="btn btn-info m-1" type="button" (click)="onSubmit()">
                           <i class="fas fa-check"></i> Guardar
                       </button>
 

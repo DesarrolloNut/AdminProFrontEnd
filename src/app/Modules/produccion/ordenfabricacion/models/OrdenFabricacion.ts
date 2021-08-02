@@ -10,6 +10,8 @@ constructor(){
   this.fechaInicio = new Date();
   this.fechaCierre = new Date();
   this.cantidad = 0;
+  this.costoReal = 0;
+  this.cantidadProducida = 0;
   this.estadoId = 0;
 }
 
@@ -23,5 +25,7 @@ constructor(){
   fechaInicio: Date;
   fechaCierre: Date;
   cantidad: number;
+  costoReal: number;
+  cantidadProducida: number;
   estadoId: number;
 }

@@ -21,6 +21,8 @@ export class OrdenFabricacionVista {
     this.costoArticulo = 0;
     this.ordenFabricacionId = 0;
     this.isPesaje = false;
+    this.estadoId = 0;
+    this.cantidadRequerida = 0;
   }
 
   id: number;
@@ -43,4 +45,6 @@ export class OrdenFabricacionVista {
   costoArticulo: number;
   ordenFabricacionId: number;
   isPesaje: boolean;
+  estadoId: number;
+  cantidadRequerida: number;
 }

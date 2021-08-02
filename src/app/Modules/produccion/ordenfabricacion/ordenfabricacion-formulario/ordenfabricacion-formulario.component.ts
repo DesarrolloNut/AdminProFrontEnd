@@ -46,6 +46,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
   ordenfabricacion: OrdenFabricacion = new OrdenFabricacion();
   ordenfabricaciondetalle: OrdenFabricacionDetalle = new OrdenFabricacionDetalle();
   IsNewData:boolean = true;
+  IsClose: boolean = false;
 
   constructor(
     private toastService: ToastrService,
@@ -89,6 +90,8 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
       articuloId: this.articulo.id,
       ordenFabricacionTipoId: this.ofheader.tipoId,
       cantidad: this.ofheader.cantidadPlanificada,
+      costoReal: 0,
+      cantidadProducida: this.ofheader.cantidadPlanificada,
       estadoId: this.ofheader.estadoId,
       codigoReferencia:"",
       fechaCierre: new Date(),
@@ -291,6 +294,10 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
+          let estado = response.records[0].estadoId;
+          if(estado == 3){
+            this.IsClose = true;
+          }
           this.getArticuloById(response.records[0].articuloId);
           this.ofheader.tipoId = response.records[0].ordenFabricacionTipoId;
           this.ofheader.estadoId = response.records[0].estadoId;
@@ -300,6 +307,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
           this.ofheader.fechaCierre = response.records[0].fechaCierre;
           this.ofheader.id = response.records[0].id;
           this.getOrdenFabricacionDetalle(response.records[0].id);
+          this.ordenfabricacion = response.records[0];
         }
         this.loadingArticulosExtras = false;
       }, error => {

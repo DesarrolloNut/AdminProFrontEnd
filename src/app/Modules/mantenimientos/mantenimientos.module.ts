@@ -72,7 +72,6 @@ import { PermisosFormularioComponent } from './permisos/permisos-formulario/perm
 import { PerfilFormularioComponent } from './perfil-formulario/perfil-formulario.component';
 
 import { TreeviewModule } from 'ngx-treeview';
-import { ListaPreciosAutorizacionComponent } from './autorizacion/lista-precios-autorizacion/lista-precios-autorizacion.component';
 import { CargaMasivaPanelComponent } from './cargaMasiva/carga-masiva-panel/carga-masiva-panel.component';
 import { MonedasListadoComponent } from './monedas/monedas-listado/monedas-listado.component';
 import { MonedasFormularioComponent } from './monedas/monedas-formulario/monedas-formulario.component';
@@ -91,7 +90,6 @@ import { UsuarioAlmacenEnrrollFormularioComponent } from './usuarioAlmacenEnrrol
 import { TomainventarioRutaListadoComponent } from './tomainventarioruta/tomainventarioruta-listado/tomainventarioruta-listado.component';
 import { ArticulosCategoriasListadoComponent } from './articulosCategorias/articulos-categorias-listado/articulos-categorias-listado.component';
 import { ArticulosCategoriasFormularioComponent } from './articulosCategorias/articulos-categorias-formulario/articulos-categorias-formulario.component';
-import { AutorizacionHistoricoComponent } from './autorizacion/autorizacion-historico/autorizacion-historico.component';
 
 
 
@@ -120,7 +118,6 @@ import { AutorizacionHistoricoComponent } from './autorizacion/autorizacion-hist
     PermisosListadoComponent,
     PermisosFormularioComponent,
     PerfilFormularioComponent,
-    ListaPreciosAutorizacionComponent,
     CargaMasivaPanelComponent,
     MonedasListadoComponent,
     MonedasFormularioComponent,
@@ -136,8 +133,7 @@ import { AutorizacionHistoricoComponent } from './autorizacion/autorizacion-hist
     UsuarioAlmacenEnrrollFormularioComponent,
     TomainventarioRutaListadoComponent,
     ArticulosCategoriasFormularioComponent,
-    ArticulosCategoriasListadoComponent,
-    AutorizacionHistoricoComponent
+    ArticulosCategoriasListadoComponent
 
   ],
 
