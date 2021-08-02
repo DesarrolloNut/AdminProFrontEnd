@@ -82,6 +82,8 @@ import { TomainventarioRutaListadoComponent } from './tomainventarioruta/tomainv
 import { ArticulosCategoriasListadoComponent } from './articulosCategorias/articulos-categorias-listado/articulos-categorias-listado.component';
 import { ArticulosCategoriasFormularioComponent } from './articulosCategorias/articulos-categorias-formulario/articulos-categorias-formulario.component';
 import { AutorizacionHistoricoComponent } from './autorizacion/autorizacion-historico/autorizacion-historico.component';
+import { PlazosListadoComponent } from './plazos/plazos-listado/plazos-listado.component';
+import { PlazosFormularioComponent } from './plazos/plazos-formulario/plazos-formulario.component';
 
 
 
@@ -968,6 +970,28 @@ const routes: Routes = [
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Articulo Categorias' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+      // plazos
+      {
+        path: 'plazo', component: PlazosListadoComponent, data: {
+          title: 'Plazo',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Plazo' }
+          ]
+        }
+      },
+
+      {
+        path: 'plazo/:id', component: PlazosFormularioComponent, data: {
+          title: 'Plazo Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Plazo' },
             { title: 'Formulario' }
           ]
         }

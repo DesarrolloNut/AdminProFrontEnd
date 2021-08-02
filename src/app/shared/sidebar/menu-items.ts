@@ -164,7 +164,7 @@ export const ROUTES: RouteInfo[] = [
     labelClass: '',
     extralink: false,
     submenu: [],
-    permisos: [ "finanzas"],
+    permisos: ["finanzas"],
   },
   {
     path: '/',
@@ -185,7 +185,7 @@ export const ROUTES: RouteInfo[] = [
     class: 'has-arrow',
     labelClass: '',
     extralink: false,
-    permisos:["inventario"],
+    permisos: ["inventario"],
     submenu: [
       {
         path: '/inventario/devoluciones',
@@ -515,6 +515,17 @@ export const ROUTES: RouteInfo[] = [
         extralink: false,
         submenu: [],
         permisos: ["mantenimientos_carga_masiva"],
+      },
+      {
+        path: '/mantenimientos/plazo',
+        label: '',
+        labelClass: '',
+        title: 'Plazos',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_plazo"],
       },
       {
         path: '/mantenimientos/promocion',
