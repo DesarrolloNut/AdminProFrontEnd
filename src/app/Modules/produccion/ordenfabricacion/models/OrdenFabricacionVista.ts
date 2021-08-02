@@ -16,6 +16,13 @@ export class OrdenFabricacionVista {
     this.tipo = "";
     this.fechaCreacion = new Date();
     this.cantidadPlanificada = 0;
+    this.consumido = 0;
+    this.costoReal = 0;
+    this.costoArticulo = 0;
+    this.ordenFabricacionId = 0;
+    this.isPesaje = false;
+    this.estadoId = 0;
+    this.cantidadRequerida = 0;
   }
 
   id: number;
@@ -33,4 +40,11 @@ export class OrdenFabricacionVista {
   tipo: string;
   fechaCreacion: Date;
   cantidadPlanificada: number;
+  consumido: number;
+  costoReal: number;
+  costoArticulo: number;
+  ordenFabricacionId: number;
+  isPesaje: boolean;
+  estadoId: number;
+  cantidadRequerida: number;
 }

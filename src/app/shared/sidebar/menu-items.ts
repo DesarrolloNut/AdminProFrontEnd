@@ -873,7 +873,7 @@ export const ROUTES: RouteInfo[] = [
     permisos: ["autorizacion"],
     submenu: [
       {
-        path: '/mantenimientos/autorizacion-historico',
+        path: '/autorizacion/autorizacion-historico',
         label: '',
         labelClass: '',
         title: 'Histórico',
@@ -884,7 +884,7 @@ export const ROUTES: RouteInfo[] = [
         permisos: ["autorizacion_historico"],
       },
       {
-        path: '/mantenimientos/autorizacionprecios',
+        path: '/autorizacion/autorizacionprecios',
         label: '',
         labelClass: '',
         title: 'Lista de precios',
@@ -906,7 +906,7 @@ export const ROUTES: RouteInfo[] = [
         permisos: ["autorizacion_solicitud_compras"],
       },
       {
-        path: '/inventario/autorizaciondevoluciones',
+        path: '/autorizacion/autorizaciondevoluciones',
         title: 'Devoluciones',
         label: '',
         icon: '',
@@ -926,6 +926,17 @@ export const ROUTES: RouteInfo[] = [
         extralink: false,
         submenu: [],
         permisos: ['autorizacion_cotizaciones'],
+      },
+      {
+        path: '/autorizacion/autorizacion-ordenfabricacion',
+        title: 'Orden Fabricacion',
+        label: '',
+        icon: '',
+        class: '',
+        labelClass: '',
+        extralink: false,
+        submenu: [],
+        permisos: ['autorizacion_ordenfabricacion'],
       },
     ],
   },
