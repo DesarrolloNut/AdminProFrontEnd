@@ -221,31 +221,6 @@ export class ClientesFormularioComponent implements OnInit {
   }
 
 
-  onRemoveContact() {
-
-    // let index = this.c.length - 1;
-    // if (index > 0) {
-    //   this.c.removeAt(index);
-    // }
-
-
-
-    // const numberOfTickets = e.target.value || 0;
-    // if (this.c.length < numberOfTickets) {
-    //     for (let i = this.c.length; i < numberOfTickets; i++) {
-
-    //         this.c.push(this.formBuilder.group({
-    //             telefono: [null, Validators.required],
-    //             celular: [null, Validators.required],
-    //             email: [null, [Validators.required, Validators.email]]
-    //         }));
-    //     }
-    // } else {
-    //     for (let i = this.c.length; i >= numberOfTickets; i--) {
-    //         this.c.removeAt(i);
-    //     }
-    // }
-  }
   onChangeRuta(value) {
     this.getRutaByID(value.codigo);
   }

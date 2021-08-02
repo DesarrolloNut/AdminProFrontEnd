@@ -97,6 +97,8 @@ import { ClienteVisitasComponent } from './clientes/cliente-visitas/cliente-visi
 import { ClienteFinanzasComponent } from './clientes/cliente-finanzas/cliente-finanzas.component';
 import { ClienteContactosComponent } from './clientes/cliente-contactos/cliente-contactos.component';
 import { ClienteDatosGeneralesComponent } from './clientes/cliente-datos-generales/cliente-datos-generales.component';
+import { AgmCoreModule } from '@agm/core';
+import { ClienteMapComponent } from './clientes/cliente-map/cliente-map.component';
 
 
 
@@ -106,7 +108,7 @@ import { ClienteDatosGeneralesComponent } from './clientes/cliente-datos-general
     MantenimientosComponent, ComiteComponent,
     UsuarioListadoComponent, UsuarioFormularioComponent, ClientesListadoComponent,
     ClientesFormularioComponent,ClienteRutasComponent,ClienteVisitasComponent,ClienteFinanzasComponent,
-    ClienteContactosComponent,ClienteDatosGeneralesComponent,MarcasListadoComponent, MarcasFormularioComponent,
+    ClienteContactosComponent,ClienteDatosGeneralesComponent,ClienteMapComponent,MarcasListadoComponent, MarcasFormularioComponent,
     ModelosListadoComponent, ModelosFormularioComponent, DealersListadoComponent, DealersFormularioComponent,
     AlmacenesListadoComponent, AlmacenesFormularioComponent, VehiculoTiposListadoComponent, VehiculoTiposFormularioComponent,
     CombustiblesListadoComponent, CombustiblesFormularioComponent, VehiculoCondicionesListadoComponent, VehiculoCondicionesFormularioComponent,
@@ -152,6 +154,10 @@ import { ClienteDatosGeneralesComponent } from './clientes/cliente-datos-general
     AngularDualListBoxModule,
     MantenimientosRoutingModule,
     SharedModule,
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyCDhjF3LNn2qqYUivCkiyYD8lQMAzihz7I',
+      libraries: ["places"]
+    }),
     NgbModule,
     TreeviewModule.forRoot()
   ]

@@ -44,7 +44,7 @@
                         <div class="form-group col-md-6">
                           <label for="example-email">Tipo de Visita</label>
                           <ng-select [items]="frecuenciaVisitas" bindLabel="nombre" bindValue="codigo"
-                            placeholder="Seleccionar tipo" [loading]="cargando" [clearable]="false"
+                            placeholder="Seleccionar tipo" [loading]="cargandoFVisitasCombo" [clearable]="false"
                             [ngClass]="{'form-control border-danger p-0' : submitted && f.frecuenciaVisitaId.errors }"
                             notFoundText="No resultados" formControlName="frecuenciaVisitaId">
                           </ng-select>
@@ -53,15 +53,21 @@
                             <div *ngIf="f.frecuenciaVisitaId.errors.required  ">El campo es
                               obligatorio</div>
                           </div>
-                        </div>
+                        </div> 
 
 
                         <div class="form-group col-md-12">
                           <label>Dia de Semana</label>
+                          <br>
+                          <span class="text_seleccione" >Marque los dias de visita</span>
+                          <br>
                           <div class="btn-group btn-group-toggle col-md-12 custom-btns">
-                            <label ngbButtonLabel class="btn-dark"  *ngFor="let dia of diaSemana; let i = index">
+                            <label ngbButtonLabel class=" btn-outline-dark"  *ngFor="let dia of diaSemana; let i = index">
                               <input ngbButton type="checkbox" [(ngModel)]="dia.select"
-                                [ngModelOptions]="{standalone: true}"> {{ dia.nombre }}
+                                [ngModelOptions]="{standalone: true}">
+                                <span style="font-weight: 500;">{{diasSigla[dia.dia-1]}}</span>
+                                <br> 
+                                {{ dia.nombre }}
                             </label>
                           </div>
                         </div>

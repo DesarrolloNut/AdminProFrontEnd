@@ -1,6 +1,8 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MapsAPILoader, Marker } from '@agm/core';
+import { Component, ElementRef, EventEmitter, Input, NgZone, OnInit, Output, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { thresholdFreedmanDiaconis } from 'd3';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { Parametro } from 'src/app/core/http/model/Parametro';
@@ -9,8 +11,7 @@ import { ParametrosCita } from 'src/app/Modules/turno/models/ParametrosCita';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { cedulaestructura } from 'src/app/shared/validators/cedula-estructura.validator';
-import { Cliente } from '../models/Cliente';
-
+import { Cliente, Coordenadas } from '../models/Cliente';
 @Component({
   selector: 'app-cliente-datos-generales',
   templateUrl: './cliente-datos-generales.component.html',
@@ -19,6 +20,7 @@ import { Cliente } from '../models/Cliente';
 export class ClienteDatosGeneralesComponent implements OnInit {
   @Input() clientId = 0;
   @Output() clienteIdCreado = new EventEmitter();
+  
   
   FormGenerales: FormGroup;
 
@@ -50,15 +52,21 @@ export class ClienteDatosGeneralesComponent implements OnInit {
   TipoSexo: any[] = [{ codigo: 'H', nombre: 'Hombre' }, { codigo: 'M', nombre: 'Mujer' }];
  
 
+  latitud:number;
+  longitud:number;  
+  
+  coordenadas: EventEmitter<Coordenadas> = new EventEmitter<Coordenadas>();
+
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
     private httpService: BackendService,
     private router: Router,
     private auth: AuthenticationService,
-    private formBuilder: FormBuilder
-    ) { }
+    private formBuilder: FormBuilder,
 
+    ) { }
+ 
   ngOnInit() {
     //CREACION DE FORMULARIO
     this.createForm();
@@ -142,11 +150,14 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       this.f.fechaNacimiento.setValue(new Date());
       this.f.sexo.setValue('');
     }
+    console.log(this.FormGenerales)
     let param = { "cliente": this.FormGenerales.value }
     console.log( this.FormGenerales.value )
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
       metodo, this.FormGenerales.value).subscribe(response => {
-        this.clientId=response.records[0].id;
+        if(!this.actualizando){
+          this.clientId=response.records[0].id;
+        }
 
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
@@ -181,10 +192,14 @@ export class ClienteDatosGeneralesComponent implements OnInit {
           if (response.records.length > 0) {
 
             let cliente = response.records[0];
-            
+           cliente.documentoTipoID = cliente.documentoTipoID==null? 0 :cliente.documentoTipoID
             // this.FrecuenciaVisita = response.records[0].visita;
             this.FormGenerales.setValue(cliente);
-         
+
+            let coors= new Coordenadas();
+            coors.latitud=parseFloat( cliente.latitud);
+            coors.longitud=parseFloat( cliente.longitud);
+            this.coordenadas.emit(coors);
             // this.onAddContacts(cliente.contactos);
             this.getCiudades();
             this.getSectores();
@@ -454,10 +469,11 @@ onSectorChange() {
 onTipoDocumentoChange(tipo:ComboBox) {
   
  // this.f.documento.setValue(null)
-  this.f.apellidos.setValue(null);
   this.f.documento.setErrors(null);
+  this.f.apellidos.setValue(null);
   this.buscarClienteByRncOCedula(this.f.documento.value,tipo.codigo);
   this.clearOrputValidatosSomeField();
+  console.log(this.f.documento.value)
 }
 
 clearOrputValidatosSomeField(){
@@ -480,6 +496,13 @@ clearOrputValidatosSomeField(){
      this.f.sexo.updateValueAndValidity();
 
   })
+
+}
+setCoordsInForm(coords:any) {
+ console.log(coords)
+
+ this.f.latitud.setValue( coords.lat.toString());
+ this.f.longitud.setValue(coords.lng.toString());
 }
 }
 

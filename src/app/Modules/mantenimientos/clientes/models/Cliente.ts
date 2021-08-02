@@ -67,3 +67,15 @@ export class Cliente {
     latitud: string;
     // contactos: Array<ClienteContactos>
 }
+
+
+export class Coordenadas {
+
+    constructor() {
+        this.longitud = 0.0
+        this.latitud =0.0
+    }
+    latitud: number;
+    longitud: number;
+}
+
