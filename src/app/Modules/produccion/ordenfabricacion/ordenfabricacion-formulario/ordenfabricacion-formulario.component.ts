@@ -46,6 +46,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
   ordenfabricacion: OrdenFabricacion = new OrdenFabricacion();
   ordenfabricaciondetalle: OrdenFabricacionDetalle = new OrdenFabricacionDetalle();
   IsNewData:boolean = true;
+  IsClose: boolean = false;
 
   constructor(
     private toastService: ToastrService,
@@ -67,15 +68,19 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
       this.IsNewData = false;
       this.getOrdenFabricacion(id);
 }
-    //else{
-    //   this.IsNewData = true;
-    //   this.getArticuloByCodigoReferencia(id.toString());
-    // }
+    else{
+      this.IsNewData = true;
+      // this.getArticuloByCodigoReferencia(id.toString());
+    }
   }
 
 
   onSubmit() {
     this.guardar()
+  }
+
+  OnlyInterger(){
+    this.ofheader.cantidadPlanificada = this.ofheader.cantidadPlanificada > 0 ? parseInt(this.ofheader.cantidadPlanificada.toString()) : this.ofheader.cantidadPlanificada ;
   }
 
   guardar() {
@@ -85,12 +90,14 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
       articuloId: this.articulo.id,
       ordenFabricacionTipoId: this.ofheader.tipoId,
       cantidad: this.ofheader.cantidadPlanificada,
+      costoReal: 0,
+      cantidadProducida: this.ofheader.cantidadPlanificada,
       estadoId: this.ofheader.estadoId,
       codigoReferencia:"",
       fechaCierre: new Date(),
       fechaCreacion: new Date(),
       fechaInicio: new Date(),
-      id: 0
+      id: this.ofheader.id
     };
 
     let OrdenFabricacionDetalle: Array<OrdenFabricacionDetalle> = [];
@@ -105,7 +112,8 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
         disponible: x.disponible,
         metodoEmisionId: x.metodoEmision == 'M' ? 1 : 2,
         unidadMedida: x.unidadMedida,
-        id: 0,
+        costoArticulo: x.costoArticulo,
+        id: x.id,
         ordenFabricacionId: 0
 
       };
@@ -116,8 +124,10 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
     // console.table(OrdenFabricacion);
     // console.table(OrdenFabricacionDetalle);
 
+    let ActionName = this.IsNewData ? "RegistrarOrdenFabricacionAndOrdenFabricacionDetalleViewModel" : "UpdateOrdenFabricacionAndOrdenFabricacionDetalleViewModel";
+
     this.httpService.DoPostAny<OrdenFabricacion>(DataApi.OrdenFabricacion,
-      "RegistrarOrdenFabricacionAndOrdenFabricacionDetalleViewModel", { OrdenFabricacion: OrdenFabricacion, OrdenFabricacionDetalles: OrdenFabricacionDetalle }).subscribe(response => {
+      ActionName, { OrdenFabricacion: OrdenFabricacion, OrdenFabricacionDetalles: OrdenFabricacionDetalle }).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
@@ -221,6 +231,32 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
       });
   }
 
+  getArticuloById(ArticuloID: number) {
+    this.searching = true;
+    this.httpService.DoPostAny<Articulo>(DataApi.Articulo,
+      "GetArticuloByID", ArticuloID ).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          //validar que existe
+          if (response != null && response.records != null && response.records.length > 0) {
+            let record = response.records[0]
+            this.articulo = record;
+
+          }
+          else {
+            this.articulo = null;
+          }
+          this.searching = false;
+        }
+
+      }, error => {
+        this.searching = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
 
    getArticulosDeMateriales() {
     this.loadingArticulosExtras = true;
@@ -232,6 +268,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.articulosExtras = response.records;
+          console.log()
           this.ofheader.almacenId = response.records[0].almacenId;
           // this.FormHeader.setValue(response.records);
           //this.formatArticulosExtras()
@@ -242,7 +279,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
         this.toastService.error("No se pudo obtener los articulos extras", "Error conexion al servidor");
 
         setTimeout(() => {
-          //this.getArticulosDeMateriales();
+          this.getArticulosDeMateriales();
         }, 1000);
       });
   }
@@ -251,16 +288,26 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
    getOrdenFabricacion(id:number) {
     this.loadingArticulosExtras = true;
 
-    this.httpService.DoPostAny<OrdenFabricacionVista>(DataApi.OrdenFabricacion,
+    this.httpService.DoPostAny<OrdenFabricacion>(DataApi.OrdenFabricacion,
       "GetOrdenFabricacionByID", id).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          this.articulosExtras = response.records;
+          let estado = response.records[0].estadoId;
+          if(estado == 3){
+            this.IsClose = true;
+          }
+          this.getArticuloById(response.records[0].articuloId);
+          this.ofheader.tipoId = response.records[0].ordenFabricacionTipoId;
+          this.ofheader.estadoId = response.records[0].estadoId;
+          this.ofheader.cantidadPlanificada = response.records[0].cantidad;
           this.ofheader.almacenId = response.records[0].almacenId;
-          // this.FormHeader.setValue(response.records);
-          //this.formatArticulosExtras()
+          this.ofheader.fechaInicio = response.records[0].fechaInicio;
+          this.ofheader.fechaCierre = response.records[0].fechaCierre;
+          this.ofheader.id = response.records[0].id;
+          this.getOrdenFabricacionDetalle(response.records[0].id);
+          this.ordenfabricacion = response.records[0];
         }
         this.loadingArticulosExtras = false;
       }, error => {
@@ -268,25 +315,23 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
         this.toastService.error("No se pudo obtener los articulos extras", "Error conexion al servidor");
 
         setTimeout(() => {
-          //this.getArticulosDeMateriales();
+          //this.getOrdenFabricacion();
         }, 1000);
       });
   }
 
 
-  getOrdenFabricacionDetalle(id:number) {
+  getOrdenFabricacionDetalle(ordenFabricacionId: number) {
     this.loadingArticulosExtras = true;
 
     this.httpService.DoPostAny<OrdenFabricacionVista>(DataApi.OrdenFabricacionDetalle,
-      "GetOrdenFabricacionListadoMateriales", {CodigoRefencia:this.articulo.codigoReferencia}).subscribe(response => {
+      "GetOrdenFabricacionDetalleVistaByID", ordenFabricacionId).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          this.articulosExtras = response.records;
-          this.ofheader.almacenId = response.records[0].almacenId;
-          // this.FormHeader.setValue(response.records);
-          //this.formatArticulosExtras()
+         this.articulosExtras = response.records;
+         //console.log(response.records)
         }
         this.loadingArticulosExtras = false;
       }, error => {
@@ -294,7 +339,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
         this.toastService.error("No se pudo obtener los articulos extras", "Error conexion al servidor");
 
         setTimeout(() => {
-          //this.getArticulosDeMateriales();
+          //this.getOrdenFabricacionDetalle();
         }, 1000);
       });
   }

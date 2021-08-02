@@ -1,3 +1,4 @@
+import { DevolucionVista } from '../../inventario/devoluciones/models/DevolucionVista';
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsService } from 'ngx-permissions';
@@ -9,14 +10,14 @@ import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
-import { ArticuloListaPrecioViewModel } from '../../articulos/models/ArticuloListaPrecioViewModel';
+import { DevolucionDetalleVista } from '../../inventario/devoluciones/models/DevolucionDetalleVista';
 
 @Component({
-  selector: 'app-lista-precios-autorizacion',
-  templateUrl: './lista-precios-autorizacion.component.html',
-  styleUrls: ['./lista-precios-autorizacion.component.scss']
+  selector: 'app-autorizacion-devoluciones',
+  templateUrl: './autorizacion-devoluciones.component.html',
+  styleUrls: ['./autorizacion-devoluciones.component.scss']
 })
-export class ListaPreciosAutorizacionComponent implements OnInit {
+export class AutorizacionDevolucionesComponent implements OnInit {
   // COPIAR AL CREAR UN LISTADO NUEVO
   Search: string = "";
   paginaNumeroActual = 1;
@@ -24,7 +25,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   totalPaginas: number = 0;
   paginaSize: number = 10;
   paginaTotalRecords: number = 0;
-  data: ArticuloListaPrecioViewModel[] = [] //tu modelo
+  data: DevolucionVista[] = [] //tu modelo
 
   estadoAutorizacionComboModel: number = 0;
   estadoAutorizacionUsuario: number;
@@ -41,6 +42,9 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   comentarios: any[];
   comentario: string;
   cargandoModal: boolean = false;
+  devolucionSelected: DevolucionVista;
+  CargandoDetalle: boolean;
+  dataDetalle: DevolucionDetalleVista[];
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
@@ -68,7 +72,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
       { key: "Search", value: this.Search },
     ]
 
-    this.httpService.GetAllWithPagination<ArticuloListaPrecioViewModel>(DataApi.Articulo, "GetArticulosAsignadosListaPrecioPagination", "ListaPrecio", this.paginaNumeroActual,
+    this.httpService.GetAllWithPagination<DevolucionVista>(DataApi.Devolucion, "GetDevolucionListadoAutorizacion", "Id", this.paginaNumeroActual,
       this.paginaSize, true, parametros).subscribe(x => {
 
         if (x.ok) {
@@ -91,7 +95,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   getEstadosAutorizacion() {
     let parametros: Parametro[] = [{
       key: "NameKey",
-      value: EstadosGeneralesKeyEnum.LISTAPRECIO
+      value: EstadosGeneralesKeyEnum.DEVOLUCION
     }]
 
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
@@ -119,7 +123,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   getEstadoAutorizacionUsuario() {
     let parametro = {
       "UsuarioID": Number(this.authService.tokenDecoded.nameid),
-      "KeynameModule": EstadosGeneralesKeyEnum.LISTAPRECIO,
+      "KeynameModule": EstadosGeneralesKeyEnum.DEVOLUCION,
     }
 
     this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
@@ -151,8 +155,8 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   getAnteriorEstadoAutorizacion() {
     let estadoUsuario = this.estadosAutorizacion.find(x => x.codigo == this.estadoAutorizacionUsuario);
     let estadoActualPosicion = this.estadosAutorizacion.indexOf(estadoUsuario);
-    console.log(estadoUsuario)
-    console.log(estadoActualPosicion)
+    // console.log(estadoUsuario)
+    // console.log(estadoActualPosicion)
     this.estadoAutorizacionAnterior = this.estadosAutorizacion[estadoActualPosicion - 1]
     if (this.estadoAutorizacionAnterior) {
       this.estadoAutorizacionComboModel = this.estadoAutorizacionAnterior.codigo;
@@ -214,20 +218,20 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
 
   autorizarMasiva() {
 
-    this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
-      "AutorizarArticulosMasivoSegunNivelUsuario", Number(this.authService.tokenDecoded.nameid)).subscribe(response => {
+    // this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
+    //   "AutorizarArticulosMasivoSegunNivelUsuario", Number(this.authService.tokenDecoded.nameid)).subscribe(response => {
 
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-          console.error(response.errores[0]);
-        } else {
-          this.toastService.success("Realizado", "OK");
-          this.getData()
-        }
-      }, error => {
-        this.toastService.error("No se pudo realizar", "Error conexion al servidor");
-        console.error(error)
-      });
+    //     if (!response.ok) {
+    //       this.toastService.error(response.errores[0]);
+    //       console.error(response.errores[0]);
+    //     } else {
+    //       this.toastService.success("Realizado", "OK");
+    //       this.getData()
+    //     }
+    //   }, error => {
+    //     this.toastService.error("No se pudo realizar", "Error conexion al servidor");
+    //     console.error(error)
+    //   });
 
   }
 
@@ -250,23 +254,19 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
     let ultimoEstado = this.estadosAutorizacion[this.estadosAutorizacion.length - 1].codigo;
     let articulos = []
     articulos.push(item)
-
     let param = {
       "IsAprobado": this.estadoAutorizacionUsuario == ultimoEstado && this.isAutorizando,
-      "UsuarioID": Number(this.authService.tokenDecoded.nameid),
       "IsAutorizando": this.isAutorizando,
       "EstadoAutorizacion": this.isAutorizando ? this.estadoAutorizacionUsuario : this.estadoIDAutorizacionDefault,
       "EstadoDefault": this.estadoIDAutorizacionDefault,
       "EstadoUsuariosNotificacion": EstadoUsuariosNotificacion,
       "Seleccion": articulos.
-        map(x => { return { "ListaPrecioID": x.listaPrecioID, "ArticuloID": x.id, "Precio": x.precio } })
+        map(x => { return { "ArticuloID": x.id } })
     }
 
-    console.log(articulos)
-    console.log(param)
-
+    item.cargando = false;
     this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
-      "ActualizarArticuloPrecioEstadoID", param).subscribe(response => {
+      "ActualizarDevolucionesEstadoID", param).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
@@ -274,7 +274,6 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
 
         } else {
           this.toastService.success("Realizado", "OK");
-          this.enviarCorreoActualizacionEstadoPrecio(param);
           this.getData()
         }
 
@@ -285,113 +284,129 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
 
   }
 
+  openModalDevolucionDetalle(content, DevolucionSelect: DevolucionVista) {
+    this.devolucionSelected = DevolucionSelect;
+    this.getDataDetalle(DevolucionSelect.id);
+    this.modalService.open(content, { size: 'xl', backdrop: "static", });
+  }
 
-  enviarCorreoActualizacionEstadoPrecio(param: any) {
-    this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
-      "EnviarCorreoActualizacionEstadoPrecio", param).subscribe(response => {
-        if (!response.ok) {
-          console.error(response.errores[0]);
+  getDataDetalle(DevolucionID:number) {
+    this.CargandoDetalle = true;
+
+    this.httpService.DoPostAny<DevolucionDetalleVista>(DataApi.DevolucionDetalle, "GetDevolucionDetalleVistaByID", DevolucionID).subscribe(x => {
+
+        if (x.ok) {
+          this.dataDetalle = [];
+          x.records.forEach(x => {
+            x.cantidadConfirmado == 0 ? x.cantidadConfirmado = x.cantidad : x.cantidadConfirmado;
+            this.dataDetalle.push(x);
+          });
         } else {
-          console.log("Correo enviado");
+          this.toastService.error(x.errores[0]);
+          console.error(x.errores[0]);
         }
+        this.CargandoDetalle = false;
       }, error => {
         console.error(error);
-      });
-  }
-
-
-  openModalComments(content, item: any) {
-    console.table(item)
-    this.itemSeleccionado = item;
-    this.getComentarios()
-    this.modalService.open(content, { size: 'lg', scrollable: true });
-    // this.articuloSeleccionado = item
-  }
-
-
-  getComentarios() {
-    this.comentarios = []
-    this.comentario = ""
-    let parametros = { "ArticuloID": this.itemSeleccionado.id, "ListaPrecioID": this.itemSeleccionado.listaPrecioID }
-    this.cargandoModal = true;
-    this.httpService.DoPostAny<ComboBox>(DataApi.ListaPrecio,
-      "GetListaPrecioArticuloComentarios", parametros).subscribe(response => {
-
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-          console.error(response.errores[0]);
-        } else {
-          this.comentarios = response.records;
-        }
-        this.cargandoModal = false;
-
-      }, error => {
-        this.cargandoModal = false;
-        this.toastService.error("No se pudo obtener los comentarios.", "Error conexion al servidor");
-        setTimeout(() => {
-          this.getEstadosAutorizacion()
-        }, 1000);
-
+        this.toastService.error("Error conexion al servidor");
+        this.CargandoDetalle = false;
       });
 
   }
 
 
+  // openModalComments(content, item: any) {
+  //   console.table(item)
+  //   this.itemSeleccionado = item;
+  //   this.getComentarios()
+  //   this.modalService.open(content, { size: 'lg', scrollable: true });
+  //   // this.articuloSeleccionado = item
+  // }
 
-  guardarComentario() {
 
-    if (this.comentario.trim().length < 3) {
-      return
-    }
+  // getComentarios() {
+  //   this.comentarios = []
+  //   this.comentario = ""
+  //   let parametros = { "ArticuloID": this.itemSeleccionado.id, "ListaPrecioID": this.itemSeleccionado.listaPrecioID }
+  //   this.cargandoModal = true;
+  //   this.httpService.DoPostAny<ComboBox>(DataApi.ListaPrecio,
+  //     "GetListaPrecioArticuloComentarios", parametros).subscribe(response => {
 
-    let parametros = {
-      "Id": 0,
-      "Comentario": this.comentario,
-      "ListaPrecioID": this.itemSeleccionado.listaPrecioID,
-      "ArticuloID": this.itemSeleccionado.id,
-      "UsuarioID": Number(this.authService.tokenDecoded.nameid),
-      "Fecha": new Date(),
-      "Usuario": this.authService.tokenDecoded.given_name,
-      "ListaPrecio": this.itemSeleccionado.listaPrecio,
-      "Articulo": this.itemSeleccionado.nombre
-    }
+  //       if (!response.ok) {
+  //         this.toastService.error(response.errores[0]);
+  //         console.error(response.errores[0]);
+  //       } else {
+  //         this.comentarios = response.records;
+  //       }
+  //       this.cargandoModal = false;
 
-    this.cargandoModal = true;
-    this.httpService.DoPostAny<any>(DataApi.ListaPrecio,
-      "InsertarListaPrecioArticuloComentario", parametros).subscribe(response => {
+  //     }, error => {
+  //       this.cargandoModal = false;
+  //       this.toastService.error("No se pudo obtener los comentarios.", "Error conexion al servidor");
+  //       setTimeout(() => {
+  //         this.getEstadosAutorizacion()
+  //       }, 1000);
 
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-          console.error(response.errores[0]);
+  //     });
 
-        } else {
-          this.toastService.success("Realizado", "OK");
-          this.comentario = ""
-          this.enviarNotificacionCorreoNuevoComentario(parametros)
-          this.getComentarios()
-        }
-      }, error => {
-        this.cargandoModal = false;
-        this.toastService.error("No se pudo actualizar el estado.",
-          "Error conexion al servidor");
-      });
-  }
+  // }
 
-  enviarNotificacionCorreoNuevoComentario(param: any) {
 
-    this.httpService.DoPostAny<any>(DataApi.ListaPrecio,
-      "EnviarCorreoNotificacionArticuloComentario", param).subscribe(response => {
 
-        if (!response.ok) {
-          // this.toastService.error(response.errores[0]);
-          console.error(response.errores[0]);
-        } else {
-          // this.toastService.success("Notificaciones enviadas", "OK");
-        }
-      }, error => {
-        console.error(error)
-      });
+  // guardarComentario() {
 
-  }
+  //   if (this.comentario.trim().length < 3) {
+  //     return
+  //   }
+
+  //   let parametros = {
+  //     "Id": 0,
+  //     "Comentario": this.comentario,
+  //     "ListaPrecioID": this.itemSeleccionado.listaPrecioID,
+  //     "ArticuloID": this.itemSeleccionado.id,
+  //     "UsuarioID": Number(this.authService.tokenDecoded.nameid),
+  //     "Fecha": new Date(),
+  //     "Usuario": this.authService.tokenDecoded.given_name,
+  //     "ListaPrecio": this.itemSeleccionado.listaPrecio,
+  //     "Articulo": this.itemSeleccionado.nombre
+  //   }
+
+  //   this.cargandoModal = true;
+  //   this.httpService.DoPostAny<any>(DataApi.ListaPrecio,
+  //     "InsertarListaPrecioArticuloComentario", parametros).subscribe(response => {
+
+  //       if (!response.ok) {
+  //         this.toastService.error(response.errores[0]);
+  //         console.error(response.errores[0]);
+
+  //       } else {
+  //         this.toastService.success("Realizado", "OK");
+  //         this.comentario = ""
+  //         this.enviarNotificacionCorreoNuevoComentario(parametros)
+  //         this.getComentarios()
+  //       }
+  //     }, error => {
+  //       this.cargandoModal = false;
+  //       this.toastService.error("No se pudo actualizar el estado.",
+  //         "Error conexion al servidor");
+  //     });
+  // }
+
+  // enviarNotificacionCorreoNuevoComentario(param: any) {
+
+  //   this.httpService.DoPostAny<any>(DataApi.ListaPrecio,
+  //     "EnviarCorreoNotificacionArticuloComentario", param).subscribe(response => {
+
+  //       if (!response.ok) {
+  //         // this.toastService.error(response.errores[0]);
+  //         console.error(response.errores[0]);
+  //       } else {
+  //         // this.toastService.success("Notificaciones enviadas", "OK");
+  //       }
+  //     }, error => {
+  //       console.error(error)
+  //     });
+
+  // }
 
 }

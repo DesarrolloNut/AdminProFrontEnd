@@ -5,11 +5,10 @@ import { InventarioRoutingModule } from './inventario-routing.module';
 import { InventarioComponent } from './inventario.component';
 import { SharedModule } from '../shared/shared.module';
 import { DevolucionesListadoComponent } from './devoluciones/devoluciones-listado/devoluciones-listado.component';
-import { AutorizacionDevolucionesComponent } from '../mantenimientos/autorizacion/autorizacion-devoluciones/autorizacion-devoluciones.component';
 
 
 @NgModule({
-  declarations: [InventarioComponent, DevolucionesListadoComponent, AutorizacionDevolucionesComponent],
+  declarations: [InventarioComponent, DevolucionesListadoComponent],
   imports: [
     CommonModule,
     SharedModule,
