@@ -92,6 +92,8 @@ import { TomainventarioRutaListadoComponent } from './tomainventarioruta/tomainv
 import { ArticulosCategoriasListadoComponent } from './articulosCategorias/articulos-categorias-listado/articulos-categorias-listado.component';
 import { ArticulosCategoriasFormularioComponent } from './articulosCategorias/articulos-categorias-formulario/articulos-categorias-formulario.component';
 import { AutorizacionHistoricoComponent } from './autorizacion/autorizacion-historico/autorizacion-historico.component';
+import { PlazosListadoComponent } from './plazos/plazos-listado/plazos-listado.component';
+import { PlazosFormularioComponent } from './plazos/plazos-formulario/plazos-formulario.component';
 
 
 
@@ -137,7 +139,9 @@ import { AutorizacionHistoricoComponent } from './autorizacion/autorizacion-hist
     TomainventarioRutaListadoComponent,
     ArticulosCategoriasFormularioComponent,
     ArticulosCategoriasListadoComponent,
-    AutorizacionHistoricoComponent
+    AutorizacionHistoricoComponent,
+    PlazosListadoComponent,
+    PlazosFormularioComponent
 
   ],
 
