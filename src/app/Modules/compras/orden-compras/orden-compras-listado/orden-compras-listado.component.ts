@@ -55,7 +55,7 @@ export class OrdenComprasListadoComponent implements OnInit {
     ]
 
     this.httpService.GetAllWithPagination<OrdenCompraListadoViewModel>(DataApi.OrdenCompra, "GetOrdenCompraListado", "ID", this.paginaNumeroActual,
-      this.paginaSize, true, parametros).subscribe(x => {
+      this.paginaSize, false, parametros).subscribe(x => {
 
         if (x.ok) {
           this.data = x.records;

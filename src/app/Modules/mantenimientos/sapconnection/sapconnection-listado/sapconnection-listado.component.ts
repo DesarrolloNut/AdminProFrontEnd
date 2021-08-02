@@ -40,6 +40,8 @@ getData() {
   this.httpService.GetAllWithPagination<SAPConnection>(DataApi.SAPConnection, "GetSAPConnectionListado", "ID", this.paginaNumeroActual,
     this.paginaSize, true, parametros).subscribe(x => {
 
+      console.log(x)
+
       if (x.ok) {
         this.data = x.records;
         this.asignarPagination(x);

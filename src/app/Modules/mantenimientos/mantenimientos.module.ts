@@ -90,6 +90,8 @@ import { UsuarioAlmacenEnrrollFormularioComponent } from './usuarioAlmacenEnrrol
 import { TomainventarioRutaListadoComponent } from './tomainventarioruta/tomainventarioruta-listado/tomainventarioruta-listado.component';
 import { ArticulosCategoriasListadoComponent } from './articulosCategorias/articulos-categorias-listado/articulos-categorias-listado.component';
 import { ArticulosCategoriasFormularioComponent } from './articulosCategorias/articulos-categorias-formulario/articulos-categorias-formulario.component';
+import { PlazosListadoComponent } from './plazos/plazos-listado/plazos-listado.component';
+import { PlazosFormularioComponent } from './plazos/plazos-formulario/plazos-formulario.component';
 
 
 
@@ -133,7 +135,10 @@ import { ArticulosCategoriasFormularioComponent } from './articulosCategorias/ar
     UsuarioAlmacenEnrrollFormularioComponent,
     TomainventarioRutaListadoComponent,
     ArticulosCategoriasFormularioComponent,
-    ArticulosCategoriasListadoComponent
+    ArticulosCategoriasListadoComponent,
+    PlazosListadoComponent,
+    PlazosFormularioComponent
+
 
   ],
 

@@ -80,6 +80,8 @@ import { UsuarioAlmacenEnrrollFormularioComponent } from './usuarioAlmacenEnrrol
 import { TomainventarioRutaListadoComponent } from './tomainventarioruta/tomainventarioruta-listado/tomainventarioruta-listado.component';
 import { ArticulosCategoriasListadoComponent } from './articulosCategorias/articulos-categorias-listado/articulos-categorias-listado.component';
 import { ArticulosCategoriasFormularioComponent } from './articulosCategorias/articulos-categorias-formulario/articulos-categorias-formulario.component';
+import { PlazosListadoComponent } from './plazos/plazos-listado/plazos-listado.component';
+import { PlazosFormularioComponent } from './plazos/plazos-formulario/plazos-formulario.component';
 
 
 
@@ -229,20 +231,20 @@ const routes: Routes = [
       // SAPCONNECTION
       {
         path: 'sapconnection', component: SapconnectionListadoComponent, data: {
-          title: 'SAP Conexiones',
+          title: 'Conexiones',
           urls: [
             { title: 'Mantenimientos' },
-            { title: 'SAP Conexiones' }
+            { title: 'Conexiones' }
           ]
         }
       },
 
       {
         path: 'sapconnection/:id', component: SapconnectionFormularioComponent, data: {
-          title: 'SAP Conexiones Formulario',
+          title: 'Conexiones Formulario',
           urls: [
             { title: 'Mantenimientos' },
-            { title: 'SAP Conexiones' },
+            { title: 'Conexiones' },
           ]
         }
       },
@@ -946,6 +948,28 @@ const routes: Routes = [
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Articulo Categorias' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+      // plazos
+      {
+        path: 'plazo', component: PlazosListadoComponent, data: {
+          title: 'Plazo',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Plazo' }
+          ]
+        }
+      },
+
+      {
+        path: 'plazo/:id', component: PlazosFormularioComponent, data: {
+          title: 'Plazo Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Plazo' },
             { title: 'Formulario' }
           ]
         }

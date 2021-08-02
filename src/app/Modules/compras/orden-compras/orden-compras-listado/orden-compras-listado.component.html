@@ -74,9 +74,9 @@
                     <small> <i class="fa fa-user-circle text-muted"></i> Proveedor: {{item.proveedor}}</small> -->
                 </td>
                 <td>
-                  <button class="btn btn-sm btn-light" type="button" (click)="openModal(modalUploadCotizaciones,item)">
+                  <!-- <button class="btn btn-sm btn-light" type="button" (click)="openModal(modalUploadCotizaciones,item)">
                     <i class="fa fa-sm fa-upload"></i>
-                  </button>
+                  </button> -->
 
                   <button *ngIf="item.estadoID == 1" class="btn btn-sm btn-info" [routerLink]="[item.id]">
                     <i class="fa fa-sm fa-edit"></i>

@@ -8,6 +8,7 @@ import { AuthenticationService } from 'src/app/core/authentication/service/authe
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
+import { Configuraciones } from 'src/app/shared/enums/Configuraciones';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { Archivo } from 'src/app/shared/model/Archivo';
@@ -46,6 +47,7 @@ export class SolicitudComprasListadoComponent implements OnInit {
   solicitudCompraDetalles: SolicitudCompraDetalle[];
   total: number;
   btnConvertirCargando: boolean;
+  urlCarpetaArchivos: string;
 
 
   constructor(private toastService: ToastrService,
@@ -58,6 +60,7 @@ export class SolicitudComprasListadoComponent implements OnInit {
 
 
   ngOnInit(): void {
+    this.getUrlCarpetaArchivos();
     this.getData()
     this.getEstadosAutorizacion()
   }
@@ -162,7 +165,10 @@ export class SolicitudComprasListadoComponent implements OnInit {
           this.toastService.error(response.errores[0], "Error");
         } else {
           this.toastService.success("Realizado", "OK");
-          this.modalService.dismissAll()
+          // this.modalService.dismissAll()
+          this.files = []
+          this.filesSubidos = []
+          this.getArchivosSubidos()
           // this.router.navigateByUrl('/mantenimientos/almacen');
         }
 
@@ -176,7 +182,7 @@ export class SolicitudComprasListadoComponent implements OnInit {
   }
 
   getArchivosSubidos() {
-
+    this.cargandoAnexos = true;
     this.httpService.DoPostAny<Archivo>(DataApi.SolicitudCompra,
       "GetSolicitudCompraAnexosArchivos", this.solicitudSeleccionada.id).subscribe(response => {
 
@@ -184,12 +190,12 @@ export class SolicitudComprasListadoComponent implements OnInit {
           this.toastService.error(response.errores[0], "Error");
         } else {
           this.filesSubidos = response.records;
-          // this.router.navigateByUrl('/mantenimientos/almacen');
         }
+        this.cargandoAnexos = false;
 
-        // this.btnGuardarCargando = false;
       }, error => {
-        // this.btnGuardarCargando = false; 
+        this.cargandoAnexos = false;
+        console.error(error)
         this.toastService.error("Error conexion al servidor");
       });
 
@@ -225,6 +231,8 @@ export class SolicitudComprasListadoComponent implements OnInit {
     this.modalService.open(content, { size: 'lg' });
     this.solicitudCompraDetalles = [];
     this.getSolicitudCompraDetalles(item.id);
+    this.filesSubidos = []
+    this.getArchivosSubidos()
   }
 
 
@@ -279,29 +287,46 @@ export class SolicitudComprasListadoComponent implements OnInit {
 
   }
 
-  // downloadFile(id: number) {
 
-  //   this.httpService.DoPostAny<Archivo>(DataApi.Upload,
-  //     "DownloadFile", id).subscribe(response => {
+  getUrlCarpetaArchivos() {
+    this.loadingSolicitudDetalle = true;
+    this.httpService.DoPostAny<string>(DataApi.Configuracion,
+      "GetConfiguracionValor", Number(Configuraciones.URL_ARCHIVOS_COMPARTIDOS_WEB_ADMIN)).subscribe(response => {
 
-  //       // if (!response.ok) {
-  //       //   this.toastService.error(response.errores[0], "Error");
-  //       // } else {
-  //       //   console.log(response)
-  //       //   // this.filesSubidos = response.records;
-  //       //   // this.router.navigateByUrl('/mantenimientos/almacen');
-  //       // }
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.urlCarpetaArchivos = response.records[0];
+        }
+        this.loadingSolicitudDetalle = false;
+      }, error => {
+        console.error(error)
+        this.loadingSolicitudDetalle = false;
+        this.toastService.error("No se pudo obtener la url de los archivos", "Error conexion al servidor");
+      });
+  }
 
-  //       console.log(response)
+
+  deleteSolicitudCompraAnexoArchivoByID(id: number) {
+    this.loadingSolicitudDetalle = true;
+    this.httpService.DoPostAny<string>(DataApi.Upload,
+      "DeleteSolicitudCompraAnexoArchivoByID", id).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.toastService.success("Realizado");
+          this.getArchivosSubidos();
+        }
+        this.loadingSolicitudDetalle = false;
+      }, error => {
+        console.error(error)
+        this.loadingSolicitudDetalle = false;
+        this.toastService.error("No se pudo obtener la url de los archivos", "Error conexion al servidor");
+      });
+  }
 
 
-  //       // this.btnGuardarCargando = false;
-  //     }, error => {
-  //       // this.btnGuardarCargando = false; 
-  //       this.toastService.error("Error conexion al servidor");
-  //     });
-
-  // }
 
 
 }

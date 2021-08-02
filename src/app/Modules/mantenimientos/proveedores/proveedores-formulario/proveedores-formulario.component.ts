@@ -253,7 +253,7 @@ export class ProveedoresFormularioComponent implements OnInit {
         this.loadingCondicionPagos = false;
       }, error => {
         this.loadingCondicionPagos = false;
-        this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
+        this.toastService.error("No se pudo obtener las condiciones de pago", "Error conexion al servidor");
 
         setTimeout(() => {
           this.getTipoCondicionPago();

@@ -354,7 +354,7 @@ export class CotizacionesFormularioComponent implements OnInit {
   }
 
   getITBIS() {
-    this.loadingCondicionPagos = true;
+    // this.loadingCondicionPagos = true;
     this.httpService.DoPostAny<any>(DataApi.Configuracion,
       "GetConfiguracionValor", Number(Configuraciones.IMPUESTO_PORCIENTO)).subscribe(response => {
 
@@ -370,13 +370,13 @@ export class CotizacionesFormularioComponent implements OnInit {
           }
 
         }
-        this.loadingCondicionPagos = false;
+        // this.loadingCondicionPagos = false;
       }, error => {
-        this.loadingCondicionPagos = false;
+        // this.loadingCondicionPagos = false;
         this.toastService.error("No se pudo obtener las condiciones de pago", "Error conexion al servidor");
 
         setTimeout(() => {
-          this.getTipoCondicionPago();
+          this.getITBIS();
         }, 1000);
 
       });

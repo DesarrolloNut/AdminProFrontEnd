@@ -1,20 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { Parametro } from 'src/app/core/http/model/Parametro';
-import { ToastrService } from 'ngx-toastr';
-import { BackendService } from 'src/app/core/http/service/backend.service';
 import { NgxPermissionsService } from 'ngx-permissions';
-import { DataApi } from 'src/app/shared/enums/DataApi.enum';
+import { ToastrService } from 'ngx-toastr';
+import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
-import { AlmacenListadoViewModel } from '../models/AlmacenListadoViewModel';
+import { BackendService } from 'src/app/core/http/service/backend.service';
+import { DataApi } from 'src/app/shared/enums/DataApi.enum';
+import { Plazo } from '../models/Plazo';
 
 @Component({
-  selector: 'app-almacenes-listado',
-  templateUrl: './almacenes-listado.component.html',
-  styleUrls: ['./almacenes-listado.component.scss']
+  selector: 'app-plazos-listado',
+  templateUrl: './plazos-listado.component.html',
+  styleUrls: ['./plazos-listado.component.scss']
 })
-export class AlmacenesListadoComponent implements OnInit {
+export class PlazosListadoComponent implements OnInit {
 
- 
   // COPIAR AL CREAR UN LISTADO NUEVO
   Search: string = "";
   paginaNumeroActual = 1;
@@ -23,7 +22,7 @@ export class AlmacenesListadoComponent implements OnInit {
   totalPaginas: number = 0;
   paginaSize: number = 5;
   paginaTotalRecords: number = 0;
-  data: AlmacenListadoViewModel[] = [] //tu modelo
+  data: Plazo[] = [] //tu modelo
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
@@ -39,7 +38,7 @@ export class AlmacenesListadoComponent implements OnInit {
 
     let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
 
-    this.httpService.GetAllWithPagination<AlmacenListadoViewModel>(DataApi.Almacen, "GetAlmacenListado", "ID", this.paginaNumeroActual,
+    this.httpService.GetAllWithPagination<Plazo>(DataApi.Plazo, "GetPlazoListado", "ID", this.paginaNumeroActual,
       this.paginaSize, true, parametros).subscribe(x => {
 
         if (x.ok) {

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
@@ -8,9 +7,12 @@ import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Proveedor } from 'src/app/Modules/mantenimientos/proveedores/models/Proveedor';
 import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
 import { Usuario } from 'src/app/Modules/servicios/recepcion/models/Usuario';
+import { Configuraciones } from 'src/app/shared/enums/Configuraciones';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
+import { Archivo } from 'src/app/shared/model/Archivo';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { OrdenCompra } from '../models/OrdenCompra';
+import { OrdenCompraAnexoCotizaciones } from '../models/OrdenCompraAnexoCotizaciones';
 import { OrdenCompraDetalle } from '../models/OrdenCompraDetalle';
 
 @Component({
@@ -20,9 +22,9 @@ import { OrdenCompraDetalle } from '../models/OrdenCompraDetalle';
 })
 export class OrdenComprasFormularioComponent implements OnInit {
 
-
+  ordenID: number = 0;
   Cargando: boolean = false;
-  Formulario: FormGroup;
+  // Formulario: FormGroup;
   submitted = false;
   btnGuardarCargando = false;
   actualizando = false;
@@ -46,27 +48,51 @@ export class OrdenComprasFormularioComponent implements OnInit {
   loadingCompradores: boolean;
   compradores: ComboBox[];
 
-  usuario: Usuario;
+  usuarioSolicita: Usuario;
+  proveedor: Proveedor;
 
   loadingSolicitudCompraTipo: boolean;
   solicitudCompraTipos: ComboBox[];
 
   articulosDeCompra: Articulo[];
-  ordenCompraDetalles: OrdenCompraDetalle[] = [new OrdenCompraDetalle()];
-  total: number;
+
+  ordenCompra: OrdenCompra;
+  ordenCompraDetalles: OrdenCompraDetalle[] = [];
   loadingArticulosDeCompra: boolean;
   loadingCotizacionDetalle: boolean;
+
+  tipoOrdenCombo: ComboBox[] = [];
+
+  //solicitud anexos
+  cargandoAnexos: boolean
+  anexosArchivosSubidas: Archivo[] = [];
+  urlCarpetaArchivosAnexos: string;
+
+  //modal
+  cargandoCotizaciones: boolean
+  progress: number;
+  filesFromInput: any[] = [];
+  cotizacionesArchivosSubidas: OrdenCompraAnexoCotizaciones[] = [];
+  ITBIS: number;
+  loadingSolicitudDetalle: boolean;
+  loadingMonedasTipo: boolean;
+  monedasTipos: ComboBox[];
+  loadingCondicionPagos: boolean;
+  TipoCondicionPagos: ComboBox[];
+  CargandoProveedor: boolean;
+
+
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
     private auth: AuthenticationService,
     private httpService: BackendService,
     private router: Router,
-    private formBuilder: FormBuilder) { }
+  ) { }
 
   ngOnInit(): void {
     let id = Number(this.route.snapshot.paramMap.get('id'));
-    this.CreateForm();
+    this.ordenID = id;
 
     if (id > 0) {
       this.getOrdenCompra(id);
@@ -74,40 +100,31 @@ export class OrdenComprasFormularioComponent implements OnInit {
     } else {
       this.getUsuarioByID(Number(this.auth.tokenDecoded.nameid))
     }
-
+    this.getUrlCarpetaAnexosArchivos()
     this.getDepartamentos()
     this.getSucursales()
     this.getProveedores()
     this.getCompradores()
     this.getSolicitudCompraTipo()
     this.getArticulosCompra()
-    this.getHoraActual()
+    this.getITBIS()
+
+    this.llenarTipoOrdenCombo()
+    this.getMonedasTipo()
+    this.getTipoCondicionPago();
+
+
   }
 
+  llenarTipoOrdenCombo() {
 
-  private CreateForm() {
+    let tipo1: ComboBox = { codigo: 1, grupo: "", grupoID: "", nombre: "Normal" };
+    let tipo2: ComboBox = { codigo: 2, grupo: "", grupoID: "", nombre: "Abierta" };
 
-    this.Formulario = this.formBuilder.group({
-      id: [0],
-      solicitudCompraID: [0],
-      codigoReferencia: [null,],
-      departamentoID: new FormControl({ value: null, disabled: true }, [Validators.required]),
-      solicitanteID: [Number(this.auth.tokenDecoded.nameid), [Validators.required]],
-      sucursalID: new FormControl({ value: null, disabled: true }, [Validators.required]),
-      estadoID: [0,],
-      fechaSolicitud: [new Date(),],
-      compradorID: [null, [Validators.required]],
-      fechaEntrega: [new Date(), [Validators.required]],
-      fechaConversion: [new Date(), [Validators.required]],
-      proveedorID: [0],
-      tipoSolicitudID: new FormControl({ value: null, disabled: true }, [Validators.required]),
-      comentario: new FormControl({ value: null, disabled: true }, [Validators.required]),
-      solicitanteDepartamentoID: [0,],
-      solicitanteSucursalID: [0,],
-    });
+    this.tipoOrdenCombo.push(tipo1)
+    this.tipoOrdenCombo.push(tipo2)
+
   }
-
-  get f() { return this.Formulario.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
 
   getOrdenCompra(id: number) {
     this.Cargando = true;
@@ -119,9 +136,14 @@ export class OrdenComprasFormularioComponent implements OnInit {
           //validar que existe
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0]
-            this.Formulario.setValue(record);
-            this.getOrdenCompraDetalles(record.id)
+
+            this.ordenCompra = record;
+
+            this.getHoraActual();
+            this.getOrdenCompraDetalles(record.id);
+            this.getAnexosSolicitudSubidos();
             this.getUsuarioByID(record.solicitanteID)
+            this.getProveedor(record.proveedorID)
 
           } else {
             this.toastService.warning("no encontrado");
@@ -157,7 +179,6 @@ export class OrdenComprasFormularioComponent implements OnInit {
 
   onSelectArticulo(item: any, index: number) {
     this.ordenCompraDetalles[index].costo = item.costo;
-    console.table(this.ordenCompraDetalles)
     if (!this.ordenCompraDetalles.some(x => x.articuloID <= 0)) {
       this.agregarDetalleVacio()
     }
@@ -172,39 +193,31 @@ export class OrdenComprasFormularioComponent implements OnInit {
   calcularTotal() {
     this.limpiarTotales()
 
-    this.ordenCompraDetalles.forEach(x => {
-      x.subtotal = x.cantidad && x.articuloID ? (x.costo * x.cantidad) : 0;
-      x.totalDescuento = x.descuentoPorciento ? (x.subtotal * x.descuentoPorciento / 100) : 0;
-      // x.totalImpuesto = (x.subtotal - x.totalDescuento) * (this.ITBIS / 100);
-      x.totalNeto = x.subtotal - x.totalDescuento
-      // + x.totalImpuesto;
 
-      // this.cotizacion.descuentoTotal += x.totalDescuento;
-      // this.cotizacion.subtotal += x.subtotal;
-      // this.cotizacion.costoTotal += x.cantidad && x.costo ? (x.costo * x.cantidad) : 0;
+    this.ordenCompraDetalles.forEach(x => {
+      x.subTotal = x.cantidad && x.articuloID ? (x.costo * x.cantidad) : 0;
+      x.descuentoTotal = x.descuentoPorciento ? (x.subTotal * x.descuentoPorciento / 100) : 0;
+      x.totalImpuesto = (x.subTotal - x.descuentoTotal) * (this.ITBIS / 100);
+      x.totalNeto = x.subTotal - x.descuentoTotal
+        + x.totalImpuesto;
+
+      this.ordenCompra.descuentoTotal += x.descuentoTotal;
+      this.ordenCompra.subTotal += x.subTotal;
+      this.ordenCompra.totalNeto += x.cantidad && x.costo ? (x.costo * x.cantidad) : 0;
     })
-    // this.cotizacion.totalNeto = this.cotizacion.subtotal - this.cotizacion.descuentoTotal;
-    // this.cotizacion.impuestoTotal = this.cotizacion.totalNeto * (this.ITBIS / 100);
-    // this.cotizacion.totalNeto += this.cotizacion.impuestoTotal;
+
+    this.ordenCompra.totalNeto = this.ordenCompra.subTotal - this.ordenCompra.descuentoTotal;
+    this.ordenCompra.totalImpuesto = this.ordenCompra.totalNeto * (this.ITBIS / 100);
+    this.ordenCompra.totalNeto += this.ordenCompra.totalImpuesto;
 
   }
 
   limpiarTotales() {
-    this.total = 0;
-
-    // this.cotizacion.subtotal = 0;
-    // this.cotizacion.descuentoTotal = 0;
-    // this.cotizacion.impuestoTotal = 0;
-    // this.cotizacion.totalNeto = 0;
-    // this.cotizacion.costoTotal = 0;
-  }
-
-  onDeleteitem(index: number) {
-    this.ordenCompraDetalles.splice(index, 1);
-    if (!this.ordenCompraDetalles.some(x => x.articuloID <= 0)) {
-      this.agregarDetalleVacio()
-    }
-    this.calcularTotal()
+    this.ordenCompra.subTotal = 0;
+    this.ordenCompra.descuentoTotal = 0;
+    // this.ordenCompra.impuestoTotal = 0;
+    this.ordenCompra.totalNeto = 0;
+    // this.ordenCompra.costoTotal = 0;
   }
 
   getArticulosCompra() {
@@ -230,24 +243,31 @@ export class OrdenComprasFormularioComponent implements OnInit {
   }
 
   onSubmit() {
-    this.submitted = true;
-    if (this.Formulario.invalid) {
+
+    if (this.ordenCompra.proveedorID <= 0) {
+      this.toastService.warning("Debes de seleccionar un proveedor.")
+      return;
+    }
+    if (this.ordenCompra.compradorID <= 0) {
+      this.toastService.warning("Debes de seleccionar un comprador.")
       return;
     }
 
-    // if (this.f.tipoSolicitudID.value == 2 && !this.f.comentario.value) {
-    //   this.toastService.warning("Si la solicitud es urgente debes de llenar el campo comentario.")
-    //   return;
-    // }
+    if (this.ordenCompra.monedaID <= 0) {
+      this.toastService.warning("Debes de seleccionar una moneda.")
+      return;
+    }
 
-    // if (!this.solicitudCompraDetalles.some(x => x.articuloID > 0)) {
-    //   this.toastService.warning("Debes de tener al menos un artículo.")
-    //   return;
-    // }
-    // if (this.solicitudCompraDetalles.some(x => x.articuloID > 0 && x.cantidad < 1)) {
-    //   this.toastService.warning("Tienes artículos sin cantidad.")
-    //   return;
-    // }
+    if (this.filesFromInput.length <= 0) {
+      this.toastService.warning("Debes de subir las cotizaciones.")
+      return;
+    }
+
+    //que una cotizacion este seleccionada
+    if (!this.filesFromInput.some(x => x.seleccionada)) {
+      this.toastService.warning("Debes de marcar la cotización escogida.")
+      return;
+    }
 
     this.guardar();
   }
@@ -256,8 +276,8 @@ export class OrdenComprasFormularioComponent implements OnInit {
   guardar() {
 
     let parametro: any = {
-      "ordenCompra": this.Formulario.value,
-      "ordenCompraDetalles": this.ordenCompraDetalles.filter(x => x.articuloID > 0 && x.cantidad > 0)
+      "ordenCompra": this.ordenCompra,
+      "ordenCompraDetalles": this.ordenCompraDetalles
     }
     console.log(parametro)
 
@@ -271,9 +291,10 @@ export class OrdenComprasFormularioComponent implements OnInit {
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
         } else {
-          this.toastService.success("Realizado", "OK");
-          this.enviarCorreoAutorizacionPendiente()
-          this.router.navigateByUrl('/compras/orden-compras');
+          // this.toastService.success("Realizado", "OK");
+          this.subirCotizacionesAlServidor();
+          // this.enviarCorreoAutorizacionPendiente()
+          // this.router.navigateByUrl('/compras/orden-compras');
         }
 
         this.btnGuardarCargando = false;
@@ -296,7 +317,7 @@ export class OrdenComprasFormularioComponent implements OnInit {
             let usuario = response.records[0];
             delete usuario.passwordHash;
             delete usuario.passwordSalt;
-            this.usuario = usuario;
+            this.usuarioSolicita = usuario;
           } else {
             this.toastService.warning("Usuario no encontrado");
             this.router.navigateByUrl('/compras/orden-compras');
@@ -394,7 +415,6 @@ export class OrdenComprasFormularioComponent implements OnInit {
     let parametros: Parametro[] = [
       {
         key: "CompaniaID",
-        // value: this.authService.tokenDecoded.primarygroupsid
         value: 0
       }
     ];
@@ -426,6 +446,10 @@ export class OrdenComprasFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.fechaActual = new Date(response.valores[0]);
+          // this.ordenCompra.fechaEntrega = response.valores[0];
+
+          //sumarle un dia
+          // this.ordenCompra.fechaEntrega.setDate(this.ordenCompra.fechaEntrega.getDate() + 1);
         }
 
         this.Cargando = false;
@@ -439,7 +463,7 @@ export class OrdenComprasFormularioComponent implements OnInit {
 
     let param = {
       "EstadoAutorizacionSiguiente": 2,
-      "SolicitanteID": Number(this.f.solicitanteID.value)
+      "SolicitanteID": Number(this.ordenCompra.solicitanteID)
     }
 
     this.httpService.DoPostAny<any>(DataApi.OrdenCompra,
@@ -458,6 +482,221 @@ export class OrdenComprasFormularioComponent implements OnInit {
   }
 
 
+
+  getITBIS() {
+    // this.loa = true;
+    this.httpService.DoPostAny<any>(DataApi.Configuracion,
+      "GetConfiguracionValor", Number(Configuraciones.IMPUESTO_PORCIENTO)).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+
+          if (response.records.length == 0 || response.records[0] < 1) {
+            this.toastService.error("No hay impuesto configurado");
+            console.error("No hay impuesto configurado")
+          } else {
+            this.ITBIS = Number(response.records[0]);
+          }
+
+        }
+        // this.loadingCondicionPagos = false;
+      }, error => {
+        // this.loadingCondicionPagos = false;
+        this.toastService.error("No se pudo obtener las condiciones de pago", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getITBIS();
+        }, 1000);
+
+      });
+  }
+
+
+  // COTIZACIONES UPLOAD
+
+  setFiles(selectedfiles: any[]) {
+
+    if (selectedfiles && selectedfiles.length > 0) {
+      // this.filesFromInput = []
+      for (let i = 0; i < selectedfiles.length; i++) {
+        const element = selectedfiles[i];
+        this.filesFromInput.push(element)
+      }
+    }
+    // this.modalService.dismissAll();
+  }
+
+  onDeleteCotizacionSeleccionada(index: number) {
+    this.filesFromInput.splice(index, 1);
+    // console.log(this.filesFromInput)
+  }
+
+
+  subirCotizacionesAlServidor() {
+
+    const formData = new FormData();
+    formData.append("OrdenCompraID", this.ordenID + '');
+
+    for (let file of this.filesFromInput)
+      formData.append("files", file);
+
+    let cotizacionEscogidaFileName: string = this.filesFromInput.find(x => x.seleccionada).name;
+    formData.append("CotizacionSeleccionadaFileName", cotizacionEscogidaFileName);
+
+    this.httpService.DoPostAny<any>(DataApi.Upload,
+      "UploadOrdenComprasCotizacionesArchivos", formData).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+        } else {
+          this.toastService.success("Realizado", "OK");
+          this.router.navigateByUrl('/compras/orden-compras');
+
+          // this.modalService.dismissAll()
+          // this.router.navigateByUrl('/mantenimientos/almacen');
+        }
+
+        // this.btnGuardarCargando = false;
+      }, error => {
+        // this.btnGuardarCargando = false; 
+        this.toastService.error("Error conexion al servidor");
+      });
+
+
+  }
+
+  getCotizacionesSubidas() {
+
+    this.httpService.DoPostAny<OrdenCompraAnexoCotizaciones>(DataApi.OrdenCompra,
+      "GetOrdenCompraAnexosArchivos", this.ordenID).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+        } else {
+          this.cotizacionesArchivosSubidas = response.records;
+          // this.router.navigateByUrl('/mantenimientos/almacen');
+        }
+
+        // this.btnGuardarCargando = false;
+      }, error => {
+        // this.btnGuardarCargando = false; 
+        this.toastService.error("Error conexion al servidor");
+      });
+
+  }
+
+  getAnexosSolicitudSubidos() {
+    this.cargandoAnexos = true;
+    this.httpService.DoPostAny<Archivo>(DataApi.SolicitudCompra,
+      "GetSolicitudCompraAnexosArchivos", this.ordenCompra.solicitudCompraID).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+        } else {
+          this.anexosArchivosSubidas = response.records;
+        }
+
+        this.cargandoAnexos = false;
+      }, error => {
+        this.cargandoAnexos = false;
+        console.error(error)
+        this.toastService.error("Error conexion al servidor");
+      });
+
+  }
+
+  getUrlCarpetaAnexosArchivos() {
+    this.loadingSolicitudDetalle = true;
+    this.httpService.DoPostAny<string>(DataApi.Configuracion,
+      "GetConfiguracionValor", Number(Configuraciones.URL_ARCHIVOS_COMPARTIDOS_WEB_ADMIN)).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.urlCarpetaArchivosAnexos = response.records[0];
+        }
+        this.loadingSolicitudDetalle = false;
+      }, error => {
+        console.error(error)
+        this.loadingSolicitudDetalle = false;
+        this.toastService.error("No se pudo obtener la url de los archivos", "Error conexion al servidor");
+      });
+  }
+
+  onSelectCotizacion(item: any, index: number) {
+
+    this.filesFromInput.forEach(x => x.seleccionada = false);
+    this.filesFromInput[index].seleccionada = true;
+
+  }
+
+  getMonedasTipo() {
+    this.loadingMonedasTipo = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetMonedas", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.monedasTipos = response.records;
+        }
+        this.loadingMonedasTipo = false;
+      }, error => {
+        this.loadingMonedasTipo = false;
+        this.toastService.error("No se pudo obtener los tipos de moneda", "Error conexion al servidor");
+      });
+  }
+
+  getTipoCondicionPago() {
+    this.loadingCondicionPagos = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetTipoCondicionPago", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.TipoCondicionPagos = response.records;
+        }
+        this.loadingCondicionPagos = false;
+      }, error => {
+        this.loadingCondicionPagos = false;
+        this.toastService.error("No se pudo obtener las condiciones de pago", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getTipoCondicionPago();
+        }, 1000);
+
+      });
+  }
+
+  getProveedor(id: number) {
+    this.CargandoProveedor = true;
+    this.httpService.DoPostAny<Proveedor>(DataApi.Proveedor,
+      "GetProveedorByID", id).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          //validar que existe
+          if (response != null && response.records != null && response.records.length > 0) {
+            this.proveedor = response.records[0];
+          } else {
+            this.toastService.warning("Proveedor no encontrado");
+          }
+
+        }
+        this.CargandoProveedor = false;
+
+      }, error => {
+        console.error(error)
+        this.CargandoProveedor = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
+  onChangeProveedor(e: ComboBox) {
+    this.getProveedor(e.codigo)
+  }
 
 
 }

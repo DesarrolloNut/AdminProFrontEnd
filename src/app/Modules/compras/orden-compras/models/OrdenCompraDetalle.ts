@@ -12,10 +12,8 @@ export class OrdenCompraDetalle {
     descuentoPorciento: number;
     cantidad: number;
 
-    subtotal: number;
-    totalDescuento: number;
-    // totalImpuesto: number;
+    subTotal: number;
+    descuentoTotal: number;
+    totalImpuesto: number;
     totalNeto: number;
-
-
 }

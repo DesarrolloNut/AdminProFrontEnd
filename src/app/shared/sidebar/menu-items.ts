@@ -24,7 +24,7 @@ export const ROUTES: RouteInfo[] = [
     labelClass: '',
     extralink: false,
     submenu: [],
-    permisos: [],
+    permisos: ["crm"],
   },
 
   {
@@ -164,7 +164,7 @@ export const ROUTES: RouteInfo[] = [
     labelClass: '',
     extralink: false,
     submenu: [],
-    permisos: [],
+    permisos: ["finanzas"],
   },
   {
     path: '/',
@@ -175,7 +175,7 @@ export const ROUTES: RouteInfo[] = [
     labelClass: '',
     extralink: false,
     submenu: [],
-    permisos: [],
+    permisos: ["recursos-humanos"],
   },
   {
     path: '',
@@ -185,6 +185,7 @@ export const ROUTES: RouteInfo[] = [
     class: 'has-arrow',
     labelClass: '',
     extralink: false,
+    permisos: ["inventario"],
     submenu: [
       {
         path: '/inventario/devoluciones',
@@ -209,7 +210,6 @@ export const ROUTES: RouteInfo[] = [
       //   permisos: ['inventario_autorizacion_devoluciones'],
       // },
     ],
-    permisos: ['inventario'],
   },
 
   {
@@ -254,8 +254,8 @@ export const ROUTES: RouteInfo[] = [
     class: 'has-arrow',
     labelClass: '',
     extralink: false,
+    permisos: ["servicios"],
     submenu: [],
-    permisos: [],
   },
 
 
@@ -312,13 +312,13 @@ export const ROUTES: RouteInfo[] = [
 
   {
     path: '',
-    title: 'Servicios',
+    title: 'Servicios Viacloud',
     icon: 'mdi mdi-bullseye',
     labelClass: '',
     label: '',
     class: 'has-arrow',
     extralink: false,
-    permisos: ["servicios"],
+    permisos: ["servicios-viacloud"],
     submenu: [
       {
         path: '/servicios/citas',
@@ -517,6 +517,17 @@ export const ROUTES: RouteInfo[] = [
         permisos: ["mantenimientos_carga_masiva"],
       },
       {
+        path: '/mantenimientos/plazo',
+        label: '',
+        labelClass: '',
+        title: 'Plazos',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_plazo"],
+      },
+      {
         path: '/mantenimientos/promocion',
         label: '',
         labelClass: '',
@@ -560,51 +571,7 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ["mantenimientos_ruta"],
       },
-      {
-        path: '/mantenimientos/nivelautorizacion',
-        label: '',
-        labelClass: '',
-        title: 'Nivel Autorizacion',
-        icon: '',
-        class: '',
-        extralink: false,
-        submenu: [],
-        permisos: ["mantenimientos_nivel_autorizacion"],
-      },
-      {
 
-        path: '/mantenimientos/nivelautorizacionmodulo',
-        label: '',
-        labelClass: '',
-        title: 'Nivel Autorizacion M.',
-        icon: '',
-        class: '',
-        extralink: false,
-        submenu: [],
-        permisos: ["mantenimientos_nivel_autorizacion_modulo"],
-      },
-      {
-        path: '/mantenimientos/estadosgenerales',
-        label: '',
-        labelClass: '',
-        title: 'Estados Generales',
-        icon: '',
-        class: '',
-        extralink: false,
-        submenu: [],
-        permisos: ["mantenimientos_estado_general"],
-      },
-      {
-        path: '/mantenimientos/sapconnection',
-        label: '',
-        labelClass: '',
-        title: 'SAP Conexiones',
-        icon: '',
-        class: '',
-        extralink: false,
-        submenu: [],
-        permisos: ["mantenimientos_sap_conexion"],
-      },
       {
         path: '/mantenimientos/roles',
         label: '',
@@ -846,17 +813,7 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ["mantenimientos_tag"],
       },
-      {
-        path: '/mantenimientos/usuario',
-        label: '',
-        labelClass: '',
-        title: 'Usuarios',
-        icon: '',
-        class: '',
-        extralink: false,
-        submenu: [],
-        permisos: ["mantenimientos_usuario"],
-      },
+
       {
         path: '/mantenimientos/usuario-almacen-enrroll',
         label: '',
@@ -1033,7 +990,63 @@ export const ROUTES: RouteInfo[] = [
     extralink: false,
     permisos: ["configuraciones"],
     submenu: [
+      {
+        path: '/mantenimientos/usuario',
+        label: '',
+        labelClass: '',
+        title: 'Usuarios',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_usuario"],
+      },
+      {
 
+        path: '/mantenimientos/nivelautorizacion',
+        label: '',
+        labelClass: '',
+        title: 'Nivel Autorizacion',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_nivel_autorizacion"],
+      },
+      {
+
+        path: '/mantenimientos/nivelautorizacionmodulo',
+        label: '',
+        labelClass: '',
+        title: 'Nivel Autorizacion M.',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_nivel_autorizacion_modulo"],
+      },
+      {
+        path: '/mantenimientos/estadosgenerales',
+        label: '',
+        labelClass: '',
+        title: 'Estados Generales',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_estado_general"],
+      },
+      {
+        path: '/mantenimientos/sapconnection',
+        label: '',
+        labelClass: '',
+        title: 'Conexiones',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_sap_conexion"],
+      },
       {
         path: '/configuraciones/admin-web-panel-sincronizacion',
         label: '',
