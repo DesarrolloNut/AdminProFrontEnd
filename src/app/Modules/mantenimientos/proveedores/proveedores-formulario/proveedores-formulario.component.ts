@@ -42,6 +42,8 @@ export class ProveedoresFormularioComponent implements OnInit {
 
   loadingActividadesEconomicas: boolean;
   actividadesEconomicas: ComboBox[];
+  loadingPlazos: boolean;
+  plazos: ComboBox[];
 
   constructor(
     private toastService: ToastrService,
@@ -64,6 +66,7 @@ export class ProveedoresFormularioComponent implements OnInit {
     this.getDocumentosTipo();
     this.getTipoCondicionPago();
     this.getActividadEconomica();
+    this.getPlazos();
   }
 
 
@@ -93,6 +96,7 @@ export class ProveedoresFormularioComponent implements OnInit {
       actividadEconomicaID: [0],
       monedaID: [0],
       estadoID: [0],
+      plazoID: [0],
     },
       {
         validator: cedulaestructura('documento', 'documentoTipoID')
@@ -140,6 +144,12 @@ export class ProveedoresFormularioComponent implements OnInit {
     if (this.f.numero.value < 1) {
       this.f.numero.setValue(0)
     }
+
+    if (this.f.condicionPagoID.value == 2 && this.f.plazoID.value <= 0) {
+      this.toastService.warning("Seleccionar el plazo del pago a crédito.")
+      return;
+    }
+
 
     this.guardar();
   }
@@ -356,6 +366,28 @@ export class ProveedoresFormularioComponent implements OnInit {
 
         setTimeout(() => {
           this.getActividadEconomica()
+        }, 1000);
+
+      });
+  }
+
+  getPlazos() {
+    this.loadingPlazos = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetPlazos", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.plazos = response.records;
+        }
+        this.loadingPlazos = false;
+      }, error => {
+        this.loadingPlazos = false;
+        this.toastService.error("No se pudo obtener los plazos", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getPlazos()
         }, 1000);
 
       });
