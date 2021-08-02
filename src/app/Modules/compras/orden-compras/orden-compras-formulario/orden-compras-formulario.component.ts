@@ -88,7 +88,6 @@ export class OrdenComprasFormularioComponent implements OnInit {
     private route: ActivatedRoute,
     private auth: AuthenticationService,
     private httpService: BackendService,
-    private modalService: NgbModal,
     private router: Router,
   ) { }
 
@@ -293,7 +292,7 @@ export class OrdenComprasFormularioComponent implements OnInit {
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
         } else {
-          this.toastService.success("Realizado", "OK");
+          // this.toastService.success("Realizado", "OK");
           this.subirCotizacionesAlServidor();
           // this.enviarCorreoAutorizacionPendiente()
           // this.router.navigateByUrl('/compras/orden-compras');
@@ -553,7 +552,9 @@ export class OrdenComprasFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0], "Error");
         } else {
           this.toastService.success("Realizado", "OK");
-          this.modalService.dismissAll()
+          this.router.navigateByUrl('/compras/orden-compras');
+
+          // this.modalService.dismissAll()
           // this.router.navigateByUrl('/mantenimientos/almacen');
         }
 
