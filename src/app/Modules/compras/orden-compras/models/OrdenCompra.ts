@@ -26,6 +26,7 @@ export interface OrdenCompra {
     tipoID: number;
     fechaAbiertaDesde: Date;
     fechaAbiertaHasta: Date;
+    proveedorCondicionPagoID: number;
 
 }
 

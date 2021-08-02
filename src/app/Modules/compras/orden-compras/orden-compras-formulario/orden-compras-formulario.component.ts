@@ -49,7 +49,8 @@ export class OrdenComprasFormularioComponent implements OnInit {
   loadingCompradores: boolean;
   compradores: ComboBox[];
 
-  usuario: Usuario;
+  usuarioSolicita: Usuario;
+  proveedor: Proveedor;
 
   loadingSolicitudCompraTipo: boolean;
   solicitudCompraTipos: ComboBox[];
@@ -77,6 +78,9 @@ export class OrdenComprasFormularioComponent implements OnInit {
   loadingSolicitudDetalle: boolean;
   loadingMonedasTipo: boolean;
   monedasTipos: ComboBox[];
+  loadingCondicionPagos: boolean;
+  TipoCondicionPagos: ComboBox[];
+  CargandoProveedor: boolean;
 
 
   constructor(
@@ -98,7 +102,7 @@ export class OrdenComprasFormularioComponent implements OnInit {
     } else {
       this.getUsuarioByID(Number(this.auth.tokenDecoded.nameid))
     }
-    this.getUrlCarpetaAnexosArchivos();
+    this.getUrlCarpetaAnexosArchivos()
     this.getDepartamentos()
     this.getSucursales()
     this.getProveedores()
@@ -107,8 +111,11 @@ export class OrdenComprasFormularioComponent implements OnInit {
     this.getArticulosCompra()
     this.getITBIS()
 
-    this.llenarTipoOrdenCombo();
+    this.llenarTipoOrdenCombo()
     this.getMonedasTipo()
+    this.getTipoCondicionPago();
+
+
   }
 
   llenarTipoOrdenCombo() {
@@ -138,6 +145,7 @@ export class OrdenComprasFormularioComponent implements OnInit {
             this.getOrdenCompraDetalles(record.id);
             this.getAnexosSolicitudSubidos();
             this.getUsuarioByID(record.solicitanteID)
+            this.getProveedor(record.proveedorID)
 
           } else {
             this.toastService.warning("no encontrado");
@@ -311,7 +319,7 @@ export class OrdenComprasFormularioComponent implements OnInit {
             let usuario = response.records[0];
             delete usuario.passwordHash;
             delete usuario.passwordSalt;
-            this.usuario = usuario;
+            this.usuarioSolicita = usuario;
           } else {
             this.toastService.warning("Usuario no encontrado");
             this.router.navigateByUrl('/compras/orden-compras');
@@ -639,7 +647,56 @@ export class OrdenComprasFormularioComponent implements OnInit {
       });
   }
 
+  getTipoCondicionPago() {
+    this.loadingCondicionPagos = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetTipoCondicionPago", null).subscribe(response => {
 
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.TipoCondicionPagos = response.records;
+        }
+        this.loadingCondicionPagos = false;
+      }, error => {
+        this.loadingCondicionPagos = false;
+        this.toastService.error("No se pudo obtener las condiciones de pago", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getTipoCondicionPago();
+        }, 1000);
+
+      });
+  }
+
+  getProveedor(id: number) {
+    this.CargandoProveedor = true;
+    this.httpService.DoPostAny<Proveedor>(DataApi.Proveedor,
+      "GetProveedorByID", id).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          //validar que existe
+          if (response != null && response.records != null && response.records.length > 0) {
+            this.proveedor = response.records[0];
+          } else {
+            this.toastService.warning("Proveedor no encontrado");
+          }
+
+        }
+        this.CargandoProveedor = false;
+
+      }, error => {
+        console.error(error)
+        this.CargandoProveedor = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
+  onChangeProveedor(e: ComboBox) {
+    this.getProveedor(e.codigo)
+  }
 
 
 }

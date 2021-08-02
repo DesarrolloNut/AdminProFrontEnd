@@ -24,39 +24,41 @@
 
                     </div>
                 </div>
-                <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
+
                 <div class="form-row m-t-40">
 
-                    <div class="col-12 mb-2" *ngIf="usuario">
+                    <!-- Usuario que solicita -->
+                    <div class="col-12 mb-2" *ngIf="usuarioSolicita">
                         <div class="row border border-light p-2">
 
                             <div class="col-12">
-                                <h4 class="card-subtitle">
+                                <h4 class="card-subtitle  ">
                                     <span class="badge badge-info">Datos del solicitante</span>
                                 </h4>
                             </div>
                             <div class="form-group col-md-2">
                                 <label for="nombre"><i class="fa fa-hashtag"></i> Código</label>
-                                <input [(ngModel)]="usuario.codigoReferencia" class="form-control" [readonly]="'true'"
-                                    type="text" [ngModelOptions]="{standalone: true}" name="nombre">
+                                <input [(ngModel)]="usuarioSolicita.codigoReferencia" class="form-control"
+                                    [readonly]="'true'" type="text" [ngModelOptions]="{standalone: true}" name="nombre">
                             </div>
 
                             <div class="form-group col-md-6">
                                 <label for="nombre"> <i class="fa fa-user"></i> Nombres</label>
-                                <input [(ngModel)]="usuario.nombres +' '+ usuario.apellidos" class="form-control"
-                                    [readonly]="'true'" type="text" [ngModelOptions]="{standalone: true}" name="nombre">
+                                <input [(ngModel)]="usuarioSolicita.nombres +' '+ usuarioSolicita.apellidos"
+                                    class="form-control" [readonly]="'true'" type="text"
+                                    [ngModelOptions]="{standalone: true}" name="nombre">
                             </div>
 
                             <div class="form-group col-md-2">
                                 <label for="nombre"> <i class="fa fa-id-card"></i> Doc.</label>
-                                <input [(ngModel)]="usuario.documento" class="form-control" [readonly]="'true'"
+                                <input [(ngModel)]="usuarioSolicita.documento" class="form-control" [readonly]="'true'"
                                     type="text" [ngModelOptions]="{standalone: true}" name="nombre">
                             </div>
 
                             <div class="form-group col-md-2">
                                 <label for="departamentoID"> <i class="fa fa-warehouse"></i> Dep. </label>
                                 <ng-select bindLabel="nombre" bindValue="codigo" [items]="departamentos"
-                                    [disabled]="true" [(ngModel)]="usuario.departamentoID"
+                                    [disabled]="true" [(ngModel)]="usuarioSolicita.departamentoID"
                                     [ngModelOptions]="{standalone: true}" [loading]="loadingDepartamentos"
                                     notFoundText="No resultados">
                                 </ng-select>
@@ -65,6 +67,7 @@
                         </div>
                     </div>
 
+                    <!-- Destino compra -->
                     <div class="col-12" *ngIf="ordenCompra">
                         <div class="row border border-light p-2">
                             <div class="col-12">
@@ -96,23 +99,58 @@
                         </div>
                     </div>
 
-                    <div class="col-12" *ngIf="ordenCompra">
+                    <!-- Proveedor -->
+                    <div class="col-12 mt-2" *ngIf="proveedor">
                         <div class="row border border-light p-2">
                             <div class="col-12">
                                 <h4 class="card-subtitle">
-                                    <span class="badge badge-info">Otros datos</span>
+                                    <span class="badge badge-info">Proveedor datos</span>
                                 </h4>
                             </div>
 
                             <div class="form-group col-md-12">
                                 <label for="proveedorID"> Proveedor </label>
                                 <ng-select bindLabel="nombre" bindValue="codigo" [items]="proveedores"
-                                    [(ngModel)]="ordenCompra.proveedorID" [loading]="loadingProveedores"
-                                    [clearable]="false" notFoundText="No resultados">
+                                    (change)="onChangeProveedor($event)" [(ngModel)]="ordenCompra.proveedorID"
+                                    [loading]="loadingProveedores" [clearable]="false" notFoundText="No resultados">
                                 </ng-select>
-                                <!-- <div *ngIf="submitted && f.proveedorID.errors" class="text-danger small">
-                                    <div *ngIf="f.proveedorID.errors.required  ">El campo es obligatorio</div>
-                                </div> -->
+                            </div>
+
+                            <div class="col-12">
+
+                                <div class="row">
+
+                                    <div class="col-md-12">
+                                        <h3>{{proveedor.nombres}} {{proveedor.apellidos}}</h3>
+                                        <hr>
+                                        <h5> <i class="fa fa-id-card"></i> {{proveedor.documento}}</h5>
+                                        <h5> <i class="fa fa-envelope"></i> {{proveedor.email}}</h5>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <!-- <label for="departamentoID"> Codición pago </label> -->
+                                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="TipoCondicionPagos"
+                                            [disabled]="true" [(ngModel)]="proveedor.condicionPagoID"
+                                            [ngModelOptions]="{standalone: true}" [loading]="loadingCondicionPagos"
+                                            notFoundText="No resultados">
+                                        </ng-select>
+                                    </div>
+
+
+                                </div>
+
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Otros datos -->
+                    <div class="col-12 mt-2" *ngIf="ordenCompra">
+                        <div class="row border border-light p-2">
+                            <div class="col-12">
+                                <h4 class="card-subtitle">
+                                    <span class="badge badge-info">Otros datos</span>
+                                </h4>
                             </div>
 
                             <div class="form-group col-md-4">
@@ -140,7 +178,6 @@
                                     [loading]="loadingSolicitudCompraTipo" [clearable]="false" [readonly]="true"
                                     [(ngModel)]="ordenCompra.tipoSolicitudID" notFoundText="No resultados">
                                 </ng-select>
-                                <hr>
                             </div>
 
                             <div class="form-group col-md-4" *ngIf="ordenCompra">
@@ -196,8 +233,13 @@
 
                     </div>
 
+
+                    <!-- Anexos y Cotizaciones -->
                     <div class="col-12">
+
                         <div class="row">
+
+                            <!-- Anexos -->
                             <div class="col-md-6">
                                 <div class="row">
                                     <div class="col-12">
@@ -253,6 +295,7 @@
                                 </div>
                             </div>
 
+                            <!-- Cotizaciones -->
                             <div class="col-md-6">
                                 <div class="row">
                                     <div class="col-8">
@@ -328,22 +371,36 @@
 
                                 </div>
                             </div>
+
                         </div>
 
                     </div>
 
 
-                    <div class="col-12">
-                        <hr>
+                    <div class="col-12" *ngIf="ordenCompra">
+                        <div class="row">
+                            <div class="col-12">
+                                <hr>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="moneda"> Moneda </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="monedasTipos"
+                                    [loading]="loadingMonedasTipo" [clearable]="false"
+                                    [(ngModel)]="ordenCompra.monedaID" notFoundText="No resultados">
+                                </ng-select>
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                <label for="departamentoID"> Condición pago de la orden </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="TipoCondicionPagos"
+                                    [disabled]="true" [(ngModel)]="ordenCompra.proveedorCondicionPagoID"
+                                    [ngModelOptions]="{standalone: true}" [loading]="loadingCondicionPagos"
+                                    notFoundText="No resultados">
+                                </ng-select>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="form-group col-md-4">
-                        <label for="moneda"> Moneda </label>
-                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="monedasTipos"
-                            [loading]="loadingMonedasTipo" [clearable]="false" [(ngModel)]="ordenCompra.monedaID"
-                            notFoundText="No resultados">
-                        </ng-select>
-                    </div>
 
 
                     <div class="col-12 table-responsive">
