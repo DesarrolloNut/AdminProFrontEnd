@@ -12,24 +12,36 @@
                       </div>
                       <form class="form-row m-t-10" [formGroup]="FormContactos" (ngSubmit)="onSubmit()">
                    
-
-                        <!-- <div class="form-group col-md-6">
-                          <label for="email"> <i class="fa fa-envelope-open"></i> Email</label>
-                          <input formControlName="email" type="email" name="email" id="email"
-                            [ngClass]="{'is-invalid' : submitted && f.email.errors,  'form-control':true  }">
-                          <div class="invalid-feedback" *ngIf="submitted && f.email.errors">
-                            <div *ngIf="f.email.errors.required">El campo es obligatorio</div>
-                            <div *ngIf="f.email.errors.email"> Ingresa un email correcto</div>
-                          </div>
-                        </div>
-
-                     -->
+ 
                         <div class="row col-md-12" *ngFor="let contact of getContactFormControls(); let i = index" >
                           <fieldset class="hm-fieldset row">
                             <legend class="hm-legend">Contacto {{i+1}}:</legend>
-                              <div [formGroup]="contact" class="form-row">
+                              <div [formGroup]="contact" class="form-row row col-md-12">
+                                <div class="form-group  col-md-3">
+                                  <label >Cedula</label>
+                                  <input type="text" formControlName="documento" class="form-control form-control-sm"  
+                                    [ngClass]="{ 'is-invalid': submitted && contact.documento.errors }" />
+                                  <div *ngIf="submitted && contact.documento.errors" class="invalid-feedback">
+                                    <div *ngIf="contact.documento.errors.required">
+                                      El campo es obligatorio</div>
+                                  </div>
+                                  <div *ngIf="contact.documento.errors.cedulaestructura">Documento no
+                                    válido</div>
+                                  <div *ngIf="contact.documento.errors.minlength">Mínimo 9 caracteres
+                                  </div>
+                                  </div>  
+                                <div class="form-group  col-md-3">
+                                  <label >Nombres</label>
+                                  <input type="text" formControlName="nombres" class="form-control form-control-sm" 
+                                    [ngClass]="{ 'is-invalid': submitted && contact.nombres.errors }" />
+                                  <div *ngIf="submitted && contact.nombres.errors" class="invalid-feedback">
+                                    <div *ngIf="contact.nombres.errors.required">
+                                      El campo es obligatorio</div>
+                                  </div>
+                                  </div>  
+                    
 
-                              <div class="form-group  col-3">
+                              <div class="form-group  col-md-3">
                                 <label >Telefono</label>
                                 <input type="text" formControlName="telefono" class="form-control form-control-sm" mask="(000) 000-0000"
                                   [ngClass]="{ 'is-invalid': submitted && contact.telefono.errors }" />
@@ -39,7 +51,7 @@
                                 </div>
                               </div>
 
-                              <div class="form-group col-3">
+                              <div class="form-group  col-md-3">
                                 <label>Celular</label>
                                 <input type="text" formControlName="celular" class="form-control form-control-sm" mask="(000) 000-0000"
                                   [ngClass]="{ 'is-invalid': submitted && contact.celular.errors }" />
@@ -49,7 +61,7 @@
                                 </div>
                               </div>
 
-                              <div class="form-group col-4">
+                              <div class="form-group  col-md-6">
                                 <label>Email</label>
                                 <input type="text" formControlName="email" class="form-control form-control-sm"
                                   [ngClass]="{ 'is-invalid': submitted && contact.email.errors }" />
@@ -60,9 +72,24 @@
                                     Email must be a valid email address</div>
                                 </div>
                               </div>
-                              <div class="form-group col-2">
-                                <button class="btn btn-sm btn-danger" (click)="removeContact(i)"  type="button">
-                                  <i class="fas fa-minus"></i> Quitar
+
+                            
+                                <div class="form-group col-md-6">
+                                  <label for="inputEmail4"> Puesto</label>
+                                  <ng-select bindLabel="nombre" bindValue="codigo" [items]="puestos"
+                                    [loading]="false" [clearable]="false"
+                                    [ngClass]="{'form-control border-danger p-0' : submitted && f.puesto.errors }"
+                                    notFoundText="No resultados" formControlName="puesto">
+                                  </ng-select>
+                                  <div *ngIf="submitted && f.puesto.errors" class="text-danger small">
+                                    <div *ngIf="f.puesto.errors.required  ">El campo es
+                                      obligatorio</div>
+                                  </div>
+                                </div>
+                                
+                              <div class="form-group  col-md-2  mt-1">
+                                <button type="button"  (click)="removeContact(i)" class="btn btn-danger btn-round-sm btn-sm">
+                                  <i class="fas fa-minus"></i> Eliminar
                                 </button>
                               </div>
                             </div>

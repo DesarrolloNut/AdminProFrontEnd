@@ -1,4 +1,4 @@
-import { MapsAPILoader } from '@agm/core';
+import { LatLngBounds, MapsAPILoader } from '@agm/core';
 import { Component, ElementRef, EventEmitter, Input, NgZone, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Coordenadas } from '../models/Cliente';
@@ -14,11 +14,12 @@ export class ClienteMapComponent implements OnInit {
   public searchControl: FormControl;
   public zoom: number;
 
-  @Input() latitud :number;
-  @Input() longitud :number;
+  @Input() latitud =0;
+  @Input() longitud =0;
 
 
   @Input() fillCoords: EventEmitter<Coordenadas>;
+  @Input() fillSearch: EventEmitter<String>;
   @ViewChild('search', {static: true}) public searchElementRef: ElementRef;
 
   markers: marker[] = [{lng:0,lat:0,label:'Cliente',draggable:true},]
@@ -28,42 +29,38 @@ export class ClienteMapComponent implements OnInit {
     private mapsAPILoader: MapsAPILoader,
     private ngZone: NgZone) { }
 
-  
+    
   ngOnInit() {
-      
-
+ 
     this.fillCoords.subscribe(co => {
-      if(co.latitud==0 && co.longitud){
+
+      if(co.latitud==0 && co.longitud==0 ){
          this.setCurrentPosition();
       }
-      console.log(co);
       this.markers[0].lat = co.latitud;
       this.latitud= co.latitud;
       this.markers[0].lng = co.longitud;
       this.longitud= co.longitud;
-      console.log(co)
-     })
-       //set google maps defaults
+
+      console.log(this.markers)
+
+     });
+     
+    this.fillSearch.subscribe(c => {
+        this.searchControl.setValue(c);
+     });
         this.zoom = 15;
-        /* this.latitude = 39.8282;
-        this.longitude = -98.5795; */
-    
-        //create search FormControl
+
         this.searchControl = new FormControl();
-    
-        //set current position
-        // this.recenterMap()
-    
-        //load Places Autocomplete
         this.mapsAPILoader.load().then(() => {
           let autocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement, {
-            types: ["address"]
+  
           });
           autocomplete.addListener("place_changed", () => {
             this.ngZone.run(() => {
               //get the place result
               let place= autocomplete.getPlace();
-    
+
               //verify result
               if (place.geometry === undefined || place.geometry === null) {
                 return;
@@ -72,7 +69,9 @@ export class ClienteMapComponent implements OnInit {
               //set latitude, longitude and zoom
               this.latitud = place.geometry.location.lat();
               this.longitud = place.geometry.location.lng();
-              this.zoom = 12;
+              this.markers[0].lat = this.latitud;
+              this.markers[0].lng = this.longitud;
+              this.zoom = 15;
             });
           });
         });
@@ -104,8 +103,10 @@ export class ClienteMapComponent implements OnInit {
     }
    }
    mapReady(event) {
-    console.log(event);
-    this.setCurrentPosition();
+    if(this.latitud==0 && this.longitud==0 ){
+        this.setCurrentPosition();
+       console.log('si')
+   }
   }
 
   clickedMarker(label: string, index: number) {

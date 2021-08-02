@@ -227,7 +227,7 @@
           <div class="form-group col-md-4">
             <label for="inputEmail4"> Ciudad</label>
             <ng-select bindLabel="nombre" bindValue="codigo" [items]="ciudades"
-              [loading]="loadingCiudades" [clearable]="false" (change)="getSectores()"
+              [loading]="loadingCiudades" [clearable]="false" (change)="getSectores($event)"
               [ngClass]="{'form-control border-danger p-0' : submitted && f.ciudadID.errors }"
               notFoundText="No resultados" formControlName="ciudadID">
             </ng-select>
@@ -253,7 +253,7 @@
 
           <div class="form-group col-md-4">
             <label for="inputEmail4"> Sub Sector</label>
-            <ng-select bindLabel="nombre" bindValue="codigo" [items]="subSectores"
+            <ng-select bindLabel="nombre" bindValue="codigo"  (change)="onSubSectorChange($event)"  [items]="subSectores"
               [loading]="loadingSubSectores" [clearable]="false"
               [ngClass]="{'form-control border-danger p-0' : submitted && f.subSectorID.errors }"
               notFoundText="No resultados" formControlName="subSectorID">
@@ -268,7 +268,7 @@
           <div class="form-group col-md-4">
             <label for="longitud"><i class="fa fa-street-view"></i>
               Longitud</label>
-            <input formControlName="longitud" type="text" name="longitud" id="longitud"
+            <input formControlName="longitud" (keyup)="onCoordsKeyUp()" type="text" name="longitud" id="longitud"
               [ngClass]="{'is-invalid' : submitted && f.longitud.errors,  'form-control':true  }">
             <div class="invalid-feedback" *ngIf="submitted && f.longitud.errors">
               <div *ngIf="f.longitud.errors.required">El campo es obligatorio
@@ -279,7 +279,7 @@
           <div class="form-group col-md-4">
             <label for="latitud"><i class="fa fa-street-view"></i>
               Latitud</label>
-            <input formControlName="latitud" type="text" name="latitud" id="latitud"
+            <input formControlName="latitud"  (keyup)="onCoordsKeyUp()" type="text" name="latitud" id="latitud"
               [ngClass]="{'is-invalid' : submitted && f.latitud.errors,  'form-control':true  }">
             <div class="invalid-feedback" *ngIf="submitted && f.latitud.errors">
               <div *ngIf="f.latitud.errors.required">El campo es obligatorio
@@ -292,7 +292,7 @@
         <!-- REGLON DE  DIRECCION -->
         <!-- REGLON DE  DIRECCION -->
         <div class="col-md-12">
-          <app-cliente-map  (markerOne)="setCoordsInForm($event)"  [fillCoords]="coordenadas"   ></app-cliente-map>
+          <app-cliente-map  (markerOne)="setCoordsInForm($event)"   [fillSearch]="searchLocalidadEvent"  [fillCoords]="coordenadas"   ></app-cliente-map>
         </div>
 
 

@@ -155,7 +155,7 @@ import { ClienteMapComponent } from './clientes/cliente-map/cliente-map.componen
     MantenimientosRoutingModule,
     SharedModule,
     AgmCoreModule.forRoot({
-      apiKey: 'AIzaSyCDhjF3LNn2qqYUivCkiyYD8lQMAzihz7I',
+      apiKey: 'AIzaSyBaddDDv0d9zuun9qiWj3VkLEzpJot9UQ4',
       libraries: ["places"]
     }),
     NgbModule,

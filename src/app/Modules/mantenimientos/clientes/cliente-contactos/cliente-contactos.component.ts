@@ -4,7 +4,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { BackendService } from 'src/app/core/http/service/backend.service';
+import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
+import { cedulaestructura } from 'src/app/shared/validators/cedula-estructura.validator';
 import { ClienteContactos } from '../models/ClienteContactos';
 
 @Component({
@@ -21,13 +23,10 @@ export class ClienteContactosComponent implements OnInit {
    submitted              = false;
    btnGuardarCargando     = false;
    actualizando           = false;
-   cargandoTiposRuta      = false;
-   cargandoFVisitasCombo  = false;
-   cargadoRutas           = false;
+   cargadoPuestos         = false;
   
   //LISTA 
-   tiposRuta         : ComboBox[];
-   rutas             : ComboBox[];
+   puestos             : ComboBox[];
    diasSigla=["L", "M", "MI", "J", "V", "S","D"];
 
   constructor(
@@ -41,7 +40,7 @@ export class ClienteContactosComponent implements OnInit {
 
   ngOnInit() {
    this.CreateForm();
-   
+   this.getPuestos();
   }
 
 
@@ -56,9 +55,7 @@ export class ClienteContactosComponent implements OnInit {
     private CreateForm() {
 
     this.FormContactos = this.formBuilder.group({
-      email: [null, [Validators.required, Validators.email]],
-      celular: [null, [Validators.required]],
-
+      clienteId: [this.clientId, [Validators.required, Validators.email]],
       contactos: new FormArray([])
     }
      );
@@ -73,13 +70,44 @@ export class ClienteContactosComponent implements OnInit {
   onAddContact() : void{
     (this.f.contactos as FormArray).push(
       this.formBuilder.group({
+        id:[0, Validators.required],
+        nombres: [null, Validators.required],
+        documento: [null, Validators.required, Validators.minLength(9)],
+        documentoTipoID: [1, [Validators.required]], //cedula por defecto
         telefono: [null, Validators.required],
         celular: [null, Validators.required],
-        email: [null, [Validators.required, Validators.email]]
-      })
-    );
+        email: [null, [Validators.required, Validators.email]],
+        puesto: [0, [Validators.required]],
+        
+      } ,
+      {
+        validator: cedulaestructura('documento', 'documentoTipoID')
+      },   
+    ));
   }
  
+
+  getPuestos() {
+    this.cargadoPuestos = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetPuestos", null).subscribe(response => {
+  
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.puestos = response.records;
+        }
+        this.cargadoPuestos = false;
+      }, error => {
+        this.cargadoPuestos = false;
+        this.toastService.error("No se pudo obtener los puestos", "Error conexion al servidor");
+  
+        setTimeout(() => {
+          this.getPuestos()
+        }, 1000);
+  
+      });
+  }
   removeContact(index) {
     console.log(index);
     (this.f.contactos as FormArray).removeAt(index);

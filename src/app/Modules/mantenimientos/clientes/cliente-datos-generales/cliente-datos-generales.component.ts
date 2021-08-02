@@ -50,12 +50,13 @@ export class ClienteDatosGeneralesComponent implements OnInit {
 
   //OBJETOS Y DEMAS
   TipoSexo: any[] = [{ codigo: 'H', nombre: 'Hombre' }, { codigo: 'M', nombre: 'Mujer' }];
- 
 
   latitud:number;
   longitud:number;  
   
   coordenadas: EventEmitter<Coordenadas> = new EventEmitter<Coordenadas>();
+  searchLocalidadEvent:EventEmitter<string> = new EventEmitter<string>();
+  searchLocalidad:string;
 
   constructor(
     private toastService: ToastrService,
@@ -262,7 +263,12 @@ getProvincias() {
 
     });
 }
-getSectores() {
+getSectores(event?:ComboBox) {
+ 
+  this.searchLocalidad= event?.nombre
+    this.searchLocalidadEvent.emit(this.searchLocalidad);
+
+
   let parametros: Parametro[] = [{ key: "ciudadId", value: this.f.ciudadID.value }]
   this.loadingSectores = true;
   this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
@@ -453,9 +459,19 @@ onDocumentoKeyUp() {
     this.buscarClienteByRncOCedula(this.f.documento.value,this.f.documentoTipoID.value);
   }
 }
+
+
+onCoordsKeyUp() {
+  let coors= new Coordenadas();
+  coors.latitud=parseFloat( this.f.latitud.value  ==""?0:this.f.latitud.value);
+  coors.longitud=parseFloat(this.f.longitud.value ==""?0:this.f.longitud.value);
+  this.coordenadas.emit(coors);
+  console.log(this.f.latitud.value);
+}
 onProvinciaChange() {
   this.f.ciudadID.setValue(null)
   this.f.sectorID.setValue(null)
+  this.f.subSectorID.setValue(null)
   this.sectores = []
   this.getCiudades()
 }
@@ -504,5 +520,17 @@ setCoordsInForm(coords:any) {
  this.f.latitud.setValue( coords.lat.toString());
  this.f.longitud.setValue(coords.lng.toString());
 }
+
+
+onSubSectorChange(event:ComboBox){
+  this.searchLocalidad=this.searchLocalidad+','+event.nombre;
+    this.searchLocalidadEvent.emit(this.searchLocalidad);
+
+  
 }
+
+
+
+}
+
 
