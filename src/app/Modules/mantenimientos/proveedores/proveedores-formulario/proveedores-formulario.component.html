@@ -114,17 +114,8 @@
             </div>
           </div>
 
-          <div class="form-group col-md-6">
-            <label for="limiteCredito"> Límite de crédito</label>
-            <input formControlName="limiteCredito" type="number" name="limiteCredito" id="limiteCredito"
-              [ngClass]="{'is-invalid' : submitted && f.limiteCredito.errors,  'form-control':true  }">
-            <div class="invalid-feedback" *ngIf="submitted && f.limiteCredito.errors">
-              <div *ngIf="f.limiteCredito.errors.required">El campo es obligatorio
-              </div>
-            </div>
-          </div>
-
-          <div class="form-group col-md-6">
+          <div class="form-group"
+            [ngClass]="{'col-md-6': f.condicionPagoID.value == 1, 'col-md-4': f.condicionPagoID.value == 2}">
             <label for="condicionPagoID"> Condición de pago</label>
             <ng-select bindLabel="nombre" bindValue="codigo" [items]="TipoCondicionPagos"
               [loading]="loadingCondicionPagos" [clearable]="false"
@@ -136,6 +127,37 @@
                 obligatorio</div>
             </div>
           </div>
+
+          <ng-template [ngIf]="f.condicionPagoID.value == 2">
+
+            <div class="form-group col-md-4">
+              <label for="plazoID"> Plazo</label>
+              <ng-select bindLabel="nombre" bindValue="codigo" [items]="plazos" [loading]="loadingPlazos"
+                [clearable]="false" [ngClass]="{'form-control border-danger p-0' : submitted && f.plazoID.errors }"
+                notFoundText="No resultados" formControlName="plazoID">
+              </ng-select>
+              <div *ngIf="submitted && f.plazoID.errors" class="text-danger small">
+                <div *ngIf="f.plazoID.errors.required  ">El campo es
+                  obligatorio</div>
+              </div>
+            </div>
+
+
+            <div class="form-group"
+              [ngClass]="{'col-md-6': f.condicionPagoID.value == 1, 'col-md-4': f.condicionPagoID.value == 2}">
+              <label for="limiteCredito"> Límite de crédito</label>
+              <input formControlName="limiteCredito" type="number" name="limiteCredito" id="limiteCredito"
+                [ngClass]="{'is-invalid' : submitted && f.limiteCredito.errors,  'form-control':true  }">
+              <div class="invalid-feedback" *ngIf="submitted && f.limiteCredito.errors">
+                <div *ngIf="f.limiteCredito.errors.required">El campo es obligatorio
+                </div>
+              </div>
+            </div>
+
+
+          </ng-template>
+
+
 
           <div class="form-group col-md-6">
             <label for="actividadEconomicaID"> Actividad económica</label>

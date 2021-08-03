@@ -45,6 +45,7 @@ export const Approutes: Routes = [
 
       { path: 'reportes/inventario', loadChildren: () => import('./Modules/reportes/reportes-inventario/reportes-inventario.module').then(m => m.ReportesInventarioModule) },
 
+      { path: 'autorizacion', loadChildren: () => import('./Modules/autorizacion/autorizacion.module').then(m => m.AutorizacionModule) },
     ],
   },
 

@@ -1,0 +1,50 @@
+export class OrdenFabricacionVista {
+
+  constructor() {
+    this.id = 0;
+    this.articuloPadre = "";
+    this.articulo = "";
+    this.articuloId = 0;
+    this.nombre = "";
+    this.cantidadBase = 0;
+    this.requerida = 0;
+    this.disponible = 0;
+    this.unidadMedida = "";
+    this.almacen = "";
+    this.almacenId = 0;
+    this.metodoEmision = "";
+    this.tipo = "";
+    this.fechaCreacion = new Date();
+    this.cantidadPlanificada = 0;
+    this.consumido = 0;
+    this.costoReal = 0;
+    this.costoArticulo = 0;
+    this.ordenFabricacionId = 0;
+    this.isPesaje = false;
+    this.estadoId = 0;
+    this.cantidadRequerida = 0;
+  }
+
+  id: number;
+  articuloPadre: string;
+  articulo: string;
+  articuloId: number;
+  nombre: string;
+  cantidadBase: number;
+  requerida: number;
+  disponible: number;
+  unidadMedida: string;
+  almacen: string;
+  almacenId: number;
+  metodoEmision: string;
+  tipo: string;
+  fechaCreacion: Date;
+  cantidadPlanificada: number;
+  consumido: number;
+  costoReal: number;
+  costoArticulo: number;
+  ordenFabricacionId: number;
+  isPesaje: boolean;
+  estadoId: number;
+  cantidadRequerida: number;
+}

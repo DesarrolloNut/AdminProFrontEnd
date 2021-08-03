@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Almacen } from '../models/Almacen';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ToastrService } from 'ngx-toastr';
 import { BackendService } from 'src/app/core/http/service/backend.service';

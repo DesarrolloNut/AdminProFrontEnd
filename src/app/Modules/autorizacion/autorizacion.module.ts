@@ -1,0 +1,28 @@
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+import { AutorizacionRoutingModule } from './autorizacion-routing.module';
+import { AutorizacionComponent } from './autorizacion.component';
+import { AutorizacionDevolucionesComponent } from './autorizacion-devoluciones/autorizacion-devoluciones.component';
+import { AutorizacionHistoricoComponent } from './autorizacion-historico/autorizacion-historico.component';
+import { ListaPreciosAutorizacionComponent } from './lista-precios-autorizacion/lista-precios-autorizacion.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { AngularDualListBoxModule } from 'angular-dual-listbox';
+import { TreeviewModule } from 'ngx-treeview';
+import { SharedModule } from '../shared/shared.module';
+import { OrdenfabricacionAutorizacionComponent } from './ordenfabricacion-autorizacion/ordenfabricacion-autorizacion.component';
+
+
+@NgModule({
+  declarations: [
+    AutorizacionComponent, AutorizacionDevolucionesComponent, AutorizacionHistoricoComponent, ListaPreciosAutorizacionComponent, OrdenfabricacionAutorizacionComponent],
+  imports: [
+    CommonModule,
+    AngularDualListBoxModule,
+    SharedModule,
+    NgbModule,
+    AutorizacionRoutingModule,
+    TreeviewModule.forRoot()
+  ]
+})
+export class AutorizacionModule { }

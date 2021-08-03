@@ -69,7 +69,6 @@ import { SapconnectionFormularioComponent } from './sapconnection/sapconnection-
 import { PromocionesListadoComponent } from './promociones/promociones-listado/promociones-listado.component';
 import { PromocionesFormularioComponent } from './promociones/promociones-formulario/promociones-formulario.component';
 import { PerfilFormularioComponent } from './perfil-formulario/perfil-formulario.component';
-import { ListaPreciosAutorizacionComponent } from './autorizacion/lista-precios-autorizacion/lista-precios-autorizacion.component';
 import { CargaMasivaPanelComponent } from './cargaMasiva/carga-masiva-panel/carga-masiva-panel.component';
 import { MonedasListadoComponent } from './monedas/monedas-listado/monedas-listado.component';
 import { MonedasFormularioComponent } from './monedas/monedas-formulario/monedas-formulario.component';
@@ -81,7 +80,8 @@ import { UsuarioAlmacenEnrrollFormularioComponent } from './usuarioAlmacenEnrrol
 import { TomainventarioRutaListadoComponent } from './tomainventarioruta/tomainventarioruta-listado/tomainventarioruta-listado.component';
 import { ArticulosCategoriasListadoComponent } from './articulosCategorias/articulos-categorias-listado/articulos-categorias-listado.component';
 import { ArticulosCategoriasFormularioComponent } from './articulosCategorias/articulos-categorias-formulario/articulos-categorias-formulario.component';
-import { AutorizacionHistoricoComponent } from './autorizacion/autorizacion-historico/autorizacion-historico.component';
+import { PlazosListadoComponent } from './plazos/plazos-listado/plazos-listado.component';
+import { PlazosFormularioComponent } from './plazos/plazos-formulario/plazos-formulario.component';
 
 
 
@@ -845,26 +845,6 @@ const routes: Routes = [
         }
       },
 
-      {
-        path: 'autorizacionprecios', component: ListaPreciosAutorizacionComponent, data: {
-          title: 'Autorización de Precios',
-          urls: [
-            { title: 'Mantenimientos' },
-            { title: 'Autorización de Precios' }
-          ]
-        }
-      },
-
-      {
-        path: 'autorizacion-historico', component: AutorizacionHistoricoComponent, data: {
-          title: 'Autorización Histórico',
-          urls: [
-            { title: 'Mantenimientos' },
-            { title: 'Autorización Histórico' }
-          ]
-        }
-      },
-
 
       // Moneda
       {
@@ -968,6 +948,28 @@ const routes: Routes = [
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Articulo Categorias' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+      // plazos
+      {
+        path: 'plazo', component: PlazosListadoComponent, data: {
+          title: 'Plazo',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Plazo' }
+          ]
+        }
+      },
+
+      {
+        path: 'plazo/:id', component: PlazosFormularioComponent, data: {
+          title: 'Plazo Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Plazo' },
             { title: 'Formulario' }
           ]
         }

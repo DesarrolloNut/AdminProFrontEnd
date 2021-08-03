@@ -1,0 +1,265 @@
+<div class="row">
+  <div class="control-section">
+      <div id="control_wrapper">
+      </div>
+  </div>
+</div>
+
+<div class="row mb-2">
+  <div class="col">
+      <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
+  </div>
+</div>
+
+
+
+<div class="row" *ngIf="IsNewData">
+
+  <div class="col">
+
+      <div class="card">
+          <div class="card-body">
+
+
+              <div class="row" >
+                  <div class="col-md-4 p-2">
+                      <div class="input-group">
+                          <!-- <div class="input-group-prepend">
+                                  <label for="search" class="input-group-text bg-white">
+                                      <span class="bg-white" style="border-right:none">
+                                          <i class="ti-search"></i>
+                                      </span>
+                                  </label>
+                              </div> -->
+                          <input [(ngModel)]="search" (keyup)="onSearchChange()" type="text" id="inputSearch"
+                              style="border-left:none !important;" class="form-control" placeholder="Buscar artículo">
+
+                          <div class="input-group-prepend">
+                              <label for="search" class="input-group-text bg-white" style="cursor: pointer;"
+                                  (click)="onClearSearch()">
+                                  <span class=" bg-white" style="border-right:none">
+                                      <i class="fa fa-times-circle"></i>
+                                  </span>
+                              </label>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="col-md-6 text-center p-2" *ngIf="searching">
+                      <h3> <span><i class="fa fa-spinner fa-spin"></i> Buscando</span> </h3>
+                  </div>
+
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="articulo">
+
+  <div class="col">
+      <div class="card">
+          <div class="card-body">
+              <div class="row">
+
+
+                  <div class="col-12 mb-1">
+                      <div class="row border border-light p-2">
+                          <div class="col">
+                              <h3> <i class="fa fa-shopping-bag"></i> {{articulo.codigoReferencia}} |
+                                  {{articulo.nombre}}</h3>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="form-group col-md-6">
+                    <label for="tipoId"> Tipo</label>
+                    <ng-select bindLabel="nombre" bindValue="codigo" [items]="Tipos" [(ngModel)]="ofheader.tipoId" [disabled]="IsClose"
+                    class ="form-control p-0" notFoundText="No resultados" >
+                    </ng-select>
+                  </div>
+
+                  <div class=" form-group col-md-6">
+                    <label for="estadoId"> Estado</label>
+                    <ng-select bindLabel="nombre" bindValue="codigo" [items]="estadosAutorizacion" [(ngModel)]="ofheader.estadoId" [disabled]="IsClose"
+                    class ="form-control p-0" notFoundText="No resultados">
+                    </ng-select>
+                  </div>
+
+
+                  <div class=" form-group col-md-6">
+                    <label for="cantidadPlanificada"> Cantidad Planificada</label>
+                    <input  type="number" name="cantidadPlanificada" id="cantidadPlanificada" class ="form-control" (keyup)="OnlyInterger()" [(ngModel)]="ofheader.cantidadPlanificada" [disabled]="IsClose">
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="almacenId">Almacenes</label>
+                    <ng-select bindLabel="nombre" bindValue="codigo" [items]="almecenes" [(ngModel)]="ofheader.almacenId" [disabled]="IsClose"
+                    class ="form-control p-0"  notFoundText="No resultados" >
+                    </ng-select>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label> <i class="fa fa-calendar"></i> Fecha de Inicio</label>
+                    <ejs-datepicker [(ngModel)]="ofheader.fechaInicio" [format]="'dd-MM-yyyy'" [disabled]="true" ></ejs-datepicker>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label> <i class="fa fa-calendar"></i> Fecha de Cierre</label>
+                    <ejs-datepicker [(ngModel)]="ofheader.fechaCierre"[format]="'dd-MM-yyyy'" [disabled]="true"></ejs-datepicker>
+                  </div>
+
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<ngb-tabset *ngIf="articulo">
+
+  <ngb-tab>
+    <ng-template ngbTabTitle><b>Componentes</b></ng-template>
+    <ng-template ngbTabContent>
+      <div class="row" >
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 table-responsive">
+
+
+                            <table class="table table-hover table-sm ">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Articulo</th>
+                                        <th scope="col">Nombre</th>
+                                        <th scope="col">Base</th>
+                                        <th scope="col">Requerida</th>
+                                        <th scope="col">Consumido</th>
+                                        <th scope="col">Disponible</th>
+                                        <th scope="col">Unidad</th>
+                                        <th scope="col">Almacen</th>
+                                        <th scope="col">Método
+                                        </th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                  <tr *ngFor="let articulext of articulosExtras">
+                                    <th style="font-size: 14px;">{{articulext.articulo}}</th>
+                                    <td  style="font-size: 14px;">{{articulext.nombre}}</td>
+                                    <td>{{articulext.cantidadBase  | number:'1.4-4'}}</td>
+                                    <td>{{(articulext.cantidadBase *  ofheader.cantidadPlanificada) | number:'1.4-4'}}</td>
+                                    <td>{{articulext.consumido}}</td>
+                                    <td>{{articulext.disponible}}</td>
+                                    <td>{{articulext.unidadMedida}}</td>
+                                    <td>{{ofheader.almacenId}}</td>
+                                    <td>{{articulext.metodoEmision == "M" ? "Manual" : "Automático"}}</td>
+                                  </tr>
+
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </ng-template>
+  </ngb-tab>
+
+
+  <ngb-tab>
+    <ng-template ngbTabTitle><b>Resumen</b></ng-template>
+    <ng-template ngbTabContent>
+      <div class="row" *ngIf="articulo">
+
+        <div class="col-6">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title font-weight-bold">Costos</h3>
+              <!-- <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> -->
+              <h6>Costo de componente de artículo real:</h6>
+              <h2>{{ordenfabricacion.costoReal | currency }}</h2>
+              <!-- <h2>$25,550.49</h2> -->
+              <h6>Costo de componente de recurso real: </h6>
+              <h2>$0.00 RDP</h2>
+              <h6>Costo adicional real:</h6>
+              <h2>$0.00 RDP</h2>
+              <h6>Costo de producto real:</h6>
+              <h2>{{ ((ordenfabricacion.costoReal / ordenfabricacion.cantidad) * ordenfabricacion.cantidadProducida) | currency }}</h2>
+              <h6>Coste real de subproductos:</h6>
+              <h2>$0.00</h2>
+              <h6>Desviación total:</h6>
+              <h2>{{ (((ordenfabricacion.costoReal / ordenfabricacion.cantidad) * ordenfabricacion.cantidadProducida) - ordenfabricacion.costoReal) | currency}}</h2>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title font-weight-bold">Cantidades</h3>
+              <!-- <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> -->
+              <h6>Cantidad planificada:</h6>
+              <h2>{{ordenfabricacion.cantidad| number: '1.2-2'}}</h2>
+              <h6>Cantidad completada:</h6>
+              <h2>{{ordenfabricacion.cantidadProducida| number: '1.2-2'}}</h2>
+              <h6>Cantidad rechazada</h6>
+              <h2>0.00</h2>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title font-weight-bold">Fechas</h3>
+              <!-- <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> -->
+              <h6>Fecha de finalización:</h6>
+              <h2>26/04/2018</h2>
+              <h6>Fecha de cierre real:</h6>
+              <h2>26/04/2018</h2>
+              <h6>Vencido</h6>
+              <h2>--/--/--</h2>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+
+    </ng-template>
+  </ngb-tab>
+
+
+  </ngb-tabset>
+
+
+
+<div class="row" *ngIf="articulo">
+  <div class="col-12">
+      <div class="card">
+          <div class="card-body">
+              <div class="row">
+                  <div class="col text-right">
+                      <button class="btn btn-light m-1" routerLink="../" type="button">
+                          <i class="fas fa-times"></i> Cancelar
+                      </button>
+
+                      <button *ngIf="!btnGuardarCargando && !IsClose" class="btn btn-info m-1" type="button" (click)="onSubmit()">
+                          <i class="fas fa-check"></i> Guardar
+                      </button>
+
+                      <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                          <span class="spinner-border spinner-border-sm"></span> Guardando
+                      </button>
+                  </div>
+              </div>
+
+          </div>
+      </div>
+  </div>
+</div>

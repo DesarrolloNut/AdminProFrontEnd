@@ -78,8 +78,7 @@
                     <i class="fa fa-sm fa-eye"></i>
                   </button>
 
-                  <button class="btn btn-sm btn-light m-1" type="button"
-                    *ngIf="item.estadoID != estadoAutorizacionFinal"
+                  <button class="btn btn-sm btn-light m-1" type="button" *ngIf="item.estadoID == 1"
                     (click)="openModalSolicitud(modalUploadAnexos,item)">
                     <i class="fa fa-sm fa-upload"></i>
                   </button>
@@ -185,38 +184,59 @@
             </div>
           </div>
 
-
-          <div class="row" *ngIf="filesSubidos.length > 0">
+          <div class="row">
             <div class="col-12">
-              <hr>
-              <h6>Archivos subidos</h6>
-            </div>
-            <div class="col-md-6 p-2 text-center border-light border rounded-sm"
-              *ngFor="let item of filesSubidos; let i = index">
-
-              <div class="row">
-
-                <div class="col-12 text-right">
-
-                  <!-- <button (click)="downloadFile(item.id)" class="btn btn-sm btn-info"><i
-                      class="fa fa-download"></i></button> -->
-
-                  <!-- <button class="btn btn-sm" (click)="onDeleteitemSubido(item.id,i)"><i
-                      class="fa fa-times"></i></button> -->
+              <div class="row" *ngIf="filesSubidos.length > 0">
+                <div class="col-12">
+                  <hr>
+                  <h6>Anexos subidos <span class="badge badge-info badge-pill">{{filesSubidos.length}}</span></h6>
                 </div>
 
-                <div class="col-12 text-center">
-                  <span>
-                    <i class="fa fa-file-pdf text-danger fa-3x"></i>
-                  </span>
-                  <h6 class="mt-2 text-info">{{item.nombre}}</h6>
+                <div class="col-12">
+                  <div class="table-responsive">
+                    <table class="table table-hover table-sm mb-0 no-wrap v-middle">
+                      <thead>
+                        <tr>
+                          <th></th>
+                          <th></th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody [hidden]="Cargando">
+                        <!-- *ngFor="let item of filesSubidos; let i = index" -->
+                        <tr *ngFor="let item of filesSubidos; let i = index">
+                          <!-- <td>
+                          <span class="badge badge-light text-info ">{{item.id}}</span>
+                        </td> -->
+                          <td>
+                            <i class="fa fa-file-pdf text-danger"></i>
+                          </td>
+                          <td>
+                            <span class=""> {{item.nombre}}.{{item.extension}}</span>
+                          </td>
+                          <td>
+
+                            <!-- <button class="btn btn-sm btn-danger m-1"><i class="fa fa-times"></i></button> -->
+
+                            <a target="_blank" [href]="urlCarpetaArchivos + 'SolicitudCompra-Anexos/Solicitud' 
+                          + solicitudSeleccionada.id +'/' + item.nombre +'.'+ item.extension"
+                              class="btn btn-sm btn-light m-1"><i class="fa fa-download"></i></a>
+
+                            <button *ngIf="solicitudSeleccionada.estadoID ==1" class="btn btn-sm"
+                              (click)="deleteSolicitudCompraAnexoArchivoByID(item.id)"><i
+                                class="fa fa-times"></i></button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
 
               </div>
-
             </div>
-
           </div>
+
+
         </div>
       </div>
     </div>
@@ -280,6 +300,49 @@
         </div>
 
       </div>
+
+
+      <div class="col-12">
+        <div class="row" *ngIf="filesSubidos.length > 0">
+          <div class="col-12">
+            <hr>
+            <h6>Anexos subidos <span class="badge badge-info badge-pill">{{filesSubidos.length}}</span></h6>
+          </div>
+
+          <div class="col-12">
+            <div class="table-responsive">
+              <table class="table table-hover table-sm mb-0 no-wrap v-middle">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody [hidden]="Cargando">
+                  <tr *ngFor="let item of filesSubidos">
+
+                    <td> <i class="fa fa-file-pdf text-danger"></i></td>
+                    <td>
+                      <span class=""> {{item.nombre}}.{{item.extension}}</span>
+                    </td>
+                    <td>
+                      <a target="_blank" [href]="urlCarpetaArchivos + 'SolicitudCompra-Anexos/Solicitud' 
+                      + solicitudSeleccionada.id +'/' + item.nombre +'.'+ item.extension"
+                        class="btn btn-sm btn-light m-1"><i class="fa fa-download"></i></a>
+
+                      <button *ngIf="solicitudSeleccionada.estadoID ==1" class="btn btn-sm"
+                        (click)="deleteSolicitudCompraAnexoArchivoByID(item.id)"><i class="fa fa-times"></i></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
 
       <div class="col-12">
         <app-loading-listado [hidden]="!loadingSolicitudDetalle"></app-loading-listado>

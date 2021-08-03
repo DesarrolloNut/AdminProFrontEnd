@@ -157,11 +157,11 @@ export class AutorizacionCotizacionComponent implements OnInit {
   getAnteriorEstadoAutorizacion() {
     let estadoUsuario = this.estadosAutorizacion.find(x => x.codigo == this.estadoAutorizacionUsuario);
     let estadoActualPosicion = this.estadosAutorizacion.indexOf(estadoUsuario);
-    console.log("estadoAutorizacionUsuario", this.estadoAutorizacionUsuario)
-    console.log("estadoUsuario", estadoUsuario)
-    console.log("estadoActualPosicion",estadoActualPosicion)
+    // console.log("estadoAutorizacionUsuario", this.estadoAutorizacionUsuario)
+    // console.log("estadoUsuario", estadoUsuario)
+    // console.log("estadoActualPosicion",estadoActualPosicion)
     this.estadoAutorizacionAnterior = this.estadosAutorizacion[estadoActualPosicion - 1]
-    console.log("estadoAutorizacionAnterior",this.estadoAutorizacionAnterior)
+    // console.log("estadoAutorizacionAnterior",this.estadoAutorizacionAnterior)
     if (this.estadoAutorizacionAnterior) {
       this.estadoAutorizacionComboModel = this.estadoAutorizacionAnterior.codigo;
     }
@@ -289,6 +289,12 @@ export class AutorizacionCotizacionComponent implements OnInit {
   openModalDevolucionDetalle(content, DevolucionSelect: CotizacionListadoViewModel) {
     this.cotizacionSeleccionada = DevolucionSelect;
     this.getDataDetalle(DevolucionSelect.id);
+    this.modalService.open(content, { size: 'xl', backdrop: "static", });
+  }
+
+  openModalCotizacionFactura(content, DevolucionSelect: CotizacionListadoViewModel) {
+    this.cotizacionSeleccionada = DevolucionSelect;
+    //this.getDataDetalle(DevolucionSelect.id);
     this.modalService.open(content, { size: 'xl', backdrop: "static", });
   }
 

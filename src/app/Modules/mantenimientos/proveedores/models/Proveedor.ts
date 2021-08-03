@@ -26,4 +26,6 @@ export class Proveedor {
   monedaID: number
   estadoID: number
 
+  plazoID: number
+
 }

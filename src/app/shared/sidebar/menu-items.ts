@@ -24,7 +24,7 @@ export const ROUTES: RouteInfo[] = [
     labelClass: '',
     extralink: false,
     submenu: [],
-    permisos: [],
+    permisos: ["crm"],
   },
 
   {
@@ -164,7 +164,7 @@ export const ROUTES: RouteInfo[] = [
     labelClass: '',
     extralink: false,
     submenu: [],
-    permisos: [],
+    permisos: ["finanzas"],
   },
   {
     path: '/',
@@ -175,7 +175,7 @@ export const ROUTES: RouteInfo[] = [
     labelClass: '',
     extralink: false,
     submenu: [],
-    permisos: [],
+    permisos: ["recursos-humanos"],
   },
   {
     path: '',
@@ -185,6 +185,7 @@ export const ROUTES: RouteInfo[] = [
     class: 'has-arrow',
     labelClass: '',
     extralink: false,
+    permisos: ["inventario"],
     submenu: [
       {
         path: '/inventario/devoluciones',
@@ -209,7 +210,6 @@ export const ROUTES: RouteInfo[] = [
       //   permisos: ['inventario_autorizacion_devoluciones'],
       // },
     ],
-    permisos: ['inventario'],
   },
 
   {
@@ -233,6 +233,17 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ["produccion_pesaje"],
       },
+      {
+        path: '/produccion/ordenfabricacion',
+        label: '',
+        labelClass: '',
+        title: 'Orden Fabricación',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["produccion_ordenfabricacion"],
+      },
     ],
   },
   {
@@ -243,8 +254,8 @@ export const ROUTES: RouteInfo[] = [
     class: 'has-arrow',
     labelClass: '',
     extralink: false,
+    permisos: ["servicios"],
     submenu: [],
-    permisos: [],
   },
 
 
@@ -301,13 +312,13 @@ export const ROUTES: RouteInfo[] = [
 
   {
     path: '',
-    title: 'Servicios',
+    title: 'Servicios Viacloud',
     icon: 'mdi mdi-bullseye',
     labelClass: '',
     label: '',
     class: 'has-arrow',
     extralink: false,
-    permisos: ["servicios"],
+    permisos: ["servicios-viacloud"],
     submenu: [
       {
         path: '/servicios/citas',
@@ -506,6 +517,17 @@ export const ROUTES: RouteInfo[] = [
         permisos: ["mantenimientos_carga_masiva"],
       },
       {
+        path: '/mantenimientos/plazo',
+        label: '',
+        labelClass: '',
+        title: 'Plazos',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_plazo"],
+      },
+      {
         path: '/mantenimientos/promocion',
         label: '',
         labelClass: '',
@@ -549,7 +571,7 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ["mantenimientos_ruta"],
       },
-      
+
       {
         path: '/mantenimientos/roles',
         label: '',
@@ -851,7 +873,7 @@ export const ROUTES: RouteInfo[] = [
     permisos: ["autorizacion"],
     submenu: [
       {
-        path: '/mantenimientos/autorizacion-historico',
+        path: '/autorizacion/autorizacion-historico',
         label: '',
         labelClass: '',
         title: 'Histórico',
@@ -862,7 +884,7 @@ export const ROUTES: RouteInfo[] = [
         permisos: ["autorizacion_historico"],
       },
       {
-        path: '/mantenimientos/autorizacionprecios',
+        path: '/autorizacion/autorizacionprecios',
         label: '',
         labelClass: '',
         title: 'Lista de precios',
@@ -884,7 +906,7 @@ export const ROUTES: RouteInfo[] = [
         permisos: ["autorizacion_solicitud_compras"],
       },
       {
-        path: '/inventario/autorizaciondevoluciones',
+        path: '/autorizacion/autorizaciondevoluciones',
         title: 'Devoluciones',
         label: '',
         icon: '',
@@ -904,6 +926,17 @@ export const ROUTES: RouteInfo[] = [
         extralink: false,
         submenu: [],
         permisos: ['autorizacion_cotizaciones'],
+      },
+      {
+        path: '/autorizacion/autorizacion-ordenfabricacion',
+        title: 'Orden Fabricacion',
+        label: '',
+        icon: '',
+        class: '',
+        labelClass: '',
+        extralink: false,
+        submenu: [],
+        permisos: ['autorizacion_ordenfabricacion'],
       },
     ],
   },
@@ -969,7 +1002,7 @@ export const ROUTES: RouteInfo[] = [
         permisos: ["mantenimientos_usuario"],
       },
       {
-        
+
         path: '/mantenimientos/nivelautorizacion',
         label: '',
         labelClass: '',
