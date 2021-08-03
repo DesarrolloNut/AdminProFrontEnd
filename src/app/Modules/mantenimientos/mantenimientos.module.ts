@@ -91,7 +91,6 @@ import { TomainventarioRutaListadoComponent } from './tomainventarioruta/tomainv
 import { ArticulosCategoriasListadoComponent } from './articulosCategorias/articulos-categorias-listado/articulos-categorias-listado.component';
 import { ArticulosCategoriasFormularioComponent } from './articulosCategorias/articulos-categorias-formulario/articulos-categorias-formulario.component';
 
-import { AutorizacionHistoricoComponent } from './autorizacion/autorizacion-historico/autorizacion-historico.component';
 import { ClienteRutasComponent } from './clientes/cliente-rutas/cliente-rutas.component';
 import { ClienteVisitasComponent } from './clientes/cliente-visitas/cliente-visitas.component';
 import { ClienteFinanzasComponent } from './clientes/cliente-finanzas/cliente-finanzas.component';
