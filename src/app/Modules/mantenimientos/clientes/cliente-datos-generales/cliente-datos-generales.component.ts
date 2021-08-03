@@ -72,6 +72,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
     //CREACION DE FORMULARIO
     this.createForm();
 
+
     if (this.clientId > 0) {
       this.getClienteByID(this.clientId);
       this.actualizando = true;
@@ -82,6 +83,17 @@ export class ClienteDatosGeneralesComponent implements OnInit {
     this.getTipoCliente();
     this.getListaPrecio();
     this.clearOrputValidatosSomeField();
+  }
+
+  ngAfterViewInit() {
+    if (this.clientId <= 0) {
+      let coors= new Coordenadas();
+      coors.latitud= 0;
+      coors.longitud= 0;
+      this.coordenadas.emit(coors);
+  
+    }
+
   }
   onSubmit() {
     this.submitted = true; 
@@ -264,11 +276,11 @@ getProvincias() {
     });
 }
 getSectores(event?:ComboBox) {
- 
   this.searchLocalidad= event?.nombre
-    this.searchLocalidadEvent.emit(this.searchLocalidad);
 
-
+    if(this.f.longitud.value==null ||this.f.longitud.value==''){
+      this.searchLocalidadEvent.emit(this.searchLocalidad);
+     }
   let parametros: Parametro[] = [{ key: "ciudadId", value: this.f.ciudadID.value }]
   this.loadingSectores = true;
   this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
@@ -463,10 +475,9 @@ onDocumentoKeyUp() {
 
 onCoordsKeyUp() {
   let coors= new Coordenadas();
-  coors.latitud=parseFloat( this.f.latitud.value  ==""?0:this.f.latitud.value);
-  coors.longitud=parseFloat(this.f.longitud.value ==""?0:this.f.longitud.value);
+  coors.latitud=parseFloat( this.f.latitud.value  =="" || this.f.latitud.value  ==null ?0:this.f.latitud.value);
+  coors.longitud=parseFloat(this.f.longitud.value =="" || this.f.longitud.value  ==null ? 0:this.f.longitud.value);
   this.coordenadas.emit(coors);
-  console.log(this.f.latitud.value);
 }
 onProvinciaChange() {
   this.f.ciudadID.setValue(null)
@@ -515,8 +526,6 @@ clearOrputValidatosSomeField(){
 
 }
 setCoordsInForm(coords:any) {
- console.log(coords)
-
  this.f.latitud.setValue( coords.lat.toString());
  this.f.longitud.setValue(coords.lng.toString());
 }
@@ -524,13 +533,10 @@ setCoordsInForm(coords:any) {
 
 onSubSectorChange(event:ComboBox){
   this.searchLocalidad=this.searchLocalidad+','+event.nombre;
+   if(this.f.longitud.value==null ||this.f.longitud.value==''){
     this.searchLocalidadEvent.emit(this.searchLocalidad);
-
-  
+   }
 }
-
-
-
 }
 
 

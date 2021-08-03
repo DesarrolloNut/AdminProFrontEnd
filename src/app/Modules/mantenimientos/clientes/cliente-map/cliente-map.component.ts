@@ -34,15 +34,15 @@ export class ClienteMapComponent implements OnInit {
  
     this.fillCoords.subscribe(co => {
 
-      if(co.latitud==0 && co.longitud==0 ){
-         this.setCurrentPosition();
-      }
       this.markers[0].lat = co.latitud;
       this.latitud= co.latitud;
       this.markers[0].lng = co.longitud;
       this.longitud= co.longitud;
 
-      console.log(this.markers)
+      if(this.latitud==0 && this.longitud==0 ){
+        this.setCurrentPosition();
+      }
+      console.log(co)
 
      });
      
@@ -103,10 +103,7 @@ export class ClienteMapComponent implements OnInit {
     }
    }
    mapReady(event) {
-    if(this.latitud==0 && this.longitud==0 ){
-        this.setCurrentPosition();
-       console.log('si')
-   }
+
   }
 
   clickedMarker(label: string, index: number) {
