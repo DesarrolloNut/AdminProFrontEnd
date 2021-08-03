@@ -15,81 +15,84 @@
  
                         <div class="row col-md-12" *ngFor="let contact of getContactFormControls(); let i = index" >
                           <fieldset class="hm-fieldset row">
-                            <legend class="hm-legend">Contacto {{i+1}}:</legend>
+                            <legend class="hm-legend">Contacto  {{contact.get('nombres').value}}</legend>
                               <div [formGroup]="contact" class="form-row row col-md-12">
                                 <div class="form-group  col-md-3">
                                   <label >Cedula</label>
                                   <input type="text" formControlName="documento" class="form-control form-control-sm"  
-                                    [ngClass]="{ 'is-invalid': submitted && contact.documento.errors }" />
-                                  <div *ngIf="submitted && contact.documento.errors" class="invalid-feedback">
-                                    <div *ngIf="contact.documento.errors.required">
+                                    [ngClass]="{ 'is-invalid': submitted && contact.get('documento').errors }" />
+                                  <div *ngIf="submitted && contact.get('documento').errors" class="invalid-feedback">
+                                    <div *ngIf="contact.get('documento').errors.required">
                                       El campo es obligatorio</div>
                                   </div>
-                                  <div *ngIf="contact.documento.errors.cedulaestructura">Documento no
+                                  <div *ngIf="contact.get('documento').hasError('cedulaestructura')">Documento no
                                     válido</div>
-                                  <div *ngIf="contact.documento.errors.minlength">Mínimo 9 caracteres
+                                  <div *ngIf="contact.get('documento').hasError('minlength')">Mínimo 9 caracteres
                                   </div>
                                   </div>  
                                 <div class="form-group  col-md-3">
                                   <label >Nombres</label>
                                   <input type="text" formControlName="nombres" class="form-control form-control-sm" 
-                                    [ngClass]="{ 'is-invalid': submitted && contact.nombres.errors }" />
-                                  <div *ngIf="submitted && contact.nombres.errors" class="invalid-feedback">
-                                    <div *ngIf="contact.nombres.errors.required">
+                                    [ngClass]="{ 'is-invalid': submitted && contact.get('nombres').errors }" />
+                                  <div *ngIf="submitted && contact.get('nombres').errors" class="invalid-feedback">
+                                    <div *ngIf="contact.get('nombres').errors.required">
                                       El campo es obligatorio</div>
                                   </div>
                                   </div>  
                     
 
-                              <div class="form-group  col-md-3">
-                                <label >Telefono</label>
-                                <input type="text" formControlName="telefono" class="form-control form-control-sm" mask="(000) 000-0000"
-                                  [ngClass]="{ 'is-invalid': submitted && contact.telefono.errors }" />
-                                <div *ngIf="submitted && contact.telefono.errors" class="invalid-feedback">
-                                  <div *ngIf="contact.telefono.errors.required">
-                                    El campo es obligatorio</div>
-                                </div>
-                              </div>
-
-                              <div class="form-group  col-md-3">
-                                <label>Celular</label>
-                                <input type="text" formControlName="celular" class="form-control form-control-sm" mask="(000) 000-0000"
-                                  [ngClass]="{ 'is-invalid': submitted && contact.celular.errors }" />
-                                <div *ngIf="submitted && contact.celular.errors" class="invalid-feedback">
-                                  <div *ngIf="contact.celular.errors.required">
-                                    El campo es obligatorio</div>
-                                </div>
-                              </div>
-
-                              <div class="form-group  col-md-6">
-                                <label>Email</label>
-                                <input type="text" formControlName="email" class="form-control form-control-sm"
-                                  [ngClass]="{ 'is-invalid': submitted && contact.email.errors }" />
-                                <div *ngIf="submitted && contact.email.errors" class="invalid-feedback">
-                                  <div *ngIf="contact.email.errors.required">
-                                    Email is required</div>
-                                  <div *ngIf="contact.email.errors.email">
-                                    Email must be a valid email address</div>
-                                </div>
-                              </div>
-
-                            
-                                <div class="form-group col-md-6">
-                                  <label for="inputEmail4"> Puesto</label>
-                                  <ng-select bindLabel="nombre" bindValue="codigo" [items]="puestos"
-                                    [loading]="false" [clearable]="false"
-                                    [ngClass]="{'form-control border-danger p-0' : submitted && f.puesto.errors }"
-                                    notFoundText="No resultados" formControlName="puesto">
-                                  </ng-select>
-                                  <div *ngIf="submitted && f.puesto.errors" class="text-danger small">
-                                    <div *ngIf="f.puesto.errors.required  ">El campo es
-                                      obligatorio</div>
+                                <div class="form-group  col-md-3">
+                                  <label >Telefono</label>
+                                  <input type="text" formControlName="telefono" class="form-control form-control-sm" mask="(000) 000-0000"
+                                    [ngClass]="{ 'is-invalid': submitted && contact.get('telefono').errors }" />
+                                  <div *ngIf="submitted && contact.get('telefono').errors" class="invalid-feedback">
+                                    <div *ngIf="contact.get('telefono').errors.required">
+                                      El campo es obligatorio</div>
                                   </div>
                                 </div>
+
+                                <div class="form-group  col-md-3">
+                                  <label>Celular</label>
+                                  <input type="text" formControlName="celular" class="form-control form-control-sm" mask="(000) 000-0000"
+                                    [ngClass]="{ 'is-invalid': submitted && contact.get('celular').errors }" />
+                                  <div *ngIf="submitted && contact.get('celular').errors" class="invalid-feedback">
+                                    <div *ngIf="contact.get('celular').errors.required">
+                                      El campo es obligatorio</div>
+                                  </div>
+                                </div>
+
+                                <div class="form-group  col-md-6">
+                                  <label>Email</label>
+                                  <input type="text" formControlName="email" class="form-control form-control-sm"
+                                    [ngClass]="{ 'is-invalid': submitted && contact.get('email').errors }" />
+                                  <div *ngIf="submitted && contact.get('email').errors" class="invalid-feedback">
+                                    <div *ngIf="contact.get('email').errors.required">
+                                      Email es obligatorio</div>
+                                    <div *ngIf="contact.get('email').errors.email">
+                                      Favor introduce un email valido</div>
+                                  </div>
+                                </div>
+
+                              
+                                  <div class="form-group col-md-6">
+                                    <label for="inputEmail4"> Puesto</label>
+                                    <ng-select bindLabel="nombre" bindValue="codigo" [items]="puestos"
+                                      [loading]="false" [clearable]="false"
+                                      [ngClass]="{'form-control border-danger p-0' : submitted && contact.get('puestoId').errors }"
+                                      notFoundText="No resultados" formControlName="puestoId">
+                                    </ng-select>
+                                    <div *ngIf="submitted && contact.get('puestoId').errors" class="text-danger small">
+                                      <div *ngIf="contact.get('puestoId').errors.required  ">El campo es
+                                        obligatorio</div>
+                                    </div>
+                                  </div>
                                 
                               <div class="form-group  col-md-2  mt-1">
-                                <button type="button"  (click)="removeContact(i)" class="btn btn-danger btn-round-sm btn-sm">
+                                <button type="button"  *ngIf="!contact.get('cargando').value" (click)="openModal(modalConfirm,contact,i)" class="btn btn-danger btn-round-sm btn-sm">
                                   <i class="fas fa-minus"></i> Eliminar
+                                </button>
+                                <button type="button" *ngIf="contact.get('cargando').value" disabled   class="btn btn-danger btn-round-sm btn-sm">
+                                  <i class="spinner-border spinner-border-sm"></i> Eliminando
                                 </button>
                               </div>
                             </div>
@@ -124,4 +127,28 @@
                   </div>
                 </div>
               </div> 
-              {{FormContactos.value | json}}
+              <ng-template #modalConfirm let-modal>
+                <div class="container-fluid">
+                  <div class="row"  >
+                    <div class="col">
+                      <div class="modal-header">
+                        <h4 class="modal-title" id="modal-title">Confirmación</h4>
+                        <button type="button" class="close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body text-center">
+                        <i class="fa fa-question fa-3x text-info"></i>
+                        <p class="mt-2"><strong>¿Estás seguro/a?</strong></p>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="modal.close('Close click')">Cancel</button>
+                        <button type="button" class="btn btn-danger" (click)="onBtnModalOk()">Si, estoy seguro/a</button>
+                      </div>
+                    </div>
+                  </div>
+              
+                  <app-loading-listado [hidden]="!cargandoAutorizacion"></app-loading-listado>
+              
+                </div>
+              </ng-template>

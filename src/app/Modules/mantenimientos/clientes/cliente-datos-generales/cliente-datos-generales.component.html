@@ -11,7 +11,7 @@
 
           </div>
         </div>
-        <form class="form-row m-t-40" [formGroup]="FormGenerales" (ngSubmit)="onSubmit()">
+        <form class="form-row m-t-40"  (keydown.enter)="$event.preventDefault()" [formGroup]="FormGenerales" (ngSubmit)="onSubmit()">
 
         
               <div class="form-group col-md-6  ">

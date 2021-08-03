@@ -126,9 +126,9 @@ export class ClienteDatosGeneralesComponent implements OnInit {
 
       calle: [null, [Validators.required]],
       numero: [0, [Validators.required]],
-      residencial: [null, [Validators.required]],
-      apartamento: [null, [Validators.required]],
-      referencia: [null, [Validators.required]],
+      residencial: [null],
+      apartamento: [null],
+      referencia: [null],
       provinciaID: [0, Validators.required],
       ciudadID: [0, Validators.required],
       sectorID: [0, Validators.required],
