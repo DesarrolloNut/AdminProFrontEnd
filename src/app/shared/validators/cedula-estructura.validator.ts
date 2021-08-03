@@ -14,6 +14,7 @@ export function cedulaestructura(controlName: string, tipodocID:string) {
 
         // set error on matchingControl if validation fails
         if (controltipoDoc.value == '1') {
+            if(control.value==null || control.value=='' ){ return;}
             if (!ValidatorLogic.ValidaCedulaFormacion(control.value)) {
                 control.setErrors({ cedulaestructura: true });
             } else {

@@ -90,6 +90,16 @@ import { UsuarioAlmacenEnrrollFormularioComponent } from './usuarioAlmacenEnrrol
 import { TomainventarioRutaListadoComponent } from './tomainventarioruta/tomainventarioruta-listado/tomainventarioruta-listado.component';
 import { ArticulosCategoriasListadoComponent } from './articulosCategorias/articulos-categorias-listado/articulos-categorias-listado.component';
 import { ArticulosCategoriasFormularioComponent } from './articulosCategorias/articulos-categorias-formulario/articulos-categorias-formulario.component';
+
+import { AutorizacionHistoricoComponent } from './autorizacion/autorizacion-historico/autorizacion-historico.component';
+import { ClienteRutasComponent } from './clientes/cliente-rutas/cliente-rutas.component';
+import { ClienteVisitasComponent } from './clientes/cliente-visitas/cliente-visitas.component';
+import { ClienteFinanzasComponent } from './clientes/cliente-finanzas/cliente-finanzas.component';
+import { ClienteContactosComponent } from './clientes/cliente-contactos/cliente-contactos.component';
+import { ClienteDatosGeneralesComponent } from './clientes/cliente-datos-generales/cliente-datos-generales.component';
+import { AgmCoreModule } from '@agm/core';
+import { ClienteMapComponent } from './clientes/cliente-map/cliente-map.component';
+
 import { PlazosListadoComponent } from './plazos/plazos-listado/plazos-listado.component';
 import { PlazosFormularioComponent } from './plazos/plazos-formulario/plazos-formulario.component';
 
@@ -100,7 +110,8 @@ import { PlazosFormularioComponent } from './plazos/plazos-formulario/plazos-for
     NgbdtabsBasicComponent,
     MantenimientosComponent, ComiteComponent,
     UsuarioListadoComponent, UsuarioFormularioComponent, ClientesListadoComponent,
-    ClientesFormularioComponent, MarcasListadoComponent, MarcasFormularioComponent,
+    ClientesFormularioComponent,ClienteRutasComponent,ClienteVisitasComponent,ClienteFinanzasComponent,
+    ClienteContactosComponent,ClienteDatosGeneralesComponent,ClienteMapComponent,MarcasListadoComponent, MarcasFormularioComponent,
     ModelosListadoComponent, ModelosFormularioComponent, DealersListadoComponent, DealersFormularioComponent,
     AlmacenesListadoComponent, AlmacenesFormularioComponent, VehiculoTiposListadoComponent, VehiculoTiposFormularioComponent,
     CombustiblesListadoComponent, CombustiblesFormularioComponent, VehiculoCondicionesListadoComponent, VehiculoCondicionesFormularioComponent,
@@ -147,6 +158,10 @@ import { PlazosFormularioComponent } from './plazos/plazos-formulario/plazos-for
     AngularDualListBoxModule,
     MantenimientosRoutingModule,
     SharedModule,
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyBaddDDv0d9zuun9qiWj3VkLEzpJot9UQ4',
+      libraries: ["places"]
+    }),
     NgbModule,
     TreeviewModule.forRoot()
   ]

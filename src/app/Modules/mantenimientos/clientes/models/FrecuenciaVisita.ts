@@ -7,7 +7,8 @@ export class FrecuenciaVisita {
         this.clienteId = 0;
         this.ordenVisita = 0;
         this.tipoRutaId = 0;
-
+        this.rutaId=0;
+        this.dias=[];
     }
 
     id: number;
@@ -16,6 +17,26 @@ export class FrecuenciaVisita {
     clienteId: number;
     ordenVisita: number;
     tipoRutaId: number;
+    rutaId:number;
+    dias:FrecuenciaVisitaFormated[]
 
 }
 
+export class FrecuenciaVisitaFormated {
+
+    constructor() {
+        this.diaId = 0;
+        this.frecuenciaVisitaId = 0;
+        this.clienteId = 0;
+        this.ordenVisita = 0;
+        this.tipoRutaId = 0;
+
+    }
+
+    diaId: number;
+    frecuenciaVisitaId: number;
+    clienteId: number;
+    ordenVisita: number;
+    tipoRutaId: number;
+
+}

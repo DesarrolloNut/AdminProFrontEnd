@@ -1,0 +1,64 @@
+<p>
+  cliente-finanzas works!
+</p>
+<!-- <div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6 col-lg-6 col-12">
+            <h4 class="card-title">Datos Finanzas</h4>
+          </div>
+          <div class="col-md-6 col-lg-6 col-12 text-right">
+
+
+          </div>
+        </div>
+        <form class="form-row m-t-40" [formGroup]="FormGenerales" (ngSubmit)="onSubmit()">
+
+          <div class="form-group col-md-6">
+            <label for="condicionPagoId"> Condición de pago</label>
+            <ng-select bindLabel="nombre" bindValue="codigo" [items]="TipoCondicionPagos"
+              [loading]="loadingCondicionPagos" [clearable]="false"
+              [ngClass]="{'form-control border-danger p-0' : submitted && f.condicionPagoId.errors }"
+              notFoundText="No resultados" formControlName="condicionPagoId">
+            </ng-select>
+            <div *ngIf="submitted && f.condicionPagoId.errors" class="text-danger small">
+              <div *ngIf="f.condicionPagoId.errors.required  ">El campo es
+                obligatorio</div>
+            </div>
+          </div>
+
+          <div class="form-group col-md-6">
+            <label for="limiteCredito"><i class="fa fa-hashtag"></i> Límite
+              Crédito</label>
+            <input formControlName="limiteCredito" type="text" prefix="$ " mask="separator"
+              thousandSeparator="," name="limiteCredito" id="limiteCredito"
+              [ngClass]="{'is-invalid' : submitted && f.limiteCredito.errors,  'form-control':true  }">
+            <div class="invalid-feedback" *ngIf="submitted && f.limiteCredito.errors">
+              <div *ngIf="f.limiteCredito.errors.required">El campo es
+                obligatorio</div>
+            </div>
+          </div>
+
+          <div class="form-group text-right col-md-12">
+            <hr />
+
+            <button class="btn btn-light m-1" routerLink="../" type="button">
+              <i class="fas fa-times"></i> Cancelar
+            </button>
+
+            <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+              <i class="fas fa-check"></i> Guardar
+            </button>
+
+            <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+              <span class="spinner-border spinner-border-sm"></span> Guardando
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div> -->
