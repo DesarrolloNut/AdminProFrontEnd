@@ -1,5 +1,6 @@
 import { MapsAPILoader, Marker } from '@agm/core';
-import { Component, ElementRef, EventEmitter, Input, NgZone, OnInit, Output, ViewChild } from '@angular/core';
+import { ViewportScroller } from '@angular/common';
+import { Component, ElementRef, EventEmitter, HostListener, Input, NgZone, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { thresholdFreedmanDiaconis } from 'd3';
@@ -20,7 +21,7 @@ import { Cliente, Coordenadas } from '../models/Cliente';
 export class ClienteDatosGeneralesComponent implements OnInit {
   @Input() clientId = 0;
   @Output() clienteIdCreado = new EventEmitter();
-  
+ 
   
   FormGenerales: FormGroup;
 
@@ -65,7 +66,6 @@ export class ClienteDatosGeneralesComponent implements OnInit {
     private router: Router,
     private auth: AuthenticationService,
     private formBuilder: FormBuilder,
-
     ) { }
  
   ngOnInit() {
@@ -106,7 +106,13 @@ export class ClienteDatosGeneralesComponent implements OnInit {
   
     this.guardarCliente();
   }
-  
+  scrollToTop(){
+    window.scroll({
+      top: 0, 
+      left: 0, 
+      behavior: 'smooth' 
+     });
+  }
   private createForm() {
 
     this.FormGenerales = this.formBuilder.group({
@@ -176,6 +182,8 @@ export class ClienteDatosGeneralesComponent implements OnInit {
           this.toastService.error(response.errores[0], "Error");
           this.btnGuardarCargando = false;
         } else {
+     
+          this.scrollToTop();
           this.toastService.success("Realizado", "OK");
           if(!this.actualizando){
             this.onClienteCreado(this.clientId);

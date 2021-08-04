@@ -5,3 +5,9 @@ export interface Archivo {
     tamanio: number;
     ubicacion: string;
 }
+
+
+export enum TipoAnexoEnum {
+    CLIENTE_FINANZA  = 1,
+    CLIENTE_COMERCIO = 2
+  }

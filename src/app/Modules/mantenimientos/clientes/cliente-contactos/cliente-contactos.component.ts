@@ -91,7 +91,7 @@ export class ClienteContactosComponent implements OnInit {
             this.toastService.error(response.errores[0], "Error");
             this.btnGuardarCargando = false;
           } else {
-              if(response.valores[0].CantRegistrados>0){
+              if(response.valores[0].cantRegistrados>0){
                 this.toastService.success("Realizado", "OK");
               }
           }
@@ -219,7 +219,6 @@ export class ClienteContactosComponent implements OnInit {
 
 
   removeContact(index) {
-    console.log(index);
     (this.f.contactos as FormArray).removeAt(index);
   }
 
@@ -234,7 +233,7 @@ export class ClienteContactosComponent implements OnInit {
   
 
   openModal(content, contact: FormGroup,index:any) {
-    this.modalService.open(content, { size: 'sm' });
+    this.modalService.open(content, { size: 'sm',centered:true });
     this.contactoFormGroupToDelete= contact;
     console.log(this.contactoFormGroupToDelete.get('id').value)
     this.contactoIndexToDelete = index;

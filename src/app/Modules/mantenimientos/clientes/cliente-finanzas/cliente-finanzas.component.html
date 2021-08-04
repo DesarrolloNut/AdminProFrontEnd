@@ -1,35 +1,44 @@
-<p>
-  cliente-finanzas works!
-</p>
-<!-- <div class="row">
+ 
+<div class="row">
   <div class="col-12">
     <div class="card">
       <div class="card-body">
         <div class="row">
           <div class="col-md-6 col-lg-6 col-12">
-            <h4 class="card-title">Datos Finanzas</h4>
+            <h4 class="card-title">Datos Finanzas</h4> 
           </div>
           <div class="col-md-6 col-lg-6 col-12 text-right">
-
-
           </div>
         </div>
-        <form class="form-row m-t-40" [formGroup]="FormGenerales" (ngSubmit)="onSubmit()">
+        <form class="form-row m-t-40" [formGroup]="FormFinanza" (ngSubmit)="onSubmit()">
 
           <div class="form-group col-md-6">
-            <label for="condicionPagoId"> Condición de pago</label>
-            <ng-select bindLabel="nombre" bindValue="codigo" [items]="TipoCondicionPagos"
+            <label for="tipoCondicionPagoId">Tipo condición de pago</label>
+            <ng-select bindLabel="nombre" bindValue="codigo" [items]="TipoCondicionesPagos"
+             placeholder="seleccione un tipo de condición"
               [loading]="loadingCondicionPagos" [clearable]="false"
-              [ngClass]="{'form-control border-danger p-0' : submitted && f.condicionPagoId.errors }"
-              notFoundText="No resultados" formControlName="condicionPagoId">
+              [ngClass]="{'form-control border-danger p-0' : submitted && f.tipoCondicionPagoId.errors }"
+              notFoundText="No resultados" formControlName="tipoCondicionPagoId">
             </ng-select>
-            <div *ngIf="submitted && f.condicionPagoId.errors" class="text-danger small">
-              <div *ngIf="f.condicionPagoId.errors.required  ">El campo es
+            <div *ngIf="submitted && f.tipoCondicionPagoId.errors" class="text-danger small">
+              <div *ngIf="f.tipoCondicionPagoId.errors.required  ">El campo es
+                obligatorio</div>
+            </div>
+          </div>
+          <div class="form-group col-md-6" *ngIf="f.tipoCondicionPagoId.value==2">
+            <label for="plazoId">Plazo</label>
+            <ng-select bindLabel="nombre" bindValue="codigo" [items]="Plazos"
+              [loading]="loadingPlazos" [clearable]="false"
+              [ngClass]="{'form-control border-danger p-0' : submitted && f.plazoId.errors }"
+              notFoundText="No resultados" formControlName="plazoId">
+            </ng-select>
+            <div *ngIf="submitted && f.plazoId.errors" class="text-danger small">
+              <div *ngIf="f.plazoId.errors.required  ">El campo es
                 obligatorio</div>
             </div>
           </div>
 
-          <div class="form-group col-md-6">
+          <div class="form-group col-md-6" *ngIf="f.tipoCondicionPagoId.value==2">
             <label for="limiteCredito"><i class="fa fa-hashtag"></i> Límite
               Crédito</label>
             <input formControlName="limiteCredito" type="text" prefix="$ " mask="separator"
@@ -39,6 +48,111 @@
               <div *ngIf="f.limiteCredito.errors.required">El campo es
                 obligatorio</div>
             </div>
+          </div>
+             <!-- Anexos y Cotizaciones -->
+             <div class="col-12">
+
+              <div class="row">
+
+                  <!-- Anexos -->
+                  <div class="col-md-12">
+                      <div class="row">
+                          <div class="col-8">
+                              <hr>
+                              <h6 class="font-weight-bold">Subir Anexos
+                                  <span class="badge badge-info badge-pill">{{filesFromInput.length}}</span>
+                              </h6>
+                              <span style="position: relative; top: -8px; font-size: 14px;color: gray;font-weight: 600;">
+                                Ej. foto cedula, registro mercantil...
+                              </span>
+
+                          </div>
+                          <div class="col-4 text-right">
+                              <hr>
+                              <input accept="application/pdf,.png,.gif,.jpg,.jpeg" class="d-none" (change)="setFiles(file.files)"
+                                  #file multiple type="file" />
+                              <button (click)="file.click()" type="button" class="btn btn-light btn-sm"><i
+                                      class="fa fa-upload"></i>
+                              </button>
+                          </div>
+
+                          <ng-container *ngIf="filesFromInput.length>0; else elseTemplate2">
+
+                              <div class=" row  col-md-12">
+                                    <div class="col-md-2 mr-1 p-2 text-center border-light border rounded-sm"
+                                    *ngFor="let item of filesFromInput; let i = index">
+                                    <div class="row">
+                      
+                                      <div class="col-12 text-right">
+                                        <button class="btn btn-sm" (click)="onDeleteitem(i)"><i class="fa fa-times"></i></button>
+                                      </div>
+                      
+                                      <div class="col-12 text-center">
+                                        <span>
+                                          <i class="fa fa-file-pdf text-danger fa-3x"></i>
+                                        </span>
+                                        <h6 class="mt-2 text-info">{{item.name}}</h6>
+                                      </div>
+                      
+                                    </div>
+                      
+                                  </div>
+                                      <!-- <thead>
+                                          <tr>
+                                              <th></th>
+                                              <th></th>
+                                              <th></th>
+                                              <th></th>
+                                          </tr>
+                                      </thead>
+                                      <tbody [hidden]="Cargando">
+                                          <tr *ngFor="let item of filesFromInput; let i= index">
+                                              <td [ngClass]="{'table-success': item.seleccionada}">
+                                                  <div class="custom-control custom-checkbox">
+                                                      <input (click)="onSelectCotizacion(item,i)"
+                                                          [(ngModel)]="item.seleccionada" type="checkbox"
+                                                          class="custom-control-input" [attr.id]="'option'+i"
+                                                          name="cotizacionCheck">
+                                                      <label class="custom-control-label"
+                                                          [attr.for]="'option'+i"></label>
+                                                  </div>
+                                              </td>
+                                              <td [ngClass]="{'table-success': item.seleccionada}">
+
+                                                  <i class="fa fa-file-pdf text-danger"></i>
+                                              </td>
+                                              <td [ngClass]="{'table-success': item.seleccionada}">
+
+                                                  <span class="small"
+                                                      [ngClass]="{'font-weight-bold': item.seleccionada}">
+                                                      {{item.name}} </span>
+                                              </td>
+                                              <td [ngClass]="{'table-success': item.seleccionada}">
+                                                  <button (click)="onDeleteCotizacionSeleccionada(i)"
+                                                      class="btn btn-sm btn-light"> <i
+                                                          class="fa fa-times"></i></button>
+                                              </td>
+                                          </tr>
+                                      </tbody> -->
+                              </div>
+
+                          </ng-container>
+                          <ng-template #elseTemplate2>
+
+                              <div class="col-12 text-center">
+                                  <i class="fa fa-info-circle text-info fa-3x"></i>
+                                  <h3>No hay anexos</h3>
+                              </div>
+
+                          </ng-template>
+
+
+
+                      </div>
+                  </div>
+
+              </div>
+
           </div>
 
           <div class="form-group text-right col-md-12">
@@ -61,4 +175,4 @@
       </div>
     </div>
   </div>
-</div> -->
+</div> 
