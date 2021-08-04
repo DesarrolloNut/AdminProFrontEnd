@@ -73,7 +73,7 @@ export class SolicitudComprasListadoComponent implements OnInit {
     ]
 
     this.httpService.GetAllWithPagination<SolicitudCompraListadoViewModel>(DataApi.SolicitudCompra, "GetSolicitudCompraListado", "ID", this.paginaNumeroActual,
-      this.paginaSize, true, parametros).subscribe(x => {
+      this.paginaSize, false, parametros).subscribe(x => {
 
         if (x.ok) {
           this.data = x.records;

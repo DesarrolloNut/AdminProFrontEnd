@@ -16,4 +16,8 @@ export class OrdenCompraDetalle {
     descuentoTotal: number;
     totalImpuesto: number;
     totalNeto: number;
+
+    unidadMedidaID: number;
+    cantidadAprobada: number;
+
 }

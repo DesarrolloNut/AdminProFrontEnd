@@ -80,6 +80,11 @@ export class OrdenComprasFormularioComponent implements OnInit {
   loadingCondicionPagos: boolean;
   TipoCondicionPagos: ComboBox[];
   CargandoProveedor: boolean;
+  loadingPlazos: boolean;
+  plazos: ComboBox[];
+  unidadesMedida: ComboBox[];
+  loadingUnidadesMedida: boolean;
+  loadingCotizacionesArchivosSubidos: boolean;
 
 
   constructor(
@@ -112,6 +117,8 @@ export class OrdenComprasFormularioComponent implements OnInit {
     this.llenarTipoOrdenCombo()
     this.getMonedasTipo()
     this.getTipoCondicionPago();
+    this.getPlazos();
+    this.getUnidadesMedida();
 
 
   }
@@ -142,8 +149,10 @@ export class OrdenComprasFormularioComponent implements OnInit {
             this.getHoraActual();
             this.getOrdenCompraDetalles(record.id);
             this.getAnexosSolicitudSubidos();
+            this.getCotizacionesArchivosSubidos();
             this.getUsuarioByID(record.solicitanteID)
             this.getProveedor(record.proveedorID)
+
 
           } else {
             this.toastService.warning("no encontrado");
@@ -166,6 +175,7 @@ export class OrdenComprasFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.ordenCompraDetalles = response.records;
+          console.table(this.ordenCompraDetalles)
           // this.agregarDetalleVacio()
           this.calcularTotal()
         }
@@ -195,7 +205,7 @@ export class OrdenComprasFormularioComponent implements OnInit {
 
 
     this.ordenCompraDetalles.forEach(x => {
-      x.subTotal = x.cantidad && x.articuloID ? (x.costo * x.cantidad) : 0;
+      x.subTotal = x.cantidadAprobada && x.articuloID ? (x.costo * x.cantidadAprobada) : 0;
       x.descuentoTotal = x.descuentoPorciento ? (x.subTotal * x.descuentoPorciento / 100) : 0;
       x.totalImpuesto = (x.subTotal - x.descuentoTotal) * (this.ITBIS / 100);
       x.totalNeto = x.subTotal - x.descuentoTotal
@@ -203,7 +213,7 @@ export class OrdenComprasFormularioComponent implements OnInit {
 
       this.ordenCompra.descuentoTotal += x.descuentoTotal;
       this.ordenCompra.subTotal += x.subTotal;
-      this.ordenCompra.totalNeto += x.cantidad && x.costo ? (x.costo * x.cantidad) : 0;
+      this.ordenCompra.totalNeto += x.cantidadAprobada && x.costo ? (x.costo * x.cantidadAprobada) : 0;
     })
 
     this.ordenCompra.totalNeto = this.ordenCompra.subTotal - this.ordenCompra.descuentoTotal;
@@ -258,13 +268,13 @@ export class OrdenComprasFormularioComponent implements OnInit {
       return;
     }
 
-    if (this.filesFromInput.length <= 0) {
+    if (this.filesFromInput.length <= 0 && this.cotizacionesArchivosSubidas.length <= 0) {
       this.toastService.warning("Debes de subir las cotizaciones.")
       return;
     }
 
     //que una cotizacion este seleccionada
-    if (!this.filesFromInput.some(x => x.seleccionada)) {
+    if (!this.filesFromInput.some(x => x.seleccionada) && !this.cotizacionesArchivosSubidas.some(x => x.escogida)) {
       this.toastService.warning("Debes de marcar la cotización escogida.")
       return;
     }
@@ -292,7 +302,12 @@ export class OrdenComprasFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0], "Error");
         } else {
           // this.toastService.success("Realizado", "OK");
-          this.subirCotizacionesAlServidor();
+          if (this.filesFromInput.length > 0) {
+            this.subirCotizacionesAlServidor();
+          } else {
+            this.toastService.success("Realizado", "OK");
+            this.router.navigateByUrl('/compras/orden-compras');
+          }
           // this.enviarCorreoAutorizacionPendiente()
           // this.router.navigateByUrl('/compras/orden-compras');
         }
@@ -541,7 +556,9 @@ export class OrdenComprasFormularioComponent implements OnInit {
     for (let file of this.filesFromInput)
       formData.append("files", file);
 
-    let cotizacionEscogidaFileName: string = this.filesFromInput.find(x => x.seleccionada).name;
+    let cotizacionEscogida = this.filesFromInput.find(x => x.seleccionada);
+
+    let cotizacionEscogidaFileName: string = cotizacionEscogida ? cotizacionEscogida.name : "";
     formData.append("CotizacionSeleccionadaFileName", cotizacionEscogidaFileName);
 
     this.httpService.DoPostAny<any>(DataApi.Upload,
@@ -566,25 +583,6 @@ export class OrdenComprasFormularioComponent implements OnInit {
 
   }
 
-  getCotizacionesSubidas() {
-
-    this.httpService.DoPostAny<OrdenCompraAnexoCotizaciones>(DataApi.OrdenCompra,
-      "GetOrdenCompraAnexosArchivos", this.ordenID).subscribe(response => {
-
-        if (!response.ok) {
-          this.toastService.error(response.errores[0], "Error");
-        } else {
-          this.cotizacionesArchivosSubidas = response.records;
-          // this.router.navigateByUrl('/mantenimientos/almacen');
-        }
-
-        // this.btnGuardarCargando = false;
-      }, error => {
-        // this.btnGuardarCargando = false; 
-        this.toastService.error("Error conexion al servidor");
-      });
-
-  }
 
   getAnexosSolicitudSubidos() {
     this.cargandoAnexos = true;
@@ -697,6 +695,120 @@ export class OrdenComprasFormularioComponent implements OnInit {
   onChangeProveedor(e: ComboBox) {
     this.getProveedor(e.codigo)
   }
+
+  getPlazos() {
+    this.loadingPlazos = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetPlazos", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.plazos = response.records;
+        }
+        this.loadingPlazos = false;
+      }, error => {
+        this.loadingPlazos = false;
+        this.toastService.error("No se pudo obtener los plazos", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getPlazos()
+        }, 1000);
+
+      });
+  }
+
+  getUnidadesMedida() {
+    this.loadingUnidadesMedida = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetUnidadesMedida", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.unidadesMedida = response.records;
+          console.table(this.unidadesMedida)
+        }
+        this.loadingUnidadesMedida = false;
+      }, error => {
+        this.loadingUnidadesMedida = false;
+        this.toastService.error("No se pudo obtener las UnidadesMedida", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getUnidadesMedida()
+        }, 1000);
+
+      });
+  }
+
+  getCotizacionesArchivosSubidos() {
+    this.loadingCotizacionesArchivosSubidos = true;
+    this.httpService.DoPostAny<OrdenCompraAnexoCotizaciones>(DataApi.OrdenCompra,
+      "GetOrdenCompraCotizacionesArchivos", this.ordenCompra.id).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.cotizacionesArchivosSubidas = response.records;
+          console.table(this.cotizacionesArchivosSubidas)
+        }
+        this.loadingCotizacionesArchivosSubidos = false;
+      }, error => {
+        this.loadingCotizacionesArchivosSubidos = false;
+        this.toastService.error("No se pudo obtener las cotizaciones subidas", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getCotizacionesArchivosSubidos()
+        }, 1000);
+
+      });
+  }
+
+  deleteOrdenCompraCotizacionArchivoByID(id: number) {
+    this.loadingCotizacionesArchivosSubidos = true;
+    this.httpService.DoPostAny<string>(DataApi.OrdenCompra,
+      "DeleteOrdenCompraCotizacionArchivoByID", id).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.toastService.success("Realizado");
+          this.getCotizacionesArchivosSubidos();
+        }
+        this.loadingCotizacionesArchivosSubidos = false;
+      }, error => {
+        console.error(error)
+        this.loadingCotizacionesArchivosSubidos = false;
+        this.toastService.error("Error", "Error conexion al servidor");
+      });
+  }
+
+  updateCotizacionEscogidaByID(item: OrdenCompraAnexoCotizaciones) {
+
+    let param = {
+      "OrdenID": this.ordenCompra.id,
+      "CotizacionID": item.id,
+      "Escogida": !item.escogida
+    }
+    this.loadingCotizacionesArchivosSubidos = true;
+    this.httpService.DoPostAny<string>(DataApi.OrdenCompra,
+      "UpdateCotizacionEscogidaByID", param).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.toastService.success("Realizado");
+          this.getCotizacionesArchivosSubidos();
+        }
+        // this.loadingCotizacionesArchivosSubidos = false;
+      }, error => {
+        console.error(error)
+        this.loadingCotizacionesArchivosSubidos = false;
+        this.toastService.error("Error", "Error conexion al servidor");
+      });
+  }
+
+
 
 
 }
