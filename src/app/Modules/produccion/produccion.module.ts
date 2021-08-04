@@ -11,10 +11,11 @@ import { NgxBarcodeModule } from 'ngx-barcode';
 import { OrdenfabricacionListadoComponent } from './ordenfabricacion/ordenfabricacion-listado/ordenfabricacion-listado.component';
 import { OrdenfabricacionFormularioComponent } from './ordenfabricacion/ordenfabricacion-formulario/ordenfabricacion-formulario.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { OrdenfabricacionPesajeComponent } from './ordenfabricacion/ordenfabricacion-pesaje/ordenfabricacion-pesaje.component';
 
 
 @NgModule({
-  declarations: [ProduccionComponent,PesajeFormularioComponent,PesajeListadoComponent, PesajeResultadoComponent, OrdenfabricacionListadoComponent, OrdenfabricacionFormularioComponent],
+  declarations: [ProduccionComponent,PesajeFormularioComponent,PesajeListadoComponent, PesajeResultadoComponent, OrdenfabricacionListadoComponent, OrdenfabricacionFormularioComponent, OrdenfabricacionPesajeComponent],
   imports: [
     CommonModule,
     SharedModule,

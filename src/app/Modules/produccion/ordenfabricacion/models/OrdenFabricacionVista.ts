@@ -20,9 +20,10 @@ export class OrdenFabricacionVista {
     this.costoReal = 0;
     this.costoArticulo = 0;
     this.ordenFabricacionId = 0;
-    this.isPesaje = false;
     this.estadoId = 0;
     this.cantidadRequerida = 0;
+    this.isPesaje = false;
+    this.loadingSaveConsumido = false;
   }
 
   id: number;
@@ -44,7 +45,8 @@ export class OrdenFabricacionVista {
   costoReal: number;
   costoArticulo: number;
   ordenFabricacionId: number;
-  isPesaje: boolean;
   estadoId: number;
   cantidadRequerida: number;
+  isPesaje: boolean;
+  loadingSaveConsumido: boolean;
 }

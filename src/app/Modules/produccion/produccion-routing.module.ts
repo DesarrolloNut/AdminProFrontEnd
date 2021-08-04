@@ -6,6 +6,7 @@ import { PesajeFormularioComponent } from './pesaje/pesaje-formulario/pesaje-for
 import { PesajeListadoComponent } from './pesaje/pesaje-listado/pesaje-listado.component';
 import { PesajeResultadoComponent } from './pesaje/pesaje-resultado/pesaje-resultado.component';
 import { ProduccionComponent } from './produccion.component';
+import { OrdenfabricacionPesajeComponent } from './ordenfabricacion/ordenfabricacion-pesaje/ordenfabricacion-pesaje.component';
 
 
 
@@ -66,6 +67,17 @@ const routes: Routes = [
             { title: 'Producción' },
             { title: 'Orden Fabricación' },
             { title: 'Formulario' },
+          ]
+        }
+      },
+
+      {
+        path: 'ordenfabricacionpesaje', component: OrdenfabricacionPesajeComponent, data: {
+          title: 'Orden Fabricación',
+          urls: [
+            { title: 'Producción' },
+            { title: 'Orden Fabricación' },
+            { title: 'Sistema de Pesajes' },
           ]
         }
       },

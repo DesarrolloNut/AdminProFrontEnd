@@ -11,6 +11,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
 import { OrdenFabricacion } from '../models/OrdenFabricacion';
 import { ListaMaterialesHeader } from '../models/ListaMaterialesHeader';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-ordenfabricacion-listado',
@@ -33,16 +34,22 @@ loadingArticulosExtras: boolean;
 articulosExtras: OrdenFabricacionVista[] = [];
 searching: boolean;
 articulo: Articulo = new Articulo();
+ordenfabricacion: OrdenFabricacion = new OrdenFabricacion();
+ordenfabricaciondetalle: OrdenFabricacionDetalle = new OrdenFabricacionDetalle();
 
 //Eliminar cuando el pesaje este listo
 IsPesaje: boolean = false;
 loadingSaveConsumido: boolean;
 IsClose: boolean = false;
+IsPesajeProducida: boolean;
+loadingSaveProducida: boolean;
 
 constructor(private toastService: ToastrService,
   private httpService: BackendService,
   public permissionsService: NgxPermissionsService,
-  private modalService: NgbModal
+  private modalService: NgbModal,
+  private router: Router,
+  private route: ActivatedRoute,
 ) { }
 
 
@@ -81,16 +88,23 @@ OnChangeIsPesaje(articulosExtras: OrdenFabricacionVista){
   articulosExtras.isPesaje = !articulosExtras.isPesaje;
 }
 
+OnChangeProducida(){
+ this.IsPesajeProducida = !this.IsPesajeProducida;
+}
+
+OnChangePagePesaje(articulosExtras: OrdenFabricacionVista){
+  this.modalService.dismissAll();
+  this.router.navigate(['/produccion/ordenfabricacionpesaje/'], {queryParams: articulosExtras})
+}
+
 OnSaveConsumido(articulosExtras: OrdenFabricacionVista){
 
   // let requeridad = Number((articulosExtras.cantidadBase * this.ofheader.cantidadPlanificada).toFixed(6));
   let requeridad = articulosExtras.cantidadRequerida;
   let consumido = articulosExtras.consumido;
-  console.log(requeridad);
-  console.log(consumido);
 
   if(consumido >= requeridad){
-    this.loadingSaveConsumido = true;
+    articulosExtras.loadingSaveConsumido = true;
     // console.log(articulosExtras);
     this.httpService.DoPostAny<OrdenFabricacionVista>(DataApi.OrdenFabricacionDetalle,
       "UpdateConsumidoYCostoReal", articulosExtras).subscribe(response => {
@@ -101,9 +115,9 @@ OnSaveConsumido(articulosExtras: OrdenFabricacionVista){
           articulosExtras.isPesaje = !articulosExtras.isPesaje;
           this.getOrdenFabricacion(articulosExtras.ordenFabricacionId);
         }
-        this.loadingSaveConsumido = false;
+        articulosExtras.loadingSaveConsumido = false;
       }, error => {
-        this.loadingSaveConsumido = false;
+        articulosExtras.loadingSaveConsumido = false;
         this.toastService.error("No se pudo obtener los articulos extras", "Error conexion al servidor");
 
         setTimeout(() => {
@@ -118,23 +132,41 @@ OnSaveConsumido(articulosExtras: OrdenFabricacionVista){
 
 
 }
+OnSaveProducida(){
 
-// OnChangeConsumido(articulosExtras: OrdenFabricacionVista){
-//       let requeridad = (articulosExtras.cantidadBase * this.ofheader.cantidadPlanificada);
-//       let consumido = articulosExtras.consumido;
-//       if(consumido < requeridad){
-//         this.toastService.error("El valor consumido de ser mayor a la cantidad requerida", "Error Cantidad");
-//       }
+    this.loadingSaveProducida = true;
+    this.httpService.DoPostAny<OrdenFabricacionVista>(DataApi.OrdenFabricacion,
+      "Update", this.ordenfabricacion).subscribe(response => {
 
-// }
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.IsPesajeProducida = !this.IsPesajeProducida;
+          //this.getOrdenFabricacion(articulosExtras.ordenFabricacionId);
+        }
+        this.loadingSaveProducida = false;
+      }, error => {
+        this.loadingSaveProducida = false;
+        this.toastService.error("No se pudo obtener los articulos extras", "Error conexion al servidor");
 
+        setTimeout(() => {
+          //this.getOrdenFabricacion();
+        }, 1000);
+      });
+
+
+
+
+}
 
 
 openModal(content, modal: OrdenFabricacionVista) {
-  // this.cotizacionDetalles = [];
-  // this.getCotizacionDetalle(cotizacion.id);
-  // this.cotizacionSeleccionada = cotizacion;
-  // console.log(modal);
+  this.getOrdenFabricacion(modal.id);
+  this.modalService.open(content, { windowClass: "myCustomModalClass", backdrop: "static",});
+}
+
+
+openModalProducida(content, modal: OrdenFabricacionVista) {
   this.getOrdenFabricacion(modal.id);
   this.modalService.open(content, { windowClass: "myCustomModalClass", backdrop: "static",});
 }
@@ -157,6 +189,7 @@ getOrdenFabricacion(id:number) {
         this.ofheader.fechaInicio = response.records[0].fechaInicio;
         this.ofheader.fechaCierre = response.records[0].fechaCierre;
         this.ofheader.id = response.records[0].id;
+        this.ordenfabricacion = response.records[0];
         this.getOrdenFabricacionDetalle(response.records[0].id);
       }
       this.loadingArticulosExtras = false;
@@ -182,6 +215,7 @@ getOrdenFabricacionDetalle(ordenFabricacionId: number) {
       } else {
        this.articulosExtras = response.records;
        this.articulosExtras.forEach(x => x.cantidadRequerida = Number((x.cantidadBase * this.ofheader.cantidadPlanificada).toFixed(6)));
+       //this.ordenfabricaciondetalle = response.records[0];
       // console.log(response.records)
       }
       this.loadingArticulosExtras = false;
