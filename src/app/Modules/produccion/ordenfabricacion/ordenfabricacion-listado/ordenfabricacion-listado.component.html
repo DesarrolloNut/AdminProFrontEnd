@@ -166,11 +166,11 @@
                 <td>{{ofheader.almacenId}}</td>
                 <td>{{articulext.metodoEmision == "M" ? "Manual" : "Automático"}}</td>
                 <td>
-                  <button class="btn btn-sm  btn-light m-1" *ngIf="!articulext.isPesaje && articulext.unidadMedida == 'Unidad'" (click)="OnChangeIsPesaje(articulext)">
+                  <button class="btn btn-sm  btn-light m-1" *ngIf="!articulext.isPesaje" (click)="OnChangeIsPesaje(articulext)">
                     <i class="fa fa-sm fa-edit"></i>
                   </button>
 
-                  <button class="btn btn-sm btn-info m-1" *ngIf="articulext.unidadMedida != 'Unidad'" (click)="OnChangePagePesaje(articulext)">
+                  <button class="btn btn-sm btn-info m-1" (click)="OnChangePagePesaje(articulext)">
                     <i class="fa fa-sm fa-balance-scale"></i>
                   </button>
 
