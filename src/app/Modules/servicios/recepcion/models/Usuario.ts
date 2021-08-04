@@ -22,4 +22,6 @@ export class Usuario {
     departamentoID: number
     descuentoVenta: number
     descuentoCompra: number
+    ipEquipo: string
+    puertoEquipo: string
 }
