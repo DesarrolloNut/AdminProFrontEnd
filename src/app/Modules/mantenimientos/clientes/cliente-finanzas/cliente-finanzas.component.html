@@ -49,8 +49,8 @@
                 obligatorio</div>
             </div>
           </div>
-             <!-- Anexos y Cotizaciones -->
-             <div class="col-12">
+             <!-- Anexos de cliente -->
+             <div class="col-12"  *ngIf="f.tipoCondicionPagoId.value==2">
 
               <div class="row">
 
@@ -79,61 +79,47 @@
                           <ng-container *ngIf="filesFromInput.length>0; else elseTemplate2">
 
                               <div class=" row  col-md-12">
-                                    <div class="col-md-2 mr-1 p-2 text-center border-light border rounded-sm"
-                                    *ngFor="let item of filesFromInput; let i = index">
-                                    <div class="row">
-                      
-                                      <div class="col-12 text-right">
-                                        <button class="btn btn-sm" (click)="onDeleteitem(i)"><i class="fa fa-times"></i></button>
+                                <div class="col-md-3  p-2 text-center" *ngFor="let item of filesFromInput; let i = index">
+
+                                  <div class="row ml-1" *ngIf="!isImage(item)"  >
+                                    <div class="card  border-secondary border rounded-sm"  style="width: 18rem;">
+                                      <div style="background-image: url('assets/images/pdf.png');background-size: cover;
+                                      min-height: 140px;
+                                      background-repeat: no-repeat;
+                                      background-position: center center;" class="card-img-top  img-responsive" alt="{{truncateString(item.name) }}"></div>
+                                      <div class="card-body ">
+                                        <h5 class="card-title" style="font-size: 13px; ">{{truncateString(item.name) }}</h5>
+                                        <hr>
+                                        <div class="col-12 text-center">
+                                          <button class="btn btn btn-outline-danger btn-sm rounded" (click)="onDeleteitem(i)"><i class="fa fa-times  mr-1">Quitar</i></button>
+                                          <button class="btn btn-outline-info btn-sm ml-2 rounded" (click)="onDeleteitem(i)"><i class="fa fa-eye mr-1"></i>Ver</button>
+                                        </div>
+                                 
                                       </div>
-                      
-                                      <div class="col-12 text-center">
-                                        <span>
-                                          <i class="fa fa-file-pdf text-danger fa-3x"></i>
-                                        </span>
-                                        <h6 class="mt-2 text-info">{{item.name}}</h6>
+                                    </div>
+                                  </div>
+                                    <div class="row ml-1" *ngIf="isImage(item)">
+                                      <div class="card  border-secondary border rounded-sm"  style="width: 18rem;">
+                                        <div style="background-image: url({{item.url}});background-size: cover;
+                                        min-height: 140px;
+                                        background-repeat: no-repeat;
+                                        background-position: center center;" class="card-img-top  img-responsive" alt="{{truncateString(item.name) }}"></div>
+                                        <div class="card-body ">
+                                          <h5 class="card-title" style="font-size: 13px; ">{{truncateString(item.name) }}</h5>
+                                          <hr>
+                                          <div class="col-12 text-center">
+                                            <button class="btn btn btn-outline-danger btn-sm rounded" (click)="onDeleteitem(i)"><i class="fa fa-times  mr-1"></i>Quitar</button>
+                                            <button class="btn btn-outline-info btn-sm ml-2 rounded" (click)="onDeleteitem(i)"><i class="fa fa-eye mr-1"></i>Ver</button>
+                                          </div>
+                                   
+                                        </div>
                                       </div>
-                      
                                     </div>
                       
                                   </div>
-                                      <!-- <thead>
-                                          <tr>
-                                              <th></th>
-                                              <th></th>
-                                              <th></th>
-                                              <th></th>
-                                          </tr>
-                                      </thead>
-                                      <tbody [hidden]="Cargando">
-                                          <tr *ngFor="let item of filesFromInput; let i= index">
-                                              <td [ngClass]="{'table-success': item.seleccionada}">
-                                                  <div class="custom-control custom-checkbox">
-                                                      <input (click)="onSelectCotizacion(item,i)"
-                                                          [(ngModel)]="item.seleccionada" type="checkbox"
-                                                          class="custom-control-input" [attr.id]="'option'+i"
-                                                          name="cotizacionCheck">
-                                                      <label class="custom-control-label"
-                                                          [attr.for]="'option'+i"></label>
-                                                  </div>
-                                              </td>
-                                              <td [ngClass]="{'table-success': item.seleccionada}">
 
-                                                  <i class="fa fa-file-pdf text-danger"></i>
-                                              </td>
-                                              <td [ngClass]="{'table-success': item.seleccionada}">
 
-                                                  <span class="small"
-                                                      [ngClass]="{'font-weight-bold': item.seleccionada}">
-                                                      {{item.name}} </span>
-                                              </td>
-                                              <td [ngClass]="{'table-success': item.seleccionada}">
-                                                  <button (click)="onDeleteCotizacionSeleccionada(i)"
-                                                      class="btn btn-sm btn-light"> <i
-                                                          class="fa fa-times"></i></button>
-                                              </td>
-                                          </tr>
-                                      </tbody> -->
+
                               </div>
 
                           </ng-container>
@@ -155,14 +141,14 @@
 
           </div>
 
-          <div class="form-group text-right col-md-12">
+          <div class="form-group text-right col-md-12" >
             <hr />
 
             <button class="btn btn-light m-1" routerLink="../" type="button">
               <i class="fas fa-times"></i> Cancelar
             </button>
 
-            <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+            <button *ngIf="!btnGuardarCargando" (click)="onSubmit()" class="btn btn-info m-1" type="submit">
               <i class="fas fa-check"></i> Guardar
             </button>
 

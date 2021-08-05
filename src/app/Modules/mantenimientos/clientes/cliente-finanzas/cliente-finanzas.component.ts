@@ -1,11 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
-import { Archivo, TipoAnexoEnum } from 'src/app/shared/model/Archivo';
+import { Archivo, FilesUploaded, TipoAnexoEnum } from 'src/app/shared/model/Archivo';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { ClienteFinanza } from '../models/ClienteFinanza';
 
@@ -70,14 +70,9 @@ export class ClienteFinanzasComponent implements OnInit {
 
   onSubmit() {
     this.submitted = true; 
-  
-    if (!this.actualizando)
-      this.f.sucursalID.setValue(Number(this.auth.tokenDecoded.groupsid))
-  
     if (this.FormFinanza.invalid)
       return;
-  
-   // this.guardarCliente();
+    this.guardarOActualizarClienteFinanza();
   }
 
   private createForm() {
@@ -85,8 +80,8 @@ export class ClienteFinanzasComponent implements OnInit {
     this.FormFinanza = this.formBuilder.group({
       clienteId: [this.clientId],
       limiteCredito: [0, [Validators.required]],
-      tipoCondicionPagoId: [2, [Validators.required]],
-      plazoId: [0, [Validators.required]],
+      tipoCondicionPagoId: [null, [Validators.required]],
+      plazoId: [null, [Validators.required]],
     },
     );
   }
@@ -95,13 +90,16 @@ export class ClienteFinanzasComponent implements OnInit {
 
 
   guardarOActualizarClienteFinanza(){
+
+
     this.btnGuardarCargando = true;
-    this.httpService.DoPostAny<ClienteFinanza>(DataApi.ClienteContacto,
+    this.httpService.DoPostAny<ClienteFinanza>(DataApi.ClienteFinanza,
       'UpdateFinanzaCliente', this.FormFinanza.value).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
           this.btnGuardarCargando = false;
         } else {
+              this.subirArchivosAlServidor();
               this.toastService.success("Realizado", "OK");
         }
         this.btnGuardarCargando = false;
@@ -112,6 +110,8 @@ export class ClienteFinanzasComponent implements OnInit {
       });
 }
 getClienteFinanzaByID(id: number) {
+  (this.FormFinanza.get('tipoAnexo') as FormGroup)?.removeControl('tipoAnexo');
+
   this.cargando = true;
   this.httpService.DoPostAny<ClienteFinanza>(DataApi.ClienteFinanza,
     "GetClienteFinanzaByID", id).subscribe(response => {
@@ -121,8 +121,10 @@ getClienteFinanzaByID(id: number) {
         //validar que existe
         if (response.records.length > 0) {
           let clientefinanza = response.records[0];
-          console.log(clientefinanza)
-          this.FormFinanza.setValue(clientefinanza);
+
+           this.FormFinanza.setValue(clientefinanza);
+           this.getArchivosSubidos();
+       
         } else {
           this.toastService.warning("Información no encontrado");
           this.router.navigateByUrl('/mantenimientos/cliente');
@@ -217,13 +219,16 @@ getClienteFinanzaByID(id: number) {
 
   getArchivosSubidos() {
     this.cargandoAnexos = true;
-    this.httpService.DoPostAny<Archivo>(DataApi.ClienteFinanza,
+    this.FormFinanza.addControl('tipoAnexo', this.formBuilder.control(1));
+    console.log(this.FormFinanza.value)
+    this.httpService.DoPostAny<FilesUploaded>(DataApi.ClienteFinanza,
       "GetClienteFinanzaAnexosArchivos", this.FormFinanza.value).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
         } else {
-          this.filesSubidos = response.records;
+          this.filesFromInput = response.records;
+          console.log(this.filesFromInput)
         }
         this.cargandoAnexos = false;
 
@@ -242,7 +247,15 @@ getClienteFinanzaByID(id: number) {
     if (selectedfiles && selectedfiles.length > 0) {
       // this.filesFromInput = []
       for (let i = 0; i < selectedfiles.length; i++) {
+        const reader = new FileReader();
         const element = selectedfiles[i];
+
+        reader.onload = (e: any) => {
+          element['url'] = e.target.result;
+      //    console.log(e.target.result);
+        };
+        reader.readAsDataURL(selectedfiles[i]);
+        console.log(element)
         this.filesFromInput.push(element)
       }
     }
@@ -258,4 +271,32 @@ getClienteFinanzaByID(id: number) {
     this.filesFromInput.splice(index, 1);
   }
 
+
+  isImage(file:any) : boolean{
+    let ex =this.getExtensionFile(file.name)
+    console.log(file.url)
+     if(ex=='pdf'){
+       return false;
+     }else if(ex=="jpg" || ex=="png" || ex=="tif" || ex=="bmp" ||ex=="jpeg"){
+       return true;
+     }
+  }
+
+
+
+  getExtensionFile(fileName):string{
+    var a:string[] = fileName.split(".");
+    if( a.length === 1 || ( a[0] === "" && a.length === 2 ) ) {
+        return "";
+    }
+    return a.pop().toLowerCase();   
+  }
+
+
+  truncateString(name:string):string{
+    if (name.length > 18) {
+      return name.substring(0, 18) + '...';
+   }
+   return name;
+  }
 }
