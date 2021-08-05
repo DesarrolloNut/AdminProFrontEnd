@@ -409,10 +409,10 @@
                                                         <div class="custom-control custom-checkbox">
                                                             <input (click)="updateCotizacionEscogidaByID(item)"
                                                                 [(ngModel)]="item.escogida" type="checkbox"
-                                                                class="custom-control-input" [attr.id]="'option'+i"
-                                                                name="cotizacionCheck">
+                                                                class="custom-control-input" [attr.id]="'options'+i"
+                                                                name="cotizacionSubCheck">
                                                             <label class="custom-control-label"
-                                                                [attr.for]="'option'+i"></label>
+                                                                [attr.for]="'options'+i"></label>
                                                         </div>
                                                     </td>
                                                     <td [ngClass]="{'table-success': item.escogida}">
@@ -427,11 +427,10 @@
                                                     </td>
                                                     <td [ngClass]="{'table-success': item.escogida}">
 
-                                                        <!-- <a target="_blank"
-                                                            [href]="urlCarpetaArchivos + 'SolicitudCompra-Anexos/OrdenCompra' 
-                                                        + ordenCompra.id +'/' + item.nombre +'.'+ item.extension"
+                                                        <a target="_blank"
+                                                            [href]="urlCarpetaArchivosCompartidos+ 'OrdenCompra-CotizacionesAnexos/OrdenCompra' + ordenCompra.id +'/' + item.nombre +'.'+ item.extension"
                                                             class="btn btn-sm btn-light m-1"><i
-                                                                class="fa fa-download"></i></a> -->
+                                                                class="fa fa-download"></i></a>
 
                                                         <button
                                                             (click)="deleteOrdenCompraCotizacionArchivoByID(item.id)"

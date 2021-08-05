@@ -85,6 +85,7 @@ export class OrdenComprasFormularioComponent implements OnInit {
   unidadesMedida: ComboBox[];
   loadingUnidadesMedida: boolean;
   loadingCotizacionesArchivosSubidos: boolean;
+  urlCarpetaArchivosCompartidos: string;
 
 
   constructor(
@@ -105,7 +106,9 @@ export class OrdenComprasFormularioComponent implements OnInit {
     } else {
       this.getUsuarioByID(Number(this.auth.tokenDecoded.nameid))
     }
+    
     this.getUrlCarpetaAnexosArchivos()
+    this.getUrlCarpetaArchivosCotizaciones()
     this.getDepartamentos()
     this.getSucursales()
     this.getProveedores()
@@ -119,7 +122,6 @@ export class OrdenComprasFormularioComponent implements OnInit {
     this.getTipoCondicionPago();
     this.getPlazos();
     this.getUnidadesMedida();
-
 
   }
 
@@ -808,6 +810,24 @@ export class OrdenComprasFormularioComponent implements OnInit {
       });
   }
 
+
+  getUrlCarpetaArchivosCotizaciones() {
+    this.loadingSolicitudDetalle = true;
+    this.httpService.DoPostAny<string>(DataApi.Configuracion,
+      "GetConfiguracionValor", Number(Configuraciones.URL_ARCHIVOS_COMPARTIDOS_WEB_ADMIN)).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.urlCarpetaArchivosCompartidos = response.records[0];
+        }
+        this.loadingSolicitudDetalle = false;
+      }, error => {
+        console.error(error)
+        this.loadingSolicitudDetalle = false;
+        this.toastService.error("No se pudo obtener la url de los archivos", "Error conexion al servidor");
+      });
+  }
 
 
 
