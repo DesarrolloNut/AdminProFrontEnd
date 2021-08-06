@@ -47,7 +47,7 @@ export class SolicitudComprasListadoComponent implements OnInit {
   solicitudCompraDetalles: SolicitudCompraDetalle[];
   total: number;
   btnConvertirCargando: boolean;
-  urlCarpetaArchivos: string;
+  urlCarpetaArchivosCompartidos: string;
 
 
   constructor(private toastService: ToastrService,
@@ -296,7 +296,7 @@ export class SolicitudComprasListadoComponent implements OnInit {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          this.urlCarpetaArchivos = response.records[0];
+          this.urlCarpetaArchivosCompartidos = response.records[0];
         }
         this.loadingSolicitudDetalle = false;
       }, error => {

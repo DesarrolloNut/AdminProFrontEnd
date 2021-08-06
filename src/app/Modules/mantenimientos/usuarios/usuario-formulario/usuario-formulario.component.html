@@ -224,32 +224,38 @@
 
                     <div class="form-group col-md-6">
                         <label for="descuentoCompra"> Descuento compra</label>
-                        <input formControlName="descuentoCompra" type="number" name="descuentoCompra" id="descuentoCompra"
+                        <input formControlName="descuentoCompra" type="number" name="descuentoCompra"
+                            id="descuentoCompra"
                             [ngClass]="{'is-invalid' : submitted && f.descuentoCompra.errors,  'form-control':true  }">
                         <div class="invalid-feedback" *ngIf="submitted && f.descuentoCompra.errors">
                             <div *ngIf="f.descuentoCompra.errors.required">El campo es obligatorio</div>
                         </div>
                     </div>
 
+                    <div class="col-12">
+                        <fieldset class="hm-fieldset row">
+                            <legend class="hm-legend"><i class="fa fa-laptop"></i> Información del equipo</legend>
+                            <div class="form-group col-md-6">
+                                <label for="ipEquipo">Equipo IP</label>
+                                <input formControlName="ipEquipo" type="text" name="ipEquipo" id="ipEquipo"
+                                    [ngClass]="{'is-invalid' : submitted && f.ipEquipo.errors,  'form-control':true  }">
+                                <div class="invalid-feedback" *ngIf="submitted && f.ipEquipo.errors">
+                                    <div *ngIf="f.ipEquipo.errors.required">El campo es obligatorio</div>
+                                </div>
+                            </div>
 
-                    <div class="form-group col-md-6">
-                        <label for="ipEquipo">Equipo IP</label>
-                        <input formControlName="ipEquipo" type="text" name="ipEquipo" id="ipEquipo"
-                            [ngClass]="{'is-invalid' : submitted && f.ipEquipo.errors,  'form-control':true  }">
-                        <div class="invalid-feedback" *ngIf="submitted && f.ipEquipo.errors">
-                            <div *ngIf="f.ipEquipo.errors.required">El campo es obligatorio</div>
-                        </div>
+                            <div class="form-group col-md-6">
+                                <label for="puertoEquipo">Equipo Puerto</label>
+                                <input formControlName="puertoEquipo" type="text" name="puertoEquipo" id="puertoEquipo"
+                                    [ngClass]="{'is-invalid' : submitted && f.puertoEquipo.errors,  'form-control':true  }">
+                                <div class="invalid-feedback" *ngIf="submitted && f.puertoEquipo.errors">
+                                    <div *ngIf="f.puertoEquipo.errors.required">El campo es obligatorio</div>
+                                </div>
+                            </div>
+                        </fieldset>
                     </div>
 
 
-                    <div class="form-group col-md-6">
-                        <label for="puertoEquipo">Equipo Puerto</label>
-                        <input formControlName="puertoEquipo" type="text" name="puertoEquipo" id="puertoEquipo"
-                            [ngClass]="{'is-invalid' : submitted && f.puertoEquipo.errors,  'form-control':true  }">
-                        <div class="invalid-feedback" *ngIf="submitted && f.puertoEquipo.errors">
-                            <div *ngIf="f.puertoEquipo.errors.required">El campo es obligatorio</div>
-                        </div>
-                    </div>
 
 
                     <div class="form-group text-right col-md-12">
