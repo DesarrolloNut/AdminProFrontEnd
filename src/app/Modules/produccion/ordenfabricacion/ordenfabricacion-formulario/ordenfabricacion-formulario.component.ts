@@ -109,6 +109,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
         cantidadBase: x.cantidadBase,
         cantidadRequerida: (x.cantidadBase * OrdenFabricacion.cantidad),
         consumido: 0,
+        merma: 0,
         disponible: x.disponible,
         metodoEmisionId: x.metodoEmision == 'M' ? 1 : 2,
         unidadMedida: x.unidadMedida,
@@ -308,6 +309,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
           this.ofheader.id = response.records[0].id;
           this.getOrdenFabricacionDetalle(response.records[0].id);
           this.ordenfabricacion = response.records[0];
+          this.getEstadosAutorizacion();
         }
         this.loadingArticulosExtras = false;
       }, error => {
@@ -405,10 +407,6 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
           console.error(response.errores[0]);
         } else {
           this.estadosAutorizacion = response.records;
-          // this.estadoIDAutorizacionDefault = response.records[0].codigo;
-          // this.getSiguienteEstado()//almacena en una variable el siguiente estado
-          // this.getAnteriorEstadoAutorizacion()//almacena en una variable el anterior estado
-          // this.getData()
         }
       }, error => {
         this.toastService.error("No se pudo obtener los estados.", "Error conexion al servidor");
@@ -418,6 +416,8 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
 
       });
   }
+
+
 
 
 
