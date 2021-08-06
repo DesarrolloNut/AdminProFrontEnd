@@ -10,7 +10,7 @@
           <div class="col-md-6 col-lg-6 col-12 text-right">
           </div>
         </div>
-        <form class="form-row m-t-40" [formGroup]="FormFinanza" (ngSubmit)="onSubmit()">
+        <form class="form-row m-t-40" [formGroup]="FormFinanza" >
 
           <div class="form-group col-md-6">
             <label for="tipoCondicionPagoId">Tipo condición de pago</label>
@@ -69,7 +69,7 @@
                           </div>
                           <div class="col-4 text-right">
                               <hr>
-                              <input accept="application/pdf,.png,.gif,.jpg,.jpeg" class="d-none" (change)="setFiles(file.files)"
+                              <input accept="application/pdf,.png,.gif,.jpg,.jpeg,.jfif" class="d-none" (change)="setFiles(file.files)"
                                   #file multiple type="file" />
                               <button (click)="file.click()" type="button" class="btn btn-light btn-sm"><i
                                       class="fa fa-upload"></i>
@@ -86,30 +86,57 @@
                                       <div style="background-image: url('assets/images/pdf.png');background-size: cover;
                                       min-height: 140px;
                                       background-repeat: no-repeat;
-                                      background-position: center center;" class="card-img-top  img-responsive" alt="{{truncateString(item.name) }}"></div>
+                                      background-position: center center;" class="card-img-top  img-responsive">
+                                   
+                                              <p class="pending_subirp"  *ngIf="!item.uploaded">
+                                                <i class="fa fa-upload " aria-hidden="true"></i>
+                                                <span class="ml-1 span_text_subir" >Pendiente subir</span>
+                                              </p>
+
+                                      </div>
                                       <div class="card-body ">
                                         <h5 class="card-title" style="font-size: 13px; ">{{truncateString(item.name) }}</h5>
                                         <hr>
                                         <div class="col-12 text-center">
-                                          <button class="btn btn btn-outline-danger btn-sm rounded" (click)="onDeleteitem(i)"><i class="fa fa-times  mr-1">Quitar</i></button>
+                                          <button class="btn btn btn-outline-danger btn-sm rounded" *ngIf="item.loading" disabled>
+                                            <i class="spinner-border spinner-border-sm  mr-1"></i></button>
+                                          <button class="btn btn btn-outline-danger btn-sm rounded" *ngIf="!item.loading" (click)="deleteFile(item,i)">
+                                            <i class="fa fa-times  mr-1"></i>Quitar</button>
+
                                           <button class="btn btn-outline-info btn-sm ml-2 rounded" (click)="onDeleteitem(i)"><i class="fa fa-eye mr-1"></i>Ver</button>
+                                     
                                         </div>
                                  
                                       </div>
                                     </div>
                                   </div>
                                     <div class="row ml-1" *ngIf="isImage(item)">
-                                      <div class="card  border-secondary border rounded-sm"  style="width: 18rem;">
-                                        <div style="background-image: url({{item.url}});background-size: cover;
+                                      <div class="card   border rounded-sm" 
+                                      [ngClass]="{'border_Subido': item.uploaded == true, 'border_NoSubido' : item.uploaded == false }"
+                                      style="width: 18rem;">
+                                 
+                                        <div [ngStyle]="{'background-image': 'url(' + formatUrlFile(item) + ')'}" style="background-size: cover;
                                         min-height: 140px;
                                         background-repeat: no-repeat;
-                                        background-position: center center;" class="card-img-top  img-responsive" alt="{{truncateString(item.name) }}"></div>
+                                        background-position: center center;" class="card-img-top  img-responsive" >
+                                      
+                                          <p class="pending_subirp"  *ngIf="!item.uploaded">
+                                            <i class="fa fa-upload " aria-hidden="true"></i>
+                                            <span class="ml-1 span_text_subir" >Pendiente subir</span>
+                                          </p>
+                                          
+                                      </div>
                                         <div class="card-body ">
                                           <h5 class="card-title" style="font-size: 13px; ">{{truncateString(item.name) }}</h5>
                                           <hr>
                                           <div class="col-12 text-center">
-                                            <button class="btn btn btn-outline-danger btn-sm rounded" (click)="onDeleteitem(i)"><i class="fa fa-times  mr-1"></i>Quitar</button>
-                                            <button class="btn btn-outline-info btn-sm ml-2 rounded" (click)="onDeleteitem(i)"><i class="fa fa-eye mr-1"></i>Ver</button>
+                                            <button class="btn btn btn-outline-danger btn-sm rounded" *ngIf="item.loading" disabled>
+                                              <i class="spinner-border spinner-border-sm  mr-1"></i></button>
+                                            <button class="btn btn btn-outline-danger btn-sm rounded" *ngIf="!item.loading" (click)="deleteFile(item,i)">
+                                              <i class="fa fa-times  mr-1"></i>Quitar</button>
+
+                                            <button class="btn btn-outline-info btn-sm ml-2 rounded" (click)=" openModal(modalImagePreview,item)  "><i class="fa fa-eye mr-1"></i>Ver</button>
+                                       
                                           </div>
                                    
                                         </div>
@@ -149,7 +176,7 @@
             </button>
 
             <button *ngIf="!btnGuardarCargando" (click)="onSubmit()" class="btn btn-info m-1" type="submit">
-              <i class="fas fa-check"></i> Guardar
+              <i class="fas fa-check"></i>Subir y Guardar
             </button>
 
             <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
@@ -162,3 +189,44 @@
     </div>
   </div>
 </div> 
+
+<ng-template #modalImagePreview let-modal>
+  <div class="container-fluid">
+    <div class="row"  >
+      <div class="col">
+        <div class="modal-header">
+          <button type="button" class="close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body text-center">
+          <img src="{{imageFilselected.url}}" class="imagepreview" style="width: 100%;" >
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="modal.close('Close click')">Salir</button>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+  <!-- <div class="container-fluid">
+    <div class="row"  >
+      <div class="col">
+        <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">              
+              <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <img src="" class="imagepreview" style="width: 100%;" >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> -->
+</ng-template>
+
+
+ 

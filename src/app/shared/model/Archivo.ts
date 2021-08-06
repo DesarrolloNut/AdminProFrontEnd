@@ -6,13 +6,23 @@ export interface Archivo {
     ubicacion: string;
 }
 
-export interface FilesUploaded {
+export class FilesUploaded {
+     constructor() {
+        this.id = 0
+        this.name=""
+        this.extension=""
+        this.size=0
+        this.url = ""
+        this.uploaded=false
+        this.loading=false
+    }
     id: number;
     name: string;
     extension: string;
     size: number;
     url: string;
     uploaded:boolean;
+    loading:boolean;
 }
 
 

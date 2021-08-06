@@ -1,9 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { BackendService } from 'src/app/core/http/service/backend.service';
+import { Configuraciones } from 'src/app/shared/enums/Configuraciones';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { Archivo, FilesUploaded, TipoAnexoEnum } from 'src/app/shared/model/Archivo';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
@@ -36,7 +38,7 @@ export class ClienteFinanzasComponent implements OnInit {
  ///
  
  filesFromInput: any[] = [];
- filesSubidos: Archivo[] = [];
+ filesSubidos: FilesUploaded[] = [];
 
 
    //solicitud anexos
@@ -44,11 +46,16 @@ export class ClienteFinanzasComponent implements OnInit {
    anexosArchivosSubidas: Archivo[] = [];
    urlCarpetaArchivosAnexos: string;
 
+
+   loadingDeleteFile: boolean;
+
+   imageFilselected = new FilesUploaded();
    
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
     private httpService: BackendService,
+    private modalService: NgbModal,
     private router: Router,
     private auth: AuthenticationService,
     private formBuilder: FormBuilder,
@@ -65,6 +72,7 @@ export class ClienteFinanzasComponent implements OnInit {
     }
     this.getTipoCondicionesPago();
     this.getPlazos();
+    this.getUrlCarpetaAnexosArchivos()
   }
 
 
@@ -239,6 +247,20 @@ getClienteFinanzaByID(id: number) {
       });
 
   }
+  getUrlCarpetaAnexosArchivos() {
+    this.httpService.DoPostAny<string>(DataApi.Configuracion,
+      "GetConfiguracionValor", Number(Configuraciones.URL_ARCHIVOS_COMPARTIDOS_WEB_ADMIN)).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.urlCarpetaArchivosAnexos = response.records[0];
+        }
+      }, error => {
+        console.error(error)
+        this.toastService.error("No se pudo obtener la url de los archivos", "Error conexion al servidor");
+      });
+  }
 
 
   ///METODOS UPLOAD
@@ -255,29 +277,57 @@ getClienteFinanzaByID(id: number) {
       //    console.log(e.target.result);
         };
         reader.readAsDataURL(selectedfiles[i]);
-        console.log(element)
+        element['uploaded'] = false;
+        element['loading'] = false;
         this.filesFromInput.push(element)
+        //this.filesSubidos.push(element);
       }
     }
     // this.modalService.dismissAll();
   }
 
-  onDeleteCotizacionSeleccionada(index: number) {
+ 
+  onDeleteitem(item:any,index: number) {
     this.filesFromInput.splice(index, 1);
-    // console.log(this.filesFromInput)
+    item.loading=false;
   }
-  
-  onDeleteitem(index: number) {
-    this.filesFromInput.splice(index, 1);
+
+  deleteFile(item:any, index:number){
+      item.loading=true;
+     if(item.uploaded){
+        this.deleteClienteAnexoArchivoByID(item,index);
+     }else{
+       this.onDeleteitem(item,index);
+     }
+  }
+
+  deleteClienteAnexoArchivoByID(item: any, index:number) {
+    this.loadingDeleteFile = true;
+    this.httpService.DoPostAny<string>(DataApi.UploadClienteAnexos,
+      "DeleteClienteAnexosArchivoByID", item.id).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          item.loading=false;
+          this.onDeleteitem(item,index)
+          this.toastService.success("Realizado");
+          //this.getArchivosSubidos();
+        }
+        this.loadingDeleteFile = false;
+      }, error => {
+        console.error(error)
+        this.loadingDeleteFile = false;
+        this.toastService.error("No se pudo eliminar el archivo", "Error conexion al servidor");
+      });
   }
 
 
   isImage(file:any) : boolean{
     let ex =this.getExtensionFile(file.name)
-    console.log(file.url)
      if(ex=='pdf'){
        return false;
-     }else if(ex=="jpg" || ex=="png" || ex=="tif" || ex=="bmp" ||ex=="jpeg"){
+     }else if(ex=="jpg" || ex=="png" || ex=="tif" || ex=="bmp" ||ex=="jpeg" ||ex=="jfif"){
        return true;
      }
   }
@@ -298,5 +348,30 @@ getClienteFinanzaByID(id: number) {
       return name.substring(0, 18) + '...';
    }
    return name;
+  }
+
+  formatUrlFile(file:any):string{
+    if(file.uploaded){
+      return  this.urlCarpetaArchivosAnexos + 'Cliente-Anexos/ClienteFinanza'  + this.clientId +'/'
+      + file.name ;
+    }else{
+      return file.url ;
+    }
+ 
+  }
+
+  openModal(content,item:any) {
+  
+    console.log(item)
+    this.imageFilselected.id = item.id;
+    this.imageFilselected.name = item.name;
+    this.imageFilselected.url = this.formatUrlFile(item);
+    
+    this.modalService.open(content, { size: 'lg',centered:true });
+    // this.articuloSeleccionado = item
+  }
+
+  onBtnModalOk() {
+    this.modalService.dismissAll()
   }
 }
