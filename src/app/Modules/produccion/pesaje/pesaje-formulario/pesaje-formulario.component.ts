@@ -1,9 +1,10 @@
 import { Component, OnInit, Renderer2 } from '@angular/core';
 import { Router } from '@angular/router';
-import { json } from 'd3-request';
 import { ToastrService } from 'ngx-toastr';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
+import { BalanzaPesajeSignalrService } from 'src/app/Services/balanza-pesaje-signalr.service';
+import { BalanzaPesoGrupoSignalREnum } from 'src/app/shared/enums/BalanzaPesoGrupoSignalREnum';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { ArticuloPesaje } from '../models/ArticuloPesaje';
@@ -41,6 +42,7 @@ export class PesajeFormularioComponent implements OnInit {
   constructor(
     private toastService: ToastrService,
     private httpService: BackendService,
+    private signalRService: BalanzaPesajeSignalrService,
     private router: Router,
     private renderer: Renderer2) { }
 
@@ -50,6 +52,22 @@ export class PesajeFormularioComponent implements OnInit {
       this.cantidades.push(i)
     }
     this.getAlmacenes()
+
+    this.signalRService.startConnection(BalanzaPesoGrupoSignalREnum.Pantalla_Pesaje);
+
+    this.signalRService.pesoBalanza.subscribe((peso: string) => {
+
+      console.log(peso)
+
+    })
+
+
+  }
+
+  readPesoFile() {
+    fetch('file.txt')
+      .then(response => response.text())
+      .then(text => console.log(text))
   }
 
   onSubmit() {

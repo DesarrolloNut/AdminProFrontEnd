@@ -9,6 +9,10 @@
     <div class="col">
         <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
     </div>
+    <div class="col text-right">
+        <a class="btn btn-light" href="assets/files/zip/BalanzaPesoSender.zip"><i class="fa fa-download"></i> Download
+            App</a>
+    </div>
 </div>
 
 
@@ -63,7 +67,7 @@
                             </div>
                         </div>
                     </div>
-                  
+
                     <div class="form-group col-md-6" *ngIf="articulo">
                         <label for="inputEmail4">Almacen</label>
                         <ng-select bindLabel="nombre" bindValue="codigo" [(ngModel)]="almacenID" [items]="almecenes"
@@ -76,6 +80,11 @@
                         <ejs-datepicker [(ngModel)]="fechaVencimiento" [format]="'dd-MM-yyyy'" [min]='fechaActual'>
                         </ejs-datepicker>
                     </div>
+
+                    <div class="col-md-12">
+                        <button class="btn btn-block btn-primary btn-lg" (click)="readPesoFile()">Leer peso</button>
+                    </div>
+
                 </div>
             </div>
         </div>
