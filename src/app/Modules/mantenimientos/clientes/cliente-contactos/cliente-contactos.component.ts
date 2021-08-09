@@ -1,13 +1,16 @@
+import { ThrowStmt } from '@angular/compiler';
 import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { cedulaestructura } from 'src/app/shared/validators/cedula-estructura.validator';
-import { ClienteContactos } from '../models/ClienteContactos';
+import { ClienteContactos, ClienteContactosRequest } from '../models/ClienteContactos';
+import { FrecuenciaVisita } from '../models/FrecuenciaVisita';
 
 @Component({
   selector: 'app-cliente-contactos',
@@ -24,16 +27,23 @@ export class ClienteContactosComponent implements OnInit {
    btnGuardarCargando     = false;
    actualizando           = false;
    cargadoPuestos         = false;
+   cargandoDelete         = false;
   
   //LISTA 
-   puestos             : ComboBox[];
-   diasSigla=["L", "M", "MI", "J", "V", "S","D"];
+   puestos                : ComboBox[];
+   clienteContactos       : ClienteContactos[];
+
+
+  //OTROS
+   contactoFormGroupToDelete:FormGroup;
+   contactoIndexToDelete  = 0;
 
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
     private httpService: BackendService,
     private router: Router,
+    private modalService: NgbModal,
     private auth: AuthenticationService,
     private formBuilder: FormBuilder
     ) { }
@@ -41,21 +51,27 @@ export class ClienteContactosComponent implements OnInit {
   ngOnInit() {
    this.CreateForm();
    this.getPuestos();
+   if (this.clientId > 0) {
+    this.GetContactosByClienteID();
+    this.actualizando = true;
+  }
+  
+
   }
 
 
   onSubmit() {
-
     this.submitted = true;
     if (this.FormContactos.invalid)
       return;
+    this.guardarOActualizarClienteContacto();
   }
 
 
     private CreateForm() {
 
     this.FormContactos = this.formBuilder.group({
-      clienteId: [this.clientId, [Validators.required, Validators.email]],
+      clienteId: [this.clientId, [Validators.required]],
       contactos: new FormArray([])
     }
      );
@@ -65,25 +81,117 @@ export class ClienteContactosComponent implements OnInit {
   get f() { return this.FormContactos.controls; }
   get c() { return this.f.contactos as FormArray; }
 
+  guardarOActualizarClienteContacto(){
+      this.f.clienteId.setValue(this.clientId);
+      this.btnGuardarCargando = true;
+  
+      this.httpService.DoPostAny<ClienteContactos>(DataApi.ClienteContacto,
+        'InsertarOActualizarClienteContacto', this.FormContactos.value).subscribe(response => {
+          if (!response.ok) {
+            this.toastService.error(response.errores[0], "Error");
+            this.btnGuardarCargando = false;
+          } else {
+              if(response.valores[0].cantRegistrados>0){
+                this.toastService.success("Realizado", "OK");
+              }
+          }
+          this.btnGuardarCargando = false;
 
+        }, error => {
+          this.btnGuardarCargando = false;
+          this.toastService.error("Error conexion al servidor");
+        });
+  }
+  GetContactosByClienteID() {
+    this.cargando = true;
+    this.httpService.DoPostAny<ClienteContactos>(DataApi.ClienteContacto,
+      "GetContactosByClienteID", this.FormContactos.value).subscribe(response => {
+       this.clienteContactos= response.records;
+       if(this.clienteContactos.length>0){
+        this.generateAndShowContact();
+       }else{
+        this.initFormArray();
+       }
+    
+      }, error => {
+        this.cargando = false;
+        this.toastService.error("No se pudo obtener los contactos", "Error conexion al servidor");
 
-  onAddContact() : void{
-    (this.f.contactos as FormArray).push(
-      this.formBuilder.group({
-        id:[0, Validators.required],
+        // setTimeout(() => {
+        //   this.getDias();
+        // }, 1000);
+
+      });
+  }
+
+  deleteContactoById() {
+    this.cargandoDelete = true;
+    this.contactoFormGroupToDelete.get('cargando').setValue(true);
+    let c = new ClienteContactos();
+    c.id =this.contactoFormGroupToDelete.get('id').value;
+    this.httpService.DoPostAny<number>(DataApi.ClienteContacto,
+      "DeleteContacto", c).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+        this.removeContact(this.contactoIndexToDelete);
+          this.toastService.success("Realizado");
+        }
+        this.contactoFormGroupToDelete.get('cargando').setValue(false);
+      }, error => {
+        console.error(error)
+        this.contactoFormGroupToDelete.get('cargando').setValue(false);
+        this.toastService.error("No se pudo eliminar el contacto", "Error conexion al servidor");
+      });
+  }
+
+  initFormArray() {
+    this.onAddContact();
+  }
+
+  
+  generateAndShowContact(){
+    this.clienteContactos.forEach(x=>{
+       this.onAddContact(x);
+    });
+  }
+
+  onAddContact(cContacto?:ClienteContactos) : void{
+    if(cContacto==undefined || cContacto==null){
+      (this.f.contactos as FormArray).push(
+        this.formBuilder.group({
+        id:[0],
         nombres: [null, Validators.required],
-        documento: [null, Validators.required, Validators.minLength(9)],
-        documentoTipoID: [1, [Validators.required]], //cedula por defecto
+        documento: [null, [Validators.required, Validators.minLength(9)]],
+        documentoTipoID: [1, Validators.required],
         telefono: [null, Validators.required],
         celular: [null, Validators.required],
         email: [null, [Validators.required, Validators.email]],
-        puesto: [0, [Validators.required]],
-        
+        puestoId: [0, Validators.required],
+        cargando: [false],
       } ,
       {
-        validator: cedulaestructura('documento', 'documentoTipoID')
-      },   
-    ));
+         validator: cedulaestructura('documento', 'documentoTipoID')
+      },))
+    }else{
+      (this.f.contactos as FormArray).push(
+        this.formBuilder.group({
+        id:[cContacto.id],
+        nombres: [cContacto.nombres, Validators.required],
+        documento: [cContacto.documento, [Validators.required, Validators.minLength(9)]],
+        documentoTipoID: [cContacto.documentoTipoID, Validators.required],
+        telefono: [cContacto.telefono, Validators.required],
+        celular: [cContacto.celular, Validators.required],
+        email: [cContacto.email, [Validators.required, Validators.email]],
+        puestoId: [cContacto.puestoId, Validators.required],
+        cargando: [false],
+      } ,
+      {
+         validator: cedulaestructura('documento', 'documentoTipoID')
+      },))
+    }
+
   }
  
 
@@ -108,8 +216,9 @@ export class ClienteContactosComponent implements OnInit {
   
       });
   }
+
+
   removeContact(index) {
-    console.log(index);
     (this.f.contactos as FormArray).removeAt(index);
   }
 
@@ -122,6 +231,23 @@ export class ClienteContactosComponent implements OnInit {
     console.log(values);
   }
   
+
+  openModal(content, contact: FormGroup,index:any) {
+    this.modalService.open(content, { size: 'sm',centered:true });
+    this.contactoFormGroupToDelete= contact;
+    console.log(this.contactoFormGroupToDelete.get('id').value)
+    this.contactoIndexToDelete = index;
+    // this.articuloSeleccionado = item
+  }
+
+  onBtnModalOk() {
+     if(this.contactoFormGroupToDelete.get('id').value>0){
+       this.deleteContactoById();
+     }else{
+       this.removeContact(this.contactoIndexToDelete);
+     }
+    this.modalService.dismissAll()
+  }
   
  
 }

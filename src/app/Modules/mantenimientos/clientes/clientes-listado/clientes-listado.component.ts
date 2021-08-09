@@ -41,9 +41,10 @@ export class ClientesListadoComponent implements OnInit {
 
     this.httpService.GetAllWithPagination<Cliente>(DataApi.Cliente, "GetClientesListado", "ID", this.paginaNumeroActual,
       this.paginaSize, false, parametros).subscribe(x => {
-
+          
         if (x.ok) {
           this.clientes = x.records;
+          console.log(  this.clientes)
           this.asignarPagination(x);
         } else {
           this.toastService.error(x.errores[0]);

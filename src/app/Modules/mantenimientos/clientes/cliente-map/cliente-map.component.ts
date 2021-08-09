@@ -20,6 +20,7 @@ export class ClienteMapComponent implements OnInit {
 
   @Input() fillCoords: EventEmitter<Coordenadas>;
   @Input() fillSearch: EventEmitter<String>;
+
   @ViewChild('search', {static: true}) public searchElementRef: ElementRef;
 
   markers: marker[] = [{lng:0,lat:0,label:'Cliente',draggable:true},]
@@ -42,38 +43,39 @@ export class ClienteMapComponent implements OnInit {
       if(this.latitud==0 && this.longitud==0 ){
         this.setCurrentPosition();
       }
-      console.log(co)
 
      });
      
     this.fillSearch.subscribe(c => {
-        this.searchControl.setValue(c);
+        this.searchControl.setValue(c+',Dominican Republic');
+   
      });
+
+     
         this.zoom = 15;
 
         this.searchControl = new FormControl();
         this.mapsAPILoader.load().then(() => {
           let autocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement, {
-  
+         
           });
+      
           autocomplete.addListener("place_changed", () => {
             this.ngZone.run(() => {
-              //get the place result
               let place= autocomplete.getPlace();
-
-              //verify result
+          
               if (place.geometry === undefined || place.geometry === null) {
                 return;
               }
-    
-              //set latitude, longitude and zoom
               this.latitud = place.geometry.location.lat();
               this.longitud = place.geometry.location.lng();
               this.markers[0].lat = this.latitud;
               this.markers[0].lng = this.longitud;
+              this.markerOne.emit( this.markers[0])
               this.zoom = 15;
             });
           });
+   
         });
   }
   recenterMap(){

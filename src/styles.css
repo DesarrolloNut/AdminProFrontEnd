@@ -28,7 +28,7 @@
 @import '~bootstrap/scss/mixins'; */
 /* @import '~ngx-toastr/toastr-bs4-alert'; */
 
-
+ 
 @media print {
   div.saltopagina {
     display: block;
@@ -49,6 +49,8 @@
     /*margin: 0 !important;*/
     /*padding: 0 !important;*/
     /*overflow: hidden;*/
+ 
+
   }
 
   @page {
