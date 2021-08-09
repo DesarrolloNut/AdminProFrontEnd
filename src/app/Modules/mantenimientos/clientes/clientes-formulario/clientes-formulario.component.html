@@ -50,14 +50,14 @@
           </ngb-tab>
 
 
-          <ngb-tab [disabled]="clienteId<=0  ">
+          <ngb-tab [disabled]="clienteId!==-1  ">
             <ng-template ngbTabTitle><b>Comercial</b></ng-template>
             <ng-template ngbTabContent>
               <app-cliente-rutas [clientId]="clienteId"></app-cliente-rutas>
             </ng-template>
           </ngb-tab>
 
-          <ngb-tab [disabled]="clienteId<=0 ">
+          <ngb-tab [disabled]="clienteId!==-1 ">
             <ng-template ngbTabTitle><b>Imagen cliente/negocio</b></ng-template>
             <ng-template ngbTabContent>
               <app-cliente-rutas [clientId]="clienteId"></app-cliente-rutas>

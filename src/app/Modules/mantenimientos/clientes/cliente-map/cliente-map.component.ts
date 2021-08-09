@@ -71,6 +71,7 @@ export class ClienteMapComponent implements OnInit {
               this.longitud = place.geometry.location.lng();
               this.markers[0].lat = this.latitud;
               this.markers[0].lng = this.longitud;
+              this.markerOne.emit( this.markers[0])
               this.zoom = 15;
             });
           });

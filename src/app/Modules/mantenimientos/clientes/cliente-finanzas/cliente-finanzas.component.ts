@@ -33,6 +33,8 @@ export class ClienteFinanzasComponent implements OnInit {
   //LISTAS
     TipoCondicionesPagos: ComboBox[];
     Plazos: ComboBox[];
+    DocumentosTipoAnexo: ComboBox[];
+    
 
 
  ///
@@ -73,6 +75,7 @@ export class ClienteFinanzasComponent implements OnInit {
     this.getTipoCondicionesPago();
     this.getPlazos();
     this.getUrlCarpetaAnexosArchivos()
+    this.getDocumentosTipoAnexo();
   }
 
 
@@ -98,7 +101,9 @@ export class ClienteFinanzasComponent implements OnInit {
 
 
   guardarOActualizarClienteFinanza(){
-
+     if(this.f.tipoCondicionPagoId.value==1){
+      this.f.plazoId.setValue(0)
+     }
 
     this.btnGuardarCargando = true;
     this.httpService.DoPostAny<ClienteFinanza>(DataApi.ClienteFinanza,
@@ -145,7 +150,17 @@ getClienteFinanzaByID(id: number) {
     });
 }
 
+onSelectDocumentoTipoAnexo(item:any,docTipoAnexo:ComboBox){
+ item.documentoTipoAnexoId = docTipoAnexo.codigo;
+ item.documentoTipoAnexo = docTipoAnexo.nombre;
+  }
 
+getNameTipoAnexo(item:any):string{
+  if(item.documentoTipoAnexo==null ||item.documentoTipoAnexo==""){
+    return "Seleccione tipo anexo";
+  }
+  return item.documentoTipoAnexo;
+}
 
   getTipoCondicionesPago() {
     this.loadingCondicionPagos = true;
@@ -168,6 +183,27 @@ getClienteFinanzaByID(id: number) {
 
       });
   }
+
+  
+  getDocumentosTipoAnexo() {
+     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetDocumentoTipoAnexo", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.DocumentosTipoAnexo = response.records;
+        }
+       }, error => {
+         this.toastService.error("No se pudo obtener las condiciones de pago", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getTipoCondicionesPago()
+        }, 1000);
+
+      });
+  }
+
 
   getPlazos() {
     this.loadingPlazos = true;
@@ -193,11 +229,12 @@ getClienteFinanzaByID(id: number) {
 
   ///METODOS UPLOAD POST
   subirArchivosAlServidor() {
-
     const formData = new FormData();
     formData.append("clienteId", this.clientId + '');
 
     formData.append("tipoAnexo", TipoAnexoEnum.CLIENTE_FINANZA + '');
+
+
 
     for (let file of this.filesFromInput)
       formData.append("files", file);
@@ -208,7 +245,6 @@ getClienteFinanzaByID(id: number) {
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
         } else {
-          this.toastService.success("Realizado", "OK");
           // this.modalService.dismissAll()
           this.filesFromInput = []
           this.filesSubidos = []
@@ -228,7 +264,6 @@ getClienteFinanzaByID(id: number) {
   getArchivosSubidos() {
     this.cargandoAnexos = true;
     this.FormFinanza.addControl('tipoAnexo', this.formBuilder.control(1));
-    console.log(this.FormFinanza.value)
     this.httpService.DoPostAny<FilesUploaded>(DataApi.ClienteFinanza,
       "GetClienteFinanzaAnexosArchivos", this.FormFinanza.value).subscribe(response => {
 
@@ -236,7 +271,7 @@ getClienteFinanzaByID(id: number) {
           this.toastService.error(response.errores[0], "Error");
         } else {
           this.filesFromInput = response.records;
-          console.log(this.filesFromInput)
+          
         }
         this.cargandoAnexos = false;
 
@@ -279,6 +314,8 @@ getClienteFinanzaByID(id: number) {
         reader.readAsDataURL(selectedfiles[i]);
         element['uploaded'] = false;
         element['loading'] = false;
+        element['DocumentoTipoAnexoId'] = 0;
+        element['DocumentoTipoAnexo'] = null;
         this.filesFromInput.push(element)
         //this.filesSubidos.push(element);
       }
@@ -359,7 +396,12 @@ getClienteFinanzaByID(id: number) {
     }
  
   }
-
+ goPdf(item:any){
+  window.open(
+     this.formatUrlFile(item),
+    '_blank' // <- This is what makes it open in a new window.
+  );
+ }
   openModal(content,item:any) {
   
     console.log(item)

@@ -82,7 +82,9 @@
                                 <div class="col-md-3  p-2 text-center" *ngFor="let item of filesFromInput; let i = index">
 
                                   <div class="row ml-1" *ngIf="!isImage(item)"  >
-                                    <div class="card  border-secondary border rounded-sm"  style="width: 18rem;">
+                                    <div class="card  border rounded-sm "       
+                                    [ngClass]="{'border_Subido': item.uploaded == true, 'border_NoSubido' : item.uploaded == false }"
+                                    style="width: 18rem;">
                                       <div style="background-image: url('assets/images/pdf.png');background-size: cover;
                                       min-height: 140px;
                                       background-repeat: no-repeat;
@@ -92,19 +94,38 @@
                                                 <i class="fa fa-upload " aria-hidden="true"></i>
                                                 <span class="ml-1 span_text_subir" >Pendiente subir</span>
                                               </p>
-
+ 
+  
                                       </div>
                                       <div class="card-body ">
                                         <h5 class="card-title" style="font-size: 13px; ">{{truncateString(item.name) }}</h5>
                                         <hr>
+
+<!-- 
+                                        <div class="btn-group mr-3"  *ngIf="item.uploaded">
+                                          <button type="button " style="border-top-left-radius: 50px;
+                                          border-bottom-left-radius: 50px; font-size: 10px; font-weight: 500;" class="btn btn-sm btn-info">{{getNameTipoAnexo(item)}}</button>
+                                          <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
+                                            <button class="btn btn-sm btn-outline-info" ngbDropdownToggle></button>
+                                            <div class="dropdown-menu" ngbDropdownMenu>
+                                              <button  class="btn-sm" (click)="onSelectDocumentoTipoAnexo(item,d)" *ngFor="let d of DocumentosTipoAnexo"  ngbDropdownItem>{{d.nombre}}</button>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <hr>
+
+ -->
+
+
+
                                         <div class="col-12 text-center">
                                           <button class="btn btn btn-outline-danger btn-sm rounded" *ngIf="item.loading" disabled>
                                             <i class="spinner-border spinner-border-sm  mr-1"></i></button>
                                           <button class="btn btn btn-outline-danger btn-sm rounded" *ngIf="!item.loading" (click)="deleteFile(item,i)">
                                             <i class="fa fa-times  mr-1"></i>Quitar</button>
-
-                                          <button class="btn btn-outline-info btn-sm ml-2 rounded" (click)="onDeleteitem(i)"><i class="fa fa-eye mr-1"></i>Ver</button>
-                                     
+         
+                                          <button class="btn btn-outline-info btn-sm ml-2 rounded" *ngIf="item.uploaded" (click)="goPdf(item)"><i class="fa fa-eye mr-1"></i>Ver</button>
+                                      
                                         </div>
                                  
                                       </div>
@@ -129,6 +150,27 @@
                                         <div class="card-body ">
                                           <h5 class="card-title" style="font-size: 13px; ">{{truncateString(item.name) }}</h5>
                                           <hr>
+                                          <!-- <span class="badge badge-pill badge-primary">selecione tipo anexo</span> -->
+
+
+<!-- 
+
+                                          <div class="btn-group mr-3"  *ngIf="item.uploaded">
+                                            <button type="button " style="border-top-left-radius: 50px;
+                                            border-bottom-left-radius: 50px; font-size: 10px; font-weight: 500;" class="btn btn-sm btn-info">{{getNameTipoAnexo(item)}}</button>
+                                            <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
+                                              <button class="btn btn-sm btn-outline-info" ngbDropdownToggle></button>
+                                              <div class="dropdown-menu" ngbDropdownMenu>
+                                                <button  class="btn-sm" (click)="onSelectDocumentoTipoAnexo(item,d)" *ngFor="let d of DocumentosTipoAnexo"  ngbDropdownItem>{{d.nombre}}</button>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <hr> -->
+
+
+
+
+
                                           <div class="col-12 text-center">
                                             <button class="btn btn btn-outline-danger btn-sm rounded" *ngIf="item.loading" disabled>
                                               <i class="spinner-border spinner-border-sm  mr-1"></i></button>
