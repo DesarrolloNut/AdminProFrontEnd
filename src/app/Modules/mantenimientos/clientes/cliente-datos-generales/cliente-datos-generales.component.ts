@@ -48,6 +48,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
   documentos  : ComboBox[];
   ListaPrecio : any[];
   TipoCliente : any[];
+  estados     : ComboBox[]
 
   //OBJETOS Y DEMAS
   TipoSexo: any[] = [{ codigo: 'H', nombre: 'Hombre' }, { codigo: 'M', nombre: 'Mujer' }];
@@ -71,7 +72,6 @@ export class ClienteDatosGeneralesComponent implements OnInit {
   ngOnInit() {
     //CREACION DE FORMULARIO
     this.createForm();
-
 
     if (this.clientId > 0) {
       this.getClienteByID(this.clientId);

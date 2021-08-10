@@ -26,6 +26,10 @@ export class ClienteMapComponent implements OnInit {
   markers: marker[] = [{lng:0,lat:0,label:'Cliente',draggable:true},]
   @Output() markerOne = new EventEmitter();
 
+  mapIsReady:boolean;
+
+
+
   constructor(
     private mapsAPILoader: MapsAPILoader,
     private ngZone: NgZone) { }
@@ -105,7 +109,7 @@ export class ClienteMapComponent implements OnInit {
     }
    }
    mapReady(event) {
-
+     this.mapIsReady=true;
   }
 
   clickedMarker(label: string, index: number) {

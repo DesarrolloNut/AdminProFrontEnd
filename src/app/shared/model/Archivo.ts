@@ -22,8 +22,22 @@ export class FilesUploaded {
     size: number;
     url: string;
     uploaded:boolean;
+    documentoTipoAnexoId:number;
+    documentoTipoAnexo :string;
     loading:boolean;
 }
+
+
+export class DocumentosTipoAnexoSelected {
+    constructor() {
+       this.documentoTipoAnexoId = 0
+       this.fileName=""
+   }
+   documentoTipoAnexoId: number;
+   fileName: string;
+}
+
+
 
 
 export enum TipoAnexoEnum {

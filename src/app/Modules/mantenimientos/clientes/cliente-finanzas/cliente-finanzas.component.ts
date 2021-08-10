@@ -7,7 +7,7 @@ import { AuthenticationService } from 'src/app/core/authentication/service/authe
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Configuraciones } from 'src/app/shared/enums/Configuraciones';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
-import { Archivo, FilesUploaded, TipoAnexoEnum } from 'src/app/shared/model/Archivo';
+import { Archivo, DocumentosTipoAnexoSelected, FilesUploaded, TipoAnexoEnum } from 'src/app/shared/model/Archivo';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { ClienteFinanza } from '../models/ClienteFinanza';
 
@@ -229,6 +229,22 @@ getNameTipoAnexo(item:any):string{
 
   ///METODOS UPLOAD POST
   subirArchivosAlServidor() {
+
+    let documentosTipoAnexoSelecteds:any[]=[];
+
+    let filesUploaded:any =  this.filesFromInput.filter(function (x) {
+      return   x.uploaded==true
+    });
+
+
+     this.filesFromInput.forEach(f=>{
+         documentosTipoAnexoSelecteds.push({
+             documentoTipoAnexoId:f.documentoTipoAnexoId,
+             fileName:f.name
+          })
+     });
+
+    console.log(documentosTipoAnexoSelecteds)
     const formData = new FormData();
     formData.append("clienteId", this.clientId + '');
 
@@ -236,8 +252,16 @@ getNameTipoAnexo(item:any):string{
 
 
 
-    for (let file of this.filesFromInput)
-      formData.append("files", file);
+    for (let file of this.filesFromInput){
+      formData.append("filesToUpload", file);
+    }
+
+
+   formData.append("FilesUploaded", JSON.stringify(filesUploaded));
+
+   formData.append("DocumentosTipoAnexoSelecteds", JSON.stringify(documentosTipoAnexoSelecteds));
+
+
 
     this.httpService.DoPostAny<any>(DataApi.UploadClienteAnexos,
       "UploadClienteAnexos", formData).subscribe(response => {
