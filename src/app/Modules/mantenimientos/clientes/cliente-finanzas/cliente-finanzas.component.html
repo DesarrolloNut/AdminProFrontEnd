@@ -10,6 +10,11 @@
           <div class="col-md-6 col-lg-6 col-12 text-right">
           </div>
         </div>
+        <app-loading-listado [hidden]="!cargando"></app-loading-listado>
+         <div   class="form_finanzas" 
+         [style.opacity]="cargando ? '0' : '1'" 
+         [style.visibility]="cargando ? 'hidden' : 'visible'" >
+
         <form class="form-row m-t-40" [formGroup]="FormFinanza" >
 
           <div class="form-group col-md-6">
@@ -50,7 +55,7 @@
             </div>
           </div>
              <!-- Anexos de cliente -->
-             <div class="col-12"  *ngIf="f.tipoCondicionPagoId.value==2">
+             <div class="col-12 container_anexos"  *ngIf="f.tipoCondicionPagoId.value==2">
 
               <div class="row">
 
@@ -71,14 +76,20 @@
                               <hr>
                               <input accept="application/pdf,.png,.gif,.jpg,.jpeg,.jfif" class="d-none" (change)="setFiles(file.files)"
                                   #file multiple type="file" />
-                              <button (click)="file.click()" type="button" class="btn btn-light btn-sm"><i
+                              <button (click)="file.click()" type="button" class="btn btn-light "><i
                                       class="fa fa-upload"></i>
                               </button>
                           </div>
 
-                          <ng-container *ngIf="filesFromInput.length>0; else elseTemplate2">
 
+                            <div class="   col-md-12">
+                            <app-loading-listado [hidden]="!cargandoAnexos"></app-loading-listado>
+
+                             </div>  
+                          <ng-container  *ngIf="filesFromInput.length>0 && !cargandoAnexos; else elseTemplate2">
+                         
                               <div class=" row  col-md-12">
+
                                 <div class="col-md-3  p-2 text-center" *ngFor="let item of filesFromInput; let i = index">
 
                                   <div class="row ml-1" *ngIf="!isImage(item)"  >
@@ -192,9 +203,9 @@
                               </div>
 
                           </ng-container>
-                          <ng-template #elseTemplate2>
+                          <ng-template  [hidden]="cargandoAnexos"  #elseTemplate2>
 
-                              <div class="col-12 text-center">
+                              <div [hidden]="cargandoAnexos" class="col-12 no_hay_archivos text-center">
                                   <i class="fa fa-info-circle text-info fa-3x"></i>
                                   <h3>No hay anexos</h3>
                               </div>
@@ -228,6 +239,8 @@
 
         </form>
       </div>
+
+      </div>
     </div>
   </div>
 </div> 
@@ -252,22 +265,7 @@
 
 
   </div>
-  <!-- <div class="container-fluid">
-    <div class="row"  >
-      <div class="col">
-        <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">              
-              <div class="modal-body">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <img src="" class="imagepreview" style="width: 100%;" >
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div> -->
+ 
 </ng-template>
 
 

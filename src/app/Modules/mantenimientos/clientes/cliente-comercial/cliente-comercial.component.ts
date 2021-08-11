@@ -136,7 +136,7 @@ export class ClienteComercialComponent implements OnInit {
        }else{
         this.initFormArray(); 
        }
-    
+       this.cargando = false;
       }, error => {
         this.cargando = false;
         this.toastService.error("No se pudo obtener la información de comercial", "Error conexion al servidor");
@@ -200,7 +200,7 @@ export class ClienteComercialComponent implements OnInit {
         articuloId: [cNegocio.articuloId],
         negociacionClienteId: [cNegocio.negociacionClienteId, Validators.required],
         monto: [cNegocio.monto, Validators.required],
-        comentario: [null],
+        comentario: [cNegocio.comentario],
         cargando: [false],
       } ,
        ))

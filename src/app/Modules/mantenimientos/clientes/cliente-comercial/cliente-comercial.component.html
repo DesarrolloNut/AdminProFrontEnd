@@ -10,7 +10,11 @@
                 <div class="col-md-6 col-lg-6 col-12 text-right">
                 </div>
               </div>
-              <form class="form-row m-t-10" [formGroup]="FormComercial" (ngSubmit)="onSubmit()">
+              <app-loading-listado [hidden]="!cargando"></app-loading-listado>
+              <div   class="form_comercial" 
+              [style.opacity]="cargando ? '0' : '1'" 
+              [style.visibility]="cargando ? 'hidden' : 'visible'" >
+                <form class="form-row m-t-10" [formGroup]="FormComercial" (ngSubmit)="onSubmit()">
                 <div class="form-group col-md-4">
                   <label for="inputEmail4">Lista de Precio</label>
                   <ng-select bindLabel="nombre" bindValue="codigo" [items]="listasPrecios"
@@ -125,6 +129,7 @@
                 </div>
 
               </form>
+              </div>
             </div>
           </div>
         </div>

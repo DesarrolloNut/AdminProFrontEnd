@@ -5,7 +5,7 @@ import { NgxPermissionsService } from 'ngx-permissions';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
-import { Cliente } from '../models/Cliente';
+import { Cliente, ClienteViewModelCustomized } from '../models/Cliente';
 import { ParametrosCita } from 'src/app/Modules/turno/models/ParametrosCita';
 
 @Component({
@@ -39,11 +39,12 @@ export class ClientesListadoComponent implements OnInit {
 
     let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
 
-    this.httpService.GetAllWithPagination<Cliente>(DataApi.Cliente, "GetClientesListado", "ID", this.paginaNumeroActual,
+    this.httpService.GetAllWithPagination<ClienteViewModelCustomized>(DataApi.Cliente, "GetClientesListadoCustomized", "ID", this.paginaNumeroActual,
       this.paginaSize, false, parametros).subscribe(x => {
           
         if (x.ok) {
-          this.clientes = x.records;
+          console.log(x)
+          this.clientes = x.valores[0];
           console.log(  this.clientes)
           this.asignarPagination(x);
         } else {

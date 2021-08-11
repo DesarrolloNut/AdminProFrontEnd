@@ -82,6 +82,11 @@ export class ClienteMapComponent implements OnInit {
    
         });
   }
+  ngAfterViewInit() {
+   
+
+  }
+
   recenterMap(){
     this.latitud = 36.8392542;
     this.longitud = 10.313922699999999;

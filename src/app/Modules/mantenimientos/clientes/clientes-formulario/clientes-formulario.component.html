@@ -57,7 +57,7 @@
             </ng-template>
           </ngb-tab>
 
-          <ngb-tab [disabled]="clienteId!==-1 ">
+          <ngb-tab [disabled]="clienteId<=0">
             <ng-template ngbTabTitle><b>Imagen cliente/negocio</b></ng-template>
             <ng-template ngbTabContent>
               <app-cliente-negocio [clientId]="clienteId"></app-cliente-negocio>

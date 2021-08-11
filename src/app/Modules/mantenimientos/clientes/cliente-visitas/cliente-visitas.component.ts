@@ -134,7 +134,6 @@ export class ClienteVisitasComponent implements OnInit {
   }
 
   getDias(fv:FrecuenciaVisitaFormated[]) {
-    this.cargando = true;
     this.httpService.DoPost<Dias>(DataApi.Cliente,
       "GetDias", null).subscribe(response => {
 
@@ -262,6 +261,7 @@ export class ClienteVisitasComponent implements OnInit {
   }
   //EVENT METHODS
   onChangeTipoRuta(tp:ComboBox){
+    this.rutas=[];
     this.clearFields();
     this.GetFrecuenciaVisitasByClienteID();
   }

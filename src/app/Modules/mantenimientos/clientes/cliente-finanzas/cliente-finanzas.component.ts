@@ -143,6 +143,7 @@ getClienteFinanzaByID(id: number) {
           this.router.navigateByUrl('/mantenimientos/cliente');
         }
       }
+      this.cargando = false;
 
     }, error => {
       this.cargando = false;
@@ -198,7 +199,7 @@ getNameTipoAnexo(item:any):string{
          this.toastService.error("No se pudo obtener las condiciones de pago", "Error conexion al servidor");
 
         setTimeout(() => {
-          this.getTipoCondicionesPago()
+          this.getDocumentosTipoAnexo()
         }, 1000);
 
       });
@@ -229,6 +230,8 @@ getNameTipoAnexo(item:any):string{
 
   ///METODOS UPLOAD POST
   subirArchivosAlServidor() {
+    this.cargandoAnexos = true;
+    this.btnGuardarCargando = true;
 
     let documentosTipoAnexoSelecteds:any[]=[];
 
@@ -244,7 +247,7 @@ getNameTipoAnexo(item:any):string{
           })
      });
 
-    console.log(documentosTipoAnexoSelecteds)
+   
     const formData = new FormData();
     formData.append("clienteId", this.clientId + '');
 
@@ -276,9 +279,9 @@ getNameTipoAnexo(item:any):string{
           // this.router.navigateByUrl('/mantenimientos/almacen');
         }
 
-        // this.btnGuardarCargando = false;
+         this.btnGuardarCargando = false;
       }, error => {
-        // this.btnGuardarCargando = false; 
+        this.btnGuardarCargando = false; 
         this.toastService.error("Error conexion al servidor");
       });
 
@@ -413,7 +416,7 @@ getNameTipoAnexo(item:any):string{
 
   formatUrlFile(file:any):string{
     if(file.uploaded){
-      return  this.urlCarpetaArchivosAnexos + 'Cliente-Anexos/ClienteFinanza'  + this.clientId +'/'
+      return  this.urlCarpetaArchivosAnexos + 'Cliente-Anexos/ClienteFinanza/ClienteFinanza'  + this.clientId +'/'
       + file.name ;
     }else{
       return file.url ;

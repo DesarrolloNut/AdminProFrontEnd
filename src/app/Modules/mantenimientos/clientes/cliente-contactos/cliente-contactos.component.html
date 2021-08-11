@@ -10,6 +10,11 @@
                         <div class="col-md-6 col-lg-6 col-12 text-right">
                         </div>
                       </div>
+                      <app-loading-listado [hidden]="!cargando"></app-loading-listado>
+
+                     <div  class="form_contactos" 
+                     [style.opacity]="cargando ? '0' : '1'" 
+                     [style.visibility]="cargando ? 'hidden' : 'visible'" >
                       <form class="form-row m-t-10" [formGroup]="FormContactos" (ngSubmit)="onSubmit()">
                    
  
@@ -123,6 +128,9 @@
                         </div>
 
                       </form>
+                     </div>
+    
+
                     </div>
                   </div>
                 </div>

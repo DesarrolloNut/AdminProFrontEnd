@@ -42,5 +42,6 @@ export class DocumentosTipoAnexoSelected {
 
 export enum TipoAnexoEnum {
     CLIENTE_FINANZA  = 1,
-    CLIENTE_COMERCIO = 2
+    CLIENTE_COMERCIO = 2,
+    CLIENTE_NEGOCIO = 3,
   }

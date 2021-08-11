@@ -35,10 +35,12 @@
                         <thead>
                             <tr>
                                 <th></th>
-                                <th></th>
                                 <th>Cliente</th>
-                                <!-- <th>Email</th> -->
                                 <th>Documento</th>
+                                <th>Ruta Vendedor </th>
+                                <th>Ruta Entrega </th>
+                                <th>Ruta Recogida</th>
+                                <th>Ruta Merchandising</th>
                                 <!-- <th>Rol</th> -->
                             </tr>
                         </thead>
@@ -62,7 +64,8 @@
                                         <i class="fa fa-sm fa-hashtag"></i>
                                     </button> -->
                                 </td>
-                                <td><span class="badge badge-light text-info ">{{cliente.id}}</span></td>
+
+                                <!-- SHOW INFO COLUMNA CLIENTE -->
                                 <td>
                                     <div class="d-flex align-items-center">
 
@@ -73,21 +76,55 @@
                                                 <span> {{cliente.nombres | titlecase }}</span>
                                                 <span> {{ cliente.apellidos | titlecase }}</span>
                                             </p>
+                                            <!-- <span class="badge badge-light text-info ">ID: {{cliente.id}}</span><br> -->
                                             <small class="text-info"> <i class=" fa fa-hashtag"></i>
                                                 {{cliente.codigoReferencia }}
+                                            </small>
+                                            <br>
+                                            <small class="text-dark">
+                                                <b>Tipo cliente :</b> {{cliente.clienteTipo }}
                                             </small>
                                         </div>
                                     </div>
                                 </td>
-                                <!-- <td>
-                                    <span> <i class="fa fa-envelope text-muted"></i> {{cliente.email}}</span>
-                                </td> -->
+                                <!-- SHOW INFO COLUMNA DOCUMENTO -->
+
                                 <td>
+                                    <small class="text-dark">
+                                        <b>Tipo doc.:</b> {{cliente.documentoTipo }}
+                                    </small>
+                                    <br>
                                     <span> <i class="fa fa-id-card text-muted"></i> {{cliente.documento}}</span>
                                 </td>
-                                <!-- <td>
-                        {{usuario.rol | uppercase}}
-                    </td> -->
+                                <!-- SHOW INFO COLUMNA RUTAS -->
+                                <td>
+                                    <span class="text-dark">
+                                        {{cliente.rutaVendedor }}
+                                    </span>
+                                </td>
+                                <td>
+
+
+                                    <span class="text-dark">
+                                     {{cliente.rutaEntrega }}
+                                    </span>
+
+                                </td>
+                                <td>
+
+                                    <span class="text-dark">
+                                      {{cliente.rutaRecogida }}
+                                    </span>
+                                    <br>
+
+
+                                </td>
+                                <td>
+                                    <span class="text-dark">
+                                         {{cliente.rutaMerchandising }}
+                                    </span>
+                                </td>
+
 
                             </tr>
 
