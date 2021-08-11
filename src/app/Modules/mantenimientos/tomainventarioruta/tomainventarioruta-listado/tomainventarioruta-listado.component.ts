@@ -67,6 +67,7 @@ export class TomainventarioRutaListadoComponent implements OnInit {
 
 
   selectData: TomaInventarioRuta = new TomaInventarioRuta(); //tu modelo
+  modelSelected: TomaInventarioRuta;
 
 
   constructor(private toastService: ToastrService,
@@ -79,6 +80,7 @@ export class TomainventarioRutaListadoComponent implements OnInit {
   ngOnInit(): void {
     this.getData();
     this.getTipoRutas();
+    this.getRutasByTipoRutaComboBox();
     this.configDualList();
   }
 
@@ -96,7 +98,7 @@ export class TomainventarioRutaListadoComponent implements OnInit {
       { key: "tipoRutaId", value: this.TipoRutaId }
     ]
 
-    this.httpService.GetAllWithPagination<TomaInventarioRuta>(DataApi.TomaInventarioRuta, "GetListadoUsuarioRutas", "UsuarioId", this.paginaNumeroActual, this.paginaSize, true, parametros).subscribe(x => {
+    this.httpService.GetAllWithPagination<TomaInventarioRuta>(DataApi.TomaInventarioRuta, "GetListadoUsuarioRutas", "id", this.paginaNumeroActual, this.paginaSize, true, parametros).subscribe(x => {
 
       if (x.ok) {
         //x.records.forEach(x => x.editarUsuarioConfirmado = true);
@@ -137,13 +139,18 @@ export class TomainventarioRutaListadoComponent implements OnInit {
     });
 
   }
+  //zona y ruta
+  getClientesTomaInventario(ruta: number, zona: number) {
 
-  getClientesTomaInventario() {
+    let param = new TomaInventarioRuta();
+    param.rutaId = ruta
+    param.zonaId = zona
+
     this.loadingDualLits = true;
 
     console.log(this.selectData)
 
-    this.httpService.DoPostAny<TomaInventarioRuta>(DataApi.TomaInventarioRuta, "GetClientesTomaInventarioPendiente", this.selectData).subscribe(x => {
+    this.httpService.DoPostAny<TomaInventarioRuta>(DataApi.TomaInventarioRuta, "GetClientesTomaInventarioPendiente", param).subscribe(x => {
 
       if (x.ok) {
         this.source = [];
@@ -152,7 +159,7 @@ export class TomainventarioRutaListadoComponent implements OnInit {
           data[index].id = index + 1;
           this.source.push(data[index]);
         }
-        console.log("source",x.records);
+        console.log("source", x.records);
       } else {
         this.toastService.error(x.errores[0]);
         console.error(x.errores[0]);
@@ -166,10 +173,12 @@ export class TomainventarioRutaListadoComponent implements OnInit {
 
   }
 
-
-  getClientesTomaInventarioSelecionados(model: TomaInventarioRuta) {
+  //solo ruta
+  getClientesTomaInventarioSelecionados(rutaid: number) {
+    let param = new TomaInventarioRuta();
+    param.rutaId = rutaid
     this.loadingDualLits = true;
-    this.httpService.DoPostAny<TomaInventarioRuta>(DataApi.TomaInventarioRuta, "GetClientesTomaInventarioSelecionados", model).subscribe(x => {
+    this.httpService.DoPostAny<TomaInventarioRuta>(DataApi.TomaInventarioRuta, "GetClientesTomaInventarioPendiente", param).subscribe(x => {
 
       if (x.ok) {
         this.confirmed = [];
@@ -194,11 +203,14 @@ export class TomainventarioRutaListadoComponent implements OnInit {
 
   openModal(content, model: TomaInventarioRuta) {
 
+    // this.selectData.zonaId =
+
+    this.modelSelected = model;
 
     if (this.TipoRutaId == 3) {
       this.IsRecogida = true;
-      this.getClientesTomaInventario();
-      this.getClientesTomaInventarioSelecionados(model);
+      this.getClientesTomaInventario(model.rutaId, this.selectData.zonaId);
+      this.getClientesTomaInventarioSelecionados(model.rutaId);
       this.getRutasByTipoRutaComboBox();
 
     } else {
@@ -208,47 +220,34 @@ export class TomainventarioRutaListadoComponent implements OnInit {
     this.modalService.open(content, { size: 'xl', backdrop: "static", });
   }
 
-
-
-
-
-
   SaveChanges() {
+    this.btnGuardarCargando = true;
+    let parametro = {
+      "RutaID": this.modelSelected.rutaId,
+      "ZonaID": this.selectData.zonaId,
+      "DiaID": this.selectData.diaId,
+      "TipoRutaId": this.TipoRutaId,
+      "ClientesJSON": JSON.stringify(
+        this.confirmed.map((x) => {
+          return { "id": x.id, "cliente": x.cliente }
+        })
+      )
+    }
+    this.httpService.DoPostAny<any>(DataApi.TomaInventarioRuta,
+      "GuardarTomaInventarioRuta", parametro).subscribe(response => {
 
-    console.log(this.source)
-    console.log(this.confirmed)
-    console.log(this.selectData)
-    // this.btnGuardarCargando = true;
-    // this.httpService.DoPostAny<any>(DataApi.TomaInventarioRuta, "Update", null).subscribe(x => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.toastService.success("OK")
+          this.modalService.dismissAll()
+        }
+        this.btnGuardarCargando = false;
+      }, error => {
+        this.btnGuardarCargando = false;
+        this.toastService.error("No se pudo guardar", "Error conexion al servidor");
 
-    //     if (x.ok) {
-    //       this.getData();
-    //     } else {
-    //       this.toastService.error(x.errores[0]);
-    //       console.error(x.errores[0]);
-    //     }
-    //     this.btnGuardarCargando = false;
-    //   }, error => {
-    //     console.error(error);
-    //     this.toastService.error("Error conexion al servidor");
-    //     this.btnGuardarCargando = false;
-    //   });
-
-    // this.httpService.DoPostAny<any>(DataApi.TomaInventarioRuta, "InsertOrUpdateFrecuenciaVisita", null).subscribe(x => {
-
-    //     if (x.ok) {
-    //       this.getData();
-    //     } else {
-    //       this.toastService.error(x.errores[0]);
-    //       console.error(x.errores[0]);
-    //     }
-    //   }, error => {
-    //     console.error(error);
-    //     this.toastService.error("Error conexion al servidor");
-    //   });
-
-
-
+      });
 
 
   }
@@ -344,7 +343,7 @@ export class TomainventarioRutaListadoComponent implements OnInit {
   getFrecuenciaVisita(value: TomaInventarioRuta) {
     this.loadingFrecuenciaVisita = true;
     this.httpService.DoPostAny<FrecuenciaVisita>(DataApi.TomaInventarioRuta,
-      "getClienteFrecuenciaVisitaEnrrollByID", value.usuarioId).subscribe(response => {
+      "getClienteFrecuenciaVisitaEnrrollByID", value.rutaId).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
@@ -391,6 +390,8 @@ export class TomainventarioRutaListadoComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.rutasPorTipo = response.records;
+          this.selectData.rutaId = this.rutasPorTipo[0].codigo
+
         }
         this.loadingRutasPorTipo = false;
       }, error => {
@@ -403,6 +404,8 @@ export class TomainventarioRutaListadoComponent implements OnInit {
 
       });
   }
+
+  //dia,clienteid,
 
 
 

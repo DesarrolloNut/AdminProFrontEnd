@@ -2,7 +2,7 @@ export class TomaInventarioRuta {
 
   constructor() {
     this.id = 0
-    this.usuarioId = 0
+    // this.usuarioId = 0
     this.usuario = ""
     this.celular = ""
     this.cantidadCliente = 0
@@ -30,7 +30,7 @@ export class TomaInventarioRuta {
   }
 
   id: number;
-  usuarioId: number;
+  // usuarioId: number;
   usuario: string;
   celular: string;
   cantidadCliente: number;
