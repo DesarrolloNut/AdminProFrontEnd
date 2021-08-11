@@ -26,7 +26,6 @@ export class TomainventarioRutaListadoComponent implements OnInit {
   paginaSize: number = 5;
   paginaTotalRecords: number = 0;
   dataListado: TomaInventarioRuta[] = [] //tu modelo
-  selectData: TomaInventarioRuta = new TomaInventarioRuta(); //tu modelo
   btnGuardarCargando: boolean = false;
   loadingTipoRutas: boolean;
   loadingFrecuenciaVisita: boolean;
@@ -63,6 +62,11 @@ export class TomainventarioRutaListadoComponent implements OnInit {
   loadingDualLits: boolean;
   loadingClientesTomaInventario: boolean;
   IsRecogida: boolean = false;
+  loadingRutasPorTipo: boolean;
+  rutasPorTipo: ComboBox[];
+
+
+  selectData: TomaInventarioRuta = new TomaInventarioRuta(); //tu modelo
 
 
   constructor(private toastService: ToastrService,
@@ -134,10 +138,12 @@ export class TomainventarioRutaListadoComponent implements OnInit {
 
   }
 
-  getClientesTomaInventarioPendiente() {
+  getClientesTomaInventario() {
     this.loadingDualLits = true;
 
-    this.httpService.DoPostAny<TomaInventarioRuta>(DataApi.TomaInventarioRuta, "GetClientesTomaInventarioPendiente", {}).subscribe(x => {
+    console.log(this.selectData)
+
+    this.httpService.DoPostAny<TomaInventarioRuta>(DataApi.TomaInventarioRuta, "GetClientesTomaInventarioPendiente", this.selectData).subscribe(x => {
 
       if (x.ok) {
         this.source = [];
@@ -146,7 +152,7 @@ export class TomainventarioRutaListadoComponent implements OnInit {
           data[index].id = index + 1;
           this.source.push(data[index]);
         }
-        // console.log("source",x.records);
+        console.log("source",x.records);
       } else {
         this.toastService.error(x.errores[0]);
         console.error(x.errores[0]);
@@ -172,7 +178,7 @@ export class TomainventarioRutaListadoComponent implements OnInit {
           data[index].id = index + 1;
           this.confirmed.push(data[index]);
         }
-        this.selectData = x.records[0];
+        this.selectData.diaId = x.records[0].diaId;
       } else {
         this.toastService.error(x.errores[0]);
         console.error(x.errores[0]);
@@ -191,8 +197,9 @@ export class TomainventarioRutaListadoComponent implements OnInit {
 
     if (this.TipoRutaId == 3) {
       this.IsRecogida = true;
-      this.getClientesTomaInventarioPendiente();
+      this.getClientesTomaInventario();
       this.getClientesTomaInventarioSelecionados(model);
+      this.getRutasByTipoRutaComboBox();
 
     } else {
       this.IsRecogida = true;
@@ -369,5 +376,34 @@ export class TomainventarioRutaListadoComponent implements OnInit {
     }
 
   }
+
+
+
+
+  getRutasByTipoRutaComboBox() {
+    this.loadingRutasPorTipo = true;
+    let param: Parametro[] = [{ key: "tiporutaid", value: "1" }]
+
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetRutasByTipoRutaComboBox", param).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.rutasPorTipo = response.records;
+        }
+        this.loadingRutasPorTipo = false;
+      }, error => {
+        this.loadingRutasPorTipo = false;
+        this.toastService.error("No se pudo obtener las rutas por tipo", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getRutasByTipoRutaComboBox()
+        }, 1000);
+
+      });
+  }
+
+
 
 }
