@@ -2,17 +2,20 @@
   <div class="col-12">
       <div class="card">
           <div class="card-body">
-              <div class="row mb-2">
-                  <div class="col-md-6 align-middle">
-                      <h4 class="card-title">Listado de rutas toma inventario</h4>
+              <div class="row mb-2 ">
+                  <div class="col-md-12 ">
+                      <h4 class="card-title">Listado de Usuario para asignar Ruta</h4>
                   </div>
-                  <!-- <div class="col-md-6 text-right">
-                      <button [routerLink]="[0]" class="btn btn-info"> <i class="fa fa-plus"></i> Nuevo
-                        ruta toma inventario
-                      </button>
-                  </div> -->
-                  <div class="col-md-12 p-2">
 
+                  <div class="col-md-6 ">
+                    <label for="selectrutas"> <i class="fa fa-id-card"></i> Tipo de ruta</label>
+                    <ng-select bindLabel="nombre" bindValue="codigo" [items]="TipoRutas" [(ngModel)]="TipoRutaId"
+                        [loading]="loadingTipoRutas" [clearable]="false" id="selectrutas" (change)="getData()"
+                        class="form-control  p-0" notFoundText="No resultados" >
+                    </ng-select>
+                </div>
+
+                  <div class="col-md-6 align-self-end">
                       <div class="input-group">
                           <div class="input-group-prepend">
                               <label for="search" class="input-group-text bg-white">
@@ -25,6 +28,10 @@
                               style="border-left:none !important;" class="form-control" placeholder="Buscar">
                       </div>
                   </div>
+
+
+
+
               </div>
 
               <div class="table-responsive">
@@ -32,72 +39,32 @@
                       <thead>
                           <tr>
                               <th></th>
-                              <th>Nombre</th>
-                              <th>Total</th>
-                              <th>Disponible</th>
-                              <th>Merchandising</th>
-                              <!-- <th>Vendedor</th> -->
-                              <th>Zona</th>
                               <th>Chofer</th>
-                              <th>Dia Visita</th>
-                              <!-- <th>Orden Visita</th> -->
+                              <th>Celular</th>
+                              <!-- <th>Cantidad Clientes</th> -->
+                              <th></th>
                           </tr>
                       </thead>
                       <tbody [hidden]="Cargando">
 
-                          <tr *ngFor="let item of data">
-                              <!-- <td><span class="badge badge-light text-info ">{{item.id}}</span></td> -->
-                                <td>
-                                  <button class="btn btn-sm btn-info mx-2" *ngIf="item.editarUsuarioConfirmado" (click)="onChangeEdit(item)">
-                                    <i class="fa fa-sm fa-edit"></i>
-                                  </button>
-                                  <button class="btn btn-sm btn-danger mx-2" *ngIf="item.cancelarUsuarioConfirmado" (click)="onChangeEdit(item)" >
-                                    <i class="fa fa-sm fa-times"></i>
-                                  </button>
-                                  <button class="btn btn-sm btn-success mx-2" *ngIf="item.cambioUsuarioConfirmado && !btnGuardarCargando" (click)="SaveChanges(item)" >
-                                    <i class="fa fa-sm fa-check"></i>
-                                  </button>
-                                  <!-- boton cargando -->
-                                  <button *ngIf="btnGuardarCargando" disabled class="btn btn-success m-1" type="button">
-                                    <span class="spinner-border spinner-border-sm"></span>
-                                </button>
+                          <tr *ngFor="let item of dataListado">
+                              <td><span class="badge badge-light text-info ">{{item.usuarioId}}</span></td>
+                              <td>
+                                  <span class="font-weight-bold"> {{item.usuario}}</span>
+                                  <span class="small d-block font-weight-bold text-info"> <i class="fas fa-address-card"></i> {{item.documento | mask: '000-0000000-0'}}</span>
+                                  <!-- <span class="small d-block fon font-weight-bold"> Fecha: {{item.fecha | date:'medium'}}</span> -->
                               </td>
                               <td>
-                                  <span class="font-weight-bold"> {{item.cliente}}</span>
-                                  <span class="small d-block text-lowercase">{{item.direccion | slice: 0:60}}</span>
-                                  <span class="small d-block fon font-weight-bold"> Fecha: {{item.fecha | date:'medium'}}</span>
-                              </td>
-                              <td>
-                                  <span class="d-block font-weight-bold"> {{item.cantidad | number:'1.2-5'}} </span>
-                              </td>
-                              <td>
-                                  <span  class="d-block font-weight-bold"> {{item.disponible | number:'1.2-5'}} </span>
-                              </td>
-                              <td>
-                                  <span> {{item.merchandising}}</span>
+                                  <span class="d-block " > {{item.celular | mask: '(000) 000-0000'}} </span>
                               </td>
                               <!-- <td>
-                                  <span> {{item.vendedor}}</span>
+                                  <span class="d-block " > {{item.cantidadCliente }} </span>
                               </td> -->
                               <td>
-                                <span> {{item.zona}}</span>
-                            </td>
-                              <td>
-                                <span *ngIf="item.editarUsuarioConfirmado"> {{item.recogedor}}</span>
-                                <ng-select [items]="Usuarios" bindLabel="nombre" bindValue="codigo" style="width: 200px;" *ngIf="!item.editarUsuarioConfirmado"
-                                [(ngModel)]="item.usuarioId" [clearable]="false" notFoundText="No resultados">
-                              </ng-select>
-                            </td>
-                              <td>
-                                  <!-- <span *ngIf="item.editarUsuarioConfirmado"> {{item.diaId}}</span> -->
-                                  <ng-select [items]="Dias" bindLabel="nombre" bindValue="codigo" style="width: 200px;"
-                                  [(ngModel)]="item.diaId" [clearable]="false" notFoundText="No resultados" [disabled]="item.editarUsuarioConfirmado">
-                                </ng-select>
+                                <button class="btn btn-sm btn-info" (click)="openModal(modalRolPermisoAsignacion,item)">
+                                  <i class="fa fa-sm fa-list"></i>
+                              </button>
                               </td>
-                              <!-- <td>
-                                  <span *ngIf="item.editarUsuarioConfirmado"> {{item.ordenVisita}}</span>
-                                  <input type="number" class="form-control" [(ngModel)]="item.ordenVisita" *ngIf="!item.editarUsuarioConfirmado">
-                              </td> -->
 
 
                           </tr>
@@ -136,3 +103,65 @@
       </div>
   </div>
 </div>
+
+
+
+<ng-template #modalRolPermisoAsignacion let-modal>
+  <div class="modal-header">
+      <h4 class="modal-title">Asignación de Usuario a Ruta</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">&times;</span>
+      </button>
+  </div>
+  <div class="modal-body">
+    <div class="row p-2">
+
+      <div class="col-md-6 ">
+        <label for="id1">Zonas</label>
+        <ng-select bindLabel="nombre" bindValue="codigo" [items]="TipoRutas" [(ngModel)]="TipoRutaId"
+            [loading]="loadingTipoRutas" [clearable]="false" id="id1" (change)="getData()"
+            class="form-control  p-0" notFoundText="No resultados" >
+        </ng-select>
+    </div>
+
+    <div class="col-md-6 ">
+      <label for="id2">Provincia</label>
+      <ng-select bindLabel="nombre" bindValue="codigo" [items]="TipoRutas" [(ngModel)]="TipoRutaId"
+          [loading]="loadingTipoRutas" [clearable]="false" id="id2" (change)="getData()"
+          class="form-control  p-0" notFoundText="No resultados" >
+      </ng-select>
+  </div>
+
+  <div class="col-md-6 ">
+    <label for="id3">Sector</label>
+    <ng-select bindLabel="nombre" bindValue="codigo" [items]="TipoRutas" [(ngModel)]="TipoRutaId"
+        [loading]="loadingTipoRutas" [clearable]="false" id="id3" (change)="getData()"
+        class="form-control  p-0" notFoundText="No resultados" >
+    </ng-select>
+</div>
+  <div class="col-md-6 ">
+    <label for="id4">Dia</label>
+    <ng-select bindLabel="nombre" bindValue="codigo" [items]="Dias" [(ngModel)]="selectData.diaId"
+        [clearable]="false" id="id4"  class="form-control  p-0" notFoundText="No resultados" >
+    </ng-select>
+</div>
+</div>
+      <div class="row">
+          <div class="col-12" [hidden]="loadingDualLits">
+              <dual-list [sort]="keepSorted" [source]="source" [key]="key" [display]="display" [filter]="filter"
+                  [(destination)]="confirmed" height="265px" [format]="format" [disabled]="disabled"></dual-list>
+          </div>
+
+          <div class="col-12">
+              <app-loading-listado [hidden]="!loadingDualLits"></app-loading-listado>
+          </div>
+      </div>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cancelar</button>
+      <button type="button" class="btn btn-success m-1" *ngIf="!btnGuardarCargando" (click)="SaveChanges()">Guardar</button>
+      <button *ngIf="btnGuardarCargando" disabled class="btn btn-success m-1" type="button">
+          <span class="spinner-border spinner-border-sm"></span> Guardando
+      </button>
+  </div>
+</ng-template>
