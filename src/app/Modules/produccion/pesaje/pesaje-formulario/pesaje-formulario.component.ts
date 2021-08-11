@@ -38,6 +38,8 @@ export class PesajeFormularioComponent implements OnInit {
   fechaVencimiento: Date;
   btnGuardarCargando: boolean;
 
+  pesoBalanza: string = "0.00 Lb";
+  pesoBalanzaUltimaFecha: Date = new Date();
 
   constructor(
     private toastService: ToastrService,
@@ -57,18 +59,52 @@ export class PesajeFormularioComponent implements OnInit {
 
     this.signalRService.pesoBalanza.subscribe((peso: string) => {
 
+      this.pesoBalanza = peso;
+      this.pesoBalanzaUltimaFecha = new Date();
+
       console.log(peso)
+      this.formatStringFromBalanza();
 
     })
 
 
   }
 
-  readPesoFile() {
-    fetch('file.txt')
-      .then(response => response.text())
-      .then(text => console.log(text))
+  formatStringFromBalanza() {
+
+    // this.pesoBalanza = `5LB 
+    //      765LB 
+    //      765LB 
+    //      765LB 
+    //      765LB 
+    //      765LB 
+    //      765LB 
+    //      765LB 
+    //      765LB 
+    //      765L`
+
+    if (!this.pesoBalanza) {
+      this.pesoBalanza = "0.00 Lb"
+      return;
+    }
+
+    let valores = this.pesoBalanza.split(" ").filter(x => x.includes("KG") || x.includes("LB"))
+
+    if (!valores || valores.length == 0) {
+      this.pesoBalanza = "0.00 Lb"
+      return;
+    }
+
+    console.table(valores)
+    this.pesoBalanza = valores //filtro los que contengan libraje o kilogramo
+      .reduce(//selecciono el de mayor length
+        function (a, b) {
+          return a.length > b.length ? a : b;
+        }
+      ).trim();
+
   }
+
 
   onSubmit() {
 

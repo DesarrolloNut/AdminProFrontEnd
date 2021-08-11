@@ -6,6 +6,7 @@ import {
   NgbCarouselConfig
 } from '@ng-bootstrap/ng-bootstrap';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
+import { TokenModel } from 'src/app/core/authentication/model/TokenModel';
 import { AuthenticationService } from '../../core/authentication/service/authentication.service';
 declare var $: any;
 
@@ -19,7 +20,7 @@ export class NavigationComponent implements AfterViewInit, OnInit {
   public config: PerfectScrollbarConfigInterface = {};
   public showSearch = false;
 
-  public usuario: any;
+  public usuario: TokenModel;
 
 
   constructor(private modalService: NgbModal, public autenticationService: AuthenticationService) { }

@@ -5,7 +5,7 @@
     </div>
 </div>
 
-<div class="row mb-2">
+<!-- <div class="row mb-2">
     <div class="col">
         <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
     </div>
@@ -13,7 +13,7 @@
         <a class="btn btn-light" href="assets/files/zip/BalanzaPesoSender.zip"><i class="fa fa-download"></i> Download
             App</a>
     </div>
-</div>
+</div> -->
 
 
 <div class="row">
@@ -81,10 +81,6 @@
                         </ejs-datepicker>
                     </div>
 
-                    <div class="col-md-12">
-                        <button class="btn btn-block btn-primary btn-lg" (click)="readPesoFile()">Leer peso</button>
-                    </div>
-
                 </div>
             </div>
         </div>
@@ -150,27 +146,44 @@
 
 <div class="row" *ngIf="articulo">
 
-    <div class="col-md-6">
+    <div class="col-md-4">
         <div class="card border-right border-danger">
-            <div class="card-body">
+            <div class="card-body  pb-0">
                 <div class="d-flex no-block align-items-center">
                     <div><span class="text-danger display-6"><i class="ti-pie-chart"></i></span></div>
                     <div class="ml-auto text-right">
-                        <h1 class="font-weight-bold">{{pesoBruto | number:'1.2-5'}} Lbs</h1>
-                        <h2 class="text-danger">Peso Bruto</h2>
+                        <h1 class="font-weight-bold">{{pesoBalanza}}</h1>
+                        <h2 class="text-danger mb-1">Peso Balanza</h2>
+                        <span *ngIf="pesoBalanzaUltimaFecha" class="small "><i class="fa fa-clock"></i>
+                            {{pesoBalanzaUltimaFecha | date:'hh:mm:ss a'}}
+                        </span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-4">
+        <div class="card border-right border-info">
+            <div class="card-body">
+                <div class="d-flex no-block align-items-center">
+                    <div><span class="text-info display-6"><i class="ti-pie-chart"></i></span></div>
+                    <div class="ml-auto text-right">
+                        <h1 class="font-weight-bold">{{pesoBruto | number:'1.2-5'}} Lb</h1>
+                        <h2 class="text-info">Peso Bruto</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
         <div class="card border-right border-success">
             <div class="card-body">
                 <div class="d-flex no-block align-items-center">
                     <div><span class="text-success display-6"><i class="ti-pie-chart"></i></span></div>
                     <div class="ml-auto text-right">
-                        <h1 class="font-weight-bold">{{pesoNeto | number:'1.2-5'}} Lbs</h1>
+                        <h1 class="font-weight-bold">{{pesoNeto | number:'1.2-5'}} Lb</h1>
                         <h2 class="text-success">Peso Neto</h2>
                     </div>
                 </div>

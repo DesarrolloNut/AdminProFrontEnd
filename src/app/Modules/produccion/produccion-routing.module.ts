@@ -18,7 +18,7 @@ const routes: Routes = [
       // { path: 'reportes-de-ventas', loadChildren: () => import('./ventas-reportes/ventas-reportes.module').then(m => m.VentasReportesModule) },
 
       {
-        path: 'pesaje', component: PesajeListadoComponent, data: {
+        path: 'pesaje', component: PesajeFormularioComponent, data: {
           title: 'Sistema de Pesajes',
           urls: [
             { title: 'Producción' },
@@ -27,16 +27,16 @@ const routes: Routes = [
         }
       },
 
-      {
-        path: 'pesaje/:id', component: PesajeFormularioComponent, data: {
-          title: 'Sistema de Pesajes',
-          urls: [
-            { title: 'Producción' },
-            { title: 'Sistema de Pesajes' },
-            { title: 'Formulario' },
-          ]
-        }
-      },
+      // {
+      //   path: 'pesaje/:id', component: PesajeFormularioComponent, data: {
+      //     title: 'Sistema de Pesajes',
+      //     urls: [
+      //       { title: 'Producción' },
+      //       { title: 'Sistema de Pesajes' },
+      //       { title: 'Formulario' },
+      //     ]
+      //   }
+      // },
 
       {
         path: 'pesaje/:id/resultado', component: PesajeResultadoComponent, data: {
