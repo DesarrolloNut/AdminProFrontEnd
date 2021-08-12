@@ -1,43 +1,38 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
+import { Parametro } from 'src/app/core/http/model/Parametro';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Configuraciones } from 'src/app/shared/enums/Configuraciones';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
-import { Archivo, DocumentosTipoAnexoSelected, FilesUploaded, TipoAnexoEnum } from 'src/app/shared/model/Archivo';
+import { Archivo, FilesUploaded, TipoAnexoEnum } from 'src/app/shared/model/Archivo';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
-import { ClienteFinanza } from '../models/ClienteFinanza';
 
 @Component({
-  selector: 'app-cliente-finanzas',
-  templateUrl: './cliente-finanzas.component.html',
-  styleUrls: ['./cliente-finanzas.component.scss']
+  selector: 'app-cliente-negocio',
+  templateUrl: './cliente-negocio.component.html',
+  styleUrls: ['./cliente-negocio.component.scss']
 })
-export class ClienteFinanzasComponent implements OnInit {
+export class ClienteNegocioComponent implements OnInit {
   @Input() clientId = 0;
-  FormFinanza: FormGroup;
   public state : TipoAnexoEnum;
-  
+
+  FormNegocio: FormGroup;
 
   //BOOLEANOS
-  cargando    = false;
+  cargando              = false;
   btnGuardarCargando    = false;
   actualizando          = false;
   submitted             = false;
-  loadingCondicionPagos = false;
-  loadingPlazos         = false;
  
-  //LISTAS
-    CondicionesPagos: ComboBox[];
-    Plazos: ComboBox[];
-    DocumentosTipoAnexo: ComboBox[];
  ///
  
- filesFromInput: any[] = [];
- filesSubidos: FilesUploaded[] = [];
+ filesFromInput: any[]           = [];
+ filesSubidos:FilesUploaded[]    = [];
+ documentosTipoAnexo:ComboBox[]  = [];
 
 
    //solicitud anexos
@@ -58,19 +53,26 @@ export class ClienteFinanzasComponent implements OnInit {
     private router: Router,
     private auth: AuthenticationService,
     private formBuilder: FormBuilder,
+
+    
     ) { }
     
+    private createForm() {
 
+      this.FormNegocio = this.formBuilder.group({
+        clienteId: [this.clientId],
+        tipoAnexo: [TipoAnexoEnum.CLIENTE_NEGOCIO],
+      },
+      );
+    }
 
   ngOnInit() {
-    this.createForm();
-
+     this.createForm();
     if (this.clientId > 0) {
-      this.getClienteFinanzaByID(this.clientId);
+      this.getArchivosSubidos();
       this.actualizando = true;
     }
-    this.getTipoCondicionesPago();
-    this.getPlazos();
+
     this.getUrlCarpetaAnexosArchivos()
     this.getDocumentosTipoAnexo();
   }
@@ -78,80 +80,15 @@ export class ClienteFinanzasComponent implements OnInit {
 
   onSubmit() {
     this.submitted = true; 
-    if (this.FormFinanza.invalid)
+    if (this.FormNegocio.invalid)
       return;
-    this.guardarOActualizarClienteFinanza();
+    this.subirArchivosAlServidor();
   }
 
-  private createForm() {
-
-    this.FormFinanza = this.formBuilder.group({
-      clienteId: [this.clientId],
-      limiteCredito: [0, [Validators.required]],
-      condicionPagoId: [null, [Validators.required]],
-      plazoId: [null, [Validators.required]],
-    },
-    );
-  }
-
-  get f() { return this.FormFinanza.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
-
-
-  guardarOActualizarClienteFinanza(){
-     if(this.f.condicionPagoId.value==1){
-      this.f.plazoId.setValue(0)
+  onSelectDocumentoTipoAnexo(item:any,docTipoAnexo:ComboBox){
+    item.documentoTipoAnexoId = docTipoAnexo.codigo;
+    item.documentoTipoAnexo = docTipoAnexo.nombre;
      }
-
-    this.btnGuardarCargando = true;
-    this.httpService.DoPostAny<ClienteFinanza>(DataApi.ClienteFinanza,
-      'UpdateFinanzaCliente', this.FormFinanza.value).subscribe(response => {
-        if (!response.ok) {
-          this.toastService.error(response.errores[0], "Error");
-          this.btnGuardarCargando = false;
-        } else {
-              this.subirArchivosAlServidor();
-              this.toastService.success("Realizado", "OK");
-        }
-        this.btnGuardarCargando = false;
-
-      }, error => {
-        this.btnGuardarCargando = false;
-        this.toastService.error("Error conexion al servidor");
-      });
-}
-getClienteFinanzaByID(id: number) {
-  (this.FormFinanza.get('tipoAnexo') as FormGroup)?.removeControl('tipoAnexo');
-
-  this.cargando = true;
-  this.httpService.DoPostAny<ClienteFinanza>(DataApi.ClienteFinanza,
-    "GetClienteFinanzaByID", id).subscribe(response => {
-      if (!response.ok) {
-        this.toastService.error(response.errores[0]);
-      } else {
-        //validar que existe
-        if (response.records.length > 0) {
-          let clientefinanza = response.records[0];
-
-           this.FormFinanza.setValue(clientefinanza);
-           this.getArchivosSubidos();
-       
-        } else {
-          this.toastService.warning("Información no encontrado");
-          this.router.navigateByUrl('/mantenimientos/cliente');
-        }
-      }
-      this.cargando = false;
-
-    }, error => {
-      this.cargando = false;
-      this.toastService.error("Error conexion al servidor");
-    });
-}
-
-onSelectDocumentoTipoAnexo(item:any,docTipoAnexo:ComboBox){
- item.documentoTipoAnexoId = docTipoAnexo.codigo;
- item.documentoTipoAnexo = docTipoAnexo.nombre;
-  }
 
 getNameTipoAnexo(item:any):string{
   if(item.documentoTipoAnexo==null ||item.documentoTipoAnexo==""){
@@ -159,28 +96,7 @@ getNameTipoAnexo(item:any):string{
   }
   return item.documentoTipoAnexo;
 }
-
-  getTipoCondicionesPago() {
-    this.loadingCondicionPagos = true;
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetTipoCondicionPago", null).subscribe(response => {
-
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          this.CondicionesPagos = response.records;
-        }
-        this.loadingCondicionPagos = false;
-      }, error => {
-        this.loadingCondicionPagos = false;
-        this.toastService.error("No se pudo obtener las condiciones de pago", "Error conexion al servidor");
-
-        setTimeout(() => {
-          this.getTipoCondicionesPago()
-        }, 1000);
-
-      });
-  }
+ 
 
   
   getDocumentosTipoAnexo() {
@@ -190,10 +106,10 @@ getNameTipoAnexo(item:any):string{
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          this.DocumentosTipoAnexo = response.records;
+          this.documentosTipoAnexo = response.records;
         }
        }, error => {
-         this.toastService.error("No se pudo obtener las condiciones de pago", "Error conexion al servidor");
+         this.toastService.error("No se pudo obtener los documentos tipo anexo", "Error conexion al servidor");
 
         setTimeout(() => {
           this.getDocumentosTipoAnexo()
@@ -203,33 +119,11 @@ getNameTipoAnexo(item:any):string{
   }
 
 
-  getPlazos() {
-    this.loadingPlazos = true;
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetPlazos", null).subscribe(response => {
-
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          this.Plazos = response.records;
-        }
-        this.loadingPlazos = false;
-      }, error => {
-        this.loadingPlazos = false;
-        this.toastService.error("No se pudo obtener los plazos", "Error conexion al servidor");
-
-        setTimeout(() => {
-          this.getPlazos()
-        }, 1000);
-
-      });
-  }
+  
 
   ///METODOS UPLOAD POST
   subirArchivosAlServidor() {
-    this.cargandoAnexos = true;
-    this.btnGuardarCargando = true;
-
+    this.btnGuardarCargando=true;
     let documentosTipoAnexoSelecteds:any[]=[];
 
     let filesUploaded:any =  this.filesFromInput.filter(function (x) {
@@ -244,11 +138,11 @@ getNameTipoAnexo(item:any):string{
           })
      });
 
-   
+    console.log(documentosTipoAnexoSelecteds)
     const formData = new FormData();
     formData.append("clienteId", this.clientId + '');
 
-    formData.append("tipoAnexo", TipoAnexoEnum.CLIENTE_FINANZA + '');
+    formData.append("tipoAnexo", TipoAnexoEnum.CLIENTE_NEGOCIO + '');
 
 
 
@@ -275,8 +169,8 @@ getNameTipoAnexo(item:any):string{
           this.getArchivosSubidos()
           // this.router.navigateByUrl('/mantenimientos/almacen');
         }
+        this.btnGuardarCargando=false;
 
-         this.btnGuardarCargando = false;
       }, error => {
         this.btnGuardarCargando = false; 
         this.toastService.error("Error conexion al servidor");
@@ -287,9 +181,14 @@ getNameTipoAnexo(item:any):string{
 
   getArchivosSubidos() {
     this.cargandoAnexos = true;
-    this.FormFinanza.addControl('tipoAnexo', this.formBuilder.control(1));
-    this.httpService.DoPostAny<FilesUploaded>(DataApi.ClienteFinanza,
-      "GetClienteFinanzaAnexosArchivos", this.FormFinanza.value).subscribe(response => {
+    let parametros: Parametro[] = [
+      { key: "clienteId", value: this.clientId},
+      { key: "tipoAnexo", value: TipoAnexoEnum.CLIENTE_NEGOCIO},
+     ]
+
+     console.log(parametros)
+    this.httpService.DoPostAny<FilesUploaded>(DataApi.ClienteNegocio,
+      "GetClienteNegocioAnexosArchivos", this.FormNegocio.value).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
@@ -413,7 +312,7 @@ getNameTipoAnexo(item:any):string{
 
   formatUrlFile(file:any):string{
     if(file.uploaded){
-      return  this.urlCarpetaArchivosAnexos + 'Cliente-Anexos/ClienteFinanza/ClienteFinanza'  + this.clientId +'/'
+      return  this.urlCarpetaArchivosAnexos + 'Cliente-Anexos/ClienteNegocio/ClienteNegocio'  + this.clientId +'/'
       + file.name ;
     }else{
       return file.url ;
@@ -440,4 +339,5 @@ getNameTipoAnexo(item:any):string{
   onBtnModalOk() {
     this.modalService.dismissAll()
   }
+
 }

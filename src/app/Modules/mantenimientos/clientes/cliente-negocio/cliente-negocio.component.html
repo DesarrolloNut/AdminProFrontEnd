@@ -5,91 +5,44 @@
       <div class="card-body">
         <div class="row">
           <div class="col-md-6 col-lg-6 col-12">
-            <h4 class="card-title">Datos Finanzas</h4> 
+            <h4 class="card-title">Datos Negocio</h4> 
           </div>
           <div class="col-md-6 col-lg-6 col-12 text-right">
           </div>
         </div>
-        <app-loading-listado [hidden]="!cargando"></app-loading-listado>
-         <div   class="form_finanzas" 
-         [style.opacity]="cargando ? '0' : '1'" 
-         [style.visibility]="cargando ? 'hidden' : 'visible'" >
-
-        <form class="form-row m-t-40" [formGroup]="FormFinanza" >
-
-          <div class="form-group col-md-6">
-            <label for="condicionPagoId">Condición de pago</label>
-            <ng-select bindLabel="nombre" bindValue="codigo" [items]="CondicionesPagos"
-             placeholder="seleccione un tipo de condición"
-              [loading]="loadingCondicionPagos" [clearable]="false"
-              [ngClass]="{'form-control border-danger p-0' : submitted && f.condicionPagoId.errors }"
-              notFoundText="No resultados" formControlName="condicionPagoId">
-            </ng-select>
-            <div *ngIf="submitted && f.condicionPagoId.errors" class="text-danger small">
-              <div *ngIf="f.condicionPagoId.errors.required  ">El campo es
-                obligatorio</div>
-            </div>
-          </div>
-          <div class="form-group col-md-6" *ngIf="f.condicionPagoId.value==2">
-            <label for="plazoId">Plazo</label>
-            <ng-select bindLabel="nombre" bindValue="codigo" [items]="Plazos"
-              [loading]="loadingPlazos" [clearable]="false"
-              [ngClass]="{'form-control border-danger p-0' : submitted && f.plazoId.errors }"
-              notFoundText="No resultados" formControlName="plazoId">
-            </ng-select>
-            <div *ngIf="submitted && f.plazoId.errors" class="text-danger small">
-              <div *ngIf="f.plazoId.errors.required  ">El campo es
-                obligatorio</div>
-            </div>
-          </div>
-
-          <div class="form-group col-md-6" *ngIf="f.condicionPagoId.value==2">
-            <label for="limiteCredito"><i class="fa fa-hashtag"></i> Límite
-              Crédito</label>
-            <input formControlName="limiteCredito" type="text" prefix="$ " mask="separator"
-              thousandSeparator="," name="limiteCredito" id="limiteCredito"
-              [ngClass]="{'is-invalid' : submitted && f.limiteCredito.errors,  'form-control':true  }">
-            <div class="invalid-feedback" *ngIf="submitted && f.limiteCredito.errors">
-              <div *ngIf="f.limiteCredito.errors.required">El campo es
-                obligatorio</div>
-            </div>
-          </div>
+        <div class="form-row m-t-20"  >
              <!-- Anexos de cliente -->
-             <div class="col-12 container_anexos"  *ngIf="f.condicionPagoId.value==2">
-
+             <div class="col-12 container_anexos" >
               <div class="row">
-
                   <!-- Anexos -->
                   <div class="col-md-12">
                       <div class="row">
                           <div class="col-8">
                               <hr>
-                              <h6 class="font-weight-bold">Subir Anexos
+                              <h6 class="font-weight-bold">Subir fotos del negocio
                                   <span class="badge badge-info badge-pill">{{filesFromInput.length}}</span>
                               </h6>
-                              <span style="position: relative; top: -8px; font-size: 14px;color: gray;font-weight: 600;">
-                                Ej. foto cedula, registro mercantil...
-                              </span>
+                              <!-- <span style="position: relative; top: -8px; font-size: 14px;color: gray;font-weight: 600;">
+                                Ej. fotos del local/negocio...
+                              </span> -->
 
                           </div>
                           <div class="col-4 text-right">
                               <hr>
                               <input accept="application/pdf,.png,.gif,.jpg,.jpeg,.jfif" class="d-none" (change)="setFiles(file.files)"
                                   #file multiple type="file" />
-                              <button (click)="file.click()" type="button" class="btn btn-light "><i
+                              <button (click)="file.click()" type="button" class="btn btn-light"><i
                                       class="fa fa-upload"></i>
                               </button>
                           </div>
 
-
-                            <div class="   col-md-12">
+                          <div class="   col-md-12">
                             <app-loading-listado [hidden]="!cargandoAnexos"></app-loading-listado>
 
-                             </div>  
-                          <ng-container  *ngIf="filesFromInput.length>0 && !cargandoAnexos; else elseTemplate2">
-                         
-                              <div class=" row  col-md-12">
+                             </div> 
+                          <ng-container *ngIf="filesFromInput.length>0 && !cargandoAnexos; else elseTemplate2">
 
+                              <div class=" row  col-md-12">
                                 <div class="col-md-3  p-2 text-center" *ngFor="let item of filesFromInput; let i = index">
 
                                   <div class="row ml-1" *ngIf="!isImage(item)"  >
@@ -119,7 +72,7 @@
                                           <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
                                             <button class="btn btn-sm btn-outline-info" ngbDropdownToggle></button>
                                             <div class="dropdown-menu" ngbDropdownMenu>
-                                              <button  class="btn-sm" (click)="onSelectDocumentoTipoAnexo(item,d)" *ngFor="let d of DocumentosTipoAnexo"  ngbDropdownItem>{{d.nombre}}</button>
+                                              <button  class="btn-sm" (click)="onSelectDocumentoTipoAnexo(item,d)" *ngFor="let d of documentosTipoAnexo"  ngbDropdownItem>{{d.nombre}}</button>
                                             </div>
                                           </div>
                                         </div>
@@ -172,7 +125,7 @@
                                             <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
                                               <button class="btn btn-sm btn-outline-info" ngbDropdownToggle></button>
                                               <div class="dropdown-menu" ngbDropdownMenu>
-                                                <button  class="btn-sm" (click)="onSelectDocumentoTipoAnexo(item,d)" *ngFor="let d of DocumentosTipoAnexo"  ngbDropdownItem>{{d.nombre}}</button>
+                                                <button  class="btn-sm" (click)="onSelectDocumentoTipoAnexo(item,d)" *ngFor="let d of documentosTipoAnexo"  ngbDropdownItem>{{d.nombre}}</button>
                                               </div>
                                             </div>
                                           </div>
@@ -203,11 +156,12 @@
                               </div>
 
                           </ng-container>
-                          <ng-template  [hidden]="cargandoAnexos"  #elseTemplate2>
+                          <ng-template  [hidden]="cargandoAnexos" #elseTemplate2>
 
-                              <div [hidden]="cargandoAnexos" class="col-12 no_hay_archivos text-center">
-                                  <i class="fa fa-info-circle text-info fa-3x"></i>
-                                  <h3>No hay anexos</h3>
+                              <div [hidden]="cargandoAnexos" class="col-12  no_hay_archivos text-center">
+
+                                  <i  class="fa fa-info-circle text-info fa-3x"></i>
+                                  <h3>No hay archivos subidos</h3>
                               </div>
 
                           </ng-template>
@@ -237,9 +191,7 @@
             </button>
           </div>
 
-        </form>
-      </div>
-
+        </div>
       </div>
     </div>
   </div>
@@ -265,7 +217,22 @@
 
 
   </div>
- 
+  <!-- <div class="container-fluid">
+    <div class="row"  >
+      <div class="col">
+        <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">              
+              <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <img src="" class="imagepreview" style="width: 100%;" >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> -->
 </ng-template>
 
 

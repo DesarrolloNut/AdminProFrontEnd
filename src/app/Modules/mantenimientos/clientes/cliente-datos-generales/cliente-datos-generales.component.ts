@@ -1,4 +1,5 @@
 import { MapsAPILoader, Marker } from '@agm/core';
+import { animate, style, transition, trigger } from '@angular/animations';
 import { ViewportScroller } from '@angular/common';
 import { Component, ElementRef, EventEmitter, HostListener, Input, NgZone, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
@@ -13,11 +14,23 @@ import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { cedulaestructura } from 'src/app/shared/validators/cedula-estructura.validator';
 import { Cliente, Coordenadas } from '../models/Cliente';
+
+const fadeInOut = trigger('fadeInOut', [
+  transition(':enter', [
+    style({ opacity: 0 }),
+    animate(200, style({ opacity: 1 }))
+  ]),
+  transition(':leave', [
+    animate(200, style({ opacity: 0 }))
+  ])
+]);
 @Component({
   selector: 'app-cliente-datos-generales',
   templateUrl: './cliente-datos-generales.component.html',
-  styleUrls: ['./cliente-datos-generales.component.scss']
+  styleUrls: ['./cliente-datos-generales.component.scss'],
+  animations: [fadeInOut]
 })
+
 export class ClienteDatosGeneralesComponent implements OnInit {
   @Input() clientId = 0;
   @Output() clienteIdCreado = new EventEmitter();
@@ -48,6 +61,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
   documentos  : ComboBox[];
   ListaPrecio : any[];
   TipoCliente : any[];
+  estados     : ComboBox[]
 
   //OBJETOS Y DEMAS
   TipoSexo: any[] = [{ codigo: 'H', nombre: 'Hombre' }, { codigo: 'M', nombre: 'Mujer' }];
@@ -72,8 +86,8 @@ export class ClienteDatosGeneralesComponent implements OnInit {
     //CREACION DE FORMULARIO
     this.createForm();
 
-
     if (this.clientId > 0) {
+
       this.getClienteByID(this.clientId);
       this.actualizando = true;
     }
@@ -83,6 +97,8 @@ export class ClienteDatosGeneralesComponent implements OnInit {
     this.getTipoCliente();
     this.getListaPrecio();
     this.clearOrputValidatosSomeField();
+    this.scrollToTop();
+
   }
 
   ngAfterViewInit() {
@@ -93,7 +109,6 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       this.coordenadas.emit(coors);
   
     }
-
   }
   onSubmit() {
     this.submitted = true; 
@@ -143,6 +158,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       frecuenciaVisitaId: [0, [Validators.required]],
       limiteCredito: [0, [Validators.required]],
       condicionPagoId: [0, [Validators.required]],
+      plazoId: [0, [Validators.required]],
       rutaId: [0, [Validators.required]],
       listaPrecioId: [0, [Validators.required]],
       longitud: [null, [Validators.required]],
@@ -214,24 +230,21 @@ export class ClienteDatosGeneralesComponent implements OnInit {
 
             let cliente = response.records[0];
            cliente.documentoTipoID = cliente.documentoTipoID==null? 0 :cliente.documentoTipoID
-            // this.FrecuenciaVisita = response.records[0].visita;
             this.FormGenerales.setValue(cliente);
 
             let coors= new Coordenadas();
             coors.latitud=parseFloat( cliente.latitud);
             coors.longitud=parseFloat( cliente.longitud);
             this.coordenadas.emit(coors);
-            // this.onAddContacts(cliente.contactos);
             this.getCiudades();
             this.getSectores();
             this.getSubSectores();
-         //   this.getRutaByID(cliente.rutaId);
           } else {
             this.toastService.warning("Cliente no encontrado");
             this.router.navigateByUrl('/mantenimientos/cliente');
           }
         }
-
+        this.cargando=false;
       }, error => {
         this.cargando = false;
         this.toastService.error("Error conexion al servidor");
