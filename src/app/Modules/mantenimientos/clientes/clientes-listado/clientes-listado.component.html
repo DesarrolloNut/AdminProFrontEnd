@@ -35,11 +35,20 @@
                         <thead>
                             <tr>
                                 <th></th>
-                                <th></th>
+                                <th>Tipo Cliente</th>
+                                <th>ID</th>
                                 <th>Cliente</th>
-                                <!-- <th>Email</th> -->
                                 <th>Documento</th>
-                                <!-- <th>Rol</th> -->
+                                <th>Condicion Pago</th>
+                                <th>Plazo</th>
+                                <th>Limite Credito</th>
+                                <th>Direccion</th>
+                                <th>Longitud</th>
+                                <th>Latitud</th>
+                                <th>Ruta Vendedor </th>
+                                <th>Ruta Entrega </th>
+                                <th>Ruta Recogida</th>
+                                <th>Ruta Merchandising</th>
                             </tr>
                         </thead>
                         <tbody [hidden]="Cargando">
@@ -62,7 +71,15 @@
                                         <i class="fa fa-sm fa-hashtag"></i>
                                     </button> -->
                                 </td>
-                                <td><span class="badge badge-light text-info ">{{cliente.id}}</span></td>
+                                <td>
+                                      <span class="text-dark">
+                                        {{cliente.clienteTipo}}
+                                       </span>
+                                </td>
+                                <!-- SHOW INFO COLUMNA CLIENTE -->
+                                <td>
+                                          <span class="badge badge-light text-info "> {{cliente.id}}</span><br>
+                                </td>
                                 <td>
                                     <div class="d-flex align-items-center">
 
@@ -73,21 +90,97 @@
                                                 <span> {{cliente.nombres | titlecase }}</span>
                                                 <span> {{ cliente.apellidos | titlecase }}</span>
                                             </p>
+                                            <!-- <span class="badge badge-light text-info ">ID: {{cliente.id}}</span><br> -->
                                             <small class="text-info"> <i class=" fa fa-hashtag"></i>
                                                 {{cliente.codigoReferencia }}
                                             </small>
                                         </div>
                                     </div>
                                 </td>
-                                <!-- <td>
-                                    <span> <i class="fa fa-envelope text-muted"></i> {{cliente.email}}</span>
-                                </td> -->
+                                <!-- SHOW INFO COLUMNA DOCUMENTO -->
+
                                 <td>
-                                    <span> <i class="fa fa-id-card text-muted"></i> {{cliente.documento}}</span>
+                                    <span  style="color: #8d8d8d;" class="font-weight-bold">{{cliente.documentoTipo}}
+                                    </span>
+                                    <span> {{cliente.documento}}</span>
                                 </td>
-                                <!-- <td>
-                        {{usuario.rol | uppercase}}
-                    </td> -->
+
+
+
+                                
+                                  <!-- SHOW INFO COLUMNA Condicion Pago -->
+                                  <td>
+                                    <span class="text-dark">
+                                        {{cliente.condicionPago }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="text-dark">
+                                          {{cliente.plazo }} <span *ngIf="cliente.plazo!=='' && cliente.plazo!==null">dias</span>
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="text-dark">
+                                          {{cliente.limiteCredito | currency }}
+                                    </span>
+                                </td>
+
+
+                                     <!-- SHOW INFO COLUMNA DIRECCION -->
+                                <td>
+                                    <span class="font-weight-bold">
+                                         {{cliente.ciudad}},  
+                                         {{cliente.provincia}},
+                                         {{cliente.subSector}}
+                                        </span>
+                                    <p class="font-bold mb-0">
+                                        <span class="small d-block text-lowercase">{{cliente.calle | slice: 0:60}}</span>
+                                    </p>
+                                 </td>
+
+
+                              <!-- SHOW INFO COLUMNAS COORDENADAS -->
+                                <td>
+                                    <span class="text-dark">
+                                        {{cliente.longitud }}
+                                    </span>
+                                 </td>
+                                 <td>
+                                    <span class="text-dark">
+                                        {{cliente.latitud }}
+                                    </span>
+                                 </td>
+                                <!-- SHOW INFO COLUMNA RUTAS -->
+                                <td>
+                                    <span class="text-dark">
+                                        {{cliente.rutaVendedor }}
+                                    </span>
+                                </td>
+                                <td>
+
+
+                                    <span class="text-dark">
+                                     {{cliente.rutaEntrega }}
+                                    </span>
+
+                                </td>
+                                <td>
+
+                                    <span class="text-dark">
+                                      {{cliente.rutaRecogida }}
+                                    </span>
+                                    <br>
+
+
+                                </td>
+                                <td>
+                                    <span class="text-dark">
+                                         {{cliente.rutaMerchandising }}
+                                    </span>
+                                </td>
+
 
                             </tr>
 

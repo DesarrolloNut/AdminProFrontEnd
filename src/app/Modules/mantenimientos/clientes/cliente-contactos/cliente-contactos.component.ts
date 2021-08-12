@@ -112,7 +112,7 @@ export class ClienteContactosComponent implements OnInit {
        }else{
         this.initFormArray();
        }
-    
+       this.cargando = false;
       }, error => {
         this.cargando = false;
         this.toastService.error("No se pudo obtener los contactos", "Error conexion al servidor");

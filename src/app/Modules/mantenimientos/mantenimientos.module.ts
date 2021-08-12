@@ -91,7 +91,7 @@ import { TomainventarioRutaListadoComponent } from './tomainventarioruta/tomainv
 import { ArticulosCategoriasListadoComponent } from './articulosCategorias/articulos-categorias-listado/articulos-categorias-listado.component';
 import { ArticulosCategoriasFormularioComponent } from './articulosCategorias/articulos-categorias-formulario/articulos-categorias-formulario.component';
 
-import { ClienteRutasComponent } from './clientes/cliente-rutas/cliente-rutas.component';
+ 
 import { ClienteVisitasComponent } from './clientes/cliente-visitas/cliente-visitas.component';
 import { ClienteFinanzasComponent } from './clientes/cliente-finanzas/cliente-finanzas.component';
 import { ClienteContactosComponent } from './clientes/cliente-contactos/cliente-contactos.component';
@@ -101,6 +101,8 @@ import { ClienteMapComponent } from './clientes/cliente-map/cliente-map.componen
 
 import { PlazosListadoComponent } from './plazos/plazos-listado/plazos-listado.component';
 import { PlazosFormularioComponent } from './plazos/plazos-formulario/plazos-formulario.component';
+import { ClienteComercialComponent } from './clientes/cliente-comercial/cliente-comercial.component';
+import { ClienteNegocioComponent } from './clientes/cliente-negocio/cliente-negocio.component';
 
 
 
@@ -109,7 +111,7 @@ import { PlazosFormularioComponent } from './plazos/plazos-formulario/plazos-for
     NgbdtabsBasicComponent,
     MantenimientosComponent, ComiteComponent,
     UsuarioListadoComponent, UsuarioFormularioComponent, ClientesListadoComponent,
-    ClientesFormularioComponent,ClienteRutasComponent,ClienteVisitasComponent,ClienteFinanzasComponent,
+    ClientesFormularioComponent,ClienteComercialComponent,ClienteNegocioComponent,ClienteVisitasComponent,ClienteFinanzasComponent,
     ClienteContactosComponent,ClienteDatosGeneralesComponent,ClienteMapComponent,MarcasListadoComponent, MarcasFormularioComponent,
     ModelosListadoComponent, ModelosFormularioComponent, DealersListadoComponent, DealersFormularioComponent,
     AlmacenesListadoComponent, AlmacenesFormularioComponent, VehiculoTiposListadoComponent, VehiculoTiposFormularioComponent,
