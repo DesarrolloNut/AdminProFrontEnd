@@ -123,7 +123,8 @@
                 <label for="id1">Zonas</label>
                 <ng-select bindLabel="nombre" bindValue="codigo" [items]="rutasPorTipo" [(ngModel)]="selectData.zonaId"
                     [loading]="loadingRutasPorTipo" [clearable]="false" id="id1" class="form-control  p-0"
-                    (change)="getClientesTomaInventario()" notFoundText="No resultados">
+                    (change)="getClientesTomaInventario(modelSelected.rutaId,selectData.zonaId)"
+                    notFoundText="No resultados">
                 </ng-select>
             </div>
 

@@ -44,8 +44,13 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6 text-center p-2" *ngIf="searching">
-                        <h3> <span><i class="fa fa-spinner fa-spin"></i> Buscando</span> </h3>
+                    <div class="col-md-4 text-center p-2" *ngIf="searching">
+                        <h6> <span><i class="fa fa-spinner fa-spin"></i> Buscando</span> </h6>
+                    </div>
+
+                    <div class="col-md-4 text-right">
+                        <a class="btn btn-light" href="assets/files/zip/BalanzaPesoSender.zip"><i
+                                class="fa fa-download"></i> Descargar App</a>
                     </div>
 
                 </div>
@@ -197,6 +202,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="row">
+
                     <div class="col text-right">
                         <button class="btn btn-light m-1" routerLink="../" type="button">
                             <i class="fas fa-times"></i> Cancelar

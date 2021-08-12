@@ -88,7 +88,8 @@ export class PesajeFormularioComponent implements OnInit {
       return;
     }
 
-    let valores = this.pesoBalanza.split(" ").filter(x => x.includes("KG") || x.includes("LB"))
+    let valores = this.pesoBalanza.split(" ")
+    // .filter(x => x.includes("KG") || x.includes("LB"))
 
     if (!valores || valores.length == 0) {
       this.pesoBalanza = "0.00 Lb"

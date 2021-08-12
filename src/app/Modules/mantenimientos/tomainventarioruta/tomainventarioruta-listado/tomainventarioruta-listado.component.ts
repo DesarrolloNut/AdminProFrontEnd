@@ -85,7 +85,7 @@ export class TomainventarioRutaListadoComponent implements OnInit {
   }
 
   configDualList() {
-    this.key = 'id';
+    this.key = 'clienteId';
     this.display = 'cliente';
     this.keepSorted = true;
   }
@@ -139,6 +139,25 @@ export class TomainventarioRutaListadoComponent implements OnInit {
     });
 
   }
+
+  openModal(content, model: TomaInventarioRuta) {
+
+    // this.selectData.zonaId =
+
+    this.modelSelected = model;
+
+    if (this.TipoRutaId == 3) {
+      this.IsRecogida = true;
+      this.getClientesTomaInventario(model.rutaId, this.selectData.zonaId);
+      this.getRutasByTipoRutaComboBox();
+
+    } else {
+      this.IsRecogida = true;
+      this.getClientebyRutaTipoId();
+    }
+    this.modalService.open(content, { size: 'xl', backdrop: "static", });
+  }
+
   //zona y ruta
   getClientesTomaInventario(ruta: number, zona: number) {
 
@@ -147,19 +166,26 @@ export class TomainventarioRutaListadoComponent implements OnInit {
     param.zonaId = zona
 
     this.loadingDualLits = true;
-
-    console.log(this.selectData)
+    console.log("source")
+    console.table({ "source": '', "ruta": ruta, "zona": zona })
 
     this.httpService.DoPostAny<TomaInventarioRuta>(DataApi.TomaInventarioRuta, "GetClientesTomaInventarioPendiente", param).subscribe(x => {
 
       if (x.ok) {
-        this.source = [];
-        let data = x.records;
-        for (let index = 0; index < data.length; index++) {
-          data[index].id = index + 1;
-          this.source.push(data[index]);
-        }
-        console.log("source", x.records);
+        // this.source = [];
+        // let data = x.records;
+        // for (let index = 0; index < data.length; index++) {
+        //   data[index].id = index + 1;
+        //   this.source.push(data[index]);
+        // }
+        // console.log("source", x.records);
+
+        this.source = x.records;
+        console.log("source")
+        console.table(this.source)
+        this.getClientesTomaInventarioSelecionados(ruta);
+
+
       } else {
         this.toastService.error(x.errores[0]);
         console.error(x.errores[0]);
@@ -178,16 +204,33 @@ export class TomainventarioRutaListadoComponent implements OnInit {
     let param = new TomaInventarioRuta();
     param.rutaId = rutaid
     this.loadingDualLits = true;
+
+    console.log("confirmed")
+    console.table({ "confirmed": '', "rutaid": rutaid })
+
     this.httpService.DoPostAny<TomaInventarioRuta>(DataApi.TomaInventarioRuta, "GetClientesTomaInventarioPendiente", param).subscribe(x => {
 
       if (x.ok) {
-        this.confirmed = [];
-        let data = x.records;
-        for (let index = 0; index < data.length; index++) {
-          data[index].id = index + 1;
-          this.confirmed.push(data[index]);
+        // this.confirmed = [];
+        // let data = x.records;
+        // for (let index = 0; index < data.length; index++) {
+        //   data[index].id = index + 1;
+        //   this.confirmed.push(data[index]);
+        // }
+
+        this.confirmed = x.records
+        console.log("barbaro")
+        console.table(this.confirmed)
+        // this.source = []
+        this.confirmed.forEach(x => this.source.push(x))
+
+        // console.log("confirmed")
+        // console.table(this.confirmed)
+
+        if (this.confirmed && this.confirmed.length > 0) {
+          this.selectData.diaId = x.records[0].diaId;
         }
-        this.selectData.diaId = x.records[0].diaId;
+
       } else {
         this.toastService.error(x.errores[0]);
         console.error(x.errores[0]);
@@ -201,24 +244,7 @@ export class TomainventarioRutaListadoComponent implements OnInit {
 
   }
 
-  openModal(content, model: TomaInventarioRuta) {
 
-    // this.selectData.zonaId =
-
-    this.modelSelected = model;
-
-    if (this.TipoRutaId == 3) {
-      this.IsRecogida = true;
-      this.getClientesTomaInventario(model.rutaId, this.selectData.zonaId);
-      this.getClientesTomaInventarioSelecionados(model.rutaId);
-      this.getRutasByTipoRutaComboBox();
-
-    } else {
-      this.IsRecogida = true;
-      this.getClientebyRutaTipoId();
-    }
-    this.modalService.open(content, { size: 'xl', backdrop: "static", });
-  }
 
   SaveChanges() {
     this.btnGuardarCargando = true;
@@ -229,7 +255,7 @@ export class TomainventarioRutaListadoComponent implements OnInit {
       "TipoRutaId": this.TipoRutaId,
       "ClientesJSON": JSON.stringify(
         this.confirmed.map((x) => {
-          return { "id": x.id, "cliente": x.cliente }
+          return { "id": x.clienteId, "cliente": x.cliente }
         })
       )
     }
