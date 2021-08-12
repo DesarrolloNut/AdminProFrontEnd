@@ -27,13 +27,14 @@ export class Cliente {
         this.subSectorID = 0
         this.limiteCredito = 0
         this.condicionPagoId = 0
+        this.condicionPago = ""
+        this.plazoId=0
+        this.plazo =""
         this.rutaId = 0
         this.listaPrecioId = 0
         this.sexo = ""
         this.longitud = ""
         this.latitud = ""
-        // this.contactos = new Array<ClienteContactos>();
-
     }
 
     
@@ -61,6 +62,9 @@ export class Cliente {
     subSectorID: number;
     limiteCredito: number;
     condicionPagoId: number;
+    condicionPago :string;
+    plazoId:number
+    plazo :string;
     rutaId: number;
     listaPrecioId: number;
     sexo: string;
@@ -104,7 +108,9 @@ export class ClienteViewModelCustomized {
         this.limiteCredito = 0
 
         this.condicionPagoId = 0
-        this.plazo =0
+        this.condicionPago = ""
+        this.plazoId=0
+        this.plazo =""
 
         this.rutaVendedorId =0;
         this.rutaVendedor ="";
@@ -156,7 +162,10 @@ export class ClienteViewModelCustomized {
     limiteCredito: number;
 
     condicionPagoId: number;
-    plazo:number;
+    condicionPago: string;
+
+    plazoId:number;
+    plazo:string;
 
     rutaVendedorId:number;
     rutaVendedor:string;

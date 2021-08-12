@@ -31,12 +31,9 @@ export class ClienteFinanzasComponent implements OnInit {
   loadingPlazos         = false;
  
   //LISTAS
-    TipoCondicionesPagos: ComboBox[];
+    CondicionesPagos: ComboBox[];
     Plazos: ComboBox[];
     DocumentosTipoAnexo: ComboBox[];
-    
-
-
  ///
  
  filesFromInput: any[] = [];
@@ -91,7 +88,7 @@ export class ClienteFinanzasComponent implements OnInit {
     this.FormFinanza = this.formBuilder.group({
       clienteId: [this.clientId],
       limiteCredito: [0, [Validators.required]],
-      tipoCondicionPagoId: [null, [Validators.required]],
+      condicionPagoId: [null, [Validators.required]],
       plazoId: [null, [Validators.required]],
     },
     );
@@ -101,7 +98,7 @@ export class ClienteFinanzasComponent implements OnInit {
 
 
   guardarOActualizarClienteFinanza(){
-     if(this.f.tipoCondicionPagoId.value==1){
+     if(this.f.condicionPagoId.value==1){
       this.f.plazoId.setValue(0)
      }
 
@@ -171,7 +168,7 @@ getNameTipoAnexo(item:any):string{
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          this.TipoCondicionesPagos = response.records;
+          this.CondicionesPagos = response.records;
         }
         this.loadingCondicionPagos = false;
       }, error => {

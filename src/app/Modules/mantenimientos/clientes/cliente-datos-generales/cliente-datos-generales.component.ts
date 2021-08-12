@@ -158,6 +158,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       frecuenciaVisitaId: [0, [Validators.required]],
       limiteCredito: [0, [Validators.required]],
       condicionPagoId: [0, [Validators.required]],
+      plazoId: [0, [Validators.required]],
       rutaId: [0, [Validators.required]],
       listaPrecioId: [0, [Validators.required]],
       longitud: [null, [Validators.required]],

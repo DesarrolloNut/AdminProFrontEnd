@@ -35,13 +35,20 @@
                         <thead>
                             <tr>
                                 <th></th>
+                                <th>Tipo Cliente</th>
+                                <th>ID</th>
                                 <th>Cliente</th>
                                 <th>Documento</th>
+                                <th>Condicion Pago</th>
+                                <th>Plazo</th>
+                                <th>Limite Credito</th>
+                                <th>Direccion</th>
+                                <th>Longitud</th>
+                                <th>Latitud</th>
                                 <th>Ruta Vendedor </th>
                                 <th>Ruta Entrega </th>
                                 <th>Ruta Recogida</th>
                                 <th>Ruta Merchandising</th>
-                                <!-- <th>Rol</th> -->
                             </tr>
                         </thead>
                         <tbody [hidden]="Cargando">
@@ -64,8 +71,15 @@
                                         <i class="fa fa-sm fa-hashtag"></i>
                                     </button> -->
                                 </td>
-
+                                <td>
+                                      <span class="text-dark">
+                                        {{cliente.clienteTipo}}
+                                       </span>
+                                </td>
                                 <!-- SHOW INFO COLUMNA CLIENTE -->
+                                <td>
+                                          <span class="badge badge-light text-info "> {{cliente.id}}</span><br>
+                                </td>
                                 <td>
                                     <div class="d-flex align-items-center">
 
@@ -80,22 +94,64 @@
                                             <small class="text-info"> <i class=" fa fa-hashtag"></i>
                                                 {{cliente.codigoReferencia }}
                                             </small>
-                                            <br>
-                                            <small class="text-dark">
-                                                <b>Tipo cliente :</b> {{cliente.clienteTipo }}
-                                            </small>
                                         </div>
                                     </div>
                                 </td>
                                 <!-- SHOW INFO COLUMNA DOCUMENTO -->
 
                                 <td>
-                                    <small class="text-dark">
-                                        <b>Tipo doc.:</b> {{cliente.documentoTipo }}
-                                    </small>
-                                    <br>
-                                    <span> <i class="fa fa-id-card text-muted"></i> {{cliente.documento}}</span>
+                                    <span  style="color: #8d8d8d;" class="font-weight-bold">{{cliente.documentoTipo}}
+                                    </span>
+                                    <span> {{cliente.documento}}</span>
                                 </td>
+
+
+
+                                
+                                  <!-- SHOW INFO COLUMNA Condicion Pago -->
+                                  <td>
+                                    <span class="text-dark">
+                                        {{cliente.condicionPago }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="text-dark">
+                                          {{cliente.plazo }} <span *ngIf="cliente.plazo!=='' && cliente.plazo!==null">dias</span>
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="text-dark">
+                                          {{cliente.limiteCredito | currency }}
+                                    </span>
+                                </td>
+
+
+                                     <!-- SHOW INFO COLUMNA DIRECCION -->
+                                <td>
+                                    <span class="font-weight-bold">
+                                         {{cliente.ciudad}},  
+                                         {{cliente.provincia}},
+                                         {{cliente.subSector}}
+                                        </span>
+                                    <p class="font-bold mb-0">
+                                        <span class="small d-block text-lowercase">{{cliente.calle | slice: 0:60}}</span>
+                                    </p>
+                                 </td>
+
+
+                              <!-- SHOW INFO COLUMNAS COORDENADAS -->
+                                <td>
+                                    <span class="text-dark">
+                                        {{cliente.longitud }}
+                                    </span>
+                                 </td>
+                                 <td>
+                                    <span class="text-dark">
+                                        {{cliente.latitud }}
+                                    </span>
+                                 </td>
                                 <!-- SHOW INFO COLUMNA RUTAS -->
                                 <td>
                                     <span class="text-dark">

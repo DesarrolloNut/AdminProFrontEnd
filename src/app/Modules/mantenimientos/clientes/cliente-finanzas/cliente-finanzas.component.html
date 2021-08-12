@@ -18,19 +18,19 @@
         <form class="form-row m-t-40" [formGroup]="FormFinanza" >
 
           <div class="form-group col-md-6">
-            <label for="tipoCondicionPagoId">Tipo condición de pago</label>
-            <ng-select bindLabel="nombre" bindValue="codigo" [items]="TipoCondicionesPagos"
+            <label for="condicionPagoId">Condición de pago</label>
+            <ng-select bindLabel="nombre" bindValue="codigo" [items]="CondicionesPagos"
              placeholder="seleccione un tipo de condición"
               [loading]="loadingCondicionPagos" [clearable]="false"
-              [ngClass]="{'form-control border-danger p-0' : submitted && f.tipoCondicionPagoId.errors }"
-              notFoundText="No resultados" formControlName="tipoCondicionPagoId">
+              [ngClass]="{'form-control border-danger p-0' : submitted && f.condicionPagoId.errors }"
+              notFoundText="No resultados" formControlName="condicionPagoId">
             </ng-select>
-            <div *ngIf="submitted && f.tipoCondicionPagoId.errors" class="text-danger small">
-              <div *ngIf="f.tipoCondicionPagoId.errors.required  ">El campo es
+            <div *ngIf="submitted && f.condicionPagoId.errors" class="text-danger small">
+              <div *ngIf="f.condicionPagoId.errors.required  ">El campo es
                 obligatorio</div>
             </div>
           </div>
-          <div class="form-group col-md-6" *ngIf="f.tipoCondicionPagoId.value==2">
+          <div class="form-group col-md-6" *ngIf="f.condicionPagoId.value==2">
             <label for="plazoId">Plazo</label>
             <ng-select bindLabel="nombre" bindValue="codigo" [items]="Plazos"
               [loading]="loadingPlazos" [clearable]="false"
@@ -43,7 +43,7 @@
             </div>
           </div>
 
-          <div class="form-group col-md-6" *ngIf="f.tipoCondicionPagoId.value==2">
+          <div class="form-group col-md-6" *ngIf="f.condicionPagoId.value==2">
             <label for="limiteCredito"><i class="fa fa-hashtag"></i> Límite
               Crédito</label>
             <input formControlName="limiteCredito" type="text" prefix="$ " mask="separator"
@@ -55,7 +55,7 @@
             </div>
           </div>
              <!-- Anexos de cliente -->
-             <div class="col-12 container_anexos"  *ngIf="f.tipoCondicionPagoId.value==2">
+             <div class="col-12 container_anexos"  *ngIf="f.condicionPagoId.value==2">
 
               <div class="row">
 

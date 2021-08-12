@@ -8,7 +8,11 @@ agm-map{
     width: 50%;
     margin-left: 20px;
     border-radius: 13px;
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 }  
+#ngx .ng-valid, .ng-touched.ng-valid {
+    border-color: gainsboro !important;
+}
 // .agm_map_style{
 //     border: 3px;
 //     padding: 10px;
