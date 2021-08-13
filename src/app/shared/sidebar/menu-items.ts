@@ -986,6 +986,19 @@ export const ROUTES: RouteInfo[] = [
             submenu: [
             ],
           },
+
+          {
+            path: '/reportes/inventario/inventario-activo',
+            label: '',
+            labelClass: '',
+            title: 'Inventario activo',
+            icon: '',
+            class: '',
+            extralink: false,
+            permisos: ["reportes_inventario_existencia"],
+            submenu: [
+            ],
+          },
         ],
       },
 
