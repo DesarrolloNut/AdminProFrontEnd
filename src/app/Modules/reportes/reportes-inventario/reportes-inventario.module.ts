@@ -5,10 +5,11 @@ import { ReportesInventarioRoutingModule } from './reportes-inventario-routing.m
 import { ReportesInventarioComponent } from './reportes-inventario.component';
 import { SharedModule } from '../../shared/shared.module';
 import { ReporteExistenciaComponent } from './reporte-existencia/reporte-existencia.component';
+import { ReporteInventarioEntregaPedidosComponent } from './reporte-inventario-entrega-pedidos/reporte-inventario-entrega-pedidos.component';
 
 
 @NgModule({
-  declarations: [ReportesInventarioComponent, ReporteExistenciaComponent],
+  declarations: [ReportesInventarioComponent, ReporteExistenciaComponent, ReporteInventarioEntregaPedidosComponent],
   imports: [
     CommonModule,
     SharedModule,

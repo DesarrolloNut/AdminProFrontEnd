@@ -1,0 +1,132 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+
+                    <div class="col-md-12 p-2">
+
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label> <i class="fa fa-calendar"></i> Fecha Factura</label>
+                                <ejs-datepicker [(ngModel)]="fechaFacturaFiltro" (change)="getData()"
+                                    [showClearButton]="false" [format]="'yyyy-MM-dd'">
+                                </ejs-datepicker>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="example-email">Estado</label>
+                                <ng-select [items]="estadosPedidos" bindLabel="nombre" bindValue="codigo"
+                                    (change)="getData()" [(ngModel)]="estadoIdPedidoFiltro"
+                                    [loading]="loadingestadosPedidos" [clearable]="false" notFoundText="No resultados">
+                                </ng-select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="example-email">Ruta</label>
+                                <ng-select [items]="rutas" bindLabel="nombre" bindValue="codigo" (change)="getData()"
+                                    [(ngModel)]="rutaEntregaId" [loading]="loadingRutas" [clearable]="false"
+                                    notFoundText="No resultados">
+                                </ng-select>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <label for="search" class="input-group-text bg-white">
+                                            <span class="bg-white" style="border-right:none">
+                                                <i class="ti-search"></i>
+                                            </span>
+                                        </label>
+                                    </div>
+                                    <input [(ngModel)]="Search" (keyup)="getData()" type="text"
+                                        style="border-left:none !important;" class="form-control" placeholder="Buscar">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 no-wrap v-middle">
+                        <thead>
+                            <tr>
+                                <th>Factura</th>
+                                <th>Estado</th>
+                                <th>Cliente</th>
+                                <th>Dirección</th>
+                                <th>Vendedor</th>
+                                <th>Zona</th>
+                                <th>Total Factura</th>
+                                <th>Fecha Creación</th>
+                                <th>Fecha Entrega</th>
+                            </tr>
+                        </thead>
+                        <tbody [hidden]="Cargando">
+
+                            <tr *ngFor="let item of data">
+                                <td>
+                                    <span class="small"> {{item.facturaCodigoReferencia}}</span>
+                                </td>
+                                <td>
+                                    <span class="small"> {{item.estado}} </span>
+                                </td>
+                                <td>
+                                    <span class="small"> {{item.cliente}} | {{item.clienteCodigoReferencia}}</span>
+                                </td>
+                                <td>
+                                    <span class="small"> {{item.direccion}} </span>
+                                </td>
+                                <td>
+                                    <span class="small"> {{item.vendedor}} </span>
+                                </td>
+                                <td>
+                                    <span class="small"> {{item.zona}} </span>
+                                </td>
+
+                                <td>
+                                    <span> {{item.totalFactura | number}}</span>
+                                </td>
+
+                                <td>
+                                    <span> {{item.facturaFechaCreacion | date: 'yyyy-MM-dd'}}</span>
+                                </td>
+                                <td>
+                                    <span> {{item.facturaFechaEntrega | date: 'yyyy-MM-dd'}}</span>
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+
+
+                <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+
+                <div class="row ">
+                    <div class="col-md-8 col-xs-12 ">
+                        <ngb-pagination [collectionSize]="paginaTotalRecords" [(page)]="paginaNumeroActual"
+                            [pageSize]="paginaSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="getData()">
+                        </ngb-pagination>
+                    </div>
+
+                    <div class="col-md-4 text-right d-none d-md-block  ">
+                        <select class="form-control d-block" name="paginaSize" [(ngModel)]="paginaSize"
+                            (change)="getData()">
+                            <option [ngValue]="5">5 registro por pagina</option>
+                            <option [ngValue]="10">10 registro por pagina</option>
+                            <option [ngValue]="15">15 registro por pagina</option>
+                        </select>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -28,7 +28,7 @@ export class RolesListadoComponent implements OnInit {
   data: Roles[] = [] //tu modelo
   RolID: number = 0;
   loadingRolesSeleccionados: boolean;
-  guardandoArticulos: boolean;
+  guardandoPermisos: boolean;
 
 
   loadingPermisos: boolean;
@@ -175,7 +175,7 @@ export class RolesListadoComponent implements OnInit {
   guardarPermisosSeleccionados() {
 
     let param = { "RolID": this.RolID, "Permisos": this.confirmed.map(x => x.id) }
-    this.loadingPermisos = true;
+    this.guardandoPermisos = true;
     this.httpService.DoPostAny<Permisos>(DataApi.Rol,
       "InsertRolPermisoEnrroll", param).subscribe(response => {
 
@@ -185,9 +185,9 @@ export class RolesListadoComponent implements OnInit {
           this.modalService.dismissAll();
           this.toastService.success("Realizado", "OK");
         }
-        this.loadingPermisos = false;
+        this.guardandoPermisos = false;
       }, error => {
-        this.loadingPermisos = false;
+        this.guardandoPermisos = false;
         this.toastService.error("No se pudo guardar", "Error conexion al servidor");
       });
 

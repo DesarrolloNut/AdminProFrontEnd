@@ -974,6 +974,18 @@ export const ROUTES: RouteInfo[] = [
             submenu: [
             ],
           },
+          {
+            path: '/reportes/inventario/entrega-pedidos',
+            label: '',
+            labelClass: '',
+            title: 'Entrega Pedidos',
+            icon: '',
+            class: '',
+            extralink: false,
+            permisos: ["reportes_inventario_entrega_pedidos"],
+            submenu: [
+            ],
+          },
         ],
       },
 

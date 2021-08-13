@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router'; 
+import { Routes, RouterModule } from '@angular/router';
 import { ReporteExistenciaComponent } from './reporte-existencia/reporte-existencia.component';
+import { ReporteInventarioEntregaPedidosComponent } from './reporte-inventario-entrega-pedidos/reporte-inventario-entrega-pedidos.component';
 import { ReportesInventarioComponent } from './reportes-inventario.component';
 
 
@@ -20,6 +21,19 @@ const routes: Routes = [
           ]
         }
       },
+
+
+      {
+        path: 'entrega-pedidos', component: ReporteInventarioEntregaPedidosComponent, data: {
+          title: 'Reporte de entregas de pedidos',
+          urls: [
+            { title: 'Reportes' },
+            { title: 'Reporte de inventario' },
+            { title: 'Entregas de pedidos' },
+          ]
+        }
+      },
+      
 
     ]
 

@@ -34,7 +34,7 @@
                                 <th></th>
                                 <th>Nombre</th>
                                 <th>Descripción</th>
-                                <!-- <th>Estado</th> -->
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody [hidden]="Cargando">
@@ -103,13 +103,13 @@
     </div>
     <div class="modal-body">
         <div class="row">
-            <div class="col-12" [hidden]="loadingArticulosSeleccionados">
+            <div class="col-12" [hidden]="loadingRolesSeleccionados">
                 <dual-list [sort]="keepSorted" [source]="source" [key]="key" [display]="display" [filter]="filter"
                     [(destination)]="confirmed" height="265px" [format]="format" [disabled]="disabled"></dual-list>
             </div>
 
             <div class="col-12">
-                <app-loading-listado [hidden]="!loadingArticulosSeleccionados"></app-loading-listado>
+                <app-loading-listado [hidden]="!loadingRolesSeleccionados"></app-loading-listado>
             </div>
         </div>
     </div>
