@@ -601,7 +601,7 @@ export class ClientesFormularioComponent implements OnInit {
         this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
 
         setTimeout(() => {
-          this.getTipoCondicionPago();
+          this.getRutas();
         }, 1000);
 
       });
