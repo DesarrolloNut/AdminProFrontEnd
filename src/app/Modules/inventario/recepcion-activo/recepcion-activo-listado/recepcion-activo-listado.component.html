@@ -1,0 +1,180 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row mb-2">
+          <div class="col-md-12 align-middle">
+            <h4 class="card-title">Listado de Recepción Activo</h4>
+          </div>
+
+          <div class="col-md-6 ">
+            <label for="selectrutas"> <i class="fa fa-id-card"></i> Sucursales</label>
+            <ng-select bindLabel="nombre" bindValue="codigo" [items]="Sucursales" [(ngModel)]="SucursalId"
+              [loading]="loadingSucursal" [clearable]="false" id="seleciona una sucursal" (change)="getData()"
+              class="form-control  p-0" notFoundText="No resultados">
+            </ng-select>
+          </div>
+
+          <div class="col-md-6 align-self-end">
+
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <label for="search" class="input-group-text bg-white">
+                  <span class="bg-white" style="border-right:none">
+                    <i class="ti-search"></i>
+                  </span>
+                </label>
+              </div>
+              <input [(ngModel)]="Search" (keyup)="getData()" type="text" style="border-left:none !important;"
+                class="form-control" placeholder="Buscar">
+            </div>
+          </div>
+        </div>
+
+
+
+        <div class="table-responsive">
+          <table class="table table-hover mb-0 no-wrap v-middle">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Usuario</th>
+                <th>Recogidos</th>
+                <th>Sucursal</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody [hidden]="Cargando">
+
+              <tr *ngFor="let item of data">
+                <td>
+                  <span class="badge badge-light text-info ">{{item.usuarioId}}</span>
+                </td>
+                <td>
+                  <h5 class="font-weight-bold"> {{item.usuario}} | {{item.documento}}</h5>
+                  <span class="small"> Celular: {{item.celular | mask:'(000) 000-0000'}}</span>
+                  <!-- <span class="small d-block">Estado: <span class="badge badge-secondary font-weight-bold">{{item.estado}} </span></span> -->
+                </td>
+                <td>
+                  <span class="font-weight-bold"> {{item.recogidos | number:'1.2-2'}}</span>
+                </td>
+                <td>
+                  <span> {{item.sucursal}}</span>
+                </td>
+                <td>
+                  <!-- <button class="btn btn-sm btn-info mx-2">
+                    <i class="fa fa-sm fa-edit"></i>
+                  </button> -->
+                  <button class="btn btn-sm btn-secondary mx-2" (click)="openModal(modalDetalle,item)">
+                    <i class="fa fa-sm fa-list"></i>
+                  </button>
+                </td>
+
+              </tr>
+
+            </tbody>
+          </table>
+
+        </div>
+
+
+
+        <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+
+        <div class="row ">
+          <div class="col-md-8 col-xs-12 ">
+            <ngb-pagination [collectionSize]="paginaTotalRecords" [(page)]="paginaNumeroActual" [pageSize]="paginaSize"
+              [maxSize]="5" [boundaryLinks]="true" (pageChange)="getData()">
+            </ngb-pagination>
+          </div>
+
+          <div class="col-md-4 text-right d-none d-md-block  ">
+            <select class="form-control d-block" name="paginaSize" [(ngModel)]="paginaSize" (change)="getData()">
+              <option [ngValue]="5">5 registro por pagina</option>
+              <option [ngValue]="10">10 registro por pagina</option>
+              <option [ngValue]="15">15 registro por pagina</option>
+            </select>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<ng-template #modalDetalle let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Recepción Detalle</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-9">
+        <h3 class="text-info"> <i class="fa fa-user"></i> Usuario: {{dataSelect.usuario}}</h3>
+        <h5> <i class="fa fa-id-card"></i> Documento: {{dataSelect.documento}}</h5>
+        <!-- <h5> <i class="fa fa-calendar"></i> Fecha: {{devolucionSelected.fechaCreacion | date:'medium' }}</h5> -->
+        <h5> <i class="fa fa-map-marker"></i> Sucursal: {{dataSelect.sucursal}}</h5>
+        <h5> <i class="fa fa-phone"></i> Celular: {{dataSelect.celular}}</h5>
+      </div>
+      <div class="col-3 text-right">
+        <h2 class="font-weight-bold"> Total: {{dataSelect.recogidos | number:'1.2-2'}}</h2>
+      </div>
+      <div class="col-12 py-3 h-50" [hidden]="loadingDataDetalle">
+        <div class="table-responsive">
+          <table class="table table-sm table-hover">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Cliente </th>
+                <th>Cantidad</th>
+              </tr>
+            </thead>
+            <tbody [hidden]="loadingDataDetalle">
+
+              <tr *ngFor="let item of dataDdetalle">
+                <td>
+                  <span class="badge badge-light text-info ">{{item.clienteId}}</span>
+                </td>
+
+                <td>
+                  <h5 class="font-weight-bold"> {{item.cliente}} | {{item.documento}}</h5>
+                  <span class="small"> Dirección: {{item.calle}}</span>
+                  <!-- <span class="small d-block">Estado: <span class="badge badge-secondary font-weight-bold">{{item.estado}} </span></span> -->
+                </td>
+
+                <td>
+                  <span class="font-weight-bold"> {{item.cantidad | number:'1.2-2'}}</span>
+                </td>
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- <div class="col-12 text-right">
+          <hr>
+          <h4>Subtotal: $ {{devolucionSelected.subtotal | number:'1.2-2' }}</h4>
+          <h4>Descuento: $ {{devolucionSelected.descuento | number:'1.2-2' }}</h4>
+          <h4>Impuesto: $ {{devolucionSelected.impuesto | number:'1.2-2' }}</h4>
+          <h4 class="font-weight-bold">Total Neto: $ {{devolucionSelected.total | number:'1.2-2' }}</h4>
+      </div> -->
+      <div class="col-12">
+        <app-loading-listado [hidden]="!loadingDataDetalle"></app-loading-listado>
+      </div>
+    </div>
+
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cancelar</button>
+    <button type="button" class="btn btn-info m-1" *ngIf="!btnEnviarCargando" (click)="SendAutorizar()">Enviar a SAP</button>
+    <!-- boton cargando -->
+    <button *ngIf="btnEnviarCargando" disabled class="btn btn-info m-1" type="button">
+      <span class="spinner-border spinner-border-sm"></span> Enviando
+    </button>
+  </div>
+</ng-template>
