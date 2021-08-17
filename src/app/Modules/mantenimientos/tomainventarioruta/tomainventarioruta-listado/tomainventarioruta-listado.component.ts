@@ -164,10 +164,12 @@ export class TomainventarioRutaListadoComponent implements OnInit {
     let param = new TomaInventarioRuta();
     param.rutaId = ruta
     param.zonaId = zona
+    param.tipoRutaId = this.TipoRutaId;
+    param.diaId = this.selectData.diaId;
 
     this.loadingDualLits = true;
-    console.log("source")
-    console.table({ "source": '', "ruta": ruta, "zona": zona })
+    // console.log("source")
+    // console.table({ "source": '', "ruta": ruta, "zona": zona })
 
     this.httpService.DoPostAny<TomaInventarioRuta>(DataApi.TomaInventarioRuta, "GetClientesTomaInventarioPendiente", param).subscribe(x => {
 

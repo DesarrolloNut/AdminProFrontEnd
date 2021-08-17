@@ -25,6 +25,7 @@ export class TomaInventarioRuta {
     this.zona = ""
     this.rutaId = 0
     this.diaId = 0
+    this.tipoRutaId = 0
 
 
   }
@@ -53,4 +54,5 @@ export class TomaInventarioRuta {
   zona: string;
   rutaId: number;
   diaId: number;
+  tipoRutaId: number;
 }
