@@ -198,6 +198,17 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ['inventario_devoluciones'],
       },
+      {
+        path: '/inventario/recepcionactivo',
+        title: 'Recepción Activo',
+        label: '',
+        icon: '',
+        class: '',
+        labelClass: '',
+        extralink: false,
+        submenu: [],
+        permisos: ['inventario_recepcionactivo'],
+      },
       // {
       //   path: '/inventario/autorizaciondevoluciones',
       //   title: 'Autorizacion Devoluciones',

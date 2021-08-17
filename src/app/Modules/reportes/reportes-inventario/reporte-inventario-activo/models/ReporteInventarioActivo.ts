@@ -9,8 +9,9 @@ export class ReporteInventarioActivo{
       this.devueltos = 0
       this.disponible = 0
       this.balance = 0
+
   }
-  
+
   codigo: string;
   cliente: string;
   direccion: string;
