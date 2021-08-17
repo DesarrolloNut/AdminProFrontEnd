@@ -3,4 +3,5 @@ export class ComboBox {
     nombre: string;
     grupo: string
     grupoID: string;
+    disabled?:boolean;
 }

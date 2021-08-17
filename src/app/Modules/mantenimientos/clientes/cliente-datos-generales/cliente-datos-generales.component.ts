@@ -51,17 +51,18 @@ export class ClienteDatosGeneralesComponent implements OnInit {
   submitted          = false;
   loadingListaPrecio = false;
   loadingTipoCliente = false;
-
+  loadingTipoComprobantes = false;
 
   //LISTAS
-  ciudades    : ComboBox[];
-  sectores    : ComboBox[];
-  subSectores : ComboBox[];
-  provincias  : ComboBox[];
-  documentos  : ComboBox[];
-  ListaPrecio : any[];
-  TipoCliente : any[];
-  estados     : ComboBox[]
+  ciudades               : ComboBox[];
+  sectores               : ComboBox[];
+  subSectores            : ComboBox[];
+  provincias             : ComboBox[];
+  documentos             : ComboBox[];
+  ListaPrecio            : any[];
+  TipoCliente            : any[];
+  estados                : ComboBox[]
+  tiposComprobantes      : ComboBox[]
 
   //OBJETOS Y DEMAS
   TipoSexo: any[] = [{ codigo: 'H', nombre: 'Hombre' }, { codigo: 'M', nombre: 'Mujer' }];
@@ -154,7 +155,9 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       ciudadID: [0, Validators.required],
       sectorID: [0, Validators.required],
       subSectorID: [0, Validators.required],
-      
+
+      tipoComprobante: [null, [Validators.required]],
+
       frecuenciaVisitaId: [0, [Validators.required]],
       limiteCredito: [0, [Validators.required]],
       condicionPagoId: [0, [Validators.required]],
@@ -177,6 +180,10 @@ export class ClienteDatosGeneralesComponent implements OnInit {
   guardarCliente() {
 
     let metodo: string = this.actualizando ? "UpdateCliente" : "CrearCliente";
+    let valueBool = this.f.estadoID.value?1:0;
+
+    this.f.estadoID.setValue(valueBool)
+
     this.btnGuardarCargando = true;
 
     if(this.f.documentoTipoID.value==2){
@@ -185,23 +192,19 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       this.f.fechaNacimiento.setValue(new Date());
       this.f.sexo.setValue('');
     }
-    console.log(this.FormGenerales)
+   // console.log(this.FormGenerales)
     let param = { "cliente": this.FormGenerales.value }
-    console.log( this.FormGenerales.value )
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
       metodo, this.FormGenerales.value).subscribe(response => {
-        if(!this.actualizando){
-          this.clientId=response.records[0].id;
-        }
-
+    
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
           this.btnGuardarCargando = false;
         } else {
-     
           this.scrollToTop();
           this.toastService.success("Realizado", "OK");
           if(!this.actualizando){
+            this.clientId=response.records[0].id;
             this.onClienteCreado(this.clientId);
           }
           this.router.navigateByUrl('/mantenimientos/cliente/'+this.clientId);
@@ -239,6 +242,8 @@ export class ClienteDatosGeneralesComponent implements OnInit {
             this.getCiudades();
             this.getSectores();
             this.getSubSectores();
+            this.getTipoComprobante();
+
           } else {
             this.toastService.warning("Cliente no encontrado");
             this.router.navigateByUrl('/mantenimientos/cliente');
@@ -296,6 +301,33 @@ getProvincias() {
 
     });
 }
+
+getTipoComprobante() {
+  this.loadingTipoComprobantes = true;
+  this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+    "GetTipoComprobante", null).subscribe(response => {
+
+      if (!response.ok) {
+        this.toastService.error(response.errores[0]);
+      } else {
+         console.log(this.f.documentoTipoID.value)
+        if(this.f.documentoTipoID.value==1){
+         response.records.filter(x=>x.codigo==1).map(d=>{d.disabled=true;})
+        }
+        this.tiposComprobantes = response.records;
+      }
+      this.loadingTipoComprobantes = false;
+    }, error => {
+      this.loadingTipoComprobantes = false;
+      this.toastService.error("No se pudo obtener los tipos de comprobantes", "Error conexion al servidor");
+
+      setTimeout(() => {
+        this.getTipoComprobante()
+      }, 1000);
+
+    });
+}
+
 getSectores(event?:ComboBox) {
   this.searchLocalidad= event?.nombre
 
@@ -333,6 +365,7 @@ getSubSectores() {
         this.toastService.error(response.errores[0]);
       } else {
         this.subSectores = response.records;
+      
       }
       this.loadingSubSectores = false;
     }, error => {
@@ -521,8 +554,10 @@ onTipoDocumentoChange(tipo:ComboBox) {
   this.f.apellidos.setValue(null);
   this.buscarClienteByRncOCedula(this.f.documento.value,tipo.codigo);
   this.clearOrputValidatosSomeField();
-  console.log(this.f.documento.value)
+
+  this.getTipoComprobante();  
 }
+
 
 clearOrputValidatosSomeField(){
 

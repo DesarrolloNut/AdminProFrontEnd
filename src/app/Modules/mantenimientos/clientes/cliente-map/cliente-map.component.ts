@@ -98,7 +98,6 @@ export class ClienteMapComponent implements OnInit {
         this.latitud = position.coords.latitude;
         this.longitud = position.coords.longitude;
         this.zoom = 15;
-        console.log(this.latitud, this.longitud);
       });
     }
   }
@@ -130,12 +129,19 @@ export class ClienteMapComponent implements OnInit {
       draggable: true
     });
     
-    console.log($event)
     this.markerOne.emit($event.coords)
   }
   
-  markerDragEnd(m: marker, $event: MouseEvent) {
-    console.log('dragEnd', m, $event);
+  markerDragEnd(m: marker, $event) {
+    this.markers =[];
+    this.markers.push({
+      lat: $event.coords.lat,
+      lng: $event.coords.lng,
+      label:'Cliente',
+      draggable: true
+    });
+    
+    this.markerOne.emit($event.coords)
   }
 }
 interface marker {
