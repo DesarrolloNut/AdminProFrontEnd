@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { DevolucionesListadoComponent } from './devoluciones/devoluciones-listado/devoluciones-listado.component';
 import { InventarioComponent } from './inventario.component';
+import { RecepcionActivoListadoComponent } from './recepcion-activo/recepcion-activo-listado/recepcion-activo-listado.component';
 
 
 const routes: Routes = [  {
@@ -13,6 +14,15 @@ const routes: Routes = [  {
         urls: [
           { title: 'Inventario' },
           { title: 'Devoluciones' },
+        ]
+      }
+    },
+    {
+      path: 'recepcionactivo', component: RecepcionActivoListadoComponent, data: {
+        title: 'Recepción Activo',
+        urls: [
+          { title: 'Inventario' },
+          { title: 'Recepción Activo' },
         ]
       }
     },
