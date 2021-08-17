@@ -14,5 +14,6 @@ export class ArticuloPesaje {
     fechaVencimiento: Date
     pesoBruto: number
     pesoNeto: number
+    pesoBalanza: number
     detalleJSON: string
 }

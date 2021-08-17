@@ -38,8 +38,14 @@ export class PesajeFormularioComponent implements OnInit {
   fechaVencimiento: Date;
   btnGuardarCargando: boolean;
 
-  pesoBalanza: string = "0.00 Lb";
+  pesoBalanza: string = "0.00 KG";
+  readonly PESO_BALANZA_DEFAULT_VALUE: string = "0.00 KG";
+  readonly KILOGRAMO_A_LIBRA: number = 2.20462;
+
   pesoBalanzaUltimaFecha: Date = new Date();
+  pesoBalanzaLBNumber: number = 0;
+
+  random: number;
 
   constructor(
     private toastService: ToastrService,
@@ -49,11 +55,42 @@ export class PesajeFormularioComponent implements OnInit {
     private renderer: Renderer2) { }
 
   ngOnInit(): void {
+
     this.getHoraActual()
     for (let i = 1; i <= 100; i++) {
       this.cantidades.push(i)
     }
     this.getAlmacenes()
+    this.subscribeSignalR();
+
+    // this.empezarAmbientePrueba();
+
+  }
+
+
+  empezarAmbientePrueba() {
+
+    setInterval(() => {
+      this.pesoBalanza = this.getRandomInt(1, 1000) + 'KGZ';
+      this.pesoBalanzaUltimaFecha = new Date();
+
+      this.formatStringFromBalanza();
+      this.getKilogramosNumberFromPesoBalanza();
+      this.calcularTotales();
+    }, 3000);
+
+  }
+
+
+  //prueba
+  getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return (Math.floor(Math.random() * (max - min + 1)) + min)
+  }
+
+
+  subscribeSignalR() {
 
     this.signalRService.startConnection(BalanzaPesoGrupoSignalREnum.Pantalla_Pesaje);
 
@@ -62,29 +99,18 @@ export class PesajeFormularioComponent implements OnInit {
       this.pesoBalanza = peso;
       this.pesoBalanzaUltimaFecha = new Date();
 
-      console.log(peso)
       this.formatStringFromBalanza();
+      this.getKilogramosNumberFromPesoBalanza();
+      this.calcularTotales();
 
     })
-
 
   }
 
   formatStringFromBalanza() {
 
-    // this.pesoBalanza = `5LB 
-    //      765LB 
-    //      765LB 
-    //      765LB 
-    //      765LB 
-    //      765LB 
-    //      765LB 
-    //      765LB 
-    //      765LB 
-    //      765L`
-
     if (!this.pesoBalanza) {
-      this.pesoBalanza = "0.00 Lb"
+      this.pesoBalanza = this.PESO_BALANZA_DEFAULT_VALUE
       return;
     }
 
@@ -92,11 +118,11 @@ export class PesajeFormularioComponent implements OnInit {
     // .filter(x => x.includes("KG") || x.includes("LB"))
 
     if (!valores || valores.length == 0) {
-      this.pesoBalanza = "0.00 Lb"
+      this.pesoBalanza = this.PESO_BALANZA_DEFAULT_VALUE
       return;
     }
 
-    console.table(valores)
+    // console.table(valores)
     this.pesoBalanza = valores //filtro los que contengan libraje o kilogramo
       .reduce(//selecciono el de mayor length
         function (a, b) {
@@ -125,6 +151,7 @@ export class PesajeFormularioComponent implements OnInit {
       articuloID: this.articulo.id,
       pesoBruto: this.pesoBruto,
       pesoNeto: this.pesoNeto,
+      pesoBalanza: this.pesoBalanzaLBNumber,
       fechaVencimiento: this.fechaVencimiento,
       detalleJSON: JSON.stringify(this.articulosExtrasViewRender),
     };
@@ -150,18 +177,55 @@ export class PesajeFormularioComponent implements OnInit {
       });
   }
 
+  getKilogramosNumberFromPesoBalanza() {
+
+    this.pesoBalanzaLBNumber = 0
+
+    if (this.pesoBalanza) {
+
+      let indexKg = this.pesoBalanza.toLowerCase().indexOf("k")
+
+      if (indexKg > 0) {
+
+        let kilogramos = this.pesoBalanza.substring(0, indexKg)
+
+        // console.log("index", indexKg)
+        // console.log("kilogramos", kilogramos)
+        // console.log("kilogramosNum", Number(kilogramos))
+
+        this.pesoBalanzaLBNumber = Number(kilogramos) * this.KILOGRAMO_A_LIBRA;
+
+        // console.log("pesoBalanzaLBNumber", this.pesoBalanzaLBNumber)
+
+
+      }
+
+
+    }
+
+  }
+
+
+
 
   calcularTotales() {
     this.pesoBruto = 0;
+
     this.articulosExtrasViewRender.forEach(a => {
       if (a.cantidadSeleccionada && a.pesoSeleccionado) {
         this.pesoBruto += a.cantidadSeleccionada * (a.pesoSeleccionado.valor * a.pesoSeleccionado.medidaValor)
       }
     })
 
-    this.pesoBruto += this.pesoNeto;
+    this.pesoNeto = this.pesoBalanzaLBNumber - this.pesoBruto;
 
   }
+
+
+
+
+
+
 
   onSearchChange() {
 
@@ -258,7 +322,6 @@ export class PesajeFormularioComponent implements OnInit {
       }
 
     })
-    console.log(this.articulosExtrasViewRender)
   }
 
 

@@ -44,8 +44,8 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4 text-center p-2" *ngIf="searching">
-                        <h6> <span><i class="fa fa-spinner fa-spin"></i> Buscando</span> </h6>
+                    <div class="col-md-4 text-center p-2">
+                        <h6 *ngIf="searching"> <span><i class="fa fa-spinner fa-spin"></i> Buscando</span> </h6>
                     </div>
 
                     <div class="col-md-4 text-right">
@@ -157,10 +157,13 @@
                 <div class="d-flex no-block align-items-center">
                     <div><span class="text-danger display-6"><i class="ti-pie-chart"></i></span></div>
                     <div class="ml-auto text-right">
-                        <h1 class="font-weight-bold">{{pesoBalanza}}</h1>
+                        <h1 class="font-weight-bold"> {{pesoBalanzaLBNumber | number}} LB</h1>
                         <h2 class="text-danger mb-1">Peso Balanza</h2>
                         <span *ngIf="pesoBalanzaUltimaFecha" class="small "><i class="fa fa-clock"></i>
                             {{pesoBalanzaUltimaFecha | date:'hh:mm:ss a'}}
+                        </span>
+                        <span *ngIf="pesoBalanza" class="small">
+                            | {{pesoBalanza }}
                         </span>
                     </div>
                 </div>
@@ -174,8 +177,8 @@
                 <div class="d-flex no-block align-items-center">
                     <div><span class="text-info display-6"><i class="ti-pie-chart"></i></span></div>
                     <div class="ml-auto text-right">
-                        <h1 class="font-weight-bold">{{pesoBruto | number:'1.2-5'}} Lb</h1>
-                        <h2 class="text-info">Peso Bruto</h2>
+                        <h1 class="font-weight-bold">{{pesoBruto | number}} Lb</h1>
+                        <h2 class="text-info">Peso Canastos</h2>
                     </div>
                 </div>
             </div>
@@ -188,7 +191,7 @@
                 <div class="d-flex no-block align-items-center">
                     <div><span class="text-success display-6"><i class="ti-pie-chart"></i></span></div>
                     <div class="ml-auto text-right">
-                        <h1 class="font-weight-bold">{{pesoNeto | number:'1.2-5'}} Lb</h1>
+                        <h1 class="font-weight-bold">{{pesoNeto | number}} Lb</h1>
                         <h2 class="text-success">Peso Neto</h2>
                     </div>
                 </div>

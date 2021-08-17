@@ -76,15 +76,16 @@ export class OrdenfabricacionPesajeComponent implements OnInit {
 
   guardar() {
 
-    let request: ArticuloPesaje = {
-      id: 0,
-      almacenID: this.almacenID,
-      articuloID: this.articulo.id,
-      pesoBruto: this.pesoBruto,
-      pesoNeto: this.pesoNeto,
-      fechaVencimiento: this.fechaVencimiento,
-      detalleJSON: JSON.stringify(this.articulosExtrasViewRender),
-    };
+    // let request: ArticuloPesaje = {
+    //   id: 0,
+    //   pesoBalanza:0,
+    //   almacenID: this.almacenID,
+    //   articuloID: this.articulo.id,
+    //   pesoBruto: this.pesoBruto,
+    //   pesoNeto: this.pesoNeto,
+    //   fechaVencimiento: this.fechaVencimiento,
+    //   detalleJSON: JSON.stringify(this.articulosExtrasViewRender),
+    // };
 
     //console.log(request)
 
