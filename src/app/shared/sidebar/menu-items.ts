@@ -209,6 +209,17 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ['inventario_recepcionactivo'],
       },
+      {
+        path: '/inventario/entregas',
+        title: 'Entregas',
+        label: '',
+        icon: '',
+        class: '',
+        labelClass: '',
+        extralink: false,
+        submenu: [],
+        permisos: ['inventario_entregas'],
+      },
       // {
       //   path: '/inventario/autorizaciondevoluciones',
       //   title: 'Autorizacion Devoluciones',
