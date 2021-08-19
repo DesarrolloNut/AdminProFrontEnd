@@ -1,3 +1,4 @@
+
 export enum DataApi {
 
 
@@ -46,7 +47,7 @@ export enum DataApi {
     ClienteNegocio = 72,
     ReporteInventarioActivo = 73,
     Factura = 74,
-
+    ReporteCanasto = 75,
 
 
 
@@ -132,6 +133,7 @@ export const dataApiRootMap: { [api: string]: string } = {
     "72": "api/ClienteNegocio",
     "73": "api/ReporteInventarioActivo",
     "74": "api/Factura",
+    "75": "api/ReporteCanasto",
 
 
 

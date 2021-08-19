@@ -7,10 +7,11 @@ import { SharedModule } from '../../shared/shared.module';
 import { ReporteExistenciaComponent } from './reporte-existencia/reporte-existencia.component';
 import { ReporteInventarioEntregaPedidosComponent } from './reporte-inventario-entrega-pedidos/reporte-inventario-entrega-pedidos.component';
 import { ReporteInventarioActivoComponent } from './reporte-inventario-activo/reporte-inventario-activo.component';
+import { ReporteCanastoListadoComponent } from './reporte-canasto/reporte-canasto-listado/reporte-canasto-listado.component';
 
 
 @NgModule({
-  declarations: [ReportesInventarioComponent, ReporteExistenciaComponent, ReporteInventarioActivoComponent, ReporteInventarioEntregaPedidosComponent],
+  declarations: [ReportesInventarioComponent, ReporteExistenciaComponent, ReporteInventarioActivoComponent, ReporteInventarioEntregaPedidosComponent, ReporteCanastoListadoComponent],
   imports: [
     CommonModule,
     SharedModule,

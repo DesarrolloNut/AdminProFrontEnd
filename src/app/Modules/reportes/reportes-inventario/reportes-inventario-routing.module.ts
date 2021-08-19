@@ -4,6 +4,7 @@ import { ReporteExistenciaComponent } from './reporte-existencia/reporte-existen
 import { ReporteInventarioEntregaPedidosComponent } from './reporte-inventario-entrega-pedidos/reporte-inventario-entrega-pedidos.component';
 import { ReporteInventarioActivoComponent } from './reporte-inventario-activo/reporte-inventario-activo.component';
 import { ReportesInventarioComponent } from './reportes-inventario.component';
+import { ReporteCanastoListadoComponent } from './reporte-canasto/reporte-canasto-listado/reporte-canasto-listado.component';
 
 
 
@@ -21,7 +22,7 @@ const routes: Routes = [
             { title: 'Existencia' },
           ]
         },
-        
+
       },
 
 
@@ -35,7 +36,7 @@ const routes: Routes = [
           ]
         }
       },
-      
+
 
       {
         path: 'inventario-activo', component: ReporteInventarioActivoComponent, data: {
@@ -46,7 +47,18 @@ const routes: Routes = [
             { title: 'inventario activo' },
           ]
         },
-        
+
+      },
+
+      {
+        path: 'reporte-canasto', component: ReporteCanastoListadoComponent, data: {
+          title: 'Reporte de Canasto',
+          urls: [
+            { title: 'Reportes' },
+            { title: 'Reporte de Canasto' },
+          ]
+        },
+
       },
     ]
 

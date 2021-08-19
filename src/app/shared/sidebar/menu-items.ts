@@ -1021,6 +1021,19 @@ export const ROUTES: RouteInfo[] = [
             submenu: [
             ],
           },
+
+          {
+            path: '/reportes/inventario/reporte-canasto',
+            label: '',
+            labelClass: '',
+            title: 'Reporte Canasto',
+            icon: '',
+            class: '',
+            extralink: false,
+            permisos: ["reportes_inventario_reportecanasto"],
+            submenu: [
+            ],
+          },
         ],
       },
 
