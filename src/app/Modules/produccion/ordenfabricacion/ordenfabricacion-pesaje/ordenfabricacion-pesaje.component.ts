@@ -5,11 +5,8 @@ import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
-import { ArticuloPesaje } from '../../pesaje/models/ArticuloPesaje';
-import { ArticuloPesajeRequestModel } from '../../pesaje/models/ArticuloPesajeRequestModel';
-import { ArticuloPesosExtrasRenderViewModel } from '../../pesaje/models/ArticuloPesosExtrasRenderViewModel';
-import { ArticuloPesosExtrasViewModel } from '../../pesaje/models/ArticuloPesosExtrasViewModel copy';
-import { OrdenFabricacionVista } from '../models/OrdenFabricacionVista';
+import { ArticuloPesosExtras } from '../../pesaje/models/ArticuloPesosExtras';
+import { ArticuloPesosExtrasViewModel } from '../../pesaje/models/ArticuloPesosExtrasViewModel';
 
 @Component({
   selector: 'app-ordenfabricacion-pesaje',
@@ -28,8 +25,8 @@ export class OrdenfabricacionPesajeComponent implements OnInit {
   search: string;
   searching: boolean;
   loadingArticulosExtras: boolean;
-  articulosExtras: ArticuloPesosExtrasViewModel[];
-  articulosExtrasViewRender: ArticuloPesosExtrasRenderViewModel[];
+  articulosExtras: ArticuloPesosExtras[];
+  articulosExtrasViewRender: ArticuloPesosExtrasViewModel[];
   cantidades: number[] = [];
 
   loadingAlmacenes: boolean;
@@ -171,7 +168,7 @@ export class OrdenfabricacionPesajeComponent implements OnInit {
 
   getArticulosDePesosExtras() {
     this.loadingArticulosExtras = true;
-    this.httpService.DoPost<ArticuloPesosExtrasViewModel>(DataApi.Articulo,
+    this.httpService.DoPost<ArticuloPesosExtras>(DataApi.Articulo,
       "GetArticulosDePesosExtras", null).subscribe(response => {
 
         if (!response.ok) {
@@ -196,7 +193,7 @@ export class OrdenfabricacionPesajeComponent implements OnInit {
     this.articulosExtras.forEach(a => {
 
       if (!this.articulosExtrasViewRender.some(x => x.articuloID == a.articuloID)) {
-        let item: ArticuloPesosExtrasRenderViewModel = new ArticuloPesosExtrasRenderViewModel();
+        let item: ArticuloPesosExtrasViewModel = new ArticuloPesosExtrasViewModel();
 
         item.articuloID = a.articuloID
         item.codigoReferencia = a.codigoReferencia

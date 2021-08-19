@@ -74,6 +74,18 @@ export const Approutes: Routes = [
     ],
   },
 
+  {
+    path: 'impresion',
+    component: BlankComponent,
+    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
+    children: [
+      {
+        path: '', loadChildren: () => import('./Modules/impresion/impresion.module').then(m => m.ImpresionModule)
+      },
+    ],
+  },
+
 
 
 

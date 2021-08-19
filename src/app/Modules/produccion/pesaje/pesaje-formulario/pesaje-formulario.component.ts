@@ -1,16 +1,18 @@
 import { Component, OnInit, Renderer2 } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
+import { Parametro } from 'src/app/core/http/model/Parametro';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
 import { BalanzaPesajeSignalrService } from 'src/app/Services/balanza-pesaje-signalr.service';
 import { BalanzaPesoGrupoSignalREnum } from 'src/app/shared/enums/BalanzaPesoGrupoSignalREnum';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
+import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { ArticuloPesaje } from '../models/ArticuloPesaje';
-import { ArticuloPesajeRequestModel } from '../models/ArticuloPesajeRequestModel';
-import { ArticuloPesosExtrasRenderViewModel } from '../models/ArticuloPesosExtrasRenderViewModel';
-import { ArticuloPesosExtrasViewModel } from '../models/ArticuloPesosExtrasViewModel copy';
+import { ArticuloPesosExtras } from '../models/ArticuloPesosExtras';
+import { ArticuloPesosExtrasViewModel } from '../models/ArticuloPesosExtrasViewModel';
 
 @Component({
   selector: 'app-pesaje-formulario',
@@ -18,38 +20,47 @@ import { ArticuloPesosExtrasViewModel } from '../models/ArticuloPesosExtrasViewM
   styleUrls: ['./pesaje-formulario.component.scss']
 })
 export class PesajeFormularioComponent implements OnInit {
+
+  readonly PESO_BALANZA_DEFAULT_VALUE: string = "0.00 KG";
+  readonly KILOGRAMO_A_LIBRA: number = 2.20462;
+
   articulo: Articulo;
-  almacenID: number;
   pesoArticuloBalanza: number
-  pesoBruto: number = 0;
+  pesoCanastos: number = 0;
   pesoNeto: number = 0;
 
   cargando: boolean;
   search: string;
   searching: boolean;
   loadingArticulosExtras: boolean;
+  articulosExtrasComboBox: ArticuloPesosExtras[];
   articulosExtras: ArticuloPesosExtrasViewModel[];
-  articulosExtrasViewRender: ArticuloPesosExtrasRenderViewModel[];
   cantidades: number[] = [];
 
-  loadingAlmacenes: boolean;
-  almecenes: any[];
   fechaActual: Date;
+
   fechaVencimiento: Date;
   btnGuardarCargando: boolean;
 
   pesoBalanza: string = "0.00 KG";
-  readonly PESO_BALANZA_DEFAULT_VALUE: string = "0.00 KG";
-  readonly KILOGRAMO_A_LIBRA: number = 2.20462;
 
   pesoBalanzaUltimaFecha: Date = new Date();
   pesoBalanzaLBNumber: number = 0;
 
   random: number;
 
+  almacenesDesde: ComboBox[];
+  loadingAlmacenesDesde: boolean;
+
+  almacenesHasta: ComboBox[];
+  loadingAlmacenesHasta: boolean;
+  almacenesDesdeSeleccionado: number;
+  almacenesHastaSeleccionado: number;
+
   constructor(
     private toastService: ToastrService,
     private httpService: BackendService,
+    private authService: AuthenticationService,
     private signalRService: BalanzaPesajeSignalrService,
     private router: Router,
     private renderer: Renderer2) { }
@@ -60,10 +71,10 @@ export class PesajeFormularioComponent implements OnInit {
     for (let i = 1; i <= 100; i++) {
       this.cantidades.push(i)
     }
-    this.getAlmacenes()
-    this.subscribeSignalR();
+    this.getAlmacenesUsuarioEnrroll()
+    // this.subscribeSignalR();
 
-    // this.empezarAmbientePrueba();
+    this.empezarAmbientePrueba();
 
   }
 
@@ -71,7 +82,7 @@ export class PesajeFormularioComponent implements OnInit {
   empezarAmbientePrueba() {
 
     setInterval(() => {
-      this.pesoBalanza = this.getRandomInt(1, 1000) + 'KGZ';
+      this.pesoBalanza = this.getRandomInt(1, 500) + 'KGZ';
       this.pesoBalanzaUltimaFecha = new Date();
 
       this.formatStringFromBalanza();
@@ -137,9 +148,35 @@ export class PesajeFormularioComponent implements OnInit {
 
     //validaciones
 
+    if (
+      !this.almacenesDesdeSeleccionado || this.almacenesDesdeSeleccionado <= 0 ||
+      !this.almacenesHastaSeleccionado || this.almacenesHastaSeleccionado <= 0
+    ) {
+      this.toastService.warning("Selecciona los almacenes.");
+      return;
+    }
+
+    if (this.almacenesDesdeSeleccionado == this.almacenesHastaSeleccionado) {
+      this.toastService.warning("El almacen no puede ser el mismo.");
+      return;
+    }
 
 
-    console.log(this.articulosExtrasViewRender)
+    if (!this.fechaVencimiento) {
+      this.toastService.warning("Selecciona la fecha de vencimiento.");
+      return;
+    }
+
+    if (this.pesoCanastos >= this.pesoBalanzaLBNumber) {
+      this.toastService.warning("El peso de los canastos no puede ser mayor o igual al de la balanza.");
+      return;
+    }
+
+    if (!this.articulosExtras.some(x => x.cantidadSeleccionada > 0 && x.pesoSeleccionado)) {
+      this.toastService.warning("No hay canastos con cantidad o peso seleccionados.");
+      return;
+    }
+
     this.guardar()
   }
 
@@ -147,20 +184,22 @@ export class PesajeFormularioComponent implements OnInit {
 
     let request: ArticuloPesaje = {
       id: 0,
-      almacenID: this.almacenID,
       articuloID: this.articulo.id,
-      pesoBruto: this.pesoBruto,
+      almacenDesde: this.almacenesDesdeSeleccionado,
+      almacenHasta: this.almacenesHastaSeleccionado,
+      fechaVencimiento: this.fechaVencimiento,
+      pesoCanastos: this.pesoCanastos,
       pesoNeto: this.pesoNeto,
       pesoBalanza: this.pesoBalanzaLBNumber,
-      fechaVencimiento: this.fechaVencimiento,
-      detalleJSON: JSON.stringify(this.articulosExtrasViewRender),
+      usuarioID: Number(this.authService.tokenDecoded.nameid),
+      detalleJSON: JSON.stringify(this.articulosExtras.filter(x => x.pesoSeleccionado && x.cantidadSeleccionada > 0)),
     };
 
     console.log(request)
 
     this.btnGuardarCargando = true;
 
-    this.httpService.DoPostAny<ArticuloPesajeRequestModel>(DataApi.ArticuloPesaje,
+    this.httpService.DoPostAny<ArticuloPesaje>(DataApi.ArticuloPesaje,
       "Registrar", request).subscribe(response => {
 
         if (!response.ok) {
@@ -183,23 +222,12 @@ export class PesajeFormularioComponent implements OnInit {
 
     if (this.pesoBalanza) {
 
-      let indexKg = this.pesoBalanza.toLowerCase().indexOf("k")
-
+      let indexKg = this.pesoBalanza.toLowerCase().indexOf("k") //donde empieza la k de kilogramo (kg)
       if (indexKg > 0) {
 
         let kilogramos = this.pesoBalanza.substring(0, indexKg)
-
-        // console.log("index", indexKg)
-        // console.log("kilogramos", kilogramos)
-        // console.log("kilogramosNum", Number(kilogramos))
-
         this.pesoBalanzaLBNumber = Number(kilogramos) * this.KILOGRAMO_A_LIBRA;
-
-        // console.log("pesoBalanzaLBNumber", this.pesoBalanzaLBNumber)
-
-
       }
-
 
     }
 
@@ -209,15 +237,17 @@ export class PesajeFormularioComponent implements OnInit {
 
 
   calcularTotales() {
-    this.pesoBruto = 0;
+    this.pesoCanastos = 0;
 
-    this.articulosExtrasViewRender.forEach(a => {
-      if (a.cantidadSeleccionada && a.pesoSeleccionado) {
-        this.pesoBruto += a.cantidadSeleccionada * (a.pesoSeleccionado.valor * a.pesoSeleccionado.medidaValor)
-      }
-    })
+    if (this.articulosExtras) {
+      this.articulosExtras.forEach(a => {
+        if (a.cantidadSeleccionada && a.pesoSeleccionado) {
+          this.pesoCanastos += a.cantidadSeleccionada * (a.pesoSeleccionado.valor * a.pesoSeleccionado.medidaValor)
+        }
+      })
+    }
 
-    this.pesoNeto = this.pesoBalanzaLBNumber - this.pesoBruto;
+    this.pesoNeto = this.pesoBalanzaLBNumber - this.pesoCanastos;
 
   }
 
@@ -230,7 +260,7 @@ export class PesajeFormularioComponent implements OnInit {
   onSearchChange() {
 
     if (this.search && this.search.length > 3) {
-      this.pesoBruto = 0;
+      this.pesoCanastos = 0;
       this.pesoNeto = 0
       this.getArticuloByCodigoReferencia(this.search)
     } else {
@@ -241,7 +271,7 @@ export class PesajeFormularioComponent implements OnInit {
 
   onClearSearch() {
     this.search = ""
-    this.pesoBruto = 0;
+    this.pesoCanastos = 0;
     this.pesoNeto = 0
     this.focusInputSearch()
     this.onSearchChange()
@@ -277,13 +307,13 @@ export class PesajeFormularioComponent implements OnInit {
 
   getArticulosDePesosExtras() {
     this.loadingArticulosExtras = true;
-    this.httpService.DoPost<ArticuloPesosExtrasViewModel>(DataApi.Articulo,
+    this.httpService.DoPost<ArticuloPesosExtras>(DataApi.Articulo,
       "GetArticulosDePesosExtras", null).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          this.articulosExtras = response.records;
+          this.articulosExtrasComboBox = response.records;
           this.formatArticulosExtras()
         }
         this.loadingArticulosExtras = false;
@@ -298,17 +328,17 @@ export class PesajeFormularioComponent implements OnInit {
   }
 
   formatArticulosExtras() {
-    this.articulosExtrasViewRender = []
-    this.articulosExtras.forEach(a => {
+    this.articulosExtras = []
+    this.articulosExtrasComboBox.forEach(a => {
 
-      if (!this.articulosExtrasViewRender.some(x => x.articuloID == a.articuloID)) {
-        let item: ArticuloPesosExtrasRenderViewModel = new ArticuloPesosExtrasRenderViewModel();
+      if (!this.articulosExtras.some(x => x.articuloID == a.articuloID)) {
+        let item: ArticuloPesosExtrasViewModel = new ArticuloPesosExtrasViewModel();
 
         item.articuloID = a.articuloID
         item.codigoReferencia = a.codigoReferencia
         item.nombre = a.nombre
 
-        item.pesos = this.articulosExtras.
+        item.pesos = this.articulosExtrasComboBox.
           filter(ar => ar.articuloID == a.articuloID).
           map(art => {
             return {
@@ -318,30 +348,42 @@ export class PesajeFormularioComponent implements OnInit {
               "medidaValor": art.medidaValor
             }
           });
-        this.articulosExtrasViewRender.push(item)
+        this.articulosExtras.push(item)
       }
 
     })
   }
 
 
-  getAlmacenes() {
-    this.loadingAlmacenes = true;
+  getAlmacenesUsuarioEnrroll() {
+
+    let parametros: Parametro[] = [
+      { key: "usuarioID", value: this.authService.tokenDecoded.nameid },
+      { key: "ModuloKey", value: EstadosGeneralesKeyEnum.PRODUCCION },
+    ]
+
+    this.loadingAlmacenesDesde = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetAlmacenes", null).subscribe(response => {
+      "GetUsuarioAlmacenesModulo", parametros).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          this.almecenes = response.records;
+          this.almacenesDesde = response.records;
+          this.almacenesHasta = response.records;
+
+          if (this.almacenesDesde && this.almacenesDesde.length > 0) {
+            this.almacenesDesdeSeleccionado = this.almacenesDesde[0].codigo
+          }
+
         }
-        this.loadingAlmacenes = false;
+        this.loadingAlmacenesDesde = false;
       }, error => {
-        this.loadingAlmacenes = false;
+        this.loadingAlmacenesDesde = false;
         this.toastService.error("No se pudo obtener los almacenes", "Error conexion al servidor");
 
         setTimeout(() => {
-          this.getAlmacenes();
+          this.getAlmacenesUsuarioEnrroll();
         }, 1000);
 
       });

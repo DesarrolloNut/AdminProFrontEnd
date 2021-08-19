@@ -1,4 +1,4 @@
-export class ArticuloPesosExtrasViewModel {
+export class ArticuloPesosExtras {
     constructor() {
 
     }

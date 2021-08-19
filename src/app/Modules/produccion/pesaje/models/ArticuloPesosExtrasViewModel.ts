@@ -1,4 +1,4 @@
-export class ArticuloPesosExtrasRenderViewModel {
+export class ArticuloPesosExtrasViewModel {
     constructor() {
 
     }

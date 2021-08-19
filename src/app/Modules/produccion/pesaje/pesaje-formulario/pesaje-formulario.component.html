@@ -73,16 +73,26 @@
                         </div>
                     </div>
 
-                    <div class="form-group col-md-6" *ngIf="articulo">
-                        <label for="inputEmail4">Almacen</label>
-                        <ng-select bindLabel="nombre" bindValue="codigo" [(ngModel)]="almacenID" [items]="almecenes"
-                            [clearable]="false" [loading]="loadingAlmacenes" notFoundText="No resultados">
+                    <div class="form-group col-md-4" *ngIf="articulo">
+                        <label for="inputEmail4">Desde</label>
+                        <ng-select bindLabel="nombre" bindValue="codigo" [(ngModel)]="almacenesDesdeSeleccionado"
+                            [items]="almacenesDesde" [clearable]="false" [loading]="loadingAlmacenesDesde"
+                            notFoundText="No resultados">
                         </ng-select>
                     </div>
 
-                    <div class="form-group col-md-6" *ngIf="articulo">
+                    <div class="form-group col-md-4" *ngIf="articulo">
+                        <label for="inputEmail4">Hasta</label>
+                        <ng-select bindLabel="nombre" bindValue="codigo" [(ngModel)]="almacenesHastaSeleccionado"
+                            [items]="almacenesHasta" [clearable]="false" [loading]="loadingAlmacenesDesde"
+                            notFoundText="No resultados">
+                        </ng-select>
+                    </div>
+
+                    <div class="form-group col-md-4" *ngIf="articulo">
                         <label>Fecha de vencimiento</label>
-                        <ejs-datepicker [(ngModel)]="fechaVencimiento" [format]="'dd-MM-yyyy'" [min]='fechaActual'>
+                        <ejs-datepicker [(ngModel)]="fechaVencimiento" [showClearButton]="false" [format]="'dd-MM-yyyy'"
+                            [min]='fechaActual'>
                         </ejs-datepicker>
                     </div>
 
@@ -112,7 +122,7 @@
                             <tbody>
 
                                 <!-- <tr *ngFor="let item of confirmed | filter: searchText; let i  = index"> -->
-                                <tr *ngFor="let item of articulosExtrasViewRender; let i=index">
+                                <tr *ngFor="let item of articulosExtras; let i=index">
                                     <td>
                                         <h2>
                                             <span> {{item.nombre}}</span>
@@ -177,7 +187,7 @@
                 <div class="d-flex no-block align-items-center">
                     <div><span class="text-info display-6"><i class="ti-pie-chart"></i></span></div>
                     <div class="ml-auto text-right">
-                        <h1 class="font-weight-bold">{{pesoBruto | number}} Lb</h1>
+                        <h1 class="font-weight-bold">{{pesoCanastos | number}} Lb</h1>
                         <h2 class="text-info">Peso Canastos</h2>
                     </div>
                 </div>

@@ -91,7 +91,7 @@ import { TomainventarioRutaListadoComponent } from './tomainventarioruta/tomainv
 import { ArticulosCategoriasListadoComponent } from './articulosCategorias/articulos-categorias-listado/articulos-categorias-listado.component';
 import { ArticulosCategoriasFormularioComponent } from './articulosCategorias/articulos-categorias-formulario/articulos-categorias-formulario.component';
 
- 
+
 import { ClienteVisitasComponent } from './clientes/cliente-visitas/cliente-visitas.component';
 import { ClienteFinanzasComponent } from './clientes/cliente-finanzas/cliente-finanzas.component';
 import { ClienteContactosComponent } from './clientes/cliente-contactos/cliente-contactos.component';
@@ -111,8 +111,8 @@ import { ClienteNegocioComponent } from './clientes/cliente-negocio/cliente-nego
     NgbdtabsBasicComponent,
     MantenimientosComponent, ComiteComponent,
     UsuarioListadoComponent, UsuarioFormularioComponent, ClientesListadoComponent,
-    ClientesFormularioComponent,ClienteComercialComponent,ClienteNegocioComponent,ClienteVisitasComponent,ClienteFinanzasComponent,
-    ClienteContactosComponent,ClienteDatosGeneralesComponent,ClienteMapComponent,MarcasListadoComponent, MarcasFormularioComponent,
+    ClientesFormularioComponent, ClienteComercialComponent, ClienteNegocioComponent, ClienteVisitasComponent, ClienteFinanzasComponent,
+    ClienteContactosComponent, ClienteDatosGeneralesComponent, ClienteMapComponent, MarcasListadoComponent, MarcasFormularioComponent,
     ModelosListadoComponent, ModelosFormularioComponent, DealersListadoComponent, DealersFormularioComponent,
     AlmacenesListadoComponent, AlmacenesFormularioComponent, VehiculoTiposListadoComponent, VehiculoTiposFormularioComponent,
     CombustiblesListadoComponent, CombustiblesFormularioComponent, VehiculoCondicionesListadoComponent, VehiculoCondicionesFormularioComponent,
@@ -126,7 +126,7 @@ import { ClienteNegocioComponent } from './clientes/cliente-negocio/cliente-nego
     NivelAutorizacionModuloFormularioComponent, NivelAutorizacionModuloListadoComponent, RolesListadoComponent, RolesFormularioComponent,
 
     SapconnectionListadoComponent,
-    SapconnectionFormularioComponent ,
+    SapconnectionFormularioComponent,
     PromocionesListadoComponent,
     PromocionesFormularioComponent,
     PermisosListadoComponent,
@@ -159,12 +159,12 @@ import { ClienteNegocioComponent } from './clientes/cliente-negocio/cliente-nego
     AngularDualListBoxModule,
     MantenimientosRoutingModule,
     SharedModule,
-    AgmCoreModule.forRoot({
+    AgmCoreModule.forRoot({ //mapas
       apiKey: 'AIzaSyBaddDDv0d9zuun9qiWj3VkLEzpJot9UQ4',
       libraries: ["places"]
     }),
-    NgbModule,
-    TreeviewModule.forRoot()
+    NgbModule, //ng bootstrap
+    TreeviewModule.forRoot() 
   ]
 })
 export class MantenimientosModule { }

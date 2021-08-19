@@ -1,19 +1,27 @@
+
 export class ArticuloPesaje {
     constructor() {
         this.id = 0;
         this.articuloID = 0;
-        this.fechaVencimiento = new Date();
+        this.almacenDesde = 0
+        this.almacenHasta = 0;
+        this.pesoCanastos = 0;
         this.pesoNeto = 0;
-        this.pesoBruto = 0;
         this.detalleJSON = "";
+        this.pesoBalanza = 0;
+        this.usuarioID = 0;
+        this.fechaVencimiento = new Date();
+
     }
 
-    id: number
-    articuloID: number
-    almacenID: number
-    fechaVencimiento: Date
-    pesoBruto: number
-    pesoNeto: number
-    pesoBalanza: number
-    detalleJSON: string
+    id: number;
+    articuloID: number;
+    almacenDesde: number;
+    almacenHasta: number;
+    pesoCanastos: number;
+    pesoNeto: number;
+    detalleJSON: string;
+    pesoBalanza: number;
+    usuarioID: number;
+    fechaVencimiento: Date;
 }
