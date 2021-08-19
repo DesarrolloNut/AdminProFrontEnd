@@ -1,24 +1,88 @@
-<div class="row">
-    <div class="col">
+<div class="row" id="pesajeDiv">
+    <div class="col-12">
         <div class="card">
-            <img class="card-img-top" src="..." alt="Card image cap">
             <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
-                    card's content.</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
+
+                <div class="row">
+                    <div class="col-12">
+
+                        <span class="text-info bg-red">Texto capturado: {{searchValue}}</span>
+
+                        <div class="outer">
+                            <div class="inner">
+                                <input style="overflow: hidden; position: relative;" type="text" name="search"
+                                    id="search" #search [(ngModel)]="searchValue">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <h1 class="font-weight-bold display-4">10001 | Salami Buen Dia </h1>
+                        <div class="table-responsive">
+                            <table class="table">
+
+                                <tbody>
+
+                                    <tr>
+                                        <th scope="row">
+                                            <h1>
+                                                <span class="font-weight-bold">Peso Neto : 369.25 Lb</span>
+                                            </h1>
+                                        </th>
+                                    </tr>
+
+                                    <tr>
+                                        <th scope="row">
+                                            <h1>
+                                                <span class="font-weight-bold">Vencimiento : 12 Feb 2021</span>
+                                            </h1>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Almacén</th>
+                                        <td>Almacén general</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">CANASTILLA ROJA PLANTA </th>
+                                        <td>15.25 Lb</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">PALETAS PLASTICAS IPS PPP 1200X1000 GRIS
+                                        </th>
+                                        <td>15.25 Lb</td>
+                                    </tr>
+                                    <!-- <tr>
+                                        <th scope="row">Chasis</th>
+                                        <td>XXXXXXXXXXXXX</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Año</th>
+                                        <td>2021</td>
+                                    </tr> -->
+
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <hr>
+
+                        <div class="row">
+                            <div class="col-md-8">
+                                <ngx-barcode [bc-height]="50" [bc-value]="codigoBarra" [bc-display-value]="true">
+                                </ngx-barcode>
+                            </div>
+                            <div class="col-md-4">
+                                <img src="assets/images/nutriciosa.png" class="img-fluid" alt="Responsive image">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card">
-            <img class="card-img-top" src="..." alt="Card image cap">
-            <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
-                    card's content.</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
-            </div>
+
         </div>
     </div>
 </div>
