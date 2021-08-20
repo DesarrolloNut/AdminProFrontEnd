@@ -3,21 +3,23 @@
     <div class="card">
       <div class="card-body">
         <div class="row mb-2">
-          <div class="col-md-12 align-middle">
+          <div class="col-md-6 align-middle">
             <h4 class="card-title">Reporte Inventario activo</h4>
           </div>
-          <!-- <div class="col-md-6 text-right">
-                      <button (click)="exportarReporteExcel()" *ngIf="data.length > 0 && !btnExportarCargando "
-                          type="button" class="btn btn-success">
-                          <i class="fa fa-file-excel"></i>
-                          Exportar
-                      </button>
 
-                      <button *ngIf="btnExportarCargando" disabled class="btn btn-success" type="button">
-                          <span class="spinner-border spinner-border-sm"></span> Exportando
-                      </button>
+          <div class="col-md-6 text-right">
+            <button (click)="exportarReporteExcel()" *ngIf="data.length > 0 && !btnExportarCargando "
+                type="button" class="btn btn-success">
+                <i class="fa fa-file-excel"></i>
+                Exportar
+            </button>
 
-                  </div> -->
+            <!-- boton cargando -->
+            <button *ngIf="btnExportarCargando" disabled class="btn btn-success" type="button">
+                <span class="spinner-border spinner-border-sm"></span> Exportando
+            </button>
+
+        </div>
 
           <div class="col-md-12">
             <div class="row">
@@ -54,12 +56,28 @@
                 </ng-select>
               </div>
 
-              <div class="form-group col-md-4">
+              <div class="form-group col-md-6">
                 <label> <i class="fa fa-calendar"></i> Fecha Factura</label>
                 <ejs-datepicker [(ngModel)]="fecha" (change)="getData()"
                     [showClearButton]="false" [format]="'yyyy-MM-dd'">
                 </ejs-datepicker>
             </div>
+
+              <div class="form-group col-md-6 text-right">
+                <h3 *ngIf="rutaId > 2" class="font-weight-bold">Totales </h3>
+                <div class="row text-right">
+                  <div class="form-group col-md-6 text-right">
+                    <h3 *ngIf="rutaId == 4" >Cantidad: {{totalcantidad | number:'1.2-2'}}</h3>
+                    <h3 *ngIf="rutaId == 3" >Recogido: {{totalrecogidos | number:'1.2-2'}}</h3>
+                </div>
+                  <div class="form-group col-md-6 text-right">
+                    <h3 *ngIf="rutaId == 4" >Disponible: {{totaldisponible | number:'1.2-2'}}</h3>
+                    <h3 *ngIf="rutaId == 3" >Entregado: {{totalentregados | number:'1.2-2'}}</h3>
+                </div>
+                </div>
+            </div>
+
+
             </div>
           </div>
         </div>

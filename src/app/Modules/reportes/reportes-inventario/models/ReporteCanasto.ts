@@ -16,8 +16,10 @@ export class ReporteCanasto {
   sucursalId: number;
   sucursal: string;
   usuario: string;
+
   cantidad: number;
   disponible: number;
   recogidos: number;
   entregados: number;
+
 }
