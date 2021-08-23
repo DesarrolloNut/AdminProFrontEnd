@@ -11,4 +11,5 @@ export interface ArticuloPesajeListadoViewModel {
     usuario: string;
     fechaVencimiento: Date;
     estado: string;
+    detalleJSON: string;
 }

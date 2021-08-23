@@ -8,12 +8,10 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class PesajeResultadoCodigoBarraComponent implements OnInit {
   @ViewChild('search') searchElement: ElementRef;
-  codigoBarra: string = "100015"
+  codigoBarra: string = "3"
 
   searchValue: string = ""
   private unlistener: () => void;
-
-
 
   constructor(private route: ActivatedRoute,
     private renderer2: Renderer2) { }

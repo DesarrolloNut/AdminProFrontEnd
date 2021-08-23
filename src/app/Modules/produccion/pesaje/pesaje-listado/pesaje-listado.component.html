@@ -6,25 +6,22 @@
                     <div class="col-md-6 align-middle">
                         <h4 class="card-title">Listado de pesajes</h4>
                     </div>
-                    <!-- <div class="col-md-6 text-right">
-                        <button [routerLink]="[0]" class="btn btn-info"> <i class="fa fa-plus"></i> Nuevo
-                            almacén
-                        </button>
-                    </div> -->
-                    <!-- <div class="col-md-12 p-2">
 
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <label for="search" class="input-group-text bg-white">
-                                    <span class="bg-white" style="border-right:none">
-                                        <i class="ti-search"></i>
-                                    </span>
-                                </label>
+                    <div class="col-12">
+                        <span class="text-info bg-red">Texto capturado: {{searchValue}}</span>
+                        <br>
+                        <span>
+                            <i class="fa fa-baseball-ball"
+                                [ngClass]="{'text-success': enterPressed, 'text-danger':!enterPressed}"></i>
+                        </span>
+                        <div class="outer">
+                            <div class="inner">
+                                <input style="overflow: hidden; position: relative;" type="text" name="search"
+                                    id="search" #search [(ngModel)]="searchValue">
                             </div>
-                            <input [(ngModel)]="Search" (keyup)="getData()" type="text"
-                                style="border-left:none !important;" class="form-control" placeholder="Buscar">
                         </div>
-                    </div> -->
+                    </div>
+
                 </div>
 
                 <div class="table-responsive">
@@ -87,7 +84,7 @@
                                     <span> {{item.pesoNeto}} Lb</span>
                                 </td>
                                 <td>
-                                    <span class="small"> {{item.usuario}}</span>
+                                    <span class="small font-weight-bold"> {{item.usuario}}</span>
                                 </td>
                                 <!-- <td>
                                     <span> <i class="fa fa-calendar text-light"></i> {{item.fechaVencimiento | date
@@ -127,3 +124,122 @@
         </div>
     </div>
 </div>
+
+
+
+
+
+<ng-template #modalDetalle let-modal>
+    <div class="modal-header">
+        <!-- <h4 class="modal-title" id="modal-basic-title">Profile update</h4> -->
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <img src="assets/images/nutriciosa.png" style="width: 150px;" alt="Responsive image">
+            </div>
+        </div>
+        <div class="row" *ngIf="!CargandoModal">
+
+            <div class="col-md-12">
+                <h2 class="font-weight-bold">{{articuloPesaje.articulo}} </h2>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+
+                        <tbody>
+
+                            <tr>
+                                <th scope="row">
+                                    <h4>
+                                        <span class="font-weight-bold">Peso Canastos </span>
+                                    </h4>
+                                </th>
+                                <td class="font-weight-bold"> {{articuloPesaje.pesoCanastos}} Lb</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">
+                                    <h4>
+                                        <span class="font-weight-bold">Peso Balanza </span>
+                                    </h4>
+                                </th>
+                                <td class="font-weight-bold"> {{articuloPesaje.pesoBalanza}} Lb</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">
+                                    <h4>
+                                        <span class="font-weight-bold">Peso Neto </span>
+                                    </h4>
+                                </th>
+                                <td class="font-weight-bold text-info"> {{articuloPesaje.pesoNeto}} Lb</td>
+                            </tr>
+
+                            <tr>
+                                <th scope="row">
+                                    <h4>
+                                        <span class="font-weight-bold">Vencimiento </span>
+                                    </h4>
+                                </th>
+                                <td class="font-weight-bold"> <i class="fa fa-calendar text-light"></i>
+                                    {{articuloPesaje.fechaVencimiento | date}} Lb</td>
+
+                            </tr>
+                            <tr>
+                                <th scope="row">
+                                    <h4>
+                                        <span class="font-weight-bold">Almacen salida </span>
+                                    </h4>
+                                </th>
+                                <td class="font-weight-bold"> {{articuloPesaje.almacenDesde}} </td>
+
+                            </tr>
+                            <tr>
+                                <th scope="row">
+                                    <h4>
+                                        <span class="font-weight-bold">Almacen destino </span>
+                                    </h4>
+                                </th>
+                                <td class="font-weight-bold"> {{articuloPesaje.almacenHasta}} </td>
+                            </tr>
+                            <tr *ngFor="let otem of articuloPesajeDetalle">
+                                <th scope="row">
+                                    <h4>
+                                        <span class="font-weight-bold">{{otem.nombre}}</span>
+                                    </h4>
+                                </th>
+                                <td class="font-weight-bold"> {{otem.pesoSeleccionado.nombre}} </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <hr>
+                <div class="row">
+                    <div class="col-md-8">
+                        <ngx-barcode [bc-height]="50" [bc-value]="articuloPesaje.id.toString().padStart(10,'0')"
+                            [bc-display-value]="false">
+                        </ngx-barcode>
+                    </div>
+                    <!-- <div class="col-md-4">
+                        <img src="assets/images/nutriciosa.png" style="width: 180px;" alt="Responsive image">
+                    </div> -->
+                </div>
+            </div>
+
+        </div>
+
+        <app-loading-listado [hidden]="!CargandoModal"></app-loading-listado>
+
+
+    </div>
+    <div class="modal-footer">
+        <button *ngIf="!CargandoModal" type="button" class="btn btn-info">Recibir</button>
+    </div>
+</ng-template>
