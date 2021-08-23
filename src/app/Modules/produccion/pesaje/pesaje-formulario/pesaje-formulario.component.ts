@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
@@ -19,7 +19,7 @@ import { ArticuloPesosExtrasViewModel } from '../models/ArticuloPesosExtrasViewM
   templateUrl: './pesaje-formulario.component.html',
   styleUrls: ['./pesaje-formulario.component.scss']
 })
-export class PesajeFormularioComponent implements OnInit {
+export class PesajeFormularioComponent implements OnInit, OnDestroy {
 
   readonly PESO_BALANZA_DEFAULT_VALUE: string = "0.00 KG";
   readonly KILOGRAMO_A_LIBRA: number = 2.20462;
@@ -425,6 +425,11 @@ export class PesajeFormularioComponent implements OnInit {
     this.renderer.selectRootElement('#inputSearch').focus();
   }
 
+  ngOnDestroy(): void {
+
+    this.signalRService.ExitGroup(BalanzaPesoGrupoSignalREnum.Pantalla_Pesaje);
+
+  }
 
 
 

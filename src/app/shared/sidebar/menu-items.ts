@@ -245,7 +245,18 @@ export const ROUTES: RouteInfo[] = [
     permisos: ["produccion"],
     submenu: [
       {
-        path: '/produccion/pesaje',
+        path: '/produccion/pesajeListado',
+        label: '',
+        labelClass: '',
+        title: 'Pesaje Listado',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["produccion_pesaje_listado"],
+      },
+      {
+        path: '/produccion/pesajeApp',
         label: '',
         labelClass: '',
         title: 'Sistema de Pesajes',
@@ -253,7 +264,7 @@ export const ROUTES: RouteInfo[] = [
         class: '',
         extralink: false,
         submenu: [],
-        permisos: ["produccion_pesaje"],
+        permisos: ["produccion_pesaje_app"],
       },
       {
         path: '/produccion/ordenfabricacion',

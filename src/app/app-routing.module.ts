@@ -49,8 +49,6 @@ export const Approutes: Routes = [
     ],
   },
 
-
-
   {
     path: 'turno',
     component: BlankComponent,
@@ -62,6 +60,8 @@ export const Approutes: Routes = [
       },
     ],
   },
+
+  
   {
     path: 'consultas',
     component: BlankComponent,

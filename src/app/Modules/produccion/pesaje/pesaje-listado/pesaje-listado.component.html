@@ -6,12 +6,12 @@
                     <div class="col-md-6 align-middle">
                         <h4 class="card-title">Listado de pesajes</h4>
                     </div>
-                    <div class="col-md-6 text-right">
+                    <!-- <div class="col-md-6 text-right">
                         <button [routerLink]="[0]" class="btn btn-info"> <i class="fa fa-plus"></i> Nuevo
-                            pesaje
+                            almacén
                         </button>
-                    </div>
-                    <div class="col-md-12 p-2">
+                    </div> -->
+                    <!-- <div class="col-md-12 p-2">
 
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -24,76 +24,103 @@
                             <input [(ngModel)]="Search" (keyup)="getData()" type="text"
                                 style="border-left:none !important;" class="form-control" placeholder="Buscar">
                         </div>
-                    </div>
+                    </div> -->
                 </div>
-                <!-- 
+
                 <div class="table-responsive">
                     <table class="table table-hover mb-0 no-wrap v-middle">
                         <thead>
                             <tr>
                                 <th></th>
                                 <th></th>
-                                <th>Cliente</th>
-                                <th>Documento</th>
+                                <th>Artículo</th>
+                                <!-- <th></th> -->
+                                <th>Peso Canastos</th>
+                                <th>Peso Balanza</th>
+                                <th>Peso Neto</th>
+                                <th>Usuario</th>
+                                <!-- <th>Fecha Vencimiento</th> -->
+
                             </tr>
                         </thead>
                         <tbody [hidden]="Cargando">
 
-                            <tr *ngFor="let cliente of clientes">
+                            <tr *ngFor="let item of data">
+                                <td><span class="badge badge-light text-info small">{{item.id}}</span></td>
+
                                 <td>
-                                    <button class="btn btn-sm btn-info m-1" [routerLink]="[cliente.id]">
-                                        <i class="fa fa-sm fa-edit"></i>
-                                    </button>
+                                    <span class="badge badge-light small">
+                                        {{item.estado}}
+                                    </span>
                                 </td>
-                                <td><span class="badge badge-light text-info ">{{cliente.id}}</span></td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <i class="fa fa-user fa-2x text-light"></i>
 
-                                        <div _ngcontent-kgy-c224="" class="ml-3">
-                                            <p class="font-bold mb-0">
-                                                <span> {{cliente.nombres | titlecase }}</span>
-                                                <span> {{ cliente.apellidos | titlecase }}</span>
-                                            </p>
-                                            <small class="text-info"> <i class=" fa fa-hashtag"></i>
-                                                {{cliente.codigoReferencia }}
+                                        <!-- <i class="fa fa fa-3x text-light"></i> -->
+                                        <div>
+                                            <p class="font-bold mb-0 text-info">{{item.articulo | titlecase }}</p>
+                                            <small>De <span class="font-weight-bold">{{item.almacenDesde}}</span>
+                                                hasta <span class="font-weight-bold"> {{item.almacenHasta}} </span>
                                             </small>
                                         </div>
                                     </div>
                                 </td>
 
-                                <td>
-                                    <span> <i class="fa fa-id-card text-muted"></i> {{cliente.documento}}</span>
-                                </td>
+                                <!-- <td>
+                                    <span class="small font-weight-bold"> {{item.articulo}}</span>
+                                </td> -->
+                                <!-- <td>
+                                    <span class="small"> {{item.almacenDesde}} </span>
+                                    <span>
+                                        <i class="fa fa-arrow-right text-success"></i>
+                                    </span>
 
+                                    <span class="small"> {{item.almacenHasta}} </span>
+                                </td> -->
+                                <td>
+                                    <span> {{item.pesoCanastos}} Lb</span>
+                                </td>
+                                <td>
+                                    <span> {{item.pesoBalanza}} Lb</span>
+                                </td>
+                                <td>
+                                    <span> {{item.pesoNeto}} Lb</span>
+                                </td>
+                                <td>
+                                    <span class="small"> {{item.usuario}}</span>
+                                </td>
+                                <!-- <td>
+                                    <span> <i class="fa fa-calendar text-light"></i> {{item.fechaVencimiento | date
+                                        }}</span>
+                                </td> -->
 
                             </tr>
 
                         </tbody>
                     </table>
 
-                </div> -->
+                </div>
 
 
 
-                <!-- <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+                <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
 
                 <div class="row ">
                     <div class="col-md-8 col-xs-12 ">
                         <ngb-pagination [collectionSize]="paginaTotalRecords" [(page)]="paginaNumeroActual"
-                            [pageSize]="paginaSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="getClientes()">
+                            [pageSize]="paginaSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="getData()">
                         </ngb-pagination>
                     </div>
 
                     <div class="col-md-4 text-right d-none d-md-block  ">
                         <select class="form-control d-block" name="paginaSize" [(ngModel)]="paginaSize"
-                            (change)="getClientes()">
+                            (change)="getData()">
                             <option [ngValue]="5">5 registro por pagina</option>
                             <option [ngValue]="10">10 registro por pagina</option>
                             <option [ngValue]="15">15 registro por pagina</option>
                         </select>
                     </div>
-                </div> -->
+                </div>
 
 
             </div>
