@@ -72,9 +72,9 @@ export class PesajeFormularioComponent implements OnInit {
       this.cantidades.push(i)
     }
     this.getAlmacenesUsuarioEnrroll()
-    // this.subscribeSignalR();
+    this.subscribeSignalR();
 
-    this.empezarAmbientePrueba();
+    // this.empezarAmbientePrueba();
 
   }
 
