@@ -1,5 +1,9 @@
 import { Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { BackendService } from 'src/app/core/http/service/backend.service';
+import { ArticuloPesajeListadoViewModel } from 'src/app/Modules/produccion/pesaje/models/ArticuloPesajeListadoViewModel';
+import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 
 @Component({
   selector: 'app-pesaje-resultado-codigo-barra',
@@ -7,56 +11,68 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./pesaje-resultado-codigo-barra.component.scss']
 })
 export class PesajeResultadoCodigoBarraComponent implements OnInit {
-  @ViewChild('search') searchElement: ElementRef;
-  codigoBarra: string = "3"
 
-  searchValue: string = ""
-  private unlistener: () => void;
+  articuloPesaje: ArticuloPesajeListadoViewModel;
+  articuloPesajeDetalle: any;
+  Cargando: boolean = false;
 
-  constructor(private route: ActivatedRoute,
+  constructor(
+    private route: ActivatedRoute,
+    private httpService: BackendService,
+    private toastService: ToastrService,
+    private router: Router,
+
     private renderer2: Renderer2) { }
+
 
   ngOnInit(): void {
 
-    // this.unlistener = this.renderer2.listen("document", "mousemove", event => {
-    //   console.log(`I am detecting mousemove at ${event.pageX}, ${event.pageY} on Document!`);
-    // });
-
-    // this.unlistener = this.renderer2.listen(".pesajeDiv", "mousemove", event => {
-    //   console.log(`I am detecting mousemove at ${event.pageX}, ${event.pageY} on Document!`);
-    // });
-
-
     let id = Number(this.route.snapshot.paramMap.get('id'));
-    console.log({
-      id
-    })
-  }
-
-
-  setFocus() {
-    // this.show = !this.show;
-    setTimeout(() => { // this will make the execution after the above boolean has changed
-      this.searchElement.nativeElement.focus();
-    }, 0);
-  }
-
-  @HostListener('window:keydown', ['$event'])
-  onWindowKeyDown(event: any) {
-    this.setFocus()
-  }
-  @HostListener('window:keyup.enter', ['$event'])
-  onWindowKeyupEnter(event: any) {
-    console.log(this.searchValue)
-
-    setTimeout(() => {
-      this.searchValue = ""
-    }, 2000);
+    this.getArticuloPesajeByID(id);
 
   }
 
-  ngOnDestroy() {
-    this.unlistener();
+  getArticuloPesajeByID(articuloPesajeID: number) {
+
+    this.Cargando = true;
+    this.httpService.DoPostAny<ArticuloPesajeListadoViewModel>(DataApi.ArticuloPesaje,
+      "GetArticuloPesajeByID", articuloPesajeID).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0])
+        } else {
+          if (response.records.length > 0) {
+            this.articuloPesaje = response.records[0];
+            this.articuloPesajeDetalle = JSON.parse(this.articuloPesaje.detalleJSON);
+
+            setTimeout(() => {
+              window.print();
+            }, 1000);
+
+
+            setTimeout(() => {
+              this.router.navigateByUrl('/produccion/pesajeApp');
+            }, 5000);
+
+          } else {
+            this.toastService.error("Resultado no encontrado")
+            this.router.navigateByUrl('/produccion/pesajeApp');
+          }
+        }
+
+        this.Cargando = false;
+      }, error => {
+
+        this.Cargando = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+
   }
+
+
+
+
+
 
 }

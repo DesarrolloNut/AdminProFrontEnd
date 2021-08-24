@@ -11,9 +11,13 @@ export class BalanzaPesajeSignalrService {
 
   private hubConnection: signalR.HubConnection
   pesoBalanza = new EventEmitter<string>();
+  refreshListado = new EventEmitter<boolean>();
   private baseUrl: string;
 
+  almacenID: number = 0;
+
   private grupoBalanzaPesaje = "GRUPO_PANTALLA_PESAJE_USUARIO_" + this.auth.tokenDecoded.nameid
+  private grupoBalanzaListado = "GRUPO_PANTALLA_PESAJE_ALMACEN_"
   // private grupoTurnoReceptores = "Receptores_Turnos_Sucursal_" + this.auth.tokenDecoded.groupsid
 
   constructor(
@@ -36,21 +40,20 @@ export class BalanzaPesajeSignalrService {
       then(ok => {
         this.subscribirMetodos();
         this.toaster.info("Conexión establecida.", "Balanza Pesaje.")
-        this.JoinGroup(this.grupoBalanzaPesaje)
+        // this.JoinGroup(this.grupoBalanzaPesaje)
+        switch (grupo) {
+          case BalanzaPesoGrupoSignalREnum.Pantalla_Pesaje:
+            this.JoinGroup(this.grupoBalanzaPesaje)
+            break;
 
-        // switch (grupo) {
-        //   case BalanzaPesoGrupoSignalREnum.Pantalla_Pesaje:
-        //     this.JoinGroup(this.grupoBalanzaPesaje)
-        //     break;
-
-        //   // case SignalRTurnosGrupos.Receptor:
-        //   //   // this.JoinGroup(this.grupoTurnoPantallas)
-        //   //   break;
+          case BalanzaPesoGrupoSignalREnum.Pantalla_Pesaje_Listado:
+            this.JoinGroup(this.grupoBalanzaListado + this.almacenID)
+            break;
 
 
-        //   default:
-        //     break;
-        // }
+          default:
+            break;
+        }
 
       })
       .catch(err => {
@@ -82,8 +85,20 @@ export class BalanzaPesajeSignalrService {
       this.pesoBalanza.emit(pesoBalanza);
     });
 
+    this.hubConnection.on('RefreshListScreen', (refresh: boolean) => {
+      this.refreshListado.emit(refresh);
+    });
+
     //subscribir a otro metodo
 
+  }
+
+
+  public refrescarListadoPesajes(almacenID: number) {
+    console.log(this.grupoBalanzaListado + almacenID)
+    this.hubConnection.invoke("RefreshListScreen", this.grupoBalanzaListado + almacenID).catch(err => {
+      return console.error(err);
+    });
   }
 
 
@@ -107,10 +122,9 @@ export class BalanzaPesajeSignalrService {
         grupoNombre = this.grupoBalanzaPesaje
         break;
 
-      // case SignalRTurnosGrupos.Receptor:
-      //   grupoNombre = this.grupoTurnoReceptores
-      //   break;
-
+      case BalanzaPesoGrupoSignalREnum.Pantalla_Pesaje_Listado:
+        grupoNombre = this.grupoBalanzaListado
+        break;
 
       default:
         break;

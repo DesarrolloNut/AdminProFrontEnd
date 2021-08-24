@@ -11,7 +11,7 @@ export class ArticuloPesaje {
         this.pesoBalanza = 0;
         this.usuarioID = 0;
         this.fechaVencimiento = new Date();
-
+        this.estadoID = 0;
     }
 
     id: number;
@@ -24,4 +24,5 @@ export class ArticuloPesaje {
     pesoBalanza: number;
     usuarioID: number;
     fechaVencimiento: Date;
+    estadoID: number;
 }

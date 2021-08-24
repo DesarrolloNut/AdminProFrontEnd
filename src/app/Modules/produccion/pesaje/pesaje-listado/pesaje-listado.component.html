@@ -9,11 +9,6 @@
 
                     <div class="col-12">
                         <span class="text-info bg-red">Texto capturado: {{searchValue}}</span>
-                        <br>
-                        <span>
-                            <i class="fa fa-baseball-ball"
-                                [ngClass]="{'text-success': enterPressed, 'text-danger':!enterPressed}"></i>
-                        </span>
                         <div class="outer">
                             <div class="inner">
                                 <input style="overflow: hidden; position: relative;" type="text" name="search"
@@ -31,12 +26,10 @@
                                 <th></th>
                                 <th></th>
                                 <th>Artículo</th>
-                                <!-- <th></th> -->
                                 <th>Peso Canastos</th>
                                 <th>Peso Balanza</th>
                                 <th>Peso Neto</th>
                                 <th>Usuario</th>
-                                <!-- <th>Fecha Vencimiento</th> -->
 
                             </tr>
                         </thead>
@@ -46,7 +39,11 @@
                                 <td><span class="badge badge-light text-info small">{{item.id}}</span></td>
 
                                 <td>
-                                    <span class="badge badge-light small">
+                                    <span class="badge small" [ngClass]="{
+                                        'badge-success': item.estado == 'Recibido',
+                                        'badge-warning': item.estado == 'Sin Recibir',
+                                        'badge-info': item.estado == 'Sincronizado SAP'
+                                    }">
                                         {{item.estado}}
                                     </span>
                                 </td>
@@ -63,17 +60,6 @@
                                     </div>
                                 </td>
 
-                                <!-- <td>
-                                    <span class="small font-weight-bold"> {{item.articulo}}</span>
-                                </td> -->
-                                <!-- <td>
-                                    <span class="small"> {{item.almacenDesde}} </span>
-                                    <span>
-                                        <i class="fa fa-arrow-right text-success"></i>
-                                    </span>
-
-                                    <span class="small"> {{item.almacenHasta}} </span>
-                                </td> -->
                                 <td>
                                     <span> {{item.pesoCanastos}} Lb</span>
                                 </td>
@@ -86,10 +72,6 @@
                                 <td>
                                     <span class="small font-weight-bold"> {{item.usuario}}</span>
                                 </td>
-                                <!-- <td>
-                                    <span> <i class="fa fa-calendar text-light"></i> {{item.fechaVencimiento | date
-                                        }}</span>
-                                </td> -->
 
                             </tr>
 
@@ -239,7 +221,16 @@
 
 
     </div>
-    <div class="modal-footer">
-        <button *ngIf="!CargandoModal" type="button" class="btn btn-info">Recibir</button>
+    <div class="modal-footer" *ngIf="!CargandoModal">
+
+        <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="button" (click)="recibirPesaje()">
+            <i class="fas fa-check"></i> Confirmar
+        </button>
+
+        <!-- boton cargando -->
+        <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+            <span class="spinner-border spinner-border-sm"></span> Confirmando
+        </button>
+
     </div>
 </ng-template>

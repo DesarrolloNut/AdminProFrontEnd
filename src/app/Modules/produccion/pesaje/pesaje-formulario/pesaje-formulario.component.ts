@@ -74,7 +74,7 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
     this.getAlmacenesUsuarioEnrroll()
     this.subscribeSignalR();
 
-    // this.empezarAmbientePrueba();
+    this.empezarAmbientePrueba();
 
   }
 
@@ -184,6 +184,7 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
 
     let request: ArticuloPesaje = {
       id: 0,
+      estadoID: 1,
       articuloID: this.articulo.id,
       almacenDesde: this.almacenesDesdeSeleccionado,
       almacenHasta: this.almacenesHastaSeleccionado,
@@ -195,8 +196,6 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
       detalleJSON: JSON.stringify(this.articulosExtras.filter(x => x.pesoSeleccionado && x.cantidadSeleccionada > 0)),
     };
 
-    console.log(request)
-
     this.btnGuardarCargando = true;
 
     this.httpService.DoPostAny<ArticuloPesaje>(DataApi.ArticuloPesaje,
@@ -205,8 +204,13 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
         } else {
+          this.signalRService.refrescarListadoPesajes(request.almacenHasta);
+          console.log(request.almacenHasta)
           this.toastService.success("Realizado", "OK");
-          this.router.navigateByUrl('/produccion/pesaje');
+          // this.router.navigateByUrl('/produccion/pesaje');
+          // this.onClearSearch();
+          let id = response.valores[0];
+          this.router.navigateByUrl('/impresion/produccion/pesaje-resultado-codigo-barra/' + id);
         }
 
         this.btnGuardarCargando = false;
