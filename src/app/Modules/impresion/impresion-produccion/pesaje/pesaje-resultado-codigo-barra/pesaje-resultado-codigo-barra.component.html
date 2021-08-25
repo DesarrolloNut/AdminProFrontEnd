@@ -55,7 +55,7 @@
                                 <tr>
                                     <th scope="row">
                                         <h4>
-                                            <span class="font-weight-bold">Almacen salida </span>
+                                            <span class="font-weight-bold">Almacén Salida </span>
                                         </h4>
                                     </th>
                                     <td class="font-weight-bold"> {{articuloPesaje.almacenDesde}} </td>
@@ -64,7 +64,7 @@
                                 <tr>
                                     <th scope="row">
                                         <h4>
-                                            <span class="font-weight-bold">Almacen destino </span>
+                                            <span class="font-weight-bold">Almacén Destino </span>
                                         </h4>
                                     </th>
                                     <td class="font-weight-bold"> {{articuloPesaje.almacenHasta}} </td>
@@ -72,7 +72,7 @@
                                 <tr *ngFor="let otem of articuloPesajeDetalle">
                                     <th scope="row">
                                         <h4>
-                                            <span class="font-weight-bold">{{otem.nombre}}</span>
+                                            <span class="font-weight-bold">{{otem.nombre | titlecase }}</span>
                                         </h4>
                                     </th>
                                     <td class="font-weight-bold"> {{otem.pesoSeleccionado.nombre}} </td>
@@ -88,8 +88,7 @@
                     <hr>
                     <div class="row">
                         <div class="col-md-8">
-                            <ngx-barcode [bc-height]="50"
-                                [bc-value]="articuloPesaje.id.toString().padStart(10,'0')"
+                            <ngx-barcode [bc-height]="50" [bc-value]="articuloPesaje.id.toString().padStart(10,'0')"
                                 [bc-display-value]="false">
                             </ngx-barcode>
                         </div>
