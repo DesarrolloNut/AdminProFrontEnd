@@ -241,6 +241,27 @@ export class PesajeListadoComponent implements OnInit, OnDestroy {
   }
 
 
+  prueba() {
+
+    this.httpService.DoPostAny<ArticuloPesaje>(DataApi.ArticuloPesaje,
+      "CrearAlmacenTransferencia", 1).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+        } else {
+          this.toastService.success("Realizado", "OK");
+          // this.getData();
+          // this.modalService.dismissAll();
+          // this.getData();
+        }
+
+        this.btnGuardarCargando = false;
+      }, error => {
+        this.btnGuardarCargando = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
 
   ngOnDestroy() {
     // this.unlistener();
