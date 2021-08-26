@@ -43,7 +43,6 @@ export class ClientesListadoComponent implements OnInit {
       this.paginaSize, false, parametros).subscribe(x => {
           
         if (x.ok) {
-          console.log(x)
           this.clientes = x.valores[0];
           console.log(  this.clientes)
           this.asignarPagination(x);
@@ -125,6 +124,27 @@ export class ClientesListadoComponent implements OnInit {
       });
   }
 
+  sendClientsToSap() {
+
+
+    // this.loadingBtnGuardarTecnico = true;
+
+    this.httpService.DoPostAny<any>(DataApi.Cliente,
+      "GetClientesToSAP", null).subscribe(response => {
+        this.Cargando = false;
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+        } else {
+          this.toastService.success("", "OK");
+        }
+        // this.loadingBtnGuardarTecnico = false;
+      }, error => {
+        // this.loadingBtnGuardarTecnico = false;
+        this.Cargando = false;
+        this.toastService.error("Asignar CodigoReferencia Cliente", "Error conexion al servidor");
+      });
+  }
 
 
 }
