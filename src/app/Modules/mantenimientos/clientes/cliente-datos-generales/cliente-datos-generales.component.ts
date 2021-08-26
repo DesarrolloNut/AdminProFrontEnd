@@ -166,6 +166,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       listaPrecioId: [0, [Validators.required]],
       longitud: [null, [Validators.required]],
       latitud: [null, [Validators.required]],
+      actualizarErp: [0],
       // contactos: new FormArray([])
     },
       {

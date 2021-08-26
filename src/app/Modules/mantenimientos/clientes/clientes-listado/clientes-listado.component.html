@@ -7,6 +7,9 @@
                         <h4 class="card-title">Listado de clientes</h4>
                     </div>
                     <div class="col-md-6 text-right">
+                        <button (click)="sendClientsToSap()" class="btn btn-info"> <i class="fa fa-plus"></i> Enviar a Sap
+                        </button>
+
                         <button [routerLink]="[0]" class="btn btn-info"> <i class="fa fa-plus"></i> Nuevo
                             cliente
                         </button>
@@ -39,6 +42,7 @@
                                 <th>ID</th>
                                 <th>Cliente</th>
                                 <th>Documento</th>
+                                <th>Estado ERP Externo</th>
                                 <th>Condicion Pago</th>
                                 <th>Plazo</th>
                                 <th>Limite Credito</th>
@@ -106,7 +110,17 @@
                                 </td>
 
 
+                                <td>
+                                    <div  [ngClass]="cliente.actualizarErp == 0  ? 'circulo synchronizeds' : 'circulo pending'"
+                                    ></div>
 
+                                    <span class="text-dark" *ngIf="cliente.actualizarErp==0">
+                                        Sincronizado
+                                    </span>
+                                    <span class="text-dark" *ngIf="cliente.actualizarErp==1">
+                                        Pendiente
+                                   </span>
+                                </td>
                                 
                                   <!-- SHOW INFO COLUMNA Condicion Pago -->
                                   <td>
@@ -180,7 +194,7 @@
                                          {{cliente.rutaMerchandising }}
                                     </span>
                                 </td>
-
+                     
 
                             </tr>
 
