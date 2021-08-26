@@ -126,7 +126,8 @@ export class ClienteViewModelCustomized {
 
         this.longitud = ""
         this.latitud = ""
-
+         
+        this.actualizarErp =0
     }
 
 
@@ -182,6 +183,9 @@ export class ClienteViewModelCustomized {
 
     longitud: string;
     latitud: string;
+
+    actualizarErp:number;
+
 }
 
  
