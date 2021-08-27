@@ -5,11 +5,13 @@ import { AuthenticationService } from 'src/app/core/authentication/service/authe
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
+import { Usuario } from 'src/app/Modules/servicios/recepcion/models/Usuario';
 import { BalanzaPesajeSignalrService } from 'src/app/Services/balanza-pesaje-signalr.service';
 import { BalanzaPesoGrupoSignalREnum } from 'src/app/shared/enums/BalanzaPesoGrupoSignalREnum';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
+import { setInterval } from 'timers';
 import { ArticuloPesaje } from '../models/ArticuloPesaje';
 import { ArticuloPesosExtras } from '../models/ArticuloPesosExtras';
 import { ArticuloPesosExtrasViewModel } from '../models/ArticuloPesosExtrasViewModel';
@@ -57,6 +59,9 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
   almacenesDesdeSeleccionado: number;
   almacenesHastaSeleccionado: number;
 
+  usuario: Usuario;
+  loadingPeso: boolean = false;
+
   constructor(
     private toastService: ToastrService,
     private httpService: BackendService,
@@ -77,6 +82,22 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
     this.empezarAmbientePrueba();
 
   }
+
+
+  pingBalanza() {
+
+    setInterval(() => {
+
+      if (!this.loadingPeso && this.usuario) {
+        this.loadingPeso = true;
+        this.signalRService.getPesajeFromBalanza(Number(this.usuario.puertoEquipo),
+          this.usuario.ipEquipo)
+      }
+
+    }, 2000);
+  }
+
+
 
 
   empezarAmbientePrueba() {
@@ -106,7 +127,8 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
     this.signalRService.startConnection(BalanzaPesoGrupoSignalREnum.Pantalla_Pesaje);
 
     this.signalRService.pesoBalanza.subscribe((peso: string) => {
-
+      this.loadingPeso = false;
+      
       this.pesoBalanza = peso;
       this.pesoBalanzaUltimaFecha = new Date();
 
@@ -392,6 +414,32 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
 
       });
   }
+
+
+  getUsuarioByID() {
+    let usuarioID: number = Number(this.authService.tokenDecoded.nameid)
+
+    this.httpService.DoPostAny<Usuario>(DataApi.Usuario,
+      "GetUsuarioByID", usuarioID).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          //validar que existe
+          if (response != null && response.records != null && response.records.length > 0) {
+
+            let usuario = response.records[0];
+            this.usuario = usuario;
+
+          } else {
+            this.toastService.warning("Usuario no encontrado");
+          }
+        }
+
+      }, error => {
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
 
   getHoraActual() {
     this.cargando = true;

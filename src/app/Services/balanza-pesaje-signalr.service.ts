@@ -94,11 +94,24 @@ export class BalanzaPesajeSignalrService {
   }
 
 
+
+  //para refrescar el listado de pesajes 
+  //cuando en el formulario se registra un nuevo peso
+  //para ese almacen
   public refrescarListadoPesajes(almacenID: number) {
-    console.log(this.grupoBalanzaListado + almacenID)
+
     this.hubConnection.invoke("RefreshListScreen", this.grupoBalanzaListado + almacenID).catch(err => {
       return console.error(err);
     });
+
+  }
+
+  public getPesajeFromBalanza(port: number, ipBalanza: string) {
+    console.log()
+    this.hubConnection.invoke("SendPesoToScreen", this.grupoBalanzaPesaje, port, ipBalanza).catch(err => {
+      return console.error(err);
+    });
+
   }
 
 
