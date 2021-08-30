@@ -123,11 +123,15 @@ getNameTipoAnexo(item:any):string{
 
   ///METODOS UPLOAD POST
   subirArchivosAlServidor() {
+    if(this.filesFromInput.length<=0){
+      this.toastService.error("Debe subir anexos");
+      return;
+  }
     this.btnGuardarCargando=true;
     let documentosTipoAnexoSelecteds:any[]=[];
 
     let filesUploaded:any =  this.filesFromInput.filter(function (x) {
-      return   x.uploaded==true
+      return x.uploaded==true
     });
 
 
