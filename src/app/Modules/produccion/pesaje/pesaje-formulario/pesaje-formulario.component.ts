@@ -11,7 +11,6 @@ import { BalanzaPesoGrupoSignalREnum } from 'src/app/shared/enums/BalanzaPesoGru
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
-import { setInterval } from 'timers';
 import { ArticuloPesaje } from '../models/ArticuloPesaje';
 import { ArticuloPesosExtras } from '../models/ArticuloPesosExtras';
 import { ArticuloPesosExtrasViewModel } from '../models/ArticuloPesosExtrasViewModel';
@@ -73,18 +72,24 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
 
     this.getHoraActual()
+    this.getAlmacenesUsuarioEnrroll()
+    this.subscribirPesoBalanzaCambios()
+    this.getUsuarioLogueado()
+
     for (let i = 1; i <= 100; i++) {
       this.cantidades.push(i)
     }
-    this.getAlmacenesUsuarioEnrroll()
-    this.subscribeSignalR();
 
-    this.empezarAmbientePrueba();
+
+    this.startPingingBalanza()
+
+
+    // this.empezarAmbientePrueba();
 
   }
 
 
-  pingBalanza() {
+  startPingingBalanza() {
 
     setInterval(() => {
 
@@ -94,7 +99,7 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
           this.usuario.ipEquipo)
       }
 
-    }, 2000);
+    }, 3000);
   }
 
 
@@ -122,13 +127,13 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
   }
 
 
-  subscribeSignalR() {
+  subscribirPesoBalanzaCambios() {
 
     this.signalRService.startConnection(BalanzaPesoGrupoSignalREnum.Pantalla_Pesaje);
 
     this.signalRService.pesoBalanza.subscribe((peso: string) => {
       this.loadingPeso = false;
-      
+
       this.pesoBalanza = peso;
       this.pesoBalanzaUltimaFecha = new Date();
 
@@ -254,6 +259,14 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
         let kilogramos = this.pesoBalanza.substring(0, indexKg)
         this.pesoBalanzaLBNumber = Number(kilogramos) * this.KILOGRAMO_A_LIBRA;
       }
+
+      let indexLb = this.pesoBalanza.toLowerCase().indexOf("l") //donde empieza la k de kilogramo (kg)
+      if (indexLb > 0) {
+
+        let libras = this.pesoBalanza.substring(0, indexLb)
+        this.pesoBalanzaLBNumber = Number(libras);
+      }
+
 
     }
 
@@ -416,7 +429,7 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
   }
 
 
-  getUsuarioByID() {
+  getUsuarioLogueado() {
     let usuarioID: number = Number(this.authService.tokenDecoded.nameid)
 
     this.httpService.DoPostAny<Usuario>(DataApi.Usuario,

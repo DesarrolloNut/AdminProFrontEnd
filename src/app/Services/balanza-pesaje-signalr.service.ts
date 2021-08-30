@@ -107,7 +107,6 @@ export class BalanzaPesajeSignalrService {
   }
 
   public getPesajeFromBalanza(port: number, ipBalanza: string) {
-    console.log()
     this.hubConnection.invoke("SendPesoToScreen", this.grupoBalanzaPesaje, port, ipBalanza).catch(err => {
       return console.error(err);
     });
