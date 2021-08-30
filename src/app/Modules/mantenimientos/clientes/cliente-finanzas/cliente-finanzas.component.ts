@@ -100,6 +100,11 @@ export class ClienteFinanzasComponent implements OnInit {
   guardarOActualizarClienteFinanza(){
      if(this.f.condicionPagoId.value==1){
       this.f.plazoId.setValue(0)
+     }else if(this.f.condicionPagoId.value==2){
+        if(this.filesFromInput.length<=0){
+          this.toastService.error("Debe subir anexos");
+          return;
+      }
      }
 
     this.btnGuardarCargando = true;

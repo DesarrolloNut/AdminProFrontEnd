@@ -6,9 +6,11 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { BackendService } from 'src/app/core/http/service/backend.service';
+import { ParametrosCita } from 'src/app/Modules/turno/models/ParametrosCita';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { cedulaestructura } from 'src/app/shared/validators/cedula-estructura.validator';
+import { Cliente } from '../models/Cliente';
 import { ClienteContactos, ClienteContactosRequest } from '../models/ClienteContactos';
 import { FrecuenciaVisita } from '../models/FrecuenciaVisita';
 
@@ -28,7 +30,7 @@ export class ClienteContactosComponent implements OnInit {
    actualizando           = false;
    cargadoPuestos         = false;
    cargandoDelete         = false;
-  
+   buscandoDocumento      = false;
   //LISTA 
    puestos                : ComboBox[];
    clienteContactos       : ClienteContactos[];
@@ -230,7 +232,79 @@ export class ClienteContactosComponent implements OnInit {
   send(values) {
     console.log(values);
   }
+  buscarCliente(documento: string) {
+    this.buscandoDocumento = true;
   
+    let parametros = new ParametrosCita();
+    parametros.clienteDocumento = documento;
+  
+    this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
+      "GetClienteOPadronDatos", parametros).subscribe(response => {
+  
+        if (response.ok) {
+          if (response != null && response.ok && response.records != null && response.records.length > 0) {
+            let cliente = response.records[0];
+  
+            this.f.nombres.setValue(cliente.nombres);
+            this.f.apellidos.setValue(cliente.apellidos);
+            // this.f.celular.setValue(cliente.celular);
+   
+          } else {
+            this.toastService.warning("Datos no encontrados");
+            // this.f.nombres.setValue(null);
+            // this.f.apellidos.setValue(null);
+            // this.f.celular.setValue(null);
+          }
+  
+        } else {
+          this.toastService.error(response.errores[0]);
+        }
+  
+        this.buscandoDocumento = false;
+      }, error => {
+        this.buscandoDocumento = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  
+  }
+  //METODOS LOGIC
+onDocumentoKeyUp(contact: FormGroup) {
+  // this.f.celular.setValue(null);
+  if (contact.get('documento').valid) {
+    this.buscarClienteByRncOCedula(contact.get('documento').value,1,contact);
+  }
+}
+  buscarClienteByRncOCedula(documento: string,documentoTipoID:number,contact: FormGroup) {
+    this.buscandoDocumento = true;
+  
+    let parametros = new ParametrosCita();
+    parametros.clienteDocumento = documento;
+    parametros.documentoTipoID = documentoTipoID;
+  
+    this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
+      "GetClientePadronDatosOByRnc", parametros).subscribe(response => {
+  
+        if (response.ok) {
+          if (response != null && response.ok && response.records != null && response.records.length > 0) {
+            let cliente = response.records[0];
+            console.log(cliente);
+            contact.get('nombres').setValue(cliente.nombres +' '+ cliente.apellidos);
+            // this.f.celular.setValue(cliente.celular);
+          } else {
+            this.toastService.warning("Datos no encontrados");
+           // this.f.nombres.setValue(null);
+            // this.f.celular.setValue(null);
+          }
+        } else {
+          this.toastService.error(response.errores[0]);
+        }
+        this.buscandoDocumento = false;
+      }, error => {
+        this.buscandoDocumento = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  
+  }
 
   openModal(content, contact: FormGroup,index:any) {
     this.modalService.open(content, { size: 'sm',centered:true });

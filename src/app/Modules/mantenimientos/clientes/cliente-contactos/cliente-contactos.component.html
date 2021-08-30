@@ -24,7 +24,7 @@
                               <div [formGroup]="contact" class="form-row row col-md-12">
                                 <div class="form-group  col-md-3">
                                   <label >Cedula</label>
-                                  <input type="text" formControlName="documento" class="form-control form-control-sm"  
+                                  <input type="text" (keyup)="onDocumentoKeyUp(contact)" formControlName="documento" class="form-control form-control-sm"  
                                     [ngClass]="{ 'is-invalid': submitted && contact.get('documento').errors }" />
                                   <div *ngIf="submitted && contact.get('documento').errors" class="invalid-feedback">
                                     <div *ngIf="contact.get('documento').errors.required">

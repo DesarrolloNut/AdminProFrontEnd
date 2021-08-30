@@ -97,6 +97,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
     this.getDocumentosTipo();
     this.getTipoCliente();
     this.getListaPrecio();
+    this.getTipoComprobante();
     this.clearOrputValidatosSomeField();
     this.scrollToTop();
 
@@ -179,7 +180,8 @@ export class ClienteDatosGeneralesComponent implements OnInit {
 
 
   guardarCliente() {
-
+  
+ 
     let metodo: string = this.actualizando ? "UpdateCliente" : "CrearCliente";
     let valueBool = this.f.estadoID.value?1:0;
 
@@ -243,7 +245,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
             this.getCiudades();
             this.getSectores();
             this.getSubSectores();
-            this.getTipoComprobante();
+      
 
           } else {
             this.toastService.warning("Cliente no encontrado");
@@ -440,11 +442,11 @@ buscarCliente(documento: string) {
           this.f.nombres.setValue(cliente.nombres);
           this.f.apellidos.setValue(cliente.apellidos);
           // this.f.celular.setValue(cliente.celular);
-
+ 
         } else {
           this.toastService.warning("Datos no encontrados");
-          this.f.nombres.setValue(null);
-          this.f.apellidos.setValue(null);
+          // this.f.nombres.setValue(null);
+          // this.f.apellidos.setValue(null);
           // this.f.celular.setValue(null);
         }
 
@@ -474,11 +476,12 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
           let cliente = response.records[0];
 
           this.f.nombres.setValue(cliente.nombres);
+          this.f.apellidos.setValue(cliente.apellidos!=null?cliente.apellidos:"");
           // this.f.celular.setValue(cliente.celular);
 
         } else {
           this.toastService.warning("Datos no encontrados");
-          this.f.nombres.setValue(null);
+         // this.f.nombres.setValue(null);
           // this.f.celular.setValue(null);
         }
       } else {
@@ -518,8 +521,7 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
 //METODOS LOGIC
 onDocumentoKeyUp() {
 
-  this.f.nombres.setValue(null);
-  this.f.apellidos.setValue(null);
+
   // this.f.celular.setValue(null);
 
   if (this.f.documento.valid) {
