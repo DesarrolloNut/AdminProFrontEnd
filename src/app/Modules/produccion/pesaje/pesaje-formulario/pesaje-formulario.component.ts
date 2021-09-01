@@ -1,5 +1,6 @@
-import { Component, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import { Component, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { CalendarComponent, FocusEventArgs } from '@syncfusion/ej2-angular-calendars';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { Parametro } from 'src/app/core/http/model/Parametro';
@@ -14,6 +15,7 @@ import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { ArticuloPesaje } from '../models/ArticuloPesaje';
 import { ArticuloPesosExtras } from '../models/ArticuloPesosExtras';
 import { ArticuloPesosExtrasViewModel } from '../models/ArticuloPesosExtrasViewModel';
+import { LoteAlmacen } from '../models/LoteAlmacen';
 
 @Component({
   selector: 'app-pesaje-formulario',
@@ -61,6 +63,10 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
   usuario: Usuario;
   loadingPeso: boolean = false;
 
+  loteSearch: string
+  lote: LoteAlmacen;
+  loadingLote: boolean;
+
   constructor(
     private toastService: ToastrService,
     private httpService: BackendService,
@@ -89,6 +95,13 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
   }
 
 
+  @ViewChild('default')
+  public datepickerObj: any;
+
+  onFocus(args: FocusEventArgs): void {
+    this.datepickerObj.show();
+  }
+
   startPingingBalanza() {
 
     setInterval(() => {
@@ -101,8 +114,6 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
 
     }, 3000);
   }
-
-
 
 
   empezarAmbientePrueba() {
@@ -204,6 +215,16 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (!this.lote) {
+      this.toastService.warning("Lote no válido, buscar nuevamente el lote.");
+      return;
+    }
+
+    if (this.lote.cantidad < this.pesoNeto) {
+      this.toastService.warning(`No tiene lote disponible para hacer esta transferencia, favor verificar.`);
+      return;
+    }
+
     this.guardar()
   }
 
@@ -219,6 +240,7 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
       pesoCanastos: this.pesoCanastos,
       pesoNeto: this.pesoNeto,
       pesoBalanza: this.pesoBalanzaLBNumber,
+      lote: this.lote.lote,
       usuarioID: Number(this.authService.tokenDecoded.nameid),
       detalleJSON: JSON.stringify(this.articulosExtras.filter(x => x.pesoSeleccionado && x.cantidadSeleccionada > 0)),
     };
@@ -232,10 +254,6 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
           this.toastService.error(response.errores[0], "Error");
         } else {
           this.signalRService.refrescarListadoPesajes(request.almacenHasta);
-          console.log(request.almacenHasta)
-          this.toastService.success("Realizado", "OK");
-          // this.router.navigateByUrl('/produccion/pesaje');
-          // this.onClearSearch();
           let id = response.valores[0];
           this.router.navigateByUrl('/impresion/produccion/pesaje-resultado-codigo-barra/' + id);
         }
@@ -365,6 +383,42 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
         }, 1000);
       });
   }
+
+  getLote() {
+    this.loadingLote = true;
+
+    let ap = new ArticuloPesaje();
+    ap.articuloID = this.articulo.id;
+    ap.almacenDesde = this.almacenesDesdeSeleccionado;
+    ap.lote = this.loteSearch;
+
+    this.httpService.DoPostAny<LoteAlmacen>(DataApi.ArticuloPesaje,
+      "GetLoteCantidadDisponible", ap).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          //validar que existe
+          if (response != null && response.records != null && response.records.length > 0) {
+            let record = response.records[0]
+            this.lote = record;
+
+            console.log(this.lote)
+
+          }
+          else {
+            this.lote = null;
+          }
+          this.loadingLote = false;
+        }
+
+      }, error => {
+        this.loadingLote = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
+
 
   formatArticulosExtras() {
     this.articulosExtras = []

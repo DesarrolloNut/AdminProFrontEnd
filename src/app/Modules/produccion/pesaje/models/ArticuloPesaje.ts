@@ -12,6 +12,7 @@ export class ArticuloPesaje {
         this.usuarioID = 0;
         this.fechaVencimiento = new Date();
         this.estadoID = 0;
+        this.lote = "";
     }
 
     id: number;
@@ -25,4 +26,5 @@ export class ArticuloPesaje {
     usuarioID: number;
     fechaVencimiento: Date;
     estadoID: number;
+    lote: string;
 }
