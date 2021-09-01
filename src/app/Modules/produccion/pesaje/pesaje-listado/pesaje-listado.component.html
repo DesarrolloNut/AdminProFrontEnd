@@ -215,7 +215,15 @@
                         </ngx-barcode>
                     </div>
                     <!-- <div class="col-md-4">
-                        <img src="assets/images/nutriciosa.png" style="width: 180px;" alt="Responsive image">
+                        <h2 class="text-right">
+                            <span class="badge" [ngClass]="{
+                                'badge-success': articuloPesaje.estado == 'Recibido',
+                                'badge-warning': articuloPesaje.estado == 'Sin Recibir',
+                                'badge-info': articuloPesaje.estado == 'Sincronizado SAP'
+                            }">
+                                {{articuloPesaje.estado}}
+                            </span>
+                        </h2>
                     </div> -->
                 </div>
             </div>
