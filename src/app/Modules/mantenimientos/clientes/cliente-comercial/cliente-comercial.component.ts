@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -9,7 +9,7 @@ import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
-import { ClienteComercial, ClienteNegociacion } from '../models/ClienteComercial';
+import { ClienteComercial, ClienteComercialResponse, ClienteNegociacion } from '../models/ClienteComercial';
 import { ClienteContactos } from '../models/ClienteContactos';
 
 @Component({
@@ -20,6 +20,9 @@ import { ClienteContactos } from '../models/ClienteContactos';
 export class ClienteComercialComponent implements OnInit {
   
   @Input() clientId = 0;
+  @Input() isnotNecesaryFieldsComplete = false;
+  @Output()isnotNecesaryFieldsCompleteO = new EventEmitter<boolean>();
+
   FormComercial: FormGroup;
 
   //BOOLEANOS
@@ -112,8 +115,15 @@ export class ClienteComercialComponent implements OnInit {
             this.toastService.error(response.errores[0], "Error");
             this.btnGuardarCargando = false;
           } else {
-              if(response.valores[0].cantRegistrados>0){
-                this.toastService.success("Realizado", "OK");
+           
+              if(response.valores?.length>0){
+                let f:ClienteComercialResponse= response.valores[0];
+                 if(f.countId>0){
+                  let v= f.clienteTabsValida.tabsValida.find(x=>x.keyName=='COMERCIAL')
+                   this.isnotNecesaryFieldsComplete  =  v.ok;
+                   this.isnotNecesaryFieldsCompleteO.emit(v.ok);
+                   this.toastService.success("Realizado", "OK");
+                 }
               }
           }
           this.btnGuardarCargando = false;

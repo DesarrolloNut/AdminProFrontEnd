@@ -1,3 +1,5 @@
+import { ClienteTabsValida } from "./Cliente";
+
 export class FrecuenciaVisita {
 
     constructor() {
@@ -38,5 +40,16 @@ export class FrecuenciaVisitaFormated {
     clienteId: number;
     ordenVisita: number;
     tipoRutaId: number;
+
+}
+export class FrecuenciaVisitaResponse {
+
+    constructor() {
+        this.countId = 0;
+        this.clienteTabsValida = new ClienteTabsValida()  
+    }
+
+    countId: number;
+    clienteTabsValida: ClienteTabsValida;
 
 }

@@ -4,10 +4,15 @@
     <div class="card">
       <div class="card-body">
         <div class="row">
-          <div class="col-md-6 col-lg-6 col-12">
-            <h4 class="card-title">Datos Finanzas</h4> 
+          <div class="col-md-3 col-lg-3 col-12">
+            <h4 class="card-title font-weight-bold">Datos Finanzas</h4> 
+
           </div>
-          <div class="col-md-6 col-lg-6 col-12 text-right">
+          <div class="col-md-9 col-lg-9 col-12 text-right">
+            <p class="badge badge-pill badge-danger"
+               style="font-size: 15px;"
+             *ngIf="!isnotNecesaryFieldsComplete">
+             Debe completar los campos pendientes</p>
           </div>
         </div>
         <app-loading-listado [hidden]="!cargando"></app-loading-listado>

@@ -11,7 +11,7 @@ import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { cedulaestructura } from 'src/app/shared/validators/cedula-estructura.validator';
 import { ParametrosCita } from 'src/app/Modules/turno/models/ParametrosCita';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
-import { Cliente } from '../models/Cliente';
+import { Cliente, ClienteTabsValida } from '../models/Cliente';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import * as _ from "lodash";
 import { ClienteFrecuencia } from '../models/ClienteFrecuencia';
@@ -63,6 +63,17 @@ export class ClientesFormularioComponent implements OnInit {
   hasDetalleRuta: Boolean;
 
   clienteId = 0;
+
+  clienteTabsValida = new ClienteTabsValida();
+  
+  isnotNecesaryFieldsCompleteInGenerales = true;
+  isnotNecesaryFieldsCompleteInVisitas   = true;
+  isnotNecesaryFieldsCompleteInContactos = true;
+  isnotNecesaryFieldsCompleteInFinanzas  = true;
+  isnotNecesaryFieldsCompleteInComercial = true;
+  isnotNecesaryFieldsCompleteInNegocio   = true;
+
+
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
@@ -97,6 +108,40 @@ export class ClientesFormularioComponent implements OnInit {
   setClienteIdGuardado(id:number) {
     this.clienteId= id;
  }
+ 
+ setClienteTabsValida(c:ClienteTabsValida) {
+  this.clienteTabsValida= c;
+
+   c.tabsValida?.forEach(x=>{
+    switch (x.keyName) {
+      case 'GENERALES':
+        this.isnotNecesaryFieldsCompleteInGenerales= x.ok;
+        break;
+
+      case 'VISITAS_RUTA':
+        this.isnotNecesaryFieldsCompleteInVisitas= x.ok;
+        break;
+
+      case 'CONTACTOS':
+        this.isnotNecesaryFieldsCompleteInContactos= x.ok;
+        break;
+
+      case 'FINANZAS':
+        this.isnotNecesaryFieldsCompleteInFinanzas= x.ok;
+        break;
+
+      case 'COMERCIAL':
+        this.isnotNecesaryFieldsCompleteInComercial= x.ok;
+        break;
+
+      case 'NEGOCIO':
+        this.isnotNecesaryFieldsCompleteInNegocio= x.ok;
+        break;
+      default:
+          console.log("No such day exists!" + x.keyName);
+    }
+   })
+}
   // private CreateFormDatosGenerales() {
 
   //   this.FormGenerales = this.formBuilder.group({

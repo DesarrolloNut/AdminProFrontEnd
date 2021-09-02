@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -9,7 +9,7 @@ import { Configuraciones } from 'src/app/shared/enums/Configuraciones';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { Archivo, DocumentosTipoAnexoSelected, FilesUploaded, TipoAnexoEnum } from 'src/app/shared/model/Archivo';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
-import { ClienteFinanza } from '../models/ClienteFinanza';
+import { ClienteFinanza, ClienteFinanzaResponse } from '../models/ClienteFinanza';
 
 @Component({
   selector: 'app-cliente-finanzas',
@@ -18,6 +18,9 @@ import { ClienteFinanza } from '../models/ClienteFinanza';
 })
 export class ClienteFinanzasComponent implements OnInit {
   @Input() clientId = 0;
+  @Input() isnotNecesaryFieldsComplete = false;
+  @Output()isnotNecesaryFieldsCompleteO = new EventEmitter<boolean>();
+
   FormFinanza: FormGroup;
   public state : TipoAnexoEnum;
   
@@ -114,8 +117,17 @@ export class ClienteFinanzasComponent implements OnInit {
           this.toastService.error(response.errores[0], "Error");
           this.btnGuardarCargando = false;
         } else {
+          if(response.valores?.length>0){
+            let f:ClienteFinanzaResponse= response.valores[0];
+             if(f.id>0){
+              let v= f.clienteTabsValida.tabsValida.find(x=>x.keyName=='FINANZAS')
+               this.isnotNecesaryFieldsComplete  = v.ok;
+               this.isnotNecesaryFieldsCompleteO.emit(v.ok);
+               this.toastService.success("Realizado", "OK");
+             }
+          }
               this.subirArchivosAlServidor();
-              this.toastService.success("Realizado", "OK");
+              this.toastService.success("Archivos subidos", "OK");
         }
         this.btnGuardarCargando = false;
 

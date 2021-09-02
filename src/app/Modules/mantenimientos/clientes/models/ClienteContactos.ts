@@ -1,3 +1,5 @@
+import { ClienteTabsValida } from "./Cliente"
+
 export class ClienteContactos {
 
     constructor() {
@@ -41,4 +43,15 @@ export class ClienteContactosRequest {
     clienteId: number;
     CantRegistrados:number;
     contactos: ClienteContactos[];
+}
+export class ContactosResponse {
+
+    constructor() {
+        this.id = 0;
+        this.clienteTabsValida = new ClienteTabsValida()  
+    }
+
+    id: number;
+    clienteTabsValida: ClienteTabsValida;
+
 }

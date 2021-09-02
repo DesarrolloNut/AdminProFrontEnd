@@ -1,3 +1,5 @@
+import { ClienteTabsValida } from "./Cliente"
+
 export class ClienteComercial {
 
     constructor() {
@@ -31,4 +33,11 @@ export class ClienteNegociacion {
     monto: number
     comentario: string
 }
- 
+export class ClienteComercialResponse {
+    constructor() {
+        this.countId = 0;
+        this.clienteTabsValida = new ClienteTabsValida()  
+    }
+    countId: number;
+    clienteTabsValida: ClienteTabsValida;
+}

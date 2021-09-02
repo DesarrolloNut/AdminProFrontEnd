@@ -17,50 +17,88 @@
   <div class="col-md-12">
     <div class="card">
       <div class="card-body">
-        <h4 class="card-title">Formulario de clientes</h4>
+        <h4 class="card-title ">Formulario de clientes</h4>
         <!-- <h6 class="card-subtitle">This is basic Default pagination</h6> -->
         <ngb-tabset>
 
           <ngb-tab>
             <ng-template ngbTabTitle><b>Generales</b></ng-template>
             <ng-template ngbTabContent>
-              <app-cliente-datos-generales (clienteIdCreado)="setClienteIdGuardado($event)" [clientId]="clienteId"></app-cliente-datos-generales>
+              <app-cliente-datos-generales
+               (clienteTabsValida)="setClienteTabsValida($event)"
+               (clienteIdCreado)="setClienteIdGuardado($event)"
+               [clientId]="clienteId">
+              </app-cliente-datos-generales>
             </ng-template>
           </ngb-tab>
 
           <ngb-tab  [disabled]="clienteId<=0 ">
-            <ng-template ngbTabTitle><b>Visitas/Rutas</b></ng-template>
+            <ng-template ngbTabTitle>
+              <b>Visitas/Rutas
+             <div class="circulo" *ngIf="!isnotNecesaryFieldsCompleteInVisitas" style="background-color: #EC7063;" ></div>
+            </b></ng-template>
             <ng-template ngbTabContent>
-            <app-cliente-visitas [clientId]="clienteId"></app-cliente-visitas>
+            <app-cliente-visitas
+              [clientId]="clienteId"
+              (isnotNecesaryFieldsCompleteO)="isnotNecesaryFieldsCompleteInVisitas=$event"
+              [isnotNecesaryFieldsComplete]="isnotNecesaryFieldsCompleteInVisitas">
+            </app-cliente-visitas>
             </ng-template>
           </ngb-tab>
 
           <ngb-tab [disabled]="clienteId<=0 ">
-            <ng-template ngbTabTitle><b>Contactos</b></ng-template>
+            <ng-template ngbTabTitle>
+              <b>Contactos
+              <div class="circulo" *ngIf="!isnotNecesaryFieldsCompleteInContactos" style="background-color: #EC7063;" ></div>
+            </b></ng-template>
             <ng-template ngbTabContent>
-            <app-cliente-contactos [clientId]="clienteId"></app-cliente-contactos>
+            <app-cliente-contactos 
+              [clientId]="clienteId"
+              (isnotNecesaryFieldsCompleteO)="isnotNecesaryFieldsCompleteInContactos=$event"
+              [isnotNecesaryFieldsComplete]="isnotNecesaryFieldsCompleteInContactos">
+            </app-cliente-contactos>
             </ng-template>
           </ngb-tab>
 
           <ngb-tab [disabled]="clienteId<=0">
-            <ng-template ngbTabTitle><b>Finanzas</b></ng-template>
+            <ng-template ngbTabTitle>
+              <b>Finanzas
+                <div class="circulo" *ngIf="!isnotNecesaryFieldsCompleteInFinanzas" style="background-color: #EC7063;" ></div>
+              </b></ng-template>
             <ng-template ngbTabContent>
-              <app-cliente-finanzas [clientId]="clienteId"></app-cliente-finanzas>
+              <app-cliente-finanzas 
+               [clientId]="clienteId"
+               (isnotNecesaryFieldsCompleteO)="isnotNecesaryFieldsCompleteInFinanzas=$event"
+               [isnotNecesaryFieldsComplete]="isnotNecesaryFieldsCompleteInFinanzas">
+              </app-cliente-finanzas>
             </ng-template>
           </ngb-tab>
 
 
           <ngb-tab [disabled]="clienteId<=0">
-            <ng-template ngbTabTitle><b>Comercial</b></ng-template>
+            <ng-template ngbTabTitle>
+              <b>Comercial
+                <div class="circulo" *ngIf="!isnotNecesaryFieldsCompleteInComercial" style="background-color: #EC7063;" ></div>
+              </b></ng-template>
             <ng-template ngbTabContent>
-              <app-cliente-comercial [clientId]="clienteId"></app-cliente-comercial>
+              <app-cliente-comercial
+                [clientId]="clienteId"
+                (isnotNecesaryFieldsCompleteO)="isnotNecesaryFieldsCompleteInComercial=$event"
+                [isnotNecesaryFieldsComplete]="isnotNecesaryFieldsCompleteInComercial">
+              </app-cliente-comercial>
             </ng-template>
           </ngb-tab>
 
           <ngb-tab [disabled]="clienteId<=0">
-            <ng-template ngbTabTitle><b>Imagen cliente/negocio</b></ng-template>
+            <ng-template ngbTabTitle>
+              <b>Imagen cliente/negocio
+                <div class="circulo" *ngIf="!isnotNecesaryFieldsCompleteInNegocio" style="background-color: #EC7063;" ></div>
+              </b></ng-template>
             <ng-template ngbTabContent>
-              <app-cliente-negocio [clientId]="clienteId"></app-cliente-negocio>
+              <app-cliente-negocio
+               [clientId]="clienteId"
+               (isnotNecesaryFieldsCompleteO)="isnotNecesaryFieldsCompleteInNegocio=$event"
+               [isnotNecesaryFieldsComplete]="isnotNecesaryFieldsCompleteInNegocio"></app-cliente-negocio>
             </ng-template>
           </ngb-tab>
         </ngb-tabset>

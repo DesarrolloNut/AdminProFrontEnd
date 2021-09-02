@@ -1,3 +1,5 @@
+import { ClienteTabsValida } from "./Cliente"
+
 export class ClienteFinanza {
 
     constructor() {
@@ -14,4 +16,13 @@ export class ClienteFinanza {
     plazoId             : number
 
 }
- 
+
+export class ClienteFinanzaResponse {
+
+    constructor() {
+        this.id = 0;
+        this.clienteTabsValida = new ClienteTabsValida()  
+    }
+    id: number;
+    clienteTabsValida: ClienteTabsValida;
+}
