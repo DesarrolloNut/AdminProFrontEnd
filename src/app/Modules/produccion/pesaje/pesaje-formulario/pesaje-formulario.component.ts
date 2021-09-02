@@ -220,10 +220,10 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.lote.cantidad < this.pesoNeto) {
-      this.toastService.warning(`No tiene lote disponible para hacer esta transferencia, favor verificar.`);
-      return;
-    }
+    // if (this.lote.cantidad < this.pesoNeto) {
+    //   this.toastService.warning(`No tiene lote disponible para hacer esta transferencia, favor verificar.`);
+    //   return;
+    // }
 
     this.guardar()
   }

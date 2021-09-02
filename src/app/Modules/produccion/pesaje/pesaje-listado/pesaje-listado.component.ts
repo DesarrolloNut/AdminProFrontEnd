@@ -23,9 +23,6 @@ import { ArticuloPesajeListadoViewModel } from '../models/ArticuloPesajeListadoV
 export class PesajeListadoComponent implements OnInit, OnDestroy {
 
 
-
-
-
   // COPIAR AL CREAR UN LISTADO NUEVO
   // Search: string = "";
   paginaNumeroActual = 1;
@@ -50,18 +47,18 @@ export class PesajeListadoComponent implements OnInit, OnDestroy {
   articuloPesajeDetalle: any;
   btnGuardarCargando: boolean;
 
+  fechaFiltro: Date;
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private authService: AuthenticationService,
-    private router: Router,
     private signalRService: BalanzaPesajeSignalrService,
     private modalService: NgbModal,
   ) { }
 
 
   ngOnInit(): void {
-    // this.getData()
+    this.getHoraActual();
     this.getAlmacenesUsuarioEnrroll();
   }
 
@@ -78,7 +75,10 @@ export class PesajeListadoComponent implements OnInit, OnDestroy {
   getData() {
     // this.Cargando = true;
 
-    let parametros: Parametro[] = [{ key: "Almacen", value: this.almacenDefault }]
+    let parametros: Parametro[] = [
+      { key: "Almacen", value: this.almacenDefault },
+      { key: "Fecha", value: this.fechaFiltro }
+    ]
 
     this.httpService.GetAllWithPagination<ArticuloPesajeListadoViewModel>(DataApi.ArticuloPesaje, "GetArticuloPesajeListado", "ID", this.paginaNumeroActual,
       this.paginaSize, false, parametros).subscribe(x => {
@@ -95,6 +95,32 @@ export class PesajeListadoComponent implements OnInit, OnDestroy {
         console.error(error);
         this.toastService.error("Error conexion al servidor");
         // this.Cargando = false;
+      });
+  }
+
+  onChangeFechaFiltro(evento: any) {
+
+    this.fechaFiltro = new Date(evento.value)
+    this.getData(); 
+
+  }
+
+
+  getHoraActual() {
+    // this.cargando = true;
+    this.httpService.DoPost<ComboBox>(DataApi.Public,
+      "GetHoraActual", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.fechaFiltro = new Date(response.valores[0]);
+        }
+
+        // this.cargando = false;
+      }, error => {
+        // this.cargando = false;
+        this.toastService.error("Error conexion al servidor");
       });
   }
 

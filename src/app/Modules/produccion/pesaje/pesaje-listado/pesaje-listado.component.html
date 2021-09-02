@@ -3,17 +3,18 @@
         <div class="card">
             <div class="card-body">
                 <div class="row mb-2">
-                    <div class="col-md-6 align-middle">
+                    <div class="col-md-12 align-middle">
                         <h4 class="card-title">Listado de pesajes</h4>
                     </div>
 
-                    <div class="col-md-6 align-middle text-right">
-
-                        <button (click)="prueba()" class="btn btn-light">Prueba</button>
+                    <div class="form-group col-md-6">
+                        <label> <i class="fa fa-calendar"></i> Fecha</label>
+                        <ejs-datepicker [showClearButton]="false" [(ngModel)]="fechaFiltro"
+                            (change)="onChangeFechaFiltro($event)" [format]="'dd-MMM-yyyy'">
+                        </ejs-datepicker>
                     </div>
 
-                    <div class="col-12">
-                        <!-- <span class="text-info small">Texto capturado: {{searchValue}}</span> -->
+                    <div class="col-md-6">
                         <div class="outer">
                             <div class="inner">
                                 <input style="overflow: hidden; position: relative;" type="text" name="search"
@@ -162,6 +163,15 @@
                                     </h4>
                                 </th>
                                 <td class="font-weight-bold text-info"> {{articuloPesaje.pesoNeto}} Lb</td>
+                            </tr>
+
+                            <tr>
+                                <th scope="row">
+                                    <h4>
+                                        <span class="font-weight-bold">Lote </span>
+                                    </h4>
+                                </th>
+                                <td class="font-weight-bold"> {{articuloPesaje.lote}}</td>
                             </tr>
 
                             <tr>

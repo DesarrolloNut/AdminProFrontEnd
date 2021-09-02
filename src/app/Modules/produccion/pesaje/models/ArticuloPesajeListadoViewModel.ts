@@ -12,4 +12,5 @@ export interface ArticuloPesajeListadoViewModel {
     fechaVencimiento: Date;
     estado: string;
     detalleJSON: string;
+    lote: string;
 }
