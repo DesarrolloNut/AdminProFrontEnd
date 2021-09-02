@@ -13,7 +13,7 @@ import { ParametrosCita } from 'src/app/Modules/turno/models/ParametrosCita';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { cedulaestructura } from 'src/app/shared/validators/cedula-estructura.validator';
-import { Cliente, Coordenadas } from '../models/Cliente';
+import { Cliente, ClienteTabsValida, Coordenadas } from '../models/Cliente';
 
 const fadeInOut = trigger('fadeInOut', [
   transition(':enter', [
@@ -34,7 +34,7 @@ const fadeInOut = trigger('fadeInOut', [
 export class ClienteDatosGeneralesComponent implements OnInit {
   @Input() clientId = 0;
   @Output() clienteIdCreado = new EventEmitter();
- 
+  @Output() clienteTabsValida = new EventEmitter<ClienteTabsValida>();
   
   FormGenerales: FormGroup;
 
@@ -148,14 +148,14 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       codigoReferencia: [null,],
 
       calle: [null, [Validators.required]],
-      numero: [0, [Validators.required]],
+      numero: [null, [Validators.required]],
       residencial: [null],
       apartamento: [null],
       referencia: [null],
-      provinciaID: [0, Validators.required],
-      ciudadID: [0, Validators.required],
-      sectorID: [0, Validators.required],
-      subSectorID: [0, Validators.required],
+      provinciaID: [null, Validators.required],
+      ciudadID: [null, Validators.required],
+      sectorID: [null, Validators.required],
+      subSectorID: [null, Validators.required],
 
       tipoComprobante: [null, [Validators.required]],
 
@@ -167,7 +167,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       listaPrecioId: [0, [Validators.required]],
       longitud: [null, [Validators.required]],
       latitud: [null, [Validators.required]],
-      actualizarErp: [0],
+      estadoERPID: [0],
       // contactos: new FormArray([])
     },
       {
@@ -207,9 +207,12 @@ export class ClienteDatosGeneralesComponent implements OnInit {
           this.scrollToTop();
           this.toastService.success("Realizado", "OK");
           if(!this.actualizando){
-            this.clientId=response.records[0].id;
+            this.clientId=response.valores[0].clienteId;
+            
             this.onClienteCreado(this.clientId);
           }
+          console.log(response.valores[0])
+
           this.router.navigateByUrl('/mantenimientos/cliente/'+this.clientId);
         }
 
@@ -224,6 +227,11 @@ export class ClienteDatosGeneralesComponent implements OnInit {
   onClienteCreado(id:number) {
     this.clienteIdCreado.emit(id);
   }
+
+  onClienteTabsValida(list:ClienteTabsValida) {
+    this.clienteTabsValida.emit(list);
+  }
+
   getClienteByID(id: number) {
     this.cargando = true;
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
@@ -233,7 +241,6 @@ export class ClienteDatosGeneralesComponent implements OnInit {
         } else {
           //validar que existe
           if (response.records.length > 0) {
-
             let cliente = response.records[0];
            cliente.documentoTipoID = cliente.documentoTipoID==null? 0 :cliente.documentoTipoID
             this.FormGenerales.setValue(cliente);
@@ -245,8 +252,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
             this.getCiudades();
             this.getSectores();
             this.getSubSectores();
-      
-
+            this.getClienteTabsValidaByID(this.clientId)
           } else {
             this.toastService.warning("Cliente no encontrado");
             this.router.navigateByUrl('/mantenimientos/cliente');
@@ -258,7 +264,27 @@ export class ClienteDatosGeneralesComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
       });
   }
-
+  getClienteTabsValidaByID(id: number) {
+    this.cargando = true;
+    this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
+      "GetClienteTabsValidaByID", id).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          //validar que existe
+          if (response.valores?.length > 0) {
+              this.onClienteTabsValida(response.valores[0])
+              console.log(response.valores[0])
+          } else {
+            this.toastService.warning("Ha ocurrido un error");
+          }
+        }
+        this.cargando=false;
+      }, error => {
+        this.cargando = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
 
   //METODOS COMBOBOX
 getCiudades() {
