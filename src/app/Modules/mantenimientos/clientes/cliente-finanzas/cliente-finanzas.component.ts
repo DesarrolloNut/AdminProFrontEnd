@@ -20,6 +20,7 @@ export class ClienteFinanzasComponent implements OnInit {
   @Input() clientId = 0;
   @Input() isnotNecesaryFieldsComplete = false;
   @Output()isnotNecesaryFieldsCompleteO = new EventEmitter<boolean>();
+  @Output() goTabByKey = new EventEmitter<string>();
 
   FormFinanza: FormGroup;
   public state : TipoAnexoEnum;
@@ -126,8 +127,9 @@ export class ClienteFinanzasComponent implements OnInit {
                this.toastService.success("Realizado", "OK");
              }
           }
+            if(this.f.condicionPagoId.value==2){
               this.subirArchivosAlServidor();
-              this.toastService.success("Archivos subidos", "OK");
+          }
         }
         this.btnGuardarCargando = false;
 
@@ -148,6 +150,10 @@ getClienteFinanzaByID(id: number) {
         //validar que existe
         if (response.records.length > 0) {
           let clientefinanza = response.records[0];
+
+           if(clientefinanza.condicionPagoId==-1){
+            clientefinanza.condicionPagoId =1
+           }
 
            this.FormFinanza.setValue(clientefinanza);
            this.getArchivosSubidos();
@@ -289,6 +295,7 @@ getNameTipoAnexo(item:any):string{
           // this.modalService.dismissAll()
           this.filesFromInput = []
           this.filesSubidos = []
+          this.toastService.success("Archivos subidos", "OK");
           this.getArchivosSubidos()
           // this.router.navigateByUrl('/mantenimientos/almacen');
         }

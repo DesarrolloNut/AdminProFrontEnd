@@ -1,7 +1,7 @@
 import { FrecuenciaVisita } from './../models/FrecuenciaVisita';
 import { Ruta } from './../../rutas/models/Ruta';
 import { Dias } from './../models/Dias';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -23,6 +23,7 @@ import { ClienteContactos } from '../models/ClienteContactos';
   styleUrls: ['./clientes-formulario.component.scss']
 })
 export class ClientesFormularioComponent implements OnInit {
+  @ViewChild('tabset') tabset: any;
 
   sucursales: ComboBox[] = [];
   roles: ComboBox[] = [];
@@ -108,6 +109,9 @@ export class ClientesFormularioComponent implements OnInit {
   setClienteIdGuardado(id:number) {
     this.clienteId= id;
  }
+   changeTabByKey(key:string) {
+    this.tabset.select(key.toUpperCase());
+  }
  
  setClienteTabsValida(c:ClienteTabsValida) {
   this.clienteTabsValida= c;

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NullLogger } from '@aspnet/signalr';
@@ -22,6 +22,7 @@ export class ClienteVisitasComponent implements OnInit {
   @Input() clientId = 0;
   @Input() isnotNecesaryFieldsComplete = false;
   @Output()isnotNecesaryFieldsCompleteO = new EventEmitter<boolean>();
+  @Output() goTabByKey = new EventEmitter<string>();
 
   FormVisitas: FormGroup;
 

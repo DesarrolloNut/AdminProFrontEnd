@@ -23,6 +23,7 @@ export class ClienteContactosComponent implements OnInit {
   @Input() clientId = 0;
   @Input() isnotNecesaryFieldsComplete = false;
   @Output()isnotNecesaryFieldsCompleteO = new EventEmitter<boolean>();
+  @Output() goTabByKey = new EventEmitter<string>();
 
   FormContactos: FormGroup;
 

@@ -21,7 +21,8 @@ export class ClienteComercialComponent implements OnInit {
   
   @Input() clientId = 0;
   @Input() isnotNecesaryFieldsComplete = false;
-  @Output()isnotNecesaryFieldsCompleteO = new EventEmitter<boolean>();
+  @Output() isnotNecesaryFieldsCompleteO = new EventEmitter<boolean>();
+  @Output() goTabByKey = new EventEmitter<string>();
 
   FormComercial: FormGroup;
 
@@ -108,7 +109,6 @@ export class ClienteComercialComponent implements OnInit {
 
       });
 
-      console.log(this.FormComercial.value)
       this.httpService.DoPostAny<ClienteComercial>(DataApi.ClienteComercial,
         'InsertOrUpdateClienteComercial', this.FormComercial.value).subscribe(response => {
           if (!response.ok) {
@@ -220,7 +220,6 @@ export class ClienteComercialComponent implements OnInit {
  
   onChangeTipoNegociacion(combo: ComboBox){
 
-    console.log("combo",combo)
   //   console.log("negociacion",negociacion)
   //  if(combo.codigo!==1){
   //     negociacion.get("articuloId").value(null);
@@ -264,7 +263,6 @@ export class ClienteComercialComponent implements OnInit {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          console.log( response.records)
           this.tiposNegociacion = response.records;
         }
         this.loadingTipoNegociacion = false;
@@ -323,7 +321,6 @@ export class ClienteComercialComponent implements OnInit {
   }
 
   send(values) {
-    console.log(values);
   }
   
 
