@@ -6,3 +6,11 @@ html, body {
 .form_datosPersonales{
   transition: all .3s ease-in;
 }
+
+.circulo {
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+  border-radius: 50%;
+}
+

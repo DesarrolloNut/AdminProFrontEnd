@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NullLogger } from '@aspnet/signalr';
@@ -11,7 +11,7 @@ import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { Cliente } from '../models/Cliente';
 import { ClienteFrecuencia } from '../models/ClienteFrecuencia';
 import { Dias } from '../models/Dias';
-import { FrecuenciaVisita, FrecuenciaVisitaFormated } from '../models/FrecuenciaVisita';
+import { FrecuenciaVisita, FrecuenciaVisitaFormated, FrecuenciaVisitaResponse } from '../models/FrecuenciaVisita';
 
 @Component({
   selector: 'app-cliente-visitas',
@@ -20,6 +20,10 @@ import { FrecuenciaVisita, FrecuenciaVisitaFormated } from '../models/Frecuencia
 })
 export class ClienteVisitasComponent implements OnInit {
   @Input() clientId = 0;
+  @Input() isnotNecesaryFieldsComplete = false;
+  @Output()isnotNecesaryFieldsCompleteO = new EventEmitter<boolean>();
+  @Output() goTabByKey = new EventEmitter<string>();
+
   FormVisitas: FormGroup;
 
   //BOOLEANOS
@@ -37,7 +41,7 @@ export class ClienteVisitasComponent implements OnInit {
    frecuenciaVisitas : any[];
    tiposRuta         : ComboBox[];
    rutas             : ComboBox[];
-   diasSigla=["L", "M", "MI", "J", "V", "S","D"];
+   diasSigla=["D","L", "M", "MI", "J", "V", "S"];
 
   constructor(
     private toastService: ToastrService,
@@ -52,7 +56,6 @@ export class ClienteVisitasComponent implements OnInit {
    this.CreateForm();
    this.getTipoRutas();
    this.getFrecuenciaVisitas();
-   
    this.GetFrecuenciaVisitasByClienteID();
   }
 
@@ -86,10 +89,13 @@ export class ClienteVisitasComponent implements OnInit {
 
 
   guardarOActualizarFrecuenciaVisita(){
-    console.log(this.FormVisitas.value);
-      this.f.clienteId.setValue(this.clientId);
-      console.log(this.clientId);
+      let diasArr:any[]= this.f.diasSemana.value;
+      if(diasArr.length<=0){
+        this.toastService.warning("Debe seleccionar al menos un dia de visita");
+        return;
+      }
 
+      this.f.clienteId.setValue(this.clientId);
       this.btnGuardarCargando = true;
   
       this.httpService.DoPostAny<FrecuenciaVisita>(DataApi.ClienteFrecuenciaVisitaRuta,
@@ -98,8 +104,16 @@ export class ClienteVisitasComponent implements OnInit {
             this.toastService.error(response.errores[0], "Error");
             this.btnGuardarCargando = false;
           } else {
-              if(response.valores[0].cantRegistrados>0){
-                this.toastService.success("Realizado", "OK");
+              if(response.valores?.length>0){
+            
+                let f:FrecuenciaVisitaResponse= response.valores[0];
+
+                 if(f.countId>0){
+                  let v= f.clienteTabsValida.tabsValida.find(x=>x.keyName=='VISITAS_RUTA')
+                  this.isnotNecesaryFieldsComplete= v.ok;
+                  this.isnotNecesaryFieldsCompleteO.emit(v.ok);
+                   this.toastService.success("Realizado", "OK");
+                 }
               }
           }
           this.btnGuardarCargando = false;
@@ -125,7 +139,7 @@ export class ClienteVisitasComponent implements OnInit {
       }, error => {
         this.cargando = false;
         this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
-
+ 
         // setTimeout(() => {
         //   this.getDias();
         // }, 1000);
@@ -167,7 +181,7 @@ export class ClienteVisitasComponent implements OnInit {
         for (let x = 0; x < visitas.length; x++) {
           let visita = visitas[x];
 
-          if (dia.dia == visita.diaId) {
+          if (dia.id == visita.diaId) {
             dia.select = true;
           }
 

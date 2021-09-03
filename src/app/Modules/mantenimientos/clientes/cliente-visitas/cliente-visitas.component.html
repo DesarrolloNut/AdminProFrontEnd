@@ -3,12 +3,14 @@
     <div class="card">
       <div class="card-body">
         <div class="row">
-          <div class="col-md-6 col-lg-6 col-12">
-            <h4 class="card-title">Visitas Clientes</h4>
+          <div class="col-md-3 col-lg-3 col-12">
+            <h4 class="card-title font-weight-bold">Visitas Clientes</h4>
           </div>
-          <div class="col-md-6 col-lg-6 col-12 text-right">
-
-
+          <div class="col-md-9 col-lg-9 col-12 text-right">
+            <p class="badge badge-pill badge-danger"
+               style="font-size: 15px;"
+             *ngIf="!isnotNecesaryFieldsComplete">
+              Debe selecionar al menos una ruta de venta</p>
           </div>
         </div>
 
@@ -67,7 +69,7 @@
               <div class="btn-group btn-group-toggle col-md-12 custom-btns">
                 <label ngbButtonLabel class=" btn-outline-dark" *ngFor="let dia of diaSemana; let i = index">
                   <input ngbButton type="checkbox" [(ngModel)]="dia.select" [ngModelOptions]="{standalone: true}">
-                  <span style="font-weight: 500;">{{diasSigla[dia.dia-1]}}</span>
+                  <span style="font-weight: 500;">{{diasSigla[dia.dia]}}</span>
                   <br>
                   {{ dia.nombre }}
                 </label>
@@ -86,6 +88,7 @@
               <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
                 <i class="fas fa-check"></i> Guardar
               </button>
+       
 
               <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
                 <span class="spinner-border spinner-border-sm"></span> Guardando

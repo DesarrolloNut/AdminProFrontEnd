@@ -4,6 +4,7 @@ import { ViewportScroller } from '@angular/common';
 import { Component, ElementRef, EventEmitter, HostListener, Input, NgZone, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { thresholdFreedmanDiaconis } from 'd3';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
@@ -13,7 +14,7 @@ import { ParametrosCita } from 'src/app/Modules/turno/models/ParametrosCita';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { cedulaestructura } from 'src/app/shared/validators/cedula-estructura.validator';
-import { Cliente, Coordenadas } from '../models/Cliente';
+import { Cliente, ClienteTabsValida, Coordenadas } from '../models/Cliente';
 
 const fadeInOut = trigger('fadeInOut', [
   transition(':enter', [
@@ -34,8 +35,12 @@ const fadeInOut = trigger('fadeInOut', [
 export class ClienteDatosGeneralesComponent implements OnInit {
   @Input() clientId = 0;
   @Output() clienteIdCreado = new EventEmitter();
- 
-  
+  @Output() clienteTabsValida = new EventEmitter<ClienteTabsValida>();
+  @Output() goTabByKey = new EventEmitter<string>();
+
+
+  @ViewChild('contentModal') content: any;
+
   FormGenerales: FormGroup;
 
   //BOOLEANOS
@@ -63,6 +68,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
   TipoCliente            : any[];
   estados                : ComboBox[]
   tiposComprobantes      : ComboBox[]
+  clienteTabsValidaIterable = new ClienteTabsValida();
 
   //OBJETOS Y DEMAS
   TipoSexo: any[] = [{ codigo: 'H', nombre: 'Hombre' }, { codigo: 'M', nombre: 'Mujer' }];
@@ -79,9 +85,14 @@ export class ClienteDatosGeneralesComponent implements OnInit {
     private route: ActivatedRoute,
     private httpService: BackendService,
     private router: Router,
+    config: NgbModalConfig,
+    private modalService: NgbModal,
     private auth: AuthenticationService,
     private formBuilder: FormBuilder,
-    ) { }
+    ) {
+    config.backdrop = 'static';
+    config.keyboard = false;
+  }
  
   ngOnInit() {
     //CREACION DE FORMULARIO
@@ -135,11 +146,12 @@ export class ClienteDatosGeneralesComponent implements OnInit {
     this.FormGenerales = this.formBuilder.group({
       id: [0],
       sucursalID: [0, [Validators.required]],
-      clienteTipoID: [0, [Validators.required]],
+      clienteTipoID: [null, [Validators.required]],
       nombres: [null,  [Validators.required]],
       apellidos: [null,  [Validators.required] ],
       documento: [null, [Validators.required, Validators.minLength(9)]],
       email: [null, [Validators.required, Validators.email]],
+      telefono:[null,  [Validators.required] ],
       documentoTipoID: [1, [Validators.required]], //cedula por defecto
       fechaNacimiento: [null,  [Validators.required] ],
       fechaRegistrado: [new Date(),],
@@ -148,14 +160,14 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       codigoReferencia: [null,],
 
       calle: [null, [Validators.required]],
-      numero: [0, [Validators.required]],
+      numero: [null, [Validators.required]],
       residencial: [null],
       apartamento: [null],
       referencia: [null],
-      provinciaID: [0, Validators.required],
-      ciudadID: [0, Validators.required],
-      sectorID: [0, Validators.required],
-      subSectorID: [0, Validators.required],
+      provinciaID: [null, Validators.required],
+      ciudadID: [null, Validators.required],
+      sectorID: [null, Validators.required],
+      subSectorID: [null, Validators.required],
 
       tipoComprobante: [null, [Validators.required]],
 
@@ -167,7 +179,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       listaPrecioId: [0, [Validators.required]],
       longitud: [null, [Validators.required]],
       latitud: [null, [Validators.required]],
-      actualizarErp: [0],
+      estadoERPID: [0],
       // contactos: new FormArray([])
     },
       {
@@ -199,16 +211,17 @@ export class ClienteDatosGeneralesComponent implements OnInit {
     let param = { "cliente": this.FormGenerales.value }
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
       metodo, this.FormGenerales.value).subscribe(response => {
-    
+         
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
           this.btnGuardarCargando = false;
         } else {
-          this.scrollToTop();
-          this.toastService.success("Realizado", "OK");
+            this.scrollToTop();
+            this.toastService.success("Realizado", "OK");
           if(!this.actualizando){
-            this.clientId=response.records[0].id;
+            this.clientId=response.valores[0].clienteId;
             this.onClienteCreado(this.clientId);
+            this.onClienteTabsValida(response.valores[0])
           }
           this.router.navigateByUrl('/mantenimientos/cliente/'+this.clientId);
         }
@@ -224,6 +237,19 @@ export class ClienteDatosGeneralesComponent implements OnInit {
   onClienteCreado(id:number) {
     this.clienteIdCreado.emit(id);
   }
+
+  onClienteTabsValida(obj:ClienteTabsValida) {
+    this.clienteTabsValida.emit(obj);
+
+    this.clienteTabsValidaIterable=obj
+    
+    //SI ALGUNA INFORMACION DE CLIENTE REQUERIDA ESTA PENDIENTE POR COMPLETAR
+    //SE DESPLEGARA EL MODAL
+    if(this.clienteTabsValidaIterable.tabsValida.filter(x=>!x.ok).length>0){
+     this.openModal(this.content);
+   }
+  }
+
   getClienteByID(id: number) {
     this.cargando = true;
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
@@ -233,7 +259,6 @@ export class ClienteDatosGeneralesComponent implements OnInit {
         } else {
           //validar que existe
           if (response.records.length > 0) {
-
             let cliente = response.records[0];
            cliente.documentoTipoID = cliente.documentoTipoID==null? 0 :cliente.documentoTipoID
             this.FormGenerales.setValue(cliente);
@@ -245,8 +270,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
             this.getCiudades();
             this.getSectores();
             this.getSubSectores();
-      
-
+            this.getClienteTabsValidaByID(this.clientId)
           } else {
             this.toastService.warning("Cliente no encontrado");
             this.router.navigateByUrl('/mantenimientos/cliente');
@@ -258,7 +282,26 @@ export class ClienteDatosGeneralesComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
       });
   }
-
+  getClienteTabsValidaByID(id: number) {
+    this.cargando = true;
+    this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
+      "GetClienteTabsValidaByID", id).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          //validar que existe
+          if (response.valores?.length > 0) {
+              this.onClienteTabsValida(response.valores[0])
+          } else {
+            this.toastService.warning("Ha ocurrido un error");
+          }
+        }
+        this.cargando=false;
+      }, error => {
+        this.cargando = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
 
   //METODOS COMBOBOX
 getCiudades() {
@@ -313,7 +356,6 @@ getTipoComprobante() {
       if (!response.ok) {
         this.toastService.error(response.errores[0]);
       } else {
-         console.log(this.f.documentoTipoID.value)
         if(this.f.documentoTipoID.value==1){
          response.records.filter(x=>x.codigo==1).map(d=>{d.disabled=true;})
         }
@@ -596,6 +638,58 @@ onSubSectorChange(event:ComboBox){
     this.searchLocalidadEvent.emit(this.searchLocalidad);
    }
 }
+openModal(content) {
+  this.modalService.open(content, { size: 'lg' });
+
 }
+goTab(key="VISITAS_RUTAS"){
+  this.goTabByKey.emit(key)
+  this.modalService.dismissAll()
+}
+formatDescripcionByKeyName(keyName:string){
+    switch (keyName) {
+      case 'GENERALES':
+        return 'Completar los datos generales del cliente'
+      case 'VISITAS_RUTA':
+
+        return 'Asignar una ruta de venta al cliente'
+
+      case 'CONTACTOS':
+        return 'Agregar al menos un contacto '
+
+      case 'FINANZAS':
+        return 'Campos pendientes por completar en Finanzas'
+
+      case 'COMERCIAL':
+        return 'Campos pendientes por completar en Comercial'
+      default:
+        '';
+    }
+
+}
+formatDescripcionButtonByKeyName(keyName:string){
+  switch (keyName) {
+    case 'GENERALES':
+      return 'Registrar'
+
+    case 'VISITAS_RUTA':
+      return 'Asignar ruta de venta'
+
+    case 'CONTACTOS':
+      return 'Agregar contacto'
+
+    case 'FINANZAS':
+      return 'Ir a Finanzas'
+
+    case 'COMERCIAL':
+      return 'Ir a Comercial'
+    default:
+        console.log("No such day exists!" + keyName);
+  }
+
+}
+
+}
+
 
 

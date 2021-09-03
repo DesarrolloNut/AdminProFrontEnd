@@ -127,7 +127,10 @@ export class ClienteViewModelCustomized {
         this.longitud = ""
         this.latitud = ""
          
-        this.actualizarErp =0
+        this.telefono=""
+        this.estadoERPID =0
+        this.estadoERP ="";
+        this.estadoColorERP="";
     }
 
 
@@ -184,8 +187,10 @@ export class ClienteViewModelCustomized {
     longitud: string;
     latitud: string;
 
-    actualizarErp:number;
-
+    telefono:string;
+    estadoERPID:number;
+    estadoERP:string;
+    estadoColorERP:string;
 }
 
  
@@ -200,3 +205,24 @@ export class Coordenadas {
     longitud: number;
 }
 
+ 
+
+ 
+export class ClienteTabsValida {
+
+    constructor() {
+        this.clienteId = 0
+        this.tabsValida = []
+    }
+    clienteId: number;
+    tabsValida: TabsValida[];
+}
+export class TabsValida {
+
+    constructor() {
+        this.keyName = ""
+        this.ok = false
+    }
+    keyName: string;
+    ok: boolean;
+}

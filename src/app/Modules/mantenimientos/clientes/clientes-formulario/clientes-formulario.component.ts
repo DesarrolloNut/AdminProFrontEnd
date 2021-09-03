@@ -1,7 +1,7 @@
 import { FrecuenciaVisita } from './../models/FrecuenciaVisita';
 import { Ruta } from './../../rutas/models/Ruta';
 import { Dias } from './../models/Dias';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,7 +11,7 @@ import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { cedulaestructura } from 'src/app/shared/validators/cedula-estructura.validator';
 import { ParametrosCita } from 'src/app/Modules/turno/models/ParametrosCita';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
-import { Cliente } from '../models/Cliente';
+import { Cliente, ClienteTabsValida } from '../models/Cliente';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import * as _ from "lodash";
 import { ClienteFrecuencia } from '../models/ClienteFrecuencia';
@@ -23,6 +23,7 @@ import { ClienteContactos } from '../models/ClienteContactos';
   styleUrls: ['./clientes-formulario.component.scss']
 })
 export class ClientesFormularioComponent implements OnInit {
+  @ViewChild('tabset') tabset: any;
 
   sucursales: ComboBox[] = [];
   roles: ComboBox[] = [];
@@ -63,6 +64,18 @@ export class ClientesFormularioComponent implements OnInit {
   hasDetalleRuta: Boolean;
 
   clienteId = 0;
+
+  clienteTabsValida = new ClienteTabsValida();
+  clienteInfo = new Cliente();
+
+  isnotNecesaryFieldsCompleteInGenerales = true;
+  isnotNecesaryFieldsCompleteInVisitas   = true;
+  isnotNecesaryFieldsCompleteInContactos = true;
+  isnotNecesaryFieldsCompleteInFinanzas  = true;
+  isnotNecesaryFieldsCompleteInComercial = true;
+  isnotNecesaryFieldsCompleteInNegocio   = true;
+
+
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
@@ -97,6 +110,43 @@ export class ClientesFormularioComponent implements OnInit {
   setClienteIdGuardado(id:number) {
     this.clienteId= id;
  }
+   changeTabByKey(key:string) {
+    this.tabset.select(key.toUpperCase());
+  }
+ 
+ setClienteTabsValida(c:ClienteTabsValida) {
+  this.clienteTabsValida= c;
+
+   c.tabsValida?.forEach(x=>{
+    switch (x.keyName) {
+      case 'GENERALES':
+        this.isnotNecesaryFieldsCompleteInGenerales= x.ok;
+        break;
+
+      case 'VISITAS_RUTA':
+        this.isnotNecesaryFieldsCompleteInVisitas= x.ok;
+        break;
+
+      case 'CONTACTOS':
+        this.isnotNecesaryFieldsCompleteInContactos= x.ok;
+        break;
+
+      case 'FINANZAS':
+        this.isnotNecesaryFieldsCompleteInFinanzas= x.ok;
+        break;
+
+      case 'COMERCIAL':
+        this.isnotNecesaryFieldsCompleteInComercial= x.ok;
+        break;
+
+      case 'NEGOCIO':
+        this.isnotNecesaryFieldsCompleteInNegocio= x.ok;
+        break;
+      default:
+          console.log("No such day exists!" + x.keyName);
+    }
+   })
+}
   // private CreateFormDatosGenerales() {
 
   //   this.FormGenerales = this.formBuilder.group({

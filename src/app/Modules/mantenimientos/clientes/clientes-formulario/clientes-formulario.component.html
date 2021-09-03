@@ -11,56 +11,115 @@
   </div>
 </div>
 
-
+  
 <div class="row">
 
   <div class="col-md-12">
     <div class="card">
       <div class="card-body">
-        <h4 class="card-title">Formulario de clientes</h4>
+        <h4 class="card-title ">Formulario de cliente</h4>
         <!-- <h6 class="card-subtitle">This is basic Default pagination</h6> -->
-        <ngb-tabset>
+        <ngb-tabset #tabset="ngbTabset">
 
-          <ngb-tab>
+          <ngb-tab id="GENERALES">
             <ng-template ngbTabTitle><b>Generales</b></ng-template>
             <ng-template ngbTabContent>
-              <app-cliente-datos-generales (clienteIdCreado)="setClienteIdGuardado($event)" [clientId]="clienteId"></app-cliente-datos-generales>
+              <app-cliente-datos-generales
+               (clienteTabsValida)="setClienteTabsValida($event)"
+               (goTabByKey)="changeTabByKey($event)"
+               (clienteIdCreado)="setClienteIdGuardado($event)"
+               [clientId]="clienteId">
+              </app-cliente-datos-generales>
             </ng-template>
           </ngb-tab>
 
-          <ngb-tab  [disabled]="clienteId<=0 ">
-            <ng-template ngbTabTitle><b>Visitas/Rutas</b></ng-template>
+          <ngb-tab id="VISITAS_RUTA" [disabled]="clienteId<=0 ">
+            <ng-template ngbTabTitle>
+              <b>Visitas/Rutas
+                <div class="pulse-container" >
+                  <div class="pulse-box"  *ngIf="isnotNecesaryFieldsCompleteInVisitas else circulePulsating">
+                  </div>
+                </div>
+            </b></ng-template>
             <ng-template ngbTabContent>
-            <app-cliente-visitas [clientId]="clienteId"></app-cliente-visitas>
+            <app-cliente-visitas
+              [clientId]="clienteId"
+              (goTabByKey)="changeTabByKey($event)"
+              (isnotNecesaryFieldsCompleteO)="isnotNecesaryFieldsCompleteInVisitas=$event"
+              [isnotNecesaryFieldsComplete]="isnotNecesaryFieldsCompleteInVisitas">
+            </app-cliente-visitas>
             </ng-template>
           </ngb-tab>
 
-          <ngb-tab [disabled]="clienteId<=0 ">
-            <ng-template ngbTabTitle><b>Contactos</b></ng-template>
+          <ngb-tab id="CONTACTOS" [disabled]="clienteId<=0 ">
+            <ng-template ngbTabTitle>
+              <b>Contactos
+                <div class="pulse-container" >
+                  <div class="pulse-box"  *ngIf="isnotNecesaryFieldsCompleteInContactos else circulePulsating">
+                  </div>
+                </div>
+            </b></ng-template>
             <ng-template ngbTabContent>
-            <app-cliente-contactos [clientId]="clienteId"></app-cliente-contactos>
+            <app-cliente-contactos 
+              [clientId]="clienteId"
+              (goTabByKey)="changeTabByKey($event)"
+              (isnotNecesaryFieldsCompleteO)="isnotNecesaryFieldsCompleteInContactos=$event"
+              [isnotNecesaryFieldsComplete]="isnotNecesaryFieldsCompleteInContactos">
+            </app-cliente-contactos>
             </ng-template>
           </ngb-tab>
 
-          <ngb-tab [disabled]="clienteId<=0">
-            <ng-template ngbTabTitle><b>Finanzas</b></ng-template>
+          <ngb-tab id="FINANZAS" [disabled]="clienteId<=0">
+            <ng-template ngbTabTitle>
+              <b>Finanzas
+                <div class="pulse-container" >
+                  <div class="pulse-box"  *ngIf="isnotNecesaryFieldsCompleteInFinanzas else circulePulsating">
+                  </div>
+                </div>
+              </b></ng-template>
             <ng-template ngbTabContent>
-              <app-cliente-finanzas [clientId]="clienteId"></app-cliente-finanzas>
+              <app-cliente-finanzas 
+               [clientId]="clienteId"
+               (goTabByKey)="changeTabByKey($event)"
+               (isnotNecesaryFieldsCompleteO)="isnotNecesaryFieldsCompleteInFinanzas=$event"
+               [isnotNecesaryFieldsComplete]="isnotNecesaryFieldsCompleteInFinanzas">
+              </app-cliente-finanzas>
             </ng-template>
           </ngb-tab>
 
 
-          <ngb-tab [disabled]="clienteId<=0">
-            <ng-template ngbTabTitle><b>Comercial</b></ng-template>
+          <ngb-tab id="COMERCIAL"  [disabled]="clienteId<=0">
+            <ng-template ngbTabTitle>
+              <b>Comercial
+                <div class="pulse-container" >
+                  <div class="pulse-box"  *ngIf="isnotNecesaryFieldsCompleteInComercial else circulePulsating">
+                  </div>
+                </div>
+              </b></ng-template>
             <ng-template ngbTabContent>
-              <app-cliente-comercial [clientId]="clienteId"></app-cliente-comercial>
+              <app-cliente-comercial
+                [clientId]="clienteId"
+                (goTabByKey)="changeTabByKey($event)"
+                (isnotNecesaryFieldsCompleteO)="isnotNecesaryFieldsCompleteInComercial=$event"
+                [isnotNecesaryFieldsComplete]="isnotNecesaryFieldsCompleteInComercial">
+              </app-cliente-comercial>
             </ng-template>
           </ngb-tab>
 
-          <ngb-tab [disabled]="clienteId<=0">
-            <ng-template ngbTabTitle><b>Imagen cliente/negocio</b></ng-template>
+          <ngb-tab id="NEGOCIO"  [disabled]="clienteId<=0">
+            <ng-template ngbTabTitle>
+              <b>Imagen cliente/negocio
+                <div class="pulse-container" >
+                  <div class="pulse-box"  *ngIf="isnotNecesaryFieldsCompleteInNegocio else circulePulsating">
+                  </div>
+                </div>
+              </b></ng-template>
             <ng-template ngbTabContent>
-              <app-cliente-negocio [clientId]="clienteId"></app-cliente-negocio>
+              <app-cliente-negocio
+               [clientId]="clienteId"
+               (goTabByKey)="changeTabByKey($event)"
+               (isnotNecesaryFieldsCompleteO)="isnotNecesaryFieldsCompleteInNegocio=$event"
+               [isnotNecesaryFieldsComplete]="isnotNecesaryFieldsCompleteInNegocio"></app-cliente-negocio>
             </ng-template>
           </ngb-tab>
         </ngb-tabset>
@@ -69,3 +128,14 @@
   </div>
 
 </div>
+
+<ng-template #circulePulsating>
+    <div class="pulse-box" >
+      <svg class="pulse-svg" width="10px" height="8px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <circle class="circle first-circle" fill="#FF6347" cx="25" cy="25" r="25"></circle>
+        <circle class="circle second-circle" fill="#FF6347" cx="25" cy="25" r="25"></circle>
+        <circle class="circle third-circle" fill="#FF6347" cx="25" cy="25" r="25"></circle>
+        <circle class="circle" fill="#FF6347" cx="25" cy="25" r="25"></circle>
+      </svg>
+    </div>
+</ng-template>

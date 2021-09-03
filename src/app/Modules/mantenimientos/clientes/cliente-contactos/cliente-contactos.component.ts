@@ -1,5 +1,5 @@
 import { ThrowStmt } from '@angular/compiler';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -11,7 +11,7 @@ import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { cedulaestructura } from 'src/app/shared/validators/cedula-estructura.validator';
 import { Cliente } from '../models/Cliente';
-import { ClienteContactos, ClienteContactosRequest } from '../models/ClienteContactos';
+import { ClienteContactos, ClienteContactosRequest, ContactosResponse } from '../models/ClienteContactos';
 import { FrecuenciaVisita } from '../models/FrecuenciaVisita';
 
 @Component({
@@ -21,6 +21,10 @@ import { FrecuenciaVisita } from '../models/FrecuenciaVisita';
 })
 export class ClienteContactosComponent implements OnInit {
   @Input() clientId = 0;
+  @Input() isnotNecesaryFieldsComplete = false;
+  @Output()isnotNecesaryFieldsCompleteO = new EventEmitter<boolean>();
+  @Output() goTabByKey = new EventEmitter<string>();
+
   FormContactos: FormGroup;
 
   //BOOLEANOS
@@ -93,9 +97,15 @@ export class ClienteContactosComponent implements OnInit {
             this.toastService.error(response.errores[0], "Error");
             this.btnGuardarCargando = false;
           } else {
-              if(response.valores[0].cantRegistrados>0){
-                this.toastService.success("Realizado", "OK");
-              }
+            if(response.valores?.length>0){
+              let f:ContactosResponse= response.valores[0];
+               if(f.id>0){
+                let v= f.clienteTabsValida.tabsValida.find(x=>x.keyName=='CONTACTOS')
+                 this.isnotNecesaryFieldsComplete= v.ok;
+                 this.isnotNecesaryFieldsCompleteO.emit(v.ok);
+                 this.toastService.success("Realizado", "OK");
+               }
+            }
           }
           this.btnGuardarCargando = false;
 

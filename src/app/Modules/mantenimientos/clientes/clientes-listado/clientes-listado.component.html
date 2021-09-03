@@ -115,15 +115,10 @@
                                 </td>
 
                                 <td>
-                                    <div  [ngClass]="cliente.actualizarErp == 0  ? 'circulo synchronizeds' : 'circulo pending'"
-                                    ></div>
-
-                                    <span class="text-dark" *ngIf="cliente.actualizarErp==0">
-                                        Sincronizado
+                                    <div class="circulo" [ngStyle]="{'background-color':  cliente.estadoColorERP}"></div>
+                                    <span class="text-dark">
+                                        {{cliente.estadoERP}}
                                     </span>
-                                    <span class="text-dark" *ngIf="cliente.actualizarErp==1">
-                                        Pendiente
-                                   </span>
                                 </td>
                                 
                                   <!-- SHOW INFO COLUMNA Condicion Pago -->

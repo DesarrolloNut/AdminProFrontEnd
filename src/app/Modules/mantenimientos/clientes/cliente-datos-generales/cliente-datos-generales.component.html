@@ -5,7 +5,7 @@
       <div class="card-body">
         <div class="row">
           <div class="col-md-6 col-lg-6 col-12">
-            <h4 class="card-title">Datos Generales</h4>
+            <h4 class="card-title font-weight-bold">Datos Generales</h4>
           </div>
           <div class="col-md-6 col-lg-6 col-12 text-right">
 
@@ -22,7 +22,7 @@
             <div class="form-group col-md-6  ">
               <label for="codigoReferencia"> <i class="fa fa-hashtag"></i> Código
                 de Referencia</label>
-              <input formControlName="codigoReferencia" type="text" name="codigoReferencia"
+              <input [attr.disabled]="true" formControlName="codigoReferencia" type="text" name="codigoReferencia"
                 id="codigoReferencia"
                 [ngClass]="{'is-invalid' : submitted && f.codigoReferencia.errors,  'form-control':true  }">
               <div class="invalid-feedback" *ngIf="submitted && f.codigoReferencia.errors">
@@ -101,13 +101,22 @@
         </div>
      
 
-        <div class="form-group col-md-12"  *ngIf="f.documentoTipoID.value==1">
+        <div class="form-group col-md-6"  *ngIf="f.documentoTipoID.value==1">
           <label for="email"> <i class="fa fa-envelope-open"></i> Email</label>
           <input formControlName="email" type="email" name="email" id="email"
             [ngClass]="{'is-invalid' : submitted && f.email.errors,  'form-control':true  }">
           <div class="invalid-feedback" *ngIf="submitted && f.email.errors">
             <div *ngIf="f.email.errors.required">El campo es obligatorio</div>
             <div *ngIf="f.email.errors.email"> Ingresa un email correcto</div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-6"  *ngIf="f.documentoTipoID.value==1">
+          <label for="telefono"><i class="fa fa-phone" aria-hidden="true"></i> Telefono/Celular</label>
+          <input formControlName="telefono" mask="(000) 000-0000" type="text" name="telefono" id="telefono"
+            [ngClass]="{'is-invalid' : submitted && f.telefono.errors,  'form-control':true  }">
+          <div class="invalid-feedback" *ngIf="submitted && f.telefono.errors">
+            <div *ngIf="f.telefono.errors.required">El campo es obligatorio</div>
           </div>
         </div>
 
@@ -348,3 +357,48 @@
     </div>
   </div>
 </div> 
+
+<ng-template #contentModal let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">
+       Cliente <span class="font-weight-bold">{{f.nombres.value}} {{f.apellidos.value}}</span> | Proceso de registro </h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>
+      <span class="font-weight-bold text-muted">¡Hola!,</span>
+       <span style="color:black;font-weight: 400;"> Aún debes completar algunas cosas:</span></p>
+
+    <div style="margin-top: 5px;" *ngFor="let l of clienteTabsValidaIterable.tabsValida"  [ngClass]="l.keyName">
+      <div class="circulo" *ngIf="l.keyName!=='NEGOCIO'"
+      [style.background-color]="!l.ok ? '#F1948A' : (l.ok ? '#82E0AA' : '#82E0AA')" ></div>
+
+      <span class="text-dark" style="font-size: 16px;">
+             {{formatDescripcionByKeyName(l.keyName)}}
+      </span>
+       <br *ngIf="!l.ok"/>
+      <button  [ngStyle]="{'margin-bottom': !l.ok ? ' 10px' : 'auto' }"
+      *ngIf="!l.ok" type="button" class="btn btn-sm btn-outline-primary" (click)="goTab(l.keyName)">
+        {{formatDescripcionButtonByKeyName(l.keyName)}}
+      </button>
+      <br>
+    </div>
+  
+  </div>  
+  <div class="modal-footer " style="justify-content: center !important;">
+    <div class="circulo" [ngStyle]="{'background-color': '#82E0AA'}"></div>
+    <span class="text-dark">
+          Completado
+    </span>
+    <div class="circulo" [ngStyle]="{'background-color': '#F1948A'}"></div>
+    <span class="text-dark">
+          Pendiente
+    </span>
+    <br>
+    <!-- <h6>--Guia para finalizar registro de cliente--</h6> -->
+
+   </div>
+</ng-template>
+
