@@ -66,7 +66,8 @@ export class ClientesFormularioComponent implements OnInit {
   clienteId = 0;
 
   clienteTabsValida = new ClienteTabsValida();
-  
+  clienteInfo = new Cliente();
+
   isnotNecesaryFieldsCompleteInGenerales = true;
   isnotNecesaryFieldsCompleteInVisitas   = true;
   isnotNecesaryFieldsCompleteInContactos = true;

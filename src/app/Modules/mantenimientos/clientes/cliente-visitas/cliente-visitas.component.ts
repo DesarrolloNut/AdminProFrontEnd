@@ -41,7 +41,7 @@ export class ClienteVisitasComponent implements OnInit {
    frecuenciaVisitas : any[];
    tiposRuta         : ComboBox[];
    rutas             : ComboBox[];
-   diasSigla=["L", "M", "MI", "J", "V", "S","D"];
+   diasSigla=["D","L", "M", "MI", "J", "V", "S"];
 
   constructor(
     private toastService: ToastrService,
@@ -181,7 +181,7 @@ export class ClienteVisitasComponent implements OnInit {
         for (let x = 0; x < visitas.length; x++) {
           let visita = visitas[x];
 
-          if (dia.dia == visita.diaId) {
+          if (dia.id == visita.diaId) {
             dia.select = true;
           }
 

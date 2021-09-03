@@ -101,13 +101,22 @@
         </div>
      
 
-        <div class="form-group col-md-12"  *ngIf="f.documentoTipoID.value==1">
+        <div class="form-group col-md-6"  *ngIf="f.documentoTipoID.value==1">
           <label for="email"> <i class="fa fa-envelope-open"></i> Email</label>
           <input formControlName="email" type="email" name="email" id="email"
             [ngClass]="{'is-invalid' : submitted && f.email.errors,  'form-control':true  }">
           <div class="invalid-feedback" *ngIf="submitted && f.email.errors">
             <div *ngIf="f.email.errors.required">El campo es obligatorio</div>
             <div *ngIf="f.email.errors.email"> Ingresa un email correcto</div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-6"  *ngIf="f.documentoTipoID.value==1">
+          <label for="telefono"><i class="fa fa-phone" aria-hidden="true"></i> Telefono/Celular</label>
+          <input formControlName="telefono" mask="(000) 000-0000" type="text" name="telefono" id="telefono"
+            [ngClass]="{'is-invalid' : submitted && f.telefono.errors,  'form-control':true  }">
+          <div class="invalid-feedback" *ngIf="submitted && f.telefono.errors">
+            <div *ngIf="f.telefono.errors.required">El campo es obligatorio</div>
           </div>
         </div>
 

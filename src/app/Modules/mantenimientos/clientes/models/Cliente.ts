@@ -127,6 +127,7 @@ export class ClienteViewModelCustomized {
         this.longitud = ""
         this.latitud = ""
          
+        this.telefono=""
         this.estadoERPID =0
         this.estadoERP ="";
         this.estadoColorERP="";
@@ -186,6 +187,7 @@ export class ClienteViewModelCustomized {
     longitud: string;
     latitud: string;
 
+    telefono:string;
     estadoERPID:number;
     estadoERP:string;
     estadoColorERP:string;

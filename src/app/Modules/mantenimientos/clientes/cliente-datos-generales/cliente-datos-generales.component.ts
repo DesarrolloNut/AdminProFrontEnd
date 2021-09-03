@@ -151,6 +151,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       apellidos: [null,  [Validators.required] ],
       documento: [null, [Validators.required, Validators.minLength(9)]],
       email: [null, [Validators.required, Validators.email]],
+      telefono:[null,  [Validators.required] ],
       documentoTipoID: [1, [Validators.required]], //cedula por defecto
       fechaNacimiento: [null,  [Validators.required] ],
       fechaRegistrado: [new Date(),],
@@ -222,7 +223,6 @@ export class ClienteDatosGeneralesComponent implements OnInit {
             this.onClienteCreado(this.clientId);
             this.onClienteTabsValida(response.valores[0])
           }
-          this.openModal(this.content);
           this.router.navigateByUrl('/mantenimientos/cliente/'+this.clientId);
         }
 
@@ -246,7 +246,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
     //SI ALGUNA INFORMACION DE CLIENTE REQUERIDA ESTA PENDIENTE POR COMPLETAR
     //SE DESPLEGARA EL MODAL
     if(this.clienteTabsValidaIterable.tabsValida.filter(x=>!x.ok).length>0){
-    this.openModal(this.content);
+     this.openModal(this.content);
    }
   }
 
