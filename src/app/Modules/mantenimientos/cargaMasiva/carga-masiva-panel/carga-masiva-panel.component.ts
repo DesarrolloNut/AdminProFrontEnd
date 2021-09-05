@@ -113,6 +113,26 @@ export class CargaMasivaPanelComponent implements OnInit {
         this.metodoEndPoint = "UploadExcelFileClienteActualizaRuta"
         this.subirDatosExcel()
       }
+    }else if(this.accionId==3){
+      if (this.validarCargaClienteRutaTipo()) {
+
+        this.dataTransformed = this.dataExcel.map((x) => {
+          let arrayValues = Object.values(x);
+          return {
+            "CodigoReferencia": arrayValues[0].toString(),
+            "Memo ": arrayValues[1],
+            "DiaVisita": Number(arrayValues[2]),
+            "RutaCodigoReferencia": Number(arrayValues[3]),
+            "Prioridad": arrayValues[4] ==null?"" :arrayValues[4],
+            "TerritorioId": Number(arrayValues[5])
+          };
+        });
+        console.table(this.dataTransformed)
+
+        this.dataApi = DataApi.Cliente;
+        this.metodoEndPoint = "UploadExcelFileReestructuraCliente"
+       this.subirDatosExcel()
+      }
     }
 
   }
@@ -138,6 +158,7 @@ export class CargaMasivaPanelComponent implements OnInit {
 
         this.guardandoDataExcel = false;
       }, error => {
+        console.log(error)
         this.guardandoDataExcel = false;
         this.toastService.error("Error conexion al servidor");
       });
@@ -159,6 +180,15 @@ export class CargaMasivaPanelComponent implements OnInit {
     //   this.toastService.warning("Hay records sin código de referencia")
     //   return false;
     // }
+
+    return true;
+  }
+  validarCargaReestructuracionCliente(): boolean {
+
+  //  if (this.dataExcel.some(x => !x.Cardcode)) {
+  //      this.toastService.warning("Hay records sin código de referencia")
+  //      return false;
+  //    }
 
     return true;
   }
