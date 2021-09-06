@@ -37,6 +37,7 @@ export class ClienteMapComponent implements OnInit {
     
   ngOnInit() {
  
+
     this.fillCoords.subscribe(co => {
 
       this.markers[0].lat = co.latitud;
@@ -49,7 +50,6 @@ export class ClienteMapComponent implements OnInit {
       }
 
      });
-     
     this.fillSearch.subscribe(c => {
         this.searchControl.setValue(c+',Dominican Republic');
    
@@ -82,10 +82,6 @@ export class ClienteMapComponent implements OnInit {
    
         });
   }
-  ngAfterViewInit() {
-   
-
-  }
 
   recenterMap(){
     this.latitud = 36.8392542;
@@ -93,13 +89,14 @@ export class ClienteMapComponent implements OnInit {
   }
   
   private setCurrentPosition() {
+
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
         this.latitud = position.coords.latitude;
         this.longitud = position.coords.longitude;
         this.zoom = 15;
       });
-    }
+    } 
   }
   
   getPosition(){

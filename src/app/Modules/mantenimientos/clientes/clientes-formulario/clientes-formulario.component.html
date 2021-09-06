@@ -17,7 +17,22 @@
   <div class="col-md-12">
     <div class="card">
       <div class="card-body">
-        <h4 class="card-title ">Formulario de cliente</h4>
+        <h4 class="card-title ">Formulario de cliente <br>
+          <span class="font-weight-bold" style="font-size: 16px;">
+
+            <i *ngIf="!loadingClienteInfo" class="fa fa-user" aria-hidden="true"></i>
+            <div *ngIf="loadingClienteInfo" class="spinner-border spinner-border-sm" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+
+            <span *ngIf="clienteId<=0">
+              Nuevo cliente
+            </span>
+            <span *ngIf="clienteId>0">
+              {{clienteInfo.nombres}} {{clienteInfo.apellidos  }}  
+            </span>
+          </span>
+        </h4>
         <!-- <h6 class="card-subtitle">This is basic Default pagination</h6> -->
         <ngb-tabset #tabset="ngbTabset">
 
@@ -27,6 +42,7 @@
               <app-cliente-datos-generales
                (clienteTabsValida)="setClienteTabsValida($event)"
                (goTabByKey)="changeTabByKey($event)"
+               (clienteExtraInfo)="setClienteInfo($event)"
                (clienteIdCreado)="setClienteIdGuardado($event)"
                [clientId]="clienteId">
               </app-cliente-datos-generales>

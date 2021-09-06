@@ -35,6 +35,7 @@ export class Cliente {
         this.sexo = ""
         this.longitud = ""
         this.latitud = ""
+        this.tipoComprobante=0
     }
 
     
@@ -70,6 +71,7 @@ export class Cliente {
     sexo: string;
     longitud: string;
     latitud: string;
+    tipoComprobante: number;
     // contactos: Array<ClienteContactos>
 }
 

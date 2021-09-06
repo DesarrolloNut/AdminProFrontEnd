@@ -1,4 +1,10 @@
+import { BackendService } from "src/app/core/http/service/backend.service";
+import { Cliente } from "src/app/Modules/mantenimientos/clientes/models/Cliente";
+import { ParametrosCita } from "src/app/Modules/turno/models/ParametrosCita";
+import { DataApi } from "../enums/DataApi.enum";
+
 export class ValidatorLogic {
+    static httpService: BackendService;
 
 
     public static ValidaCedulaFormacion(ced): boolean {
@@ -31,4 +37,26 @@ export class ValidatorLogic {
         return cedulaValida;
     }
 
+    public static    async ValidaExisteCedulaORNC(ced_rnc): Promise<boolean> {
+
+        let parametros = new ParametrosCita();
+        parametros.clienteDocumento = ced_rnc;
+
+        let k =     await this.httpService.DoPostAnyAsync<Cliente>(DataApi.Cliente,
+            "GetClienteOPadronDatos", parametros).then(async response => {
+                console.log(response)
+                console.log('FROM VALID')
+
+              if (response.ok) {
+                if (response != null&& response.valores != null && response.valores.length > 0) {
+                 return  response.valores[0];
+                } 
+              } 
+              return  true;
+            }, error => {
+                return  true;
+            });
+        console.log(k);
+        return k;
+    }
 }

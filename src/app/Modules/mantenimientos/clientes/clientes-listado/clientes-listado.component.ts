@@ -44,8 +44,6 @@ export class ClientesListadoComponent implements OnInit {
           
         if (x.ok) {
           this.clientes = x.valores[0];
-          console.log(  this.clientes)
-          this.asignarPagination(x);
         } else {
           this.toastService.error(x.errores[0]);
           console.error(x.errores[0]);

@@ -13,7 +13,7 @@ import { BackendService } from 'src/app/core/http/service/backend.service';
 import { ParametrosCita } from 'src/app/Modules/turno/models/ParametrosCita';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
-import { cedulaestructura } from 'src/app/shared/validators/cedula-estructura.validator';
+import { cedulaestructura, validaExistCedulaORNC } from 'src/app/shared/validators/cedula-estructura.validator';
 import { Cliente, ClienteTabsValida, Coordenadas } from '../models/Cliente';
 
 const fadeInOut = trigger('fadeInOut', [
@@ -37,6 +37,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
   @Output() clienteIdCreado = new EventEmitter();
   @Output() clienteTabsValida = new EventEmitter<ClienteTabsValida>();
   @Output() goTabByKey = new EventEmitter<string>();
+  @Output() clienteExtraInfo = new EventEmitter<Cliente>();
 
 
   @ViewChild('contentModal') content: any;
@@ -183,7 +184,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       // contactos: new FormArray([])
     },
       {
-        validator: cedulaestructura('documento', 'documentoTipoID')
+        validator: cedulaestructura('documento', 'documentoTipoID'),
       });
   }
 
@@ -223,6 +224,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
             this.onClienteCreado(this.clientId);
             this.onClienteTabsValida(response.valores[0])
           }
+          this.clienteExtraInfo.emit(this.FormGenerales.value)
           this.router.navigateByUrl('/mantenimientos/cliente/'+this.clientId);
         }
 
@@ -260,8 +262,19 @@ export class ClienteDatosGeneralesComponent implements OnInit {
           //validar que existe
           if (response.records.length > 0) {
             let cliente = response.records[0];
-           cliente.documentoTipoID = cliente.documentoTipoID==null? 0 :cliente.documentoTipoID
+            
+            //Transforma DATA
+            cliente.documentoTipoID = cliente.documentoTipoID==null? 0 :cliente.documentoTipoID
+            cliente.provinciaID = cliente.provinciaID<=0 ? null : cliente.provinciaID
+            cliente.ciudadID = cliente.ciudadID<=0 ? null : cliente.ciudadID
+            cliente.sectorID = cliente.sectorID<=0 ? null : cliente.sectorID
+            cliente.subSectorID = cliente.subSectorID<=0 ? null : cliente.subSectorID
+            cliente.tipoComprobante = cliente.tipoComprobante<=0 ? null : cliente.tipoComprobante
+
+            console.log(cliente);
             this.FormGenerales.setValue(cliente);
+
+            this.clienteExtraInfo.emit(cliente);
 
             let coors= new Coordenadas();
             coors.latitud=parseFloat( cliente.latitud);
@@ -305,6 +318,9 @@ export class ClienteDatosGeneralesComponent implements OnInit {
 
   //METODOS COMBOBOX
 getCiudades() {
+  if(this.f.provinciaID.value==null){
+    return;
+  }
   let parametros: Parametro[] = [{ key: "ProvinciaId", value: this.f.provinciaID.value }]
   this.loadingCiudades = true;
   this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
@@ -374,6 +390,9 @@ getTipoComprobante() {
 }
 
 getSectores(event?:ComboBox) {
+  if(this.f.ciudadID.value==null){
+     return;
+  }
   this.searchLocalidad= event?.nombre
 
     if(this.f.longitud.value==null ||this.f.longitud.value==''){
@@ -401,6 +420,9 @@ getSectores(event?:ComboBox) {
     });
 }
 getSubSectores() {
+  if(this.f.sectorID.value==null){
+    return;
+ }
   let parametros: Parametro[] = [{ key: "sectorId", value: this.f.sectorID.value }]
   this.loadingSubSectores = true;
   this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
@@ -415,10 +437,10 @@ getSubSectores() {
       this.loadingSubSectores = false;
     }, error => {
       this.loadingSubSectores = false;
-      this.toastService.error("No se pudo obtener los sectores", "Error conexion al servidor");
+      this.toastService.error("No se pudo obtener los Subsectores", "Error conexion al servidor");
 
       setTimeout(() => {
-        this.getSectores()
+        this.getSubSectores()
       }, 1000);
 
     });

@@ -67,6 +67,7 @@ export class ClientesFormularioComponent implements OnInit {
 
   clienteTabsValida = new ClienteTabsValida();
   clienteInfo = new Cliente();
+  loadingClienteInfo=true;
 
   isnotNecesaryFieldsCompleteInGenerales = true;
   isnotNecesaryFieldsCompleteInVisitas   = true;
@@ -85,25 +86,12 @@ export class ClientesFormularioComponent implements OnInit {
     private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
-    //CREACION DE FORMULARIO
-   // this.CreateFormDatosGenerales();
-    // this.CreateFormVisitasClientes();
-
+ 
     let id = Number(this.route.snapshot.paramMap.get('id'));
     this.clienteId=  id;
-    // if (id > 0) {
-    //   this.getClienteByID(id);
-    //   this.actualizando = true;
-    // }
-
-    // this.getDias(id);
-    // this.getProvincias()
-    // this.getDocumentosTipo();
-    // this.getTipoCondicionPago();
-    // this.getRutas();
-    // this.getTipoCliente();
-    // this.getListaPrecio();
-    // this.getFrecuenciaVisitas();
+    if(this.clienteId<=0){
+       this.loadingClienteInfo=false;
+    }
   }
 
 
@@ -146,6 +134,11 @@ export class ClientesFormularioComponent implements OnInit {
           console.log("No such day exists!" + x.keyName);
     }
    })
+}
+
+setClienteInfo(c:Cliente){
+this.clienteInfo=c;
+this.loadingClienteInfo=false;
 }
   // private CreateFormDatosGenerales() {
 

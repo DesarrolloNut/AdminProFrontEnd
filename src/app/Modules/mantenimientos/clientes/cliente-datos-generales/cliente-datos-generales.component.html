@@ -75,6 +75,7 @@
             </div>
             <div *ngIf="f.documento.errors.cedulaestructura">Documento no
               válido</div>
+              <div *ngIf="f.documento.errors.validaExistCedulaORNC">Documento existe</div>
             <div *ngIf="f.documento.errors.minlength">Mínimo 9 caracteres
             </div>
           </div>
@@ -142,21 +143,15 @@
           </div>
         </div>
 
-        <!-- <div class="form-group col-md-6">
-          <label for="inputEmail4">Lista de Precios</label>
-          <ng-select bindLabel="nombre" bindValue="codigo" [items]="ListaPrecio"
-            [loading]="loadingListaPrecio" [clearable]="false"
-            [ngClass]="{'form-control border-danger p-0' : submitted && f.listaPrecioId.errors }"
-            notFoundText="No resultados" formControlName="listaPrecioId">
-          </ng-select>
-          <div *ngIf="submitted && f.listaPrecioId.errors" class="text-danger small">
-            <div *ngIf="f.listaPrecioId.errors.required  ">El campo es
-              obligatorio</div>
-          </div>
-        </div> -->
-
+ 
  
         <div class="form-group col-md-6"  *ngIf="f.documentoTipoID.value==2">
+          <label for="telefono"><i class="fa fa-phone" aria-hidden="true"></i> Telefono/Celular</label>
+          <input formControlName="telefono" mask="(000) 000-0000" type="text" name="telefono" id="telefono"
+            [ngClass]="{'is-invalid' : submitted && f.telefono.errors,  'form-control':true  }">
+          <div class="invalid-feedback" *ngIf="submitted && f.telefono.errors">
+            <div *ngIf="f.telefono.errors.required">El campo es obligatorio</div>
+          </div>
         </div>
 
    
@@ -278,7 +273,16 @@
           </div>
         </div>
 
-
+        <div class="form-group col-md-4">
+          <label for="latitud"><i class="fa fa-street-view"></i>
+            Latitud</label>
+          <input formControlName="latitud"  (keyup)="onCoordsKeyUp()" type="text" name="latitud" id="latitud"
+            [ngClass]="{'is-invalid' : submitted && f.latitud.errors,  'form-control':true  }">
+          <div class="invalid-feedback" *ngIf="submitted && f.latitud.errors">
+            <div *ngIf="f.latitud.errors.required">El campo es obligatorio
+            </div>
+          </div>
+        </div>
         <div class="form-group col-md-4">
           <label for="longitud"><i class="fa fa-street-view"></i>
             Longitud</label>
@@ -290,16 +294,7 @@
           </div>
         </div>
 
-        <div class="form-group col-md-4">
-          <label for="latitud"><i class="fa fa-street-view"></i>
-            Latitud</label>
-          <input formControlName="latitud"  (keyup)="onCoordsKeyUp()" type="text" name="latitud" id="latitud"
-            [ngClass]="{'is-invalid' : submitted && f.latitud.errors,  'form-control':true  }">
-          <div class="invalid-feedback" *ngIf="submitted && f.latitud.errors">
-            <div *ngIf="f.latitud.errors.required">El campo es obligatorio
-            </div>
-          </div>
-        </div>
+      
 
         <div class="form-group col-md-4">
           <label for="inputEmail4">Tipo Comprobante</label>
