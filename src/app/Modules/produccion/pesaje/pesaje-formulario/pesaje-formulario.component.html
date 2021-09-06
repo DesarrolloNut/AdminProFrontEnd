@@ -94,9 +94,8 @@
                         <input (keyup)="getLote()" [(ngModel)]="loteSearch" class="form-control" type="text" name="lote"
                             id="lote">
                         <div class="mt-2">
-                            <h6 class="font-weight-bold text-info" *ngIf="lote">
-                                <i class="fa fa-info-circle"></i> Lote encontrado: <span
-                                    class="text-success">{{lote.cantidad}}</span> disponibles.
+                            <h6 class="font-weight-bold text-success" *ngIf="lote">
+                                <i class="fa fa-check-circle"></i> Lote encontrado
                             </h6>
                             <!-- <h5 class="font-weight-bold" *ngIf="!lote">
                                 <span class="text-danger"> Lote no encontrado</span>

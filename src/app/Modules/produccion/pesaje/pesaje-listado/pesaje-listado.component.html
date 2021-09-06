@@ -180,8 +180,8 @@
                                         <span class="font-weight-bold">Vencimiento </span>
                                     </h4>
                                 </th>
-                                <td class="font-weight-bold"> <i class="fa fa-calendar text-light"></i>
-                                    {{articuloPesaje.fechaVencimiento | date}} Lb</td>
+                                <td class="font-weight-bold">
+                                    {{articuloPesaje.fechaVencimiento | date}}</td>
 
                             </tr>
                             <tr>
@@ -224,17 +224,6 @@
                             [bc-display-value]="false">
                         </ngx-barcode>
                     </div>
-                    <!-- <div class="col-md-4">
-                        <h2 class="text-right">
-                            <span class="badge" [ngClass]="{
-                                'badge-success': articuloPesaje.estado == 'Recibido',
-                                'badge-warning': articuloPesaje.estado == 'Sin Recibir',
-                                'badge-info': articuloPesaje.estado == 'Sincronizado SAP'
-                            }">
-                                {{articuloPesaje.estado}}
-                            </span>
-                        </h2>
-                    </div> -->
                 </div>
             </div>
 

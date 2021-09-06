@@ -45,7 +45,7 @@ export class PesajeListadoComponent implements OnInit, OnDestroy {
   articuloPesajeDetalle: any;
   btnGuardarCargando: boolean;
 
-  fechaFiltro: Date;
+  fechaFiltro: Date = new Date();
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
@@ -56,7 +56,6 @@ export class PesajeListadoComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
-    this.getHoraActual();
     this.getAlmacenesUsuarioEnrroll();
   }
 
@@ -99,27 +98,10 @@ export class PesajeListadoComponent implements OnInit, OnDestroy {
   onChangeFechaFiltro(evento: any) {
 
     this.fechaFiltro = new Date(evento.value)
-    this.getData(); 
+    if (this.almacenDefault > 0) {
+      this.getData();
+    }
 
-  }
-
-
-  getHoraActual() {
-    // this.cargando = true;
-    this.httpService.DoPost<ComboBox>(DataApi.Public,
-      "GetHoraActual", null).subscribe(response => {
-
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          this.fechaFiltro = new Date(response.valores[0]);
-        }
-
-        // this.cargando = false;
-      }, error => {
-        // this.cargando = false;
-        this.toastService.error("Error conexion al servidor");
-      });
   }
 
 
@@ -155,6 +137,8 @@ export class PesajeListadoComponent implements OnInit, OnDestroy {
 
           if (response.records.length > 0) {
             this.almacenDefault = response.records[0].codigo
+
+            console.table(response.records)
             this.signalRService.almacenID = this.almacenDefault;
 
             console.log(this.signalRService.almacenID)
@@ -239,20 +223,15 @@ export class PesajeListadoComponent implements OnInit, OnDestroy {
 
   recibirPesaje() {
 
-    let request = new ArticuloPesaje();
-    request.id = this.articuloPesaje.id;
-    request.estadoID = 2;
-
     this.btnGuardarCargando = true;
 
     this.httpService.DoPostAny<ArticuloPesaje>(DataApi.ArticuloPesaje,
-      "UpdateArticuloPesajeEstadoID", request).subscribe(response => {
+      "RecibirTransferenciaAlmacenPesaje", this.articuloPesaje.id).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
         } else {
           this.toastService.success("Realizado", "OK");
-          // this.getData();
           this.modalService.dismissAll();
           this.getData();
         }
@@ -264,27 +243,6 @@ export class PesajeListadoComponent implements OnInit, OnDestroy {
       });
   }
 
-
-  prueba() {
-
-    this.httpService.DoPostAny<ArticuloPesaje>(DataApi.ArticuloPesaje,
-      "CrearAlmacenTransferencia", 1).subscribe(response => {
-
-        if (!response.ok) {
-          this.toastService.error(response.errores[0], "Error");
-        } else {
-          this.toastService.success("Realizado", "OK");
-          // this.getData();
-          // this.modalService.dismissAll();
-          // this.getData();
-        }
-
-        this.btnGuardarCargando = false;
-      }, error => {
-        this.btnGuardarCargando = false;
-        this.toastService.error("Error conexion al servidor");
-      });
-  }
 
 
   ngOnDestroy() {

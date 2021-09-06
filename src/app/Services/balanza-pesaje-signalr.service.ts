@@ -39,7 +39,7 @@ export class BalanzaPesajeSignalrService {
       .start().
       then(ok => {
         this.subscribirMetodos();
-        this.toaster.info("Conexión establecida.", "Balanza Pesaje.")
+        this.toaster.info("Actualización en tiempo real.", "Sistema pesaje.")
         // this.JoinGroup(this.grupoBalanzaPesaje)
         switch (grupo) {
           case BalanzaPesoGrupoSignalREnum.Pantalla_Pesaje:
