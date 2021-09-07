@@ -271,7 +271,6 @@ export class ClienteDatosGeneralesComponent implements OnInit {
             cliente.subSectorID = cliente.subSectorID<=0 ? null : cliente.subSectorID
             cliente.tipoComprobante = cliente.tipoComprobante<=0 ? null : cliente.tipoComprobante
 
-            console.log(cliente);
             this.FormGenerales.setValue(cliente);
 
             this.clienteExtraInfo.emit(cliente);
