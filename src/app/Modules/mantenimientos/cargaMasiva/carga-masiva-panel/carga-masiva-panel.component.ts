@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
+import { Parametro } from 'src/app/core/http/model/Parametro';
+import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import * as XLSX from 'xlsx';
+import { Cliente } from '../../clientes/models/Cliente';
+import { CargaMasiva, DetalleReestructuracionClient } from '../models/CargaMasiva';
 
 @Component({
   selector: 'app-carga-masiva-panel',
@@ -25,13 +29,36 @@ export class CargaMasivaPanelComponent implements OnInit {
   dataApi: DataApi;
   filter: string;
 
+
+
+
+ ///ESTO ES PARA REESTRUCTURACION DE CLIENTE | PENDIENTE MOVER A OTRO COMPONENTE SEPARADO
+   // COPIAR AL CREAR UN LISTADO NUEVO
+   Search: string = "";
+   paginaNumeroActual = 1;
+   Cargando: boolean = false;
+   totalPaginas: number = 0;
+   paginaSize: number = 1;
+   paginaTotalRecords: number = 0;
+   arrayLoading = new Array(this.paginaSize);
+   cargasMasivasReestructuracionCliente: CargaMasiva[] = [] //tu modelo
+   detalleCargaMasivaReestructuracionCliente: DetalleReestructuracionClient[] = [] //tu modelo
+   cargasMasivaRCliente: CargaMasiva; //tu modelo
+   loadingDetalleRcliente: boolean;
+
+
   constructor(
     private toastService: ToastrService,
+    config: NgbModalConfig,
     private modalService: NgbModal,
     private httpService: BackendService,
-    private formBuilder: FormBuilder) { }
+    private formBuilder: FormBuilder) { 
+      config.backdrop = 'static';
+      config.keyboard = false;
+    }
 
   ngOnInit(): void {
+    this.getCargasMasivasReestructuracionclientes();
   }
 
 
@@ -76,8 +103,6 @@ export class CargaMasivaPanelComponent implements OnInit {
 
 
   transformData() {
-    console.log("TransformDataFunc")
-    console.log(this.accionId)
 
     if (this.accionId == 1) { //precios articulos
       if (this.validarCargaArticuloPrecios()) {
@@ -203,4 +228,91 @@ export class CargaMasivaPanelComponent implements OnInit {
 
 
 
+
+
+
+  ///PENDIENTE MOVER A OTRO COMPONENTE
+  getCargasMasivasReestructuracionclientes() {
+    this.Cargando = true;
+
+    let parametros: Parametro[] = [{ key: "tipoCarga", value: 'REESTRUCTURACIONCLIENTE' }]
+
+    this.httpService.GetAllWithPagination<CargaMasiva>(DataApi.Cliente, "GetCargasMasivasReestructuracionclientes", "Id", this.paginaNumeroActual,
+      this.paginaSize, false, parametros).subscribe(x => {
+          
+        if (x.ok) { 
+          this.cargasMasivasReestructuracionCliente = x.valores[0];
+          console.log(x);
+          this.asignarPagination(x);
+        } else {
+          this.toastService.error(x.errores[0]);
+          console.error(x.errores[0]);
+        }
+        this.arrayLoading = new Array(0);
+        this.Cargando = false;
+      }, error => {
+        console.error(error);
+        this.toastService.error("Error conexion al servidor");
+        this.Cargando = false;
+        this.arrayLoading = new Array(0);
+      });
+
+  }
+
+
+  asignarPagination(x: ResponseContenido<any>) {
+
+    if (x.pagina != null) {
+      this.totalPaginas = x.pagina.totalPaginas == null ? 0 : x.pagina.totalPaginas;
+      this.paginaTotalRecords = x.pagina.totalRecords == null ? 0 : x.pagina.totalRecords;
+      this.paginaSize = x.pagina.paginaSize == null ? 0 : x.pagina.paginaSize;
+    } else {
+      this.totalPaginas = 0;
+      this.paginaTotalRecords = 0;
+      this.paginaSize = 0;
+    }
+
+  }
+  getDetalleCargasMasivasReestructuracionclientes(id: number) {
+    this.loadingDetalleRcliente=true;
+    this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
+      "GetDetalleCargasMasivasReestructuracionclientes", id).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          //validar que existe
+          if (response.valores?.length > 0) {
+              this.detalleCargaMasivaReestructuracionCliente= response.valores[0];
+             console.log(response.valores);
+              
+          } else {
+            this.toastService.warning("Ha ocurrido un error");
+          }
+        }
+        this.loadingDetalleRcliente=false;
+      }, error => {
+        this.loadingDetalleRcliente=false;
+
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
+  openModalDetalle(cm:CargaMasiva,content){
+    this.cargasMasivaRCliente = cm;
+    this.modalService.open(content, { windowClass: "myCustomModalClass", backdrop: "static",});
+
+    this.getDetalleCargasMasivasReestructuracionclientes(cm.id);
+  } 
+
+  formatDescripcionByEstado(estado:number){
+    switch (estado) {
+      case 0:
+        return 'Reestructurado'
+      case 1:
+        return 'Pendiente'
+      default:
+        'Error';
+    }
+
+}
 }
