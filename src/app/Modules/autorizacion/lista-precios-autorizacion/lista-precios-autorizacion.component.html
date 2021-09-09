@@ -26,26 +26,26 @@
 
 
                     <div class=" p-2 col-md-4">
-                        <label> Lista de precio</label>
+                        <!-- <label> Lista de precio</label> -->
                         <ng-select [items]="ListaPrecio" bindLabel="nombre" bindValue="codigo" (change)="getData()"
                             [(ngModel)]="listaPrecioSeleccionada" [clearable]="false" notFoundText="No resultados">
                         </ng-select>
                     </div>
-                    <div class=" p-2 col-md-4">
-                        <label> Estado</label>
+                    <div class=" p-2 col-md-3">
+                        <!-- <label> Estado</label> -->
                         <ng-select [items]="estadosAutorizacion" bindLabel="nombre" bindValue="codigo"
                             (change)="getData()" [(ngModel)]="estadoAutorizacionComboModel" [clearable]="false"
                             notFoundText="No resultados">
                         </ng-select>
                     </div>
-                    <div class="form-group col-md-4 pt-2">
+                    <!-- <div class="form-group col-md-3 pt-2">
                         <label> Fecha Aplicación</label>
                         <ejs-datepicker [showClearButton]="false" [(ngModel)]="fechaFiltro"
                             (change)="onChangeFechaFiltro($event)" [format]="'dd-MMM-yyyy'">
                         </ejs-datepicker>
-                    </div>
+                    </div> -->
 
-                    <div class="col-md-12 p-2">
+                    <div class="col-md-5 p-2">
 
                         <div class="input-group">
                             <div class="input-group-prepend">

@@ -37,7 +37,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   isAutorizando: boolean;
   cargandoAutorizacion: boolean;
 
-  listaPrecioSeleccionada: number
+  listaPrecioSeleccionada: number = 0
 
   //comentarios
   itemSeleccionado: any;
@@ -70,7 +70,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
       { key: "EstadoAutorizacionID", value: this.estadoAutorizacionComboModel },
       { key: "Search", value: this.Search },
       { key: "ListaPrecioID", value: this.listaPrecioSeleccionada },
-      { key: "fechaFiltro", value: this.fechaFiltro },
+      // { key: "fechaFiltro", value: this.fechaFiltro },
     ]
 
     this.httpService.GetAllWithPagination<ArticuloListaPrecioViewModel>(DataApi.Articulo, "GetArticulosAsignadosListaPrecioPagination", "fechaaplicacion", this.paginaNumeroActual,
@@ -410,8 +410,11 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
         } else {
           this.ListaPrecio = response.records;
 
-          if (this.ListaPrecio && this.ListaPrecio.length > 0)
-            this.listaPrecioSeleccionada = this.ListaPrecio[0].codigo;
+          let todas = new ComboBox();
+          todas.nombre = "TODAS"
+          todas.codigo = 0
+
+          this.ListaPrecio.unshift(todas);
 
         }
         this.loadingListaPrecio = false;
