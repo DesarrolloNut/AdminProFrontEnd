@@ -10,6 +10,7 @@ import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { ArticuloListaPrecioViewModel } from '../../mantenimientos/articulos/models/ArticuloListaPrecioViewModel';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-lista-precios-autorizacion',
@@ -22,7 +23,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   paginaNumeroActual = 1;
   Cargando: boolean = false;
   totalPaginas: number = 0;
-  paginaSize: number = 10;
+  paginaSize: number = 150;
   paginaTotalRecords: number = 0;
   data: ArticuloListaPrecioViewModel[] = [] //tu modelo
 
@@ -36,11 +37,17 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   isAutorizando: boolean;
   cargandoAutorizacion: boolean;
 
+  listaPrecioSeleccionada: number
+
   //comentarios
   itemSeleccionado: any;
   comentarios: any[];
   comentario: string;
   cargandoModal: boolean = false;
+  loadingListaPrecio: boolean;
+  ListaPrecio: ComboBox[];
+  loadingReporteExcel: boolean;
+  fechaFiltro: Date = new Date();
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
@@ -51,13 +58,9 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
 
 
   ngOnInit(): void {
-    // this.getData()
     this.getEstadoAutorizacionUsuario()
+    this.getListasPrecio();
   }
-
-  // onEstadoComboChange() {
-  //   this.getData()
-  // }
 
 
   getData() {
@@ -66,10 +69,12 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
     let parametros: Parametro[] = [
       { key: "EstadoAutorizacionID", value: this.estadoAutorizacionComboModel },
       { key: "Search", value: this.Search },
+      { key: "ListaPrecioID", value: this.listaPrecioSeleccionada },
+      { key: "fechaFiltro", value: this.fechaFiltro },
     ]
 
-    this.httpService.GetAllWithPagination<ArticuloListaPrecioViewModel>(DataApi.Articulo, "GetArticulosAsignadosListaPrecioPagination", "ListaPrecio", this.paginaNumeroActual,
-      this.paginaSize, true, parametros).subscribe(x => {
+    this.httpService.GetAllWithPagination<ArticuloListaPrecioViewModel>(DataApi.Articulo, "GetArticulosAsignadosListaPrecioPagination", "fechaaplicacion", this.paginaNumeroActual,
+      this.paginaSize, false, parametros).subscribe(x => {
 
         if (x.ok) {
           this.data = x.records;
@@ -393,5 +398,70 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
       });
 
   }
+
+
+  getListasPrecio() {
+    this.loadingListaPrecio = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetListaPreciosComboBox", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.ListaPrecio = response.records;
+
+          if (this.ListaPrecio && this.ListaPrecio.length > 0)
+            this.listaPrecioSeleccionada = this.ListaPrecio[0].codigo;
+
+        }
+        this.loadingListaPrecio = false;
+      }, error => {
+        this.loadingListaPrecio = false;
+        this.toastService.error("No se pudo obtener las listas de precios", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getListasPrecio();
+        }, 1000);
+
+      });
+  }
+
+  onChangeFechaFiltro(evento: any) {
+
+    this.fechaFiltro = new Date(evento.value)
+    if (this.listaPrecioSeleccionada > 0 && this.estadoAutorizacionComboModel > 0) {
+      this.getData();
+    }
+
+  }
+
+  exportarReporteExcel() {
+    this.loadingReporteExcel = true;
+
+    this.httpService.DoPostAny<ArticuloListaPrecioViewModel>(DataApi.Articulo,
+      "GetArticulosAutorizacionExcelExport", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+
+          const ws2: XLSX.WorkSheet = XLSX.utils.json_to_sheet(response.records);
+
+          /* generate workbook and add the worksheet */
+          const wb: XLSX.WorkBook = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws2, 'Autorizaciones');
+
+          /* save to file */
+          XLSX.writeFile(wb, "Autorización listado | Reporte.xlsx");
+        }
+
+
+        this.loadingReporteExcel = false;
+      }, error => {
+        this.loadingReporteExcel = false;
+        this.toastService.error("No se pudo obtener el reporte", "Error conexion al servidor");
+      });
+  }
+
 
 }
