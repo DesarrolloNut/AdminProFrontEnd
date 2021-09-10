@@ -1,3 +1,4 @@
+import { AbstractControl, ValidationErrors, ValidatorFn } from "@angular/forms";
 import { BackendService } from "src/app/core/http/service/backend.service";
 import { Cliente } from "src/app/Modules/mantenimientos/clientes/models/Cliente";
 import { ParametrosCita } from "src/app/Modules/turno/models/ParametrosCita";
@@ -6,7 +7,15 @@ import { DataApi } from "../enums/DataApi.enum";
 export class ValidatorLogic {
     static httpService: BackendService;
 
-
+    public static  regexValidator(regex: RegExp, error: ValidationErrors): ValidatorFn {
+        return (control: AbstractControl): {[key: string]: any} => {
+          if (!control.value) {
+            return null;
+          }
+          const valid = regex.test(control.value);
+          return valid ? null : error;
+        };
+      }
     public static ValidaCedulaFormacion(ced): boolean {
       
         var c = ced.replace(/-/g, '');

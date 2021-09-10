@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -18,6 +18,8 @@ import { CargaMasiva, DetalleReestructuracionClient } from '../models/CargaMasiv
 export class CargaMasivaPanelComponent implements OnInit {
 
   loadingSincronizacionListaPrecios: boolean = false;
+  showCargasReestructuracion: boolean = false;
+
   loadingSincronizacionArticulos: boolean;
   loadingSincronizacionPrecioArticulos: boolean;
   dataExcel: any[];
@@ -30,7 +32,8 @@ export class CargaMasivaPanelComponent implements OnInit {
   filter: string;
 
 
-
+  @ViewChild('myInputFileReestructuracliente')
+  myInputFileReestructuracliente: ElementRef;
 
  ///ESTO ES PARA REESTRUCTURACION DE CLIENTE | PENDIENTE MOVER A OTRO COMPONENTE SEPARADO
    // COPIAR AL CREAR UN LISTADO NUEVO
@@ -58,7 +61,6 @@ export class CargaMasivaPanelComponent implements OnInit {
     }
 
   ngOnInit(): void {
-    this.getCargasMasivasReestructuracionclientes();
   }
 
 
@@ -173,16 +175,20 @@ export class CargaMasivaPanelComponent implements OnInit {
 
     this.httpService.DoPostAny<any>(this.dataApi,
       this.metodoEndPoint, this.dataTransformed).subscribe(response => {
+        this.resetInputsFile();
 
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
         } else {
           this.toastService.success("Realizado", "OK");
           this.modalService.dismissAll()
+          this.getCargasMasivasReestructuracionclientes();
         }
 
         this.guardandoDataExcel = false;
       }, error => {
+        this.resetInputsFile();
+
         console.log(error)
         this.guardandoDataExcel = false;
         this.toastService.error("Error conexion al servidor");
@@ -232,6 +238,11 @@ export class CargaMasivaPanelComponent implements OnInit {
 
 
   ///PENDIENTE MOVER A OTRO COMPONENTE
+
+  getCargasReestructuracion(){
+    this.showCargasReestructuracion =true;
+    this.getCargasMasivasReestructuracionclientes();
+  }
   getCargasMasivasReestructuracionclientes() {
     this.Cargando = true;
 
@@ -273,6 +284,8 @@ export class CargaMasivaPanelComponent implements OnInit {
     }
 
   }
+
+
   getDetalleCargasMasivasReestructuracionclientes(id: number) {
     this.loadingDetalleRcliente=true;
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
@@ -307,7 +320,7 @@ export class CargaMasivaPanelComponent implements OnInit {
   formatDescripcionByEstado(estado:number){
     switch (estado) {
       case 0:
-        return 'Reestructurado'
+        return 'Sincronizado'
       case 1:
         return 'Pendiente'
       default:
@@ -315,4 +328,13 @@ export class CargaMasivaPanelComponent implements OnInit {
     }
 
 }
+
+modalClose(){
+  this.modalService.dismissAll();
+  this.resetInputsFile();
+}
+
+resetInputsFile() {
+  this.myInputFileReestructuracliente.nativeElement.value = "";
+}v
 }

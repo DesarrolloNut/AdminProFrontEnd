@@ -77,7 +77,7 @@ export class ClienteVisitasComponent implements OnInit {
     this.FormVisitas = this.formBuilder.group({
       clienteId: [this.clientId, [Validators.required]],
       rutaId:[0,[Validators.required]],
-      tipoRutaId: [0, [Validators.required]],
+      tipoRutaId: [1, [Validators.required]],
       frecuenciaVisitaId:[0,[Validators.required]],
       diasSemana:[null,],
     }
