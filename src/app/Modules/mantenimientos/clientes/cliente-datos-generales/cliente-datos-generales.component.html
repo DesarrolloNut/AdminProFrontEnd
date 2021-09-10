@@ -83,7 +83,7 @@
 
         <div class="form-group col-md-6" >
           <label for="nombres"><i class=""></i> Nombres</label>
-          <input formControlName="nombres" type="text" name="nombres" id="nombres"
+          <input formControlName="nombres" (input)="f.nombres.setValue(f.nombres.value.toUpperCase())" type="text" name="nombres" id="nombres"
             [ngClass]="{'is-invalid' : submitted && f.nombres.errors,  'form-control':true  }">
           <div class="invalid-feedback" *ngIf="submitted && f.nombres.errors">
             <div *ngIf="f.nombres.errors.required">El campo es obligatorio
@@ -93,7 +93,7 @@
 
         <div class="form-group col-md-6"  *ngIf="f.documentoTipoID.value==1">
           <label for="apellidos">Apellidos</label>
-          <input formControlName="apellidos" type="text" name="apellidos" id="apellidos"
+          <input formControlName="apellidos" (input)="f.apellidos.setValue(f.apellidos.value.toUpperCase())" type="text" name="apellidos" id="apellidos"
             [ngClass]="{'is-invalid' : submitted && f.apellidos.errors,  'form-control':true  }">
           <div class="invalid-feedback" *ngIf="submitted && f.apellidos.errors">
             <div *ngIf="f.apellidos.errors.required">El campo es obligatorio
@@ -123,7 +123,7 @@
 
         <div class="form-group col-md-6"  *ngIf="f.documentoTipoID.value==1">
           <label> <i class="fa fa-calendar"></i> Fecha de nacimiento</label>
-          <ejs-datepicker formControlName="fechaNacimiento" [format]="'dd-MM-yyyy'"></ejs-datepicker>
+          <ejs-datepicker [max]='minDate' formControlName="fechaNacimiento" [format]="'dd-MM-yyyy'"></ejs-datepicker>
           <div *ngIf="submitted && f.fechaNacimiento.errors"
             class="text-danger small animated animated--fade-in">
             <div *ngIf="f.fechaNacimiento.errors.required">El campo es
@@ -281,6 +281,8 @@
           <div class="invalid-feedback" *ngIf="submitted && f.latitud.errors">
             <div *ngIf="f.latitud.errors.required">El campo es obligatorio
             </div>
+            <div *ngIf="f.latitud.errors.valid">La latitud debe ser valida
+            </div>
           </div>
         </div>
         <div class="form-group col-md-4">
@@ -290,6 +292,8 @@
             [ngClass]="{'is-invalid' : submitted && f.longitud.errors,  'form-control':true  }">
           <div class="invalid-feedback" *ngIf="submitted && f.longitud.errors">
             <div *ngIf="f.longitud.errors.required">El campo es obligatorio
+            </div>
+            <div *ngIf="f.longitud.errors.valid">La longitud debe ser valida
             </div>
           </div>
         </div>

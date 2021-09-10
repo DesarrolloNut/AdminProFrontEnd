@@ -41,7 +41,7 @@
                                   </div>  
                                 <div class="form-group  col-md-3">
                                   <label >Nombres</label>
-                                  <input type="text" formControlName="nombres" class="form-control form-control-sm" 
+                                  <input type="text" formControlName="nombres" (input)="contact.get('nombres').setValue(contact.get('nombres').value.toUpperCase())" class="form-control form-control-sm" 
                                     [ngClass]="{ 'is-invalid': submitted && contact.get('nombres').errors }" />
                                   <div *ngIf="submitted && contact.get('nombres').errors" class="invalid-feedback">
                                     <div *ngIf="contact.get('nombres').errors.required">

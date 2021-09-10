@@ -26,10 +26,10 @@
             </div>
 
             <span *ngIf="clienteId<=0">
-              Nuevo cliente
+              NUEVO CLIENTE
             </span>
             <span *ngIf="clienteId>0">
-              {{clienteInfo.nombres}} {{clienteInfo.apellidos  }}  
+              {{clienteInfo.nombres | uppercase}} {{clienteInfo.apellidos | uppercase }}  
             </span>
           </span>
         </h4>
@@ -37,7 +37,13 @@
         <ngb-tabset #tabset="ngbTabset">
 
           <ngb-tab id="GENERALES">
-            <ng-template ngbTabTitle><b>Generales</b></ng-template>
+            <ng-template ngbTabTitle>
+              <b>Generales
+                <div class="pulse-container" >
+                  <div class="pulse-box"  *ngIf="isnotNecesaryFieldsCompleteInGenerales else circulePulsating">
+                  </div>
+                </div>
+            </b></ng-template>
             <ng-template ngbTabContent>
               <app-cliente-datos-generales
                (clienteTabsValida)="setClienteTabsValida($event)"

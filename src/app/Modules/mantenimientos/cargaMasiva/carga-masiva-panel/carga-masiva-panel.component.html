@@ -19,21 +19,22 @@
                             <div class="title mt-2">
                                 <h4>Precios de artículos</h4>
                             </div>
+                            <button class="btn btn-success btn-sm" (click)="file.click()"> <i
+                                class="fa fa-upload text-white"></i> Subir
+                            archivo</button>
+
                             <div class="text">
                                 <span>Actualiza precios de artículos desde un archivo excel.</span>
                             </div>
                             <input accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                                 class="d-none" (change)="onFileChange($event,modalUploadExcel,1)" #file multiple
                                 type="file" />
-
-                            <button class="btn btn-success" (click)="file.click()"> <i
-                                    class="fa fa-upload text-white"></i> Subir
-                                archivo</button>
-
-                            <a href="assets/files/excel/ArticuloPrecioCargaMasivaTemplate.xlsx" class="btn btn-light">
+                            <a href="assets/files/excel/ArticuloPrecioCargaMasivaTemplate.xlsx" class="btn btn-sm btn-light">
                                 <i class="fa fa-download text-dark"></i> Descargar plantilla
                             </a>
-
+                            <button class="btn btn-info btn-sm ml-2" [hidden]="true" (click)="file.click()">
+                                <i class="fa fa-list-alt text-white mr-1"  aria-hidden="true"></i>Mostrar Cargas</button>
+                            <hr>
                         </div>
                     </div>
 
@@ -43,21 +44,25 @@
                             <div class="title mt-2">
                                 <h4>Cliente Rutas</h4>
                             </div>
+                            <button class="btn   btn-sm btn-success" (click)="file2.click()"> <i
+                                class="fa fa-upload text-white"></i> Subir
+                            archivo</button>
+
                             <div class="text">
                                 <span>Actualiza las rutas de clientes desde un archivo excel.</span>
                             </div>
+                
                             <input accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                                 class="d-none" (change)="onFileChange($event,modalUploadExcel,2)" #file2 multiple
                                 type="file" />
 
-                            <button class="btn btn-info" (click)="file2.click()"> <i
-                                    class="fa fa-upload text-white"></i> Subir
-                                archivo</button>
-
-                            <a href="assets/files/excel/ActualizaClienteRutaTipoTemplate.xlsx" class="btn btn-light">
+                      
+                            <a href="assets/files/excel/ActualizaClienteRutaTipoTemplate.xlsx" class="btn btn-sm btn-light">
                                 <i class="fa fa-download text-dark"></i> Descargar plantilla
                             </a>
- 
+                            <button class="btn btn-info btn-sm ml-2" [hidden]="true" >
+                                <i class="fa fa-list-alt text-white mr-1"  aria-hidden="true"></i>Mostrar Cargas</button>
+                            <hr>
                         </div>
                     </div>
 
@@ -67,101 +72,110 @@
                             <div class="title mt-2">
                                 <h4>Reestructuración de cliente</h4>
                             </div>
+                            <button class="btn btn-success btn-sm" (click)="file3.click()"> <i
+                                class="fa fa-upload text-white"></i> Subir
+                            archivo</button>
+
                             <div class="text">
-                                <span>Actualiza las rutas y dias de visitas en los vendedores desde un archivo excel.</span>
+                                <span>Actualiza las rutas y dias de visitas en los clientes desde un archivo excel.</span>
                             </div>
-                            <input accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                            <input #myInputFileReestructuracliente accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                                 class="d-none" (change)="onFileChange($event,modalUploadExcel,3)" #file3  multiple
                                 type="file" />
 
-                            <button class="btn btn-info" (click)="file3.click()"> <i
-                                    class="fa fa-upload text-white"></i> Subir
-                                archivo</button>
-
-                            <a href="assets/files/excel/ActualizaClienteRutaTipoTemplate.xlsx" class="btn btn-light">
+                   
+                            <a href="assets/files/excel/ReestructuraClienteTemplate.xlsx" class="btn btn-sm btn-light">
                                 <i class="fa fa-download text-dark"></i> Descargar plantilla
                             </a>
+                            <button *ngIf="!showCargasReestructuracion" class="btn btn-info btn-sm ml-2" (click)="getCargasReestructuracion()" >
+                                <i class="fa fa-list-alt text-white mr-1" aria-hidden="true" ></i>Mostrar Cargas</button>
+                           <button  *ngIf="showCargasReestructuracion" [disabled]="Cargando" class="btn btn-info btn-sm ml-2" (click)="getCargasReestructuracion()" >
+                                    <i class="fa fa-list-alt text-white mr-1" aria-hidden="true" ></i>Actualizar Cargas</button>
                             <hr>
-                            <div class="table-responsive">
-                                <table class="table table-hover mb-0 no-wrap v-middle">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Registros</th>
-                                            <th>Fecha</th>
-                                            <th>Detalle</th>
 
-                                        </tr>
-                                    </thead>
-                                    <tbody [hidden]="Cargando">
-            
-                                        <!-- <tr *ngFor="let cm of cargasMasivasReestructuracionCliente"> -->
-                                       <tr *ngFor="let cm of cargasMasivasReestructuracionCliente">
-                                            <!-- <td>
-                                                <button class="btn btn-sm btn-info m-1" [routerLink]="[cliente.id]">
-                                                    <i class="fa fa-sm fa-edit"></i>
-                                                </button>
-                                            </td> -->
-                                            <th scope="row">{{cm.id}}</th>
-                                            <td>{{cm.registros}}</td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar" viewBox="0 0 16 16">
-                                                        <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
-                                                      </svg>
-                                                    <div class="ml-3">
-                                                        <p class="font-bold  text-info mb-0">
-                                                            <span> {{cm.fechaSubida | date:'dd/MM/yy' }}</span>
-                                                        </p>
+                            <div class="table_cargas" *ngIf="showCargasReestructuracion">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0 no-wrap v-middle">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Registros</th>
+                                                <th>Fecha</th>
+                                                <th>Detalle</th>
+    
+                                            </tr>
+                                        </thead>
+                                        <tbody [hidden]="Cargando">
+                
+                                            <!-- <tr *ngFor="let cm of cargasMasivasReestructuracionCliente"> -->
+                                           <tr *ngFor="let cm of cargasMasivasReestructuracionCliente">
+                                                <!-- <td>
+                                                    <button class="btn btn-sm btn-info m-1" [routerLink]="[cliente.id]">
+                                                        <i class="fa fa-sm fa-edit"></i>
+                                                    </button>
+                                                </td> -->
+                                                <th scope="row">{{cm.id}}</th>
+                                                <td>{{cm.registros}}</td>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar" viewBox="0 0 16 16">
+                                                            <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                                                          </svg>
+                                                        <div class="ml-3">
+                                                            <p class="font-bold  text-info mb-0">
+                                                                <span> {{cm.fechaSubida | date:'dd/MM/yy' }}</span>
+                                                            </p>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="d-flex align-items-center">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
-                                                        <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
-                                                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
-                                                      </svg>
-
-                                                    <div class="ml-3">
-                                                        <p class="mb-0" style="color: gray;    font-weight: 600;">
-                                                            <span> {{cm.fechaSubida | date:'h:mm:ss a' }}</span>
-                                                        </p>
+                                                    <div class="d-flex align-items-center">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
+                                                            <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
+                                                            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
+                                                          </svg>
+    
+                                                        <div class="ml-3">
+                                                            <p class="mb-0" style="color: gray;    font-weight: 600;">
+                                                                <span> {{cm.fechaSubida | date:'h:mm:ss a' }}</span>
+                                                            </p>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-light  m-1"
-                                                 (click)="openModalDetalle(cm,modalDetallaReestructuracionCliente)">
-                                                    <i class="fa fa-list" aria-hidden="true"></i>
-                                                </button>
-                                            </td>
-                                  
-                                        </tr>
-            
-                                    </tbody>
-                                </table>
-            
-                            </div>
-            
-            
-            
-                            <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
-            
-                            <div class="row ">
-                                <div class="col-md-8 col-xs-12 ">
-                                    <ngb-pagination [collectionSize]="paginaTotalRecords" [(page)]="paginaNumeroActual"
-                                        [pageSize]="paginaSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="getCargasMasivasReestructuracionclientes()" >
-                                    </ngb-pagination>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-light  m-1"
+                                                     (click)="openModalDetalle(cm,modalDetallaReestructuracionCliente)">
+                                                        <i class="fa fa-list" aria-hidden="true"></i>
+                                                    </button>
+                                                </td>
+                                      
+                                            </tr>
+                
+                                        </tbody>
+                                    </table>
+                
                                 </div>
-            
-                                <div class="col-md-4 text-right d-none d-md-block  ">
-                                    <select class="form-control d-block" name="paginaSize" [(ngModel)]="paginaSize"
-                                    (change)="getCargasMasivasReestructuracionclientes()" >
-                                        <option [ngValue]="1">1 registro</option>
-                                        <option [ngValue]="5">5 registro</option>
-                                        <option [ngValue]="10">10 registro</option>
-                                    </select>
+                
+                
+                
+                                <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+                
+                                <div class="row ">
+                                    <div class="col-md-8 col-xs-12 ">
+                                        <ngb-pagination [collectionSize]="paginaTotalRecords" [(page)]="paginaNumeroActual"
+                                            [pageSize]="paginaSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="getCargasMasivasReestructuracionclientes()" >
+                                        </ngb-pagination>
+                                    </div>
+                
+                                    <div class="col-md-4 text-right d-none d-md-block  ">
+                                        <select class="form-control d-block" name="paginaSize" [(ngModel)]="paginaSize"
+                                        (change)="getCargasMasivasReestructuracionclientes()" >
+                                            <option [ngValue]="1">1 registro</option>
+                                            <option [ngValue]="5">5 registro</option>
+                                            <option [ngValue]="10">10 registro</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
+              
                         </div>
                      
                     </div>
@@ -182,7 +196,7 @@
                 <div class="modal-header">
                     <!-- <h4 class="modal-title" id="modal-title">Artículo</h4> -->
                     <button type="button" class="close" aria-describedby="modal-title"
-                        (click)="modal.dismiss('Cross click')">
+                        (click)="modalClose()">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -252,9 +266,17 @@
                 </div>
 
                 <div class="modal-footer" *ngIf="dataExcel && !guardandoDataExcel && dataExcel.length > 0">
-                    <button type="button" class="btn btn-outline-secondary"
-                        (click)="modal.close('Close click')">Cancelar</button>
+                    <div class="form-group col-md-5" >
+                        <label> <i class="fa fa-calendar"></i> Fecha de sincronización</label>
+                        <ejs-datepicker  [format]="'dd-MM-yyyy'"></ejs-datepicker>
+                    </div>
+                    <div class="form-group col-md-4" >
+
+                    </div>
+                        <button type="button" class="btn btn-outline-secondary"
+                        (click)="modalClose()">Cancelar</button>
                     <button type="button" class="btn btn-info" (click)="transformData()">Subir</button>
+
                 </div>
             </div>
         </div>

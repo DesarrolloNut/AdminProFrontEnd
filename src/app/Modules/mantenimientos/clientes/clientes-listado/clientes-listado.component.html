@@ -75,7 +75,7 @@
                                 </td>
                                 <td>
                                       <span class="text-dark">
-                                        {{cliente.clienteTipo}}
+                                        {{cliente.clienteTipo | uppercase }}
                                        </span>
                                 </td>
                                 <!-- SHOW INFO COLUMNA CLIENTE -->
@@ -89,8 +89,8 @@
 
                                         <div class="ml-3">
                                             <p class="font-bold mb-0">
-                                                <span> {{cliente.nombres | titlecase }}</span>
-                                                <span> {{ cliente.apellidos | titlecase }}</span>
+                                                <span> {{cliente.nombres | uppercase }}</span>
+                                                <span> {{ cliente.apellidos | uppercase}}</span>
                                             </p>
                                             <!-- <span class="badge badge-light text-info ">ID: {{cliente.id}}</span><br> -->
                                             <small class="text-info"> <i class=" fa fa-hashtag"></i>
@@ -102,9 +102,9 @@
                                 <!-- SHOW INFO COLUMNA DOCUMENTO -->
 
                                 <td>
-                                    <span  style="color: #8d8d8d;" class="font-weight-bold">{{cliente.documentoTipo}}
+                                    <span  style="color: #8d8d8d;" class="font-weight-bold">{{cliente.documentoTipo | uppercase}}
                                     </span>
-                                    <span> {{cliente.documento}}</span>
+                                    <span>: {{cliente.documento}}</span>
                                 </td>
 
                                 <td>
@@ -124,7 +124,7 @@
                                   <!-- SHOW INFO COLUMNA Condicion Pago -->
                                   <td>
                                     <span class="text-dark">
-                                        {{cliente.condicionPago }}
+                                        {{cliente.condicionPago | uppercase}}
                                     </span>
                                 </td>
 
@@ -144,9 +144,9 @@
                                      <!-- SHOW INFO COLUMNA DIRECCION -->
                                 <td>
                                     <span class="font-weight-bold">
-                                         {{cliente.ciudad}},  
-                                         {{cliente.provincia}},
-                                         {{cliente.subSector}}
+                                         {{cliente.ciudad | uppercase}},  
+                                         {{cliente.provincia | uppercase}},
+                                         {{cliente.subSector | uppercase}}
                                         </span>
                                     <p class="font-bold mb-0">
                                         <span class="small d-block text-lowercase">{{cliente.calle | slice: 0:60}}</span>
@@ -168,21 +168,21 @@
                                 <!-- SHOW INFO COLUMNA RUTAS -->
                                 <td>
                                     <span class="text-dark">
-                                        {{cliente.rutaVendedor }}
+                                        {{cliente.rutaVendedor | uppercase}}
                                     </span>
                                 </td>
                                 <td>
 
 
                                     <span class="text-dark">
-                                     {{cliente.rutaEntrega }}
+                                     {{cliente.rutaEntrega | uppercase}}
                                     </span>
 
                                 </td>
                                 <td>
 
                                     <span class="text-dark">
-                                      {{cliente.rutaRecogida }}
+                                      {{cliente.rutaRecogida | uppercase}}
                                     </span>
                                     <br>
 
@@ -190,7 +190,7 @@
                                 </td>
                                 <td>
                                     <span class="text-dark">
-                                         {{cliente.rutaMerchandising }}
+                                         {{cliente.rutaMerchandising | uppercase}}
                                     </span>
                                 </td>
                      

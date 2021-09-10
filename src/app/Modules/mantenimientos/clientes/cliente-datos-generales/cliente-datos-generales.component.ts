@@ -2,7 +2,7 @@ import { MapsAPILoader, Marker } from '@agm/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { ViewportScroller } from '@angular/common';
 import { Component, ElementRef, EventEmitter, HostListener, Input, NgZone, OnInit, Output, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { thresholdFreedmanDiaconis } from 'd3';
@@ -38,8 +38,8 @@ export class ClienteDatosGeneralesComponent implements OnInit {
   @Output() clienteTabsValida = new EventEmitter<ClienteTabsValida>();
   @Output() goTabByKey = new EventEmitter<string>();
   @Output() clienteExtraInfo = new EventEmitter<Cliente>();
-
-
+  minDate: Date ;
+ 
   @ViewChild('contentModal') content: any;
 
   FormGenerales: FormGroup;
@@ -73,6 +73,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
 
   //OBJETOS Y DEMAS
   TipoSexo: any[] = [{ codigo: 'H', nombre: 'Hombre' }, { codigo: 'M', nombre: 'Mujer' }];
+  geoRegex = '^-?([1-8]?[1-9]|[1-9]0)\\.{1}\\d{1,6}';
 
   latitud:number;
   longitud:number;  
@@ -112,9 +113,18 @@ export class ClienteDatosGeneralesComponent implements OnInit {
     this.getTipoComprobante();
     this.clearOrputValidatosSomeField();
     this.scrollToTop();
+    this.getHoraActual()
 
   }
-
+  regexValidator(regex: RegExp, error: ValidationErrors): ValidatorFn {
+    return (control: AbstractControl): {[key: string]: any} => {
+      if (!control.value) {
+        return null;
+      }
+      const valid = regex.test(control.value);
+      return valid ? null : error;
+    };
+  }
   ngAfterViewInit() {
     if (this.clientId <= 0) {
       let coors= new Coordenadas();
@@ -124,6 +134,23 @@ export class ClienteDatosGeneralesComponent implements OnInit {
   
     }
   }
+
+  getHoraActual() {
+    this.httpService.DoPost<ComboBox>(DataApi.Public,
+        "GetHoraActual", null).subscribe(response => {
+
+            if (!response.ok) {
+                this.toastService.error(response.errores[0]);
+            } else {
+
+                this.minDate =  new Date(response.valores[0]);
+                this.minDate.setFullYear(this.minDate.getFullYear()-18)
+            }
+
+        }, error => {
+            this.toastService.error("Error conexion al servidor");
+        });
+}
   onSubmit() {
     this.submitted = true; 
   
@@ -156,7 +183,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       documentoTipoID: [1, [Validators.required]], //cedula por defecto
       fechaNacimiento: [null,  [Validators.required] ],
       fechaRegistrado: [new Date(),],
-      estadoID: [0,],
+      estadoID: [1,],
       sexo: [null,[Validators.required]],
       codigoReferencia: [null,],
 
@@ -178,8 +205,8 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       plazoId: [0, [Validators.required]],
       rutaId: [0, [Validators.required]],
       listaPrecioId: [0, [Validators.required]],
-      longitud: [null, [Validators.required]],
-      latitud: [null, [Validators.required]],
+      longitud: [null, [Validators.required,this.regexValidator(new RegExp('^-?([1-8]?[1-9]|[1-9]0)\\.{1}\\d{1,6}'), {'valid': ''})]],
+      latitud:[null, [Validators.required, this.regexValidator(new RegExp('^-?([1-8]?[1-9]|[1-9]0)\\.{1}\\d{1,6}'), {'valid': ''})]],
       estadoERPID: [0],
       // contactos: new FormArray([])
     },
@@ -248,7 +275,12 @@ export class ClienteDatosGeneralesComponent implements OnInit {
     //SI ALGUNA INFORMACION DE CLIENTE REQUERIDA ESTA PENDIENTE POR COMPLETAR
     //SE DESPLEGARA EL MODAL
     if(this.clienteTabsValidaIterable.tabsValida.filter(x=>!x.ok).length>0){
+  
+      if(this.clienteTabsValidaIterable.tabsValida.filter(x=>!x.ok && x.keyName=='GENERALES')){
+         this.onSubmit();
+     }
      this.openModal(this.content);
+
    }
   }
 
@@ -264,12 +296,13 @@ export class ClienteDatosGeneralesComponent implements OnInit {
             let cliente = response.records[0];
             
             //Transforma DATA
-            cliente.documentoTipoID = cliente.documentoTipoID==null? 0 :cliente.documentoTipoID
+            cliente.documentoTipoID = cliente.documentoTipoID<=0 ? null : cliente.documentoTipoID
             cliente.provinciaID = cliente.provinciaID<=0 ? null : cliente.provinciaID
             cliente.ciudadID = cliente.ciudadID<=0 ? null : cliente.ciudadID
             cliente.sectorID = cliente.sectorID<=0 ? null : cliente.sectorID
             cliente.subSectorID = cliente.subSectorID<=0 ? null : cliente.subSectorID
             cliente.tipoComprobante = cliente.tipoComprobante<=0 ? null : cliente.tipoComprobante
+            cliente.clienteTipoID = cliente.clienteTipoID<=0 ? null : cliente.clienteTipoID
 
             this.FormGenerales.setValue(cliente);
 
@@ -283,6 +316,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
             this.getSectores();
             this.getSubSectores();
             this.getClienteTabsValidaByID(this.clientId)
+       
           } else {
             this.toastService.warning("Cliente no encontrado");
             this.router.navigateByUrl('/mantenimientos/cliente');
@@ -691,7 +725,7 @@ formatDescripcionByKeyName(keyName:string){
 formatDescripcionButtonByKeyName(keyName:string){
   switch (keyName) {
     case 'GENERALES':
-      return 'Registrar'
+      return 'Completar'
 
     case 'VISITAS_RUTA':
       return 'Asignar ruta de venta'
