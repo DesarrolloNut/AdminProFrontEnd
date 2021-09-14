@@ -50,6 +50,7 @@ export class AlmacenesFormularioComponent implements OnInit {
     this.Formulario = this.formBuilder.group({
       id: [0],
       nombre: [null, [Validators.required]],
+      codigoReferencia: [null, Validators.required],
       sucursalID: [null, Validators.required],
       descripcion: [null,],
       estadoID: [0,],

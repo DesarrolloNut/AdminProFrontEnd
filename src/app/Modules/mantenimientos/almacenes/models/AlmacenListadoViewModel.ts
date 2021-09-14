@@ -9,6 +9,7 @@ export class AlmacenListadoViewModel {
     }
     id: number;
     nombre: string;
+    codigoReferencia: string;
     descripcion: string
     estadoID: number
     sucursalID: number

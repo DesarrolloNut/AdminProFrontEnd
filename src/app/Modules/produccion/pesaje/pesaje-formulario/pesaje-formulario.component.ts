@@ -87,10 +87,10 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
     }
 
 
-    this.startPingingBalanza()
+    // this.startPingingBalanza()
 
 
-    // this.empezarAmbientePrueba();
+    this.empezarAmbientePrueba();
 
   }
 
@@ -215,8 +215,8 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (!this.lote) {
-      this.toastService.warning("Lote no válido, buscar nuevamente el lote.");
+    if (!this.loteSearch) {
+      this.toastService.warning("Digita el lote.");
       return;
     }
 
@@ -240,7 +240,7 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
       pesoCanastos: this.pesoCanastos,
       pesoNeto: this.pesoNeto,
       pesoBalanza: this.pesoBalanzaLBNumber,
-      lote: this.lote.lote,
+      lote: this.loteSearch,
       usuarioID: Number(this.authService.tokenDecoded.nameid),
       detalleJSON: JSON.stringify(this.articulosExtras.filter(x => x.pesoSeleccionado && x.cantidadSeleccionada > 0)),
     };
