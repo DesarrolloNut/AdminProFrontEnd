@@ -162,6 +162,15 @@ export class ClienteDatosGeneralesComponent implements OnInit {
   
     this.guardarCliente();
   }
+  onSubmitWithoutAction() {
+    this.submitted = true; 
+  
+    if (!this.actualizando)
+      this.f.sucursalID.setValue(Number(this.auth.tokenDecoded.groupsid))
+  
+    if (this.FormGenerales.invalid)
+      return;
+  }
   scrollToTop(){
     window.scroll({
       top: 0, 
@@ -208,6 +217,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       longitud: [null, [Validators.required,this.regexValidator(new RegExp('^-?([1-8]?[1-9]|[1-9]0)\\.{1}\\d{1,6}'), {'valid': ''})]],
       latitud:[null, [Validators.required, this.regexValidator(new RegExp('^-?([1-8]?[1-9]|[1-9]0)\\.{1}\\d{1,6}'), {'valid': ''})]],
       estadoERPID: [0],
+      clientePadreId: [null],
       // contactos: new FormArray([])
     },
       {
@@ -277,7 +287,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
     if(this.clienteTabsValidaIterable.tabsValida.filter(x=>!x.ok).length>0){
   
       if(this.clienteTabsValidaIterable.tabsValida.filter(x=>!x.ok && x.keyName=='GENERALES')){
-         this.onSubmit();
+         this.onSubmitWithoutAction();
      }
      this.openModal(this.content);
 
@@ -538,8 +548,8 @@ buscarCliente(documento: string) {
 
           this.f.nombres.setValue(cliente.nombres);
           this.f.apellidos.setValue(cliente.apellidos);
-          // this.f.celular.setValue(cliente.celular);
- 
+          this.f.clientePadreId.setValue(cliente.clientePadreId);
+          console.log(this.FormGenerales.value)
         } else {
           this.toastService.warning("Datos no encontrados");
           // this.f.nombres.setValue(null);
@@ -574,9 +584,21 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
 
           this.f.nombres.setValue(cliente.nombres);
           this.f.apellidos.setValue(cliente.apellidos!=null?cliente.apellidos:"");
-          // this.f.celular.setValue(cliente.celular);
+         
+          if(this.clientId<=0){
+            this.f.clientePadreId.setValue(cliente.id);
+          }
+          if(this.clientId>0){
+            if(this.f.id.value!=cliente.id){
+              this.f.clientePadreId.setValue(cliente.id);
+            }
+          }
+    
+    
+          console.log(this.FormGenerales.value)
 
         } else {
+              this.f.clientePadreId.setValue(0);
           this.toastService.warning("Datos no encontrados");
          // this.f.nombres.setValue(null);
           // this.f.celular.setValue(null);
