@@ -196,9 +196,16 @@ export class PesajeListadoComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
         } else {
           if (response.records.length > 0) {
-            this.articuloPesaje = response.records[0];
 
-            this.articuloPesajeDetalle = JSON.parse(this.articuloPesaje.detalleJSON);
+            if (this.articuloPesaje.almacenHastaID == this.almacenDefault) {
+              this.articuloPesaje = response.records[0];
+              this.articuloPesajeDetalle = JSON.parse(this.articuloPesaje.detalleJSON);
+            } else {
+              this.toastService.error("Pesaje encontrado, pero no pertenece a este almacen.")
+              this.modalService.dismissAll()
+            }
+
+
           } else {
             this.toastService.error("Resultado no encontrado")
             this.modalService.dismissAll();
