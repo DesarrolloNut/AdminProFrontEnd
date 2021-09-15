@@ -11,8 +11,8 @@
                             cliente
                         </button>
                     </div>
-                    <div class="col-md-12 p-2">
-
+         
+                    <div class="col-md-10 pt-3">
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <label for="search" class="input-group-text bg-white">
@@ -22,21 +22,29 @@
                                 </label>
                             </div>
                             <input [(ngModel)]="Search" (keyup)="getClientes()" type="text"
-                                style="border-left:none !important;" class="form-control" placeholder="Buscar cliente">
+                             style="border-left:none !important;" class="form-control" placeholder="Buscar cliente">
+                             
                         </div>
+               
+                    </div>
+                    <div class="form-group col-md-2 pt-3">
+                        <ng-select [items]="tipos" bindLabel="nombre" bindValue="codigo" (change)="onChangeTipo($event)"
+                        placeholder="Seleccionar tipo" [clearable]="false"
+                        notFoundText="No resultados" [(ngModel)]="tipo" >
+                        </ng-select>
                     </div>
                 </div>
                 <!-- <h6 class="card-subtitle">Create responsive tables by wrapping any <code>.table</code> in <code>.table-responsive </code></h6>-->
 
 
-
+ 
                 <div class="table-responsive">
                     <table class="table table-hover mb-0 no-wrap v-middle">
                         <thead>
                             <tr>
                                 <th></th>
-                                <th>Tipo Cliente</th>
                                 <th>ID</th>
+                                <th>Tipo Cliente</th>
                                 <th>Cliente</th>
                                 <th>Documento</th>
                                 <th>Estado</th>
@@ -74,14 +82,15 @@
                                     </button> -->
                                 </td>
                                 <td>
+                                    <span class="badge badge-light text-info "> {{cliente.id}}</span><br>
+                               </td>
+                                <td>
                                       <span class="text-dark">
                                         {{cliente.clienteTipo | uppercase }}
                                        </span>
                                 </td>
                                 <!-- SHOW INFO COLUMNA CLIENTE -->
-                                <td>
-                                          <span class="badge badge-light text-info "> {{cliente.id}}</span><br>
-                                </td>
+                  
                                 <td>
                                     <div class="d-flex align-items-center">
 
@@ -94,7 +103,19 @@
                                             </p>
                                             <!-- <span class="badge badge-light text-info ">ID: {{cliente.id}}</span><br> -->
                                             <small class="text-info"> <i class=" fa fa-hashtag"></i>
-                                                {{cliente.codigoReferencia }}
+                                                {{cliente.codigoReferencia }} 
+                                                <span *ngIf="cliente.codigoReferencia==null">
+                                                    &nbsp;&nbsp;
+                                                    &nbsp;&nbsp;
+                                                    &nbsp;&nbsp;
+                                                    &nbsp;&nbsp;
+                                                    &nbsp;&nbsp;
+                                                    &nbsp;&nbsp;
+                                                    &nbsp;
+                                                </span>
+                                              |  <span *ngIf="cliente.clientePadreId<=0 || cliente.clientePadreId==null " class="badge badge-info ">PRINCIPAL</span>
+                                                <span *ngIf="cliente.clientePadreId" class="badge badge-secondary">SUCURSAL</span>
+            
                                             </small>
                                         </div>
                                     </div>

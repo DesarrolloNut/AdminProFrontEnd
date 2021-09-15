@@ -115,10 +115,9 @@ export class ClienteComercialComponent implements OnInit {
             this.toastService.error(response.errores[0], "Error");
             this.btnGuardarCargando = false;
           } else {
-           
               if(response.valores?.length>0){
                 let f:ClienteComercialResponse= response.valores[0];
-                 if(f.countId>0){
+                 if(f.countId>=0){
                   let v= f.clienteTabsValida.tabsValida.find(x=>x.keyName=='COMERCIAL')
                    this.isnotNecesaryFieldsComplete  =  v.ok;
                    this.isnotNecesaryFieldsCompleteO.emit(v.ok);
@@ -181,7 +180,7 @@ export class ClienteComercialComponent implements OnInit {
   }
 
   initFormArray() {
-    this.onAddNegociacion();
+ //   this.onAddNegociacion();
   }
 
   

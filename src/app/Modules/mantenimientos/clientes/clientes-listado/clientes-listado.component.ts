@@ -7,6 +7,7 @@ import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { Cliente, ClienteViewModelCustomized } from '../models/Cliente';
 import { ParametrosCita } from 'src/app/Modules/turno/models/ParametrosCita';
+import { ComboBox } from 'src/app/shared/model/ComboBox';
 
 @Component({
   selector: 'app-clientes-listado',
@@ -24,7 +25,8 @@ export class ClientesListadoComponent implements OnInit {
   paginaTotalRecords: number = 0;
   arrayLoading = new Array(this.paginaSize);
   clientes: Cliente[] = [] //tu modelo
-
+  tipos:ComboBox[]=[];
+  tipo:number=0;
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     public permissionsService: NgxPermissionsService,
@@ -32,18 +34,29 @@ export class ClientesListadoComponent implements OnInit {
 
 
   ngOnInit(): void {
+    this.fillComboTipos();
     this.getClientes()
+    
+  }
+
+  fillComboTipos(){
+    this.tipos.push({codigo:0,nombre:"Todos",grupo:'',grupoID:''})
+    this.tipos.push({codigo:1,nombre:"Principales",grupo:'',grupoID:''})
+    this.tipos.push({codigo:2,nombre:"Sucursales",grupo:'',grupoID:''})
   }
   getClientes() {
     this.Cargando = true;
 
-    let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
+    let parametros: Parametro[] = [
+    { key: "Search", value: this.Search },
+    { key: "tipo", value: this.tipo },]
 
     this.httpService.GetAllWithPagination<ClienteViewModelCustomized>(DataApi.Cliente, "GetClientesListadoCustomized", "ID", this.paginaNumeroActual,
       this.paginaSize, false, parametros).subscribe(x => {
           
         if (x.ok) {
           this.clientes = x.valores[0];
+          console.log(this.clientes)
           this.asignarPagination(x);
         } else {
           this.toastService.error(x.errores[0]);
@@ -60,7 +73,9 @@ export class ClientesListadoComponent implements OnInit {
 
   }
 
-
+  onChangeTipo(tipo:ComboBox){
+    this.getClientes()
+  }
   asignarPagination(x: ResponseContenido<any>) {
 
     if (x.pagina != null) {

@@ -36,6 +36,7 @@ export class Cliente {
         this.longitud = ""
         this.latitud = ""
         this.tipoComprobante=0
+        this.clientePadreId=0
     }
 
     
@@ -72,6 +73,8 @@ export class Cliente {
     longitud: string;
     latitud: string;
     tipoComprobante: number;
+    clientePadreId: number;
+
     // contactos: Array<ClienteContactos>
 }
 
@@ -133,6 +136,7 @@ export class ClienteViewModelCustomized {
         this.estadoERPID =0
         this.estadoERP ="";
         this.estadoColorERP="";
+        this.clientePadreId = 0;
     }
 
 
@@ -193,6 +197,8 @@ export class ClienteViewModelCustomized {
     estadoERPID:number;
     estadoERP:string;
     estadoColorERP:string;
+    clientePadreId: number;
+
 }
 
  
