@@ -87,10 +87,10 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
     }
 
 
-    // this.startPingingBalanza()
+    this.startPingingBalanza()
 
 
-    this.empezarAmbientePrueba();
+    // this.empezarAmbientePrueba();
 
   }
 

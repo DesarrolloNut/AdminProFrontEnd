@@ -197,7 +197,7 @@ export class PesajeListadoComponent implements OnInit, OnDestroy {
         } else {
           if (response.records.length > 0) {
 
-            if (this.articuloPesaje.almacenHastaID == this.almacenDefault) {
+            if (response.records[0].almacenHastaID == this.almacenDefault) {
               this.articuloPesaje = response.records[0];
               this.articuloPesajeDetalle = JSON.parse(this.articuloPesaje.detalleJSON);
             } else {
