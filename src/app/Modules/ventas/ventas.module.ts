@@ -13,12 +13,24 @@ import { CotizacionesListadoComponent } from './cotizaciones/cotizaciones-listad
 import { CotizacionesFormularioComponent } from './cotizaciones/cotizaciones-formulario/cotizaciones-formulario.component';
 import { ReporteprontopagoComponent } from './reporteprontopago/reporteprontopago.component';
 import { AutorizacionCotizacionComponent } from './cotizaciones/autorizacion-cotizacion/autorizacion-cotizacion.component';
+import { PedidosEmpleadosListadoComponent } from './pedidos-empleado/pedidos-empleado-listado/pedidos-empleado-listado.component';
+import { PedidosEmpleadoFormularioComponent } from './pedidos-empleado/pedidos-empleado-formulario/pedidos-empleado-formulario.component';
 
 
 @NgModule({
-  declarations: [VentasComponent, OfertasConsultasFacturasComponent, NotacreditoListadoComponent, NotacreditoFormularioComponent, CotizacionesListadoComponent, CotizacionesFormularioComponent, ReporteprontopagoComponent,
-    AutorizacionCotizacionComponent],
-  imports: [
+  declarations: 
+  [VentasComponent,
+   OfertasConsultasFacturasComponent,
+   NotacreditoListadoComponent,
+   NotacreditoFormularioComponent, 
+   CotizacionesListadoComponent,
+   CotizacionesFormularioComponent, 
+   PedidosEmpleadosListadoComponent,
+   PedidosEmpleadoFormularioComponent,
+    ReporteprontopagoComponent,
+
+  AutorizacionCotizacionComponent],
+  imports: [ 
     CommonModule,
     SharedModule,
     NgbModule,
