@@ -60,6 +60,17 @@ export const ROUTES: RouteInfo[] = [
         permisos: ["ventas_cotizacion"],
       },
       {
+        path: '/ventas/pedidos-empleado',
+        label: '',
+        labelClass: '',
+        title: 'Pedidos Empleado',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["ventas_cotizacion"],
+      },
+      {
         path: '/ventas/ofertas-consulta-factura',
         label: '',
         labelClass: '',

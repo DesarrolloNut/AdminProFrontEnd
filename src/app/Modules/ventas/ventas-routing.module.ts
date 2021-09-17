@@ -8,6 +8,8 @@ import { NotacreditoListadoComponent } from './notacredito/notacredito-listado/n
 import { OfertasConsultasFacturasComponent } from './ofertas/ofertas-consultas-facturas/ofertas-consultas-facturas.component';
 import { ReporteprontopagoComponent } from './reporteprontopago/reporteprontopago.component';
 import { VentasComponent } from './ventas.component';
+import { PedidosEmpleadoFormularioComponent } from './pedidos-empleado/pedidos-empleado-formulario/pedidos-empleado-formulario.component';
+import { PedidosEmpleadosListadoComponent } from './pedidos-empleado/pedidos-empleado-listado/pedidos-empleado-listado.component';
 
 
 const routes: Routes = [
@@ -74,6 +76,26 @@ const routes: Routes = [
         }
       },
 
+      // Cotizacion
+      {
+        path: 'pedidos-empleado', component: PedidosEmpleadosListadoComponent, data: {
+          title: 'Pedidos Empleado',
+          urls: [
+            { title: 'Ventas' },
+            { title: 'Pedidos Empleado' },
+          ]
+        }
+      },
+      {
+        path: 'pedidos-empleado/:id', component: PedidosEmpleadoFormularioComponent, data: {
+          title: 'Pedidos Empleado',
+          urls: [
+            { title: 'Ventas' },
+            { title: 'Pedidos Empleado' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
       //  ReporteProntoPago
       {
         path: 'reporteprontopago', component: ReporteprontopagoComponent, data: {
