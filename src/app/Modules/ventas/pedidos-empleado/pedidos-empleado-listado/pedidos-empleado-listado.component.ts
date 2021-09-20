@@ -7,8 +7,9 @@ import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
-import { CotizacionDetalleViewModel } from '../models/PedidoEmpleadoDetalleViewModel';
-import { CotizacionListadoViewModel } from '../models/PedidoDetalleEmpleadoListadoViewModel';
+import { PedidoEmpleadoDetalleViewModel } from '../models/PedidoEmpleadoDetalleViewModel';
+import { PedidoEmpleadoListadoViewModel } from '../models/PedidoEmpleadoListadoViewModel';
+ 
 
 @Component({
   selector: 'app-pedidos-empleado-listado',
@@ -26,13 +27,13 @@ export class PedidosEmpleadosListadoComponent implements OnInit {
   totalPaginas: number = 0;
   paginaSize: number = 5;
   paginaTotalRecords: number = 0;
-  data: CotizacionListadoViewModel[] = [] //tu modelo
+  data: PedidoEmpleadoListadoViewModel[] = [] //tu modelo
 
-  cotizacionDetalles: CotizacionDetalleViewModel[];
-  loadingCotizacionDetalle: boolean;
+  pedidoEmpleadoDetalles: PedidoEmpleadoDetalleViewModel[];
+  loadingPedidoEmpleadoDetalle:boolean
   estados: ComboBox[] = []
   loadingEstados: boolean;
-  cotizacionSeleccionada: CotizacionListadoViewModel;
+  pedidoEmpleadoSeleccionado: PedidoEmpleadoListadoViewModel;
   loadingEstadoAutorizacionCotizacion: boolean = false;
 
   constructor(private toastService: ToastrService,
@@ -51,7 +52,8 @@ export class PedidosEmpleadosListadoComponent implements OnInit {
 
     let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
 
-    this.httpService.GetAllWithPagination<CotizacionListadoViewModel>(DataApi.Cotizacion, "GetCotizacionListado", "ID", this.paginaNumeroActual,
+    this.httpService.GetAllWithPagination<PedidoEmpleadoListadoViewModel>(DataApi.PedidosEmpleado,
+       "GetPedidosEmpleadoListado", "ID", this.paginaNumeroActual,
       this.paginaSize, false, parametros).subscribe(x => {
 
         if (x.ok) {
@@ -86,55 +88,55 @@ export class PedidosEmpleadosListadoComponent implements OnInit {
   }
 
 
-  openModal(content, cotizacion: CotizacionListadoViewModel) {
-    this.cotizacionDetalles = [];
-    this.getCotizacionDetalle(cotizacion.id);
-    this.cotizacionSeleccionada = cotizacion;
+  openModal(content, pedidoEmpleado: PedidoEmpleadoListadoViewModel) {
+    this.pedidoEmpleadoDetalles = [];
+    this.getPedidoEmpleadoDetalle(pedidoEmpleado.id);
+    this.pedidoEmpleadoSeleccionado = pedidoEmpleado;
     this.modalService.open(content, { size: 'lg', });
   }
 
-  openModalAutorizar(content, cotizacion: CotizacionListadoViewModel) {
-    this.cotizacionDetalles = [];
-    this.getCotizacionDetalle(cotizacion.id);
-    this.cotizacionSeleccionada = cotizacion;
+  openModalAutorizar(content, pedidoEmpleado: PedidoEmpleadoListadoViewModel) {
+    this.pedidoEmpleadoDetalles = [];
+    this.getPedidoEmpleadoDetalle(pedidoEmpleado.id);
+    this.pedidoEmpleadoSeleccionado = pedidoEmpleado;
     this.modalService.open(content, { size: 'lg', });
   }
 
-  getCotizacionDetalle(cotizacionID: number) {
-    this.loadingCotizacionDetalle = true;
-    this.httpService.DoPostAny<CotizacionDetalleViewModel>(DataApi.Cotizacion,
-      "GetCotizacionDetalles", cotizacionID).subscribe(response => {
+  getPedidoEmpleadoDetalle(pedidoEmpleadoId: number) {
+    this.loadingPedidoEmpleadoDetalle = true;
+    this.httpService.DoPostAny<PedidoEmpleadoDetalleViewModel>(DataApi.PedidosEmpleado,
+      "GetPedidosEmpleadoDetalles", pedidoEmpleadoId).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          this.cotizacionDetalles = response.records;
+          this.pedidoEmpleadoDetalles = response.records;
         }
-        this.loadingCotizacionDetalle = false;
+        this.loadingPedidoEmpleadoDetalle = false;
       }, error => {
-        this.loadingCotizacionDetalle = false;
+        this.loadingPedidoEmpleadoDetalle = false;
         this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
       });
   }
 
-  CambiarEstadoAutorizacionCotizacion(cotizacionID: number) {
-    this.loadingEstadoAutorizacionCotizacion = true;
-    this.httpService.DoPostAny<CotizacionDetalleViewModel>(DataApi.Cotizacion,
-      "CambiarEstadoAutorizacionCotizacion", cotizacionID).subscribe(response => {
+  // CambiarEstadoAutorizacionCotizacion(cotizacionID: number) {
+  //   this.loadingEstadoAutorizacionCotizacion = true;
+  //   this.httpService.DoPostAny<PedidoEmpleadoDetalleViewModel>(DataApi.PedidosEmpleado,
+  //     "CambiarEstadoAutorizacionCotizacion", cotizacionID).subscribe(response => {
 
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          // this.cotizacionDetalles = response.records;
-          this.modalService.dismissAll();
-          this.getData()
-        }
-        this.loadingEstadoAutorizacionCotizacion = false;
-      }, error => {
-        this.loadingEstadoAutorizacionCotizacion = false;
-        this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
-      });
-  }
+  //       if (!response.ok) {
+  //         this.toastService.error(response.errores[0]);
+  //       } else {
+  //         // this.cotizacionDetalles = response.records;
+  //         this.modalService.dismissAll();
+  //         this.getData()
+  //       }
+  //       this.loadingEstadoAutorizacionCotizacion = false;
+  //     }, error => {
+  //       this.loadingEstadoAutorizacionCotizacion = false;
+  //       this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
+  //     });
+  // }
 
 
   getEstados() {
@@ -160,23 +162,23 @@ export class PedidosEmpleadosListadoComponent implements OnInit {
   }
 
 
-  onChangeEstado(cotizacion: CotizacionListadoViewModel, index: number) {
+  // onChangeEstado(cotizacion: PedidoEmpleadoListadoViewModel, index: number) {
 
-    this.httpService.DoPostAny<ComboBox>(DataApi.Cotizacion,
-      "UpdateCotizacionEstado", cotizacion).subscribe(response => {
+  //   this.httpService.DoPostAny<ComboBox>(DataApi.Cotizacion,
+  //     "UpdateCotizacionEstado", cotizacion).subscribe(response => {
 
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-          console.error(response.errores[0]);
-        } else {
-          this.toastService.success("Estado actualizado", "OK");
-        }
-      }, error => {
-        this.getData()
-        this.toastService.error("No se actualizar el estado", "Error conexion al servidor");
-      });
+  //       if (!response.ok) {
+  //         this.toastService.error(response.errores[0]);
+  //         console.error(response.errores[0]);
+  //       } else {
+  //         this.toastService.success("Estado actualizado", "OK");
+  //       }
+  //     }, error => {
+  //       this.getData()
+  //       this.toastService.error("No se actualizar el estado", "Error conexion al servidor");
+  //     });
 
-  }
+  // }
 
 
 

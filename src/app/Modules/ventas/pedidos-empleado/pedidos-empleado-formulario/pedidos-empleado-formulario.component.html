@@ -18,21 +18,21 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6 col-lg-6 col-12">
-                        <h4 class="card-title">Formulario de cotizaciones</h4>
+                        <h4 class="card-title">Formulario de Pedido Empleado</h4>
                     </div>
                     <div class="col-md-6 col-lg-6 col-12 text-right">
                     </div>
                 </div>
-                <div class="form-row m-t-40">
-                    <div class="form-group col-md-12">
+                <div class="form-row m-t-20">
+                    <!-- <div class="form-group col-md-12">
                         <label for="inputEmail4">Cliente</label>
-                        <ng-select [ngModelOptions]="{standalone: true}" [(ngModel)]="cotizacion.clienteId"
+                        <ng-select [ngModelOptions]="{standalone: true}" [(ngModel)]="pedidoEmpleado.clienteId"
                             bindLabel="nombre" bindValue="codigo" [items]="clientes" [loading]="loadingClientes"
                             [clearable]="false" (search)="getClientes($event)" (change)="onSelectCliente($event)"
                             notFoundText="No resultados">
                         </ng-select>
                     </div>
-                    <hr>
+                    <hr> -->
                     <div class="col-12">
                         <div class="row border border-light p-2" *ngIf="cliente">
                             <div class="col-12">
@@ -65,15 +65,44 @@
                                 </ng-select>
                             </div>
 
-                            <div class="form-group col-md-12">
+                            <div class="form-group col-md-6">
                                 <label for="nombre"> <i class="fa fa-map-marker"></i> Dirección</label>
                                 <input [(ngModel)]="cliente.calle" class="form-control" [readonly]="'true'" type="text"
                                     [ngModelOptions]="{standalone: true}">
                             </div>
+                            <div class="form-group col-md-6" *ngIf="cliente">
+                                <label for="inputEmail4">Vendedor</label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="vendedores"
+                                    [ngModelOptions]="{standalone: true}" [(ngModel)]="pedidoEmpleado.vendedorId"
+                                    [loading]="loadingVendedores" [clearable]="false" notFoundText="No resultados">
+                                </ng-select>
+                            </div>
+                    
+                            <div class="form-group col-md-6">
+                                <label for="inputEmail4">Moneda</label>
+                                <ng-select class="customSelect_moneda" style="height: 50px !important;" bindLabel="nombre" bindValue="codigo" [items]="monedaTipos"
+                                    [ngModelOptions]="{standalone: true}" [(ngModel)]="pedidoEmpleado.monedaId"
+                                    [loading]="loadingMonedaTipos" [clearable]="false" notFoundText="No resultados">
+                                </ng-select>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="nombre"> <i class="fa fa-money"></i>$ Limite Credito</label>
+                                <input [(ngModel)]="cliente.limiteCredito" mask="separator.2" thousandSeparator=","
+                                  class="form-control input_limite_credito" [readonly]="'true'" type="text"
+                                    [ngModelOptions]="{standalone: true}">
+                                <p style="color:red" *ngIf="limitExceeded"> Excedió el limite de credito</p>
+                            </div>
+        
+                            <div class="form-group col-md-3">
+                                <label for="nombre"> <i class="fa fa-money"></i>$ Balance</label>
+                                <input  style="height: 50px;"  [allowNegativeNumbers]="true" [(ngModel)]="cliente.balance"  dropSpecialCharacters = "false" mask="separator.2" thousandSeparator="," 
+                                 [readonly]="'true'"
+                                 [ngStyle]="{'background-color': (limitExceeded) ? '#FADBD8' : '#EAFAF1'}"
+                                 class="form-control input_balance" type="text"
+                                    [ngModelOptions]="{standalone: true}">
+                                    <p style="color:red" *ngIf="limitExceeded"> Excedió el limite de credito</p>
 
-
-
-
+                            </div>
                         </div>
                     </div>
 
@@ -89,25 +118,12 @@
                         </div>
                     </div> -->
 
-                    <div class="form-group col-md-6" *ngIf="cliente">
-                        <label for="inputEmail4">Moneda</label>
-                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="monedaTipos"
-                            [ngModelOptions]="{standalone: true}" [(ngModel)]="cotizacion.monedaId"
-                            [loading]="loadingMonedaTipos" [clearable]="false" notFoundText="No resultados">
-                        </ng-select>
-                    </div>
-
-                    <div class="form-group col-md-6" *ngIf="cliente">
-                        <label for="inputEmail4">Vendedor</label>
-                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="vendedores"
-                            [ngModelOptions]="{standalone: true}" [(ngModel)]="cotizacion.vendedorId"
-                            [loading]="loadingVendedores" [clearable]="false" notFoundText="No resultados">
-                        </ng-select>
-                    </div>
+                    
+           
 
 
                     <!-- <div class="col-12" [hidden]="loadingArticulosSeleccionados"> -->
-                    <div class="col-12" *ngIf="cliente">
+                    <div class="col-12 m-t-10" *ngIf="cliente">
                         <table class="table table-sm table-hover mb-0 no-wrap v-middle">
                             <thead>
                                 <tr>
@@ -129,7 +145,7 @@
                             <tbody>
 
                                 <!-- <tr *ngFor="let item of confirmed | filter: searchText; let i  = index"> -->
-                                <tr *ngFor="let item of cotizacionDetalles; let i=index">
+                                <tr *ngFor="let item of pedidoEmpleadoDetalles; let i=index">
                                     <td>
                                         <button *ngIf="item.articuloId" class="btn btn-sm btn-light m-1"
                                             (click)="openModal(modalExistenciaArticuloAlmacenes,item.articuloId)">
@@ -150,8 +166,8 @@
                                     </td>
                                     <td>
                                         <ng-select [items]="almacenes" bindLabel="codigo" bindValue="codigo"
-                                            [loading]="loadingAlmacenes" [(ngModel)]="item.almacenId"
-                                            [readonly]="!item.articuloId" [clearable]="false"
+                                            [loading]="loadingAlmacenes"  [(ngModel)]="item.almacenId"
+                                            [readonly]="!item.articuloId" (change)="calcularTotales()" [clearable]="false"
                                             [ngModelOptions]="{standalone: true}" notFoundText="No resultados">
                                         </ng-select>
                                     </td>
@@ -192,10 +208,10 @@
 
                     <div class="form-group text-right col-md-12" *ngIf="cliente">
                         <hr>
-                        <h4>Subtotal: $ {{cotizacion.subtotal | number:'1.2-2' }}</h4>
-                        <h4>Descuento: $ {{cotizacion.descuentoTotal | number:'1.2-2' }}</h4>
-                        <h4>Impuesto: $ {{cotizacion.impuestoTotal | number:'1.2-2' }}</h4>
-                        <h4 class="font-weight-bold">Total Neto: $ {{cotizacion.totalNeto | number:'1.2-2' }}</h4>
+                        <h4>Subtotal: $ {{pedidoEmpleado.subtotal | number:'1.2-2' }}</h4>
+                        <h4>Descuento: $ {{pedidoEmpleado.descuentoTotal | number:'1.2-2' }}</h4>
+                        <h4>Impuesto: $ {{pedidoEmpleado.impuestoTotal | number:'1.2-2' }}</h4>
+                        <h4 class="font-weight-bold">Total Neto: $ {{pedidoEmpleado.totalNeto | number:'1.2-2' }}</h4>
                     </div>
 
 
