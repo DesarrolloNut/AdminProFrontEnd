@@ -112,7 +112,7 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
           this.usuario.ipEquipo)
       }
 
-    }, 3000);
+    }, 2000);
   }
 
 
@@ -320,6 +320,7 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
       this.pesoCanastos = 0;
       this.pesoNeto = 0
       this.getArticuloByCodigoReferencia(this.search)
+      this.getArticulosDePesosExtras()
     } else {
       this.articulo = null;
     }
@@ -371,6 +372,8 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
           this.toastService.error(response.errores[0]);
         } else {
           this.articulosExtrasComboBox = response.records;
+
+
           this.formatArticulosExtras()
         }
         this.loadingArticulosExtras = false;
@@ -430,6 +433,8 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
         item.articuloID = a.articuloID
         item.codigoReferencia = a.codigoReferencia
         item.nombre = a.nombre
+        item.cantidadSeleccionada = a.cantidadDefault;
+
 
         item.pesos = this.articulosExtrasComboBox.
           filter(ar => ar.articuloID == a.articuloID).
@@ -441,6 +446,7 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
               "medidaValor": art.medidaValor
             }
           });
+
         this.articulosExtras.push(item)
       }
 

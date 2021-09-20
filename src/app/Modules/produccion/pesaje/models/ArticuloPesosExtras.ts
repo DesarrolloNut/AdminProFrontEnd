@@ -8,4 +8,5 @@ export class ArticuloPesosExtras {
     valor: number
     abreviatura: string
     medidaValor: number
+    cantidadDefault: number
 }
