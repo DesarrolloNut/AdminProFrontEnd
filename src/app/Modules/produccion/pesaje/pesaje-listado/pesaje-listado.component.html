@@ -8,18 +8,24 @@
                     </div>
 
                     <div class="form-group col-md-6">
-                        <label> <i class="fa fa-calendar"></i> Fecha</label>
+                        <!-- <label> <i class="fa fa-calendar"></i> Fecha</label> -->
                         <ejs-datepicker [showClearButton]="false" [(ngModel)]="fechaFiltro"
                             (change)="onChangeFechaFiltro($event)" [format]="'dd-MMM-yyyy'">
                         </ejs-datepicker>
                     </div>
 
-                    <div class="col-md-6">
-                        <div class="outer">
-                            <div class="inner">
-                                <input style="overflow: hidden; position: relative;" type="text" name="search"
-                                    id="search" #search [(ngModel)]="searchValue">
+                    <div class="col-md-6 ">
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <label for="search" class="input-group-text bg-white">
+                                    <span class="bg-white" style="border-right:none">
+                                        <i class="ti-search"></i>
+                                    </span>
+                                </label>
                             </div>
+                            <input [(ngModel)]="searchValue" id="search" #search name="search" type="text"
+                                style="border-left:none !important;" class="form-control" placeholder="Buscar">
                         </div>
                     </div>
 
