@@ -12,7 +12,8 @@
 </div>
 
 
-<!-- <div class="row">
+<!--
+<div class="row">
   <div class="col">
       <div class="card">
           <div class="card-body">
@@ -33,10 +34,9 @@
                       </div>
                   </div>
 
-                  <div class="col-md-6 text-center p-2" *ngIf="searching">
-                      <h3> <span><i class="fa fa-spinner fa-spin"></i> Buscando</span> </h3>
+                  <div class="col-md-4 text-center p-2">
+                      <h6 *ngIf="searching"> <span><i class="fa fa-spinner fa-spin"></i> Buscando</span> </h6>
                   </div>
-
               </div>
           </div>
       </div>
@@ -58,16 +58,39 @@
                   </div>
 
                   <div class="form-group col-md-6" *ngIf="articulo">
-                      <label for="inputEmail4">Almacen</label>
-                      <ng-select bindLabel="nombre" bindValue="codigo" [(ngModel)]="almacenID" [items]="almecenes"
-                          [clearable]="false" [loading]="loadingAlmacenes" notFoundText="No resultados">
+                      <label for="inputEmail4">Almacén</label>
+                      <ng-select bindLabel="nombre" bindValue="codigo" [(ngModel)]="almacenID"
+                          [items]="almecenes" [clearable]="false" [loading]="loadingAlmacenes"
+                          notFoundText="No resultados" [readonly]="true">
                       </ng-select>
                   </div>
 
+                  <!-- <div class="form-group col-md-6" *ngIf="articulo">
+                      <label for="inputEmail4">Almacén hasta</label>
+                      <ng-select bindLabel="nombre" bindValue="codigo" [(ngModel)]="almacenesHastaSeleccionado"
+                          [items]="almacenesHasta" [clearable]="false" [loading]="loadingAlmacenesDesde"
+                          notFoundText="No resultados">
+                      </ng-select>
+                  </div> -->
+
+                  <!-- <div class="form-group col-md-6">
+                      <label for="nombre"> Lote</label>
+                      <input (keyup)="getLote()" [(ngModel)]="loteSearch" class="form-control" type="text" name="lote"
+                          id="lote">
+                      <div class="mt-2">
+                          <h6 class="font-weight-bold text-success" *ngIf="lote">
+                              <i class="fa fa-check-circle"></i> Lote encontrado
+                          </h6>
+                      </div>
+                  </div> -->
+
                   <div class="form-group col-md-6" *ngIf="articulo">
-                      <label>Numero Lote</label>
-                      <input type="text" class="form-control">
+                      <label>Fecha de vencimiento</label>
+                      <ejs-datepicker #default (focus)='onFocus($event)' [(ngModel)]="fechaVencimiento"
+                          [showClearButton]="false" [format]="'dd-MM-yyyy'" [min]='fechaActual'>
+                      </ejs-datepicker>
                   </div>
+
               </div>
           </div>
       </div>
@@ -94,7 +117,7 @@
                           <tbody>
 
                               <!-- <tr *ngFor="let item of confirmed | filter: searchText; let i  = index"> -->
-                              <tr *ngFor="let item of articulosExtrasViewRender; let i=index">
+                              <tr *ngFor="let item of articulosExtras; let i=index">
                                   <td>
                                       <h2>
                                           <span> {{item.nombre}}</span>
@@ -133,27 +156,47 @@
 
 <div class="row" *ngIf="articulo">
 
-  <div class="col-md-6">
+  <div class="col-md-4">
       <div class="card border-right border-danger">
-          <div class="card-body">
+          <div class="card-body  pb-0">
               <div class="d-flex no-block align-items-center">
                   <div><span class="text-danger display-6"><i class="ti-pie-chart"></i></span></div>
                   <div class="ml-auto text-right">
-                      <h1 class="font-weight-bold">{{pesoBruto | number:'1.2-5'}} Lbs</h1>
-                      <h2 class="text-danger">Peso Bruto</h2>
+                      <h1 class="font-weight-bold"> {{pesoBalanzaLBNumber | number}} LB</h1>
+                      <h2 class="text-danger mb-1">Peso Balanza</h2>
+                      <span *ngIf="pesoBalanzaUltimaFecha" class="small "><i class="fa fa-clock"></i>
+                          {{pesoBalanzaUltimaFecha | date:'hh:mm:ss a'}}
+                      </span>
+                      <span *ngIf="pesoBalanza" class="small">
+                          | {{pesoBalanza }}
+                      </span>
                   </div>
               </div>
           </div>
       </div>
   </div>
 
-  <div class="col-md-6">
+  <div class="col-md-4">
+      <div class="card border-right border-info">
+          <div class="card-body">
+              <div class="d-flex no-block align-items-center">
+                  <div><span class="text-info display-6"><i class="ti-pie-chart"></i></span></div>
+                  <div class="ml-auto text-right">
+                      <h1 class="font-weight-bold">{{pesoCanastos | number}} Lb</h1>
+                      <h2 class="text-info">Peso Canastos</h2>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <div class="col-md-4">
       <div class="card border-right border-success">
           <div class="card-body">
               <div class="d-flex no-block align-items-center">
                   <div><span class="text-success display-6"><i class="ti-pie-chart"></i></span></div>
                   <div class="ml-auto text-right">
-                      <h1 class="font-weight-bold">{{pesoNeto | number:'1.2-5'}} Lbs</h1>
+                      <h1 class="font-weight-bold">{{pesoNeto | number}} Lb</h1>
                       <h2 class="text-success">Peso Neto</h2>
                   </div>
               </div>
@@ -167,6 +210,7 @@
       <div class="card">
           <div class="card-body">
               <div class="row">
+
                   <div class="col text-right">
                       <button class="btn btn-light m-1" routerLink="/produccion/ordenfabricacion" type="button">
                           <i class="fas fa-times"></i> Cancelar

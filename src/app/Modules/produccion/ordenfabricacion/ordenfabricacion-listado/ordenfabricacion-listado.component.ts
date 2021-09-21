@@ -12,6 +12,7 @@ import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
 import { OrdenFabricacion } from '../models/OrdenFabricacion';
 import { ListaMaterialesHeader } from '../models/ListaMaterialesHeader';
 import { Router, ActivatedRoute } from '@angular/router';
+import { OrdenfabricacionPesajeService } from 'src/app/Services/ordenfabricacion-pesaje.service';
 
 @Component({
   selector: 'app-ordenfabricacion-listado',
@@ -49,6 +50,7 @@ constructor(private toastService: ToastrService,
   public permissionsService: NgxPermissionsService,
   private modalService: NgbModal,
   private router: Router,
+  private ordenfabriService: OrdenfabricacionPesajeService,
   private route: ActivatedRoute,
 ) { }
 
@@ -94,7 +96,8 @@ OnChangeProducida(){
 
 OnChangePagePesaje(articulosExtras: OrdenFabricacionVista){
   this.modalService.dismissAll();
-  this.router.navigate(['/produccion/ordenfabricacionpesaje/'], {queryParams: articulosExtras})
+  this.ordenfabriService.SaveOrdenFabricacion(articulosExtras);
+  this.router.navigateByUrl('/produccion/ordenfabricacionpesaje');
 }
 
 OnSaveConsumido(articulosExtras: OrdenFabricacionVista){
