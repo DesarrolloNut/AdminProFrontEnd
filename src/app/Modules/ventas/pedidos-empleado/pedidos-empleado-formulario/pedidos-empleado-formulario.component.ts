@@ -46,7 +46,7 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
   monedaTipos: ComboBox[];
 
   loadingAlmacenes: boolean;
-  almacenes: ComboBox[];
+  almacenes: ComboBox[] =null;
 
   vendedores: ComboBox[];
   loadingVendedores: boolean;
@@ -60,8 +60,11 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
   loadingArticuloBalance: boolean;
   articuloBalance: ArticuloBalanceViewModel[];
   totalCantidadExistencia: number;
-  loadingCotizacionDetalle: boolean;
-
+  loadingPedidoEmpleadoDetalle: boolean;
+  loadingInfoCliente: boolean;
+  clienteExiste=true;
+  balanceEmpleado:number;
+  idPedidoEmpleadoByRouter:number;
   constructor(
     private toastService: ToastrService,
     private httpService: BackendService,
@@ -74,7 +77,7 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
   ngOnInit(): void {
 
     let id = Number(this.route.snapshot.paramMap.get('id'));
-    this.getAlmacenes();
+    this.idPedidoEmpleadoByRouter=id;
     if (id > 0) {
       this.getCotizacion(id);
       this.actualizando = true;
@@ -108,6 +111,7 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
             this.router.navigateByUrl('/ventas/pedidos-empleado');
           }
         }
+        this.Cargando = false;
 
       }, error => {
         this.Cargando = false;
@@ -116,7 +120,7 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
   }
 
   getPedidoEmpleadoDetalles(pedidoEmpleadoID: number) {
-    this.loadingCotizacionDetalle = true;
+    this.loadingPedidoEmpleadoDetalle = true;
     this.httpService.DoPostAny<PedidoEmpleadoDetalleViewModel>(DataApi.PedidosEmpleado,
       "GetPedidosEmpleadoDetalles", pedidoEmpleadoID).subscribe(response => {
 
@@ -126,16 +130,16 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
           this.pedidoEmpleadoDetalles = response.records;
           this.agregarDetalleVacio()
         }
-        this.loadingCotizacionDetalle = false;
+        this.loadingPedidoEmpleadoDetalle = false;
       }, error => {
-        this.loadingCotizacionDetalle = false;
+        this.loadingPedidoEmpleadoDetalle = false;
         this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
         this.router.navigateByUrl('/ventas/pedidos-empleado');
       });
   }
 
   getUsuarioByID(usuarioID: number) {
-    this.Cargando = true;
+    //this.Cargando = true;
     this.httpService.DoPostAny<Usuario>(DataApi.Usuario,
       "GetUsuarioByID", usuarioID).subscribe(response => {
         if (!response.ok) {
@@ -153,12 +157,16 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
         }
 
       }, error => {
-        this.Cargando = false;
+      //  this.Cargando = false;
         this.toastService.error("Error conexion al servidor");
       });
   }
 
   agregarDetalleVacio() {
+    if(this.almacenes==null){
+      this.getAlmacenes();
+      return;
+    }
     if(this.almacenes!= undefined && this.almacenes.length>0){
       this.pedidoEmpleadoDetalles.push({
         almacenId: this.almacenes[0].codigo, articuloId: 0, cantidad: undefined, costo: 0,
@@ -174,7 +182,6 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
   }
 
   onSubmit() {
-     console.log(this.usuario)
      if(( this.cliente.limiteCredito-this.pedidoEmpleado.totalNeto)<0 ){
       this.toastService.warning("Este pedido esta excediendo el limite de credito");
      return ;
@@ -267,7 +274,7 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
   }
 
   getClienteByUsuarioID(usuarioId: number) {
-    this.Cargando = true;
+    this.loadingInfoCliente = true;
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
       "GetClienteByUsuarioID", usuarioId).subscribe(response => {
         if (!response.ok) {
@@ -275,25 +282,31 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
         } else {
           //validar que existe
           if (response != null && response.records != null && response.records.length > 0) {
-
+           
             this.cliente = response.records[0];
+            this.clienteExiste=true;
             this.cliente.apellidos = this.cliente.apellidos==null?"":this.cliente.apellidos;
-            console.log(this.cliente)
             this.pedidoEmpleado.clienteId=this.cliente.id;
+            this.balanceEmpleado = this.cliente.balance;
             this.getArticulosPrecioActual()
-           this.agregarDetalleVacio();
+            this.agregarDetalleVacio();
+            this.loadingInfoCliente = false;
+
           } else {
+            this.clienteExiste=false;
+            this.loadingInfoCliente = false;
+
             this.toastService.warning("Cliente no encontrado");
           }
         }
 
       }, error => {
-        this.Cargando = false;
+        this.loadingInfoCliente = false;
         this.toastService.error("Error conexion al servidor");
       });
   }
   getClienteByID(id: number) {
-    this.Cargando = true;
+    this.loadingInfoCliente = true;
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
       "GetClienteByID", id).subscribe(response => {
         if (!response.ok) {
@@ -304,14 +317,17 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
 
             this.cliente = response.records[0];
             this.cliente.apellidos = this.cliente.apellidos==null?"":this.cliente.apellidos;
+            this.balanceEmpleado = this.cliente.balance;
+            this.clienteExiste=true;
             this.getArticulosPrecioActual()
           } else {
             this.toastService.warning("Cliente no encontrado");
+            this.clienteExiste=false;
           }
         }
-
+        this.loadingInfoCliente = false;
       }, error => {
-        this.Cargando = false;
+        this.loadingInfoCliente = false;
         this.toastService.error("Error conexion al servidor");
       });
   }
@@ -411,7 +427,6 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
 
           if (response.records.length == 0 || response.records[0] < 1) {
             this.toastService.error("No hay impuesto configurado");
-            console.error("No hay impuesto configurado")
           } else {
             this.ITBIS = Number(response.records[0]);
           }
@@ -503,6 +518,7 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
   }
 
   getAlmacenes() {
+    console.log('get almacenes')
     let parametros: Parametro[] = [
       { key: "usuarioID", value: this.authService.tokenDecoded.nameid },
       { key: "ModuloKey", value: EstadosGeneralesKeyEnum.COTIZACION },
@@ -515,6 +531,9 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.almacenes = response.records;
+          if(this.almacenes.length>0){
+             this.agregarDetalleVacio();
+          }
         }
         this.loadingAlmacenes = false;
       }, error => {

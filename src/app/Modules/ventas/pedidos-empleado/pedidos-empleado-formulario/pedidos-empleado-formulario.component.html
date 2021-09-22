@@ -15,7 +15,7 @@
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-body">
+            <div class="card-body" style="    min-height: 710px; ">
                 <div class="row">
                     <div class="col-md-6 col-lg-6 col-12">
                         <h4 class="card-title">Formulario de Pedido Empleado</h4>
@@ -34,7 +34,7 @@
                     </div>
                     <hr> -->
                     <div class="col-12">
-                        <div class="row border border-light p-2" *ngIf="cliente">
+                        <div class="row border border-light p-2" *ngIf="cliente && !loadingInfoCliente">
                             <div class="col-12">
                                 <h6 class="card-subtitle">Datos del cliente.</h6>
                             </div>
@@ -104,6 +104,16 @@
 
                             </div>
                         </div>
+                        <div class="row p-2 m-t-20" *ngIf="!clienteExiste">
+                            <div class="col-md-12 text-center">
+                                <i style="font-size: 100px;" class="fa fa-shopping-cart" aria-hidden="true"></i>
+                                 <h4 class="m-t-20">
+                                    Usted no tiene un codigo de cliente, por esta razón no puede realizar pedido.
+                                </h4>
+                                <p class="text-info "  >Comunicate con <b style="text-decoration: underline;">Gestión Humana</b>. </p>
+                            </div>
+                        </div>
+
                     </div>
 
                     <!-- <div class="form-group col-md-6" *ngIf="cliente">
@@ -124,6 +134,7 @@
 
                     <!-- <div class="col-12" [hidden]="loadingArticulosSeleccionados"> -->
                     <div class="col-12 m-t-10" *ngIf="cliente">
+                
                         <table class="table table-sm table-hover mb-0 no-wrap v-middle">
                             <thead>
                                 <tr>
@@ -178,9 +189,7 @@
                                     </td>
 
                                     <td>
-                                        <input style="width: 50px;" type="number" class="form-control"
-                                            [readonly]="!item.articuloId" (keyup)="calcularTotales()"
-                                            [(ngModel)]="item.porcientoDescuento" [ngModelOptions]="{standalone: true}">
+                                        <span>{{ item.porcientoDescuento}}</span>
                                     </td>
                                     <td>
                                         <span>${{ item.subtotal | number:'1.2-2'}}</span>
@@ -204,7 +213,6 @@
                             </tbody>
                         </table>
                     </div>
-
 
                     <div class="form-group text-right col-md-12" *ngIf="cliente">
                         <hr>
@@ -233,6 +241,15 @@
                     </div>
 
                 </div>
+                <div class="row p-2 m-t-20"  *ngIf="loadingPedidoEmpleadoDetalle || loadingInfoCliente || Cargando">
+                    <div class="col-md-12 text-center">
+                        <i style="font-size: 100px;" class="fa fa-shopping-cart" aria-hidden="true"></i>
+                    </div>
+                </div>
+
+                <app-loading-listado  [hidden]="idPedidoEmpleadoByRouter <=0  || !loadingPedidoEmpleadoDetalle && !Cargando"></app-loading-listado>
+                <app-loading-listado  [hidden]="idPedidoEmpleadoByRouter > 0 || !loadingInfoCliente "></app-loading-listado>
+
             </div>
         </div>
     </div>

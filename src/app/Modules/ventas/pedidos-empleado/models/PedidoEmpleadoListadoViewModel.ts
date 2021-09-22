@@ -4,6 +4,7 @@ export interface PedidoEmpleadoListadoViewModel {
     sucursal: string;
     vendedor: string;
     fechaCreacion: string;
+    clienteId: number;
     cliente: string;
     clienteDocumento: string;
     subTotal: number;
@@ -11,6 +12,8 @@ export interface PedidoEmpleadoListadoViewModel {
     impuestoTotal: number;
     totalNeto: number;
     estadoID: number;
+    estado: string;
     estadoAutorizacionId: number;
     confirmado: number;
+    loadingCancelPedido:boolean;
 }
