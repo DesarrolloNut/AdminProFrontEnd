@@ -190,8 +190,6 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
 
 
   onSearchChange() {
-    var data = this.getArticuloBalance("100031","04");
-    console.log(data);
     if (this.search && this.search.length > 3) {
       this.IsNewData = true;
       this.getArticuloByCodigoReferencia(this.search)
@@ -294,7 +292,6 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
 
         if(response.ok && response.records.length > 0){
           Balance =  response.records[0];
-          console.log('dentro --- '+Balance);
         }
       // .subscribe(response => {
       //   console.log(response)
@@ -304,7 +301,6 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
       //   }
       // });
 
-      console.log('klkll ---'+Balance);
       return Balance;
   }
 
