@@ -1,4 +1,4 @@
-export interface CotizacionDetalle {
+export interface PedidoEmpleadoDetalle {
     id: number;
     cotizacionId: number;
     articuloId: number;

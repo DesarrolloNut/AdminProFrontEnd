@@ -1,0 +1,24 @@
+.input_balance{
+ background-color: #EAFAF1;
+ font-weight: 500;
+ font-size: 20px;
+ height: 50px;
+}
+
+.input_limite_credito{
+    background-color: #FEF5E7;
+    font-weight: 500;
+    font-size: 20px;
+    height: 50px;
+}
+
+.ng-select.customSelect_moneda {
+    height: 50px !important;
+}
+.ng-select.customSelect_moneda .ng-select-container  {            
+    height: 50px !important;
+}
+
+.ng-select.customSelect_moneda ::ng-deep .ng-select-container  {            
+    height: 50px !important;
+}

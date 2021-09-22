@@ -1,4 +1,4 @@
-export interface CotizacionDetalleViewModel {
+export interface PedidoEmpleadoDetalleViewModel {
     id: number;
     cotizacionId: number;
     articuloId: number;

@@ -1,4 +1,4 @@
-export class Cotizacion {
+export class PedidoEmpleado {
     constructor() {
         this.id = 0;
         this.sucursalId = 0;
