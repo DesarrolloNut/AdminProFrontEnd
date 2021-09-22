@@ -21,9 +21,27 @@ export class PesajeResultadoCodigoBarraComponent implements OnInit {
     private httpService: BackendService,
     private toastService: ToastrService,
     private router: Router,
-
     private renderer2: Renderer2) { }
 
+
+  printPrueba() {
+    var css = '@page { size: landscape; }',
+      head = document.head || document.getElementsByTagName('head')[0],
+      style: any = document.createElement('style');
+
+    style.type = 'text/css';
+    style.media = 'print';
+
+    if (style.styleSheet) {
+      style.styleSheet.cssText = css;
+    } else {
+      style.appendChild(document.createTextNode(css));
+    }
+
+    head.appendChild(style);
+
+    window.print();
+  }
 
   ngOnInit(): void {
 
@@ -47,13 +65,17 @@ export class PesajeResultadoCodigoBarraComponent implements OnInit {
             this.articuloPesajeDetalle = JSON.parse(this.articuloPesaje.detalleJSON);
 
             setTimeout(() => {
-              window.print();
+              // window.print();
+
+              this.printPrueba()
             }, 1000);
 
 
             setTimeout(() => {
               this.router.navigateByUrl('/produccion/pesajeApp');
-            }, 5000);
+            }, 3000);
+
+
 
           } else {
             this.toastService.error("Resultado no encontrado")

@@ -387,39 +387,39 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
       });
   }
 
-  getLote() {
-    this.loadingLote = true;
+  // getLote() {
+  //   this.loadingLote = true;
 
-    let ap = new ArticuloPesaje();
-    ap.articuloID = this.articulo.id;
-    ap.almacenDesde = this.almacenesDesdeSeleccionado;
-    ap.lote = this.loteSearch;
+  //   let ap = new ArticuloPesaje();
+  //   ap.articuloID = this.articulo.id;
+  //   ap.almacenDesde = this.almacenesDesdeSeleccionado;
+  //   ap.lote = this.loteSearch;
 
-    this.httpService.DoPostAny<LoteAlmacen>(DataApi.ArticuloPesaje,
-      "GetLoteCantidadDisponible", ap).subscribe(response => {
+  //   this.httpService.DoPostAny<LoteAlmacen>(DataApi.ArticuloPesaje,
+  //     "GetLoteCantidadDisponible", ap).subscribe(response => {
 
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          //validar que existe
-          if (response != null && response.records != null && response.records.length > 0) {
-            let record = response.records[0]
-            this.lote = record;
+  //       if (!response.ok) {
+  //         this.toastService.error(response.errores[0]);
+  //       } else {
+  //         //validar que existe
+  //         if (response != null && response.records != null && response.records.length > 0) {
+  //           let record = response.records[0]
+  //           this.lote = record;
 
-            console.log(this.lote)
+  //           console.log(this.lote)
 
-          }
-          else {
-            this.lote = null;
-          }
-          this.loadingLote = false;
-        }
+  //         }
+  //         else {
+  //           this.lote = null;
+  //         }
+  //         this.loadingLote = false;
+  //       }
 
-      }, error => {
-        this.loadingLote = false;
-        this.toastService.error("Error conexion al servidor");
-      });
-  }
+  //     }, error => {
+  //       this.loadingLote = false;
+  //       this.toastService.error("Error conexion al servidor");
+  //     });
+  // }
 
 
 

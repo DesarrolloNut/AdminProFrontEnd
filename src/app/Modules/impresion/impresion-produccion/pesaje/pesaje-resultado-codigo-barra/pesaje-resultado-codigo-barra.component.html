@@ -1,114 +1,59 @@
-<div class="container">
-    <div class="row">
-        <div class="col m-3">
+<div style="width: 550px; margin-left: 20px;">
 
-            <div class="row">
-                <div class="col-md-12 text-center">
-                    <img src="assets/images/nutriciosa.png" style="width: 150px;" alt="Responsive image">
-                </div>
-            </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
 
-            <div class="row" *ngIf="!Cargando">
-
-                <div class="col-md-12">
-                    <h2 class="font-weight-bold">{{articuloPesaje.articulo}} </h2>
-                    <div class="table-responsive">
-                        <table class="table table-sm">
-
-                            <tbody>
-
-                                <tr>
-                                    <th scope="row">
-                                        <h4>
-                                            <span class="font-weight-bold">Peso Canastos </span>
-                                        </h4>
-                                    </th>
-                                    <td class="font-weight-bold"> {{articuloPesaje.pesoCanastos}} Lb</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">
-                                        <h4>
-                                            <span class="font-weight-bold">Peso Balanza </span>
-                                        </h4>
-                                    </th>
-                                    <td class="font-weight-bold"> {{articuloPesaje.pesoBalanza}} Lb</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">
-                                        <h4>
-                                            <span class="font-weight-bold">Peso Neto </span>
-                                        </h4>
-                                    </th>
-                                    <td class="font-weight-bold text-info"> {{articuloPesaje.pesoNeto}} Lb</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">
-                                        <h4>
-                                            <span class="font-weight-bold">Lote </span>
-                                        </h4>
-                                    </th>
-                                    <td class="font-weight-bold"> {{articuloPesaje.lote}}</td>
-                                </tr>
-
-                                <tr>
-                                    <th scope="row">
-                                        <h4>
-                                            <span class="font-weight-bold">Vencimiento </span>
-                                        </h4>
-                                    </th>
-                                    <td class="font-weight-bold"> {{articuloPesaje.fechaVencimiento | date}}</td>
-
-                                </tr>
-                                <tr>
-                                    <th scope="row">
-                                        <h4>
-                                            <span class="font-weight-bold">Almacén Salida </span>
-                                        </h4>
-                                    </th>
-                                    <td class="font-weight-bold"> {{articuloPesaje.almacenDesde}} </td>
-
-                                </tr>
-                                <tr>
-                                    <th scope="row">
-                                        <h4>
-                                            <span class="font-weight-bold">Almacén Destino </span>
-                                        </h4>
-                                    </th>
-                                    <td class="font-weight-bold"> {{articuloPesaje.almacenHasta}} </td>
-                                </tr>
-                                <tr *ngFor="let otem of articuloPesajeDetalle">
-                                    <th scope="row">
-                                        <h4>
-                                            <span class="font-weight-bold">{{otem.nombre | titlecase }}</span>
-                                        </h4>
-                                    </th>
-                                    <td class="font-weight-bold"> {{otem.pesoSeleccionado.nombre}} </td>
-                                </tr>
-
-                            </tbody>
-
-                        </table>
+                <!-- <div class="row">
+                    <div class="col-md-12 text-center">
+                        <img src="assets/images/nutriciosa.png" style="width: 150px;" alt="Responsive image">
                     </div>
-                </div>
+                </div> -->
 
-                <div class="col-md-12">
-                    <hr>
-                    <div class="row">
-                        <div class="col-md-8">
-                            <ngx-barcode [bc-height]="50" [bc-value]="articuloPesaje.id.toString().padStart(10,'0')"
-                                [bc-display-value]="false">
-                            </ngx-barcode>
+                <div class="row" *ngIf="!Cargando">
+
+                    <div class="col-md-12">
+                        <h3 class="font-weight-bold" style="font-size: 25px;">{{articuloPesaje.articulo}} </h3>
+                        <hr>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-5">
+                                <h4 class="d-inline" style="font-size: 20px"> <span class="font-weight-bold">
+                                        Neto: {{articuloPesaje.pesoNeto | number:'2.2-2'}} Lb </span>
+                                </h4>
+                            </div>
+                            <div class="col-5 ">
+                                <h4 class="d-inline" style="font-size: 20px;"> <span class="font-weight-bold">
+                                        Lote: {{articuloPesaje.lote}} </span>
+                                </h4>
+                            </div>
+                            <div class="col-12 ">
+                                <hr>
+                                <h4 class="d-inline" style="font-size: 20px;"> <span class="font-weight-bold">
+                                        Vence: {{articuloPesaje.fechaVencimiento | date:'dd/MM/yyyy'}}
+                                    </span>
+                                </h4>
+                            </div>
                         </div>
-                        <!-- <div class="col-md-4">
-                            <img src="assets/images/nutriciosa.png" style="width: 180px;" alt="Responsive image">
-                        </div> -->
+
+
+
                     </div>
+
+                    <div class="col-md-12 text-center ">
+                        <ngx-barcode [bc-height]="50" [bc-value]="articuloPesaje.id.toString().padStart(10,'0')"
+                            [bc-display-value]="false">
+                        </ngx-barcode>
+                    </div>
+
                 </div>
 
+                <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+
             </div>
-
-            <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
-
         </div>
     </div>
+
 </div>

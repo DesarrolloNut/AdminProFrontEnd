@@ -241,7 +241,8 @@
     </div>
     <div class="modal-footer" *ngIf="!CargandoModal">
 
-        <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="button" (click)="recibirPesaje()">
+        <button *ngIf="!btnGuardarCargando && articuloPesaje.estado == 'Sin Recibir' " class="btn btn-info m-1"
+            type="button" (click)="recibirPesaje()">
             <i class="fas fa-check"></i> Confirmar
         </button>
 
