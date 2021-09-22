@@ -17,6 +17,7 @@ import { ArticuloPesaje } from '../../pesaje/models/ArticuloPesaje';
 import { ArticuloPesosExtras } from '../../pesaje/models/ArticuloPesosExtras';
 import { ArticuloPesosExtrasViewModel } from '../../pesaje/models/ArticuloPesosExtrasViewModel';
 import { LoteAlmacen } from '../../pesaje/models/LoteAlmacen';
+import { OrdenFabricacionVista } from '../models/OrdenFabricacionVista';
 
 @Component({
   selector: 'app-ordenfabricacion-pesaje',
@@ -54,6 +55,7 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
 
   random: number;
   almecenes: any[];
+  ordenfabricacionvista: OrdenFabricacionVista = null;
   // almacenesDesde: ComboBox[];
   // loadingAlmacenesDesde: boolean;
 
@@ -92,10 +94,18 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
       this.cantidades.push(i)
     }
 
-    var params = this.ordenfabriService.OrdenFabricacion;
-      console.log(params);
-      this.getArticuloByCodigoReferencia(params.articulo);
-      this.almacenID = Number(params.almacenId);
+    if(this.ordenfabriService.OrdenFabricacion.id > 0){
+      this.ordenfabricacionvista = this.ordenfabriService.OrdenFabricacion;
+    }else{
+      this.ordenfabriService.OrdenFabricacionChange.subscribe(x =>{
+        // console.log(x);
+        this.ordenfabricacionvista = x;
+      });
+    }
+
+    this.getArticuloByCodigoReferencia(this.ordenfabricacionvista.articulo);
+    this.almacenID = Number(this.ordenfabricacionvista.almacenId);
+
 
 
 
@@ -107,7 +117,8 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
     // });
 
 
-    this.startPingingBalanza()
+    //this.startPingingBalanza();
+    this. empezarAmbientePrueba();
 
 
   }
@@ -137,13 +148,13 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
   empezarAmbientePrueba() {
 
     setInterval(() => {
-      this.pesoBalanza = this.getRandomInt(1, 500) + 'KGZ';
+      this.pesoBalanza = this.getRandomInt(1, 100) + 'KGZ';
       this.pesoBalanzaUltimaFecha = new Date();
 
       this.formatStringFromBalanza();
       this.getKilogramosNumberFromPesoBalanza();
       this.calcularTotales();
-    }, 3000);
+    }, 5000);
 
   }
 
@@ -233,10 +244,10 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (!this.loteSearch) {
-      this.toastService.warning("Digita el lote.");
-      return;
-    }
+    // if (!this.loteSearch) {
+    //   this.toastService.warning("Digita el lote.");
+    //   return;
+    // }
 
     // if (this.lote.cantidad < this.pesoNeto) {
     //   this.toastService.warning(`No tiene lote disponible para hacer esta transferencia, favor verificar.`);
@@ -263,27 +274,32 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
       detalleJSON: JSON.stringify(this.articulosExtras.filter(x => x.pesoSeleccionado && x.cantidadSeleccionada > 0)),
     };
 
-    this.ordenfabriService.SaveArticuloPesaje(request);
-    this.router.navigateByUrl('/produccion/ordenfabricacionpesaje');
+    this.ordenfabricacionvista.consumido = this.pesoNeto;
 
-    // this.btnGuardarCargando = true;
 
-    // this.httpService.DoPostAny<ArticuloPesaje>(DataApi.ArticuloPesaje,
-    //   "Registrar", request).subscribe(response => {
 
-    //     if (!response.ok) {
-    //       this.toastService.error(response.errores[0], "Error");
-    //     } else {
-    //       this.signalRService.refrescarListadoPesajes(request.almacenHasta);
-    //       let id = response.valores[0];
-    //       this.router.navigateByUrl('/impresion/produccion/pesaje-resultado-codigo-barra/' + id);
-    //     }
+      if(this.ordenfabricacionvista.id > 0) {
+    this.btnGuardarCargando = true;
+        this.httpService.DoPostAny<ArticuloPesaje>(DataApi.OrdenFabricacionDetalle,
+          "UpdateConsumidoYCostoReal", this.ordenfabricacionvista).subscribe(response => {
+            console.log(response);
+            if (response.ok) {
+              this.toastService.success("Procesado");
+              this.router.navigateByUrl('/produccion/ordenfabricacion');
+            } else {
+              this.toastService.error(response.errores[0], "Error");
+            }
 
-    //     this.btnGuardarCargando = false;
-    //   }, error => {
-    //     this.btnGuardarCargando = false;
-    //     this.toastService.error("Error conexion al servidor");
-    //   });
+            this.btnGuardarCargando = false;
+          }, error => {
+            this.btnGuardarCargando = false;
+            this.toastService.error("Error conexion al servidor");
+          });
+      }else{
+        this.toastService.error("No hay Articulo");
+      }
+
+
   }
 
   getKilogramosNumberFromPesoBalanza() {
