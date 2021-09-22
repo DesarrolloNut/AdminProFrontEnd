@@ -26,6 +26,7 @@ export class Cliente {
         this.sectorID = 0
         this.subSectorID = 0
         this.limiteCredito = 0
+        this.balance=0
         this.condicionPagoId = 0
         this.condicionPago = ""
         this.plazoId=0
@@ -63,6 +64,7 @@ export class Cliente {
     sectorID: number;
     subSectorID: number;
     limiteCredito: number;
+    balance:number;
     condicionPagoId: number;
     condicionPago :string;
     plazoId:number
@@ -111,7 +113,7 @@ export class ClienteViewModelCustomized {
         this.subSector =""
 
         this.limiteCredito = 0
-
+        this.balance=0
         this.condicionPagoId = 0
         this.condicionPago = ""
         this.plazoId=0
@@ -170,6 +172,7 @@ export class ClienteViewModelCustomized {
     subSector: string;
 
     limiteCredito: number;
+    balance: number;
 
     condicionPagoId: number;
     condicionPago: string;

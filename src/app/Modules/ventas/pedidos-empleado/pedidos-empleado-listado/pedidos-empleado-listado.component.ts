@@ -1,14 +1,18 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
+import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
+import { Cliente } from 'src/app/Modules/mantenimientos/clientes/models/Cliente';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
-import { CotizacionDetalleViewModel } from '../models/PedidoEmpleadoDetalleViewModel';
-import { CotizacionListadoViewModel } from '../models/PedidoDetalleEmpleadoListadoViewModel';
+import { PedidoEmpleadoDetalleViewModel } from '../models/PedidoEmpleadoDetalleViewModel';
+import { PedidoEmpleadoListadoViewModel } from '../models/PedidoEmpleadoListadoViewModel';
+ 
 
 @Component({
   selector: 'app-pedidos-empleado-listado',
@@ -26,32 +30,45 @@ export class PedidosEmpleadosListadoComponent implements OnInit {
   totalPaginas: number = 0;
   paginaSize: number = 5;
   paginaTotalRecords: number = 0;
-  data: CotizacionListadoViewModel[] = [] //tu modelo
+  data: PedidoEmpleadoListadoViewModel[] = [] //tu modelo
 
-  cotizacionDetalles: CotizacionDetalleViewModel[];
-  loadingCotizacionDetalle: boolean;
+  pedidoEmpleadoDetalles: PedidoEmpleadoDetalleViewModel[];
+  loadingPedidoEmpleadoDetalle:boolean;
   estados: ComboBox[] = []
   loadingEstados: boolean;
-  cotizacionSeleccionada: CotizacionListadoViewModel;
+  pedidoEmpleadoSeleccionado: PedidoEmpleadoListadoViewModel;
   loadingEstadoAutorizacionCotizacion: boolean = false;
+  loadingValidaExistPedidoSinFacturar: boolean = false;
+
+
+  loadingInfoCliente: boolean;
+  clienteExiste=true;
+  cliente: Cliente;
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private modalService: NgbModal,
+    private router: Router,
+
     public permissionsService: NgxPermissionsService,
+    private authService: AuthenticationService,
   ) { }
 
 
   ngOnInit(): void {
     this.getEstados()
-    this.getData()
+    this.getClienteByUsuarioID(Number(this.authService.tokenDecoded.nameid))
+
   }
   getData() {
     this.Cargando = true;
 
-    let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
+    let parametros: Parametro[] = [{ key: "Search", value: this.Search },
+                                    { key: "UsuarioId", value: Number(this.authService.tokenDecoded.nameid) },
+  ]
 
-    this.httpService.GetAllWithPagination<CotizacionListadoViewModel>(DataApi.Cotizacion, "GetCotizacionListado", "ID", this.paginaNumeroActual,
+    this.httpService.GetAllWithPagination<PedidoEmpleadoListadoViewModel>(DataApi.PedidosEmpleado,
+       "GetPedidosEmpleadoListado", "ID", this.paginaNumeroActual,
       this.paginaSize, false, parametros).subscribe(x => {
 
         if (x.ok) {
@@ -86,58 +103,90 @@ export class PedidosEmpleadosListadoComponent implements OnInit {
   }
 
 
-  openModal(content, cotizacion: CotizacionListadoViewModel) {
-    this.cotizacionDetalles = [];
-    this.getCotizacionDetalle(cotizacion.id);
-    this.cotizacionSeleccionada = cotizacion;
+  openModal(content, pedidoEmpleado: PedidoEmpleadoListadoViewModel) {
+    this.pedidoEmpleadoDetalles = [];
+    this.getPedidoEmpleadoDetalle(pedidoEmpleado.id);
+    this.pedidoEmpleadoSeleccionado = pedidoEmpleado;
     this.modalService.open(content, { size: 'lg', });
   }
 
-  openModalAutorizar(content, cotizacion: CotizacionListadoViewModel) {
-    this.cotizacionDetalles = [];
-    this.getCotizacionDetalle(cotizacion.id);
-    this.cotizacionSeleccionada = cotizacion;
+  openModalAutorizar(content, pedidoEmpleado: PedidoEmpleadoListadoViewModel) {
+    this.pedidoEmpleadoDetalles = [];
+    this.getPedidoEmpleadoDetalle(pedidoEmpleado.id);
+    this.pedidoEmpleadoSeleccionado = pedidoEmpleado;
     this.modalService.open(content, { size: 'lg', });
   }
 
-  getCotizacionDetalle(cotizacionID: number) {
-    this.loadingCotizacionDetalle = true;
-    this.httpService.DoPostAny<CotizacionDetalleViewModel>(DataApi.Cotizacion,
-      "GetCotizacionDetalles", cotizacionID).subscribe(response => {
+  openModalCancelarPedido(content, pedidoEmpleado: PedidoEmpleadoListadoViewModel) {
+    this.pedidoEmpleadoSeleccionado = pedidoEmpleado;
+    this.modalService.open(content, { size: 'lg', });
+  }
+  getPedidoEmpleadoDetalle(pedidoEmpleadoId: number) {
+    this.loadingPedidoEmpleadoDetalle = true;
+    this.httpService.DoPostAny<PedidoEmpleadoDetalleViewModel>(DataApi.PedidosEmpleado,
+      "GetPedidosEmpleadoDetalles", pedidoEmpleadoId).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          this.cotizacionDetalles = response.records;
+          this.pedidoEmpleadoDetalles = response.records;
         }
-        this.loadingCotizacionDetalle = false;
+        this.loadingPedidoEmpleadoDetalle = false;
       }, error => {
-        this.loadingCotizacionDetalle = false;
+        this.loadingPedidoEmpleadoDetalle = false;
         this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
       });
   }
 
-  CambiarEstadoAutorizacionCotizacion(cotizacionID: number) {
-    this.loadingEstadoAutorizacionCotizacion = true;
-    this.httpService.DoPostAny<CotizacionDetalleViewModel>(DataApi.Cotizacion,
-      "CambiarEstadoAutorizacionCotizacion", cotizacionID).subscribe(response => {
+  validExistPedidoSinFacturar() {
+    this.loadingValidaExistPedidoSinFacturar = true;
+    this.httpService.DoPostAny<PedidoEmpleadoDetalleViewModel>(DataApi.PedidosEmpleado,
+      "GetExistePedidoSinFacturarEmpleado", Number(this.authService.tokenDecoded.nameid)).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          // this.cotizacionDetalles = response.records;
-          this.modalService.dismissAll();
-          this.getData()
+          if(response.valores.length>0){
+             if(response.valores[0]>0){
+              this.toastService.warning("No puede crear un nuevo pedido");
+             }else{
+              this.router.navigateByUrl('/ventas/pedidos-empleado/0');
+             }
+          }else{
+            this.router.navigateByUrl('/ventas/pedidos-empleado/0');
+          }
         }
-        this.loadingEstadoAutorizacionCotizacion = false;
+        this.loadingValidaExistPedidoSinFacturar = false;
       }, error => {
-        this.loadingEstadoAutorizacionCotizacion = false;
-        this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
+        this.loadingValidaExistPedidoSinFacturar = false;
+        this.toastService.error("No se pudo validar la existencia de pedidos sin facturar", "Error conexion al servidor");
       });
   }
+
+
+
+  // CambiarEstadoAutorizacionCotizacion(cotizacionID: number) {
+  //   this.loadingEstadoAutorizacionCotizacion = true;
+  //   this.httpService.DoPostAny<PedidoEmpleadoDetalleViewModel>(DataApi.PedidosEmpleado,
+  //     "CambiarEstadoAutorizacionCotizacion", cotizacionID).subscribe(response => {
+
+  //       if (!response.ok) {
+  //         this.toastService.error(response.errores[0]);
+  //       } else {
+  //         // this.cotizacionDetalles = response.records;
+  //         this.modalService.dismissAll();
+  //         this.getData()
+  //       }
+  //       this.loadingEstadoAutorizacionCotizacion = false;
+  //     }, error => {
+  //       this.loadingEstadoAutorizacionCotizacion = false;
+  //       this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
+  //     });
+  // }
 
 
   getEstados() {
+
     this.loadingEstados = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
       "GetEstadosCotizacion", null).subscribe(response => {
@@ -160,24 +209,60 @@ export class PedidosEmpleadosListadoComponent implements OnInit {
   }
 
 
-  onChangeEstado(cotizacion: CotizacionListadoViewModel, index: number) {
-
-    this.httpService.DoPostAny<ComboBox>(DataApi.Cotizacion,
-      "UpdateCotizacionEstado", cotizacion).subscribe(response => {
+  cancelarPedidoEmpleado() {
+    this.modalService.dismissAll();
+   this.pedidoEmpleadoSeleccionado.loadingCancelPedido=true;
+   let pedido={"Id":this.pedidoEmpleadoSeleccionado.id
+               ,"EstadoID": 4
+               ,"ClienteId":this.pedidoEmpleadoSeleccionado.clienteId
+              }
+              console.log(pedido)
+    this.httpService.DoPostAny<ComboBox>(DataApi.PedidosEmpleado,
+      "CancelarPedidoEmpleado",  pedido).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
           console.error(response.errores[0]);
         } else {
-          this.toastService.success("Estado actualizado", "OK");
+          this.getData();
+          this.toastService.success("Pedido cancelado", "OK");
         }
+        this.pedidoEmpleadoSeleccionado.loadingCancelPedido=false;
+
       }, error => {
+        this.pedidoEmpleadoSeleccionado.loadingCancelPedido=false;
+
         this.getData()
-        this.toastService.error("No se actualizar el estado", "Error conexion al servidor");
+        this.toastService.error("No se pudo cancelar el pedido", "Error conexion al servidor");
       });
 
   }
+  getClienteByUsuarioID(usuarioId: number) {
+    this.Cargando=true;
+    this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
+      "GetClienteByUsuarioID", usuarioId).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          this.Cargando=false;
+        } else {
+          //validar que existe
+          if (response != null && response.records != null && response.records.length > 0) {
+           
+            this.cliente = response.records[0];
+            this.cliente.apellidos = this.cliente.apellidos==null?"":this.cliente.apellidos;
+            this.clienteExiste=true;
+            this.getData()
+          } else {
+            this.clienteExiste=false;
+            this.Cargando=false;
+          }
+        }
 
+      }, error => {
+        this.Cargando=false;
+         this.toastService.error("Error conexion al servidor");
+      });
+  }
 
 
 }
