@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { BackendService } from 'src/app/core/http/service/backend.service';
@@ -59,6 +60,7 @@ export class ClienteFinanzasComponent implements OnInit {
     private route: ActivatedRoute,
     private httpService: BackendService,
     private modalService: NgbModal,
+    public permissionsService: NgxPermissionsService,
     private router: Router,
     private auth: AuthenticationService,
     private formBuilder: FormBuilder,
@@ -191,7 +193,8 @@ getNameTipoAnexo(item:any):string{
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          this.CondicionesPagos = response.records;
+            response.records.filter(x=>x.codigo==2).map(d=>{d.disabled=true;})
+           this.CondicionesPagos = response.records;
         }
         this.loadingCondicionPagos = false;
       }, error => {

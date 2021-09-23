@@ -6,6 +6,7 @@ import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors,
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { thresholdFreedmanDiaconis } from 'd3';
+import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { Parametro } from 'src/app/core/http/model/Parametro';
@@ -87,7 +88,8 @@ export class ClienteDatosGeneralesComponent implements OnInit {
     private route: ActivatedRoute,
     private httpService: BackendService,
     private router: Router,
-    config: NgbModalConfig,
+    public permissionsService: NgxPermissionsService,
+    config: NgbModalConfig, 
     private modalService: NgbModal,
     private auth: AuthenticationService,
     private formBuilder: FormBuilder,

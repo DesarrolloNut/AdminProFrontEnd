@@ -1,0 +1,425 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-md-6 align-middle">
+                        <h4 class="card-title">Listado de pedidos para despachar </h4>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <!-- <button  [disabled]="loadingValidaExistPedidoSinFacturar || !clienteExiste" (click)="validExistPedidoSinFacturar()"
+                         class="btn btn-info"> <i class="fa fa-plus"></i> Nuevo
+                            pedido
+                        </button> -->
+                    </div>
+                    <div class="col-md-12 p-2">
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <label for="search" class="input-group-text bg-white">
+                                    <span class="bg-white" style="border-right:none">
+                                        <i class="ti-search"></i>
+                                    </span>
+                                </label>
+                            </div>
+                            <input [(ngModel)]="Search" [disabled]="loadingValidaExistPedidoSinFacturar || !clienteExiste" (keyup)="getData()" type="text"
+                                style="border-left:none !important;" class="form-control" placeholder="Buscar">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 no-wrap v-middle">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>No. Despacho</th>
+                                <th>Cliente</th>
+                                <th>SubTotal</th>
+                                <th>Desc.</th>
+                                <th>Imp.</th>
+                                <th>Total Neto</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                                <th>Vendedor</th>
+                                <!-- <th>Estado</th> -->
+                            </tr>
+                        </thead>
+                        <tbody [hidden]="Cargando">
+
+                            <tr *ngFor="let item of data; let i = index">
+                                <td>
+                                    <button class="btn btn-sm btn-light m-1"
+                                        (click)="openModal(modalDetalleCotizacion,item)">
+                                        <i class="fa fa-sm fa-eye "></i>
+                                    </button>
+                        
+                                    <button class="btn btn-sm btn-info m-1" [disabled]="item.loadingCancelPedido"  *ngIf="item.estadoID == 2" [routerLink]="[item.id]">
+                                        <i class="fa fa-sm fa-edit"></i> 
+                                    </button>
+                             
+                                    <button class="btn btn-sm btn-danger m-1" *ngIf="item.estadoID == 2 && !item.loadingCancelPedido"
+                                      (click)="openModalCancelarPedido(modalConfirmCancelarPedido,item)">
+                                        <i class="fa fa-sm fa-times"></i> 
+                                    </button>
+                                    <button class="btn btn-sm btn-danger m-1" *ngIf="item.loadingCancelPedido" >
+                                    <i class="spinner-border spinner-border-sm"></i>
+                                  </button>
+
+                                </td>
+                                <td><span class="badge badge-light text-info font-bold"  >{{item.id}}</span></td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <!-- <i class="fa fa-user-circle fa-3x text-light"></i> -->
+                                        <div class="ml-3">
+                                            <p class="font-bold mb-0">{{item.cliente | titlecase }}</p>
+                                            <small class="text-info"> <i class="fa fa-id-card"></i>
+                                                {{item.clienteDocumento | uppercase }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span> ${{item.subTotal | number:'1.2-2'}}</span>
+                                </td>
+                                <td>
+                                    <span> ${{item.descuentoTotal | number:'1.2-2'}}</span>
+                                </td>
+                                <td>
+                                    <span> ${{item.impuestoTotal | number:'1.2-2'}}</span>
+                                </td>
+                                <td>
+                                    <span class="font-weight-bold"> ${{item.totalNeto | number:'1.2-2'}}</span>
+                                </td>
+                                <td>
+                                    <span class="text-muted"><i class="far fa-calendar"></i>
+                                        {{item.fechaCreacion | date:'dd/MM/yy' }}
+                                    </span>
+                                </td>
+                                
+                                <td>
+                                    <span *ngIf="item.estadoID==2" class="badge badge-warning">Pedido</span>
+                                    <span *ngIf="item.estadoID==3" class="badge badge-success">Facturado</span>
+                                    <span *ngIf="item.estadoID==4" class="badge badge-danger">Cancelado</span>
+                                   
+                                </td>
+                                <td>
+                                    
+                                    <div class="d-flex align-items-center">
+                                        <!-- <i class="fa fa-user-circle fa-3x text-light"></i> -->
+                                        <div class="ml-3">
+                                            <p class="mb-0">{{item.vendedor | titlecase }}</p>
+                                            <small class="text-info"> <i class="fa fa-map-marker"></i>
+                                                Sucursal: {{item.sucursal | uppercase }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <!-- <td>
+                                    <ng-select style="width: 120px;" [items]="estados" bindLabel="nombre"
+                                        [clearable]="false" bindValue="codigo" [loading]="loadingEstados"
+                                        [(ngModel)]="item.estadoID" [ngModelOptions]="{standalone: true}"
+                                        (change)="onChangeEstado(item,i)" notFoundText="No resultados">
+                                    </ng-select>
+                                </td> -->
+
+                            </tr>
+
+                        </tbody>
+         
+                    </table>
+                    <div class="row p-2 m-t-20" *ngIf="!clienteExiste && !Cargando">
+                        <div class="col-md-12 text-center">
+                            <i style="font-size: 100px;" class="fa fa-shopping-cart" aria-hidden="true"></i>
+                             <h4 class="m-t-20">
+                                Usted no tiene un codigo de cliente, por esta razón no puede realizar pedido.
+                            </h4>
+                            <p class="text-info "  >Comunicate con <b style="text-decoration: underline;">Gestión Humana</b>. </p>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+
+                <div class="row " *ngIf="clienteExiste">
+                    <div class="col-md-8 col-xs-12 ">
+                        <ngb-pagination [collectionSize]="paginaTotalRecords" [(page)]="paginaNumeroActual"
+                            [pageSize]="paginaSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="getData()">
+                        </ngb-pagination>
+                    </div>
+
+                    <div class="col-md-4 text-right d-none d-md-block  ">
+                        <select class="form-control d-block" name="paginaSize" [(ngModel)]="paginaSize"
+                            (change)="getData()">
+                            <option [ngValue]="5">5 registro por pagina</option>
+                            <option [ngValue]="10">10 registro por pagina</option>
+                            <option [ngValue]="15">15 registro por pagina</option>
+                        </select>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<!--
+<ng-template #modalAutorizarCotizacion let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Autorizar cotización</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+
+
+
+            <div class="col-12">
+                <app-loading-listado [hidden]="!loadingCotizacionDetalle"></app-loading-listado>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
+        <button type="button" class="btn btn-success m-1">  <i class="fa fa-sm fa-shield-alt"></i> Enviar a autorizar</button>
+    </div>
+</ng-template> -->
+
+
+<ng-template #modalConfirmCancelarPedido let-modal>
+    <div class="container-fluid">
+      <div class="row"  >
+        <div class="col">
+          <div class="modal-header">
+            <h4 class="modal-title" id="modal-title">Confirmación</h4>
+            <button type="button" class="close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body text-center">
+            <i class="fa fa-question fa-3x text-info"></i>
+            <p class="mt-2"><strong>¿Estás seguro/a de cancelar este pedido?</strong></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="modal.close('Close click')">Cancel</button>
+            <button type="button" class="btn btn-danger" (click)="  cancelarPedidoEmpleado()">Si</button>
+          </div>
+        </div>
+      </div>
+  
+      <app-loading-listado [hidden]="!cargandoAutorizacion"></app-loading-listado>
+  
+    </div>
+  </ng-template>
+<ng-template #modalAutorizarCotizacion let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Detalle de Pedido</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+
+            <div class="col-12">
+                <h5 class="text-info"> <i class="fa fa-user"></i> Cliente: {{pedidoEmpleadoSeleccionado.cliente}}</h5>
+                <h5> <i class="fa fa-id-card"></i> Documento: {{pedidoEmpleadoSeleccionado.clienteDocumento}}</h5>
+                <h5> <i class="fa fa-calendar"></i> Fecha: {{pedidoEmpleadoSeleccionado.fechaCreacion |
+                    date:'dd/MM/yy'}}</h5>
+                <hr>
+                <!-- <h5> <i class="fa fa-user-circle"></i> Cotizador: {{pedidoEmpleadoSeleccionado.cotizador}}</h5> -->
+                <h5> <i class="fa fa-map-marker"></i> Sucursal: {{pedidoEmpleadoSeleccionado.sucursal}}</h5>
+                <h5> <i class="fa fa-user-circle"></i>Vendedor: {{pedidoEmpleadoSeleccionado.vendedor}}</h5>
+            </div>
+
+            <div class="col-12" [hidden]="loadingPedidoEmpleadoDetalle">
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover mb-0 no-wrap v-middle">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Artículo</th>
+                                <th>Cantidad</th>
+                                <th>Precio</th>
+                                <th>% Desc</th>
+                                <th>SubTotal</th>
+                                <th>Desc</th>
+                                <th>Impuesto</th>
+                                <th>Total Neto</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr *ngFor="let item of pedidoEmpleadoDetalles">
+                                <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
+                                <td>
+                                    <span> {{item.articulo}}</span>
+                                </td>
+                                <td>
+                                    <span> {{item.cantidad}}</span>
+                                </td>
+                                <td>
+                                    <span> ${{item.precio | number:'1.2-2'}} </span>
+                                </td>
+                                <td>
+                                    <span> %{{item.porcientoDescuento | number:'1.2-2'}}</span>
+                                </td>
+                                <td>
+                                    <span> ${{item.subtotal | number:'1.2-2'}} </span>
+                                </td>
+                                <td>
+                                    <span> ${{item.totalDescuento | number:'1.2-2'}} </span>
+                                </td>
+                                <td>
+                                    <span> ${{item.totalImpuesto | number:'1.2-2'}} </span>
+                                </td>
+                                <td>
+                                    <span class="font-weight-bold"> ${{item.totalNeto | number:'1.2-2'}} </span>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+
+            </div>
+
+            <div class="col-12 text-right">
+                <hr>
+                <h4>Subtotal: $ {{pedidoEmpleadoSeleccionado.subTotal | number:'1.2-2' }}</h4>
+                <h4>Descuento: $ {{pedidoEmpleadoSeleccionado.descuentoTotal | number:'1.2-2' }}</h4>
+                <h4>Impuesto: $ {{pedidoEmpleadoSeleccionado.impuestoTotal | number:'1.2-2' }}</h4>
+                <h4 class="font-weight-bold">Total Neto: $ {{pedidoEmpleadoSeleccionado.totalNeto | number:'1.2-2' }}</h4>
+            </div>
+
+            <div class="col-12">
+                <app-loading-listado [hidden]="!loadingCotizacionDetalle"></app-loading-listado>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
+        <button type="button" class="btn btn-success m-1" *ngIf="!loadingEstadoAutorizacionCotizacion" (click)="CambiarEstadoAutorizacionCotizacion(pedidoEmpleadoSeleccionado.id)">
+          <i class="fa fa-sm fa-check"></i> Enviar a autorizar</button>
+        <!-- boton cargando -->
+        <button *ngIf="loadingEstadoAutorizacionCotizacion" disabled class="btn btn-success m-1" type="button">
+          <span class="spinner-border spinner-border-sm"></span> Enviando
+      </button>
+    </div>
+</ng-template>
+
+
+
+<ng-template #modalDetalleCotizacion let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Detalle de Pedido</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+
+            <div class="col-12">
+                <h5 class="text-info"> <i class="fa fa-user"></i> Cliente: {{pedidoEmpleadoSeleccionado.cliente}}</h5>
+                <h5> <i class="fa fa-id-card"></i> Documento: {{pedidoEmpleadoSeleccionado.clienteDocumento}}</h5>
+                <h5> <i class="fa fa-calendar"></i> Fecha: {{pedidoEmpleadoSeleccionado.fechaCreacion |
+                    date:'dd/MM/yy'}}</h5>
+                <hr>
+                <!-- <h5> <i class="fa fa-user-circle"></i> Cotizador: {{pedidoEmpleadoSeleccionado.cotizador}}</h5> -->
+                <h5> <i class="fa fa-map-marker"></i> Sucursal: {{pedidoEmpleadoSeleccionado.sucursal}}</h5>
+                <h5> <i class="fa fa-user-circle"></i> Vendedor: {{pedidoEmpleadoSeleccionado.vendedor}}</h5>
+               <h5>
+                <i class="fa  fa-adjust"></i>
+                   Estado:
+                <span *ngIf="pedidoEmpleadoSeleccionado.estadoID==2" class="badge badge-warning">Pedido</span>
+                <span *ngIf="pedidoEmpleadoSeleccionado.estadoID==3" class="badge badge-success">Facturado</span>
+                <span *ngIf="pedidoEmpleadoSeleccionado.estadoID==4" class="badge badge-danger">Cancelado</span>
+               </h5> 
+            </div>
+
+            <div class="col-12" [hidden]="loadingCotizacionDetalle">
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover mb-0 no-wrap v-middle">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Artículo</th>
+                                <th>Cantidad</th>
+                                <th>Precio</th>
+                                <th>% Desc</th>
+                                <th>SubTotal</th>
+                                <th>Desc</th>
+                                <th>Impuesto</th>
+                                <th>Total Neto</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr *ngFor="let item of pedidoEmpleadoDetalles">
+                                <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
+                                <td>
+                                    <span> {{item.articulo}}</span>
+                                </td>
+                                <td>
+                                    <span> {{item.cantidad}}</span>
+                                </td>
+                                <td>
+                                    <span> ${{item.precio | number:'1.2-2'}} </span>
+                                </td>
+                                <td>
+                                    <span> %{{item.porcientoDescuento | number:'1.2-2'}}</span>
+                                </td>
+                                <td>
+                                    <span> ${{item.subtotal | number:'1.2-2'}} </span>
+                                </td>
+                                <td>
+                                    <span> ${{item.totalDescuento | number:'1.2-2'}} </span>
+                                </td>
+                                <td>
+                                    <span> ${{item.totalImpuesto | number:'1.2-2'}} </span>
+                                </td>
+                                <td>
+                                    <span class="font-weight-bold"> ${{item.totalNeto | number:'1.2-2'}} </span>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+
+            </div>
+
+            <div class="col-12 text-right">
+                <hr>
+                <h4>Subtotal: $ {{pedidoEmpleadoSeleccionado.subTotal | number:'1.2-2' }}</h4>
+                <h4>Descuento: $ {{pedidoEmpleadoSeleccionado.descuentoTotal | number:'1.2-2' }}</h4>
+                <h4>Impuesto: $ {{pedidoEmpleadoSeleccionado.impuestoTotal | number:'1.2-2' }}</h4>
+                <h4 class="font-weight-bold">Total Neto: $ {{pedidoEmpleadoSeleccionado.totalNeto | number:'1.2-2' }}</h4>
+            </div>
+
+            <div class="col-12">
+                <app-loading-listado [hidden]="!loadingCotizacionDetalle"></app-loading-listado>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
+    </div>
+</ng-template>
