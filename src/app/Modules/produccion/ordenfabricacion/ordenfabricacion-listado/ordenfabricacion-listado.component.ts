@@ -1,277 +1,358 @@
-import { OrdenFabricacionDetalle } from './../models/OrdenFabricacionDetalle';
-import { OrdenFabricacionVista } from './../models/OrdenFabricacionVista';
-import { Component, OnInit } from '@angular/core';
-import { NgxPermissionsService } from 'ngx-permissions';
-import { ToastrService } from 'ngx-toastr';
-import { Parametro } from 'src/app/core/http/model/Parametro';
-import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
-import { BackendService } from 'src/app/core/http/service/backend.service';
-import { DataApi } from 'src/app/shared/enums/DataApi.enum';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
-import { OrdenFabricacion } from '../models/OrdenFabricacion';
-import { ListaMaterialesHeader } from '../models/ListaMaterialesHeader';
-import { Router, ActivatedRoute } from '@angular/router';
-import { OrdenfabricacionPesajeService } from 'src/app/Services/ordenfabricacion-pesaje.service';
+import { OrdenFabricacionDetalle } from "./../models/OrdenFabricacionDetalle";
+import { OrdenFabricacionVista } from "./../models/OrdenFabricacionVista";
+import { Component, OnInit } from "@angular/core";
+import { NgxPermissionsService } from "ngx-permissions";
+import { ToastrService } from "ngx-toastr";
+import { Parametro } from "src/app/core/http/model/Parametro";
+import { ResponseContenido } from "src/app/core/http/model/ResponseContenido";
+import { BackendService } from "src/app/core/http/service/backend.service";
+import { DataApi } from "src/app/shared/enums/DataApi.enum";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { Articulo } from "src/app/Modules/servicios/recepcion/models/Articulo";
+import { OrdenFabricacion } from "../models/OrdenFabricacion";
+import { ListaMaterialesHeader } from "../models/ListaMaterialesHeader";
+import { Router, ActivatedRoute } from "@angular/router";
+import { OrdenfabricacionPesajeService } from "src/app/Services/ordenfabricacion-pesaje.service";
 
 @Component({
-  selector: 'app-ordenfabricacion-listado',
-  templateUrl: './ordenfabricacion-listado.component.html',
-  styleUrls: ['./ordenfabricacion-listado.component.scss']
+  selector: "app-ordenfabricacion-listado",
+  templateUrl: "./ordenfabricacion-listado.component.html",
+  styleUrls: ["./ordenfabricacion-listado.component.scss"],
 })
 export class OrdenfabricacionListadoComponent implements OnInit {
+  // COPIAR AL CREAR UN LISTADO NUEVO
+  Search: string = "";
+  paginaNumeroActual = 1;
+  Cargando: boolean = false;
+  CargandoBar: boolean = false;
+  totalPaginas: number = 0;
+  paginaSize: number = 5;
+  paginaTotalRecords: number = 0;
+  data: OrdenFabricacionVista[] = []; //tu modelo
+  ofheader: ListaMaterialesHeader = new ListaMaterialesHeader();
+  loadingArticulosExtras: boolean;
+  articulosExtras: OrdenFabricacionVista[] = [];
+  searching: boolean;
+  articulo: Articulo = new Articulo();
+  ordenfabricacion: OrdenFabricacion = new OrdenFabricacion();
+  ordenfabricaciondetalle: OrdenFabricacionDetalle =
+    new OrdenFabricacionDetalle();
 
-// COPIAR AL CREAR UN LISTADO NUEVO
-Search: string = "";
-paginaNumeroActual = 1;
-Cargando: boolean = false;
-CargandoBar: boolean = false;
-totalPaginas: number = 0;
-paginaSize: number = 5;
-paginaTotalRecords: number = 0;
-data: OrdenFabricacionVista[] = [] //tu modelo
-ofheader: ListaMaterialesHeader = new ListaMaterialesHeader();
-loadingArticulosExtras: boolean;
-articulosExtras: OrdenFabricacionVista[] = [];
-searching: boolean;
-articulo: Articulo = new Articulo();
-ordenfabricacion: OrdenFabricacion = new OrdenFabricacion();
-ordenfabricaciondetalle: OrdenFabricacionDetalle = new OrdenFabricacionDetalle();
+  //Eliminar cuando el pesaje este listo
+  IsPesaje: boolean = false;
+  loadingSaveConsumido: boolean;
+  IsClose: boolean = false;
+  IsPesajeProducida: boolean;
+  loadingSaveProducida: boolean;
 
-//Eliminar cuando el pesaje este listo
-IsPesaje: boolean = false;
-loadingSaveConsumido: boolean;
-IsClose: boolean = false;
-IsPesajeProducida: boolean;
-loadingSaveProducida: boolean;
+  constructor(
+    private toastService: ToastrService,
+    private httpService: BackendService,
+    public permissionsService: NgxPermissionsService,
+    private modalService: NgbModal,
+    private router: Router,
+    private ordenfabriService: OrdenfabricacionPesajeService,
+    private route: ActivatedRoute
+  ) {}
 
-constructor(private toastService: ToastrService,
-  private httpService: BackendService,
-  public permissionsService: NgxPermissionsService,
-  private modalService: NgbModal,
-  private router: Router,
-  private ordenfabriService: OrdenfabricacionPesajeService,
-  private route: ActivatedRoute,
-) { }
+  ngOnInit(): void {
+    this.getData();
+  }
+  getData() {
+    this.Cargando = true;
 
+    let parametros: Parametro[] = [{ key: "Search", value: this.Search }];
 
-ngOnInit(): void {
-  this.getData()
-}
-getData() {
-  this.Cargando = true;
-
-  let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
-
-  this.httpService.GetAllWithPagination<OrdenFabricacionVista>(DataApi.OrdenFabricacion, "GetOrdenFabricacionListado", "ID", this.paginaNumeroActual,
-    this.paginaSize, true, parametros).subscribe(x => {
-
-      if (x.ok) {
-        this.data = x.records;
-        let estado = x.records[0].estadoId;
-        if(estado == 3){
-          this.IsClose = true;
+    this.httpService
+      .GetAllWithPagination<OrdenFabricacionVista>(
+        DataApi.OrdenFabricacion,
+        "GetOrdenFabricacionListado",
+        "ID",
+        this.paginaNumeroActual,
+        this.paginaSize,
+        true,
+        parametros
+      )
+      .subscribe(
+        (x) => {
+          if (x.ok) {
+            this.data = x.records;
+            let estado = x.records[0].estadoId;
+            if (estado == 3) {
+              this.IsClose = true;
+            }
+            this.asignarPagination(x);
+          } else {
+            this.toastService.error(x.errores[0]);
+            console.error(x.errores[0]);
+          }
+          this.Cargando = false;
+        },
+        (error) => {
+          console.error(error);
+          this.toastService.error("Error conexion al servidor");
+          this.Cargando = false;
         }
-        this.asignarPagination(x);
-      } else {
-        this.toastService.error(x.errores[0]);
-        console.error(x.errores[0]);
-      }
-      this.Cargando = false;
-    }, error => {
-      console.error(error);
-      this.toastService.error("Error conexion al servidor");
-      this.Cargando = false;
-    });
-
-}
-
-OnChangeIsPesaje(articulosExtras: OrdenFabricacionVista){
-  articulosExtras.isPesaje = !articulosExtras.isPesaje;
-}
-
-OnChangeProducida(){
- this.IsPesajeProducida = !this.IsPesajeProducida;
-}
-
-OnChangePagePesaje(articulosExtras: OrdenFabricacionVista){
-  this.modalService.dismissAll();
-  this.ordenfabriService.SaveOrdenFabricacion(articulosExtras);
-  this.router.navigateByUrl('/produccion/ordenfabricacionpesaje');
-}
-
-OnSaveConsumido(articulosExtras: OrdenFabricacionVista){
-
-  // let requeridad = Number((articulosExtras.cantidadBase * this.ofheader.cantidadPlanificada).toFixed(6));
-  let requeridad = articulosExtras.cantidadRequerida;
-  let consumido = articulosExtras.consumido;
-
-  if(consumido >= requeridad){
-    articulosExtras.loadingSaveConsumido = true;
-    // console.log(articulosExtras);
-    this.httpService.DoPostAny<OrdenFabricacionVista>(DataApi.OrdenFabricacionDetalle,
-      "UpdateConsumidoYCostoReal", articulosExtras).subscribe(response => {
-
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          articulosExtras.isPesaje = !articulosExtras.isPesaje;
-          this.getOrdenFabricacion(articulosExtras.ordenFabricacionId);
-        }
-        articulosExtras.loadingSaveConsumido = false;
-      }, error => {
-        articulosExtras.loadingSaveConsumido = false;
-        this.toastService.error("No se pudo obtener los articulos extras", "Error conexion al servidor");
-
-        setTimeout(() => {
-          //this.getOrdenFabricacion();
-        }, 1000);
-      });
-  }else{
-    this.toastService.error("El valor consumido de ser igual a la cantidad requerida", "Error Cantidad");
+      );
   }
 
+  OnChangeIsPesaje(articulosExtras: OrdenFabricacionVista) {
+    articulosExtras.isPesaje = !articulosExtras.isPesaje;
+  }
 
+  OnChangeProducida() {
+    this.IsPesajeProducida = !this.IsPesajeProducida;
+  }
 
+  OnChangePagePesaje(articulosExtras: OrdenFabricacionVista) {
+    this.modalService.dismissAll();
+    this.ordenfabriService.SaveOrdenFabricacion(articulosExtras);
+    this.router.navigateByUrl("/produccion/ordenfabricacionpesaje");
+  }
 
-}
-OnSaveProducida(){
+  OnSaveConsumido(articulosExtras: OrdenFabricacionVista) {
+    // let requeridad = Number((articulosExtras.cantidadBase * this.ofheader.cantidadPlanificada).toFixed(6));
+    let requeridad = articulosExtras.cantidadRequerida;
+    let consumido = articulosExtras.consumido;
 
+    if (consumido >= requeridad) {
+      articulosExtras.loadingSaveConsumido = true;
+      // console.log(articulosExtras);
+      this.httpService
+        .DoPostAny<OrdenFabricacionVista>(
+          DataApi.OrdenFabricacionDetalle,
+          "UpdateConsumidoYCostoReal",
+          articulosExtras
+        )
+        .subscribe(
+          (response) => {
+            if (!response.ok) {
+              this.toastService.error(response.errores[0]);
+            } else {
+              articulosExtras.isPesaje = !articulosExtras.isPesaje;
+              this.getOrdenFabricacion(articulosExtras.ordenFabricacionId);
+            }
+            articulosExtras.loadingSaveConsumido = false;
+          },
+          (error) => {
+            articulosExtras.loadingSaveConsumido = false;
+            this.toastService.error(
+              "No se pudo obtener los articulos extras",
+              "Error conexion al servidor"
+            );
+
+            setTimeout(() => {
+              //this.getOrdenFabricacion();
+            }, 1000);
+          }
+        );
+    } else {
+      this.toastService.error(
+        "El valor consumido de ser igual a la cantidad requerida",
+        "Error Cantidad"
+      );
+    }
+  }
+  OnSaveProducida() {
     this.loadingSaveProducida = true;
-    this.httpService.DoPostAny<OrdenFabricacionVista>(DataApi.OrdenFabricacion,
-      "Update", this.ordenfabricacion).subscribe(response => {
+    this.httpService
+      .DoPostAny<OrdenFabricacionVista>(
+        DataApi.OrdenFabricacion,
+        "Update",
+        this.ordenfabricacion
+      )
+      .subscribe(
+        (response) => {
+          if (!response.ok) {
+            this.toastService.error(response.errores[0]);
+          } else {
+            this.IsPesajeProducida = !this.IsPesajeProducida;
+            //this.getOrdenFabricacion(articulosExtras.ordenFabricacionId);
+          }
+          this.loadingSaveProducida = false;
+        },
+        (error) => {
+          this.loadingSaveProducida = false;
+          this.toastService.error(
+            "No se pudo obtener los articulos extras",
+            "Error conexion al servidor"
+          );
 
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          this.IsPesajeProducida = !this.IsPesajeProducida;
-          //this.getOrdenFabricacion(articulosExtras.ordenFabricacionId);
+          setTimeout(() => {
+            //this.getOrdenFabricacion();
+          }, 1000);
         }
-        this.loadingSaveProducida = false;
-      }, error => {
-        this.loadingSaveProducida = false;
-        this.toastService.error("No se pudo obtener los articulos extras", "Error conexion al servidor");
-
-        setTimeout(() => {
-          //this.getOrdenFabricacion();
-        }, 1000);
-      });
-
-
-
-
-}
-
-
-openModal(content, modal: OrdenFabricacionVista) {
-  this.getOrdenFabricacion(modal.id);
-  this.modalService.open(content, { windowClass: "myCustomModalClass", backdrop: "static",});
-}
-
-
-openModalProducida(content, modal: OrdenFabricacionVista) {
-  this.getOrdenFabricacion(modal.id);
-  this.modalService.open(content, { windowClass: "myCustomModalClass", backdrop: "static",});
-}
-
-
-getOrdenFabricacion(id:number) {
-  this.loadingArticulosExtras = true;
-
-  this.httpService.DoPostAny<OrdenFabricacion>(DataApi.OrdenFabricacion,
-    "GetOrdenFabricacionByID", id).subscribe(response => {
-
-      if (!response.ok) {
-        this.toastService.error(response.errores[0]);
-      } else {
-        this.getArticuloById(response.records[0].articuloId);
-        this.ofheader.tipoId = response.records[0].ordenFabricacionTipoId;
-        this.ofheader.estadoId = response.records[0].estadoId;
-        this.ofheader.cantidadPlanificada = response.records[0].cantidad;
-        this.ofheader.almacenId = response.records[0].almacenId;
-        this.ofheader.fechaInicio = response.records[0].fechaInicio;
-        this.ofheader.fechaCierre = response.records[0].fechaCierre;
-        this.ofheader.id = response.records[0].id;
-        this.ordenfabricacion = response.records[0];
-        this.getOrdenFabricacionDetalle(response.records[0].id);
-      }
-      this.loadingArticulosExtras = false;
-    }, error => {
-      this.loadingArticulosExtras = false;
-      this.toastService.error("No se pudo obtener los articulos extras", "Error conexion al servidor");
-
-      setTimeout(() => {
-        //this.getOrdenFabricacion();
-      }, 1000);
-    });
-}
-
-
-getOrdenFabricacionDetalle(ordenFabricacionId: number) {
-  this.loadingArticulosExtras = true;
-
-  this.httpService.DoPostAny<OrdenFabricacionVista>(DataApi.OrdenFabricacionDetalle,
-    "GetOrdenFabricacionDetalleVistaByID", ordenFabricacionId).subscribe(response => {
-
-      if (!response.ok) {
-        this.toastService.error(response.errores[0]);
-      } else {
-       this.articulosExtras = response.records;
-       this.articulosExtras.forEach(x => x.cantidadRequerida = Number((x.cantidadBase * this.ofheader.cantidadPlanificada).toFixed(6)));
-       //this.ordenfabricaciondetalle = response.records[0];
-      // console.log(response.records)
-      }
-      this.loadingArticulosExtras = false;
-    }, error => {
-      this.loadingArticulosExtras = false;
-      this.toastService.error("No se pudo obtener los articulos extras", "Error conexion al servidor");
-
-      setTimeout(() => {
-        //this.getOrdenFabricacionDetalle();
-      }, 1000);
-    });
-}
-
-getArticuloById(ArticuloID: number) {
-  this.searching = true;
-  this.httpService.DoPostAny<Articulo>(DataApi.Articulo,
-    "GetArticuloByID", ArticuloID ).subscribe(response => {
-
-      if (!response.ok) {
-        this.toastService.error(response.errores[0]);
-      } else {
-        //validar que existe
-        if (response != null && response.records != null && response.records.length > 0) {
-          let record = response.records[0];
-          this.articulo = record;
-         // console.log(record);
-          //this.getOrdenFabricacionDetalle(record.codigoReferencia);
-        }
-        else {
-          this.articulo = null;
-        }
-        this.searching = false;
-      }
-
-    }, error => {
-      this.searching = false;
-      this.toastService.error("Error conexion al servidor");
-    });
-}
-
-
-asignarPagination(x: ResponseContenido<any>) {
-
-  if (x.pagina != null) {
-    this.totalPaginas = x.pagina.totalPaginas == null ? 0 : x.pagina.totalPaginas;
-    this.paginaTotalRecords = x.pagina.totalRecords == null ? 0 : x.pagina.totalRecords;
-    this.paginaSize = x.pagina.paginaSize == null ? 0 : x.pagina.paginaSize;
-  } else {
-    this.totalPaginas = 0;
-    this.paginaTotalRecords = 0;
-    this.paginaSize = 0;
+      );
   }
 
-}
+  openModal(content, modal: OrdenFabricacionVista) {
+    this.getOrdenFabricacion(modal.id);
+    this.modalService.open(content, {
+      windowClass: "myCustomModalClass",
+      backdrop: "static",
+    });
+  }
 
+  openModalProducida(content, modal: OrdenFabricacionVista) {
+    this.getOrdenFabricacion(modal.id);
+    this.modalService.open(content, {
+      windowClass: "myCustomModalClass",
+      backdrop: "static",
+    });
+  }
+
+  getOrdenFabricacion(id: number) {
+    this.loadingArticulosExtras = true;
+
+    this.httpService
+      .DoPostAny<OrdenFabricacion>(
+        DataApi.OrdenFabricacion,
+        "GetOrdenFabricacionByID",
+        id
+      )
+      .subscribe(
+        (response) => {
+          if (!response.ok) {
+            this.toastService.error(response.errores[0]);
+          } else {
+            this.getArticuloById(response.records[0].articuloId);
+            this.ofheader.tipoId = response.records[0].ordenFabricacionTipoId;
+            this.ofheader.estadoId = response.records[0].estadoId;
+            this.ofheader.cantidadPlanificada = response.records[0].cantidad;
+            this.ofheader.almacenId = response.records[0].almacenId;
+            this.ofheader.fechaInicio = response.records[0].fechaInicio;
+            this.ofheader.fechaCierre = response.records[0].fechaCierre;
+            this.ofheader.id = response.records[0].id;
+            this.ordenfabricacion = response.records[0];
+            this.getOrdenFabricacionDetalle(response.records[0].id);
+          }
+          this.loadingArticulosExtras = false;
+        },
+        (error) => {
+          this.loadingArticulosExtras = false;
+          this.toastService.error(
+            "No se pudo obtener los articulos extras",
+            "Error conexion al servidor"
+          );
+
+          setTimeout(() => {
+            //this.getOrdenFabricacion();
+          }, 1000);
+        }
+      );
+  }
+
+  getOrdenFabricacionDetalle(ordenFabricacionId: number) {
+    this.loadingArticulosExtras = true;
+
+    this.httpService
+      .DoPostAny<OrdenFabricacionVista>(
+        DataApi.OrdenFabricacionDetalle,
+        "GetOrdenFabricacionDetalleVistaByID",
+        ordenFabricacionId
+      )
+      .subscribe(
+        async (response) => {
+          if (!response.ok) {
+            this.toastService.error(response.errores[0]);
+          } else {
+            console.log(response.records);
+            this.articulosExtras = response.records;
+            this.articulosExtras.forEach(
+              (x) =>
+                (x.cantidadRequerida = Number(
+                  (x.cantidadBase * this.ofheader.cantidadPlanificada).toFixed(
+                    6
+                  )
+                ))
+            );
+            for (const key in this.articulosExtras) {
+              let element = this.articulosExtras[key];
+              let Balance = await this.getArticuloBalance(
+                element.articulo,
+                element.almacenCodigoReferencia
+              );
+              element.disponible = Balance;
+            }
+          }
+          this.loadingArticulosExtras = false;
+        },
+        (error) => {
+          this.loadingArticulosExtras = false;
+          this.toastService.error(
+            "No se pudo obtener los articulos extras",
+            "Error conexion al servidor"
+          );
+
+          setTimeout(() => {
+            //this.getOrdenFabricacionDetalle();
+          }, 1000);
+        }
+      );
+  }
+
+  async getArticuloBalance(
+    codigoArticulo: string,
+    codigoAlmacen: string
+  ): Promise<number> {
+    var Balance = null;
+    var response = await this.httpService
+      .DoPostAny<any>(DataApi.OrdenFabricacion, "GetArticuloBalance", {
+        Codigo1: codigoArticulo,
+        Codigo2: codigoAlmacen,
+      })
+      .toPromise();
+
+    if (response.ok && response.records.length > 0) {
+      Balance = response.records[0];
+    }
+
+    return Balance;
+  }
+
+  getArticuloById(ArticuloID: number) {
+    this.searching = true;
+    this.httpService
+      .DoPostAny<Articulo>(DataApi.Articulo, "GetArticuloByID", ArticuloID)
+      .subscribe(
+        (response) => {
+          if (!response.ok) {
+            this.toastService.error(response.errores[0]);
+          } else {
+            //validar que existe
+            if (
+              response != null &&
+              response.records != null &&
+              response.records.length > 0
+            ) {
+              let record = response.records[0];
+              this.articulo = record;
+              // console.log(record);
+              //this.getOrdenFabricacionDetalle(record.codigoReferencia);
+            } else {
+              this.articulo = null;
+            }
+            this.searching = false;
+          }
+        },
+        (error) => {
+          this.searching = false;
+          this.toastService.error("Error conexion al servidor");
+        }
+      );
+  }
+
+  asignarPagination(x: ResponseContenido<any>) {
+    if (x.pagina != null) {
+      this.totalPaginas =
+        x.pagina.totalPaginas == null ? 0 : x.pagina.totalPaginas;
+      this.paginaTotalRecords =
+        x.pagina.totalRecords == null ? 0 : x.pagina.totalRecords;
+      this.paginaSize = x.pagina.paginaSize == null ? 0 : x.pagina.paginaSize;
+    } else {
+      this.totalPaginas = 0;
+      this.paginaTotalRecords = 0;
+      this.paginaSize = 0;
+    }
+  }
 }

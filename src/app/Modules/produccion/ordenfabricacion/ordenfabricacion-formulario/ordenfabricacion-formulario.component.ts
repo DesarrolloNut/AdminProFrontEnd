@@ -262,13 +262,18 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
     this.loadingArticulosExtras = true;
 
     this.httpService.DoPostAny<OrdenFabricacionVista>(DataApi.OrdenFabricacion,
-      "GetOrdenFabricacionListadoMateriales", {CodigoRefencia:this.articulo.codigoReferencia}).subscribe(response => {
+      "GetOrdenFabricacionListadoMateriales", {CodigoRefencia:this.articulo.codigoReferencia}).subscribe(async response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
           this.articulosExtras = response.records;
-          console.log()
+          for (const key in this.articulosExtras) {
+            let element = this.articulosExtras[key];
+            let Balance =  await this.getArticuloBalance(element.articulo, element.almacenCodigoReferencia);
+             element.disponible = Balance;
+          }
+          // console.log(response.records);
           this.ofheader.almacenId = response.records[0].almacenId;
           // this.FormHeader.setValue(response.records);
           //this.formatArticulosExtras()
@@ -293,13 +298,6 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
         if(response.ok && response.records.length > 0){
           Balance =  response.records[0];
         }
-      // .subscribe(response => {
-      //   console.log(response)
-      //   if(response.ok && response.records.length > 0){
-      //     Balance =  response.records[0];
-      //     console.log('dentro --- '+Balance);
-      //   }
-      // });
 
       return Balance;
   }

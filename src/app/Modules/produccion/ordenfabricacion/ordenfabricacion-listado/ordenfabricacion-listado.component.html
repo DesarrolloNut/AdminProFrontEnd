@@ -55,9 +55,14 @@
                 <td>
                   <span> {{item.almacen}}</span>
                 </td>
+
                 <!-- <td>
-                  <span> {{item.fechaCreacion | date:'medium'}}</span>
-                </td> -->
+                  <div class="circulo" [ngStyle]="{'background-color':  cliente.estadoColorERP}"></div>
+                  <span class="text-dark">
+                      {{cliente.estadoERP}}
+                  </span>
+              </td> -->
+
                 <td>
                   <span> {{item.cantidadPlanificada | number:'1.2-2'}}</span>
                 </td>
@@ -170,7 +175,7 @@
                 <td>{{articulext.disponible}}</td>
                 <td>{{articulext.costoReal}}</td>
                 <!-- <td>{{articulext.unidadMedida}}</td> -->
-                <td>{{ofheader.almacenId}}</td>
+                <td>{{articulext.almacenCodigoReferencia}}</td>
                 <!-- <td>{{articulext.metodoEmision == "M" ? "Manual" : "Automático"}}</td> -->
                 <td>
                   <button class="btn btn-sm  btn-light m-1" *ngIf="!articulext.isPesaje && articulo.unidadMedida == 'Unidad'" (click)="OnChangeIsPesaje(articulext)">

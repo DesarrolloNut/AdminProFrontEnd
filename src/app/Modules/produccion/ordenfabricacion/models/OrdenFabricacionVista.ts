@@ -12,6 +12,7 @@ export class OrdenFabricacionVista {
     this.unidadMedida = "";
     this.almacen = "";
     this.almacenId = 0;
+    this.almacenCodigoReferencia = "";
     this.metodoEmision = "";
     this.tipo = "";
     this.fechaCreacion = new Date();
@@ -37,6 +38,7 @@ export class OrdenFabricacionVista {
   disponible: number;
   unidadMedida: string;
   almacen: string;
+  almacenCodigoReferencia: string;
   almacenId: number;
   metodoEmision: string;
   tipo: string;
