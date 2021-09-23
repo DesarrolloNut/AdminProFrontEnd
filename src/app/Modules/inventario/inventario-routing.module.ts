@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { DespachoListadoComponent } from './despacho/despacho-listado/despacho-listado.component';
 import { DevolucionesListadoComponent } from './devoluciones/devoluciones-listado/devoluciones-listado.component';
 import { EntregasListadoComponent } from './entregas/entregas-listado/entregas-listado.component';
 import { InventarioComponent } from './inventario.component';
@@ -33,6 +34,15 @@ const routes: Routes = [  {
         urls: [
           { title: 'Inventario' },
           { title: 'Entregas' },
+        ]
+      }
+    },
+    {
+      path: 'despacho', component: DespachoListadoComponent, data: {
+        title: 'Despacho',
+        urls: [
+          { title: 'Inventario' },
+          { title: 'Despacho' },
         ]
       }
     },

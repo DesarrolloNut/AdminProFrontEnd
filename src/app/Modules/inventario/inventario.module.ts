@@ -8,10 +8,18 @@ import { DevolucionesListadoComponent } from './devoluciones/devoluciones-listad
 import { RecepcionActivoListadoComponent } from './recepcion-activo/recepcion-activo-listado/recepcion-activo-listado.component';
 import { EntregasListadoComponent } from './entregas/entregas-listado/entregas-listado.component';
 import { EntregasFormularioComponent } from './entregas/entregas-formulario/entregas-formulario.component';
+import { DespachoFormularioComponent } from './despacho/despacho-formulario/despacho-formulario.component';
+import { DespachoListadoComponent } from './despacho/despacho-listado/despacho-listado.component';
 
 
 @NgModule({
-  declarations: [InventarioComponent, DevolucionesListadoComponent, RecepcionActivoListadoComponent, EntregasListadoComponent, EntregasFormularioComponent],
+  declarations: [InventarioComponent, DevolucionesListadoComponent,
+     RecepcionActivoListadoComponent, 
+     EntregasListadoComponent,
+     EntregasFormularioComponent,
+     DespachoListadoComponent,
+     DespachoFormularioComponent
+    ],
   imports: [
     CommonModule,
     SharedModule,
