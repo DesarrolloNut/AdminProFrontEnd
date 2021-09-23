@@ -160,11 +160,12 @@ import { ClienteNegocioComponent } from './clientes/cliente-negocio/cliente-nego
     MantenimientosRoutingModule,
     SharedModule,
     AgmCoreModule.forRoot({ //mapas
-      apiKey: 'AIzaSyBaddDDv0d9zuun9qiWj3VkLEzpJot9UQ4',
-      libraries: ["places"]
+      // apiKey: 'AIzaSyBaddDDv0d9zuun9qiWj3VkLEzpJot9UQ4',
+      // libraries: ["places"]
+      apiKey: 'AIzaSyCDhjF3LNn2qqYUivCkiyYD8lQMAzihz7I',
     }),
     NgbModule, //ng bootstrap
-    TreeviewModule.forRoot() 
+    TreeviewModule.forRoot()
   ]
 })
 export class MantenimientosModule { }
