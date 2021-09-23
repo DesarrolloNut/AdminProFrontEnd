@@ -31,7 +31,7 @@ export class RecallListadoComponent implements OnInit {
 
   recallID: number;
   guardandoDataExcel: boolean;
-
+ 
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
