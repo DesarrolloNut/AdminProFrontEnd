@@ -1,0 +1,30 @@
+::ng-deep .myCustomModalClass .modal-dialog {
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  .tdcss{
+    padding: 0.7rem;
+  }
+
+  .tr_detalle{
+    font-size: 20px;
+    font-weight: 500;
+  }
+
+  .left_detalle{
+    background-color: #FCFCFC;
+    border-right: 1px solid gainsboro;
+    margin-top: -16px;
+    margin-bottom: -16px; 
+    margin-left: -6px;
+  }
+
+  .right_detalle{
+    margin-top: -16px;
+    margin-bottom: -16px; 
+  }
+  .input_check{
+    width: 21px;
+    height: 21px;
+  }
