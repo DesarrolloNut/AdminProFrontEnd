@@ -1,5 +1,6 @@
 import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { FocusEventArgs } from '@syncfusion/ej2-angular-calendars';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { Parametro } from 'src/app/core/http/model/Parametro';
@@ -47,6 +48,14 @@ export class PesajeListadoComponent implements OnInit, OnDestroy {
 
   fechaFiltro: Date = new Date();
 
+  mostrarPanelTrasferenciaDirecta: boolean;
+  almacenDestinoTrasnferenciaSeleccionado: number;
+  loadingAlmacenesTransferenciaDirecta: boolean;
+  almacenesDestinoTransferencia: ComboBox[];
+  articuloPesajeEstados: ComboBox[];
+  articuloPesajeEstadoSeleccionado: number = 1;
+  loadingArticuloPesajeEstado: boolean;
+
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private authService: AuthenticationService,
@@ -56,6 +65,7 @@ export class PesajeListadoComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
+    this.getArticuloPesajeEstados();
     this.getAlmacenesUsuarioEnrroll();
   }
 
@@ -70,11 +80,12 @@ export class PesajeListadoComponent implements OnInit, OnDestroy {
   }
 
   getData() {
-    // this.Cargando = true;
+    this.Cargando = true;
 
     let parametros: Parametro[] = [
       { key: "Almacen", value: this.almacenDefault },
-      { key: "Fecha", value: this.fechaFiltro }
+      { key: "Fecha", value: this.fechaFiltro },
+      { key: "EstadoID", value: this.articuloPesajeEstadoSeleccionado }
     ]
 
     this.httpService.GetAllWithPagination<ArticuloPesajeListadoViewModel>(DataApi.ArticuloPesaje, "GetArticuloPesajeListado", "ID", this.paginaNumeroActual,
@@ -87,11 +98,11 @@ export class PesajeListadoComponent implements OnInit, OnDestroy {
           this.toastService.error(x.errores[0]);
           console.error(x.errores[0]);
         }
-        // this.Cargando = false;
+        this.Cargando = false;
       }, error => {
         console.error(error);
         this.toastService.error("Error conexion al servidor");
-        // this.Cargando = false;
+        this.Cargando = false;
       });
   }
 
@@ -127,7 +138,7 @@ export class PesajeListadoComponent implements OnInit, OnDestroy {
       { key: "ModuloKey", value: EstadosGeneralesKeyEnum.PRODUCCION },
     ]
 
-    // this.loadingAlmacenesDesde = true;
+    this.loadingAlmacenesTransferenciaDirecta = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
       "GetUsuarioAlmacenesModulo", parametros).subscribe(response => {
 
@@ -136,21 +147,17 @@ export class PesajeListadoComponent implements OnInit, OnDestroy {
         } else {
 
           if (response.records.length > 0) {
+            this.almacenesDestinoTransferencia = response.records;
             this.almacenDefault = response.records[0].codigo
-
-            console.table(response.records)
             this.signalRService.almacenID = this.almacenDefault;
-
-            console.log(this.signalRService.almacenID)
-
             this.subscribeSignalR();
             this.getData();
           }
 
         }
-        // this.loadingAlmacenesDesde = false;
+        this.loadingAlmacenesTransferenciaDirecta = false;
       }, error => {
-        // this.loadingAlmacenesDesde = false;
+        this.loadingAlmacenesTransferenciaDirecta = false;
         this.toastService.error("No se pudo obtener el almacen por default PRODUCCION", "Error conexion al servidor");
 
         setTimeout(() => {
@@ -181,15 +188,15 @@ export class PesajeListadoComponent implements OnInit, OnDestroy {
       this.enterPressed = true;
       this.modalService.dismissAll();
       this.modalService.open(this.modalElement, { size: "xl" })
-      this.getArticuloPesajeByID(Number(this.searchValue));
+      this.getArticuloPesajeListadoByID(Number(this.searchValue));
     }
   }
 
-  getArticuloPesajeByID(articuloPesajeID: number) {
+  getArticuloPesajeListadoByID(articuloPesajeID: number) {
 
     this.CargandoModal = true;
     this.httpService.DoPostAny<ArticuloPesajeListadoViewModel>(DataApi.ArticuloPesaje,
-      "GetArticuloPesajeByID", articuloPesajeID).subscribe(response => {
+      "GetArticuloPesajeListadoByID", articuloPesajeID).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
@@ -250,6 +257,100 @@ export class PesajeListadoComponent implements OnInit, OnDestroy {
       });
   }
 
+  onBtnTransferirClic() {
+
+    this.mostrarPanelTrasferenciaDirecta = true;
+
+  }
+
+  onBtnRealizarTransferenciaClic() {
+
+    if (!this.almacenDestinoTrasnferenciaSeleccionado) {
+      this.toastService.warning("Selecciona el almacen de destino.")
+      return;
+    }
+
+    this.realizarTransferencia();
+
+  }
+
+
+  realizarTransferencia() {
+
+    let request: any = {
+      "PesajeID": this.articuloPesaje.id,
+      "AlmacenDestinoID": this.almacenDestinoTrasnferenciaSeleccionado
+    }
+
+    this.btnGuardarCargando = true;
+
+    this.httpService.DoPostAny<ArticuloPesaje>(DataApi.ArticuloPesaje,
+      "TransferirDirectamente", request).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+        } else {
+          this.signalRService.refrescarListadoPesajes(this.almacenDestinoTrasnferenciaSeleccionado);
+          this.toastService.success("Realizado");
+          this.modalService.dismissAll()
+          this.getData()
+        }
+
+        this.btnGuardarCargando = false;
+      }, error => {
+        this.btnGuardarCargando = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+
+  }
+
+  onBtnRegresarTransferenciaClic() {
+    this.mostrarPanelTrasferenciaDirecta = false;
+    this.almacenDestinoTrasnferenciaSeleccionado = null;
+  }
+
+
+
+  getArticuloPesajeEstados() {
+    this.loadingArticuloPesajeEstado = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetArticulosPesajeEstados", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.articuloPesajeEstados = response.records;
+
+          let todas = new ComboBox();
+          todas.nombre = "TODOS"
+          todas.codigo = 0
+
+          this.articuloPesajeEstados.unshift(todas);
+
+        }
+        this.loadingArticuloPesajeEstado = false;
+      }, error => {
+        this.loadingArticuloPesajeEstado = false;
+        this.toastService.error("No se pudo obtener los estados", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getArticuloPesajeEstados();
+        }, 1000);
+
+      });
+  }
+
+  onEstadoPesajeChange() {
+    this.getData();
+  }
+
+
+  @ViewChild('default')
+  public datepickerObj: any;
+
+  onFocus(args: FocusEventArgs): void {
+    this.datepickerObj.show();
+  }
 
 
   ngOnDestroy() {

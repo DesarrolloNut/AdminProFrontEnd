@@ -3,18 +3,33 @@
         <div class="card">
             <div class="card-body">
                 <div class="row mb-2">
-                    <div class="col-md-12 align-middle">
+                    <div class="col-md-8 align-middle">
                         <h4 class="card-title">Listado de pesajes</h4>
                     </div>
+                    <div class="col-md-4 align-middle text-right">
+                        <h4 class="card-title">
+                            <span *ngIf="Cargando" class="fa fa-spin fa-spinner"></span>
+                        </h4>
+                    </div>
 
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-4">
                         <!-- <label> <i class="fa fa-calendar"></i> Fecha</label> -->
                         <ejs-datepicker [showClearButton]="false" [(ngModel)]="fechaFiltro"
-                            (change)="onChangeFechaFiltro($event)" [format]="'dd-MMM-yyyy'">
+                            (change)="onChangeFechaFiltro($event)" (focus)='onFocus($event)' #default
+                            [format]="'dd-MMM-yyyy'">
                         </ejs-datepicker>
                     </div>
 
-                    <div class="col-md-6 ">
+                    <div class="form-group col-md-4">
+                        <!-- <label for="inputEmail4">Almacén desde</label> -->
+                        <ng-select bindLabel="nombre" bindValue="codigo" [(ngModel)]="articuloPesajeEstadoSeleccionado"
+                            [items]="articuloPesajeEstados" (change)="onEstadoPesajeChange()" [clearable]="false"
+                            [loading]="loadingArticuloPesajeEstado" notFoundText="No resultados">
+                        </ng-select>
+                    </div>
+
+
+                    <div class="col-md-4 ">
 
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -94,7 +109,7 @@
 
 
 
-                <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+                <!-- <app-loading-listado [hidden]="!Cargando"></app-loading-listado> -->
 
                 <div class="row ">
                     <div class="col-md-8 col-xs-12 ">
@@ -133,123 +148,174 @@
     <div class="modal-body">
 
         <div class="row">
-            <div class="col-md-12 text-center">
+            <div class="col-md-2">
+                <button *ngIf="mostrarPanelTrasferenciaDirecta" (click)="onBtnRegresarTransferenciaClic()"
+                    class="btn btn-light"><i class="fa fa-arrow-left"></i></button>
+            </div>
+            <div class="col-md-8 text-center">
                 <img src="assets/images/nutriciosa.png" style="width: 150px;" alt="Responsive image">
             </div>
         </div>
-        <div class="row" *ngIf="!CargandoModal">
 
-            <div class="col-md-12">
-                <h2 class="font-weight-bold">{{articuloPesaje.articulo}} </h2>
-                <div class="table-responsive">
-                    <table class="table table-sm">
+        <ng-container *ngIf="!mostrarPanelTrasferenciaDirecta; then detallePesaje; else trasnferenciaDirecta">
+        </ng-container>
+        <ng-template #detallePesaje>
 
-                        <tbody>
+            <div class="row" *ngIf="!CargandoModal">
 
-                            <tr>
-                                <th scope="row">
-                                    <h4>
-                                        <span class="font-weight-bold">Peso Canastos </span>
-                                    </h4>
-                                </th>
-                                <td class="font-weight-bold"> {{articuloPesaje.pesoCanastos}} Lb</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">
-                                    <h4>
-                                        <span class="font-weight-bold">Peso Balanza </span>
-                                    </h4>
-                                </th>
-                                <td class="font-weight-bold"> {{articuloPesaje.pesoBalanza}} Lb</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">
-                                    <h4>
-                                        <span class="font-weight-bold">Peso Neto </span>
-                                    </h4>
-                                </th>
-                                <td class="font-weight-bold text-info"> {{articuloPesaje.pesoNeto}} Lb</td>
-                            </tr>
+                <div class="col-md-12">
+                    <h2 class="font-weight-bold">{{articuloPesaje.articulo}} </h2>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <tbody>
 
-                            <tr>
-                                <th scope="row">
-                                    <h4>
-                                        <span class="font-weight-bold">Lote </span>
-                                    </h4>
-                                </th>
-                                <td class="font-weight-bold"> {{articuloPesaje.lote}}</td>
-                            </tr>
+                                <!-- <tr>
+                                    <th scope="row">
+                                        <h4>
+                                            <span class="font-weight-bold">Peso Canastos </span>
+                                        </h4>
+                                    </th>
+                                    <td class="font-weight-bold"> {{articuloPesaje.pesoCanastos}} Lb</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">
+                                        <h4>
+                                            <span class="font-weight-bold">Peso Balanza </span>
+                                        </h4>
+                                    </th>
+                                    <td class="font-weight-bold"> {{articuloPesaje.pesoBalanza}} Lb</td>
+                                </tr> -->
+                                <tr>
+                                    <th scope="row">
+                                        <h4>
+                                            <span class="font-weight-bold">Peso Neto </span>
+                                        </h4>
+                                    </th>
+                                    <td class="font-weight-bold text-info"> {{articuloPesaje.pesoNeto}} Lb</td>
+                                </tr>
 
-                            <tr>
-                                <th scope="row">
-                                    <h4>
-                                        <span class="font-weight-bold">Vencimiento </span>
-                                    </h4>
-                                </th>
-                                <td class="font-weight-bold">
-                                    {{articuloPesaje.fechaVencimiento | date}}</td>
+                                <tr>
+                                    <th scope="row">
+                                        <h4>
+                                            <span class="font-weight-bold">Lote </span>
+                                        </h4>
+                                    </th>
+                                    <td class="font-weight-bold"> {{articuloPesaje.lote}}</td>
+                                </tr>
 
-                            </tr>
-                            <tr>
-                                <th scope="row">
-                                    <h4>
-                                        <span class="font-weight-bold">Almacén Salida </span>
-                                    </h4>
-                                </th>
-                                <td class="font-weight-bold"> {{articuloPesaje.almacenDesde}} </td>
+                                <tr>
+                                    <th scope="row">
+                                        <h4>
+                                            <span class="font-weight-bold">Vencimiento </span>
+                                        </h4>
+                                    </th>
+                                    <td class="font-weight-bold">
+                                        {{articuloPesaje.fechaVencimiento | date}}</td>
 
-                            </tr>
-                            <tr>
-                                <th scope="row">
-                                    <h4>
-                                        <span class="font-weight-bold">Almacén Destino </span>
-                                    </h4>
-                                </th>
-                                <td class="font-weight-bold"> {{articuloPesaje.almacenHasta}} </td>
-                            </tr>
-                            <tr *ngFor="let otem of articuloPesajeDetalle">
-                                <th scope="row">
-                                    <h4>
-                                        <span class="font-weight-bold">{{otem.nombre | titlecase}}</span>
-                                    </h4>
-                                </th>
-                                <td class="font-weight-bold"> {{otem.pesoSeleccionado.nombre}} </td>
-                            </tr>
+                                </tr>
+                                <tr>
+                                    <th scope="row">
+                                        <h4>
+                                            <span class="font-weight-bold">Almacén Salida </span>
+                                        </h4>
+                                    </th>
+                                    <td class="font-weight-bold"> {{articuloPesaje.almacenDesde}} </td>
 
-                        </tbody>
+                                </tr>
+                                <tr>
+                                    <th scope="row">
+                                        <h4>
+                                            <span class="font-weight-bold">Almacén Destino </span>
+                                        </h4>
+                                    </th>
+                                    <td class="font-weight-bold"> {{articuloPesaje.almacenHasta}} </td>
+                                </tr>
+                                <!-- <tr *ngFor="let otem of articuloPesajeDetalle">
+                                    <th scope="row">
+                                        <h4>
+                                            <span class="font-weight-bold">{{otem.nombre | titlecase}}</span>
+                                        </h4>
+                                    </th>
+                                    <td class="font-weight-bold"> {{otem.pesoSeleccionado.nombre}} </td>
+                                </tr> -->
 
-                    </table>
-                </div>
-            </div>
-
-            <div class="col-md-12">
-                <hr>
-                <div class="row">
-                    <div class="col-md-8">
-                        <ngx-barcode [bc-height]="50" [bc-value]="articuloPesaje.id.toString().padStart(10,'0')"
-                            [bc-display-value]="false">
-                        </ngx-barcode>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+
+                <div class="col-md-12">
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-12 ">
+                            <ngx-barcode [bc-height]="50" [bc-value]="articuloPesaje.id.toString().padStart(10,'0')"
+                                [bc-display-value]="false">
+                            </ngx-barcode>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
-        </div>
+        </ng-template>
+        <ng-template #trasnferenciaDirecta>
+
+            <div class="row">
+
+                <div class="form-group col-md-6 offset-3">
+                    <label for="inputEmail4">Almacén destino</label>
+                    <ng-select bindLabel="nombre" bindValue="codigo"
+                        [(ngModel)]="almacenDestinoTrasnferenciaSeleccionado" [items]="almacenesDestinoTransferencia"
+                        [clearable]="false" [loading]="loadingAlmacenesTransferenciaDirecta"
+                        notFoundText="No resultados">
+                    </ng-select>
+                </div>
+
+            </div>
+
+        </ng-template>
 
         <app-loading-listado [hidden]="!CargandoModal"></app-loading-listado>
 
-
     </div>
+
+
     <div class="modal-footer" *ngIf="!CargandoModal">
 
-        <button *ngIf="!btnGuardarCargando && articuloPesaje.estado == 'Sin Recibir' " class="btn btn-info m-1"
-            type="button" (click)="recibirPesaje()">
-            <i class="fas fa-check"></i> Confirmar
-        </button>
+        <ng-container *ngIf="!mostrarPanelTrasferenciaDirecta; else opcionesTransferencia">
 
-        <!-- boton cargando -->
-        <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
-            <span class="spinner-border spinner-border-sm"></span> Confirmando
-        </button>
+            <button *ngIf="!btnGuardarCargando && articuloPesaje.estado == 'Recibido' " class="btn btn-primary m-1"
+                type="button" (click)="onBtnTransferirClic()">
+                <i class="fas fa-exchange-alt"></i> Transferir
+            </button>
+
+            <button *ngIf="!btnGuardarCargando && articuloPesaje.estado == 'Sin Recibir' " class="btn btn-success m-1"
+                type="button" (click)="recibirPesaje()">
+                <i class="fas fa-check"></i> Confirmar
+            </button>
+
+            <!-- boton cargando -->
+            <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                <span class="spinner-border spinner-border-sm"></span> Cargando
+            </button>
+
+        </ng-container>
+        <ng-template #opcionesTransferencia>
+
+            <div class="row">
+                <div class="col">
+                    <button class="btn btn-primary m-1" type="button" (click)="onBtnRealizarTransferenciaClic()">
+                        Realizar transferencia <i class="fas fa-exchange-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+        </ng-template>
+
+
+
+
 
     </div>
+
 </ng-template>
