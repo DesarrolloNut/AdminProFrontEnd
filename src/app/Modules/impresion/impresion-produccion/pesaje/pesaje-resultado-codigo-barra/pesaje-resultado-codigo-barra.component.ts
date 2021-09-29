@@ -54,7 +54,7 @@ export class PesajeResultadoCodigoBarraComponent implements OnInit {
 
     this.Cargando = true;
     this.httpService.DoPostAny<ArticuloPesajeListadoViewModel>(DataApi.ArticuloPesaje,
-      "GetArticuloPesajeByID", articuloPesajeID).subscribe(response => {
+      "GetArticuloPesajeListadoByID", articuloPesajeID).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
