@@ -13,4 +13,6 @@ export interface DespachoPedidoDetalleViewModel {
     totalNeto: number;
     articulo: string;
     almacen: string;
+    selected:boolean;
+    estadoId:number;
 }

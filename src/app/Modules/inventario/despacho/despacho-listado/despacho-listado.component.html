@@ -41,10 +41,10 @@
                                 <th></th>
                                 <th>No. Despacho</th>
                                 <th>Cliente</th>
-                                <th>SubTotal</th>
+                                <!-- <th>SubTotal</th>
                                 <th>Desc.</th>
                                 <th>Imp.</th>
-                                <th>Total Neto</th>
+                                <th>Total Neto</th> -->
                                 <th>Fecha</th>
                                 <th>Estado</th>
                                 <th>Vendedor</th>
@@ -53,7 +53,7 @@
                         </thead>
                         <tbody [hidden]="Cargando">
 
-                            <tr *ngFor="let item of data; let i = index">
+                            <tr    *ngFor="let item of data; let i = index">
                                 <td>
                                     <button class="btn  font-bold btn-sm btn-danger m-1" *ngIf="item.estadoID == 2 && !item.loadingCancelPedido"
                                     (click)="openModalCancelarPedido(modalConfirmCancelarPedido,item)">
@@ -85,7 +85,7 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td>
+                                <!-- <td>
                                     <span> ${{item.subTotal | number:'1.2-2'}}</span>
                                 </td>
                                 <td>
@@ -96,7 +96,7 @@
                                 </td>
                                 <td>
                                     <span class="font-weight-bold"> ${{item.totalNeto | number:'1.2-2'}}</span>
-                                </td>
+                                </td> -->
                                 <td>
                                     <span class="text-muted"><i class="far fa-calendar"></i>
                                         {{item.fechaCreacion | date:'dd/MM/yy' }}
@@ -235,14 +235,15 @@
 
             <div class="col-md-12" [hidden]="loadingCotizacionDetalle">
 
-                <div class="table-responsive w-100">
-                    <table class="table table-sm table-hover mb-0 no-wrap v-middle">
+                <div class=" w-100">
+                    <table class="table table-sm  mb-0 no-wrap v-middle">
                         <thead style="background-color:white;color: black;">
                             <tr>
-                                <th>¿Listo?</th>
                                 <th>Artículo</th>
                                 <th>Pedido</th>
                                 <th>Despacho</th>
+                                <th>¿Listo?</th>
+
                                 <!-- <th>Precio</th> -->
                                 <!-- <th>% Desc</th>
                                 <th>SubTotal</th>
@@ -254,11 +255,10 @@
                         </thead>
                         <tbody>
 
-                            <tr *ngFor="let item of pedidoEmpleadoDetalles" class="tr_detalle">
+                            <tr (click)="onSelectArticulo(item)" 
+                            [ngClass]="(item.selected)?'tr_detalle_articulo_selected':'tr_detalle_articulo_no_selected'"
+                              *ngFor="let item of pedidoEmpleadoDetalles" class="tr_detalle">
                         
-                                <td class="tdcss" style="vertical-align: initial;    text-align: center;  ">
-                                    <input class="form-check-input input_check " type="checkbox" value="" aria-label="...">
-                                </td>
                                 <td class="tdcss">
                                     <span> {{item.articulo}}</span>
                                 </td>
@@ -267,6 +267,28 @@
                                 </td>
                                 <td class="tdcss">
                                     <span> {{item.cantidad}}</span>
+                                </td>
+                                
+                                <td class="tdcss" style="vertical-align: initial;    text-align: center; ">
+                                    <input style="display:none" class="form-check-input input_check " id="{{item.id}}" type="checkbox" [(ngModel)]="item.selected" >
+                                  
+                                  
+                                    <span  *ngIf=" item.estadoId==0" class="badge badge-pill badge-success">SI</span>
+                                    <span  *ngIf=" item.estadoId==1" class="badge badge-pill badge-warning">NO</span>
+                                    <span  *ngIf=" item.estadoId==2" class="badge badge-pill badge-secondary">INCOMPLETO</span>
+
+                                      <!-- <svg *ngIf="item.selected" style="color: #EC7063;" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-pin-angle-fill" viewBox="0 0 16 16">
+                                        <path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z"/>
+                                      </svg> -->
+                                      <svg *ngIf="item.selected"
+                                      style="    position: absolute;
+                                      top: -20px;
+                                      right: -68px;
+                                      z-index: 10000000;
+                                      color: antiquewhite;"
+                                      xmlns="http://www.w3.org/2000/svg" width="95" height="95" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
+                                        <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
+                                      </svg>
                                 </td>
                                 <!-- <td>
                                     <span> ${{item.precio | number:'1.2-2'}} </span>
@@ -365,19 +387,22 @@
 <ng-template #pickingArticuloLibra>
 
     
-    <div class="col-md-12">
-        <div class="card">
+        <div class="card" style=" margin-left: 10px;">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-12 mb-1">
+
+
+          <!-- INFORMACION ARTICULO -->
+                    <div class="col-md-12">
                         <div class="row  p-1">
                             <div class="col">
-                                <h3> <i class="fa fa-shopping-bag"></i> 200039 |
+                                <h3 class="font-bold"> <i class="fa fa-shopping-bag"></i> 200039 |
                                     Salami Super Especial Nut. 1/1 de 2.2 Lbs	</h3>
                             </div>
                         </div>
                     </div>
   
+          <!-- INPUTS LOTE -->
                     <div class="form-group col-md-6" >
                         <label for="inputEmail4">Almacén</label>
                         <ng-select bindLabel="nombre" bindValue="codigo" [(ngModel)]="almacenID"
@@ -385,122 +410,134 @@
                             notFoundText="No resultados" [readonly]="true">
                         </ng-select>
                     </div>
-  
-  
+
                     <div class="form-group col-md-6" >
                         <label>Lote</label>
                         <input  type="text" id="inputSearch"
                         class="form-control" placeholder="Lote">
                     </div>
-  
-                </div>
-            </div>
-        </div>
-    </div>
-  
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-12">
-  
+
+
+         <!-- LISTADO DE ARTICULOS EXTRAS -->
+                    <div class="col-md-12">
                         <table class="table table-hover mb-0 no-wrap v-middle">
-                            <thead>
-                                <tr>
-                                    <th scope="col"></th>
-                                    <th scope="col">Peso</th>
-                                    <th scope="col">Cantidad</th>
-                                    <th scope="col">Total Peso</th>
-                                </tr>
-                            </thead>
-  
-                            <tbody>
-  
-                                <tr *ngFor="let item of articulosExtras; let i=index">
-                                    <td>
-                                        <h2>
-                                            <span> {{item.nombre}}</span>
-                                        </h2>
-                                    </td>
-                                    <td>
-                                        <ng-select style="width: 200px;" [clearable]="false" [items]="item.pesos"
-                                            bindLabel="nombre" [searchable]="false" (change)="calcularTotales()"
-                                            [(ngModel)]="item.pesoSeleccionado" notFoundText="No resultados">
-                                        </ng-select>
-                                    </td>
-                                    <td>
-                                        <ng-select style="width: 150px;" [clearable]="false" [items]="cantidades"
-                                            [(ngModel)]="item.cantidadSeleccionada" [searchable]="false"
-                                            (change)="calcularTotales()" notFoundText="No resultados">
-                                        </ng-select>
-                                    </td>
-                                    <td>
-                                        <h2>
-                                            <span *ngIf="item.cantidadSeleccionada && item.pesoSeleccionado">
-                                                {{item.cantidadSeleccionada * item.pesoSeleccionado.valor |
-                                                number:'1.2-5'}}
-                                                {{item.pesoSeleccionado.abreviatura}}</span>
-                                        </h2>
-                                    </td>
-                                </tr>
-                            </tbody>
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col"></th>
+                                                    <th scope="col">Peso</th>
+                                                    <th scope="col">Cantidad</th>
+                                                    <th scope="col">Total Peso</th>
+                                                </tr>
+                                            </thead>
+                  
+                                            <tbody>
+                  
+                                                <tr class="" *ngFor="let item of articulosExtras; let i=index">
+                                                    <td>
+                                                        <h4>
+                                                            <span class="font-bold"> {{item.nombre}}</span>
+                                                        </h4>
+                                                    </td>
+                                                    <td>
+                                                        <ng-select style="width: 150px;" [clearable]="false" [items]="item.pesos"
+                                                            bindLabel="nombre" [searchable]="false" (change)="calcularTotales()"
+                                                            [(ngModel)]="item.pesoSeleccionado" notFoundText="No resultados">
+                                                        </ng-select>
+                                                    </td>
+                                                    <td>
+                                                        <ng-select style="width: 80px;" [clearable]="false" [items]="cantidades"
+                                                            [(ngModel)]="item.cantidadSeleccionada" [searchable]="false"
+                                                            (change)="calcularTotales()" notFoundText="No resultados">
+                                                        </ng-select>
+                                                    </td>
+                                                    <td>
+                                                        <h2>
+                                                            <span *ngIf="item.cantidadSeleccionada && item.pesoSeleccionado">
+                                                                {{item.cantidadSeleccionada * item.pesoSeleccionado.valor |
+                                                                number:'1.2-5'}}
+                                                                {{item.pesoSeleccionado.abreviatura}}</span>
+                                                        </h2>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
                         </table>
-  
+                    </div> 
+
+
+
+        <!-- TOTALES DEL PESO -->
+                    <div class=" col-md-12 row">
+                      <div class="col-12">
+                        <br>
+                      </div>
+        
+                        <div class="col-md-4">
+                        <div class="card  ">
+                            <div class="card-body  pb-0">
+                                <div class="d-flex no-block align-items-center">
+                                    <div><span class="text-danger display-5"><i class="ti-pie-chart"></i></span></div>
+                                    <div class="ml-auto text-right">
+                                        <h2 class="font-weight-bold"> {{1000 | number}} LB</h2>
+                                        <h4 class="text-danger mb-1">Peso Balanza</h4>
+                                        <span *ngIf="pesoBalanzaUltimaFecha" class="small "><i class="fa fa-clock"></i>
+                                            {{pesoBalanzaUltimaFecha | date:'hh:mm:ss a'}}
+                                        </span>
+                                        <span *ngIf="pesoBalanza" class="small">
+                                            | {{pesoBalanza }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card ">
+                            <div class="card-body">
+                                <div class="d-flex no-block align-items-center">
+                                    <div><span class="text-info display-5"><i class="ti-pie-chart"></i></span></div>
+                                    <div class="ml-auto text-right">
+                                        <h2 class="font-weight-bold">{{1000 | number}} Lb</h2>
+                                        <h4 class="text-info">Peso Canastos</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card ">
+                            <div class="card-body">
+                                <div class="d-flex no-block align-items-center">
+                                    <div><span class="text-success display-5"><i class="ti-pie-chart"></i></span></div>
+                                    <div class="ml-auto text-right">
+                                        <h2 class="font-weight-bold">{{1000 | number}} Lb</h2>
+                                        <h4 class="text-success">Peso Neto</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div> 
+                    <div class=" col-md-12  row">
+                        <div class="col-md-12"><hr></div>
+                       <div class="col-md-1"></div>
+                        <div class="col-md-5 text-left">
+                            <button  style="width: 100%;  color:#4183D7;     font-size: 18px;   height: 50px;" *ngIf="!btnGuardarCargando" class="btn btn-outline-light font-bold  m-1" type="button" (click)="onSubmit()">
+                                <i class="fa fa-arrow-left" aria-hidden="true"></i>    Anterior 
+                            </button>
+                        </div>
+
+                        <div class="col-md-5 text-right">
+                            <button   style="width: 100%;  height: 50px;     font-size: 18px;" *ngIf="!btnGuardarCargando" class="btn btn-success font-bold  m-1" type="button" (click)="onSubmit()">
+                               Guardar  y Siguiente <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-  <div class=" col-md-12 row">
-  
-    <div class="col-md-4">
-        <div class="card  ">
-            <div class="card-body  pb-0">
-                <div class="d-flex no-block align-items-center">
-                    <div><span class="text-danger display-5"><i class="ti-pie-chart"></i></span></div>
-                    <div class="ml-auto text-right">
-                        <h2 class="font-weight-bold"> {{1000 | number}} LB</h2>
-                        <h4 class="text-danger mb-1">Peso Balanza</h4>
-                        <span *ngIf="pesoBalanzaUltimaFecha" class="small "><i class="fa fa-clock"></i>
-                            {{pesoBalanzaUltimaFecha | date:'hh:mm:ss a'}}
-                        </span>
-                        <span *ngIf="pesoBalanza" class="small">
-                            | {{pesoBalanza }}
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-  
-    <div class="col-md-4">
-        <div class="card ">
-            <div class="card-body">
-                <div class="d-flex no-block align-items-center">
-                    <div><span class="text-info display-5"><i class="ti-pie-chart"></i></span></div>
-                    <div class="ml-auto text-right">
-                        <h2 class="font-weight-bold">{{1000 | number}} Lb</h2>
-                        <h4 class="text-info">Peso Canastos</h4>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-  
-    <div class="col-md-4">
-        <div class="card ">
-            <div class="card-body">
-                <div class="d-flex no-block align-items-center">
-                    <div><span class="text-success display-5"><i class="ti-pie-chart"></i></span></div>
-                    <div class="ml-auto text-right">
-                        <h2 class="font-weight-bold">{{1000 | number}} Lb</h2>
-                        <h4 class="text-success">Peso Neto</h4>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-  </div>
+
   
   <!-- <div class="row" >
     <div class="col-12">

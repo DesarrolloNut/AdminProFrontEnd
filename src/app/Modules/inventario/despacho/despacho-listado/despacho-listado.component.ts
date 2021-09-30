@@ -91,7 +91,7 @@ articulosExtras: ArticuloPesosExtrasViewModel[];
         if (x.ok) {
           this.data = x.records;
           this.asignarPagination(x);
-        } else {
+        } else { 
           this.toastService.error(x.errores[0]);
           console.error(x.errores[0]);
         }
@@ -147,6 +147,12 @@ articulosExtras: ArticuloPesosExtrasViewModel[];
           this.toastService.error(response.errores[0]);
         } else {
           this.pedidoEmpleadoDetalles = response.records;
+          this.pedidoEmpleadoDetalles[0].selected=true;
+          this.pedidoEmpleadoDetalles[0].estadoId=0;
+          this.pedidoEmpleadoDetalles[1].estadoId=1;
+          this.pedidoEmpleadoDetalles[2].estadoId=2;
+
+
         }
         this.loadingPedidoEmpleadoDetalle = false;
       }, error => {
@@ -292,4 +298,8 @@ articulosExtras: ArticuloPesosExtrasViewModel[];
     })
   }
 
+  onSelectArticulo(item:DespachoPedidoDetalleViewModel){
+    this.pedidoEmpleadoDetalles.map(x=>{x.selected=false})
+     item.selected=true;
+  }
 }
