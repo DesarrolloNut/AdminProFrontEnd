@@ -15,4 +15,6 @@ export interface DespachoPedidoDetalleViewModel {
     almacen: string;
     selected:boolean;
     estadoId:number;
+    estado:string;
+    estadoColor:string;
 }

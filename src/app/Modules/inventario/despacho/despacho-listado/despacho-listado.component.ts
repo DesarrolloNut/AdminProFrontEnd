@@ -55,7 +55,7 @@ export class DespachoListadoComponent implements OnInit {
 loadingArticulosExtras: boolean;
 articulosExtrasComboBox: ArticuloPesosExtras[];
 articulosExtras: ArticuloPesosExtrasViewModel[];
-
+cantidades: number[] = [];
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private modalService: NgbModal,
@@ -70,6 +70,11 @@ articulosExtras: ArticuloPesosExtrasViewModel[];
     this.getData();
     this.fillComboCanales();
     this.getArticulosDePesosExtras();
+
+    
+    for (let i = 1; i <= 100; i++) {
+      this.cantidades.push(i)
+    }
   }
   
   fillComboCanales(){
@@ -148,11 +153,7 @@ articulosExtras: ArticuloPesosExtrasViewModel[];
         } else {
           this.pedidoEmpleadoDetalles = response.records;
           this.pedidoEmpleadoDetalles[0].selected=true;
-          this.pedidoEmpleadoDetalles[0].estadoId=0;
-          this.pedidoEmpleadoDetalles[1].estadoId=1;
-          this.pedidoEmpleadoDetalles[2].estadoId=2;
-
-
+          console.log(this.pedidoEmpleadoDetalles)
         }
         this.loadingPedidoEmpleadoDetalle = false;
       }, error => {
