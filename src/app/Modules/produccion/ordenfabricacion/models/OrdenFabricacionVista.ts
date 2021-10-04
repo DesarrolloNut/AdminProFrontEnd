@@ -23,6 +23,7 @@ export class OrdenFabricacionVista {
     this.costoArticulo = 0;
     this.ordenFabricacionId = 0;
     this.estadoId = 0;
+    this.colorHEX = '';
     this.cantidadRequerida = 0;
     this.isPesaje = false;
     this.loadingSaveConsumido = false;
@@ -50,6 +51,7 @@ export class OrdenFabricacionVista {
   costoArticulo: number;
   ordenFabricacionId: number;
   estadoId: number;
+  colorHEX: String;
   cantidadRequerida: number;
   isPesaje: boolean;
   loadingSaveConsumido: boolean;

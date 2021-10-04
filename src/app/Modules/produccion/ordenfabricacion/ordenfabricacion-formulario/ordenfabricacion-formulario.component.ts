@@ -1,3 +1,4 @@
+import { OrdenFabricacionEstadoEnum } from './../models/OrdenFabricacionEstadoEnum';
 import { OrdenFabricacion } from './../models/OrdenFabricacion';
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
@@ -46,7 +47,11 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
   ordenfabricacion: OrdenFabricacion = new OrdenFabricacion();
   ordenfabricaciondetalle: OrdenFabricacionDetalle = new OrdenFabricacionDetalle();
   IsNewData:boolean = true;
-  IsClose: boolean = false;
+  // ValidOrden: OrdenFabricacionEstadoEnum;
+
+  public get ValidOrden(): typeof OrdenFabricacionEstadoEnum {
+    return OrdenFabricacionEstadoEnum;
+  }
 
   constructor(
     private toastService: ToastrService,
@@ -313,9 +318,6 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           let estado = response.records[0].estadoId;
-          if(estado == 3){
-            this.IsClose = true;
-          }
           this.getArticuloById(response.records[0].articuloId);
           this.ofheader.tipoId = response.records[0].ordenFabricacionTipoId;
           this.ofheader.estadoId = response.records[0].estadoId;

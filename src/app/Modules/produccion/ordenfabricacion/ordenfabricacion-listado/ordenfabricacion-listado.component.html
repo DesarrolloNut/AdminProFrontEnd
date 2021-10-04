@@ -6,12 +6,11 @@
           <div class="col-md-6 align-middle">
             <h4 class="card-title">Listado de Orden Fabricación</h4>
           </div>
-          <div class="col-md-6 text-right">
+          <div class="col-md-12 text-right p-3">
             <button [routerLink]="[0]" class="btn btn-info"> <i class="fa fa-plus"></i> Nueva
-              Orden Fabricación
             </button>
           </div>
-          <div class="col-md-12 p-2">
+          <div class="col-md-8">
 
             <div class="input-group">
               <div class="input-group-prepend">
@@ -25,6 +24,14 @@
                 class="form-control" placeholder="Buscar">
             </div>
           </div>
+
+          <div class="col-md-4">
+            <ng-select bindLabel="nombre" bindValue="codigo" [items]="estadosAutorizacion" [(ngModel)]="OrdenFilterEstadoId" (change)="getData()"
+            class ="form-control p-0" notFoundText="No resultados" >
+            </ng-select>
+          </div>
+
+
         </div>
 
         <div class="table-responsive">
@@ -37,8 +44,8 @@
                 <th>Almacen</th>
                 <!-- <th>Fecha Creación</th> -->
                 <th>Cantidad Planificada</th>
-                <th></th>
                 <!-- <th>Estado</th> -->
+                <th></th>
               </tr>
             </thead>
             <tbody [hidden]="Cargando">
@@ -48,6 +55,14 @@
                 <td>
                   <span class="font-weight-bold"> {{item.articulo}}</span>
                   <small  class="d-block" > Fecha Creación: {{item.fechaCreacion | date:'medium'}}</small>
+                  <span class="badge text-white m-1 font-weight-bold" [ngClass]="{
+                    'badge-secondary text-black' : item.colorHEX == 'secondary',
+                  'badge-success' : item.colorHEX == 'success',
+                  'badge-warning ' : item.colorHEX == 'warning',
+                  'badge-danger ' : item.colorHEX == 'danger',
+                  'badge-info ' : item.colorHEX == 'info'
+
+                }" >{{item.nombre}}</span>
                 </td>
                 <td>
                   <span> {{item.tipo}}</span>
@@ -56,29 +71,29 @@
                   <span> {{item.almacen}}</span>
                 </td>
 
-                <!-- <td>
-                  <div class="circulo" [ngStyle]="{'background-color':  cliente.estadoColorERP}"></div>
-                  <span class="text-dark">
-                      {{cliente.estadoERP}}
-                  </span>
-              </td> -->
-
                 <td>
                   <span> {{item.cantidadPlanificada | number:'1.2-2'}}</span>
                 </td>
 
+
                 <td>
-                  <button class="btn btn-sm btn-light m-1" (click)="openModal(modalPesajes,item)" >
-                    <i class="fa fa-sm fa-list"></i>
-                  </button>
-
-                  <button class="btn btn-sm btn-light m-1" (click)="openModalProducida(modalProducida,item)" >
-                    <i class="fa fa-sm fa-calendar-check"></i>
-                  </button>
-
                   <button class="btn btn-sm btn-info m-1" [routerLink]="[item.id]">
                     <i class="fa fa-sm fa-edit"></i>
                   </button>
+
+                  <button class="btn btn-sm btn-dark m-1" (click)="openModalComfirm(modalConfirmacionEstado,item)" >
+                    <i class="fa fa-sm fa-arrow-right"></i>
+                  </button>
+
+                  <button class="btn btn-sm btn-warning m-1" (click)="openModal(modalPesajes,item)" *ngIf="item.estadoId == ValidOrden.PENDIENTECONSUMO">
+                    <i class="fa fa-sm fa-list"></i>
+                  </button>
+
+                  <button class="btn btn-sm btn-success m-1" (click)="openModalProducida(modalProducida,item)" *ngIf="item.estadoId == ValidOrden.PENDIENTEPRODUCIR">
+                    <i class="fa fa-sm fa-calendar-check"></i>
+                  </button>
+
+
                 </td>
               </tr>
 
@@ -114,6 +129,58 @@
 </div>
 
 
+<ng-template #modalConfirmacionEstado let-modal>
+  <div class="modal-header bg-dark">
+    <h4 class="modal-title text-white">Cambio de estado</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+
+
+      <div class="col-12 mb-1">
+        <div class="row border border-light p-2">
+          <div class="col">
+            <h3> <i class="fa fa-shopping-bag"></i> {{articulo.codigoReferencia}} |
+              {{articulo.nombre}}</h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-4 text-center">
+            <p>Estado actual</p>
+            <h1>Liberado</h1>
+          </div>
+          <div class="col-4 text-center">
+            <i class="fa fa-arrow-right fa-5x"></i>
+          </div>
+          <div class="col-4 text-center">
+            <p>Proximo Estado</p>
+            <h1>Pendiente Consumir</h1>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
+
+
+    <button *ngIf="!btnGuardarCargando " class="btn btn-info m-1" type="button" (click)="onSubmit()">
+      <i class="fas fa-arrow-right"></i> Enviar
+  </button>
+
+  <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+      <span class="spinner-border spinner-border-sm"></span> Enviando
+  </button>
+  </div>
+</ng-template>
 
 <ng-template #modalPesajes let-modal>
   <div class="modal-header bg-dark">

@@ -13,6 +13,9 @@ import { OrdenFabricacion } from "../models/OrdenFabricacion";
 import { ListaMaterialesHeader } from "../models/ListaMaterialesHeader";
 import { Router, ActivatedRoute } from "@angular/router";
 import { OrdenfabricacionPesajeService } from "src/app/Services/ordenfabricacion-pesaje.service";
+import { OrdenFabricacionEstadoEnum } from "../models/OrdenFabricacionEstadoEnum";
+import { EstadosGeneralesKeyEnum } from "src/app/shared/enums/EstadosGeneralesKeyEnum";
+import { ComboBox } from "src/app/shared/model/ComboBox";
 
 @Component({
   selector: "app-ordenfabricacion-listado",
@@ -41,9 +44,17 @@ export class OrdenfabricacionListadoComponent implements OnInit {
   //Eliminar cuando el pesaje este listo
   IsPesaje: boolean = false;
   loadingSaveConsumido: boolean;
-  IsClose: boolean = false;
+  // IsClose: boolean = false;
   IsPesajeProducida: boolean;
   loadingSaveProducida: boolean;
+  validOrdenList: OrdenFabricacionEstadoEnum;
+  estadosAutorizacion: any[];
+  OrdenFilterEstadoId: number = 0;
+
+
+  public get ValidOrden(): typeof OrdenFabricacionEstadoEnum {
+    return OrdenFabricacionEstadoEnum;
+  }
 
   constructor(
     private toastService: ToastrService,
@@ -57,11 +68,16 @@ export class OrdenfabricacionListadoComponent implements OnInit {
 
   ngOnInit(): void {
     this.getData();
+    this.getEstadosAutorizacion();
   }
   getData() {
     this.Cargando = true;
 
-    let parametros: Parametro[] = [{ key: "Search", value: this.Search }];
+    let parametros: Parametro[] = [
+      { key: "Search", value: this.Search },
+      { key: "OrdenFilterEstadoId", value: this.OrdenFilterEstadoId },
+
+    ];
 
     this.httpService
       .GetAllWithPagination<OrdenFabricacionVista>(
@@ -77,10 +93,6 @@ export class OrdenfabricacionListadoComponent implements OnInit {
         (x) => {
           if (x.ok) {
             this.data = x.records;
-            let estado = x.records[0].estadoId;
-            if (estado == 3) {
-              this.IsClose = true;
-            }
             this.asignarPagination(x);
           } else {
             this.toastService.error(x.errores[0]);
@@ -185,6 +197,10 @@ export class OrdenfabricacionListadoComponent implements OnInit {
       );
   }
 
+  openModalComfirm(content, modal: OrdenFabricacionVista) {
+    this.getOrdenFabricacion(modal.id);
+    this.modalService.open(content, { size: 'xl' });
+  }
   openModal(content, modal: OrdenFabricacionVista) {
     this.getOrdenFabricacion(modal.id);
     this.modalService.open(content, {
@@ -355,4 +371,37 @@ export class OrdenfabricacionListadoComponent implements OnInit {
       this.paginaSize = 0;
     }
   }
+
+
+  getEstadosAutorizacion() {
+    let parametros: Parametro[] = [{
+      key: "NameKey",
+      value: EstadosGeneralesKeyEnum.ORDENFABRICACION
+    }]
+
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetEstadoForKeyComboBox", parametros).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+          this.estadosAutorizacion = response.records;
+          let estado = new ComboBox();
+          estado.codigo = 0;
+          estado.nombre = "Todos";
+          estado.grupo = "";
+          estado.grupoID = "";
+          this.estadosAutorizacion.unshift(estado);
+        }
+      }, error => {
+        this.toastService.error("No se pudo obtener los estados.", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getEstadosAutorizacion()
+        }, 1000);
+
+      });
+  }
+
+
 }
