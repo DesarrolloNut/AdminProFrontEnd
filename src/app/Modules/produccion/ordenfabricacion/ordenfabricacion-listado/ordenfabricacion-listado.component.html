@@ -81,7 +81,7 @@
                     <i class="fa fa-sm fa-edit"></i>
                   </button>
 
-                  <button class="btn btn-sm btn-dark m-1" (click)="openModalComfirm(modalConfirmacionEstado,item)" >
+                  <button class="btn btn-sm btn-dark m-1" (click)="openModalComfirm(modalConfirmacionEstado,item)" *ngIf="item.estadoId != ValidOrden.CERRADA">
                     <i class="fa fa-sm fa-arrow-right"></i>
                   </button>
 
@@ -150,17 +150,17 @@
       </div>
 
       <div class="col-12">
-        <div class="row justify-content-center align-items-center">
+        <div class=" justify-content-center align-items-center flex-column">
           <div class="col-4 text-center">
             <p>Estado actual</p>
-            <h1>Liberado</h1>
+            <h1>{{GetNameEstado(ofheader.estadoId)}}</h1>
           </div>
           <div class="col-4 text-center">
-            <i class="fa fa-arrow-right fa-5x"></i>
+            <i class="fa fa-arrow-down fa-3x"></i>
           </div>
           <div class="col-4 text-center">
             <p>Proximo Estado</p>
-            <h1>Pendiente Consumir</h1>
+            <h1>{{GetNameEstado(ofheader.estadoId+1)}}</h1>
           </div>
         </div>
       </div>
@@ -172,11 +172,11 @@
     <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
 
 
-    <button *ngIf="!btnGuardarCargando " class="btn btn-info m-1" type="button" (click)="onSubmit()">
+    <button *ngIf="!loadingEnviando " class="btn btn-info m-1" type="button" (click)="updateOrdenFabricacionEstado(ofheader.id)">
       <i class="fas fa-arrow-right"></i> Enviar
   </button>
 
-  <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+  <button *ngIf="loadingEnviando" disabled class="btn btn-info m-1" type="button">
       <span class="spinner-border spinner-border-sm"></span> Enviando
   </button>
   </div>

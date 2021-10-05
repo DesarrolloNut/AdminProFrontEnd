@@ -50,6 +50,7 @@ export class OrdenfabricacionListadoComponent implements OnInit {
   validOrdenList: OrdenFabricacionEstadoEnum;
   estadosAutorizacion: any[];
   OrdenFilterEstadoId: number = 0;
+  loadingEnviando: boolean;
 
 
   public get ValidOrden(): typeof OrdenFabricacionEstadoEnum {
@@ -70,12 +71,18 @@ export class OrdenfabricacionListadoComponent implements OnInit {
     this.getData();
     this.getEstadosAutorizacion();
   }
+
+GetNameEstado(estadoId: number){
+  let data = OrdenFabricacionEstadoEnum[estadoId] ;
+  return data;
+}
+
   getData() {
     this.Cargando = true;
 
     let parametros: Parametro[] = [
       { key: "Search", value: this.Search },
-      { key: "OrdenFilterEstadoId", value: this.OrdenFilterEstadoId },
+      { key: "OrdenFilterEstadoId", value: this.OrdenFilterEstadoId ?? 0 },
 
     ];
 
@@ -86,7 +93,7 @@ export class OrdenfabricacionListadoComponent implements OnInit {
         "ID",
         this.paginaNumeroActual,
         this.paginaSize,
-        true,
+        false,
         parametros
       )
       .subscribe(
@@ -199,7 +206,7 @@ export class OrdenfabricacionListadoComponent implements OnInit {
 
   openModalComfirm(content, modal: OrdenFabricacionVista) {
     this.getOrdenFabricacion(modal.id);
-    this.modalService.open(content, { size: 'xl' });
+    this.modalService.open(content, { size:'lg'});
   }
   openModal(content, modal: OrdenFabricacionVista) {
     this.getOrdenFabricacion(modal.id);
@@ -272,7 +279,7 @@ export class OrdenfabricacionListadoComponent implements OnInit {
           if (!response.ok) {
             this.toastService.error(response.errores[0]);
           } else {
-            console.log(response.records);
+            // console.log(response.records);
             this.articulosExtras = response.records;
             this.articulosExtras.forEach(
               (x) =>
@@ -297,6 +304,42 @@ export class OrdenfabricacionListadoComponent implements OnInit {
           this.loadingArticulosExtras = false;
           this.toastService.error(
             "No se pudo obtener los articulos extras",
+            "Error conexion al servidor"
+          );
+
+          setTimeout(() => {
+            //this.getOrdenFabricacionDetalle();
+          }, 1000);
+        }
+      );
+  }
+
+  updateOrdenFabricacionEstado(id: number) {
+    this.loadingEnviando = true;
+
+    this.httpService
+      .DoPostAny<OrdenFabricacionVista>(
+        DataApi.OrdenFabricacion,
+        "CambiarEstadoOrdenFabricacion",
+        id
+      )
+      .subscribe(
+        async (response) => {
+          if (!response.ok) {
+            this.toastService.error(response.errores[0]);
+          } else {
+            // console.log(response.records);
+            this.toastService.success("Procesado");
+            this.modalService.dismissAll();
+            this.getData();
+
+          }
+          this.loadingEnviando = false;
+        },
+        (error) => {
+          this.loadingEnviando = false;
+          this.toastService.error(
+            "No se pudo obtener los datos",
             "Error conexion al servidor"
           );
 

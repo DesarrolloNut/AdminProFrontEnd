@@ -148,7 +148,7 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
   empezarAmbientePrueba() {
 
     setInterval(() => {
-      this.pesoBalanza = this.getRandomInt(1, 100) + 'KGZ';
+      this.pesoBalanza = this.getRandomInt(0, 100) + 'KGZ';
       this.pesoBalanzaUltimaFecha = new Date();
 
       this.formatStringFromBalanza();

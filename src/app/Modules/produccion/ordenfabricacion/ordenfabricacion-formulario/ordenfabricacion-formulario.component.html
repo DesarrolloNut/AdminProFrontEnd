@@ -68,8 +68,6 @@
                           <div class="col">
                               <h3> <i class="fa fa-shopping-bag"></i> {{articulo.codigoReferencia}} |
                                   {{articulo.nombre}}</h3>
-                                  {{ValidOrden.PENDIENTECONSUMO }}
-                                  {{ofheader.estadoId }}
                           </div>
                       </div>
                   </div>
@@ -156,7 +154,7 @@
                                     <td>{{articulext.consumido}}</td>
                                     <td>{{articulext.disponible}}</td>
                                     <td>{{articulext.unidadMedida}}</td>
-                                    <td>{{ofheader.almacenId}}</td>
+                                    <td>{{articulext.almacenCodigoReferencia}}</td>
                                     <td>{{articulext.metodoEmision == "M" ? "Manual" : "Automático"}}</td>
                                   </tr>
 
@@ -241,7 +239,7 @@
 
 
 
-<div class="row" *ngIf="articulo">
+<div class="row" *ngIf="articulo && ofheader.estadoId < ValidOrden.PENDIENTECONSUMO">
   <div class="col-12">
       <div class="card">
           <div class="card-body">
