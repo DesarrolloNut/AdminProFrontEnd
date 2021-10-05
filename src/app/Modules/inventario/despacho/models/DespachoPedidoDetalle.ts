@@ -11,4 +11,5 @@ export interface DespachoPedidoDetalle {
     totalDescuento: number;
     totalImpuesto: number;
     totalNeto: number;
+    estadoId:number;
 }

@@ -172,7 +172,8 @@ export class DespachoFormularioComponent implements OnInit {
         almacenId: this.almacenes[0].codigo, articuloId: 0, cantidad: undefined, costo: 0,
         cotizacionId: 0, id: 0,
         porcientoDescuento: undefined, precio: 0,
-        subtotal: 0, totalDescuento: 0, totalImpuesto: 0, totalNeto: 0
+        subtotal: 0, totalDescuento: 0, totalImpuesto: 0, totalNeto: 0,
+        estadoId:2,
       })
     }else{
       this.toastService.warning("Debe asignarle un almacen a este empleado")

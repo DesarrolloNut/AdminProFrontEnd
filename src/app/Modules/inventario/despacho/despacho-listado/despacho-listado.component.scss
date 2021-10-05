@@ -1,0 +1,59 @@
+::ng-deep .myCustomModalClass .modal-dialog {
+    max-width: 99%;
+    width: 99%;
+  }
+  
+  .tdcss{
+    padding: 0.7rem;
+  }
+
+  .tr_detalle{
+    font-size: 20px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .left_detalle{
+    background-color: #FCFCFC;
+    border-right: 1px solid gainsboro;
+    margin-top: -16px;
+    margin-bottom: -16px; 
+    margin-left: -6px;
+  }
+
+  .right_detalle{
+    margin-top: -16px;
+    margin-bottom: -16px; 
+    margin-left: 15px;
+  }
+  .input_check{
+    width: 21px;
+    height: 21px;
+  }
+  #right-triangle {
+    width: 0;
+    height: 0;
+    border-left: 140px solid #103252;
+    border-top: 70px solid transparent;
+    border-bottom: 70px solid transparent;
+}
+
+.tr_detalle_articulo_selected{
+  background-color: antiquewhite;
+  position: relative;
+}
+.tr_detalle_articulo_no_selected{
+  background-color: #FCFCFC; 
+}
+
+
+.input_CantidadPedido{
+  font-weight: 500;
+  font-size: 25px;
+  height: 70px;
+}
+.input_CantidadDespacho{
+  font-weight: 500;
+  font-size: 25px;
+  height: 70px;
+}
