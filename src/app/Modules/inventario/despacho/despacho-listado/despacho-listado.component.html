@@ -133,15 +133,6 @@
                         </tbody>
 
                     </table>
-                    <div class="row p-2 m-t-20" *ngIf="!clienteExiste && !Cargando">
-                        <div class="col-md-12 text-center">
-                            <i style="font-size: 100px;" class="fa fa-shopping-cart" aria-hidden="true"></i>
-                             <h4 class="m-t-20">
-                                Usted no tiene un codigo de cliente, por esta razón no puede realizar pedido.
-                            </h4>
-                            <p class="text-info "  >Comunicate con <b style="text-decoration: underline;">Gestión Humana</b>. </p>
-                        </div>
-                    </div>
                 </div>
 
 
@@ -257,10 +248,10 @@
 
                             <tr (click)="onSelectArticulo(item)" 
                             [ngClass]="(item.selected)?'tr_detalle_articulo_selected':'tr_detalle_articulo_no_selected'"
-                              *ngFor="let item of pedidoEmpleadoDetalles" class="tr_detalle">
+                              *ngFor="let item of despachoDetalles" class="tr_detalle">
                         
                                 <td class="tdcss">
-                                    <span> {{item.articulo}}</span>
+                                    <span> {{item.codigoReferencia}} |  {{item.articulo}}</span>
                                 </td>
                                 <td class="tdcss">
                                     <span> {{item.cantidad}}</span>
@@ -273,7 +264,7 @@
                                     <input style="display:none" class="form-check-input input_check " id="{{item.id}}" type="checkbox" [(ngModel)]="item.selected" >
                                   
                                   
-                                    <span  class="badge badge-pill badge-{{item.estadoColor}}">{{item.estado | uppercase}}</span>
+                                    <span  class="badge font-bold badge-pill badge-{{item.estadoColor}}">{{item.estado | uppercase}}</span>
 
 
                                       <!-- <svg *ngIf="item.selected" style="color: #EC7063;" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-pin-angle-fill" viewBox="0 0 16 16">
@@ -332,8 +323,11 @@
             </div>
         </div>
 
-        <div class=" col-md-6 row right_detalle" >
-            <ng-container  *ngIf="true;then pickingArticuloLibra else pickingArticuloUnidad" >
+        <div class=" col-md-6 row right_detalle" *ngIf="this.despachoPedidoArticuloDetalleSelected">
+            <ng-container  
+            *ngIf="this.despachoPedidoArticuloDetalleSelected.unidadMedida  =='UNIDAD';
+                     then pickingArticuloUnidad
+                     else pickingArticuloLibra" >
             </ng-container>
         </div>
 
@@ -388,15 +382,16 @@
     
         <div class="card" style=" margin-left: 10px;">
             <div class="card-body">
-                <div class="row">
+                <div class="row" *ngIf="despachoPedidoArticuloDetalleSelected">
 
 
           <!-- INFORMACION ARTICULO -->
                     <div class="col-md-12">
                         <div class="row  p-1">
                             <div class="col">
-                                <h3 class="font-bold"> <i class="fa fa-shopping-bag"></i> 200039 |
-                                    Salami Super Especial Nut. 1/1 de 2.2 Lbs	</h3>
+                                <h3 class="font-bold"> <i class="fa fa-shopping-bag"></i> 
+                                    {{despachoPedidoArticuloDetalleSelected.codigoReferencia}} |
+                                   {{despachoPedidoArticuloDetalleSelected.articulo}}	</h3>
                             </div>
                         </div>
                     </div>
@@ -404,15 +399,16 @@
           <!-- INPUTS LOTE -->
                     <div class="form-group col-md-6" >
                         <label for="inputEmail4">Almacén</label>
-                        <ng-select bindLabel="nombre" bindValue="codigo" [(ngModel)]="almacenID"
-                            [items]="almecenes" [clearable]="false" [loading]="loadingAlmacenes"
+                        <ng-select bindLabel="nombre" bindValue="codigo"
+                            [(ngModel)]="despachoPedidoArticuloDetalleSelected.almacenId"
+                            [items]="almacenes" [clearable]="false" [loading]="loadingAlmacenes"
                             notFoundText="No resultados" [readonly]="true">
                         </ng-select>
                     </div>
 
                     <div class="form-group col-md-6" >
                         <label>Lote</label>
-                        <input  type="text" id="inputSearch"
+                        <input  [readonly]="true"  type="text" id="inputSearch"
                         class="form-control" placeholder="Lote">
                     </div>
 
@@ -476,7 +472,7 @@
                                 <div class="d-flex no-block align-items-center">
                                     <div><span class="text-danger display-5"><i class="ti-pie-chart"></i></span></div>
                                     <div class="ml-auto text-right">
-                                        <h2 class="font-weight-bold"> {{1000 | number}} LB</h2>
+                                        <h2 class="font-weight-bold"> {{pesoBalanzaLBNumber | number}} LB</h2>
                                         <h4 class="text-danger mb-1">Peso Balanza</h4>
                                         <span *ngIf="pesoBalanzaUltimaFecha" class="small "><i class="fa fa-clock"></i>
                                             {{pesoBalanzaUltimaFecha | date:'hh:mm:ss a'}}
@@ -496,7 +492,7 @@
                                 <div class="d-flex no-block align-items-center">
                                     <div><span class="text-info display-5"><i class="ti-pie-chart"></i></span></div>
                                     <div class="ml-auto text-right">
-                                        <h2 class="font-weight-bold">{{1000 | number}} Lb</h2>
+                                        <h2 class="font-weight-bold">{{pesoCanastos | number}} Lb</h2>
                                         <h4 class="text-info">Peso Canastos</h4>
                                     </div>
                                 </div>
@@ -510,7 +506,7 @@
                                 <div class="d-flex no-block align-items-center">
                                     <div><span class="text-success display-5"><i class="ti-pie-chart"></i></span></div>
                                     <div class="ml-auto text-right">
-                                        <h2 class="font-weight-bold">{{1000 | number}} Lb</h2>
+                                        <h2 class="font-weight-bold">{{pesoNeto | number}} Lb</h2>
                                         <h4 class="text-success">Peso Neto</h4>
                                     </div>
                                 </div>
@@ -518,18 +514,24 @@
                         </div>
                     </div>
                     </div> 
-                    <div class=" col-md-12  row">
+                    <div class=" col-md-12  row " style="position: absolute; bottom: 0px;">
                         <div class="col-md-12"><hr></div>
                        <div class="col-md-1"></div>
                         <div class="col-md-5 text-left">
-                            <button  style="width: 100%;  color:#4183D7;     font-size: 18px;   height: 50px;" *ngIf="!btnGuardarCargando" class="btn btn-outline-light font-bold  m-1" type="button" (click)="onSubmit()">
-                                <i class="fa fa-arrow-left" aria-hidden="true"></i>    Anterior 
+                            <button (click)="onBackItem()"  style="width: 100%;  color:#4183D7;     font-size: 18px;   height: 50px;"
+                             *ngIf="!btnGuardarCargando" 
+                             class="btn btn-outline-light font-bold  m-1" type="button" >
+                                <i class="fa fa-arrow-left"  aria-hidden="true"></i>    Anterior 
                             </button>
                         </div>
 
                         <div class="col-md-5 text-right">
-                            <button   style="width: 100%;  height: 50px;     font-size: 18px;" *ngIf="!btnGuardarCargando" class="btn btn-success font-bold  m-1" type="button" (click)="onSubmit()">
-                               Guardar  y Siguiente <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                            <button  
+                               style="width: 100%;  height: 50px;     font-size: 18px;"
+                               *ngIf="!btnGuardarCargando" class="btn btn-success font-bold  m-1"
+                                type="button" (click)="onNextItemSubmit()">
+                                Guardar  y Siguiente 
+                               <i class="fa fa-arrow-right" aria-hidden="true"></i>
                             </button>
                         </div>
                     </div>
@@ -566,5 +568,78 @@
 </ng-template>
 
 <ng-template #pickingArticuloUnidad>
-  <h1>hola</h1>
+    <div class="card" style=" margin-left: 10px;">
+        <div class="card-body">
+            <div class="row" *ngIf="despachoPedidoArticuloDetalleSelected">
+
+
+      <!-- INFORMACION ARTICULO -->
+                <div class="col-md-12">
+                    <div class="row  p-1">
+                        <div class="col-md-12">
+                            <h3 class="font-bold"> <i class="fa fa-shopping-bag"></i> 
+                                {{despachoPedidoArticuloDetalleSelected.codigoReferencia}} |
+                               {{despachoPedidoArticuloDetalleSelected.articulo}}	</h3>
+                        </div>
+                              <!-- INPUTS LOTE -->
+                        <div class="form-group col-md-6" >
+                            <label for="inputEmail4">Almacén</label>
+                            <ng-select bindLabel="nombre" bindValue="codigo"
+                                [(ngModel)]="despachoPedidoArticuloDetalleSelected.almacenId"
+                                [items]="almacenes" [clearable]="false" [loading]="loadingAlmacenes"
+                                notFoundText="No resultados" [readonly]="true">
+                            </ng-select>
+                        </div>
+
+                        <div class="form-group col-md-6" >
+                            <label>Lote</label>
+                            <input  [readonly]="true"  type="text" id="inputSearch"
+                            class="form-control" placeholder="Lote">
+                        </div>
+
+
+                        <!-- CANTIDAD PEDIDO | CANTIDAD DESPACHO -->
+                        <div class="form-group col-md-6" >
+                            <label>Cantidad Pedido</label>
+                            <input [(ngModel)]="despachoPedidoArticuloDetalleSelected.cantidad"
+                              [readonly]="true"  type="number" id="inputSearch"
+                            class="form-control input_CantidadPedido" placeholder="Cantidad pedido">
+                        </div>
+
+                        <div class="form-group col-md-6" >
+                            <label>Cantidad Despacho</label>
+                            <input [(ngModel)]="despachoPedidoArticuloDetalleSelected.cantidadDespacho" 
+                              type="number" id="inputSearch"
+                            class="form-control input_CantidadDespacho" placeholder="0">
+                        </div>
+                        
+                    </div>
+                </div>
+
+
+
+                <div class=" col-md-12  row " style="position: absolute; bottom: 0px;">
+                    <div class="col-md-12"><hr></div>
+                   <div class="col-md-1"></div>
+                    <div class="col-md-5 text-left">
+                        <button (click)="onBackItem()"  style="width: 100%;  color:#4183D7;     font-size: 18px;   height: 50px;"
+                         *ngIf="!btnGuardarCargando" 
+                         class="btn btn-outline-light font-bold  m-1" type="button" >
+                            <i class="fa fa-arrow-left"  aria-hidden="true"></i>    Anterior 
+                        </button>
+                    </div>
+
+                    <div class="col-md-5 text-right">
+                        <button  
+                           style="width: 100%;  height: 50px;     font-size: 18px;"
+                           *ngIf="!btnGuardarCargando" class="btn btn-success font-bold  m-1"
+                            type="button" (click)="onNextItemSubmit()">
+                            Guardar  y Siguiente 
+                           <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </ng-template>
