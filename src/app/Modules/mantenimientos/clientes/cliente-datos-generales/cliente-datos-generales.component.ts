@@ -579,7 +579,7 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
   parametros.documentoTipoID = documentoTipoID;
 
   this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
-    "GetClientePadronDatosOByRnc", parametros).subscribe(response => {
+    "GetClienteByCedulaOrRnc", parametros).subscribe(response => {
 
       if (response.ok) {
         if (response != null && response.ok && response.records != null && response.records.length > 0) {
@@ -587,7 +587,10 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
 
           this.f.nombres.setValue(cliente.nombres);
           this.f.apellidos.setValue(cliente.apellidos!=null?cliente.apellidos:"");
-         
+          this.f.fechaNacimiento.setValue(cliente.fechaNacimiento);
+          this.f.sexo.setValue(cliente.sexo);
+
+
           if(this.clientId<=0){
             this.f.clientePadreId.setValue(cliente.id);
           }
