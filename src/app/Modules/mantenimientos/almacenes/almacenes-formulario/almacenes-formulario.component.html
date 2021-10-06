@@ -46,8 +46,8 @@
 
                     <div class="form-group col-md-4">
                         <label for="example-email">Sucursal</label>
-                        <ng-select [items]="companias" bindLabel="nombre" bindValue="codigo"
-                            [loading]="loadingCompanias"
+                        <ng-select [items]="sucursales" bindLabel="nombre" bindValue="codigo"
+                            [loading]="loadingSucursales"
                             [ngClass]="{'form-control border-danger p-0' : submitted && f.sucursalID.errors }"
                             notFoundText="No resultados" formControlName="sucursalID">
                         </ng-select>

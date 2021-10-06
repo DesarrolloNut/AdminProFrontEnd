@@ -82,6 +82,8 @@ import { ArticulosCategoriasListadoComponent } from './articulosCategorias/artic
 import { ArticulosCategoriasFormularioComponent } from './articulosCategorias/articulos-categorias-formulario/articulos-categorias-formulario.component';
 import { PlazosListadoComponent } from './plazos/plazos-listado/plazos-listado.component';
 import { PlazosFormularioComponent } from './plazos/plazos-formulario/plazos-formulario.component';
+import { ComprobanteFiscalListadoComponent } from './comprobanteFiscal/comprobante-fiscal-listado/comprobante-fiscal-listado.component';
+import { ComprobanteFiscalFormularioComponent } from './comprobanteFiscal/comprobante-fiscal-formulario/comprobante-fiscal-formulario.component';
 
 
 
@@ -91,7 +93,25 @@ const routes: Routes = [
     path: '', component: MantenimientosComponent,
     children: [
 
+      {
+        path: 'comprobante-fiscal', component: ComprobanteFiscalListadoComponent, data: {
+          title: 'Comprobantes fiscales',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Comprobantes fiscales' },
+          ]
+        }
+      },
 
+      {
+        path: 'comprobante-fiscal/:id', component: ComprobanteFiscalFormularioComponent, data: {
+          title: 'Comprobantes fiscales',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Comprobantes fiscales' },
+          ]
+        }
+      },
 
       // listas de precios
       {

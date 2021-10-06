@@ -103,6 +103,8 @@ import { PlazosListadoComponent } from './plazos/plazos-listado/plazos-listado.c
 import { PlazosFormularioComponent } from './plazos/plazos-formulario/plazos-formulario.component';
 import { ClienteComercialComponent } from './clientes/cliente-comercial/cliente-comercial.component';
 import { ClienteNegocioComponent } from './clientes/cliente-negocio/cliente-negocio.component';
+import { ComprobanteFiscalListadoComponent } from './comprobanteFiscal/comprobante-fiscal-listado/comprobante-fiscal-listado.component';
+import { ComprobanteFiscalFormularioComponent } from './comprobanteFiscal/comprobante-fiscal-formulario/comprobante-fiscal-formulario.component';
 
 
 
@@ -149,7 +151,9 @@ import { ClienteNegocioComponent } from './clientes/cliente-negocio/cliente-nego
     ArticulosCategoriasFormularioComponent,
     ArticulosCategoriasListadoComponent,
     PlazosListadoComponent,
-    PlazosFormularioComponent
+    PlazosFormularioComponent,
+    ComprobanteFiscalListadoComponent,
+    ComprobanteFiscalFormularioComponent
 
 
   ],
