@@ -73,7 +73,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
   clienteTabsValidaIterable = new ClienteTabsValida();
 
   //OBJETOS Y DEMAS
-  TipoSexo: any[] = [{ codigo: 'H', nombre: 'Hombre' }, { codigo: 'M', nombre: 'Mujer' }];
+  TipoSexo: any[] = [{ codigo: 'M', nombre: 'Hombre' }, { codigo: 'F', nombre: 'Mujer' }];
   geoRegex = '^-?([1-8]?[1-9]|[1-9]0)\\.{1}\\d{1,6}';
 
   latitud:number;
