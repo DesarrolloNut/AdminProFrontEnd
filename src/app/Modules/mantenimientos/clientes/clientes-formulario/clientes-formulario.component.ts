@@ -16,6 +16,7 @@ import { Parametro } from 'src/app/core/http/model/Parametro';
 import * as _ from "lodash";
 import { ClienteFrecuencia } from '../models/ClienteFrecuencia';
 import { ClienteContactos } from '../models/ClienteContactos';
+import { NgxPermissionsService } from 'ngx-permissions';
 
 @Component({
   selector: 'app-clientes-formulario',
@@ -92,6 +93,8 @@ export class ClientesFormularioComponent implements OnInit {
     if(this.clienteId<=0){
        this.loadingClienteInfo=false;
     }
+
+
   }
 
 

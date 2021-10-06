@@ -40,7 +40,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
   @Output() goTabByKey = new EventEmitter<string>();
   @Output() clienteExtraInfo = new EventEmitter<Cliente>();
   minDate: Date ;
- 
+  clientIsPrincipal:boolean;
   @ViewChild('contentModal') content: any;
 
   FormGenerales: FormGroup;
@@ -221,6 +221,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       latitud:[null, [Validators.required, this.regexValidator(new RegExp('^-?([1-8]?[1-9]|[1-9]0)\\.{1}\\d{1,6}'), {'valid': ''})]],
       estadoERPID: [0],
       clientePadreId: [null],
+      clientIsPrincipal:[true]
       // contactos: new FormArray([])
     },
       {
@@ -420,6 +421,7 @@ getTipoComprobante() {
       } else {
         if(this.f.documentoTipoID.value==1){
          response.records.filter(x=>x.codigo==1).map(d=>{d.disabled=true;})
+
         }
         this.tiposComprobantes = response.records;
       }
@@ -493,9 +495,14 @@ getSubSectores() {
 }
 
 getTipoCliente() {
+  
   this.loadingTipoCliente = true;
-  this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-    "GetTipoClienteComboBox", null).subscribe(response => {
+
+ 
+  let parametros: Parametro[] = [{ key: "usuario", value: Number(this.auth.tokenDecoded.nameid) }]
+
+  this.httpService.DoPostAny<ComboBox>(DataApi.ComboBox,
+    "GetTipoClienteComboBoxByUsuario",parametros[0]).subscribe(response => {
 
       if (!response.ok) {
         this.toastService.error(response.errores[0]);
@@ -505,7 +512,7 @@ getTipoCliente() {
       this.loadingTipoCliente = false;
     }, error => {
       this.loadingTipoCliente = false;
-      this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
+      this.toastService.error("No se pudo obtener los tipos de cliente", "Error conexion al servidor");
 
       setTimeout(() => {
         this.getTipoCliente();

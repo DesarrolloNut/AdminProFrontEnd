@@ -76,7 +76,6 @@ export class Cliente {
     latitud: string;
     tipoComprobante: number;
     clientePadreId: number;
-
     // contactos: Array<ClienteContactos>
 }
 
