@@ -5,11 +5,13 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
+import { Parametro } from 'src/app/core/http/model/Parametro';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Configuraciones } from 'src/app/shared/enums/Configuraciones';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { Archivo, DocumentosTipoAnexoSelected, FilesUploaded, TipoAnexoEnum } from 'src/app/shared/model/Archivo';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
+import { Cliente } from '../models/Cliente';
 import { ClienteFinanza, ClienteFinanzaResponse } from '../models/ClienteFinanza';
 
 @Component({
@@ -19,6 +21,8 @@ import { ClienteFinanza, ClienteFinanzaResponse } from '../models/ClienteFinanza
 })
 export class ClienteFinanzasComponent implements OnInit {
   @Input() clientId = 0;
+  @Input() clientExtraInfo = new Cliente();
+
   @Input() isnotNecesaryFieldsComplete = false;
   @Output()isnotNecesaryFieldsCompleteO = new EventEmitter<boolean>();
   @Output() goTabByKey = new EventEmitter<string>();
@@ -193,7 +197,6 @@ getNameTipoAnexo(item:any):string{
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-            response.records.filter(x=>x.codigo==2).map(d=>{d.disabled=true;})
            this.CondicionesPagos = response.records;
         }
         this.loadingCondicionPagos = false;
@@ -231,8 +234,10 @@ getNameTipoAnexo(item:any):string{
 
   getPlazos() {
     this.loadingPlazos = true;
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetPlazos", null).subscribe(response => {
+    let parametros: Parametro[] = [{ key: "clienteTipoId", value: this.clientExtraInfo.clienteTipoID }]
+
+    this.httpService.DoPostAny<ComboBox>(DataApi.ComboBox,
+      "GetPlazosComboBoxByTipoCliente", parametros[0]).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);

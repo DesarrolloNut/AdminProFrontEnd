@@ -68,7 +68,7 @@
               <br>
               <div class="btn-group btn-group-toggle col-md-12 custom-btns">
                 <label ngbButtonLabel class=" btn-outline-dark" *ngFor="let dia of diaSemana; let i = index">
-                  <input ngbButton type="checkbox" [(ngModel)]="dia.select" [ngModelOptions]="{standalone: true}">
+                  <input ngbButton type="radio" [(ngModel)]="dia.select" [ngModelOptions]="{standalone: true}">
                   <span style="font-weight: 500;">{{diasSigla[dia.dia]}}</span>
                   <br>
                   {{ dia.nombre }}
