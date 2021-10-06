@@ -18,7 +18,7 @@ export class Cliente {
         this.fechaRegistrado = ""
         this.codigoReferencia = ""
         this.calle = ""
-        this.numero = 0
+        this.numero = ""
         this.residencial = ""
         this.apartamento = ""
         this.referencia = ""
@@ -40,7 +40,7 @@ export class Cliente {
         this.clientePadreId=0
     }
 
-    
+
 
     id: number;
     clienteTipoID: number;
@@ -55,7 +55,7 @@ export class Cliente {
     sucursalID: number;
     codigoReferencia: string;
     calle: string;
-    numero: number;
+    numero: string;
     residencial: string;
     apartamento: string;
     referencia: string;
@@ -99,10 +99,10 @@ export class ClienteViewModelCustomized {
         this.codigoReferencia = ""
         this.calle = ""
         this.numero = 0
-        
+
         this.provinciaID = 0
         this.provincia =""
-  
+
         this.ciudadID = 0
         this.ciudad =""
 
@@ -121,7 +121,7 @@ export class ClienteViewModelCustomized {
 
         this.rutaVendedorId =0;
         this.rutaVendedor ="";
-        
+
         this.rutaEntregaId =0;
         this.rutaEntrega ="";
 
@@ -133,7 +133,7 @@ export class ClienteViewModelCustomized {
 
         this.longitud = ""
         this.latitud = ""
-         
+
         this.telefono=""
         this.estadoERPID =0
         this.estadoERP ="";
@@ -167,7 +167,7 @@ export class ClienteViewModelCustomized {
 
     sectorID: number;
     sector: string;
-    
+
     subSectorID: number;
     subSector: string;
 
@@ -204,8 +204,8 @@ export class ClienteViewModelCustomized {
 
 }
 
- 
- 
+
+
 export class Coordenadas {
 
     constructor() {
@@ -216,9 +216,9 @@ export class Coordenadas {
     longitud: number;
 }
 
- 
 
- 
+
+
 export class ClienteTabsValida {
 
     constructor() {
