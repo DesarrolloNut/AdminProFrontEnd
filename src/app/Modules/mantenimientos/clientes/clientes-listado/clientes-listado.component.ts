@@ -8,6 +8,7 @@ import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { Cliente, ClienteViewModelCustomized } from '../models/Cliente';
 import { ParametrosCita } from 'src/app/Modules/turno/models/ParametrosCita';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
+import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 
 @Component({
   selector: 'app-clientes-listado',
@@ -30,6 +31,7 @@ export class ClientesListadoComponent implements OnInit {
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     public permissionsService: NgxPermissionsService,
+    private authService: AuthenticationService,
   ) { }
 
 
@@ -49,6 +51,7 @@ export class ClientesListadoComponent implements OnInit {
 
     let parametros: Parametro[] = [
     { key: "Search", value: this.Search },
+    { key: "UsuarioId", value: Number(this.authService.tokenDecoded.nameid) },
     { key: "tipo", value: this.tipo },]
 
     this.httpService.GetAllWithPagination<ClienteViewModelCustomized>(DataApi.Cliente, "GetClientesListadoCustomized", "ID", this.paginaNumeroActual,

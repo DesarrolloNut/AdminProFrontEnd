@@ -50,37 +50,37 @@ export class ClienteMapComponent implements OnInit {
       }
 
      });
-    this.fillSearch.subscribe(c => {
-        this.searchControl.setValue(c+',Dominican Republic');
+    // this.fillSearch.subscribe(c => {
+    //     this.searchControl.setValue(c+',Dominican Republic');
    
-     });
+    //  });
 
      
         this.zoom = 15;
 
-        this.searchControl = new FormControl();
-        this.mapsAPILoader.load().then(() => {
-          let autocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement, {
+        // this.searchControl = new FormControl();
+        // this.mapsAPILoader.load().then(() => {
+        //   let autocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement, {
          
-          });
+        //   });
       
-          autocomplete.addListener("place_changed", () => {
-            this.ngZone.run(() => {
-              let place= autocomplete.getPlace();
+        //   autocomplete.addListener("place_changed", () => {
+        //     this.ngZone.run(() => {
+        //       let place= autocomplete.getPlace();
           
-              if (place.geometry === undefined || place.geometry === null) {
-                return;
-              }
-              this.latitud = place.geometry.location.lat();
-              this.longitud = place.geometry.location.lng();
-              this.markers[0].lat = this.latitud;
-              this.markers[0].lng = this.longitud;
-              this.markerOne.emit( this.markers[0])
-              this.zoom = 15;
-            });
-          });
+        //       if (place.geometry === undefined || place.geometry === null) {
+        //         return;
+        //       }
+        //       this.latitud = place.geometry.location.lat();
+        //       this.longitud = place.geometry.location.lng();
+        //       this.markers[0].lat = this.latitud;
+        //       this.markers[0].lng = this.longitud;
+        //       this.markerOne.emit( this.markers[0])
+        //       this.zoom = 15;
+        //     });
+        //   });
    
-        });
+        // });
   }
 
   recenterMap(){

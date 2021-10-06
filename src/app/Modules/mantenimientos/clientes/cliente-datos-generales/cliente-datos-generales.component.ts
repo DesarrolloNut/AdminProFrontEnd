@@ -72,6 +72,11 @@ export class ClienteDatosGeneralesComponent implements OnInit {
   tiposComprobantes      : ComboBox[]
   clienteTabsValidaIterable = new ClienteTabsValida();
 
+  isClientPrincipal = 0 ;
+
+  valor0 = 0 ;
+  valor1 = 1 ;
+
   //OBJETOS Y DEMAS
   TipoSexo: any[] = [{ codigo: 'M', nombre: 'Hombre' }, { codigo: 'F', nombre: 'Mujer' }];
   geoRegex = '^-?([1-8]?[1-9]|[1-9]0)\\.{1}\\d{1,6}';
@@ -221,7 +226,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       latitud:[null, [Validators.required, this.regexValidator(new RegExp('^-?([1-8]?[1-9]|[1-9]0)\\.{1}\\d{1,6}'), {'valid': ''})]],
       estadoERPID: [0],
       clientePadreId: [null],
-      clientIsPrincipal:[true]
+      isClientPrincipal: [0],
       // contactos: new FormArray([])
     },
       {
@@ -317,7 +322,16 @@ export class ClienteDatosGeneralesComponent implements OnInit {
             cliente.subSectorID = cliente.subSectorID<=0 ? null : cliente.subSectorID
             cliente.tipoComprobante = cliente.tipoComprobante<=0 ? null : cliente.tipoComprobante
             cliente.clienteTipoID = cliente.clienteTipoID<=0 ? null : cliente.clienteTipoID
+            
 
+            ///isClientPrincipal cuando su valor es 0
+            cliente.isClientPrincipal=1;
+
+            if( cliente.clientePadreId<=0 || cliente.clientePadreId==null)
+            {
+              cliente.isClientPrincipal=0;
+            }
+       
             this.FormGenerales.setValue(cliente);
 
             this.clienteExtraInfo.emit(cliente);

@@ -16,22 +16,27 @@
         <div class="form_datosPersonales"
         [style.opacity]="cargando ? '0' : '1'"
         [style.visibility]="cargando ? 'hidden' : 'visible'" >
+   
           <form  class="form-row m-t-10 "  (keydown.enter)="$event.preventDefault()" [formGroup]="FormGenerales" (ngSubmit)="onSubmit()">
              
-                <ul class="payment-methods col-md-12 row">
-                  <div class="col-md-3"></div>
-
-                  <li class=" col-md-3 payment-method paypal">
-                    <input  formControlName="clientIsPrincipal" name="payment_methods" type="radio" id="paypal">
-                    <label for="paypal">PRINCIPAL</label>
-                  </li>
-                  <li class=" col-md-3 payment-method pagseguro">
-                     <input name="payment_methods" type="radio" id="pagseguro"
-                     formControlName="clientIsPrincipal" >
-                    <label for="pagseguro">SUCURSAL</label>
-                  </li>
-                    <div class="col-md-3"></div>
-                </ul>
+            <ul class="payment-methods col-md-12 row">
+              <div class="col-md-3"></div>
+    
+              <li class=" col-md-3 payment-method paypal">
+                <input
+                [value]="valor0"
+                formControlName="isClientPrincipal" 
+                name="payment_methods" type="radio"   [attr.disabled]="true"id="paypal">
+                <label for="paypal">PRINCIPAL</label>
+              </li>
+              <li class=" col-md-3 payment-method pagseguro">
+                 <input name="payment_methods" type="radio"   [attr.disabled]="true"id="pagseguro"
+                 [value]="valor1"
+                 formControlName="isClientPrincipal" >
+                <label for="pagseguro">SUCURSAL</label>
+              </li>
+                <div class="col-md-3"></div>
+            </ul>
            
                 <div class="col-12"><br> </div>
    
