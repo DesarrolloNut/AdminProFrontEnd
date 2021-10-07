@@ -24,21 +24,23 @@
     
               <li class=" col-md-3 payment-method paypal">
                 <input
-                [value]="valor0"
-                formControlName="isClientPrincipal" 
-                name="payment_methods" type="radio"   [attr.disabled]="true"id="paypal">
+                [value]="0"
+                formControlName="isClientPrincipal"  
+                (click)="onClickRadioPrincipalOSucursal(0)"
+                     type="radio" id="paypal">
                 <label for="paypal">PRINCIPAL</label>
               </li>
               <li class=" col-md-3 payment-method pagseguro">
-                 <input name="payment_methods" type="radio"   [attr.disabled]="true"id="pagseguro"
-                 [value]="valor1"
+                 <input  type="radio"  id="pagseguro"
+                 [value]="1"
+                 (click)="onClickRadioPrincipalOSucursal(1)"
                  formControlName="isClientPrincipal" >
                 <label for="pagseguro">SUCURSAL</label>
               </li>
                 <div class="col-md-3"></div>
             </ul>
            
-                <div class="col-12"><br> </div>
+          <div class="col-12"><br> </div>
    
             <div class="form-group col-md-6  ">
               <label for="codigoReferencia"> <i class="fa fa-hashtag"></i> Código
@@ -64,7 +66,23 @@
                   obligatorio</div>
               </div>
             </div>
-        <div class="form-group col-md-6">
+
+      <div class="form-group col-md-12" *ngIf="f.isClientPrincipal.value==1">
+              <label for="inputEmail4">Principal</label>
+              <ng-select bindLabel="nombre" bindValue="codigo" [items]="clientesPrincipalesComboBox"
+                (change)="onSelectClientePrincipal($event)"
+                 placeholder="Seleccione la principal"
+                (clear)="onClearClientePrincipal($event)" [loading]="loadingClientesPrincipales" 
+                (search)="getClientesPrincipales($event)"
+                [ngClass]="{'form-control border-danger p-0' : submitted && f.clientePadreId.errors }"
+                notFoundText="No resultados" formControlName="clientePadreId">
+              </ng-select>
+              <div *ngIf="submitted && f.clientePadreId.errors" class="text-danger small animated animated--fade-in">
+                <div *ngIf="f.clientePadreId.errors.required  ">El campo es obligatorio</div>
+              </div>
+      </div>
+
+        <div class="form-group col-md-6" *ngIf="f.isClientPrincipal.value==0">
           <label for="inputEmail4"> Tipo de Documento</label>
           <ng-select bindLabel="nombre"   bindValue="codigo" (change)="onTipoDocumentoChange($event)" [items]="documentos"
             [loading]="loadingDocumentos" [clearable]="false"
@@ -78,7 +96,7 @@
           </div>
         </div>
 
-        <div class="form-group col-md-6">
+        <div class="form-group col-md-6" *ngIf="f.isClientPrincipal.value==0">
           <label for="documento"> <i class="fa fa-id-card"></i>
             Documento</label>
           <div class="input-group">
@@ -399,10 +417,14 @@
              {{formatDescripcionByKeyName(l.keyName)}}
       </span>
        <br *ngIf="!l.ok"/>
-      <button  [ngStyle]="{'margin-bottom': !l.ok ? ' 10px' : 'auto' }"
-      *ngIf="!l.ok" type="button" class="btn btn-sm btn-outline-primary" (click)="goTab(l.keyName)">
-        {{formatDescripcionButtonByKeyName(l.keyName)}}
-      </button>
+
+       <div style="    margin-bottom: -19px;" *ngxPermissionsOnly="[formatPermisionByKeyName(l.keyName)]">
+        <button   [ngStyle]="{'margin-bottom': !l.ok ? ' 10px' : 'auto' }"
+        *ngIf="!l.ok" type="button" class="btn btn-sm btn-outline-primary" (click)="goTab(l.keyName)">
+          {{formatDescripcionButtonByKeyName(l.keyName)}}
+        </button>
+      </div>
+
       <br>
     </div>
 
