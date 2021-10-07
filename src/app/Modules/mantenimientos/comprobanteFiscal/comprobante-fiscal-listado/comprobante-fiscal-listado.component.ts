@@ -5,6 +5,7 @@ import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
+import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { ComprobanteFiscal } from '../models/ComprobanteFiscal';
 import { ComprobanteFiscalListadoViewModel } from '../models/ComprobanteFiscalListadoViewModel';
 
@@ -24,6 +25,9 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
   paginaSize: number = 5;
   paginaTotalRecords: number = 0;
   data: ComprobanteFiscalListadoViewModel[] = [] //tu modelo
+  estados: ComboBox[];
+  loadingEstados: boolean;
+  estadoSelected: number;
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
@@ -32,12 +36,15 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.getData()
+    this.getComprobanteFiscalEstados();
   }
   getData() {
     this.Cargando = true;
 
-    let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
+    let parametros: Parametro[] = [
+      { key: "Search", value: this.Search },
+      { key: "estadoID", value: this.estadoSelected },
+    ]
 
     this.httpService.GetAllWithPagination<ComprobanteFiscalListadoViewModel>(DataApi.ComprobanteFiscal,
       "GetComprobanteFiscalListado", "ID", this.paginaNumeroActual,
@@ -73,4 +80,39 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
     }
 
   }
+
+
+
+  getComprobanteFiscalEstados() {
+    this.loadingEstados = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetComprobanteFiscalEstados", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+          this.estados = response.records;
+
+          if (this.estados && this.estados.length > 0) {
+            this.estadoSelected = this.estados[0].codigo;
+          }
+
+          this.getData()
+        }
+
+        this.loadingEstados = false;
+
+      }, error => {
+        this.toastService.error("No se pudo obtener los estados.", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getComprobanteFiscalEstados()
+        }, 1000);
+
+      });
+  }
+
+
+
+
 }

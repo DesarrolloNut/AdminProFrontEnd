@@ -11,7 +11,7 @@
                             Nuevo
                         </button>
                     </div>
-                    <div class="col-md-12 p-2">
+                    <div class="col-md-8 p-2">
 
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -25,6 +25,15 @@
                                 style="border-left:none !important;" class="form-control" placeholder="Buscar">
                         </div>
                     </div>
+
+                    <div class=" p-2 col-md-4">
+                        <!-- <label> Lista de precio</label> -->
+                        <ng-select [items]="estados" bindLabel="nombre" bindValue="codigo" (change)="getData()"
+                            [loading]="loadingEstados" [(ngModel)]="estadoSelected" [clearable]="false"
+                            notFoundText="No resultados">
+                        </ng-select>
+                    </div>
+
                 </div>
 
                 <div class="table-responsive">
@@ -53,7 +62,7 @@
                                 </td>
 
                                 <td>
-                                    <span> {{item.serie}}{{item.secuenciaDesde}}</span>
+                                    <span class="font-weight-bold"> {{item.serie}}{{item.secuenciaDesde}}</span>
                                 </td>
 
                                 <td>
