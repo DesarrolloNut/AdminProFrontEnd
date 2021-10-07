@@ -130,13 +130,15 @@ GetNameEstado(estadoId: number){
   }
 
   OnSaveConsumido(articulosExtras: OrdenFabricacionVista) {
-    // let requeridad = Number((articulosExtras.cantidadBase * this.ofheader.cantidadPlanificada).toFixed(6));
-    let requeridad = articulosExtras.cantidadRequerida;
-    let consumido = articulosExtras.consumido;
+    // let requeridad = articulosExtras.cantidadRequerida;
+    // let consumido = articulosExtras.consumido;
 
-    if (consumido >= requeridad) {
+    // if (consumido < requeridad) {
+    //   this.toastService.warning("El valor consumido es menor a la cantidad requerida");
+    // }else if(consumido > requeridad){
+    //   this.toastService.warning("El valor consumido es mayor a la cantidad requerida");
+    // }
       articulosExtras.loadingSaveConsumido = true;
-      // console.log(articulosExtras);
       this.httpService
         .DoPostAny<OrdenFabricacionVista>(
           DataApi.OrdenFabricacionDetalle,
@@ -165,12 +167,7 @@ GetNameEstado(estadoId: number){
             }, 1000);
           }
         );
-    } else {
-      this.toastService.error(
-        "El valor consumido de ser igual a la cantidad requerida",
-        "Error Cantidad"
-      );
-    }
+
   }
   OnSaveProducida() {
     this.loadingSaveProducida = true;

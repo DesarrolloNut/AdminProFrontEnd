@@ -244,6 +244,9 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (this.ordenfabricacionvista.requerida < this.pesoNeto) {
+      this.toastService.warning("Está consumiendo menos de la cantidad requerida.");
+    }
     // if (!this.loteSearch) {
     //   this.toastService.warning("Digita el lote.");
     //   return;
