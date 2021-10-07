@@ -59,6 +59,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
   loadingListaPrecio = false;
   loadingTipoCliente = false;
   loadingTipoComprobantes = false;
+  loadingClientesPrincipales = false;
 
   //LISTAS
   ciudades               : ComboBox[];
@@ -70,8 +71,8 @@ export class ClienteDatosGeneralesComponent implements OnInit {
   TipoCliente            : any[];
   estados                : ComboBox[]
   tiposComprobantes      : ComboBox[]
+  clientesPrincipalesComboBox : ComboBox[]
   clienteTabsValidaIterable = new ClienteTabsValida();
-
   isClientPrincipal = 0 ;
 
   valor0 = 0 ;
@@ -83,7 +84,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
 
   latitud:number;
   longitud:number;  
-  
+  clientePadreSearched = new Cliente();
   coordenadas: EventEmitter<Coordenadas> = new EventEmitter<Coordenadas>();
   searchLocalidadEvent:EventEmitter<string> = new EventEmitter<string>();
   searchLocalidad:string;
@@ -116,11 +117,13 @@ export class ClienteDatosGeneralesComponent implements OnInit {
     this.getProvincias()
     this.getDocumentosTipo();
     this.getTipoCliente();
+    this.getClientesPrincipales();
     this.getListaPrecio();
     this.getTipoComprobante();
     this.clearOrputValidatosSomeField();
     this.scrollToTop();
     this.getHoraActual()
+    
 
   }
   regexValidator(regex: RegExp, error: ValidationErrors): ValidatorFn {
@@ -160,13 +163,22 @@ export class ClienteDatosGeneralesComponent implements OnInit {
 }
   onSubmit() {
     this.submitted = true; 
-  
+    if(this.f.clientePadreId.value>0){
+       if(this.f.documentoTipoID.value==2){
+         console.log(this.clientePadreSearched)
+         if(this.clientePadreSearched.nombres==this.f.nombres.value){
+            this.toastService
+            .error("La sucursal que esta creando/actualizando no puede tener el mismo de nombre que la principal");
+            return;
+         }
+       }
+    }
+
     if (!this.actualizando)
       this.f.sucursalID.setValue(Number(this.auth.tokenDecoded.groupsid))
   
     if (this.FormGenerales.invalid)
       return;
-  
     this.guardarCliente();
   }
   onSubmitWithoutAction() {
@@ -256,6 +268,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
     }
    // console.log(this.FormGenerales)
     let param = { "cliente": this.FormGenerales.value }
+    this.f.numero.setValue(this.f.numero.value.toString())
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
       metodo, this.FormGenerales.value).subscribe(response => {
          
@@ -277,6 +290,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
         this.btnGuardarCargando = false;
       }, error => {
         this.btnGuardarCargando = false;
+        console.log(error)
         this.toastService.error("Error conexion al servidor");
       });
 
@@ -573,7 +587,6 @@ buscarCliente(documento: string) {
           this.f.nombres.setValue(cliente.nombres);
           this.f.apellidos.setValue(cliente.apellidos);
           this.f.clientePadreId.setValue(cliente.clientePadreId);
-          console.log(this.FormGenerales.value)
         } else {
           this.toastService.warning("Datos no encontrados");
           // this.f.nombres.setValue(null);
@@ -604,28 +617,30 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
 
       if (response.ok) {
         if (response != null && response.ok && response.records != null && response.records.length > 0) {
-          let cliente = response.records[0];
+           this.clientePadreSearched = response.records[0];
 
-          this.f.nombres.setValue(cliente.nombres);
-          this.f.apellidos.setValue(cliente.apellidos!=null?cliente.apellidos:"");
-          this.f.fechaNacimiento.setValue(cliente.fechaNacimiento);
-          this.f.sexo.setValue(cliente.sexo);
+          this.f.nombres.setValue(this.clientePadreSearched.nombres);
+          this.f.apellidos.setValue(this.clientePadreSearched.apellidos!=null?this.clientePadreSearched.apellidos:"");
+          this.f.fechaNacimiento.setValue(this.clientePadreSearched.fechaNacimiento);
+          this.f.sexo.setValue(this.clientePadreSearched.sexo);
 
+
+          if(this.clientePadreSearched.id>0){
+            this.f.isClientPrincipal.setValue(1)
+          }else{
+            this.f.isClientPrincipal.setValue(0)
+          }
 
           if(this.clientId<=0){
-            this.f.clientePadreId.setValue(cliente.id);
+            this.f.clientePadreId.setValue(this.clientePadreSearched.id);
           }
           if(this.clientId>0){
-            if(this.f.id.value!=cliente.id){
-              this.f.clientePadreId.setValue(cliente.id);
+            if(this.f.id.value!=this.clientePadreSearched.id){
+              this.f.clientePadreId.setValue(this.clientePadreSearched.id);
             }
           }
-    
-    
-          console.log(this.FormGenerales.value)
-
         } else {
-              this.f.clientePadreId.setValue(0);
+          this.f.clientePadreId.setValue(0);
           this.toastService.warning("Datos no encontrados");
          // this.f.nombres.setValue(null);
           // this.f.celular.setValue(null);
@@ -662,7 +677,55 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
       });
   }
 
+ getClientesPrincipales(searchObj: any = null, clienteID: number = 0) {
+    let search = ""
 
+    if (searchObj)
+        search = searchObj.term;
+
+    this.loadingClientesPrincipales = true;
+    let parametros: Parametro[] = [
+        { key: "CompaniaID", value: this.auth.tokenDecoded.primarygroupsid },
+        { key: "UsuarioId", value: this.auth.tokenDecoded.nameid },
+        { key: "Search", value: search },
+        { key: "clienteID", value: clienteID },
+        { key: "Tipo", value: 1},
+
+    ];
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+        "GetClientesPrincipalesComboBox", parametros).subscribe(response => {
+
+            if (!response.ok) {
+                this.toastService.error(response.errores[0]);
+            } else {
+                this.clientesPrincipalesComboBox = response.records;
+            }
+
+            this.loadingClientesPrincipales = false;
+        }, error => {
+            this.loadingClientesPrincipales = false;
+            this.toastService.error("Error conexion al servidor");
+        });
+}
+
+
+onClearClientePrincipal(cliente: ComboBox) {
+  this.f.clientePadreId.reset();
+}
+
+
+onSelectClientePrincipal(cliente: ComboBox) {
+  this.f.documentoTipoID.setValue( cliente.grupoID);
+  this.f.documento.setValue( cliente.grupo);
+}
+onClickRadioPrincipalOSucursal(value:number){
+    this.f.isClientPrincipal.setValue(value)
+    if(value==1){
+      this.f.clientePadreId.setValidators([Validators.required]);
+    }else {
+      this.f.clientePadreId.setValidators(null);
+    }
+}
 
 //METODOS LOGIC
 onDocumentoKeyUp() {
@@ -787,6 +850,28 @@ formatDescripcionButtonByKeyName(keyName:string){
 
     case 'COMERCIAL':
       return 'Ir a Comercial'
+    default:
+        console.log("No such day exists!" + keyName);
+  }
+
+}
+
+formatPermisionByKeyName(keyName:string){
+  switch (keyName) {
+    case 'GENERALES':
+      return 'mantenimientos_cliente'
+
+    case 'VISITAS_RUTA':
+      return 'mantenimientos_cliente_visitas'
+
+    case 'CONTACTOS':
+      return 'mantenimientos_cliente_contactos'
+
+    case 'FINANZAS':
+      return 'mantenimientos_cliente_finanzas'
+
+    case 'COMERCIAL':
+      return 'mantenimientos_cliente_comercial'
     default:
         console.log("No such day exists!" + keyName);
   }
