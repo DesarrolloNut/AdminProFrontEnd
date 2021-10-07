@@ -1,3 +1,4 @@
+import { OrdenFabricacionEstadoEnum } from './../../produccion/ordenfabricacion/models/OrdenFabricacionEstadoEnum';
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsService } from 'ngx-permissions';
@@ -9,8 +10,7 @@ import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
-import { DevolucionDetalleVista } from '../../inventario/devoluciones/models/DevolucionDetalleVista';
-import { DevolucionVista } from '../../inventario/devoluciones/models/DevolucionVista';
+import { OrdenFabricacionVista } from '../../produccion/ordenfabricacion/models/OrdenFabricacionVista';
 
 @Component({
   selector: 'app-autorizacion-ordenfabricacion',
@@ -26,7 +26,7 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
   totalPaginas: number = 0;
   paginaSize: number = 10;
   paginaTotalRecords: number = 0;
-  data: DevolucionVista[] = [] //tu modelo
+  data: OrdenFabricacionVista[] = [] //tu modelo
 
   estadoAutorizacionComboModel: number = 0;
   estadoAutorizacionUsuario: number;
@@ -43,9 +43,10 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
   comentarios: any[];
   comentario: string;
   cargandoModal: boolean = false;
-  devolucionSelected: DevolucionVista;
+  ModelSelected: OrdenFabricacionVista;
   CargandoDetalle: boolean;
-  dataDetalle: DevolucionDetalleVista[];
+  dataDetalle: OrdenFabricacionVista[];
+  IsComsumido: boolean = false;
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
@@ -57,7 +58,8 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
 
   ngOnInit(): void {
     // this.getData()
-    this.getEstadoAutorizacionUsuario()
+    this.getEstadoAutorizacionUsuario();
+    // this.getEstaComsumido(36);
   }
 
   // onEstadoComboChange() {
@@ -73,7 +75,7 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
       { key: "Search", value: this.Search },
     ]
 
-    this.httpService.GetAllWithPagination<DevolucionVista>(DataApi.Devolucion, "GetDevolucionListadoAutorizacion", "Id", this.paginaNumeroActual,
+    this.httpService.GetAllWithPagination<OrdenFabricacionVista>(DataApi.OrdenFabricacion, "GetOrdenFabricacionListadoAutorizacion", "Id", this.paginaNumeroActual,
       this.paginaSize, true, parametros).subscribe(x => {
 
         if (x.ok) {
@@ -96,7 +98,7 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
   getEstadosAutorizacion() {
     let parametros: Parametro[] = [{
       key: "NameKey",
-      value: EstadosGeneralesKeyEnum.DEVOLUCION
+      value: EstadosGeneralesKeyEnum.ORDENFABRICACION
     }]
 
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
@@ -107,7 +109,8 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
           console.error(response.errores[0]);
         } else {
           this.estadosAutorizacion = response.records;
-          this.estadoIDAutorizacionDefault = response.records[0].codigo;
+          // this.estadoIDAutorizacionDefault = response.records[0].codigo;
+          this.estadoAutorizacionComboModel = response.records[0].codigo;
           this.getSiguienteEstado()//almacena en una variable el siguiente estado
           this.getAnteriorEstadoAutorizacion()//almacena en una variable el anterior estado
           this.getData()
@@ -124,7 +127,7 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
   getEstadoAutorizacionUsuario() {
     let parametro = {
       "UsuarioID": Number(this.authService.tokenDecoded.nameid),
-      "KeynameModule": EstadosGeneralesKeyEnum.DEVOLUCION,
+      "KeynameModule": EstadosGeneralesKeyEnum.ORDENFABRICACION,
     }
 
     this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
@@ -238,12 +241,20 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
 
 
   actualizarEstadoArticulos(item: any) {
-    item.cargando = true;
     // if (this.confirmed.filter(x => x.IsChecked).length < 1) {
-    //   this.toastService.warning("Selecciona uno o más artículos para actualizar");
-    //   return;
-    // }
+      //   this.toastService.warning("Selecciona uno o más artículos para actualizar");
+      //   return;
+      // }
 
+      this.getEstaComsumido(item.id);
+      // console.log(this.IsComsumido);
+      if(!this.IsComsumido && OrdenFabricacionEstadoEnum.PENDIENTECONSUMO == item.estadoId){
+        this.toastService.warning("No se a consumido todos los materiales de la orden de fabricación. ");
+        return;
+      }
+
+
+      item.cargando = true;
     let EstadoUsuariosNotificacion: number;
 
     if (this.isAutorizando) {
@@ -267,7 +278,7 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
 
     item.cargando = false;
     this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
-      "ActualizarDevolucionesEstadoID", param).subscribe(response => {
+      "ActualizarOrdenFabricacionEstadoID", param).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
@@ -285,23 +296,20 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
 
   }
 
-  openModalDevolucionDetalle(content, DevolucionSelect: DevolucionVista) {
-    this.devolucionSelected = DevolucionSelect;
-    this.getDataDetalle(DevolucionSelect.id);
+  openModalDevolucionDetalle(content, model: OrdenFabricacionVista) {
+    this.ModelSelected = model;
+    this.getDataDetalle(model.id);
     this.modalService.open(content, { size: 'xl', backdrop: "static", });
   }
 
-  getDataDetalle(DevolucionID:number) {
+  getDataDetalle(Id:number) {
     this.CargandoDetalle = true;
 
-    this.httpService.DoPostAny<DevolucionDetalleVista>(DataApi.DevolucionDetalle, "GetDevolucionDetalleVistaByID", DevolucionID).subscribe(x => {
+    this.httpService.DoPostAny<OrdenFabricacionVista>(DataApi.OrdenFabricacionDetalle, "GetOrdenFabricacionDetalleVistaByID", Id).subscribe(x => {
 
         if (x.ok) {
-          this.dataDetalle = [];
-          x.records.forEach(x => {
-            x.cantidadConfirmado == 0 ? x.cantidadConfirmado = x.cantidad : x.cantidadConfirmado;
-            this.dataDetalle.push(x);
-          });
+          this.dataDetalle = x.records;
+
         } else {
           this.toastService.error(x.errores[0]);
           console.error(x.errores[0]);
@@ -311,6 +319,23 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
         console.error(error);
         this.toastService.error("Error conexion al servidor");
         this.CargandoDetalle = false;
+      });
+
+  }
+
+  getEstaComsumido(Id:number) {
+
+    this.httpService.DoPostAny<OrdenFabricacionVista>(DataApi.OrdenFabricacion, "GetEstaComsumido", Id).subscribe(x => {
+        if (x.ok) {
+          // console.log(x.records);
+          this.IsComsumido = x.records[0].isPesaje;
+        } else {
+          this.toastService.error(x.errores[0]);
+          console.error(x.errores[0]);
+        }
+      }, error => {
+        console.error(error);
+        this.toastService.error("Error conexion al servidor");
       });
 
   }

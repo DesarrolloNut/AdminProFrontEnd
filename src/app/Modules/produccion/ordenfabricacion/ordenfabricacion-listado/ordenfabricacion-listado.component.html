@@ -39,6 +39,7 @@
             <thead>
               <tr>
                 <th></th>
+                <th></th>
                 <th>Articulo</th>
                 <th>Tipo</th>
                 <th>Estado</th>
@@ -53,16 +54,8 @@
               <tr *ngFor="let item of data">
                 <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
                 <td>
-                  <span class="font-weight-bold"> {{item.articulo}}</span>
+                  <span class="font-weight-bold"> {{item.articuloPadre }} | {{item.articulo}}</span>
                   <small  class="d-block" > Fecha Creación: {{item.fechaCreacion | date:'medium'}}</small>
-                  <!-- <span class="badge text-white m-1 font-weight-bold" [ngClass]="{
-                    'badge-secondary text-black' : item.colorHEX == 'secondary',
-                  'badge-success' : item.colorHEX == 'success',
-                  'badge-warning ' : item.colorHEX == 'warning',
-                  'badge-danger ' : item.colorHEX == 'danger',
-                  'badge-info ' : item.colorHEX == 'info'
-
-                }" >{{item.nombre}}</span> -->
                 </td>
                 <td>
                   <span> {{item.tipo}}</span>
@@ -92,9 +85,9 @@
                     <i class="fa fa-sm fa-edit"></i>
                   </button>
 
-                  <button class="btn btn-sm btn-dark m-1" (click)="openModalComfirm(modalConfirmacionEstado,item)" *ngIf="item.estadoId != ValidOrden.CERRADA">
+                  <!-- <button class="btn btn-sm btn-dark m-1" (click)="openModalComfirm(modalConfirmacionEstado,item)" *ngIf="item.estadoId != ValidOrden.CERRADA">
                     <i class="fa fa-sm fa-arrow-right"></i>
-                  </button>
+                  </button> -->
 
                   <button class="btn btn-sm btn-warning m-1" (click)="openModal(modalPesajes,item)" *ngIf="item.estadoId == ValidOrden.PENDIENTECONSUMO">
                     <i class="fa fa-sm fa-list"></i>

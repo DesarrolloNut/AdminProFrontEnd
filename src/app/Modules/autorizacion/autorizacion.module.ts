@@ -10,12 +10,12 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AngularDualListBoxModule } from 'angular-dual-listbox';
 import { TreeviewModule } from 'ngx-treeview';
 import { SharedModule } from '../shared/shared.module';
-import { OrdenfabricacionAutorizacionComponent } from './ordenfabricacion-autorizacion/ordenfabricacion-autorizacion.component';
+import { AutorizacionOrdenfabricacionComponent } from './autorizacion-ordenfabricacion/autorizacion-ordenfabricacion.component';
 
 
 @NgModule({
   declarations: [
-    AutorizacionComponent, AutorizacionDevolucionesComponent, AutorizacionHistoricoComponent, ListaPreciosAutorizacionComponent, OrdenfabricacionAutorizacionComponent],
+    AutorizacionComponent, AutorizacionDevolucionesComponent, AutorizacionHistoricoComponent, ListaPreciosAutorizacionComponent, AutorizacionOrdenfabricacionComponent],
   imports: [
     CommonModule,
     AngularDualListBoxModule,

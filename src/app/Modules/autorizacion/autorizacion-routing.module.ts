@@ -2,9 +2,9 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AutorizacionDevolucionesComponent } from './autorizacion-devoluciones/autorizacion-devoluciones.component';
 import { AutorizacionHistoricoComponent } from './autorizacion-historico/autorizacion-historico.component';
+import { AutorizacionOrdenfabricacionComponent } from './autorizacion-ordenfabricacion/autorizacion-ordenfabricacion.component';
 import { AutorizacionComponent } from './autorizacion.component';
 import { ListaPreciosAutorizacionComponent } from './lista-precios-autorizacion/lista-precios-autorizacion.component';
-import { OrdenfabricacionAutorizacionComponent } from './ordenfabricacion-autorizacion/ordenfabricacion-autorizacion.component';
 
 
 const routes: Routes = [
@@ -44,7 +44,7 @@ const routes: Routes = [
       },
 
       {
-        path: 'autorizacion-ordenfabricacion', component: OrdenfabricacionAutorizacionComponent, data: {
+        path: 'autorizacion-ordenfabricacion', component: AutorizacionOrdenfabricacionComponent, data: {
           title: 'Autorización Orden Fabricación',
           urls: [
             { title: 'Autorización' },
