@@ -248,7 +248,7 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
 
       this.getEstaComsumido(item.id);
       // console.log(this.IsComsumido);
-      if(!this.IsComsumido && OrdenFabricacionEstadoEnum.PENDIENTECONSUMO == item.estadoId){
+      if(this.IsComsumido && OrdenFabricacionEstadoEnum.PENDIENTECONSUMO == item.estadoId){
         this.toastService.warning("No se a consumido todos los materiales de la orden de fabricación. ");
         return;
       }
@@ -325,10 +325,10 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
 
   getEstaComsumido(Id:number) {
 
-    this.httpService.DoPostAny<OrdenFabricacionVista>(DataApi.OrdenFabricacion, "GetEstaComsumido", Id).subscribe(x => {
+    this.httpService.DoPostAny<any>(DataApi.OrdenFabricacion, "GetEstaComsumido", Id).subscribe(x => {
         if (x.ok) {
-          // console.log(x.records);
-          this.IsComsumido = x.records[0].isPesaje;
+          console.log(x.records);
+          this.IsComsumido = x.records[0];
         } else {
           this.toastService.error(x.errores[0]);
           console.error(x.errores[0]);
