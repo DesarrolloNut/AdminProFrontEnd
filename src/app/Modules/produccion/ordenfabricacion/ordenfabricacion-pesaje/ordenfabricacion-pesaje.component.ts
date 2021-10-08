@@ -102,7 +102,7 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
         this.ordenfabricacionvista = x;
       });
     }
-
+    console.log(this.ordenfabricacionvista);
     this.getArticuloByCodigoReferencia(this.ordenfabricacionvista.articulo);
     this.almacenID = Number(this.ordenfabricacionvista.almacenId);
 

@@ -123,9 +123,12 @@ GetNameEstado(estadoId: number){
     this.IsPesajeProducida = !this.IsPesajeProducida;
   }
 
-  OnChangePagePesaje(articulosExtras: OrdenFabricacionVista) {
+  OnChangePagePesaje(articulosExtras) {
     this.modalService.dismissAll();
-    this.ordenfabriService.SaveOrdenFabricacion(articulosExtras);
+    let data = <OrdenFabricacionVista> articulosExtras;
+      data.articulo = this.articulo.codigoReferencia;
+
+    this.ordenfabriService.SaveOrdenFabricacion(data);
     this.router.navigateByUrl("/produccion/ordenfabricacionpesaje");
   }
 
