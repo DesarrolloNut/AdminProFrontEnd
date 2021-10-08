@@ -37,8 +37,11 @@ export class Cliente {
         this.longitud = ""
         this.latitud = ""
         this.tipoComprobante=0
+        this.sucursalId=0
+
         this.clientePadreId=0
         this.isClientPrincipal=0
+        this.salario=0
     }
 
 
@@ -76,8 +79,11 @@ export class Cliente {
     longitud: string;
     latitud: string;
     tipoComprobante: number;
+    sucursalId: number;
     clientePadreId: number;
     isClientPrincipal: number;
+    salario: number;
+
     // contactos: Array<ClienteContactos>
 }
 

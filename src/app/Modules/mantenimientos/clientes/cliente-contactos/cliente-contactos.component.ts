@@ -292,7 +292,7 @@ onDocumentoKeyUp(contact: FormGroup) {
     parametros.documentoTipoID = documentoTipoID;
   
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
-      "GetClientePadronDatosOByRnc", parametros).subscribe(response => {
+      "GetClienteByCedulaOrRnc", parametros).subscribe(response => {
   
         if (response.ok) {
           if (response != null && response.ok && response.records != null && response.records.length > 0) {
