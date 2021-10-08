@@ -337,7 +337,17 @@
           </div>
         </div>
 
-
+        <div class="form-group col-md-4" *ngIf="f.clienteTipoID.value==12 || f.clienteTipoID.value==15">
+          <label for="salario"><i class="fa fa-street-view"></i>
+            Salario</label>
+          <input formControlName="salario"  prefix="$ " mask="separator"
+          thousandSeparator=","  type="text" name="salario" id="salario"
+            [ngClass]="{'is-invalid' : submitted && f.salario.errors,  'form-control':true  }">
+          <div class="invalid-feedback" *ngIf="submitted && f.salario.errors">
+            <div *ngIf="f.salario.errors.required">El campo es obligatorio
+            </div>
+          </div>
+        </div>
 
         <div class="form-group col-md-4">
           <label for="inputEmail4">Tipo Comprobante</label>
@@ -351,6 +361,17 @@
               obligatorio</div>
           </div>
         </div>
+        <div class="form-group col-md-4">
+          <label for="sucursalId"> <i class="fa fa-map-marker"></i> Sucursal de Atención </label>
+          <ng-select bindLabel="nombre" bindValue="codigo" [items]="sucursales"
+              [loading]="loadingSucursales"
+              [ngClass]="{'form-control border-danger p-0' : submitted && f.sucursalId.errors }"
+              notFoundText="No resultados" formControlName="sucursalId">
+          </ng-select>
+          <div *ngIf="submitted && f.sucursalId.errors" class="text-danger small">
+              <div *ngIf="f.sucursalId.errors.required  ">El campo es obligatorio</div>
+          </div>
+      </div>
         <div class="form-check col-md-4">
           <label for="estadoID" class="d-block">Estado</label>
           <div class="form-group" style="margin-left: 20px;">

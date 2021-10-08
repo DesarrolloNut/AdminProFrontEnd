@@ -60,12 +60,14 @@ export class ClienteDatosGeneralesComponent implements OnInit {
   loadingTipoCliente = false;
   loadingTipoComprobantes = false;
   loadingClientesPrincipales = false;
+  loadingSucursales = false;
 
   //LISTAS
   ciudades               : ComboBox[];
   sectores               : ComboBox[];
   subSectores            : ComboBox[];
   provincias             : ComboBox[];
+  sucursales             : ComboBox[];     
   documentos             : ComboBox[];
   ListaPrecio            : any[];
   TipoCliente            : any[];
@@ -114,7 +116,8 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       this.actualizando = true;
     }
 
-    this.getProvincias()
+    this.getProvincias();
+    this.getSucursales();
     this.getDocumentosTipo();
     this.getTipoCliente();
     this.getClientesPrincipales();
@@ -174,8 +177,8 @@ export class ClienteDatosGeneralesComponent implements OnInit {
        }
     }
 
-    if (!this.actualizando)
-      this.f.sucursalID.setValue(Number(this.auth.tokenDecoded.groupsid))
+    // if (!this.actualizando)
+    //   this.f.sucursalID.setValue(Number(this.auth.tokenDecoded.groupsid))
   
     if (this.FormGenerales.invalid)
       return;
@@ -201,7 +204,6 @@ export class ClienteDatosGeneralesComponent implements OnInit {
 
     this.FormGenerales = this.formBuilder.group({
       id: [0],
-      sucursalID: [0, [Validators.required]],
       clienteTipoID: [null, [Validators.required]],
       nombres: [null,  [Validators.required]],
       apellidos: [null,  [Validators.required] ],
@@ -236,6 +238,8 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       listaPrecioId: [0, [Validators.required]],
       longitud: [null, [Validators.required,this.regexValidator(new RegExp('^-?([1-8]?[1-9]|[1-9]0)\\.{1}\\d{1,6}'), {'valid': ''})]],
       latitud:[null, [Validators.required, this.regexValidator(new RegExp('^-?([1-8]?[1-9]|[1-9]0)\\.{1}\\d{1,6}'), {'valid': ''})]],
+      sucursalId:[0, [Validators.required]],
+      salario:[0, [Validators.required]],
       estadoERPID: [0],
       clientePadreId: [null],
       isClientPrincipal: [0],
@@ -281,7 +285,8 @@ export class ClienteDatosGeneralesComponent implements OnInit {
           if(!this.actualizando){
             this.clientId=response.valores[0].clienteId;
             this.onClienteCreado(this.clientId);
-            this.onClienteTabsValida(response.valores[0])
+      //      this.onClienteTabsValida(response.valores[0])
+            this.getClienteByID(this.clientId);
           }
           this.clienteExtraInfo.emit(this.FormGenerales.value)
           this.router.navigateByUrl('/mantenimientos/cliente/'+this.clientId);
@@ -304,16 +309,13 @@ export class ClienteDatosGeneralesComponent implements OnInit {
     this.clienteTabsValida.emit(obj);
 
     this.clienteTabsValidaIterable=obj
-    
     //SI ALGUNA INFORMACION DE CLIENTE REQUERIDA ESTA PENDIENTE POR COMPLETAR
     //SE DESPLEGARA EL MODAL
     if(this.clienteTabsValidaIterable.tabsValida.filter(x=>!x.ok).length>0){
-  
       if(this.clienteTabsValidaIterable.tabsValida.filter(x=>!x.ok && x.keyName=='GENERALES')){
          this.onSubmitWithoutAction();
      }
      this.openModal(this.content);
-
    }
   }
 
@@ -676,6 +678,33 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
 
       });
   }
+  getSucursales() {
+    this.loadingSucursales = true;
+    let parametros: Parametro[] = [
+      {
+        key: "CompaniaID",
+        // value: this.authService.tokenDecoded.primarygroupsid
+        value: 0
+      }
+    ];
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetSucursalesByCompania", parametros).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.sucursales = response.records;
+        }
+
+        this.loadingSucursales = false;
+      }, error => {
+        this.loadingSucursales = false;
+        this.toastService.error("No se pudo obtener las sucursales.", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getSucursales();
+        }, 1000);
+      });
+  }
 
  getClientesPrincipales(searchObj: any = null, clienteID: number = 0) {
     let search = ""
@@ -807,7 +836,6 @@ onSubSectorChange(event:ComboBox){
 }
 openModal(content) {
   this.modalService.open(content, { size: 'lg' });
-
 }
 goTab(key="VISITAS_RUTAS"){
   this.goTabByKey.emit(key)
@@ -873,7 +901,7 @@ formatPermisionByKeyName(keyName:string){
     case 'COMERCIAL':
       return 'mantenimientos_cliente_comercial'
     default:
-        console.log("No such day exists!" + keyName);
+      '';
   }
 
 }
