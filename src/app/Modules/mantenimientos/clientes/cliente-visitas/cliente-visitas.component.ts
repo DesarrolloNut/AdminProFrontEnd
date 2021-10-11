@@ -253,7 +253,7 @@ export class ClienteVisitasComponent implements OnInit {
         this.cargadoRutas = false;
       }, error => {
         this.cargadoRutas = false;
-        this.toastService.error("No se pudo obtener las frecuencias", "Error conexion al servidor");
+        this.toastService.error("No se pudo obtener las rutas", "Error conexion al servidor");
 
         setTimeout(() => {
           this.getRutas();

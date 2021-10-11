@@ -76,10 +76,10 @@
                                     <span> {{item.serie}} </span>
                                 </td>
                                 <td>
-                                    <span> {{item.secuenciaDesde}} </span>
+                                    <span> {{item.secuenciaDesde | number}} </span>
                                 </td>
                                 <td>
-                                    <span> {{item.secuenciaHasta}} </span>
+                                    <span> {{item.secuenciaHasta | number}} </span>
                                 </td>
                                 <td>
                                     <span> {{item.secuenciaHasta - item.secuenciaDesde | number}}</span>
@@ -88,7 +88,12 @@
                                     <h3> <span class="badge badge-light"> {{item.estado}}</span></h3>
                                 </td>
                                 <td>
-                                    <button class="btn btn-sm btn-info" [routerLink]="[item.id]">
+                                    <button (click)="openModal(modalDetalleComprobante,item)"
+                                        class="btn btn-sm btn-info m-1">
+                                        <i class="fa fa-sm fa-list-ol"></i>
+                                    </button>
+
+                                    <button class="btn btn-sm btn-light m-1" [routerLink]="[item.id]">
                                         <i class="fa fa-sm fa-edit"></i>
                                     </button>
                                 </td>
@@ -125,3 +130,128 @@
         </div>
     </div>
 </div>
+
+
+
+<ng-template #modalDetalleComprobante let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Detalle de comprobantes fiscales</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+
+            <div class="col-12">
+                <!-- <h5 class="text-info"> <i class="fa fa-user"></i> Cliente: {{cotizacionSeleccionada.cliente}}</h5>
+                <h5> <i class="fa fa-id-card"></i> Documento: {{cotizacionSeleccionada.clienteDocumento}}</h5>
+                <h5> <i class="fa fa-calendar"></i> Fecha: {{cotizacionSeleccionada.fechaCreacion |
+                    date:'dd/MM/yy'}}</h5>
+                <hr>
+                <h5> <i class="fa fa-user-circle"></i> Cotizador: {{cotizacionSeleccionada.cotizador}}</h5>
+                <h5> <i class="fa fa-map-marker"></i> Sucursal: {{cotizacionSeleccionada.sucursal}}</h5>
+                <h5> <i class="fa fa-user-circle"></i>Vendedor: {{cotizacionSeleccionada.vendedor}}</h5> -->
+            </div>
+
+            <!-- <div class="col-12" [hidden]="loadingCotizacionDetalle"> -->
+            <div class="col-6">
+                <h3>Rutas</h3>
+                <table class="table table-sm table-hover mb-0 no-wrap v-middle">
+                    <thead>
+                        <tr>
+                            <th>Ruta</th>
+                            <th>Desde</th>
+                            <th>Hasta</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr *ngFor="let item of comprobanteDetalleRutas; let i = index">
+
+                            <td>
+                                <ng-select style="width: 200px;" [items]="rutasVendedores" bindLabel="nombre"
+                                    [clearable]="false" bindValue="codigo" [loading]="loadingRutasVendedores"
+                                    (change)="onSelectComboDetalle(comprobanteDetalleRutas,item,i)"
+                                    [(ngModel)]="item.valorID" notFoundText="No resultados">
+                                </ng-select>
+                            </td>
+                            <td>
+                                <input class="form-control" type="number" [(ngModel)]="item.desde">
+                            </td>
+                            <td>
+                                <input class="form-control" type="number" [(ngModel)]="item.hasta">
+                            </td>
+                            <td>
+                                <button (click)="onDeleteitem(comprobanteDetalleRutas,i)" type="button"
+                                    class="btn btn-sm btn-outline-danger">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+
+
+            <div class="col-6">
+                <h3>Sucursales</h3>
+                <table class="table table-sm table-hover mb-0 no-wrap v-middle">
+                    <thead>
+                        <tr>
+                            <th>Sucursal</th>
+                            <th>Desde</th>
+                            <th>Hasta</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr *ngFor="let item of comprobanteDetalleSucursales; let i =index">
+
+                            <td>
+                                <ng-select style="width: 200px;" [items]="sucursales" bindLabel="nombre"
+                                    [clearable]="false" bindValue="codigo" [loading]="loadingSucursales"
+                                    (change)="onSelectComboDetalle(comprobanteDetalleSucursales,item,i)"
+                                    [(ngModel)]="item.valorID" notFoundText="No resultados">
+                                </ng-select>
+                            </td>
+                            <td>
+                                <input class="form-control" type="number" [(ngModel)]="item.desde">
+                            </td>
+                            <td>
+                                <input class="form-control" type="number" [(ngModel)]="item.hasta">
+                            </td>
+                            <td>
+                                <button (click)="onDeleteitem(comprobanteDetalleSucursales,i)" type="button"
+                                    class="btn btn-sm btn-outline-danger">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+
+            <!-- <div class="col-12 text-right">
+                <hr>
+                <h4>Subtotal: $ {{cotizacionSeleccionada.subTotal | number:'1.2-2' }}</h4>
+                <h4>Descuento: $ {{cotizacionSeleccionada.descuentoTotal | number:'1.2-2' }}</h4>
+                <h4>Impuesto: $ {{cotizacionSeleccionada.impuestoTotal | number:'1.2-2' }}</h4>
+                <h4 class="font-weight-bold">Total Neto: $ {{cotizacionSeleccionada.totalNeto | number:'1.2-2' }}</h4>
+            </div> -->
+
+            <!-- <div class="col-12">
+                <app-loading-listado [hidden]="!loadingCotizacionDetalle"></app-loading-listado>
+            </div> -->
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-info m-1" (click)="onSubmit()">Guardar</button>
+    </div>
+</ng-template>
