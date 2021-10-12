@@ -3,6 +3,7 @@ export interface ComprobanteFiscalDetalle {
     valorID: number
     desde: number
     hasta: number
+    asignados: number
     comprobanteID: number
     tipoID: number
 }

@@ -42,6 +42,9 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
   loadingSucursales: boolean;
   sucursales: ComboBox[];
   btnGuardarCargando: boolean;
+  loadingComprobanteDetalle: boolean;
+
+  tipoComprobantes = ComprobanteFiscalTipoEnum;
 
 
   constructor(private toastService: ToastrService,
@@ -57,13 +60,9 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
     this.getSucursales()
     this.getRutasVendedores()
 
-    this.comprobanteDetalleRutas.push
-      ({ comprobanteID: 0, desde: 0, hasta: 0, id: 0, valorID: 0, tipoID: 1 })
-
-    this.comprobanteDetalleSucursales.push
-      ({ comprobanteID: 0, desde: 0, hasta: 0, id: 0, valorID: 0, tipoID: 1 })
 
   }
+
   getData() {
     this.Cargando = true;
 
@@ -140,8 +139,11 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
 
 
   openModal(content, item: ComprobanteFiscalListadoViewModel) {
-    this.modalService.open(content, { windowClass: "myCustomModalClass" });
+    this.modalService.open(content, { windowClass: "myCustomModalClass", });
     this.itemSelected = item;
+
+    this.getComprobanteDetalles(item.id);
+
   }
 
 
@@ -194,7 +196,7 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
   }
 
 
-  onSelectComboDetalle(list: ComprobanteFiscalDetalle[], item: ComprobanteFiscalDetalle, index: number) {
+  onSelectComboDetalle(list: ComprobanteFiscalDetalle[], item: ComprobanteFiscalDetalle, index: number, tipo: number) {
 
 
     // if (list.filter(x => x.valorID == item.valorID).length > 1) {
@@ -203,23 +205,35 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
     // }
 
     if (!list.some(x => x.valorID <= 0)) {
-      list.push({ comprobanteID: 0, desde: 0, hasta: 0, id: 0, valorID: 0, tipoID: 0 })
+      list.push({ comprobanteID: 0, desde: 0, hasta: 0, id: 0, asignados: 0, valorID: 0, tipoID: tipo })
     }
 
 
   }
 
 
-  onDeleteitem(list: ComprobanteFiscalDetalle[], index: number) {
+  onDeleteitem(list: ComprobanteFiscalDetalle[], index: number, tipo: number) {
     list.splice(index, 1);
     if (!list.some(x => x.valorID <= 0)) {
-      list.push({ comprobanteID: 0, desde: 0, hasta: 0, id: 0, valorID: 0, tipoID: 0 })
+      list.push({ comprobanteID: 0, desde: 0, hasta: 0, id: 0, asignados: 0, valorID: 0, tipoID: tipo })
     }
   }
 
   onSubmit() {
 
+    //valida campos llenos
+    let camposImcompletos =
+      this.comprobanteDetalleRutas.filter(x => x.valorID > 0)
+        .some(x => x.desde <= 0 || x.hasta <= 0)
+      ||
+      this.comprobanteDetalleSucursales.filter(x => x.valorID > 0)
+        .some(x => x.desde <= 0 || x.hasta <= 0)
 
+
+    if (camposImcompletos) {
+      this.toastService.warning("Llena todos los campos.")
+      return;
+    }
 
     this.guardarDetalle();
   }
@@ -228,12 +242,13 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
   guardarDetalle() {
 
 
-    this.comprobanteDetalleRutas.forEach(x=> x.tipoID = ComprobanteFiscalTipoEnum.RUTA)
-    this.comprobanteDetalleSucursales.forEach(x=> x.tipoID = ComprobanteFiscalTipoEnum.SUCURSAL)
+    this.comprobanteDetalleRutas.forEach(x => x.tipoID = ComprobanteFiscalTipoEnum.RUTA)
+    this.comprobanteDetalleSucursales.forEach(x => x.tipoID = ComprobanteFiscalTipoEnum.SUCURSAL)
 
     let parametro: any = {
       "Comprobante": this.itemSelected,
       "Detalles": this.comprobanteDetalleRutas.concat(this.comprobanteDetalleSucursales)
+        .filter(x => x.valorID > 0)
     }
 
     this.btnGuardarCargando = true;
@@ -245,7 +260,7 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
           this.toastService.error(response.errores[0], "Error");
         } else {
           this.toastService.success("Realizado", "OK");
-          // this.router.navigateByUrl('/ventas/cotizacion');
+          // this.router.navigateByUrl('/ventas/comprobante');
           this.modalService.dismissAll()
         }
 
@@ -254,9 +269,105 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
         this.btnGuardarCargando = false;
         this.toastService.error("Error conexion al servidor");
       });
+  }
 
+
+  getComprobanteDetalles(comprobanteID: number) {
+    this.loadingComprobanteDetalle = true;
+    this.httpService.DoPostAny<ComprobanteFiscalDetalle>(DataApi.ComprobanteFiscal,
+      "GetComprobanteDetalles", comprobanteID).subscribe(response => {
+
+        if (!response || !response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+
+          if (response.records) {
+
+            this.comprobanteDetalleRutas = response.records
+              .filter(x => x.tipoID == ComprobanteFiscalTipoEnum.RUTA)
+
+            this.comprobanteDetalleSucursales = response.records
+              .filter(x => x.tipoID == ComprobanteFiscalTipoEnum.SUCURSAL)
+          }
+
+          this.agregarDetalleVacio()
+        }
+        this.loadingComprobanteDetalle = false;
+      }, error => {
+        this.loadingComprobanteDetalle = false;
+        this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
+        this.modalService.dismissAll()
+      });
+  }
+
+
+  agregarDetalleVacio() {
+
+    this.comprobanteDetalleRutas.push
+      ({ comprobanteID: 0, desde: 0, hasta: 0, id: 0, valorID: 0, asignados: 0, tipoID: ComprobanteFiscalTipoEnum.RUTA })
+
+    this.comprobanteDetalleSucursales.push
+      ({ comprobanteID: 0, desde: 0, hasta: 0, id: 0, valorID: 0, asignados: 0, tipoID: ComprobanteFiscalTipoEnum.SUCURSAL })
 
   }
+
+
+  // onInputHastaChange(list: ComprobanteFiscalDetalle[], item: ComprobanteFiscalDetalle, index: number) {
+
+  //   let firstItem = list[0];
+
+  //   firstItem.desde = this.itemSelected.secuenciaDesde;
+
+  //   if (index < list.length - 1) {
+  //     let nextItem = list[index + 1]
+  //     nextItem.desde = item.hasta + 1
+  //   }
+
+  // }
+
+  onInputAsignarKeyUp(list: ComprobanteFiscalDetalle[], item: ComprobanteFiscalDetalle, index: number) {
+
+    let firstItem = list[0];
+    firstItem.desde = this.itemSelected.secuenciaDesde;
+
+    if (index < list.length - 1) {
+      let nextItem = list[index + 1]
+      nextItem.desde = item.hasta + 1
+    }
+
+  }
+
+  calcularAsignacionComprobantes() {
+
+
+    let allItems = this.comprobanteDetalleRutas.concat(this.comprobanteDetalleSucursales).filter(x => x.valorID > 0);
+
+    let firstItem = allItems[0];
+    firstItem.desde = this.itemSelected.secuenciaDesde;
+
+    allItems.forEach((item, i) => {
+
+      if (item.valorID > 0) {
+
+        if (i > 0) {
+          let itemAnterior = allItems[i - 1];
+          item.desde = itemAnterior.hasta + 1;
+        }
+
+        item.hasta = item.desde + item.asignados;
+      }
+
+    });
+
+
+    this.comprobanteDetalleRutas = allItems.filter(x => x.tipoID == ComprobanteFiscalTipoEnum.RUTA)
+    this.comprobanteDetalleSucursales = allItems.filter(x => x.tipoID == ComprobanteFiscalTipoEnum.SUCURSAL)
+
+
+    this.agregarDetalleVacio();
+
+  }
+
 
 
 

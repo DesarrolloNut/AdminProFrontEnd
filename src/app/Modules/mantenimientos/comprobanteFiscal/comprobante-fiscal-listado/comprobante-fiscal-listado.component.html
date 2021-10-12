@@ -48,7 +48,7 @@
                                 <th>Desde</th>
                                 <th>Hasta</th>
                                 <th>Cantidad</th>
-                                <th>Estado</th>
+                                <!-- <th>Estado</th> -->
                                 <th></th>
 
                             </tr>
@@ -84,9 +84,9 @@
                                 <td>
                                     <span> {{item.secuenciaHasta - item.secuenciaDesde | number}}</span>
                                 </td>
-                                <td>
+                                <!-- <td>
                                     <h3> <span class="badge badge-light"> {{item.estado}}</span></h3>
-                                </td>
+                                </td> -->
                                 <td>
                                     <button (click)="openModal(modalDetalleComprobante,item)"
                                         class="btn btn-sm btn-info m-1">
@@ -135,26 +135,28 @@
 
 <ng-template #modalDetalleComprobante let-modal>
     <div class="modal-header">
-        <h4 class="modal-title">Detalle de comprobantes fiscales</h4>
+        <!-- <h4 class="modal-title">Detalle de comprobantes fiscales</h4> -->
         <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
     <div class="modal-body">
-        <div class="row">
 
+        <div class="row" *ngIf="itemSelected">
             <div class="col-12">
-                <!-- <h5 class="text-info"> <i class="fa fa-user"></i> Cliente: {{cotizacionSeleccionada.cliente}}</h5>
-                <h5> <i class="fa fa-id-card"></i> Documento: {{cotizacionSeleccionada.clienteDocumento}}</h5>
-                <h5> <i class="fa fa-calendar"></i> Fecha: {{cotizacionSeleccionada.fechaCreacion |
-                    date:'dd/MM/yy'}}</h5>
-                <hr>
-                <h5> <i class="fa fa-user-circle"></i> Cotizador: {{cotizacionSeleccionada.cotizador}}</h5>
-                <h5> <i class="fa fa-map-marker"></i> Sucursal: {{cotizacionSeleccionada.sucursal}}</h5>
-                <h5> <i class="fa fa-user-circle"></i>Vendedor: {{cotizacionSeleccionada.vendedor}}</h5> -->
-            </div>
+                <h5 class="text-info font-weight-bold">
+                    {{itemSelected.serie}}{{itemSelected.secuenciaDesde}} -
+                    {{itemSelected.serie}}{{itemSelected.secuenciaHasta}}
+                </h5>
 
-            <!-- <div class="col-12" [hidden]="loadingCotizacionDetalle"> -->
+                <h5 class="font-weight-bold"> {{itemSelected.tipoComprobante}}</h5>
+                <hr>
+            </div>
+        </div>
+
+
+        <div class="row" [hidden]="loadingComprobanteDetalle">
+
             <div class="col-6">
                 <h3>Rutas</h3>
                 <table class="table table-sm table-hover mb-0 no-wrap v-middle">
@@ -163,7 +165,8 @@
                             <th>Ruta</th>
                             <th>Desde</th>
                             <th>Hasta</th>
-                            <th></th>
+                            <th>Asignados</th>
+                            <!-- <th></th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -173,29 +176,41 @@
                             <td>
                                 <ng-select style="width: 200px;" [items]="rutasVendedores" bindLabel="nombre"
                                     [clearable]="false" bindValue="codigo" [loading]="loadingRutasVendedores"
-                                    (change)="onSelectComboDetalle(comprobanteDetalleRutas,item,i)"
+                                    (change)="onSelectComboDetalle(comprobanteDetalleRutas,item,i,tipoComprobantes.RUTA)"
                                     [(ngModel)]="item.valorID" notFoundText="No resultados">
                                 </ng-select>
                             </td>
                             <td>
-                                <input class="form-control" type="number" [(ngModel)]="item.desde">
+                                <span class=" font-weight-bold"
+                                    [ngClass]="{'text-danger': item.desde > itemSelected.secuenciaHasta}">{{item.desde |
+                                    number}}</span>
+
+                                <!-- <input disabled="true" class="form-control" type="number" [(ngModel)]="item.desde"> -->
                             </td>
                             <td>
-                                <input class="form-control" type="number" [(ngModel)]="item.hasta">
+                                <span class=" font-weight-bold"
+                                    [ngClass]="{'text-danger': item.hasta > itemSelected.secuenciaHasta}">{{item.hasta |
+                                    number}}</span>
+
+                                <!-- <input (change)="onInputHastaChange(comprobanteDetalleRutas,item,i)"
+                                    class="form-control" type="number" [(ngModel)]="item.hasta"> -->
                             </td>
                             <td>
-                                <button (click)="onDeleteitem(comprobanteDetalleRutas,i)" type="button"
-                                    class="btn btn-sm btn-outline-danger">
+                                <input [disabled]="item.valorID == 0" [(ngModel)]="item.asignados"
+                                    (keyup)="calcularAsignacionComprobantes()" class="form-control" type="number">
+                            </td>
+                            <!-- <td>
+                                <button (click)="onDeleteitem(comprobanteDetalleRutas,i,tipoComprobantes.RUTA)"
+                                    type="button" class="btn btn-sm btn-outline-danger">
                                     <i class="fa fa-times"></i>
                                 </button>
-                            </td>
+                            </td> -->
                         </tr>
 
                     </tbody>
                 </table>
 
             </div>
-
 
             <div class="col-6">
                 <h3>Sucursales</h3>
@@ -205,32 +220,46 @@
                             <th>Sucursal</th>
                             <th>Desde</th>
                             <th>Hasta</th>
+                            <th>Asignados</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
 
-                        <tr *ngFor="let item of comprobanteDetalleSucursales; let i =index">
+                        <tr *ngFor="let item of comprobanteDetalleSucursales; let i = index">
 
                             <td>
                                 <ng-select style="width: 200px;" [items]="sucursales" bindLabel="nombre"
                                     [clearable]="false" bindValue="codigo" [loading]="loadingSucursales"
-                                    (change)="onSelectComboDetalle(comprobanteDetalleSucursales,item,i)"
+                                    (change)="onSelectComboDetalle(comprobanteDetalleSucursales,item,i,tipoComprobantes.SUCURSAL)"
                                     [(ngModel)]="item.valorID" notFoundText="No resultados">
                                 </ng-select>
                             </td>
                             <td>
-                                <input class="form-control" type="number" [(ngModel)]="item.desde">
+                                <span class=" font-weight-bold"
+                                    [ngClass]="{'text-danger': item.desde > itemSelected.secuenciaHasta}">{{item.desde |
+                                    number}}</span>
+
+                                <!-- <input disabled="true" class="form-control" type="number" [(ngModel)]="item.desde"> -->
                             </td>
                             <td>
-                                <input class="form-control" type="number" [(ngModel)]="item.hasta">
+                                <span class=" font-weight-bold"
+                                    [ngClass]="{'text-danger': item.hasta > itemSelected.secuenciaHasta}">{{item.hasta |
+                                    number}}</span>
+
+                                <!-- <input (change)="onInputHastaChange(comprobanteDetalleRutas,item,i)"
+                                    class="form-control" type="number" [(ngModel)]="item.hasta"> -->
                             </td>
                             <td>
-                                <button (click)="onDeleteitem(comprobanteDetalleSucursales,i)" type="button"
-                                    class="btn btn-sm btn-outline-danger">
+                                <input [disabled]="item.valorID == 0" [(ngModel)]="item.asignados"
+                                    (keyup)="calcularAsignacionComprobantes()" class="form-control" type="number">
+                            </td>
+                            <!-- <td>
+                                <button (click)="onDeleteitem(comprobanteDetalleSucursales,i,tipoComprobantes.SUCURSAL)"
+                                    type="button" class="btn btn-sm btn-outline-danger">
                                     <i class="fa fa-times"></i>
                                 </button>
-                            </td>
+                            </td> -->
                         </tr>
 
                     </tbody>
@@ -238,20 +267,16 @@
 
             </div>
 
-            <!-- <div class="col-12 text-right">
-                <hr>
-                <h4>Subtotal: $ {{cotizacionSeleccionada.subTotal | number:'1.2-2' }}</h4>
-                <h4>Descuento: $ {{cotizacionSeleccionada.descuentoTotal | number:'1.2-2' }}</h4>
-                <h4>Impuesto: $ {{cotizacionSeleccionada.impuestoTotal | number:'1.2-2' }}</h4>
-                <h4 class="font-weight-bold">Total Neto: $ {{cotizacionSeleccionada.totalNeto | number:'1.2-2' }}</h4>
-            </div> -->
-
-            <!-- <div class="col-12">
-                <app-loading-listado [hidden]="!loadingCotizacionDetalle"></app-loading-listado>
-            </div> -->
         </div>
+
+        <div class="row">
+            <div class="col-12">
+                <app-loading-listado [hidden]="!loadingComprobanteDetalle"></app-loading-listado>
+            </div>
+        </div>
+
     </div>
-    <div class="modal-footer">
+    <div class="modal-footer" [hidden]="loadingComprobanteDetalle">
         <button type="button" class="btn btn-info m-1" (click)="onSubmit()">Guardar</button>
     </div>
 </ng-template>
