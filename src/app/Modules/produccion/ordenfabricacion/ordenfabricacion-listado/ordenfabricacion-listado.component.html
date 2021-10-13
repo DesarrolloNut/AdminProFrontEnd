@@ -215,6 +215,7 @@
                 <th scope="col">Base</th>
                 <th scope="col">Requerida</th>
                 <th scope="col">Consumido</th>
+                <th scope="col">Lote</th>
                 <th scope="col">Disponible</th>
                 <th scope="col">Costo Real</th>
                 <!-- <th scope="col">Unidad</th> -->
@@ -240,8 +241,11 @@
                 <td>{{articulext.cantidadRequerida }}</td>
 
                 <td>
-
                   <input type="text" mask="separator.6" thousandSeparator=","  [readonly]="!articulext.isPesaje" [(ngModel)]="articulext.consumido" [ngClass]="{'form-control-plaintext': !articulext.isPesaje, 'form-control': articulext.isPesaje}">
+                </td>
+
+                <td>
+                  <input type="text" [readonly]="!articulext.isPesaje" [(ngModel)]="articulext.lote" [ngClass]="{'form-control-plaintext': !articulext.isPesaje, 'form-control': articulext.isPesaje}">
                 </td>
                 <td>{{articulext.disponible}}</td>
                 <td>{{articulext.costoReal}}</td>

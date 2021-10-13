@@ -1,3 +1,4 @@
+import { LotesOrdenFabricacion } from './../models/LotesOrdenFabricacion';
 import { Component, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FocusEventArgs } from '@syncfusion/ej2-angular-calendars';
@@ -67,8 +68,8 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
   usuario: Usuario;
   loadingPeso: boolean = false;
 
-  loteSearch: string
-  lote: LoteAlmacen;
+  loteSearch: string = "";
+  lote: LotesOrdenFabricacion = new LotesOrdenFabricacion();
   loadingLote: boolean;
   loadingAlmacenes: boolean;
 
@@ -148,7 +149,7 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
   empezarAmbientePrueba() {
 
     setInterval(() => {
-      this.pesoBalanza = this.getRandomInt(0, 100) + 'KGZ';
+      this.pesoBalanza = this.getRandomInt(0, 500) + 'KGZ';
       this.pesoBalanzaUltimaFecha = new Date();
 
       this.formatStringFromBalanza();
@@ -244,13 +245,20 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (this.loteSearch == "") {
+      this.toastService.warning("Digita el lote.");
+      return;
+    }
+
+    if (this.lote.cantidad <= 0) {
+      this.toastService.warning("No digitado un lote disponible.");
+      return;
+    }
+
     if (this.ordenfabricacionvista.requerida < this.pesoNeto) {
       this.toastService.warning("Está consumiendo menos de la cantidad requerida.");
     }
-    // if (!this.loteSearch) {
-    //   this.toastService.warning("Digita el lote.");
-    //   return;
-    // }
+
 
     // if (this.lote.cantidad < this.pesoNeto) {
     //   this.toastService.warning(`No tiene lote disponible para hacer esta transferencia, favor verificar.`);
@@ -278,6 +286,7 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
     };
 
     this.ordenfabricacionvista.consumido = this.pesoNeto;
+    this.ordenfabricacionvista.lote = this.lote.lote;
 
 
 
@@ -428,37 +437,38 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
   }
 
   getLote() {
-    // this.loadingLote = true;
+    this.loadingLote = true;
 
-    // let ap = new ArticuloPesaje();
-    // ap.articuloID = this.articulo.id;
-    // ap.almacenDesde = this.almacenesDesdeSeleccionado;
-    // ap.lote = this.loteSearch;
+    let ap = new LotesOrdenFabricacion();
+    ap.articulo = this.articulo.codigoReferencia;
+    ap.almacen = this.ordenfabricacionvista.almacenCodigoReferencia;
+    ap.lote = this.loteSearch;
 
-    // this.httpService.DoPostAny<LoteAlmacen>(DataApi.ArticuloPesaje,
-    //   "GetLoteCantidadDisponible", ap).subscribe(response => {
+    this.httpService.DoPostAny<LotesOrdenFabricacion>(DataApi.OrdenFabricacionDetalle,
+      "GetLote", ap).subscribe(response => {
 
-    //     if (!response.ok) {
-    //       this.toastService.error(response.errores[0]);
-    //     } else {
-    //       //validar que existe
-    //       if (response != null && response.records != null && response.records.length > 0) {
-    //         let record = response.records[0]
-    //         this.lote = record;
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          //validar que existe
+          if (response != null && response.records != null && response.records.length > 0) {
+            let record = response.records[0];
+            if(record == null){
+              this.toastService.warning("No se encontro el lote.");
+            }
+            this.lote = record ?? new LotesOrdenFabricacion();
 
-    //         console.log(this.lote)
+          }
+          else {
+            this.lote = new LotesOrdenFabricacion();
+          }
+          this.loadingLote = false;
+        }
 
-    //       }
-    //       else {
-    //         this.lote = null;
-    //       }
-    //       this.loadingLote = false;
-    //     }
-
-    //   }, error => {
-    //     this.loadingLote = false;
-    //     this.toastService.error("Error conexion al servidor");
-    //   });
+      }, error => {
+        this.loadingLote = false;
+        this.toastService.error("Error conexion al servidor");
+      });
   }
 
 

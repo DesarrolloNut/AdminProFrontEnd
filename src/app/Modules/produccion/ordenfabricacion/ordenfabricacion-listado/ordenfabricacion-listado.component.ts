@@ -126,21 +126,22 @@ GetNameEstado(estadoId: number){
   OnChangePagePesaje(articulosExtras) {
     this.modalService.dismissAll();
     let data = <OrdenFabricacionVista> articulosExtras;
-      data.articulo = this.articulo.codigoReferencia;
+      data.articuloPadre = this.articulo.codigoReferencia;
 
     this.ordenfabriService.SaveOrdenFabricacion(data);
     this.router.navigateByUrl("/produccion/ordenfabricacionpesaje");
   }
 
   OnSaveConsumido(articulosExtras: OrdenFabricacionVista) {
-    // let requeridad = articulosExtras.cantidadRequerida;
-    // let consumido = articulosExtras.consumido;
+    let requeridad = articulosExtras.cantidadRequerida;
+    let consumido = articulosExtras.consumido;
 
-    // if (consumido < requeridad) {
-    //   this.toastService.warning("El valor consumido es menor a la cantidad requerida");
-    // }else if(consumido > requeridad){
-    //   this.toastService.warning("El valor consumido es mayor a la cantidad requerida");
-    // }
+    if (consumido < requeridad) {
+      this.toastService.warning("El valor consumido es menor a la cantidad requerida");
+    }
+    if(articulosExtras.lote == null || articulosExtras.lote.trim() == ""){
+      this.toastService.warning("Debe poner un lote.");
+    }
       articulosExtras.loadingSaveConsumido = true;
       this.httpService
         .DoPostAny<OrdenFabricacionVista>(

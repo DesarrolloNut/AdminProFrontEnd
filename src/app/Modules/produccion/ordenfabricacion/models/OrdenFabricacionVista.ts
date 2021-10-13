@@ -18,6 +18,7 @@ export class OrdenFabricacionVista {
     this.fechaCreacion = new Date();
     this.cantidadPlanificada = 0;
     this.consumido = 0;
+    this.lote = "";
     this.merma = 0;
     this.costoReal = 0;
     this.costoArticulo = 0;
@@ -46,6 +47,7 @@ export class OrdenFabricacionVista {
   fechaCreacion: Date;
   cantidadPlanificada: number;
   consumido: number;
+  lote: string;
   merma: number;
   costoReal: number;
   costoArticulo: number;

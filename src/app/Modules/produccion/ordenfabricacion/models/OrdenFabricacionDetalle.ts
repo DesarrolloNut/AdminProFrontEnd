@@ -8,6 +8,7 @@ export class OrdenFabricacionDetalle {
     this.cantidadBase = 0;
     this.cantidadRequerida = 0;
     this.consumido = 0;
+    this.lote = "";
     this.merma = 0;
     this.disponible = 0;
     this.unidadMedida = "";
@@ -22,6 +23,7 @@ export class OrdenFabricacionDetalle {
   cantidadBase: number;
   cantidadRequerida: number;
   consumido: number;
+  lote: string;
   merma: number;
   disponible: number;
   unidadMedida: string;

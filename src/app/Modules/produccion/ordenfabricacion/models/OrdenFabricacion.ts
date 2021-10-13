@@ -12,6 +12,7 @@ constructor(){
   this.cantidad = 0;
   this.costoReal = 0;
   this.cantidadProducida = 0;
+  this.lote = "";
   this.estadoId = 0;
 }
 
@@ -27,5 +28,6 @@ constructor(){
   cantidad: number;
   costoReal: number;
   cantidadProducida: number;
+  lote: string;
   estadoId: number;
 }
