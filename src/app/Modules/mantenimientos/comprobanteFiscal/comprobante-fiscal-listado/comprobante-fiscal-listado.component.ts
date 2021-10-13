@@ -48,6 +48,7 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
   comprobanteDetalles: ComprobanteFiscalDetalle[];
   ocultarBotonesAgregar: boolean;
   excedioLimite: boolean;
+  btnEnviandoSAP: boolean;
 
 
   constructor(private toastService: ToastrService,
@@ -204,11 +205,6 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
       });
   }
 
-
-  onDeleteitem(list: ComprobanteFiscalDetalle[], item: ComprobanteFiscalDetalle, index: number, tipo: number) {
-    list.splice(index, 1);
-  }
-
   onSubmit() {
 
     //valida campos llenos
@@ -253,7 +249,10 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
         } else {
           this.toastService.success("Realizado", "OK");
           // this.router.navigateByUrl('/ventas/comprobante');
-          this.modalService.dismissAll()
+          // this.modalService.dismissAll()
+
+          this.getComprobanteDetalles(this.itemSelected.id);
+
         }
 
         this.btnGuardarCargando = false;
@@ -323,6 +322,28 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
     this.excedioLimite = this.comprobanteDetalles.some(x => x.hasta > this.itemSelected.secuenciaHasta)
   }
 
+
+  ActualizarNumerosComprobantesFiscalesSAP(itemSucursal: ComprobanteFiscalDetalle) {
+
+    this.btnEnviandoSAP = true;
+
+    this.httpService.DoPostAny<any>(DataApi.ComprobanteFiscal,
+      "ActualizarNumerosComprobantesFiscalesSAP", itemSucursal).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+        } else {
+          this.toastService.success("Realizado", "OK");
+        }
+
+        this.btnEnviandoSAP = false;
+      }, error => {
+        this.btnEnviandoSAP = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+
+
+  }
 
 
 
