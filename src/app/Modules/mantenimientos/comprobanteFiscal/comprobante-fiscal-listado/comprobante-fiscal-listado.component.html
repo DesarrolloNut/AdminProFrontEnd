@@ -171,45 +171,51 @@
                     </thead>
                     <tbody>
 
-                        <tr *ngFor="let item of comprobanteDetalleRutas; let i = index">
+                        <tr *ngFor="let item of comprobanteDetalles | filterFunc: filterRutas; let i = index">
 
                             <td>
                                 <ng-select style="width: 200px;" [items]="rutasVendedores" bindLabel="nombre"
-                                    [clearable]="false" bindValue="codigo" [loading]="loadingRutasVendedores"
-                                    (change)="onSelectComboDetalle(comprobanteDetalleRutas,item,i,tipoComprobantes.RUTA)"
-                                    [(ngModel)]="item.valorID" notFoundText="No resultados">
+                                    [disabled]="!item.editable" [clearable]="false" bindValue="codigo"
+                                    [loading]="loadingRutasVendedores" [(ngModel)]="item.valorID"
+                                    notFoundText="No resultados">
                                 </ng-select>
                             </td>
                             <td>
                                 <span class=" font-weight-bold"
                                     [ngClass]="{'text-danger': item.desde > itemSelected.secuenciaHasta}">{{item.desde |
-                                    number}}</span>
+                                    number}}
+                                </span>
 
                                 <!-- <input disabled="true" class="form-control" type="number" [(ngModel)]="item.desde"> -->
                             </td>
                             <td>
-                                <span class=" font-weight-bold"
+                                <span class=" font-w323eight-bold"
                                     [ngClass]="{'text-danger': item.hasta > itemSelected.secuenciaHasta}">{{item.hasta |
-                                    number}}</span>
+                                    number}}
+                                </span>
 
                                 <!-- <input (change)="onInputHastaChange(comprobanteDetalleRutas,item,i)"
                                     class="form-control" type="number" [(ngModel)]="item.hasta"> -->
                             </td>
                             <td>
-                                <input [disabled]="item.valorID == 0" [(ngModel)]="item.asignados"
+                                <input [disabled]="!item.editable || item.valorID == 0" [(ngModel)]="item.asignados"
                                     (keyup)="calcularAsignacionComprobantes()" class="form-control" type="number">
                             </td>
-                            <!-- <td>
-                                <button (click)="onDeleteitem(comprobanteDetalleRutas,i,tipoComprobantes.RUTA)"
+                            <td *ngIf="item.valorID <= 0">
+                                <button (click)="onDeleteitem(comprobanteDetalles,item,i,tipoComprobantes.RUTA)"
                                     type="button" class="btn btn-sm btn-outline-danger">
                                     <i class="fa fa-times"></i>
                                 </button>
-                            </td> -->
+                            </td>
                         </tr>
 
                     </tbody>
                 </table>
-
+                <hr>
+                <div class="text-center">
+                    <button *ngIf="!ocultarBotonesAgregar" class="btn btn-sm btn-success"
+                        (click)="agregarDetalleVacio(tipoComprobantes.RUTA)"><i class="fa fa-plus"></i></button>
+                </div>
             </div>
 
             <div class="col-6">
@@ -226,13 +232,13 @@
                     </thead>
                     <tbody>
 
-                        <tr *ngFor="let item of comprobanteDetalleSucursales; let i = index">
+                        <tr *ngFor="let item of comprobanteDetalles | filterFunc: filterSucursales; let i = index">
 
                             <td>
                                 <ng-select style="width: 200px;" [items]="sucursales" bindLabel="nombre"
-                                    [clearable]="false" bindValue="codigo" [loading]="loadingSucursales"
-                                    (change)="onSelectComboDetalle(comprobanteDetalleSucursales,item,i,tipoComprobantes.SUCURSAL)"
-                                    [(ngModel)]="item.valorID" notFoundText="No resultados">
+                                    [disabled]="!item.editable" [clearable]="false" bindValue="codigo"
+                                    [loading]="loadingSucursales" [(ngModel)]="item.valorID"
+                                    notFoundText="No resultados">
                                 </ng-select>
                             </td>
                             <td>
@@ -251,20 +257,24 @@
                                     class="form-control" type="number" [(ngModel)]="item.hasta"> -->
                             </td>
                             <td>
-                                <input [disabled]="item.valorID == 0" [(ngModel)]="item.asignados"
+                                <input [disabled]="!item.editable || item.valorID == 0" [(ngModel)]="item.asignados"
                                     (keyup)="calcularAsignacionComprobantes()" class="form-control" type="number">
                             </td>
-                            <!-- <td>
-                                <button (click)="onDeleteitem(comprobanteDetalleSucursales,i,tipoComprobantes.SUCURSAL)"
+                            <td *ngIf="item.valorID <= 0">
+                                <button (click)="onDeleteitem(comprobanteDetalles,i,tipoComprobantes.SUCURSAL)"
                                     type="button" class="btn btn-sm btn-outline-danger">
                                     <i class="fa fa-times"></i>
                                 </button>
-                            </td> -->
+                            </td>
                         </tr>
 
                     </tbody>
                 </table>
-
+                <hr>
+                <div class="text-center">
+                    <button *ngIf="!ocultarBotonesAgregar" class="btn btn-sm btn-success"
+                        (click)="agregarDetalleVacio(tipoComprobantes.SUCURSAL)"><i class="fa fa-plus"></i></button>
+                </div>
             </div>
 
         </div>
@@ -277,6 +287,11 @@
 
     </div>
     <div class="modal-footer" [hidden]="loadingComprobanteDetalle">
-        <button type="button" class="btn btn-info m-1" (click)="onSubmit()">Guardar</button>
+        <button *ngIf="!excedioLimite" type="button" class="btn btn-info m-1" (click)="onSubmit()">Guardar</button>
+
+        <div *ngIf="excedioLimite" class="alert alert-danger" role="alert">
+            Ha excedido el límite ({{itemSelected.secuenciaHasta | number}}).
+        </div>
+
     </div>
 </ng-template>

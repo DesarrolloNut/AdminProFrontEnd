@@ -45,6 +45,9 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
   loadingComprobanteDetalle: boolean;
 
   tipoComprobantes = ComprobanteFiscalTipoEnum;
+  comprobanteDetalles: ComprobanteFiscalDetalle[];
+  ocultarBotonesAgregar: boolean;
+  excedioLimite: boolean;
 
 
   constructor(private toastService: ToastrService,
@@ -61,6 +64,13 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
     this.getRutasVendedores()
 
 
+  }
+
+  filterRutas(item: ComprobanteFiscalDetalle): boolean {
+    return item.tipoID == ComprobanteFiscalTipoEnum.RUTA;
+  }
+  filterSucursales(item: ComprobanteFiscalDetalle): boolean {
+    return item.tipoID == ComprobanteFiscalTipoEnum.SUCURSAL;
   }
 
   getData() {
@@ -105,7 +115,6 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
     }
 
   }
-
 
 
   getComprobanteFiscalEstados() {
@@ -196,27 +205,8 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
   }
 
 
-  onSelectComboDetalle(list: ComprobanteFiscalDetalle[], item: ComprobanteFiscalDetalle, index: number, tipo: number) {
-
-
-    // if (list.filter(x => x.valorID == item.valorID).length > 1) {
-    //   this.toastService.warning("No se pueden duplicar los valores.")
-    //   list[index].valorID = null;
-    // }
-
-    if (!list.some(x => x.valorID <= 0)) {
-      list.push({ comprobanteID: 0, desde: 0, hasta: 0, id: 0, asignados: 0, valorID: 0, tipoID: tipo })
-    }
-
-
-  }
-
-
-  onDeleteitem(list: ComprobanteFiscalDetalle[], index: number, tipo: number) {
+  onDeleteitem(list: ComprobanteFiscalDetalle[], item: ComprobanteFiscalDetalle, index: number, tipo: number) {
     list.splice(index, 1);
-    if (!list.some(x => x.valorID <= 0)) {
-      list.push({ comprobanteID: 0, desde: 0, hasta: 0, id: 0, asignados: 0, valorID: 0, tipoID: tipo })
-    }
   }
 
   onSubmit() {
@@ -247,7 +237,9 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
 
     let parametro: any = {
       "Comprobante": this.itemSelected,
-      "Detalles": this.comprobanteDetalleRutas.concat(this.comprobanteDetalleSucursales)
+      // "Detalles": this.comprobanteDetalleRutas.concat(this.comprobanteDetalleSucursales)
+      //   .filter(x => x.valorID > 0)
+      "Detalles": this.comprobanteDetalles
         .filter(x => x.valorID > 0)
     }
 
@@ -282,15 +274,11 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
         } else {
 
           if (response.records) {
-
-            this.comprobanteDetalleRutas = response.records
-              .filter(x => x.tipoID == ComprobanteFiscalTipoEnum.RUTA)
-
-            this.comprobanteDetalleSucursales = response.records
-              .filter(x => x.tipoID == ComprobanteFiscalTipoEnum.SUCURSAL)
+            this.comprobanteDetalles = response.records;
           }
+          this.ocultarBotonesAgregar = this.comprobanteDetalles.some(x => x.hasta >= this.itemSelected.secuenciaHasta)
+          this.excedioLimite = this.comprobanteDetalles.some(x => x.hasta > this.itemSelected.secuenciaHasta)
 
-          this.agregarDetalleVacio()
         }
         this.loadingComprobanteDetalle = false;
       }, error => {
@@ -301,46 +289,17 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
   }
 
 
-  agregarDetalleVacio() {
+  agregarDetalleVacio(tipo: ComprobanteFiscalTipoEnum.RUTA | ComprobanteFiscalTipoEnum.SUCURSAL) {
 
-    this.comprobanteDetalleRutas.push
-      ({ comprobanteID: 0, desde: 0, hasta: 0, id: 0, valorID: 0, asignados: 0, tipoID: ComprobanteFiscalTipoEnum.RUTA })
-
-    this.comprobanteDetalleSucursales.push
-      ({ comprobanteID: 0, desde: 0, hasta: 0, id: 0, valorID: 0, asignados: 0, tipoID: ComprobanteFiscalTipoEnum.SUCURSAL })
+    this.comprobanteDetalles.push
+      ({ comprobanteID: 0, desde: 0, hasta: 0, id: 0, valorID: 0, asignados: 0, tipoID: tipo, editable: true })
 
   }
 
-
-  // onInputHastaChange(list: ComprobanteFiscalDetalle[], item: ComprobanteFiscalDetalle, index: number) {
-
-  //   let firstItem = list[0];
-
-  //   firstItem.desde = this.itemSelected.secuenciaDesde;
-
-  //   if (index < list.length - 1) {
-  //     let nextItem = list[index + 1]
-  //     nextItem.desde = item.hasta + 1
-  //   }
-
-  // }
-
-  onInputAsignarKeyUp(list: ComprobanteFiscalDetalle[], item: ComprobanteFiscalDetalle, index: number) {
-
-    let firstItem = list[0];
-    firstItem.desde = this.itemSelected.secuenciaDesde;
-
-    if (index < list.length - 1) {
-      let nextItem = list[index + 1]
-      nextItem.desde = item.hasta + 1
-    }
-
-  }
 
   calcularAsignacionComprobantes() {
 
-
-    let allItems = this.comprobanteDetalleRutas.concat(this.comprobanteDetalleSucursales).filter(x => x.valorID > 0);
+    let allItems = this.comprobanteDetalles.filter(x => x.valorID > 0 && x.asignados > 0)
 
     let firstItem = allItems[0];
     firstItem.desde = this.itemSelected.secuenciaDesde;
@@ -355,17 +314,13 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
         }
 
         item.hasta = item.desde + item.asignados;
+
       }
 
     });
 
-
-    this.comprobanteDetalleRutas = allItems.filter(x => x.tipoID == ComprobanteFiscalTipoEnum.RUTA)
-    this.comprobanteDetalleSucursales = allItems.filter(x => x.tipoID == ComprobanteFiscalTipoEnum.SUCURSAL)
-
-
-    this.agregarDetalleVacio();
-
+    this.ocultarBotonesAgregar = this.comprobanteDetalles.some(x => x.hasta >= this.itemSelected.secuenciaHasta)
+    this.excedioLimite = this.comprobanteDetalles.some(x => x.hasta > this.itemSelected.secuenciaHasta)
   }
 
 
