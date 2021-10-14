@@ -145,7 +145,7 @@ GetNameEstado(estadoId: number){
     }
 
     if (this.lote.cantidad <= 0) {
-      this.toastService.warning("No digitado un lote disponible.");
+      this.toastService.warning("No a digitado un lote disponible.");
       return;
     }
 
@@ -193,6 +193,25 @@ GetNameEstado(estadoId: number){
         );
 
   }
+
+  OnSubmitProducida(){
+
+
+
+    if (this.ordenfabricacion.cantidadProducida <= 0) {
+      this.toastService.warning("No a digitado una cantidad valida.");
+      return;
+    }
+
+    if (this.ordenfabricacion.batch <= 0) {
+      this.toastService.warning("No a digitado el batch.");
+      return;
+    }
+
+    this.OnSaveProducida();
+  }
+
+
   OnSaveProducida() {
     this.loadingSaveProducida = true;
     this.httpService

@@ -251,7 +251,7 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
     }
 
     if (this.lote.cantidad <= 0) {
-      this.toastService.warning("No digitado un lote disponible.");
+      this.toastService.warning("No a digitado un lote disponible.");
       return;
     }
 
