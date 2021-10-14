@@ -39,7 +39,6 @@
             <thead>
               <tr>
                 <th></th>
-                <th></th>
                 <th>Articulo</th>
                 <th>Tipo</th>
                 <th>Estado</th>
@@ -261,7 +260,7 @@
                     <i class="fa fa-sm fa-balance-scale"></i>
                   </button>
 
-                  <button class="btn btn-sm btn-success m-1" *ngIf="articulext.isPesaje && !articulext.loadingSaveConsumido" (click)="OnSaveConsumido(articulext)">
+                  <button class="btn btn-sm btn-success m-1" *ngIf="articulext.isPesaje && !articulext.loadingSaveConsumido" (click)="OnSubmitConsumido(articulext)">
                     <i class="fa fa-sm fa-check"></i>
                   </button>
 
@@ -331,6 +330,7 @@
                 <th scope="col">Articulo</th>
                 <th scope="col">Nombre</th>
                 <th scope="col">Cantidad Completada</th>
+                <th scope="col">Cantidad Batches</th>
                 <th scope="col">Precio</th>
                 <th scope="col">Total</th>
                 <th></th>
@@ -344,6 +344,9 @@
                 <th style="font-size: 14px;">{{articulo.nombre}}</th>
                 <td>
                   <input type="number" [readonly]="!IsPesajeProducida" [(ngModel)]="ordenfabricacion.cantidadProducida" [ngClass]="{'form-control-plaintext': !IsPesajeProducida, 'form-control': IsPesajeProducida}">
+                </td>
+                <td>
+                  <input type="number" [readonly]="!IsPesajeProducida" [(ngModel)]="ordenfabricacion.batch" [ngClass]="{'form-control-plaintext': !IsPesajeProducida, 'form-control': IsPesajeProducida}">
                 </td>
                 <td>{{(ordenfabricacion.costoReal / ordenfabricacion.cantidad) | currency}}</td>
                 <td>{{((ordenfabricacion.costoReal / ordenfabricacion.cantidad) * ordenfabricacion.cantidadProducida) | currency }}</td>

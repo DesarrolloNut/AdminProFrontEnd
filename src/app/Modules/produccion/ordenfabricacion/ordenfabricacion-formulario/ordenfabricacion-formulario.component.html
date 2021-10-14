@@ -75,17 +75,16 @@
                   <div class="form-group col-md-6">
                     <label for="tipoId"> Tipo</label>
                     <ng-select bindLabel="nombre" bindValue="codigo" [items]="Tipos" [(ngModel)]="ofheader.tipoId" [disabled]="ofheader.estadoId >= ValidOrden.LIBERADA"
-                    class ="form-control p-0" notFoundText="No resultados" >
+                    class ="form-control p-0" notFoundText="No resultados" [clearable]="false">
                     </ng-select>
                   </div>
 
                   <div class=" form-group col-md-6">
                     <label for="estadoId"> Estado</label>
                     <ng-select bindLabel="nombre" bindValue="codigo" [items]="estadosAutorizacion" [(ngModel)]="ofheader.estadoId" [disabled]="true"
-                    class ="form-control p-0" notFoundText="No resultados">
+                    class ="form-control p-0" notFoundText="No resultados" [clearable]="false">
                     </ng-select>
                   </div>
-
 
                   <div class=" form-group col-md-6">
                     <label for="cantidadPlanificada"> Cantidad Planificada</label>
@@ -95,7 +94,14 @@
                   <div class="col-md-6">
                     <label for="almacenId">Almacenes</label>
                     <ng-select bindLabel="nombre" bindValue="codigo" [items]="almecenes" [disabled]="true" [(ngModel)]="ofheader.almacenId"
-                    class ="form-control p-0"  notFoundText="No resultados" >
+                    class ="form-control p-0"  notFoundText="No resultados" [clearable]="false">
+                    </ng-select>
+                  </div>
+
+                  <div class="form-group col-md-12">
+                    <label for="tipoId"> Turno </label>
+                    <ng-select bindLabel="nombre" bindValue="codigo" [items]="Turnos" [(ngModel)]="TurnoId" [disabled]="ofheader.estadoId >= ValidOrden.PENDIENTECONSUMO"
+                    class ="form-control p-0 w-50" notFoundText="No resultados" [clearable]="false">
                     </ng-select>
                   </div>
 

@@ -16,6 +16,7 @@ import { OrdenfabricacionPesajeService } from "src/app/Services/ordenfabricacion
 import { OrdenFabricacionEstadoEnum } from "../models/OrdenFabricacionEstadoEnum";
 import { EstadosGeneralesKeyEnum } from "src/app/shared/enums/EstadosGeneralesKeyEnum";
 import { ComboBox } from "src/app/shared/model/ComboBox";
+import { LotesOrdenFabricacion } from "../models/LotesOrdenFabricacion";
 
 @Component({
   selector: "app-ordenfabricacion-listado",
@@ -51,6 +52,8 @@ export class OrdenfabricacionListadoComponent implements OnInit {
   estadosAutorizacion: any[];
   OrdenFilterEstadoId: number = 0;
   loadingEnviando: boolean;
+  loadingLote: boolean;
+  lote: LotesOrdenFabricacion = new LotesOrdenFabricacion();
 
 
   public get ValidOrden(): typeof OrdenFabricacionEstadoEnum {
@@ -130,6 +133,23 @@ GetNameEstado(estadoId: number){
 
     this.ordenfabriService.SaveOrdenFabricacion(data);
     this.router.navigateByUrl("/produccion/ordenfabricacionpesaje");
+  }
+
+  OnSubmitConsumido(model: OrdenFabricacionVista){
+
+    this.getLote();
+
+    if (model.lote == "") {
+      this.toastService.warning("Digita el lote.");
+      return;
+    }
+
+    if (this.lote.cantidad <= 0) {
+      this.toastService.warning("No digitado un lote disponible.");
+      return;
+    }
+
+    this.OnSaveConsumido(model);
   }
 
   OnSaveConsumido(articulosExtras: OrdenFabricacionVista) {
@@ -446,6 +466,42 @@ GetNameEstado(estadoId: number){
 
       });
   }
+
+  getLote() {
+    this.loadingLote = true;
+
+    let ap = new LotesOrdenFabricacion();
+    ap.articulo = this.articulo.codigoReferencia;
+    ap.almacen = "";
+    ap.lote = "";
+
+    this.httpService.DoPostAny<LotesOrdenFabricacion>(DataApi.OrdenFabricacionDetalle,
+      "GetLote", ap).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          //validar que existe
+          if (response != null && response.records != null && response.records.length > 0) {
+            let record = response.records[0];
+            if(record == null){
+              this.toastService.warning("No se encontro el lote.");
+            }
+            this.lote = record ?? new LotesOrdenFabricacion();
+
+          }
+          else {
+            this.lote = new LotesOrdenFabricacion();
+          }
+          this.loadingLote = false;
+        }
+
+      }, error => {
+        this.loadingLote = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
 
 
 }

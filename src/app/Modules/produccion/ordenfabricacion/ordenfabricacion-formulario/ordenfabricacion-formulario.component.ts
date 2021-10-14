@@ -36,6 +36,8 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
   loadingTipo: boolean;
   Tipos: ComboBox[];
   TipoId: number = 1;
+  Turnos: ComboBox[] = [{codigo: 1, nombre:'Diurno', grupo:'', grupoID:'' },{codigo: 2, nombre:'Nocturno', grupo:'', grupoID:'' }];
+  TurnoId: number = 1;
 
   loadingEstado: boolean;
   estadosAutorizacion: ComboBox[];
@@ -81,6 +83,14 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
 
 
   onSubmit() {
+
+
+    if (this.ofheader.cantidadPlanificada <= 0) {
+      this.toastService.warning("No digitado la cantidad planificada disponible.");
+      return;
+    }
+
+
     this.guardar()
   }
 
@@ -98,8 +108,11 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
       costoReal: 0,
       cantidadProducida: this.ofheader.cantidadPlanificada,
       estadoId: this.ofheader.estadoId,
+      estadoERPExternoId: 0,
       codigoReferencia:"",
       lote: "",
+      batch: 0,
+      turno: this.TurnoId,
       fechaCierre: new Date(),
       fechaCreacion: new Date(),
       fechaInicio: new Date(),

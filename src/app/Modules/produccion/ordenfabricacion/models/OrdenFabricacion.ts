@@ -13,7 +13,10 @@ constructor(){
   this.costoReal = 0;
   this.cantidadProducida = 0;
   this.lote = "";
+  this.batch = 0;
+  this.turno = 1;
   this.estadoId = 0;
+  this.estadoERPExternoId = 0;
 }
 
 
@@ -29,5 +32,8 @@ constructor(){
   costoReal: number;
   cantidadProducida: number;
   lote: string;
+  batch: number;
+  turno: number;
   estadoId: number;
+  estadoERPExternoId: number;
 }
