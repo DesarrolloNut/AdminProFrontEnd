@@ -276,6 +276,9 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
         map(x => { return { "ArticuloID": x.id } })
     }
 
+
+
+
     item.cargando = false;
     this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
       "ActualizarOrdenFabricacionEstadoID", param).subscribe(response => {
@@ -285,6 +288,10 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
           console.error(response.errores[0]);
 
         } else {
+          if( this.estadoAutorizacionUsuario == ultimoEstado && this.isAutorizando){
+            this.UpdateFechaCerrada(item.id);
+            this.UpdateEstadoERPExterno(item.id);
+          }
           this.toastService.success("Realizado", "OK");
           this.getData()
         }
@@ -327,8 +334,41 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
 
     this.httpService.DoPostAny<any>(DataApi.OrdenFabricacion, "GetEstaComsumido", Id).subscribe(x => {
         if (x.ok) {
-          console.log(x.records);
+          // console.log(x.records);
           this.IsComsumido = x.records[0];
+        } else {
+          this.toastService.error(x.errores[0]);
+          console.error(x.errores[0]);
+        }
+      }, error => {
+        console.error(error);
+        this.toastService.error("Error conexion al servidor");
+      });
+
+  }
+  UpdateFechaCerrada(Id:number) {
+
+    this.httpService.DoPostAny<any>(DataApi.OrdenFabricacion, "UpdateFechaCerrada", Id).subscribe(x => {
+        if (x.ok) {
+          // console.log(x.records);
+          // this.IsComsumido = x.records[0];
+        } else {
+          this.toastService.error(x.errores[0]);
+          console.error(x.errores[0]);
+        }
+      }, error => {
+        console.error(error);
+        this.toastService.error("Error conexion al servidor");
+      });
+
+  }
+
+  UpdateEstadoERPExterno(Id:number) {
+
+    this.httpService.DoPostAny<any>(DataApi.OrdenFabricacion, "UpdateEstadoERPExterno", Id).subscribe(x => {
+        if (x.ok) {
+          // console.log(x.records);
+          // this.IsComsumido = x.records[0];
         } else {
           this.toastService.error(x.errores[0]);
           console.error(x.errores[0]);

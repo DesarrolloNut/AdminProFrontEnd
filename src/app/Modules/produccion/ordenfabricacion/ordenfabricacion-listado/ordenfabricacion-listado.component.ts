@@ -137,7 +137,7 @@ GetNameEstado(estadoId: number){
 
   OnSubmitConsumido(model: OrdenFabricacionVista){
 
-    this.getLote();
+    this.getLote(model);
 
     if (model.lote == "") {
       this.toastService.warning("Digita el lote.");
@@ -486,13 +486,13 @@ GetNameEstado(estadoId: number){
       });
   }
 
-  getLote() {
+  getLote(model: OrdenFabricacionVista) {
     this.loadingLote = true;
 
     let ap = new LotesOrdenFabricacion();
-    ap.articulo = this.articulo.codigoReferencia;
-    ap.almacen = "";
-    ap.lote = "";
+    ap.articulo = model.articulo;
+    ap.almacen = model.almacenCodigoReferencia;
+    ap.lote = model.lote;
 
     this.httpService.DoPostAny<LotesOrdenFabricacion>(DataApi.OrdenFabricacionDetalle,
       "GetLote", ap).subscribe(response => {
