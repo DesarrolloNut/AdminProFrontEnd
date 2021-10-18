@@ -12,6 +12,7 @@ import { OrdenFabricacionVista } from '../models/OrdenFabricacionVista';
 import { ListaMaterialesHeader } from '../models/ListaMaterialesHeader';
 import { OrdenFabricacionDetalle } from '../models/OrdenFabricacionDetalle';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 
 @Component({
   selector: 'app-ordenfabricacion-formulario',
@@ -49,6 +50,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
   ordenfabricacion: OrdenFabricacion = new OrdenFabricacion();
   ordenfabricaciondetalle: OrdenFabricacionDetalle = new OrdenFabricacionDetalle();
   IsNewData:boolean = true;
+  estadoAutorizacionUsuario: number = 0;
   // ValidOrden: OrdenFabricacionEstadoEnum;
 
   public get ValidOrden(): typeof OrdenFabricacionEstadoEnum {
@@ -58,6 +60,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
   constructor(
     private toastService: ToastrService,
     private httpService: BackendService,
+    private authService: AuthenticationService,
     private router: Router,
     private route: ActivatedRoute,
     )
@@ -69,16 +72,18 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
     this.getAlmacenes()
     this.getOrdenFabricacionTipo();
     this.getEstadosAutorizacion();
+    this.getEstadoAutorizacionUsuario();
 
     let id = Number(this.route.snapshot.paramMap.get('id'));
     if (id > 0) {
       this.IsNewData = false;
       this.getOrdenFabricacion(id);
-}
-    else{
+}else{
       this.IsNewData = true;
-      // this.getArticuloByCodigoReferencia(id.toString());
+      // this.ofheader.estadoId = this.estadoAutorizacionUsuario;
     }
+
+
   }
 
 
@@ -212,6 +217,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
   onSearchChange() {
     if (this.search && this.search.length > 3) {
       this.IsNewData = true;
+      // this.ofheader.estadoId = this.estadoAutorizacionUsuario;
       this.getArticuloByCodigoReferencia(this.search)
     } else {
       this.articulo = null;
@@ -451,7 +457,31 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
       });
   }
 
+  getEstadoAutorizacionUsuario() {
+    let parametro = {
+      "UsuarioID": Number(this.authService.tokenDecoded.nameid),
+      "KeynameModule": EstadosGeneralesKeyEnum.ORDENFABRICACION,
+    }
 
+    this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
+      "GetEstadoAutorizacionUsuario", parametro).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+          this.estadoAutorizacionUsuario = response.valores[0];
+          this.getEstadosAutorizacion()
+        }
+      }, error => {
+        this.toastService.error("No se pudo obtener el estado de autorización del usuario", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getEstadoAutorizacionUsuario()
+        }, 1000);
+
+      });
+
+  }
 
 
 

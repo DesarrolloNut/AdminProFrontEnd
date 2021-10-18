@@ -101,6 +101,7 @@ GetNameEstado(estadoId: number){
       )
       .subscribe(
         (x) => {
+          console.log(x);
           if (x.ok) {
             this.data = x.records;
             this.asignarPagination(x);
@@ -137,7 +138,7 @@ GetNameEstado(estadoId: number){
 
   OnSubmitConsumido(model: OrdenFabricacionVista){
 
-    this.getLote(model);
+  this.getLote(model);
 
     if (model.lote == "") {
       this.toastService.warning("Digita el lote.");
@@ -494,7 +495,7 @@ GetNameEstado(estadoId: number){
     ap.almacen = model.almacenCodigoReferencia;
     ap.lote = model.lote;
 
-    this.httpService.DoPostAny<LotesOrdenFabricacion>(DataApi.OrdenFabricacionDetalle,
+     this.httpService.DoPostAny<LotesOrdenFabricacion>(DataApi.OrdenFabricacionDetalle,
       "GetLote", ap).subscribe(response => {
 
         if (!response.ok) {
