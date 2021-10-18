@@ -10,6 +10,7 @@ export interface ArticuloListaPrecioViewModel {
     fechaAplicacion: string;
     estadoID: number;
     estado: string;
+    colorEstado: string;
     diasRestantes: number;
     cargando: boolean;
     usuarioAutorizacion: string;

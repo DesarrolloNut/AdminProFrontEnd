@@ -247,8 +247,15 @@
                                     <span class="badge badge-info"> {{item.estado}}</span>
                                 </td> -->
                                 <td>
-                                    <span class="badge badge-info"> {{item.estado}}</span>
+                                    <!-- <span class="badge badge-info"> {{item.estado}}</span>
+                                    <span> {{item.nombre}}</span> -->
+
+                                    <span>
+                                        <i class="fa fa-circle" [ngStyle]="{'color': item.colorEstado}"></i>
+                                        {{item.estado}}
+                                    </span>
                                     <span> {{item.nombre}}</span>
+
                                 </td>
                                 <td>
                                     <input style="width: 100px;"

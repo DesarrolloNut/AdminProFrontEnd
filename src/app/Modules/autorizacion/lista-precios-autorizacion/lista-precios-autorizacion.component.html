@@ -8,8 +8,10 @@
                     </div>
                     <div class="col-md-6 text-right">
 
-                        <button type="button" [disabled]="!data || data.length == 0" (click)="autorizarMasiva()"
-                            class="btn btn-info"> <i class="fa fa-check"></i> Autorizar todos
+                        <button type="button"
+                            [disabled]="!data || data.length == 0 || estadoAutorizacionComboModel != estadoAutorizacionUsuario"
+                            (click)="autorizarMasiva()" class="btn btn-info"> <i class="fa fa-check"></i> Autorizar
+                            todos
                         </button>
 
                         <button *ngIf="!loadingReporteExcel" type="button" (click)="exportarReporteExcel()"
@@ -33,10 +35,41 @@
                     </div>
                     <div class=" p-2 col-md-3">
                         <!-- <label> Estado</label> -->
-                        <ng-select [items]="estadosAutorizacion" bindLabel="nombre" bindValue="codigo"
+                        <!-- <ng-select [items]="estadosAutorizacion" bindLabel="nombre" bindValue="codigo"
                             (change)="getData()" [(ngModel)]="estadoAutorizacionComboModel" [clearable]="false"
                             notFoundText="No resultados">
+                        </ng-select> -->
+
+
+                        <ng-select [items]="estadosAutorizacion" bindLabel="nombre" bindValue="codigo"
+                            (change)="getData()" [clearable]="false" [(ngModel)]="estadoAutorizacionComboModel">
+                            <!-- <ng-template ng-header-tmp>
+                                Estados
+                            </ng-template> -->
+                            <ng-template ng-label-tmp let-item="item">
+                                <!-- <img height="15" width="15" [src]="item.avatar" /> -->
+                                <!-- <b>{{item.name}}</b> is cool -->
+
+                                <span>
+                                    <i class="fa fa-circle" [ngStyle]="{'color': item.grupo}"></i> {{item.nombre}}
+                                </span>
+
+                            </ng-template>
+                            <ng-template ng-option-tmp let-item="item" let-index="index">
+                                <!-- <img height="15" width="15" [src]="item.avatar" />
+                                <b>{{item.nombre}}</b> -->
+
+                                <span>
+                                    <i class="fa fa-circle" [ngStyle]="{'color': item.grupo}"></i> {{item.nombre}}
+                                </span>
+
+                            </ng-template>
+                            <!-- <ng-template ng-footer-tmp>
+                                Custom footer
+                            </ng-template> -->
                         </ng-select>
+
+
                     </div>
                     <!-- <div class="form-group col-md-3 pt-2">
                         <label> Fecha Aplicación</label>
@@ -195,7 +228,8 @@
 
                                 <td>
                                     <h5>
-                                        <span class="badge badge-light"> {{item.estado}}</span>
+                                        <span> <i class="fa fa-circle" [ngStyle]="{'color': item.colorEstado}"></i>
+                                            {{item.estado}}</span>
                                     </h5>
                                 </td>
                                 <td>
