@@ -36,6 +36,7 @@
                                 <th>Value</th>
                                 <th>Key</th>
                                 <th></th>
+                                <th></th>
                                 <!-- <th>Estado</th> -->
                             </tr>
                         </thead>
@@ -44,7 +45,8 @@
                             <tr *ngFor="let item of data">
                                 <!-- <td><span class="badge badge-light text-info ">{{item.id}}</span></td> -->
                                 <td>
-                                    <span> {{item.nombre}}</span>
+                                    <span> <i class="fa fa-circle" [ngStyle]="{'color': item.colorHex}"></i>
+                                        {{item.nombre}}</span>
                                 </td>
                                 <td>
                                     <!-- <span> {{item.activo ? 'Activo' : 'Inactivo' |  slice:0:60}} ...</span> -->
@@ -54,7 +56,7 @@
                                     <span> {{item.nameKey}}</span>
                                 </td>
                                 <td>
-                                    <button class="btn btn-sm btn-info" [routerLink]="[item.id]">
+                                    <button class=" btn btn-sm btn-info" [routerLink]="[item.id]">
                                         <i class="fa fa-sm fa-edit"></i>
                                     </button>
                                 </td>

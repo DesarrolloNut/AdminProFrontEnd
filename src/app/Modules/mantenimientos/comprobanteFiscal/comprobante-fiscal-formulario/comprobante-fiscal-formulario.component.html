@@ -39,7 +39,7 @@
                         <div class="row">
                             <div class="form-group col-md-4  ">
                                 <label for="secuenciaDesde"> Secuencia Desde</label>
-                                <input formControlName="secuenciaDesde" type="text" mask="00,000,000"
+                                <input formControlName="secuenciaDesde" type="text" mask="00000000"
                                     [ngClass]="{'is-invalid' : submitted && f.secuenciaDesde.errors,  'form-control':true }">
                                 <div class="invalid-feedback" *ngIf="submitted && f.secuenciaDesde.errors">
                                     <div *ngIf="f.secuenciaDesde.errors.required">El campo es obligatorio</div>
@@ -48,7 +48,7 @@
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="secuenciaHasta"> Secuencia Hasta</label>
-                                <input formControlName="secuenciaHasta" type="text" mask="00,000,000"
+                                <input formControlName="secuenciaHasta" type="text" mask="00000000"
                                     [ngClass]="{'is-invalid' : submitted && f.secuenciaHasta.errors,  'form-control':true }">
                                 <div class="invalid-feedback" *ngIf="submitted && f.secuenciaHasta.errors">
                                     <div *ngIf="f.secuenciaHasta.errors.required">El campo es obligatorio</div>

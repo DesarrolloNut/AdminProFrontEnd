@@ -46,6 +46,7 @@ export class EstadosGeneralesFormularioComponent implements OnInit {
       id: [0],
       nombre: [null, [Validators.required]],
       nameKey: [null,],
+      colorHex: [null,],
       value: [null, [Validators.required]],
       activo: [false, [Validators.required]],
     });
