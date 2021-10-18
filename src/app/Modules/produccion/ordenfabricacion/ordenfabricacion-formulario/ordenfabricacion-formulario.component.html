@@ -74,7 +74,7 @@
 
                   <div class="form-group col-md-6">
                     <label for="tipoId"> Tipo</label>
-                    <ng-select bindLabel="nombre" bindValue="codigo" [items]="Tipos" [(ngModel)]="ofheader.tipoId" [disabled]="ofheader.estadoId >= ValidOrden.LIBERADA"
+                    <ng-select bindLabel="nombre" bindValue="codigo" [items]="Tipos" [(ngModel)]="ofheader.tipoId" [disabled]="ofheader.estadoId >= ValidOrden.PENDIENTECONSUMO"
                     class ="form-control p-0" notFoundText="No resultados" [clearable]="false">
                     </ng-select>
                   </div>

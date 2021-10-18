@@ -67,7 +67,7 @@
                   'badge-danger ' : item.colorHEX == 'danger',
                   'badge-info ' : item.colorHEX == 'info'
 
-                }" >{{item.nombre}}</span>
+                }" >{{item.nombre}} </span>
                 </td>
                 <td>
                   <span> {{item.almacen}}</span>
@@ -88,11 +88,11 @@
                     <i class="fa fa-sm fa-arrow-right"></i>
                   </button> -->
 
-                  <button class="btn btn-sm btn-warning m-1" (click)="openModal(modalPesajes,item)" *ngIf="item.estadoId == ValidOrden.PENDIENTECONSUMO">
+                  <button class="btn btn-sm btn-warning m-1" (click)="openModal(modalPesajes,item)" *ngIf="item.estadoId == ValidOrden.PENDIENTECONSUMO && item.noConsumido > 0">
                     <i class="fa fa-sm fa-list"></i>
                   </button>
 
-                  <button class="btn btn-sm btn-success m-1" (click)="openModalProducida(modalProducida,item)" *ngIf="item.estadoId == ValidOrden.PENDIENTEPRODUCIR">
+                  <button class="btn btn-sm btn-success m-1" (click)="openModalProducida(modalProducida,item)" *ngIf="item.estadoId == ValidOrden.PENDIENTECONSUMO && item.noConsumido == 0">
                     <i class="fa fa-sm fa-calendar-check"></i>
                   </button>
 
@@ -240,7 +240,7 @@
                 <td>{{articulext.cantidadRequerida }}</td>
 
                 <td>
-                  <input type="text" mask="separator.6" thousandSeparator=","  [readonly]="!articulext.isPesaje" [(ngModel)]="articulext.consumido" [ngClass]="{'form-control-plaintext': !articulext.isPesaje, 'form-control': articulext.isPesaje}">
+                  <input type="number"   [readonly]="!articulext.isPesaje" [(ngModel)]="articulext.consumido" [ngClass]="{'form-control-plaintext': !articulext.isPesaje, 'form-control': articulext.isPesaje}">
                 </td>
 
                 <td>
