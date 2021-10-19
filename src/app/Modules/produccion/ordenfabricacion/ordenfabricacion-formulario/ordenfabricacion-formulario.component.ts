@@ -111,7 +111,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
       ordenFabricacionTipoId: this.ofheader.tipoId,
       cantidad: this.ofheader.cantidadPlanificada,
       costoReal: 0,
-      cantidadProducida: this.ofheader.cantidadPlanificada,
+      cantidadProducida: 0,
       estadoId: this.ofheader.estadoId,
       estadoERPExternoId: 0,
       codigoReferencia:"",

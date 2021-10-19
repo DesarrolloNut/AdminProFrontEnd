@@ -88,11 +88,11 @@
                     <i class="fa fa-sm fa-arrow-right"></i>
                   </button> -->
 
-                  <button class="btn btn-sm btn-warning m-1" (click)="openModal(modalPesajes,item)" *ngIf="item.estadoId == ValidOrden.PENDIENTECONSUMO && item.noConsumido > 0">
+                  <button class="btn btn-sm btn-warning m-1" (click)="openModal(modalPesajes,item)" *ngIf="item.estadoId == ValidOrden.PENDIENTECONSUMO || item.estadoId == ValidOrden.PROCESANDOCONSUMO">
                     <i class="fa fa-sm fa-list"></i>
                   </button>
 
-                  <button class="btn btn-sm btn-success m-1" (click)="openModalProducida(modalProducida,item)" *ngIf="item.estadoId == ValidOrden.PENDIENTECONSUMO && item.noConsumido == 0">
+                  <button class="btn btn-sm btn-success m-1" (click)="openModalProducida(modalProducida,item)" *ngIf="item.estadoId == ValidOrden.PENDIENTETERMINALREPORT || item.estadoId == ValidOrden.PROCESANDOTERMINALREPORT">
                     <i class="fa fa-sm fa-calendar-check"></i>
                   </button>
 
@@ -260,7 +260,7 @@
                     <i class="fa fa-sm fa-balance-scale"></i>
                   </button>
 
-                  <button class="btn btn-sm btn-success m-1" *ngIf="articulext.isPesaje && !articulext.loadingSaveConsumido" (click)="OnSubmitConsumido(articulext)">
+                  <button class="btn btn-sm btn-success m-1" *ngIf="articulext.isPesaje && !articulext.loadingSaveConsumido" (click)="getLote(articulext)">
                     <i class="fa fa-sm fa-check"></i>
                   </button>
 

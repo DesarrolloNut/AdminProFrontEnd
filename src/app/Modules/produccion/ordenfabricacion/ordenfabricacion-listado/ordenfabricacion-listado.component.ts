@@ -54,6 +54,7 @@ export class OrdenfabricacionListadoComponent implements OnInit {
   loadingEnviando: boolean;
   loadingLote: boolean;
   lote: LotesOrdenFabricacion = new LotesOrdenFabricacion();
+  selectOrden: OrdenFabricacionVista = new OrdenFabricacionVista();
 
 
   public get ValidOrden(): typeof OrdenFabricacionEstadoEnum {
@@ -101,7 +102,7 @@ GetNameEstado(estadoId: number){
       )
       .subscribe(
         (x) => {
-          console.log(x);
+          // console.log(x);
           if (x.ok) {
             this.data = x.records;
             this.asignarPagination(x);
@@ -138,8 +139,6 @@ GetNameEstado(estadoId: number){
 
   OnSubmitConsumido(model: OrdenFabricacionVista){
 
-  this.getLote(model);
-
     if (model.lote == "") {
       this.toastService.warning("Digita el lote.");
       return;
@@ -147,6 +146,11 @@ GetNameEstado(estadoId: number){
 
     if (this.lote.cantidad <= 0) {
       this.toastService.warning("No a digitado un lote disponible.");
+      return;
+    }
+
+    if (model.consumido <= 0) {
+      this.toastService.warning("No a digitado una cantidad valida.");
       return;
     }
 
@@ -177,6 +181,28 @@ GetNameEstado(estadoId: number){
             } else {
               articulosExtras.isPesaje = !articulosExtras.isPesaje;
               this.getOrdenFabricacion(articulosExtras.ordenFabricacionId);
+              // this.updateOrdenFabricacionEstado(this.ofheader.id);
+              this.getData();
+
+              // let dataOfb = this.data.filter(x => x.id == this.selectOrden.id);
+
+              // if (dataOfb.length > 0) {
+              //   let num = dataOfb[0].noConsumido;
+                let ArtCantidad = this.articulosExtras.length;
+                let ArtCunsumido = this.articulosExtras.filter(x => x.consumido > 0).length;
+
+                if (ArtCunsumido == 1 && ArtCantidad == 1) {
+                  this.updateOrdenFabricacionEstado(this.ofheader.id, this.selectOrden.estadoId+2);
+                  this.modalService.dismissAll();
+                }else if(ArtCunsumido == 1 && ArtCantidad > 1 && this.selectOrden.estadoId == OrdenFabricacionEstadoEnum.PENDIENTECONSUMO){
+                  this.updateOrdenFabricacionEstado(this.ofheader.id, this.selectOrden.estadoId+1);
+                }else if(ArtCantidad == ArtCunsumido && ArtCantidad > 1 && ArtCunsumido > 1){
+                  this.updateOrdenFabricacionEstado(this.ofheader.id, this.selectOrden.estadoId+1);
+                  this.modalService.dismissAll();
+                }
+              //}
+
+
             }
             articulosExtras.loadingSaveConsumido = false;
           },
@@ -227,7 +253,15 @@ GetNameEstado(estadoId: number){
             this.toastService.error(response.errores[0]);
           } else {
             this.IsPesajeProducida = !this.IsPesajeProducida;
-            //this.getOrdenFabricacion(articulosExtras.ordenFabricacionId);
+            this.getOrdenFabricacion(this.ordenfabricacion.id);
+            this.getData()
+
+
+            if (this.ordenfabricacion.cantidadProducida > 0 && this.ordenfabricacion.batch > 0) {
+              this.updateOrdenFabricacionEstado(this.ofheader.id, this.ordenfabricacion.estadoId+1);
+              this.modalService.dismissAll();
+            }
+
           }
           this.loadingSaveProducida = false;
         },
@@ -251,6 +285,7 @@ GetNameEstado(estadoId: number){
   }
   openModal(content, modal: OrdenFabricacionVista) {
     this.getOrdenFabricacion(modal.id);
+    this.selectOrden = modal;
     this.modalService.open(content, {
       windowClass: "myCustomModalClass",
       backdrop: "static",
@@ -338,6 +373,7 @@ GetNameEstado(estadoId: number){
               );
               element.disponible = Balance;
             }
+
           }
           this.loadingArticulosExtras = false;
         },
@@ -355,14 +391,14 @@ GetNameEstado(estadoId: number){
       );
   }
 
-  updateOrdenFabricacionEstado(id: number) {
+  updateOrdenFabricacionEstado(id: number, estado: number) {
     this.loadingEnviando = true;
 
     this.httpService
       .DoPostAny<OrdenFabricacionVista>(
         DataApi.OrdenFabricacion,
         "CambiarEstadoOrdenFabricacion",
-        id
+        {id,estado}
       )
       .subscribe(
         async (response) => {
@@ -370,8 +406,8 @@ GetNameEstado(estadoId: number){
             this.toastService.error(response.errores[0]);
           } else {
             // console.log(response.records);
-            this.toastService.success("Procesado");
-            this.modalService.dismissAll();
+            // this.toastService.success("Procesado");
+            // this.modalService.dismissAll();
             this.getData();
 
           }
@@ -488,7 +524,7 @@ GetNameEstado(estadoId: number){
   }
 
   getLote(model: OrdenFabricacionVista) {
-    this.loadingLote = true;
+    model.loadingSaveConsumido = true;
 
     let ap = new LotesOrdenFabricacion();
     ap.articulo = model.articulo;
@@ -509,15 +545,17 @@ GetNameEstado(estadoId: number){
             }
             this.lote = record ?? new LotesOrdenFabricacion();
 
+            this.OnSubmitConsumido(model);
+
           }
           else {
             this.lote = new LotesOrdenFabricacion();
           }
-          this.loadingLote = false;
+          model.loadingSaveConsumido = false;
         }
 
       }, error => {
-        this.loadingLote = false;
+        model.loadingSaveConsumido = false;
         this.toastService.error("Error conexion al servidor");
       });
   }
