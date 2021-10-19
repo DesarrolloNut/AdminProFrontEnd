@@ -166,22 +166,28 @@ export class ClienteDatosGeneralesComponent implements OnInit {
 }
   onSubmit() {
     this.submitted = true; 
-    if(this.f.clientePadreId.value>0){
-       if(this.f.documentoTipoID.value==2){
-         console.log(this.clientePadreSearched)
-         if(this.clientePadreSearched.nombres==this.f.nombres.value){
-            this.toastService
-            .error("La sucursal que esta creando/actualizando no puede tener el mismo de nombre que la principal");
-            return;
-         }
-       }
-    }
+    // if(this.f.clientePadreId.value>0){
+    //    if(this.f.documentoTipoID.value==2){
+    //      if(this.clientePadreSearched.nombres==this.f.nombres.value){
+    //         this.toastService
+    //         .error("La sucursal que esta creando/actualizando no puede tener el mismo de nombre que la principal");
+    //         return;
+    //      }
+    //    }
+    // }
 
     // if (!this.actualizando)
     //   this.f.sucursalID.setValue(Number(this.auth.tokenDecoded.groupsid))
-  
     if (this.FormGenerales.invalid)
       return;
+    if(this.f.documentoTipoID.value==2){
+      this.f.nombres.setValue(this.f.clienteNombre.value);
+    }
+    if(this.f.clienteTipoID.value==15 || this.f.clienteTipoID.value==12){
+      this.f.isClientPrincipal.setValue(0);
+    }
+
+
     this.guardarCliente();
   }
   onSubmitWithoutAction() {
@@ -207,6 +213,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       clienteTipoID: [null, [Validators.required]],
       nombres: [null,  [Validators.required]],
       apellidos: [null,  [Validators.required] ],
+      clienteNombre: [null,  [Validators.required]],
       documento: [null, [Validators.required, Validators.minLength(9)]],
       email: [null, [Validators.required, Validators.email]],
       telefono:[null,  [Validators.required] ],
@@ -559,7 +566,12 @@ getDocumentosTipo() {
       if (!response.ok) {
         this.toastService.error(response.errores[0]);
       } else {
+
+        if(this.f.clienteTipoID.value==12 || this.f.clienteTipoID.value==15){
+         this.documentos=    response.records.filter(x=>x.codigo!=2);
+        }else{
         this.documentos = response.records;
+       }
       }
       this.loadingDocumentos = false;
     }, error => {
@@ -623,24 +635,25 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
 
           this.f.nombres.setValue(this.clientePadreSearched.nombres);
           this.f.apellidos.setValue(this.clientePadreSearched.apellidos!=null?this.clientePadreSearched.apellidos:"");
+          this.f.clienteNombre.setValue(this.clientePadreSearched.nombres +'' +this.clientePadreSearched.apellidos)
           this.f.fechaNacimiento.setValue(this.clientePadreSearched.fechaNacimiento);
           this.f.sexo.setValue(this.clientePadreSearched.sexo);
 
+          if(this.f.clienteTipoID.value==15 || this.f.clienteTipoID.value==12){
+            if(this.f.id.value!=this.clientePadreSearched.id && this.clientePadreSearched.id>0){
+              this.clientId=this.clientePadreSearched.id;
+              this.onClienteCreado(this.clientId);
+              this.getClienteByID(this.clientePadreSearched.id);
+              this.router.navigateByUrl('/mantenimientos/cliente/'+this.clientId);
+              this.toastService.warning("Editando cliente existente...");
 
-          if(this.clientePadreSearched.id>0){
-            this.f.isClientPrincipal.setValue(1)
-          }else{
-            this.f.isClientPrincipal.setValue(0)
-          }
-
-          if(this.clientId<=0){
-            this.f.clientePadreId.setValue(this.clientePadreSearched.id);
-          }
-          if(this.clientId>0){
-            if(this.f.id.value!=this.clientePadreSearched.id){
-              this.f.clientePadreId.setValue(this.clientePadreSearched.id);
+              this.actualizando = true;
             }
+          }else{
+            this.identificaSucursalOPrincipal();
           }
+          
+         
         } else {
           this.f.clientePadreId.setValue(0);
           this.toastService.warning("Datos no encontrados");
@@ -656,6 +669,25 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
       this.toastService.error("Error conexion al servidor");
     });
 
+}
+
+identificaSucursalOPrincipal(){
+
+  if(this.clientePadreSearched.id>0){
+    this.f.isClientPrincipal.setValue(1)
+  }else{
+    this.f.isClientPrincipal.setValue(0)
+  }
+  //En caso de que el cliente se este creando
+  if(this.clientId<=0){
+    this.f.clientePadreId.setValue(this.clientePadreSearched.id);
+  }
+  //En caso de que se este editando el cliente y se digita otro numero de documento
+  if(this.clientId>0){
+    if(this.f.id.value!=this.clientePadreSearched.id){
+      this.f.clientePadreId.setValue(this.clientePadreSearched.id);
+    }
+  }
 }
   getListaPrecio() {
     this.loadingListaPrecio = true;
@@ -747,7 +779,21 @@ onSelectClientePrincipal(cliente: ComboBox) {
   this.f.documentoTipoID.setValue( cliente.grupoID);
   this.f.documento.setValue( cliente.grupo);
 }
+
+onSelectClienteTipo(tipo: ComboBox) {
+ this.getDocumentosTipo();
+
+ if(tipo.codigo==12 || tipo.codigo==15){
+  this.f.isClientPrincipal.setValue(null);
+ }else{
+  this.f.isClientPrincipal.setValue(0);
+ }
+
+}
 onClickRadioPrincipalOSucursal(value:number){
+    //SOLO SE EJECUTA 
+   // SI EL CLIENTE TIPO ES DIFERENTE DE  EMPLEADO(12) O EMPLEADOS RELACIONADOS(15)
+   if(this.f.clienteTipoID.value==12 || this.f.clienteTipoID.value==15 ){ return;}
     this.f.isClientPrincipal.setValue(value)
     if(value==1){
       this.f.clientePadreId.setValidators([Validators.required]);
@@ -758,9 +804,6 @@ onClickRadioPrincipalOSucursal(value:number){
 
 //METODOS LOGIC
 onDocumentoKeyUp() {
-
-
-  // this.f.celular.setValue(null);
 
   if (this.f.documento.valid) {
     this.buscarClienteByRncOCedula(this.f.documento.value,this.f.documentoTipoID.value);
@@ -789,7 +832,6 @@ onSectorChange() {
 
 
 onTipoDocumentoChange(tipo:ComboBox) {
-  
  // this.f.documento.setValue(null)
   this.f.documento.setErrors(null);
   this.f.apellidos.setValue(null);
@@ -804,17 +846,21 @@ clearOrputValidatosSomeField(){
 
   this.FormGenerales.get('documentoTipoID').valueChanges.subscribe(documentoTipo => {
      if(documentoTipo ==1){
+      this.f.nombres.setValidators([Validators.required]);
       this.f.apellidos.setValidators([Validators.required]);
       this.f.email.setValidators([Validators.required, Validators.email]);
       this.f.fechaNacimiento.setValidators([Validators.required] );
      }else if (documentoTipo==2){
       this.f.apellidos.setValidators(null);
+      this.f.nombres.setValidators(null);
       this.f.email.setValidators(null);
       this.f.fechaNacimiento.setValidators(null);
       this.f.sexo.setValidators(null);
      } 
 
      this.f.apellidos.updateValueAndValidity();
+     this.f.nombres.updateValueAndValidity();
+
      this.f.email.updateValueAndValidity();
      this.f.fechaNacimiento.updateValueAndValidity();
      this.f.sexo.updateValueAndValidity();
