@@ -98,34 +98,15 @@
                       </h6>
                   </div>
 
-                    <!-- <div class="row justify-content-start align-items-center">
-                      <div class="form-group col-md-6">
-                        <label for="nombre"> Lote</label>
-                        <input  [(ngModel)]="loteSearch" class="form-control" type="text" name="lote"
-                            id="lote">
-                        <div class="mt-2">
-                            <h6 class="font-weight-bold text-success" *ngIf="lote.cantidad > 0 && !loadingLote ">
-                                <i class="fa fa-check-circle"></i> Lote encontrado y Disponible ({{lote.cantidad}})
-                            </h6>
-                            <h6 class="font-weight-bold text-warning" *ngIf="lote.cantidad <= 0 && lote.lote != '' &&  !loadingLote ">
-                                <i class="fa fa-info-circle"></i> Lote encontrado y No disponible ({{lote.cantidad}})
-                            </h6>
-                        </div>
-                      </div>
 
-                      <div class=" col-md-6 mt-3">
 
-                  <button class="btn btn-info" *ngIf="!loadingLote" (click)="getLote()">
-                    <i class="fa fa-sm fa-search"></i> Buscar
-                  </button>
+                  </div>
+                  <div class="col-md-6" *ngIf="isTerminalReport">
 
-                  <button class="btn btn-info" *ngIf="loadingLote">
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    <span class="sr-only">Buscando ...</span>
-                  </button>
-                      </div>
-
-                    </div> -->
+                    <label for="lote"> Batch</label>
+                    <div class="input-group mb-3 w-50">
+                      <input  [(ngModel)]="batch" class="form-control" type="number" name="lote" id="lote">
+                    </div>
 
                   </div>
 

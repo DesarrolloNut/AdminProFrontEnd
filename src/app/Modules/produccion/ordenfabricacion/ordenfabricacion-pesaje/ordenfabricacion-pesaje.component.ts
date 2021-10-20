@@ -72,6 +72,7 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
   lote: LotesOrdenFabricacion = new LotesOrdenFabricacion();
   loadingLote: boolean;
   loadingAlmacenes: boolean;
+  batch: number = 0;
 
   isTerminalReport: boolean = false;
 
@@ -106,7 +107,7 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
       });
     }
     console.log(this.ordenfabricacionvista);
-    if (this.ordenfabricacionvista.articuloPadre == "") {
+    if (this.ordenfabricacionvista.almacen == null) {
       this.isTerminalReport = true;
     }
     this.getArticuloByCodigoReferencia(this.ordenfabricacionvista.articulo);
@@ -260,6 +261,11 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (this.batch <= 0 && this.isTerminalReport == true) {
+      this.toastService.warning("No a digitado un ningun batch.");
+      return;
+    }
+
     if (this.ordenfabricacionvista.requerida < this.pesoNeto) {
       this.toastService.warning("Está consumiendo menos de la cantidad requerida.");
     }
@@ -292,14 +298,34 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
 
     this.ordenfabricacionvista.consumido = this.pesoNeto;
     this.ordenfabricacionvista.lote = this.lote.lote;
+    this.ordenfabricacionvista.batch = this.batch;
+    // console.log(this.ordenfabricacionvista);
 
 
 
-      if(this.ordenfabricacionvista.id > 0) {
+      if(this.ordenfabricacionvista.id > 0 && this.isTerminalReport == false) {
     this.btnGuardarCargando = true;
         this.httpService.DoPostAny<ArticuloPesaje>(DataApi.OrdenFabricacionDetalle,
           "UpdateConsumidoYCostoReal", this.ordenfabricacionvista).subscribe(response => {
-            console.log(response);
+            // console.log(response);
+            if (response.ok) {
+              this.toastService.success("Procesado");
+              this.router.navigateByUrl('/produccion/ordenfabricacion');
+            } else {
+              this.toastService.error(response.errores[0], "Error");
+            }
+
+            this.btnGuardarCargando = false;
+          }, error => {
+            this.btnGuardarCargando = false;
+            this.toastService.error("Error conexion al servidor");
+          });
+      }else if(this.ordenfabricacionvista.id > 0 && this.isTerminalReport == true){
+        this.btnGuardarCargando = true;
+        this.ordenfabricacionvista.ordenFabricacionId = this.ordenfabricacionvista.id;
+        this.httpService.DoPostAny<ArticuloPesaje>(DataApi.OrdenFabricacionDetalle,
+          "UpdateConsumidoYCostoRealHeader", this.ordenfabricacionvista).subscribe(response => {
+            // console.log(response);
             if (response.ok) {
               this.toastService.success("Procesado");
               this.router.navigateByUrl('/produccion/ordenfabricacion');

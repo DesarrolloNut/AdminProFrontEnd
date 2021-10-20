@@ -256,7 +256,7 @@
                     <i class="fa fa-sm fa-edit"></i>
                   </button>
 
-                  <button class="btn btn-sm btn-info m-1"  *ngIf="!articulext.isPesaje" (click)="OnChangePagePesaje(articulext)">
+                  <button class="btn btn-sm btn-info m-1"  *ngIf="!articulext.isPesaje" (click)="OnChangePagePesaje(articulext, true)">
                     <i class="fa fa-sm fa-balance-scale"></i>
                   </button>
 
@@ -357,7 +357,7 @@
                     <i class="fa fa-sm fa-edit"></i>
                   </button>
 
-                   <button class="btn btn-sm btn-info m-1" *ngIf="articulo.unidadMedida != 'Unidad'" (click)="OnChangePagePesaje(ordenfabricacion)">
+                   <button class="btn btn-sm btn-info m-1" *ngIf="articulo.unidadMedida != 'Unidad'" (click)="OnChangePagePesaje(ordenfabricacion, false)">
                     <i class="fa fa-sm fa-balance-scale"></i>
                   </button>
 

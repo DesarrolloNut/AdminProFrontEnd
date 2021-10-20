@@ -132,7 +132,6 @@ GetNameEstado(estadoId: number){
     this.modalService.dismissAll();
     let data = <OrdenFabricacionVista> articulosExtras;
       data.articulo = this.articulo.codigoReferencia;
-      data.articuloPadre = "";
 
     this.ordenfabriService.SaveOrdenFabricacion(data);
     this.router.navigateByUrl("/produccion/ordenfabricacionpesaje");
@@ -294,6 +293,7 @@ GetNameEstado(estadoId: number){
   }
 
   openModalProducida(content, modal: OrdenFabricacionVista) {
+    console.log(modal)
     this.getOrdenFabricacion(modal.id);
     this.modalService.open(content, {
       windowClass: "myCustomModalClass",
