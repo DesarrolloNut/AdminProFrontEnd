@@ -98,6 +98,7 @@ export class ClienteFinanzasComponent implements OnInit {
     this.FormFinanza = this.formBuilder.group({
       clienteId: [this.clientId],
       limiteCredito: [0, [Validators.required]],
+      clienteTipoId: [0],
       condicionPagoId: [null, [Validators.required]],
       plazoId: [null, [Validators.required]],
     },
@@ -109,11 +110,20 @@ export class ClienteFinanzasComponent implements OnInit {
 
   guardarOActualizarClienteFinanza(){
      if(this.f.condicionPagoId.value==1){
+      //SI LA CONDICION DE PAGO ES CONTADO
+
       this.f.plazoId.setValue(0)
+      
      }else if(this.f.condicionPagoId.value==2){
+      //SI LA CONDICION DE PAGO ES CREDITO
+      
+      //SI EL CLIENTE TIPO ES DIFERENTE DE EMPLEADO
+      if( this.f.clienteTipoId.value!=12 && this.f.clienteTipoId.value!=15){
+
         if(this.filesFromInput.length<=0){
           this.toastService.error("Debe subir anexos");
           return;
+      }
       }
      }
 
@@ -160,7 +170,6 @@ getClienteFinanzaByID(id: number) {
            if(clientefinanza.condicionPagoId==-1){
             clientefinanza.condicionPagoId =1
            }
-
            this.FormFinanza.setValue(clientefinanza);
            this.getArchivosSubidos();
        
@@ -460,7 +469,6 @@ getNameTipoAnexo(item:any):string{
  }
   openModal(content,item:any) {
   
-    console.log(item)
     this.imageFilselected.id = item.id;
     this.imageFilselected.name = item.name;
     this.imageFilselected.url = this.formatUrlFile(item);

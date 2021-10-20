@@ -5,6 +5,8 @@ export class ClienteFinanza {
     constructor() {
         this.clienteId           = 0
         this.limiteCredito       = 0
+        this.clienteTipoId       = 0
+
         this.condicionPagoId     = 0
         this.plazoId             = 0
     }
@@ -12,6 +14,7 @@ export class ClienteFinanza {
 
     clienteId           : number
     limiteCredito       : number
+    clienteTipoId       : number
     condicionPagoId     : number
     plazoId             : number
 

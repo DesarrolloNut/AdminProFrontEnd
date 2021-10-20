@@ -21,22 +21,25 @@
              
             <ul class="payment-methods col-md-12 row">
               <div class="col-md-3"></div>
-    
-              <li class=" col-md-3 payment-method paypal">
-                <input
-                [value]="0"
-                formControlName="isClientPrincipal"  
-                (click)="onClickRadioPrincipalOSucursal(0)"
-                     type="radio" id="paypal">
-                <label for="paypal">PRINCIPAL</label>
-              </li>
-              <li class=" col-md-3 payment-method pagseguro">
-                 <input  type="radio"  id="pagseguro"
-                 [value]="1"
-                 (click)="onClickRadioPrincipalOSucursal(1)"
-                 formControlName="isClientPrincipal" >
-                <label for="pagseguro">SUCURSAL</label>
-              </li>
+           
+              <fieldset  class="col-md-6 row" [disabled]="f.clienteTipoID.value==12|| f.clienteTipoID.value==15">
+                <li class=" col-md-5 payment-method paypal">
+                  <input
+                  [value]="0"
+                  formControlName="isClientPrincipal"  
+                  (click)="onClickRadioPrincipalOSucursal(0)"
+                       type="radio" id="paypal">
+                  <label for="paypal">PRINCIPAL</label>
+                </li>
+                <li class=" col-md-5 payment-method pagseguro">
+                   <input  type="radio"  id="pagseguro"
+                   [value]="1"
+                   (click)="onClickRadioPrincipalOSucursal(1)"
+                   formControlName="isClientPrincipal" >
+                  <label for="pagseguro">SUCURSAL</label>
+                </li>
+              </fieldset>
+  
                 <div class="col-md-3"></div>
             </ul>
            
@@ -57,7 +60,7 @@
             <div class="form-group col-md-6">
               <label for="inputEmail4">Tipo Cliente</label>
               <ng-select bindLabel="nombre" bindValue="codigo" [items]="TipoCliente"
-                [loading]="loadingTipoCliente" [clearable]="false"
+                [loading]="loadingTipoCliente"   (change)="onSelectClienteTipo($event)" [clearable]="false"
                 [ngClass]="{'form-control border-danger p-0' : submitted && f.clienteTipoID.errors }"
                 notFoundText="No resultados" formControlName="clienteTipoID">
               </ng-select>
@@ -82,9 +85,11 @@
               </div>
       </div>
 
-        <div class="form-group col-md-6" *ngIf="f.isClientPrincipal.value==0">
+        <div class="form-group col-md-6" *ngIf="f.isClientPrincipal.value==0 || f.isClientPrincipal.value==null">
           <label for="inputEmail4"> Tipo de Documento</label>
-          <ng-select bindLabel="nombre"   bindValue="codigo" (change)="onTipoDocumentoChange($event)" [items]="documentos"
+          <ng-select 
+            [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null || loadingDocumentos" 
+            bindLabel="nombre"   bindValue="codigo" (change)="onTipoDocumentoChange($event)" [items]="documentos"
             [loading]="loadingDocumentos" [clearable]="false"
             [ngClass]="{'form-control border-danger p-0' : submitted && f.documentoTipoID.errors }"
             notFoundText="No resultados" formControlName="documentoTipoID">
@@ -96,11 +101,13 @@
           </div>
         </div>
 
-        <div class="form-group col-md-6" *ngIf="f.isClientPrincipal.value==0">
+        <div class="form-group col-md-6" *ngIf="f.isClientPrincipal.value==0 || f.isClientPrincipal.value==null">
           <label for="documento"> <i class="fa fa-id-card"></i>
             Documento</label>
           <div class="input-group">
-            <input (keyup)="onDocumentoKeyUp()" formControlName="documento" type="text" name="documento"
+            <input (keyup)="onDocumentoKeyUp()"
+              [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null"
+               formControlName="documento" type="text" name="documento"
               cleareable="false" id="documento"
               [ngClass]="{'is-invalid' :f.documento.value && f.documento.errors,  'form-control':true  }">
             <div class="input-group-append" *ngIf="buscandoDocumento">
@@ -120,9 +127,11 @@
           </div>
         </div>
 
-        <div class="form-group col-md-6" >
+        <div class="form-group col-md-6" *ngIf="f.documentoTipoID.value==1" >
           <label for="nombres"><i class=""></i> Nombres</label>
-          <input formControlName="nombres" (input)="f.nombres.setValue(f.nombres.value.toUpperCase())" type="text" name="nombres" id="nombres"
+          <input 
+            [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null"
+            formControlName="nombres" (input)="f.nombres.setValue(f.nombres.value.toUpperCase())" type="text" name="nombres" id="nombres"
             [ngClass]="{'is-invalid' : submitted && f.nombres.errors,  'form-control':true  }">
           <div class="invalid-feedback" *ngIf="submitted && f.nombres.errors">
             <div *ngIf="f.nombres.errors.required">El campo es obligatorio
@@ -132,18 +141,31 @@
 
         <div class="form-group col-md-6"  *ngIf="f.documentoTipoID.value==1">
           <label for="apellidos">Apellidos</label>
-          <input formControlName="apellidos" (input)="f.apellidos.setValue(f.apellidos.value.toUpperCase())" type="text" name="apellidos" id="apellidos"
+          <input
+          [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null"
+           formControlName="apellidos" (input)="f.apellidos.setValue(f.apellidos.value.toUpperCase())" type="text" name="apellidos" id="apellidos"
             [ngClass]="{'is-invalid' : submitted && f.apellidos.errors,  'form-control':true  }">
           <div class="invalid-feedback" *ngIf="submitted && f.apellidos.errors">
             <div *ngIf="f.apellidos.errors.required">El campo es obligatorio
             </div>
           </div>
         </div>
-
-
-        <div class="form-group col-md-6"  *ngIf="f.documentoTipoID.value==1">
+        <div class="form-group col-md-12"   >
+          <label for="clienteNombre"><i class=""></i>Cliente</label>
+          <input
+           [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null"
+           formControlName="clienteNombre" (input)="f.clienteNombre.setValue(f.clienteNombre.value.toUpperCase())" type="text" name="clienteNombre" id="clienteNombre"
+            [ngClass]="{'is-invalid' : submitted && f.clienteNombre.errors,  'form-control':true  }">
+          <div class="invalid-feedback" *ngIf="submitted && f.clienteNombre.errors">
+            <div *ngIf="f.clienteNombre.errors.required">El campo es obligatorio
+            </div>
+          </div>
+        </div>
+        <div class="form-group col-md-6"  >
           <label for="email"> <i class="fa fa-envelope-open"></i> Email</label>
-          <input formControlName="email" type="email" name="email" id="email"
+          <input
+           [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null"
+            formControlName="email" type="email" name="email" id="email"
             [ngClass]="{'is-invalid' : submitted && f.email.errors,  'form-control':true  }">
           <div class="invalid-feedback" *ngIf="submitted && f.email.errors">
             <div *ngIf="f.email.errors.required">El campo es obligatorio</div>
@@ -153,7 +175,9 @@
 
         <div class="form-group col-md-6"  *ngIf="f.documentoTipoID.value==1">
           <label for="telefono"><i class="fa fa-phone" aria-hidden="true"></i> Telefono/Celular</label>
-          <input formControlName="telefono" mask="(000) 000-0000" type="text" name="telefono" id="telefono"
+          <input
+           [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null"
+            formControlName="telefono" mask="(000) 000-0000" type="text" name="telefono" id="telefono"
             [ngClass]="{'is-invalid' : submitted && f.telefono.errors,  'form-control':true  }">
           <div class="invalid-feedback" *ngIf="submitted && f.telefono.errors">
             <div *ngIf="f.telefono.errors.required">El campo es obligatorio</div>
@@ -162,7 +186,9 @@
 
         <div class="form-group col-md-6"  *ngIf="f.documentoTipoID.value==1">
           <label> <i class="fa fa-calendar"></i> Fecha de nacimiento</label>
-          <ejs-datepicker [max]='minDate' formControlName="fechaNacimiento" [format]="'dd-MM-yyyy'"></ejs-datepicker>
+          <ejs-datepicker
+          [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null" 
+          [max]='minDate' formControlName="fechaNacimiento" [format]="'dd-MM-yyyy'"></ejs-datepicker>
           <div *ngIf="submitted && f.fechaNacimiento.errors"
             class="text-danger small animated animated--fade-in">
             <div *ngIf="f.fechaNacimiento.errors.required">El campo es
@@ -172,7 +198,9 @@
 
         <div class="form-group col-md-6"  *ngIf="f.documentoTipoID.value==1">
           <label for="sexo"> Sexo</label>
-          <ng-select bindLabel="nombre" bindValue="codigo" [items]="TipoSexo" [clearable]="false"
+          <ng-select
+            [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null" 
+            bindLabel="nombre" bindValue="codigo" [items]="TipoSexo" [clearable]="false"
             [ngClass]="{'form-control border-danger p-0' : submitted && f.sexo.errors }"
             notFoundText="No resultados" formControlName="sexo">
           </ng-select>
@@ -186,7 +214,9 @@
 
         <div class="form-group col-md-6"  *ngIf="f.documentoTipoID.value==2">
           <label for="telefono"><i class="fa fa-phone" aria-hidden="true"></i> Telefono/Celular</label>
-          <input formControlName="telefono" mask="(000) 000-0000" type="text" name="telefono" id="telefono"
+          <input
+          [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null" 
+          formControlName="telefono" mask="(000) 000-0000" type="text" name="telefono" id="telefono"
             [ngClass]="{'is-invalid' : submitted && f.telefono.errors,  'form-control':true  }">
           <div class="invalid-feedback" *ngIf="submitted && f.telefono.errors">
             <div *ngIf="f.telefono.errors.required">El campo es obligatorio</div>
@@ -201,7 +231,9 @@
 
         <div class="form-group col-md-6">
           <label for="calle"><i class="fa fa-street-view"></i> Calle</label>
-          <textarea formControlName="calle" name="calle" id="calle" rows="1"
+          <textarea
+          [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null"
+          formControlName="calle" name="calle" id="calle" rows="1"
           [ngClass]="{'is-invalid' : submitted && f.calle.errors,  'form-control':true  }">
             </textarea>
           <div class="invalid-feedback" *ngIf="submitted && f.calle.errors">
@@ -213,7 +245,9 @@
 
         <div class="form-group col-md-3">
           <label for="numero"><i class="fa fa-hashtag"></i> Número</label>
-          <input formControlName="numero" type="number" name="numero" id="numero"
+          <input
+          [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null"
+          formControlName="numero" type="number" name="numero" id="numero"
             [ngClass]="{'is-invalid' : submitted && f.numero.errors,  'form-control':true  }">
           <div class="invalid-feedback" *ngIf="submitted && f.numero.errors">
             <div *ngIf="f.numero.errors.required">El campo es obligatorio
@@ -223,7 +257,9 @@
 
         <div class="form-group col-md-3">
           <label for="residencial"> Residencial</label>
-          <input formControlName="residencial" type="text" name="residencial" id="residencial"
+          <input
+            [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null"
+            formControlName="residencial" type="text" name="residencial" id="residencial"
             [ngClass]="{'is-invalid' : submitted && f.residencial.errors,  'form-control':true  }">
           <div class="invalid-feedback" *ngIf="submitted && f.residencial.errors">
             <div *ngIf="f.residencial.errors.required">El campo es obligatorio
@@ -234,7 +270,9 @@
 
         <div class="form-group col-md-6">
           <label for="apartamento"> Apartamento</label>
-          <input formControlName="apartamento" type="text" name="apartamento" id="apartamento"
+          <input 
+            [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null"
+            formControlName="apartamento" type="text" name="apartamento" id="apartamento"
             [ngClass]="{'is-invalid' : submitted && f.apartamento.errors,  'form-control':true  }">
           <div class="invalid-feedback" *ngIf="submitted && f.apartamento.errors">
             <div *ngIf="f.apartamento.errors.required">El campo es obligatorio
@@ -244,7 +282,9 @@
 
         <div class="form-group col-md-6">
           <label for="referencia"><i class="fa fa-hashtag"></i> Referencia</label>
-          <textarea  formControlName="referencia" name="referencia" id="referencia" rows="1"
+          <textarea
+          [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null"
+          formControlName="referencia" name="referencia" id="referencia" rows="1"
           [ngClass]="{'is-invalid' : submitted && f.referencia.errors,  'form-control':true  }">
             </textarea>
           <div class="invalid-feedback" *ngIf="submitted && f.referencia.errors">
@@ -260,7 +300,9 @@
         </div>
         <div class="form-group col-md-4">
           <label for="inputEmail4"> Provincia</label>
-          <ng-select bindLabel="nombre" bindValue="codigo" [items]="provincias"
+          <ng-select 
+            [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null" 
+            bindLabel="nombre" bindValue="codigo" [items]="provincias"
             [loading]="loadingProvincias" [clearable]="false" (change)="onProvinciaChange()"
             [ngClass]="{'form-control border-danger p-0' : submitted && f.provinciaID.errors }"
             notFoundText="No resultados" formControlName="provinciaID">
@@ -274,7 +316,9 @@
 
         <div class="form-group col-md-4">
           <label for="inputEmail4"> Ciudad</label>
-          <ng-select bindLabel="nombre" bindValue="codigo" [items]="ciudades"
+          <ng-select
+            [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null" 
+            bindLabel="nombre" bindValue="codigo" [items]="ciudades"
             [loading]="loadingCiudades" [clearable]="false" (change)="getSectores($event)"
             [ngClass]="{'form-control border-danger p-0' : submitted && f.ciudadID.errors }"
             notFoundText="No resultados" formControlName="ciudadID">
@@ -287,7 +331,9 @@
 
         <div class="form-group col-md-4">
           <label for="inputEmail4"> Sector</label>
-          <ng-select bindLabel="nombre" bindValue="codigo" [items]="sectores"
+          <ng-select 
+            [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null" 
+            bindLabel="nombre" bindValue="codigo" [items]="sectores"
             [loading]="loadingSectores" [clearable]="false" (change) ="onSectorChange()"
             [ngClass]="{'form-control border-danger p-0' : submitted && f.sectorID.errors }"
             notFoundText="No resultados" formControlName="sectorID">
@@ -301,7 +347,9 @@
 
         <div class="form-group col-md-4">
           <label for="inputEmail4"> Sub Sector</label>
-          <ng-select bindLabel="nombre" bindValue="codigo"  (change)="onSubSectorChange($event)"  [items]="subSectores"
+          <ng-select
+            [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null" 
+             bindLabel="nombre" bindValue="codigo"  (change)="onSubSectorChange($event)"  [items]="subSectores"
             [loading]="loadingSubSectores" [clearable]="false"
             [ngClass]="{'form-control border-danger p-0' : submitted && f.subSectorID.errors }"
             notFoundText="No resultados" formControlName="subSectorID">
@@ -315,7 +363,9 @@
         <div class="form-group col-md-4">
           <label for="latitud"><i class="fa fa-street-view"></i>
             Latitud</label>
-          <input formControlName="latitud"  (keyup)="onCoordsKeyUp()" type="text" name="latitud" id="latitud"
+          <input
+            [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null"
+            formControlName="latitud"  (keyup)="onCoordsKeyUp()" type="text" name="latitud" id="latitud"
             [ngClass]="{'is-invalid' : submitted && f.latitud.errors,  'form-control':true  }">
           <div class="invalid-feedback" *ngIf="submitted && f.latitud.errors">
             <div *ngIf="f.latitud.errors.required">El campo es obligatorio
@@ -327,7 +377,9 @@
         <div class="form-group col-md-4">
           <label for="longitud"><i class="fa fa-street-view"></i>
             Longitud</label>
-          <input formControlName="longitud" (keyup)="onCoordsKeyUp()" type="text" name="longitud" id="longitud"
+          <input 
+            [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null"
+            formControlName="longitud" (keyup)="onCoordsKeyUp()" type="text" name="longitud" id="longitud"
             [ngClass]="{'is-invalid' : submitted && f.longitud.errors,  'form-control':true  }">
           <div class="invalid-feedback" *ngIf="submitted && f.longitud.errors">
             <div *ngIf="f.longitud.errors.required">El campo es obligatorio
@@ -340,7 +392,9 @@
         <div class="form-group col-md-4" *ngIf="f.clienteTipoID.value==12 || f.clienteTipoID.value==15">
           <label for="salario"><i class="fa fa-street-view"></i>
             Salario</label>
-          <input formControlName="salario"  prefix="$ " mask="separator"
+          <input 
+          [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null"
+          formControlName="salario"  prefix="$ " mask="separator"
           thousandSeparator=","  type="text" name="salario" id="salario"
             [ngClass]="{'is-invalid' : submitted && f.salario.errors,  'form-control':true  }">
           <div class="invalid-feedback" *ngIf="submitted && f.salario.errors">
@@ -351,7 +405,9 @@
 
         <div class="form-group col-md-4">
           <label for="inputEmail4">Tipo Comprobante</label>
-          <ng-select bindLabel="nombre" bindValue="codigo"    [items]="tiposComprobantes"
+          <ng-select 
+            [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null" 
+            bindLabel="nombre" bindValue="codigo"    [items]="tiposComprobantes"
             [loading]="loadingTipoComprobantes" [clearable]="false"
             [ngClass]="{'form-control border-danger p-0' : submitted && f.tipoComprobante.errors }"
             notFoundText="No resultados" formControlName="tipoComprobante">
@@ -363,7 +419,9 @@
         </div>
         <div class="form-group col-md-4">
           <label for="sucursalId"> <i class="fa fa-map-marker"></i> Sucursal de Atención </label>
-          <ng-select bindLabel="nombre" bindValue="codigo" [items]="sucursales"
+          <ng-select
+              [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null" 
+              bindLabel="nombre" bindValue="codigo" [items]="sucursales"
               [loading]="loadingSucursales"
               [ngClass]="{'form-control border-danger p-0' : submitted && f.sucursalId.errors }"
               notFoundText="No resultados" formControlName="sucursalId">
@@ -375,7 +433,9 @@
         <div class="form-check col-md-4">
           <label for="estadoID" class="d-block">Estado</label>
           <div class="form-group" style="margin-left: 20px;">
-            <input formControlName="estadoID" type="checkbox" name="estadoID" id="estadoID"
+            <input 
+            [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null"
+            formControlName="estadoID" type="checkbox" name="estadoID" id="estadoID"
             [ngClass]="{'is-invalid' : submitted && f.estadoID.errors,  'form-check-input':true  }">
           <label for="estadoID">Activo</label>
           </div>

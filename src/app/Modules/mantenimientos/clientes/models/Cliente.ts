@@ -12,6 +12,7 @@ export class Cliente {
 
         this.nombres = ""
         this.apellidos = ""
+        this.clienteNombre = ""
         this.documento = ""
         this.email = ""
         this.fechaNacimiento =  ""
@@ -51,6 +52,7 @@ export class Cliente {
     documentoTipoID: number;
     nombres: string;
     apellidos: string;
+    clienteNombre: string;
     documento: string;
     email: string;
     fechaNacimiento: string;
@@ -96,6 +98,7 @@ export class ClienteViewModelCustomized {
 
         this.nombres = ""
         this.apellidos = ""
+        this.clienteNombre = ""
 
 
         this.documento = ""
@@ -155,6 +158,7 @@ export class ClienteViewModelCustomized {
 
     nombres: string;
     apellidos: string;
+    clienteNombre: string;
 
     documento: string;
     documentoTipoID: number;
