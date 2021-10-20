@@ -155,13 +155,13 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
 
   getAnteriorEstadoAutorizacion() {
     let estadoUsuario = this.estadosAutorizacion.find(x => x.codigo == this.estadoAutorizacionUsuario);
-    let estadoActualPosicion = this.estadosAutorizacion.indexOf(estadoUsuario);
-    console.log(estadoUsuario)
-    console.log(estadoActualPosicion)
+    let estadoActualPosicion = this.estadosAutorizacion.indexOf(estadoUsuario); 
     this.estadoAutorizacionAnterior = this.estadosAutorizacion[estadoActualPosicion - 1]
+
     if (this.estadoAutorizacionAnterior) {
       this.estadoAutorizacionComboModel = this.estadoAutorizacionAnterior.codigo;
     }
+    
   }
 
 

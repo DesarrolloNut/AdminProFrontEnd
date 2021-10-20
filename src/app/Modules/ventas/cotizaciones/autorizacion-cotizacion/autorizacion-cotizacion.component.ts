@@ -40,8 +40,6 @@ export class AutorizacionCotizacionComponent implements OnInit {
 
   //comentarios
   itemSeleccionado: any;
-  comentarios: any[];
-  comentario: string;
   cargandoModal: boolean = false;
   cotizacionSeleccionada: CotizacionListadoViewModel;
   CargandoDetalle: boolean;
@@ -321,7 +319,7 @@ export class AutorizacionCotizacionComponent implements OnInit {
       });
 
   }
-
+ 
 
   // openModalComments(content, item: any) {
   //   console.table(item)
