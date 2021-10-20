@@ -73,6 +73,8 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
   loadingLote: boolean;
   loadingAlmacenes: boolean;
 
+  isTerminalReport: boolean = false;
+
   constructor(
     private toastService: ToastrService,
     private httpService: BackendService,
@@ -104,6 +106,9 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
       });
     }
     console.log(this.ordenfabricacionvista);
+    if (this.ordenfabricacionvista.articuloPadre == "") {
+      this.isTerminalReport = true;
+    }
     this.getArticuloByCodigoReferencia(this.ordenfabricacionvista.articulo);
     this.almacenID = Number(this.ordenfabricacionvista.almacenId);
 
@@ -230,10 +235,10 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
     // }
 
 
-    if (!this.fechaVencimiento) {
-      this.toastService.warning("Selecciona la fecha de vencimiento.");
-      return;
-    }
+    // if (!this.fechaVencimiento) {
+    //   this.toastService.warning("Selecciona la fecha de vencimiento.");
+    //   return;
+    // }
 
     if (this.pesoCanastos >= this.pesoBalanzaLBNumber) {
       this.toastService.warning("El peso de los canastos no puede ser mayor o igual al de la balanza.");
@@ -245,12 +250,12 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.loteSearch == "") {
+    if (this.loteSearch == "" && this.isTerminalReport == false) {
       this.toastService.warning("Digita el lote.");
       return;
     }
 
-    if (this.lote.cantidad <= 0) {
+    if (this.lote.cantidad <= 0 && this.isTerminalReport == false) {
       this.toastService.warning("No a digitado un lote disponible.");
       return;
     }
@@ -397,6 +402,7 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0]
             this.articulo = record;
+
             this.getArticulosDePesosExtras();
           }
           else {

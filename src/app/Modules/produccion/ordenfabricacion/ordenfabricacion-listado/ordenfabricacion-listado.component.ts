@@ -131,7 +131,8 @@ GetNameEstado(estadoId: number){
   OnChangePagePesaje(articulosExtras) {
     this.modalService.dismissAll();
     let data = <OrdenFabricacionVista> articulosExtras;
-      data.articuloPadre = this.articulo.codigoReferencia;
+      data.articulo = this.articulo.codigoReferencia;
+      data.articuloPadre = "";
 
     this.ordenfabriService.SaveOrdenFabricacion(data);
     this.router.navigateByUrl("/produccion/ordenfabricacionpesaje");
