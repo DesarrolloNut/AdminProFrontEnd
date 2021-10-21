@@ -128,12 +128,15 @@ GetNameEstado(estadoId: number){
     this.IsPesajeProducida = !this.IsPesajeProducida;
   }
 
-  OnChangePagePesaje(articulosExtras) {
+  OnChangePagePesaje(articulosExtras, isTerminalReport) {
     this.modalService.dismissAll();
     let data = <OrdenFabricacionVista> articulosExtras;
+    if(isTerminalReport){
       data.articulo = this.articulo.codigoReferencia;
+    }
 
-    this.ordenfabriService.SaveOrdenFabricacion(data);
+    this.ordenfabriService.SaveOrdenFabricacion(articulosExtras);
+    this.ordenfabriService.SaveListArticulosDetalles(this.articulosExtras);
     this.router.navigateByUrl("/produccion/ordenfabricacionpesaje");
   }
 
@@ -241,11 +244,13 @@ GetNameEstado(estadoId: number){
 
   OnSaveProducida() {
     this.loadingSaveProducida = true;
+    let data = this.ordenfabricacion ?? new OrdenFabricacion();
+    console.log(data);
     this.httpService
       .DoPostAny<OrdenFabricacionVista>(
         DataApi.OrdenFabricacion,
         "Update",
-        this.ordenfabricacion
+        data
       )
       .subscribe(
         (response) => {

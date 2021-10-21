@@ -30,6 +30,8 @@ export class OrdenFabricacionVista {
     this.cantidadRequerida = 0;
     this.isPesaje = false;
     this.loadingSaveConsumido = false;
+    this.cargando = false;
+
   }
 
   id: number;
@@ -61,4 +63,5 @@ export class OrdenFabricacionVista {
   cantidadRequerida: number;
   isPesaje: boolean;
   loadingSaveConsumido: boolean;
+  cargando: boolean;
 }

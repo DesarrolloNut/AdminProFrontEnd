@@ -109,7 +109,7 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
           console.error(response.errores[0]);
         } else {
           this.estadosAutorizacion = response.records;
-          // this.estadoIDAutorizacionDefault = response.records[0].codigo;
+          this.estadoIDAutorizacionDefault = response.records[0].codigo;
           this.estadoAutorizacionComboModel = response.records[0].codigo;
           this.getSiguienteEstado()//almacena en una variable el siguiente estado
           this.getAnteriorEstadoAutorizacion()//almacena en una variable el anterior estado
@@ -247,7 +247,6 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
       // }
 
       this.getEstaComsumido(item.id);
-      // console.log(this.IsComsumido);
       if(this.IsComsumido && OrdenFabricacionEstadoEnum.PENDIENTECONSUMO == item.estadoId){
         this.toastService.warning("No se a consumido todos los materiales de la orden de fabricación. ");
         return;
@@ -258,9 +257,9 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
     let EstadoUsuariosNotificacion: number;
 
     if (this.isAutorizando) {
-      EstadoUsuariosNotificacion = this.estadoAutorizacionSiguiente ? this.estadoAutorizacionSiguiente.codigo : 0
+      EstadoUsuariosNotificacion = this.estadoAutorizacionSiguiente ? this.estadoAutorizacionSiguiente.codigo : 1
     } else {
-      EstadoUsuariosNotificacion = this.estadoIDAutorizacionDefault
+      EstadoUsuariosNotificacion = this.estadoIDAutorizacionDefault;
     }
 
     let ultimoEstado = this.estadosAutorizacion[this.estadosAutorizacion.length - 1].codigo;

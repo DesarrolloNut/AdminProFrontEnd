@@ -121,7 +121,8 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
       fechaCierre: new Date(),
       fechaCreacion: new Date(),
       fechaInicio: new Date(),
-      id: this.ofheader.id
+      id: this.ofheader.id,
+      usuarioId: parseInt(this.authService.tokenDecoded.nameid)
     };
 
     let OrdenFabricacionDetalle: Array<OrdenFabricacionDetalle> = [];

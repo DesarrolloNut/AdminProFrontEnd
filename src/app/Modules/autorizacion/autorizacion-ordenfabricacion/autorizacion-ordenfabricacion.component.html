@@ -56,19 +56,39 @@
                     <i class="fa fa-sm fa-list"></i>
                   </button>
 
+
                   <ng-template
-                    [ngIf]="estadoAutorizacionAnterior && item.estadoId == estadoAutorizacionAnterior.codigo">
+                  [ngIf]="estadoAutorizacionAnterior && item.estadoId == estadoAutorizacionAnterior.codigo">
 
-                    <button class="btn btn-sm btn-success m-1" *ngIf="!item.cargando" (click)="autorizar(item)">
+                  <button class="btn btn-sm btn-success m-1" *ngIf="!item.cargando"
+                      (click)="autorizar(item)">
                       <i class="fa fa-sm fa-check"></i>
-                    </button>
+                  </button>
 
-                    <!-- boton cargando -->
-                    <button *ngIf="item.cargando && isAutorizando" disabled class="btn btn-success m-1" type="button">
+                  <!-- boton cargando -->
+                  <button *ngIf="item.cargando && isAutorizando" disabled
+                      class="btn btn-success m-1" type="button">
                       <span class="spinner-border spinner-border-sm"></span>
-                    </button>
+                  </button>
 
-                  </ng-template>
+
+              </ng-template>
+
+
+              <ng-template [ngIf]="item.estadoId == estadoAutorizacionUsuario">
+
+                  <button *ngIf="!item.cargando" class="btn btn-sm btn-warning m-1"
+                      (click)="desautorizar(item)">
+                      <i class="fa fa-sm fa-times"></i>
+                  </button>
+
+                  <!-- boton cargando -->
+                  <button *ngIf="item.cargando && !isAutorizando " disabled
+                      class="btn btn-warning m-1" type="button">
+                      <span class="spinner-border spinner-border-sm"></span>
+                  </button>
+
+              </ng-template>
                 </td>
 
 

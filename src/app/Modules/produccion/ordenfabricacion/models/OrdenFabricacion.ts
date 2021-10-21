@@ -17,6 +17,7 @@ constructor(){
   this.turno = 1;
   this.estadoId = 0;
   this.estadoERPExternoId = 0;
+  this.usuarioId = 0;
 }
 
 
@@ -36,4 +37,5 @@ constructor(){
   turno: number;
   estadoId: number;
   estadoERPExternoId: number;
+  usuarioId: number;
 }

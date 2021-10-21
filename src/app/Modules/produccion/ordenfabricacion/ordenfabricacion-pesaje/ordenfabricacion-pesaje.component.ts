@@ -19,6 +19,7 @@ import { ArticuloPesosExtras } from '../../pesaje/models/ArticuloPesosExtras';
 import { ArticuloPesosExtrasViewModel } from '../../pesaje/models/ArticuloPesosExtrasViewModel';
 import { LoteAlmacen } from '../../pesaje/models/LoteAlmacen';
 import { OrdenFabricacionVista } from '../models/OrdenFabricacionVista';
+import { OrdenFabricacionEstadoEnum } from '../models/OrdenFabricacionEstadoEnum';
 
 @Component({
   selector: 'app-ordenfabricacion-pesaje',
@@ -73,6 +74,7 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
   loadingLote: boolean;
   loadingAlmacenes: boolean;
   batch: number = 0;
+  ListaArticuloDetalle: OrdenFabricacionVista[] = [];
 
   isTerminalReport: boolean = false;
 
@@ -98,17 +100,25 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
       this.cantidades.push(i)
     }
 
-    if(this.ordenfabriService.OrdenFabricacion.id > 0){
+    if(this.ordenfabriService.OrdenFabricacion.id > 0 && this.ordenfabriService.ListaArticulo.length > 0){
       this.ordenfabricacionvista = this.ordenfabriService.OrdenFabricacion;
+      this.ListaArticuloDetalle = this.ordenfabriService.ListaArticulo;
     }else{
       this.ordenfabriService.OrdenFabricacionChange.subscribe(x =>{
         // console.log(x);
         this.ordenfabricacionvista = x;
       });
+
+      this.ordenfabriService.ListaArticuloChange.subscribe(x => {
+        this.ListaArticuloDetalle = x;
+      });
     }
+
     console.log(this.ordenfabricacionvista);
+    // console.log(this.ListaArticuloDetalle);
     if (this.ordenfabricacionvista.almacen == null) {
       this.isTerminalReport = true;
+      console.log("hola----------------------------------")
     }
     this.getArticuloByCodigoReferencia(this.ordenfabricacionvista.articulo);
     this.almacenID = Number(this.ordenfabricacionvista.almacenId);
@@ -310,6 +320,7 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
             // console.log(response);
             if (response.ok) {
               this.toastService.success("Procesado");
+              this.updateEstado();
               this.router.navigateByUrl('/produccion/ordenfabricacion');
             } else {
               this.toastService.error(response.errores[0], "Error");
@@ -328,6 +339,7 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
             // console.log(response);
             if (response.ok) {
               this.toastService.success("Procesado");
+              this.updateEstado();
               this.router.navigateByUrl('/produccion/ordenfabricacion');
             } else {
               this.toastService.error(response.errores[0], "Error");
@@ -343,6 +355,53 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
       }
 
 
+  }
+
+
+  updateEstado(){
+
+    let ArtCantidad = this.ListaArticuloDetalle.length;
+    let ArtCunsumido = this.ListaArticuloDetalle.filter(x => x.consumido > 0).length;
+    let id = this.ordenfabricacionvista.id;
+    let estado = this.ordenfabricacionvista.estadoId; //this.selectOrden.estadoId;
+
+
+    if (ArtCunsumido == 1 && ArtCantidad == 1) {
+      let num = estado == OrdenFabricacionEstadoEnum.PENDIENTETERMINALREPORT ? 1 : 2;
+      this.updateOrdenFabricacionEstado(id, estado + num);
+    }else if(ArtCunsumido == 1 && ArtCantidad > 1 && estado == OrdenFabricacionEstadoEnum.PENDIENTECONSUMO){
+      this.updateOrdenFabricacionEstado(id, estado + 1);
+    }else if(ArtCantidad == ArtCunsumido && ArtCantidad > 1 && ArtCunsumido > 1){
+      this.updateOrdenFabricacionEstado(id, estado + 1);
+    }
+  }
+
+  updateOrdenFabricacionEstado(id: number, estado: number) {
+
+    this.httpService
+      .DoPostAny<OrdenFabricacionVista>(
+        DataApi.OrdenFabricacion,
+        "CambiarEstadoOrdenFabricacion",
+        {id,estado}
+      )
+      .subscribe(
+        async (response) => {
+          if (!response.ok) {
+            this.toastService.error(response.errores[0]);
+          } else {
+
+          }
+        },
+        (error) => {
+          this.toastService.error(
+            "No se pudo obtener los datos",
+            "Error conexion al servidor"
+          );
+
+          setTimeout(() => {
+          }, 1000);
+        }
+      );
   }
 
   getKilogramosNumberFromPesoBalanza() {
