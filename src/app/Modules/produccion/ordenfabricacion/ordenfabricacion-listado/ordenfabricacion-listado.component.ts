@@ -142,12 +142,12 @@ GetNameEstado(estadoId: number){
 
   OnSubmitConsumido(model: OrdenFabricacionVista){
 
-    if (model.lote == "") {
+    if (model.lote == "" && model.gestionado) {
       this.toastService.warning("Digita el lote.");
       return;
     }
 
-    if (this.lote.cantidad <= 0) {
+    if (this.lote.cantidad <= 0 && model.gestionado) {
       this.toastService.warning("No a digitado un lote disponible.");
       return;
     }
@@ -167,7 +167,7 @@ GetNameEstado(estadoId: number){
     if (consumido < requeridad) {
       this.toastService.warning("El valor consumido es menor a la cantidad requerida");
     }
-    if(articulosExtras.lote == null || articulosExtras.lote.trim() == ""){
+    if(articulosExtras.lote == null || articulosExtras.lote.trim() == "" && articulosExtras.gestionado){
       this.toastService.warning("Debe poner un lote.");
     }
       articulosExtras.loadingSaveConsumido = true;
@@ -532,38 +532,45 @@ GetNameEstado(estadoId: number){
   getLote(model: OrdenFabricacionVista) {
     model.loadingSaveConsumido = true;
 
-    let ap = new LotesOrdenFabricacion();
-    ap.articulo = model.articulo;
-    ap.almacen = model.almacenCodigoReferencia;
-    ap.lote = model.lote;
+      if (model.gestionado) {
+        let ap = new LotesOrdenFabricacion();
+        ap.articulo = model.articulo;
+        ap.almacen = model.almacenCodigoReferencia;
+        ap.lote = model.lote;
 
-     this.httpService.DoPostAny<LotesOrdenFabricacion>(DataApi.OrdenFabricacionDetalle,
-      "GetLote", ap).subscribe(response => {
+         this.httpService.DoPostAny<LotesOrdenFabricacion>(DataApi.OrdenFabricacionDetalle,
+          "GetLote", ap).subscribe(response => {
 
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          //validar que existe
-          if (response != null && response.records != null && response.records.length > 0) {
-            let record = response.records[0];
-            if(record == null){
-              this.toastService.warning("No se encontro el lote.");
+            if (!response.ok) {
+              this.toastService.error(response.errores[0]);
+            } else {
+              //validar que existe
+              if (response != null && response.records != null && response.records.length > 0) {
+                let record = response.records[0];
+                if(record == null){
+                  this.toastService.warning("No se encontro el lote.");
+                }
+                this.lote = record ?? new LotesOrdenFabricacion();
+
+                this.OnSubmitConsumido(model);
+
+              }
+              else {
+                this.lote = new LotesOrdenFabricacion();
+              }
+              model.loadingSaveConsumido = false;
             }
-            this.lote = record ?? new LotesOrdenFabricacion();
 
-            this.OnSubmitConsumido(model);
-
-          }
-          else {
-            this.lote = new LotesOrdenFabricacion();
-          }
-          model.loadingSaveConsumido = false;
-        }
-
-      }, error => {
+          }, error => {
+            model.loadingSaveConsumido = false;
+            this.toastService.error("Error conexion al servidor");
+          });
+      }else{
+        this.OnSubmitConsumido(model);
         model.loadingSaveConsumido = false;
-        this.toastService.error("Error conexion al servidor");
-      });
+      }
+
+
   }
 
 

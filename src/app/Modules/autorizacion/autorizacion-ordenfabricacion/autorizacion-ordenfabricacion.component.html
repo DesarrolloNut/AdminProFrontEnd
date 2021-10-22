@@ -75,7 +75,7 @@
               </ng-template>
 
 
-              <ng-template [ngIf]="item.estadoId == estadoAutorizacionUsuario">
+              <ng-template [ngIf]="item.estadoId == estadoAutorizacionUsuario && item.estadoId != ValidOrden.CERRADA">
 
                   <button *ngIf="!item.cargando" class="btn btn-sm btn-warning m-1"
                       (click)="desautorizar(item)">

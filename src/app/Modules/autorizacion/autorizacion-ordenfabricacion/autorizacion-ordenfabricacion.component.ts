@@ -48,6 +48,10 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
   dataDetalle: OrdenFabricacionVista[];
   IsComsumido: boolean = false;
 
+  public get ValidOrden(): typeof OrdenFabricacionEstadoEnum {
+    return OrdenFabricacionEstadoEnum;
+  }
+
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private authService: AuthenticationService,
@@ -65,6 +69,7 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
   // onEstadoComboChange() {
   //   this.getData()
   // }
+
 
 
   getData() {

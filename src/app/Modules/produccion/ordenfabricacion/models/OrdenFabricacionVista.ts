@@ -26,6 +26,7 @@ export class OrdenFabricacionVista {
     this.estadoId = 0;
     this.noConsumido = 0;
     this.batch = 0;
+    this.gestionado = false;
     this.colorHEX = '';
     this.cantidadRequerida = 0;
     this.isPesaje = false;
@@ -59,6 +60,7 @@ export class OrdenFabricacionVista {
   estadoId: number;
   noConsumido: number;
   batch: number;
+  gestionado: boolean;
   colorHEX: String;
   cantidadRequerida: number;
   isPesaje: boolean;

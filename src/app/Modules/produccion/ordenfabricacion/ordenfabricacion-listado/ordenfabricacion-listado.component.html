@@ -244,7 +244,7 @@
                 </td>
 
                 <td>
-                  <input type="text"  [readonly]="!articulext.isPesaje" [(ngModel)]="articulext.lote" [ngClass]="{'form-control-plaintext': !articulext.isPesaje, 'form-control': articulext.isPesaje}">
+                  <input type="text" *ngIf="articulext.gestionado" [readonly]="!articulext.isPesaje" [(ngModel)]="articulext.lote" [ngClass]="{'form-control-plaintext': !articulext.isPesaje, 'form-control': articulext.isPesaje}">
                 </td>
                 <td>{{articulext.disponible}}</td>
                 <td>{{articulext.costoReal}}</td>

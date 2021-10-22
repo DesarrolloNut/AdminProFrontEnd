@@ -24,4 +24,5 @@ export class Articulo {
     articuloDeVenta: number
     articuloDeInventario: number
     categoriaID: number
+    gestionado: number
 }

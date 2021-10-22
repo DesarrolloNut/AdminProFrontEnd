@@ -362,12 +362,13 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
 
     let ArtCantidad = this.ListaArticuloDetalle.length;
     let ArtCunsumido = this.ListaArticuloDetalle.filter(x => x.consumido > 0).length;
-    let id = this.ordenfabricacionvista.id;
+    let id = this.ordenfabricacionvista.ordenFabricacionId;
     let estado = this.ordenfabricacionvista.estadoId; //this.selectOrden.estadoId;
 
 
     if (ArtCunsumido == 1 && ArtCantidad == 1) {
       let num = estado == OrdenFabricacionEstadoEnum.PENDIENTETERMINALREPORT ? 1 : 2;
+
       this.updateOrdenFabricacionEstado(id, estado + num);
     }else if(ArtCunsumido == 1 && ArtCantidad > 1 && estado == OrdenFabricacionEstadoEnum.PENDIENTECONSUMO){
       this.updateOrdenFabricacionEstado(id, estado + 1);
@@ -377,7 +378,6 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
   }
 
   updateOrdenFabricacionEstado(id: number, estado: number) {
-
     this.httpService
       .DoPostAny<OrdenFabricacionVista>(
         DataApi.OrdenFabricacion,
