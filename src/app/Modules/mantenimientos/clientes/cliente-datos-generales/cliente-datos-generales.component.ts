@@ -249,7 +249,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       salario:[0, [Validators.required]],
       estadoERPID: [0],
       clientePadreId: [null],
-      clientePadreTipoId: [null],
+      clientePadreTipoId: [0],
       isClientPrincipal: [0],
       // contactos: new FormArray([])
     },

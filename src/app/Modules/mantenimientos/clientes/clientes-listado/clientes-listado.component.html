@@ -11,7 +11,7 @@
                             cliente
                         </button>
                     </div>
-         
+
                     <div class="col-md-10 pt-3">
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -22,10 +22,10 @@
                                 </label>
                             </div>
                             <input [(ngModel)]="Search" (keyup)="getClientes()" type="text"
-                             style="border-left:none !important;" class="form-control" placeholder="Buscar cliente">
-                             
+                             style="border-left:none !important;" class="form-control" placeholder="BUSCAR CLIENTE POR CODIGO | NOMBRE | DOCUMENTO">
+
                         </div>
-               
+
                     </div>
                     <div class="form-group col-md-2 pt-3">
                         <ng-select [items]="tipos" bindLabel="nombre" bindValue="codigo" (change)="onChangeTipo($event)"
@@ -37,7 +37,7 @@
                 <!-- <h6 class="card-subtitle">Create responsive tables by wrapping any <code>.table</code> in <code>.table-responsive </code></h6>-->
 
 
- 
+
                 <div class="table-responsive">
                     <table class="table table-hover mb-0 no-wrap v-middle">
                         <thead>
@@ -90,7 +90,7 @@
                                        </span>
                                 </td>
                                 <!-- SHOW INFO COLUMNA CLIENTE -->
-                  
+
                                 <td>
                                     <div class="d-flex align-items-center">
 
@@ -99,11 +99,11 @@
                                         <div class="ml-3">
                                             <p class="font-bold mb-0">
                                                 <span> {{cliente.clienteNombre | uppercase }}</span>
-                                       
+
                                             </p>
                                             <!-- <span class="badge badge-light text-info ">ID: {{cliente.id}}</span><br> -->
                                             <small class="text-info"> <i class=" fa fa-hashtag"></i>
-                                                {{cliente.codigoReferencia }} 
+                                                {{cliente.codigoReferencia }}
                                                 <span *ngIf="cliente.codigoReferencia==null">
                                                     &nbsp;&nbsp;
                                                     &nbsp;&nbsp;
@@ -115,7 +115,7 @@
                                                 </span>
                                               |  <span *ngIf="cliente.clientePadreId<=0 || cliente.clientePadreId==null " class="badge badge-info ">PRINCIPAL</span>
                                                 <span *ngIf="cliente.clientePadreId" class="badge badge-secondary">SUCURSAL</span>
-            
+
                                             </small>
                                         </div>
                                     </div>
@@ -132,7 +132,7 @@
                                     <span *ngIf="cliente.estadoID==1" class="badge badge-success">Activo</span>
                                     <span *ngIf="cliente.estadoID==0" class="badge badge-light">Inactivo</span>
 
-                                   
+
                                 </td>
 
                                 <td>
@@ -141,7 +141,7 @@
                                         {{cliente.estadoERP}}
                                     </span>
                                 </td>
-                                
+
                                   <!-- SHOW INFO COLUMNA Condicion Pago -->
                                   <td>
                                     <span class="text-dark">
@@ -165,7 +165,7 @@
                                      <!-- SHOW INFO COLUMNA DIRECCION -->
                                 <td>
                                     <span class="font-weight-bold">
-                                         {{cliente.ciudad | uppercase}},  
+                                         {{cliente.ciudad | uppercase}},
                                          {{cliente.provincia | uppercase}},
                                          {{cliente.subSector | uppercase}}
                                         </span>
@@ -214,7 +214,7 @@
                                          {{cliente.rutaMerchandising | uppercase}}
                                     </span>
                                 </td>
-                     
+
 
                             </tr>
 
