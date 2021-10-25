@@ -635,7 +635,7 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
 
           this.f.nombres.setValue(this.clientePadreSearched.nombres);
           this.f.apellidos.setValue(this.clientePadreSearched.apellidos!=null?this.clientePadreSearched.apellidos:"");
-          this.f.clienteNombre.setValue(this.clientePadreSearched.nombres +'' +this.clientePadreSearched.apellidos)
+          this.f.clienteNombre.setValue(this.clientePadreSearched.nombres +' ' +this.clientePadreSearched.apellidos)
           this.f.fechaNacimiento.setValue(this.clientePadreSearched.fechaNacimiento);
           this.f.sexo.setValue(this.clientePadreSearched.sexo);
 
