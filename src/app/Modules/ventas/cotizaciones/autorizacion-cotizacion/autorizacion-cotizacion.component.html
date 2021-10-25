@@ -28,26 +28,36 @@
 
           <div class=" p-2 col-md-4">
             <ng-select [items]="estadosAutorizacion" bindLabel="nombre" bindValue="codigo" (change)="getData()"
-              [(ngModel)]="estadoAutorizacionComboModel" [clearable]="false" notFoundText="No resultados">
+              [searchable]="false" [clearable]="false" [(ngModel)]="estadoAutorizacionComboModel">
+              <ng-template ng-label-tmp let-item="item">
+                <span>
+                  <i class="fa fa-circle" [ngStyle]="{'color': item.grupo}"></i> {{item.nombre}}
+                </span>
+              </ng-template>
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                <span>
+                  <i class="fa fa-circle" [ngStyle]="{'color': item.grupo}"></i> {{item.nombre}}
+                </span>
+              </ng-template>
             </ng-select>
           </div>
 
         </div>
 
         <div class="table-responsive">
-          <table class="table table-hover mb-0 no-wrap v-middle">
+          <table class="table table-sm table-hover mb-0 no-wrap v-middle">
             <thead>
               <tr>
 
-                <th>Cotizacion</th>
+                <th></th>
                 <th>Cliente</th>
-                <th>Monto Cotizacion</th>
-                <th>Limite credito</th>
+                <th>Monto</th>
+                <th>Lim. crédito</th>
                 <th>Balance</th>
-                <th>Porciento</th>
+                <th>%</th>
                 <th>Fecha</th>
-                <th>Condiciones</th>
-                <!-- <th>Estado</th> -->
+                <th>Condición</th>
+                <th>Estado</th>
                 <th></th>
               </tr>
             </thead>
@@ -57,26 +67,26 @@
 
                 <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
                 <td>
-                    <div class="d-flex align-items-center">
-                        <!-- <i class="fa fa-user-circle fa-3x text-light"></i> -->
-                        <div class="ml-3">
-                            <p class="font-bold mb-0">{{item.cliente | titlecase }}</p>
-                            <small class="text-info"> <i class="fa fa-id-card"></i>
-                                {{item.clienteDocumento | uppercase }}</small>
-                        </div>
+                  <div class="d-flex align-items-center">
+                    <!-- <i class="fa fa-user-circle fa-3x text-light"></i> -->
+                    <div class="ml-3">
+                      <p class="font-bold mb-0">{{item.cliente | titlecase }}</p>
+                      <small class="text-info"> <i class="fa fa-id-card"></i>
+                        {{item.clienteDocumento | uppercase }}</small>
                     </div>
+                  </div>
                 </td>
                 <td>
-                    <span> ${{ item.totalNeto | number:'1.2-2'}}</span>
+                  <span> ${{ item.totalNeto | number:'1.2-2'}}</span>
                 </td>
                 <td>
-                    <span> ${{ 100000 | number:'1.2-2'}}</span>
+                  <span> ${{ 100000 | number:'1.2-2'}}</span>
                 </td>
                 <td>
-                    <span> ${{ 50000 | number:'1.2-2'}}</span>
+                  <span> ${{ 50000 | number:'1.2-2'}}</span>
                 </td>
                 <td>
-                    <span> 50% </span>
+                  <span> 50% </span>
                 </td>
                 <!-- <td>
                     <span> ${{item.impuestoTotal | number:'1.2-2'}}</span>
@@ -85,9 +95,9 @@
                     <span class="font-weight-bold"> ${{item.totalNeto | number:'1.2-2'}}</span>
                 </td> -->
                 <td>
-                    <span class="text-muted"><i class="far fa-calendar"></i>
-                        {{item.fechaCreacion | date:'dd/MM/yy' }}
-                    </span>
+                  <span class="text-muted"><i class="far fa-calendar"></i>
+                    {{item.fechaCreacion | date:'dd/MM/yy' }}
+                  </span>
                 </td>
                 <!-- <td>
                     <div class="d-flex align-items-center">
@@ -100,18 +110,22 @@
                 </td> -->
                 <td>
                   <div class="row">
-                    <div class="col-3"><h5> <span class="badge badge-success">Bueno</span></h5></div>
+                    <div class="col-3">
+                      <h5> <span class="badge badge-success">Bueno</span></h5>
+                    </div>
                     <!-- <div class="col-3"><h5> <span class="badge badge-warning">Regular</span> </h5></div>
                     <div class="col-3"><h5> <span class="badge badge-danger">Malo</span></h5></div> -->
                   </div>
-              </td>
+                </td>
                 <td>
 
-                  <button class="btn btn-sm btn-light m-1" *ngIf="!item.cargando" (click)="openModalDevolucionDetalle(modalDetalleCotizacion, item)">
+                  <button class="btn btn-sm btn-light m-1"
+                    (click)="openModalDevolucionDetalle(modalDetalleCotizacion, item)">
                     <i class="fa fa-sm fa-list"></i>
                   </button>
 
-                  <button class="btn btn-sm btn-info m-1" *ngIf="!item.cargando" (click)="openModalCotizacionFactura(modalDetalleFactura, item)">
+                  <button class="btn btn-sm btn-info m-1"
+                    (click)="openModalCotizacionFactura(modalDetalleFactura, item)">
                     <i class="fa fa-sm fa-clipboard-check"></i>
                   </button>
 
@@ -119,19 +133,19 @@
                   <ng-template
                     [ngIf]="estadoAutorizacionAnterior && item.estadoAutorizacionId == estadoAutorizacionAnterior.codigo">
 
-                    <button class="btn btn-sm btn-success m-1" *ngIf="!item.cargando" (click)="autorizar(item)">
+                    <button class="btn btn-sm btn-success m-1" (click)="autorizar(item)">
                       <i class="fa fa-sm fa-check"></i>
                     </button>
 
                     <!-- boton cargando -->
-                    <button *ngIf="item.cargando && isAutorizando" disabled class="btn btn-success m-1" type="button">
+                    <button *ngIf="  isAutorizando" disabled class="btn btn-success m-1" type="button">
                       <span class="spinner-border spinner-border-sm"></span>
                     </button>
 
 
                   </ng-template>
 
-<!--
+                  <!--
                   <ng-template [ngIf]="item.estadoAutorizacionId == estadoAutorizacionUsuario">
 
                     <button *ngIf="!item.cargando" class="btn btn-sm btn-warning m-1" (click)="desautorizar(item)">
@@ -235,150 +249,149 @@
 
 <ng-template #modalDetalleCotizacion let-modal>
   <div class="modal-header">
-      <h4 class="modal-title">Detalle de cotización</h4>
-      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-          <span aria-hidden="true">&times;</span>
-      </button>
+    <h4 class="modal-title">Detalle de cotización</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
   </div>
   <div class="modal-body">
-      <div class="row">
+    <div class="row">
 
-          <div class="col-12">
-              <h5 class="text-info"> <i class="fa fa-user"></i> Cliente: {{cotizacionSeleccionada.cliente}}</h5>
-              <h5> <i class="fa fa-id-card"></i> Documento: {{cotizacionSeleccionada.clienteDocumento}}</h5>
-              <h5> <i class="fa fa-calendar"></i> Fecha: {{cotizacionSeleccionada.fechaCreacion |
-                  date:'dd/MM/yy'}}</h5>
-              <hr>
-              <h5> <i class="fa fa-user-circle"></i> Cotizador: {{cotizacionSeleccionada.cotizador}}</h5>
-              <h5> <i class="fa fa-map-marker"></i> Sucursal: {{cotizacionSeleccionada.sucursal}}</h5>
-              <h5> <i class="fa fa-user-circle"></i>Vendedor: {{cotizacionSeleccionada.vendedor}}</h5>
-          </div>
-
-          <div class="col-12" [hidden]="loadingCotizacionDetalle">
-
-              <div class="table-responsive">
-                  <table class="table table-sm table-hover mb-0 no-wrap v-middle">
-                      <thead>
-                          <tr>
-                              <th></th>
-                              <th>Artículo</th>
-                              <th>Cantidad</th>
-                              <th>Precio</th>
-                              <th>% Desc</th>
-                              <th>SubTotal</th>
-                              <th>Desc</th>
-                              <th>Impuesto</th>
-                              <th>Total Neto</th>
-
-                          </tr>
-                      </thead>
-                      <tbody>
-
-                          <tr *ngFor="let item of cotizacionDetalles">
-                              <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
-                              <td>
-                                  <span> {{item.articulo}}</span>
-                              </td>
-                              <td>
-                                  <span> {{item.cantidad}}</span>
-                              </td>
-                              <td>
-                                  <span> ${{item.precio | number:'1.2-2'}} </span>
-                              </td>
-                              <td>
-                                  <span> %{{item.porcientoDescuento | number:'1.2-2'}}</span>
-                              </td>
-                              <td>
-                                  <span> ${{item.subtotal | number:'1.2-2'}} </span>
-                              </td>
-                              <td>
-                                  <span> ${{item.totalDescuento | number:'1.2-2'}} </span>
-                              </td>
-                              <td>
-                                  <span> ${{item.totalImpuesto | number:'1.2-2'}} </span>
-                              </td>
-                              <td>
-                                  <span class="font-weight-bold"> ${{item.totalNeto | number:'1.2-2'}} </span>
-                              </td>
-                          </tr>
-
-                      </tbody>
-                  </table>
-
-              </div>
-
-
-          </div>
-
-          <div class="col-12 text-right">
-              <hr>
-              <h4>Subtotal: $ {{cotizacionSeleccionada.subTotal | number:'1.2-2' }}</h4>
-              <h4>Descuento: $ {{cotizacionSeleccionada.descuentoTotal | number:'1.2-2' }}</h4>
-              <h4>Impuesto: $ {{cotizacionSeleccionada.impuestoTotal | number:'1.2-2' }}</h4>
-              <h4 class="font-weight-bold">Total Neto: $ {{cotizacionSeleccionada.totalNeto | number:'1.2-2' }}</h4>
-          </div>
-
-          <div class="col-12">
-              <app-loading-listado [hidden]="!loadingCotizacionDetalle"></app-loading-listado>
-          </div>
+      <div class="col-12">
+        <h5 class="text-info"> <i class="fa fa-user"></i> Cliente: {{cotizacionSeleccionada.cliente}}</h5>
+        <h5> <i class="fa fa-id-card"></i> Documento: {{cotizacionSeleccionada.clienteDocumento}}</h5>
+        <h5> <i class="fa fa-calendar"></i> Fecha: {{cotizacionSeleccionada.fechaCreacion |
+          date:'dd/MM/yy'}}</h5>
+        <hr>
+        <h5> <i class="fa fa-user-circle"></i> Cotizador: {{cotizacionSeleccionada.cotizador}}</h5>
+        <h5> <i class="fa fa-map-marker"></i> Sucursal: {{cotizacionSeleccionada.sucursal}}</h5>
+        <h5> <i class="fa fa-user-circle"></i>Vendedor: {{cotizacionSeleccionada.vendedor}}</h5>
       </div>
+
+      <div class="col-12" [hidden]="cargandoModal">
+
+        <div class="table-responsive">
+          <table class="table table-sm table-hover mb-0 no-wrap v-middle">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Artículo</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+                <th>% Desc</th>
+                <th>SubTotal</th>
+                <th>Desc</th>
+                <th>Impuesto</th>
+                <th>Total Neto</th>
+
+              </tr>
+            </thead>
+            <tbody>
+
+              <tr *ngFor="let item of cotizacionDetalles">
+                <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
+                <td>
+                  <span> {{item.articulo}}</span>
+                </td>
+                <td>
+                  <span> {{item.cantidad}}</span>
+                </td>
+                <td>
+                  <span> ${{item.precio | number:'1.2-2'}} </span>
+                </td>
+                <td>
+                  <span> %{{item.porcientoDescuento | number:'1.2-2'}}</span>
+                </td>
+                <td>
+                  <span> ${{item.subtotal | number:'1.2-2'}} </span>
+                </td>
+                <td>
+                  <span> ${{item.totalDescuento | number:'1.2-2'}} </span>
+                </td>
+                <td>
+                  <span> ${{item.totalImpuesto | number:'1.2-2'}} </span>
+                </td>
+                <td>
+                  <span class="font-weight-bold"> ${{item.totalNeto | number:'1.2-2'}} </span>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+
+        </div>
+
+
+      </div>
+
+      <div class="col-12 text-right">
+        <hr>
+        <h4>Subtotal: $ {{cotizacionSeleccionada.subTotal | number:'1.2-2' }}</h4>
+        <h4>Descuento: $ {{cotizacionSeleccionada.descuentoTotal | number:'1.2-2' }}</h4>
+        <h4>Impuesto: $ {{cotizacionSeleccionada.impuestoTotal | number:'1.2-2' }}</h4>
+        <h4 class="font-weight-bold">Total Neto: $ {{cotizacionSeleccionada.totalNeto | number:'1.2-2' }}</h4>
+      </div>
+
+      <div class="col-12">
+        <app-loading-listado [hidden]="!cargandoModal"></app-loading-listado>
+      </div>
+    </div>
   </div>
   <div class="modal-footer">
-      <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
+    <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
   </div>
 </ng-template>
 
 
-
 <ng-template #modalDetalleFactura let-modal>
   <div class="modal-header">
-      <h4 class="modal-title">Facturas Pendientes</h4>
-      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-          <span aria-hidden="true">&times;</span>
-      </button>
+    <h4 class="modal-title">Facturas Pendientes</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
   </div>
   <div class="modal-body">
-      <div class="row">
+    <div class="row">
 
-          <div class="col-12">
-              <h5 class="text-info"> <i class="fa fa-user"></i> Cliente: {{cotizacionSeleccionada.cliente}}</h5>
-              <h5> <i class="fa fa-id-card"></i> Documento: {{cotizacionSeleccionada.clienteDocumento}}</h5>
-              <h5> <i class="fa fa-calendar"></i> Fecha: {{cotizacionSeleccionada.fechaCreacion |
-                  date:'dd/MM/yy'}}</h5>
-              <!-- <hr>
+      <div class="col-12">
+        <h5 class="text-info"> <i class="fa fa-user"></i> Cliente: {{cotizacionSeleccionada.cliente}}</h5>
+        <h5> <i class="fa fa-id-card"></i> Documento: {{cotizacionSeleccionada.clienteDocumento}}</h5>
+        <h5> <i class="fa fa-calendar"></i> Fecha: {{cotizacionSeleccionada.fechaCreacion |
+          date:'dd/MM/yy'}}</h5>
+        <!-- <hr>
               <h5> <i class="fa fa-user-circle"></i> Cotizador: {{cotizacionSeleccionada.cotizador}}</h5>
               <h5> <i class="fa fa-map-marker"></i> Sucursal: {{cotizacionSeleccionada.sucursal}}</h5>
               <h5> <i class="fa fa-user-circle"></i>Vendedor: {{cotizacionSeleccionada.vendedor}}</h5> -->
-          </div>
+      </div>
 
-          <div class="col-12" [hidden]="loadingCotizacionDetalle">
+      <div class="col-12" [hidden]="CargandoDetalle">
 
-              <div class="table-responsive">
-                  <table class="table table-sm table-hover mb-0 no-wrap v-middle">
-                      <thead>
-                          <tr>
-                              <th>Factura</th>
-                              <th>Monto</th>
-                              <th>Balance pendiente</th>
-                              <th>Vencimiento</th>
+        <div class="table-responsive">
+          <table class="table table-sm table-hover mb-0 no-wrap v-middle">
+            <thead>
+              <tr>
+                <th>Factura</th>
+                <th>Monto</th>
+                <th>Balance pendiente</th>
+                <th>Vencimiento</th>
 
-                          </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>111111</td>
-                          <td>$100,000</td>
-                          <td>$50,000</td>
-                          <td>10 dias</td>
-                        </tr>
-                        <tr>
-                          <td>222222</td>
-                          <td>$200,000</td>
-                          <td>$100,000</td>
-                          <td>15 dias</td>
-                        </tr>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>111111</td>
+                <td>$100,000</td>
+                <td>$50,000</td>
+                <td>10 dias</td>
+              </tr>
+              <tr>
+                <td>222222</td>
+                <td>$200,000</td>
+                <td>$100,000</td>
+                <td>15 dias</td>
+              </tr>
 
-                          <!-- <tr *ngFor="let item of cotizacionDetalles">
+              <!-- <tr *ngFor="let item of cotizacionDetalles">
                               <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
                               <td>
                                   <span> {{item.articulo}}</span>
@@ -406,15 +419,15 @@
                               </td>
                           </tr> -->
 
-                      </tbody>
-                  </table>
+            </tbody>
+          </table>
 
-              </div>
+        </div>
 
 
-          </div>
+      </div>
 
-          <!-- <div class="col-12 text-right">
+      <!-- <div class="col-12 text-right">
               <hr>
               <h4>Subtotal: $ {{cotizacionSeleccionada.subTotal | number:'1.2-2' }}</h4>
               <h4>Descuento: $ {{cotizacionSeleccionada.descuentoTotal | number:'1.2-2' }}</h4>
@@ -422,13 +435,13 @@
               <h4 class="font-weight-bold">Total Neto: $ {{cotizacionSeleccionada.totalNeto | number:'1.2-2' }}</h4>
           </div> -->
 
-          <div class="col-12">
-              <app-loading-listado [hidden]="!loadingCotizacionDetalle"></app-loading-listado>
-          </div>
+      <div class="col-12">
+        <app-loading-listado [hidden]="!CargandoDetalle"></app-loading-listado>
       </div>
+    </div>
   </div>
   <div class="modal-footer">
-      <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
+    <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
   </div>
 </ng-template>
 

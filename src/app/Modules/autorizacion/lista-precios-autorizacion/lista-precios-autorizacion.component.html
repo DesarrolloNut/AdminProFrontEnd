@@ -23,7 +23,7 @@
                             <span class="spinner-border spinner-border-sm"></span>
                         </button>
 
- 
+
                     </div>
 
 
@@ -42,31 +42,19 @@
 
 
                         <ng-select [items]="estadosAutorizacion" bindLabel="nombre" bindValue="codigo"
-                            (change)="getData()" [clearable]="false" [(ngModel)]="estadoAutorizacionComboModel">
-                            <!-- <ng-template ng-header-tmp>
-                                Estados
-                            </ng-template> -->
-                            <ng-template ng-label-tmp let-item="item">
-                                <!-- <img height="15" width="15" [src]="item.avatar" /> -->
-                                <!-- <b>{{item.name}}</b> is cool -->
+                            [searchable]="false" (change)="getData()" [clearable]="false"
+                            [(ngModel)]="estadoAutorizacionComboModel">
 
+                            <ng-template ng-label-tmp let-item="item">
                                 <span>
                                     <i class="fa fa-circle" [ngStyle]="{'color': item.grupo}"></i> {{item.nombre}}
                                 </span>
-
                             </ng-template>
                             <ng-template ng-option-tmp let-item="item" let-index="index">
-                                <!-- <img height="15" width="15" [src]="item.avatar" />
-                                <b>{{item.nombre}}</b> -->
-
                                 <span>
                                     <i class="fa fa-circle" [ngStyle]="{'color': item.grupo}"></i> {{item.nombre}}
                                 </span>
-
                             </ng-template>
-                            <!-- <ng-template ng-footer-tmp>
-                                Custom footer
-                            </ng-template> -->
                         </ng-select>
 
 
