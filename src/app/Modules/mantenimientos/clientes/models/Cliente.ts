@@ -84,6 +84,7 @@ export class Cliente {
     sucursalId: number;
     clientePadreId: number;
     isClientPrincipal: number;
+    clientePadreTipoId :number;
     salario: number;
 
     // contactos: Array<ClienteContactos>

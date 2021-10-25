@@ -249,6 +249,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       salario:[0, [Validators.required]],
       estadoERPID: [0],
       clientePadreId: [null],
+      clientePadreTipoId: [null],
       isClientPrincipal: [0],
       // contactos: new FormArray([])
     },
@@ -273,7 +274,6 @@ export class ClienteDatosGeneralesComponent implements OnInit {
 
     if(this.f.documentoTipoID.value==2){
       this.f.apellidos.setValue('');
-      this.f.email.setValue('');
       this.f.fechaNacimiento.setValue(new Date());
       this.f.sexo.setValue('');
     }
@@ -327,11 +327,18 @@ export class ClienteDatosGeneralesComponent implements OnInit {
   }
 
   getClienteByID(id: number) {
+
+  let parametros = new ParametrosCita();
+  parametros.citaID = id;
+  parametros.servicioID = Number(this.auth.tokenDecoded.nameid);
     this.cargando = true;
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
-      "GetClienteByID", id).subscribe(response => {
+      "GetClienteByIDAndUsuarioID", parametros).subscribe(response => {
         if (!response.ok) {
+
           this.toastService.error(response.errores[0]);
+          this.router.navigateByUrl('/mantenimientos/cliente');
+
         } else {
           //validar que existe
           if (response.records.length > 0) {
@@ -632,13 +639,14 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
       if (response.ok) {
         if (response != null && response.ok && response.records != null && response.records.length > 0) {
            this.clientePadreSearched = response.records[0];
+           console.log(this.clientePadreSearched)
 
           this.f.nombres.setValue(this.clientePadreSearched.nombres);
           this.f.apellidos.setValue(this.clientePadreSearched.apellidos!=null?this.clientePadreSearched.apellidos:"");
           this.f.clienteNombre.setValue(this.clientePadreSearched.nombres +' ' +this.clientePadreSearched.apellidos)
           this.f.fechaNacimiento.setValue(this.clientePadreSearched.fechaNacimiento);
           this.f.sexo.setValue(this.clientePadreSearched.sexo);
-
+          this.f.clientePadreTipoId.setValue(this.clientePadreSearched.clienteTipoID)
           if(this.f.clienteTipoID.value==15 || this.f.clienteTipoID.value==12){
             if(this.f.id.value!=this.clientePadreSearched.id && this.clientePadreSearched.id>0){
               this.clientId=this.clientePadreSearched.id;
