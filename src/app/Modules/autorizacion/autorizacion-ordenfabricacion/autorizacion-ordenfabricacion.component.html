@@ -61,7 +61,7 @@
                   [ngIf]="estadoAutorizacionAnterior && item.estadoId == estadoAutorizacionAnterior.codigo">
 
                   <button class="btn btn-sm btn-success m-1" *ngIf="!item.cargando"
-                      (click)="autorizar(item)">
+                      (click)="autorizar(item, modalAutorizacionUsuario)">
                       <i class="fa fa-sm fa-check"></i>
                   </button>
 
@@ -269,6 +269,42 @@
     </button> -->
   </div>
 </ng-template>
+
+<ng-template #modalAutorizacionUsuario let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Autorizacion de Cierre</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row justify-content-center align-items-center">
+      <div class="col-12 text-center">
+        <h4>Costo Unitario Objetivo</h4>
+        <h1>{{articulo.costoObjetivo | currency}}</h1>
+      </div>
+      <div class="col-12 text-center">
+        <h4>Costo Unitario Completado</h4>
+        <h1>{{(ordenfabricacion.costoReal / ordenfabricacion.cantidad) | currency}}</h1>
+      </div>
+      <div class="col-12 text-center">
+        <h4>Porcentaje de Diferencia</h4>
+        <h1><span class="badge" [ngClass]="{'badge-danger': getPorcentaje() > 10 || getPorcentaje() < -10,'badge-warning': getPorcentaje() < 10 && getPorcentaje() > -10 && getPorcentaje() != 0 , 'badge-secondary': getPorcentaje() == 0}">{{getPorcentaje() | number:'1.2-2'}}%</span></h1>
+      </div>
+
+    </div>
+
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
+    <!-- <button type="button" *ngIf="!btnGuardarCargando" class="btn btn-info m-1" (click)="SaveDevolucionDetalleVista()" >Guardar</button>
+      <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+        <span class="spinner-border spinner-border-sm"></span> Guardando
+    </button> -->
+  </div>
+</ng-template>
+
 
 
 

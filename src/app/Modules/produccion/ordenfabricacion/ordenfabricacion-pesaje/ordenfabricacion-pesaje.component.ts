@@ -334,8 +334,9 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
       }else if(this.ordenfabricacionvista.id > 0 && this.isTerminalReport == true){
         this.btnGuardarCargando = true;
         this.ordenfabricacionvista.ordenFabricacionId = this.ordenfabricacionvista.id;
-        this.httpService.DoPostAny<ArticuloPesaje>(DataApi.OrdenFabricacionDetalle,
-          "UpdateConsumidoYCostoRealHeader", this.ordenfabricacionvista).subscribe(response => {
+        this.ordenfabricacionvista.consumido
+        this.httpService.DoPostAny<ArticuloPesaje>(DataApi.OrdenFabricacion,
+          "UpdateCantidadProducida", this.ordenfabricacionvista).subscribe(response => {
             // console.log(response);
             if (response.ok) {
               this.toastService.success("Procesado");

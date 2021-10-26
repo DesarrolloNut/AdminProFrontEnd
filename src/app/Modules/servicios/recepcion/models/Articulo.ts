@@ -19,6 +19,7 @@ export class Articulo {
     tipoArticuloID: number
     placa: string
     costo: number
+    costoObjetivo: number;
     precio: number
     articuloDeCompra: number
     articuloDeVenta: number

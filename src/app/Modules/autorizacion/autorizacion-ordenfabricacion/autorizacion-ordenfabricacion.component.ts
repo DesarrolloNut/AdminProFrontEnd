@@ -11,6 +11,8 @@ import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { OrdenFabricacionVista } from '../../produccion/ordenfabricacion/models/OrdenFabricacionVista';
+import { OrdenFabricacion } from '../../produccion/ordenfabricacion/models/OrdenFabricacion';
+import { Articulo } from '../../servicios/recepcion/models/Articulo';
 
 @Component({
   selector: 'app-autorizacion-ordenfabricacion',
@@ -47,6 +49,9 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
   CargandoDetalle: boolean;
   dataDetalle: OrdenFabricacionVista[];
   IsComsumido: boolean = false;
+  ordenfabricacion: OrdenFabricacion =  new OrdenFabricacion();
+  articulo: Articulo = new Articulo();
+  porcentajeDesviacion: number = 0;
 
   public get ValidOrden(): typeof OrdenFabricacionEstadoEnum {
     return OrdenFabricacionEstadoEnum;
@@ -215,14 +220,33 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
 
   }
 
-  autorizar(item: any) {
+  autorizar(item: any, content: any) {
     this.isAutorizando = true;
-    this.actualizarEstadoArticulos(item)
+    let ultimoEstado = this.estadosAutorizacion[this.estadosAutorizacion.length - 1].codigo;
+
+
+    if (this.estadoAutorizacionUsuario == ultimoEstado && this.isAutorizando) {
+          this.getOrdenFabricacion(item.id);
+          this.modalService.open(content, { size: 'lg' });
+          //this.getPorcentaje();
+      }else{
+        this.actualizarEstadoArticulos(item)
+      }
   }
 
   desautorizar(item: any) {
     this.isAutorizando = false;
     this.actualizarEstadoArticulos(item)
+  }
+
+  getPorcentaje():number{
+      let costoUnitario = (this.ordenfabricacion.costoReal / this.ordenfabricacion.cantidad);
+      let diferencia = (costoUnitario / this.articulo.costoObjetivo);
+      let porcentajeDiferencia = (diferencia * 100);
+      let porcentaje = (porcentajeDiferencia - 100);
+      //this.porcentajeDesviacion = porcentaje;
+      return porcentaje;
+
   }
 
   autorizarMasiva() {
@@ -246,10 +270,7 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
 
 
   actualizarEstadoArticulos(item: any) {
-    // if (this.confirmed.filter(x => x.IsChecked).length < 1) {
-      //   this.toastService.warning("Selecciona uno o más artículos para actualizar");
-      //   return;
-      // }
+
 
       this.getEstaComsumido(item.id);
       if(this.IsComsumido && OrdenFabricacionEstadoEnum.PENDIENTECONSUMO == item.estadoId){
@@ -382,6 +403,66 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
       });
 
+  }
+
+  getOrdenFabricacion(id: number) {
+
+    this.httpService
+      .DoPostAny<OrdenFabricacion>(
+        DataApi.OrdenFabricacion,
+        "GetOrdenFabricacionByID",
+        id
+      )
+      .subscribe(
+        (response) => {
+          if (!response.ok) {
+            this.toastService.error(response.errores[0]);
+          } else {
+            this.getArticuloById(response.records[0].articuloId);
+            this.ordenfabricacion = response.records[0];
+
+          }
+        },
+        (error) => {
+          this.toastService.error(
+            "No se pudo obtener la orden.",
+            "Error conexion al servidor"
+          );
+
+          setTimeout(() => {
+            //this.getOrdenFabricacion();
+          }, 1000);
+        }
+      );
+  }
+
+  getArticuloById(ArticuloID: number) {
+    this.httpService
+      .DoPostAny<Articulo>(DataApi.Articulo, "GetArticuloByID", ArticuloID)
+      .subscribe(
+        (response) => {
+          if (!response.ok) {
+            this.toastService.error(response.errores[0]);
+          } else {
+            //validar que existe
+            if (
+              response != null &&
+              response.records != null &&
+              response.records.length > 0
+            ) {
+              let record = response.records[0];
+              this.articulo = record;
+              // console.log(record);
+              //this.getOrdenFabricacionDetalle(record.codigoReferencia);
+            } else {
+              this.articulo = null;
+            }
+          }
+        },
+        (error) => {
+          this.toastService.error("Error conexion al servidor");
+        }
+      );
   }
 
 
