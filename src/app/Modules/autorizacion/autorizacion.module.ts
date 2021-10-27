@@ -11,11 +11,12 @@ import { AngularDualListBoxModule } from 'angular-dual-listbox';
 import { TreeviewModule } from 'ngx-treeview';
 import { SharedModule } from '../shared/shared.module';
 import { AutorizacionOrdenfabricacionComponent } from './autorizacion-ordenfabricacion/autorizacion-ordenfabricacion.component';
+import { AutorizacionPedidosComponent } from './autorizacion-pedidos/autorizacion-pedidos.component';
 
 
 @NgModule({
   declarations: [
-    AutorizacionComponent, AutorizacionDevolucionesComponent, AutorizacionHistoricoComponent, ListaPreciosAutorizacionComponent, AutorizacionOrdenfabricacionComponent],
+    AutorizacionComponent, AutorizacionDevolucionesComponent, AutorizacionHistoricoComponent, ListaPreciosAutorizacionComponent, AutorizacionOrdenfabricacionComponent, AutorizacionPedidosComponent],
   imports: [
     CommonModule,
     AngularDualListBoxModule,

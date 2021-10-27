@@ -52,15 +52,28 @@
                     <div class="form-group col-md-6">
                         <label for="example-email">Estado</label>
                         <ng-select [items]="EstadoCategorias" bindLabel="nombre" bindValue="codigo"
-                            [loading]="loadingEstadoCategorias" [clearable]="false" groupBy="grupo"
+                            [loading]="loadingEstadoCategorias" [clearable]="false"
                             [ngClass]="{'form-control border-danger p-0' : submitted && f.estadoId.errors }"
                             notFoundText="No resultados" formControlName="estadoId">
+
+                            <ng-template ng-label-tmp let-item="item">
+                                <span>
+                                    <i class="fa fa-circle" [ngStyle]="{'color': item.grupo}"></i> {{item.nombre}}
+                                </span>
+                            </ng-template>
+                            <ng-template ng-option-tmp let-item="item" let-index="index">
+                                <span>
+                                    <i class="fa fa-circle" [ngStyle]="{'color': item.grupo}"></i> {{item.nombre}}
+                                </span>
+                            </ng-template>
+
                         </ng-select>
                         <div *ngIf="submitted && f.estadoId.errors"
                             class="text-danger small animated animated--fade-in">
                             <div *ngIf="f.estadoId.errors.required  ">El campo es obligatorio</div>
                         </div>
                     </div>
+
 
                     <div class="form-group text-right col-md-12">
                         <hr />

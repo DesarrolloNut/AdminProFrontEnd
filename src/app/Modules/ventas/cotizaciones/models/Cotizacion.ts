@@ -18,6 +18,7 @@ export class Cotizacion {
         this.estadoId = 0;
         this.usuarioId = 0;
         this.listaPrecioID = 0;
+        this.estadoAutorizacionID = 0;
     }
 
     id = 0;
@@ -38,4 +39,5 @@ export class Cotizacion {
     estadoId = 0;
     usuarioId = 0;
     listaPrecioID = 0;
+    estadoAutorizacionID = 0;
 }
