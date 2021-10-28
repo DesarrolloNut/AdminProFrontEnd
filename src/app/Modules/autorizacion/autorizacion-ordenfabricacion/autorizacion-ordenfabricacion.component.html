@@ -279,18 +279,40 @@
   </div>
   <div class="modal-body">
     <div class="row justify-content-center align-items-center">
-      <div class="col-12 text-center">
+
+      <div class="col-6 text-center">
         <h4>Costo Unitario Objetivo</h4>
         <h1>{{articulo.costoObjetivo | currency}}</h1>
       </div>
-      <div class="col-12 text-center">
+
+      <div class="col-6 text-center">
+        <h4>Costo de componente de artículo real:</h4>
+        <h1>{{ordenfabricacion.costoReal | currency }}</h1>
+      </div>
+
+
+
+      <div class="col-6 text-center">
         <h4>Costo Unitario Completado</h4>
         <h1>{{(ordenfabricacion.costoReal / ordenfabricacion.cantidad) | currency}}</h1>
       </div>
-      <div class="col-12 text-center">
+
+      <div class="col-6 text-center">
+        <h4>Costo de producto real:</h4>
+        <h1>{{ ((ordenfabricacion.costoReal / ordenfabricacion.cantidad) * ordenfabricacion.cantidadProducida) | currency }}</h1>
+      </div>
+
+      <div class="col-6 text-center">
         <h4>Porcentaje de Diferencia</h4>
         <h1><span class="badge" [ngClass]="{'badge-danger': getPorcentaje() > 10 || getPorcentaje() < -10,'badge-warning': getPorcentaje() < 10 && getPorcentaje() > -10 && getPorcentaje() != 0 , 'badge-secondary': getPorcentaje() == 0}">{{getPorcentaje() | number:'1.2-2'}}%</span></h1>
       </div>
+
+      <div class="col-6 text-center">
+        <h4>Desviación total:</h4>
+        <h1>{{ (((ordenfabricacion.costoReal / ordenfabricacion.cantidad) * ordenfabricacion.cantidadProducida) - ordenfabricacion.costoReal) | currency}}</h1>
+      </div>
+
+
 
     </div>
 

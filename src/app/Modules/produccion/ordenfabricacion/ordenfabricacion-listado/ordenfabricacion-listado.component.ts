@@ -263,7 +263,8 @@ GetNameEstado(estadoId: number){
 
 
             if (this.ordenfabricacion.cantidadProducida > 0 && this.ordenfabricacion.batch > 0) {
-              this.updateOrdenFabricacionEstado(this.ofheader.id, this.ordenfabricacion.estadoId+1);
+              // this.updateOrdenFabricacionEstado(this.ofheader.id, this.ordenfabricacion.estadoId+1);
+              this.updateOrdenFabricacionEstadoPendiente(this.ofheader.id, this.ordenfabricacion.estadoId)
               this.modalService.dismissAll();
             }
 
@@ -571,6 +572,33 @@ GetNameEstado(estadoId: number){
       }
 
 
+  }
+
+  updateOrdenFabricacionEstadoPendiente(id: number, estado: number) {
+    this.httpService
+      .DoPostAny<OrdenFabricacionVista>(
+        DataApi.OrdenFabricacion,
+        "CambiarEstadoOrdenFabricacionPendiente",
+        {id,estado}
+      )
+      .subscribe(
+        async (response) => {
+          if (!response.ok) {
+            this.toastService.error(response.errores[0]);
+          } else {
+
+          }
+        },
+        (error) => {
+          this.toastService.error(
+            "No se pudo obtener los datos",
+            "Error conexion al servidor"
+          );
+
+          setTimeout(() => {
+          }, 1000);
+        }
+      );
   }
 
 

@@ -1006,7 +1006,7 @@ export const ROUTES: RouteInfo[] = [
         permisos: ['autorizacion_cotizaciones'],
       },
       {
-        path: '/autorizacion/pedidos-ordenfabricacion',
+        path: '/autorizacion/autorizacion-ordenfabricacion',
         title: 'Orden Fabricacion',
         label: '',
         icon: '',

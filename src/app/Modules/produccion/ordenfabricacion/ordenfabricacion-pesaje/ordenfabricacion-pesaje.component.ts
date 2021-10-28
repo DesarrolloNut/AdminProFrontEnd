@@ -114,11 +114,10 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
       });
     }
 
-    console.log(this.ordenfabricacionvista);
+    // console.log(this.ordenfabricacionvista);
     // console.log(this.ListaArticuloDetalle);
     if (this.ordenfabricacionvista.almacen == null) {
       this.isTerminalReport = true;
-      console.log("hola----------------------------------")
     }
     this.getArticuloByCodigoReferencia(this.ordenfabricacionvista.articulo);
     this.almacenID = Number(this.ordenfabricacionvista.almacenId);
@@ -280,11 +279,10 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
       this.toastService.warning("Está consumiendo menos de la cantidad requerida.");
     }
 
-
-    // if (this.lote.cantidad < this.pesoNeto) {
-    //   this.toastService.warning(`No tiene lote disponible para hacer esta transferencia, favor verificar.`);
-    //   return;
-    // }
+    if (this.lote.cantidad < this.pesoNeto && this.isTerminalReport == false) {
+      this.toastService.warning(`No tiene lote disponible para hacer esta transferencia, favor verificar.`);
+      return;
+    }
 
     this.guardar()
   }
@@ -340,7 +338,14 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
             // console.log(response);
             if (response.ok) {
               this.toastService.success("Procesado");
-              this.updateEstado();
+              //######################################################
+              //######################################################
+              let id = this.ordenfabricacionvista.ordenFabricacionId;
+              let estado = this.ordenfabricacionvista.estadoId; //this.selectOrden.estadoId;
+              this.updateOrdenFabricacionEstadoPendiente(id, estado)
+
+              //######################################################
+              //######################################################
               this.router.navigateByUrl('/produccion/ordenfabricacion');
             } else {
               this.toastService.error(response.errores[0], "Error");
@@ -383,6 +388,32 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
       .DoPostAny<OrdenFabricacionVista>(
         DataApi.OrdenFabricacion,
         "CambiarEstadoOrdenFabricacion",
+        {id,estado}
+      )
+      .subscribe(
+        async (response) => {
+          if (!response.ok) {
+            this.toastService.error(response.errores[0]);
+          } else {
+
+          }
+        },
+        (error) => {
+          this.toastService.error(
+            "No se pudo obtener los datos",
+            "Error conexion al servidor"
+          );
+
+          setTimeout(() => {
+          }, 1000);
+        }
+      );
+  }
+  updateOrdenFabricacionEstadoPendiente(id: number, estado: number) {
+    this.httpService
+      .DoPostAny<OrdenFabricacionVista>(
+        DataApi.OrdenFabricacion,
+        "CambiarEstadoOrdenFabricacionPendiente",
         {id,estado}
       )
       .subscribe(

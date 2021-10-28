@@ -119,6 +119,7 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
           console.error(response.errores[0]);
         } else {
           this.estadosAutorizacion = response.records;
+          console.log(this.estadosAutorizacion)
           this.estadoIDAutorizacionDefault = response.records[0].codigo;
           this.estadoAutorizacionComboModel = response.records[0].codigo;
           this.getSiguienteEstado()//almacena en una variable el siguiente estado
