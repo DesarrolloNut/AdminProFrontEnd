@@ -178,6 +178,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
 
     // if (!this.actualizando)
     //   this.f.sucursalID.setValue(Number(this.auth.tokenDecoded.groupsid))
+   
     if (this.FormGenerales.invalid)
       return;
     if(this.f.documentoTipoID.value==2){
@@ -248,7 +249,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       sucursalId:[0, [Validators.required]],
       salario:[0, [Validators.required]],
       estadoERPID: [0],
-      clientePadreId: [null],
+      clientePadreId: [0],
       clientePadreTipoId: [0],
       isClientPrincipal: [0],
       // contactos: new FormArray([])
@@ -266,7 +267,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
 
 
     let metodo: string = this.actualizando ? "UpdateCliente" : "CrearCliente";
-    let valueBool = this.f.estadoID.value?1:0;
+    let valueBool = this.f.estadoID.value ? 1 : 0;
 
     this.f.estadoID.setValue(valueBool)
 
@@ -277,8 +278,13 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       this.f.fechaNacimiento.setValue(new Date());
       this.f.sexo.setValue('');
     }
+    if(this.f.clienteTipoID.value==12 || this.f.clienteTipoID.value==15){
+       this.f.condicionPagoId.setValue(2)
+    }
+
    // console.log(this.FormGenerales)
     let param = { "cliente": this.FormGenerales.value }
+
     this.f.numero.setValue(this.f.numero.value.toString())
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
       metodo, this.FormGenerales.value).subscribe(response => {
@@ -352,7 +358,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
             cliente.subSectorID = cliente.subSectorID<=0 ? null : cliente.subSectorID
             cliente.tipoComprobante = cliente.tipoComprobante<=0 ? null : cliente.tipoComprobante
             cliente.clienteTipoID = cliente.clienteTipoID<=0 ? null : cliente.clienteTipoID
-
+ 
 
             ///isClientPrincipal cuando su valor es 0
             cliente.isClientPrincipal=1;
@@ -639,8 +645,14 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
       if (response.ok) {
         if (response != null && response.ok && response.records != null && response.records.length > 0) {
            this.clientePadreSearched = response.records[0];
-           console.log(this.clientePadreSearched)
 
+           //SI ESTE CLIENTE ES UN EMPLEADO NO SE PUEDE CREAR OTRO CLIENTE CON ESTE MISMO NO. DOCUMENTO
+           if(this.clientePadreSearched.clienteTipoID==12 || this.clientePadreSearched.clienteTipoID==12 ){
+             
+            this.toastService.error('Ya existe un cliente de tipo empleado con este numero de documento');
+            this.buscandoDocumento = false;
+            return;
+           }
           this.f.nombres.setValue(this.clientePadreSearched.nombres);
           this.f.apellidos.setValue(this.clientePadreSearched.apellidos!=null?this.clientePadreSearched.apellidos:"");
           this.f.clienteNombre.setValue(this.clientePadreSearched.nombres +' ' +this.clientePadreSearched.apellidos)
@@ -681,10 +693,14 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
 
 identificaSucursalOPrincipal(){
 
-  if(this.clientePadreSearched.id>0){
+  if(this.clientePadreSearched.id>0 && this.f.id.value!=this.clientePadreSearched.id){
     this.f.isClientPrincipal.setValue(1)
+    this.f.clientePadreId.setValidators([Validators.required]);
+     this.getClientesPrincipales(null,this.clientePadreSearched.id)
   }else{
     this.f.isClientPrincipal.setValue(0)
+    this.f.clientePadreId.setValidators(null);
+    this.f.clientePadreId.setValue(0);
   }
   //En caso de que el cliente se este creando
   if(this.clientId<=0){
@@ -696,6 +712,8 @@ identificaSucursalOPrincipal(){
       this.f.clientePadreId.setValue(this.clientePadreSearched.id);
     }
   }
+  this.f.clientePadreId.updateValueAndValidity();
+
 }
   getListaPrecio() {
     this.loadingListaPrecio = true;
@@ -809,9 +827,14 @@ onClickRadioPrincipalOSucursal(value:number){
     this.f.isClientPrincipal.setValue(value)
     if(value==1){
       this.f.clientePadreId.setValidators([Validators.required]);
+      this.f.clientePadreId.setValue(null);
     }else {
       this.f.clientePadreId.setValidators(null);
+      this.f.clientePadreId.setValue(0);
+
     }
+    this.f.clientePadreId.updateValueAndValidity();
+
 }
 
 //METODOS LOGIC
