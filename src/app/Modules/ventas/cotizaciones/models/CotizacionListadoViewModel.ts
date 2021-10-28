@@ -1,5 +1,6 @@
 export interface CotizacionListadoViewModel {
     id: number;
+    codigoReferencia: number;
     cotizador: string;
     sucursal: string;
     vendedor: string;
@@ -13,4 +14,6 @@ export interface CotizacionListadoViewModel {
     estadoID: number;
     estadoAutorizacionId: number;
     confirmado: number;
+
+    cargando: boolean;
 }

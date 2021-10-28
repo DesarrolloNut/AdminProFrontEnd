@@ -5,4 +5,6 @@ export interface AutorizacionHistoricoListadoViewModel {
     moduloKey: string;
     fechaAutorizacion: Date;
     jsonInfo: any;
-}
+    comentario: string;
+
+}   

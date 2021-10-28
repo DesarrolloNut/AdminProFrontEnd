@@ -525,10 +525,10 @@ export class UsuarioFormularioComponent implements OnInit {
 
   guardarNivelesAutorizacionSeleccionados() {
 
-    if (this.confirmed.length < 1) {
-      this.toastService.warning("Selecciona uno o más");
-      return;
-    }
+    // if (this.confirmed.length < 1) {
+    //   this.toastService.warning("Selecciona uno o más");
+    //   return;
+    // }
 
     let param = this.confirmed.map(x => { return { "UsuarioID": this.usuarioID, "NivelAutorizacionID": x.codigo }; });
     console.table(param);
