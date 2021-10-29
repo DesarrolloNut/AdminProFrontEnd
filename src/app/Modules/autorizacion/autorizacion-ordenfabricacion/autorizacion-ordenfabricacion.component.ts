@@ -52,6 +52,7 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
   ordenfabricacion: OrdenFabricacion =  new OrdenFabricacion();
   articulo: Articulo = new Articulo();
   porcentajeDesviacion: number = 0;
+  btnGuardarCargando: boolean;
 
   public get ValidOrden(): typeof OrdenFabricacionEstadoEnum {
     return OrdenFabricacionEstadoEnum;
@@ -66,16 +67,8 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
 
 
   ngOnInit(): void {
-    // this.getData()
     this.getEstadoAutorizacionUsuario();
-    // this.getEstaComsumido(36);
   }
-
-  // onEstadoComboChange() {
-  //   this.getData()
-  // }
-
-
 
   getData() {
     this.Cargando = true;
@@ -119,7 +112,6 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
           console.error(response.errores[0]);
         } else {
           this.estadosAutorizacion = response.records;
-          console.log(this.estadosAutorizacion)
           this.estadoIDAutorizacionDefault = response.records[0].codigo;
           this.estadoAutorizacionComboModel = response.records[0].codigo;
           this.getSiguienteEstado()//almacena en una variable el siguiente estado
@@ -170,15 +162,11 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
   getAnteriorEstadoAutorizacion() {
     let estadoUsuario = this.estadosAutorizacion.find(x => x.codigo == this.estadoAutorizacionUsuario);
     let estadoActualPosicion = this.estadosAutorizacion.indexOf(estadoUsuario);
-    // console.log(estadoUsuario)
-    // console.log(estadoActualPosicion)
     this.estadoAutorizacionAnterior = this.estadosAutorizacion[estadoActualPosicion - 1]
     if (this.estadoAutorizacionAnterior) {
       this.estadoAutorizacionComboModel = this.estadoAutorizacionAnterior.codigo;
     }
   }
-
-
 
   asignarPagination(x: ResponseContenido<any>) {
 
@@ -223,21 +211,35 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
 
   autorizar(item: any, content: any) {
     this.isAutorizando = true;
-    let ultimoEstado = this.estadosAutorizacion[this.estadosAutorizacion.length - 1].codigo;
+    //let ultimoEstado = this.estadosAutorizacion[this.estadosAutorizacion.length - 1].codigo;
+      this.itemSeleccionado = item;
 
-
-    if (this.estadoAutorizacionUsuario == ultimoEstado && this.isAutorizando) {
+    if (this.estadoAutorizacionUsuario > this.ValidOrden.PENDIENTECERRARSUPERVISORPRODUCCION && this.isAutorizando) {
           this.getOrdenFabricacion(item.id);
           this.modalService.open(content, { size: 'lg' });
           //this.getPorcentaje();
-      }else{
+      }else if (this.estadoAutorizacionUsuario == this.ValidOrden.PENDIENTECERRARSUPERVISORPRODUCCION && this.isAutorizando) {
+        this.estadoAutorizacionUsuario = this.ValidOrden.CERRADA;
+        this.actualizarEstadoArticulos(item)
+    }else{
         this.actualizarEstadoArticulos(item)
       }
+  }
+
+  autorizarModal(){
+    this.estadoAutorizacionUsuario = this.ValidOrden.CERRADA;
+    this.actualizarEstadoArticulos(this.itemSeleccionado)
   }
 
   desautorizar(item: any) {
     this.isAutorizando = false;
     this.actualizarEstadoArticulos(item)
+  }
+
+  desautorizarModal() {
+    this.isAutorizando = false;
+    this.estadoAutorizacionUsuario = this.ValidOrden.PENDIENTECONSUMO
+    this.actualizarEstadoArticulos(this.itemSeleccionado)
   }
 
   getPorcentaje():number{
@@ -273,14 +275,15 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
   actualizarEstadoArticulos(item: any) {
 
 
-      this.getEstaComsumido(item.id);
-      if(this.IsComsumido && OrdenFabricacionEstadoEnum.PENDIENTECONSUMO == item.estadoId){
-        this.toastService.warning("No se a consumido todos los materiales de la orden de fabricación. ");
-        return;
-      }
+    this.getEstaComsumido(item.id);
+    if(this.IsComsumido && OrdenFabricacionEstadoEnum.PENDIENTECONSUMO == item.estadoId){
+      this.toastService.warning("No se a consumido todos los materiales de la orden de fabricación. ");
+      return;
+    }
 
 
-      item.cargando = true;
+    item.cargando = true;
+    this.btnGuardarCargando = true;
     let EstadoUsuariosNotificacion: number;
 
     if (this.isAutorizando) {
@@ -306,6 +309,8 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
 
 
     item.cargando = false;
+    this.btnGuardarCargando = false;
+    this.modalService.dismissAll();
     this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
       "ActualizarOrdenFabricacionEstadoID", param).subscribe(response => {
 
@@ -357,7 +362,6 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
   }
 
   getEstaComsumido(Id:number) {
-
     this.httpService.DoPostAny<any>(DataApi.OrdenFabricacion, "GetEstaComsumido", Id).subscribe(x => {
         if (x.ok) {
           // console.log(x.records);
@@ -372,6 +376,7 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
       });
 
   }
+
   UpdateFechaCerrada(Id:number) {
 
     this.httpService.DoPostAny<any>(DataApi.OrdenFabricacion, "UpdateFechaCerrada", Id).subscribe(x => {

@@ -60,9 +60,9 @@
                   <ng-template
                   [ngIf]="estadoAutorizacionAnterior && item.estadoId == estadoAutorizacionAnterior.codigo">
 
-                  <button class="btn btn-sm btn-success m-1" *ngIf="!item.cargando"
+                  <button class="btn btn-sm  m-1"  *ngIf="!item.cargando" [ngClass]="{'btn-success': item.estadoId <= ValidOrden.PENDIENTECONSUMO, 'btn-info': item.estadoId > ValidOrden.PENDIENTECONSUMO}"
                       (click)="autorizar(item, modalAutorizacionUsuario)">
-                      <i class="fa fa-sm fa-check"></i>
+                      <i [ngClass]="{'fa-check': item.estadoId <= ValidOrden.PENDIENTECONSUMO, 'fa-eye': item.estadoId > ValidOrden.PENDIENTECONSUMO}" class="fa fa-sm fa-check"></i>
                   </button>
 
                   <!-- boton cargando -->
@@ -319,11 +319,18 @@
 
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
-    <!-- <button type="button" *ngIf="!btnGuardarCargando" class="btn btn-info m-1" (click)="SaveDevolucionDetalleVista()" >Guardar</button>
-      <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
-        <span class="spinner-border spinner-border-sm"></span> Guardando
-    </button> -->
+    <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar Modal</button>
+
+    <button type="button" *ngIf="!btnGuardarCargando" class="btn btn-warning m-1" (click)="desautorizarModal()" > <i class="fa fa-sm fa-times"></i> Deautorizar</button>
+      <button *ngIf="btnGuardarCargando" disabled class="btn btn-warning m-1" type="button">
+        <span class="spinner-border spinner-border-sm"></span> Deautorizando
+    </button>
+
+    <button type="button" *ngIf="!btnGuardarCargando" class="btn btn-success m-1" (click)="autorizarModal()" ><i class="fa fa-sm fa-check"></i> Autorizar</button>
+    <button *ngIf="btnGuardarCargando" disabled class="btn btn-success m-1" type="button">
+      <span class="spinner-border spinner-border-sm"></span> Autorizando
+  </button>
+
   </div>
 </ng-template>
 
