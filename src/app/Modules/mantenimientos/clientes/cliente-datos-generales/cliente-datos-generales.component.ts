@@ -178,7 +178,18 @@ export class ClienteDatosGeneralesComponent implements OnInit {
 
     // if (!this.actualizando)
     //   this.f.sucursalID.setValue(Number(this.auth.tokenDecoded.groupsid))
-   
+
+
+
+   if(this.f.clientePadreId.value>0){
+      if(this.clientePadreSearched.clienteTipoID!=this.f.clienteTipoID.value){
+        this.identificaSucursalOPrincipal();
+        this.toastService.error("Debes seleccionar el mismo tipo de cliente que tiene la principal");
+        return;
+
+      }
+   }
+
     if (this.FormGenerales.invalid)
       return;
     if(this.f.documentoTipoID.value==2){
@@ -216,6 +227,8 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       apellidos: [null,  [Validators.required] ],
       clienteNombre: [null,  [Validators.required]],
       documento: [null, [Validators.required, Validators.minLength(9)]],
+      documentoAnterior: [null],
+
       email: [null, [Validators.required, Validators.email]],
       telefono:[null,  [Validators.required] ],
       documentoTipoID: [1, [Validators.required]], //cedula por defecto
@@ -238,7 +251,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       tipoComprobante: [null, [Validators.required]],
 
       frecuenciaVisitaId: [0, [Validators.required]],
-      limiteCredito: [0, [Validators.required]],
+      limiteCredito: [0, [Validators.required]],  
       balance: [0, [Validators.required]],
       condicionPagoId: [0, [Validators.required]],
       plazoId: [0, [Validators.required]],
@@ -278,9 +291,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       this.f.fechaNacimiento.setValue(new Date());
       this.f.sexo.setValue('');
     }
-    if(this.f.clienteTipoID.value==12 || this.f.clienteTipoID.value==15){
-       this.f.condicionPagoId.setValue(2)
-    }
+
 
    // console.log(this.FormGenerales)
     let param = { "cliente": this.FormGenerales.value }
@@ -647,9 +658,18 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
            this.clientePadreSearched = response.records[0];
 
            //SI ESTE CLIENTE ES UN EMPLEADO NO SE PUEDE CREAR OTRO CLIENTE CON ESTE MISMO NO. DOCUMENTO
-           if(this.clientePadreSearched.clienteTipoID==12 || this.clientePadreSearched.clienteTipoID==12 ){
+           if(this.clientePadreSearched.clienteTipoID==12 || this.clientePadreSearched.clienteTipoID==15 ){
              
-            this.toastService.error('Ya existe un cliente de tipo empleado con este numero de documento');
+            if(this.f.id.value!=this.clientePadreSearched.id){
+              // this.clientId=this.clientePadreSearched.id;
+              // this.onClienteCreado(this.clientId);
+              // this.getClienteByID(this.clientePadreSearched.id);
+              // this.router.navigateByUrl('/mantenimientos/cliente/'+this.clientId);
+              // this.toastService.warning("Editando cliente existente...");
+
+              // this.actualizando = true;
+              this.toastService.error('Ya existe un cliente de tipo empleado con este numero de documento');
+            }
             this.buscandoDocumento = false;
             return;
            }
@@ -658,21 +678,12 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
           this.f.clienteNombre.setValue(this.clientePadreSearched.nombres +' ' +this.clientePadreSearched.apellidos)
           this.f.fechaNacimiento.setValue(this.clientePadreSearched.fechaNacimiento);
           this.f.sexo.setValue(this.clientePadreSearched.sexo);
+          this.f.clienteTipoID.setValue(this.clientePadreSearched.clienteTipoID)
           this.f.clientePadreTipoId.setValue(this.clientePadreSearched.clienteTipoID)
-          if(this.f.clienteTipoID.value==15 || this.f.clienteTipoID.value==12){
-            if(this.f.id.value!=this.clientePadreSearched.id && this.clientePadreSearched.id>0){
-              this.clientId=this.clientePadreSearched.id;
-              this.onClienteCreado(this.clientId);
-              this.getClienteByID(this.clientePadreSearched.id);
-              this.router.navigateByUrl('/mantenimientos/cliente/'+this.clientId);
-              this.toastService.warning("Editando cliente existente...");
-
-              this.actualizando = true;
-            }
-          }else{
+          if(this.f.clienteTipoID.value!=15 || this.f.clienteTipoID.value!=12){
+     
             this.identificaSucursalOPrincipal();
           }
-
 
         } else {
           this.f.clientePadreId.setValue(0);
@@ -690,6 +701,7 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
     });
 
 }
+
 
 identificaSucursalOPrincipal(){
 
@@ -810,13 +822,18 @@ onSelectClienteTipo(tipo: ComboBox) {
  this.getDocumentosTipo();
 
  if(tipo.codigo==12 || tipo.codigo==15){
+  this.f.documentoTipoID.setValue(null);
   this.f.isClientPrincipal.setValue(null);
   this.f.latitud.setValue('18.473523927129218');
   this.f.longitud.setValue('-69.9349482357502');
   this.onCoordsKeyUp();
 
  }else{
-  this.f.isClientPrincipal.setValue(0);
+  this.f.latitud.setValue(null);
+  this.f.longitud.setValue(null);
+  if(this.f.clientePadreId.value<=0){
+    this.f.isClientPrincipal.setValue(0);
+  }
  }
 
 }
