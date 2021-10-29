@@ -681,8 +681,13 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
           this.f.clienteNombre.setValue(this.clientePadreSearched.nombres +' ' +this.clientePadreSearched.apellidos)
           this.f.fechaNacimiento.setValue(this.clientePadreSearched.fechaNacimiento);
           this.f.sexo.setValue(this.clientePadreSearched.sexo);
-          this.f.clienteTipoID.setValue(this.clientePadreSearched.clienteTipoID)
-          this.f.clientePadreTipoId.setValue(this.clientePadreSearched.clienteTipoID)
+  
+
+            if(this.clientePadreSearched.clienteTipoID>0 &&  this.clientePadreSearched.clienteTipoID !=null)
+            {
+              this.f.clientePadreTipoId.setValue(this.clientePadreSearched.clienteTipoID)
+            }
+
           if(this.f.clienteTipoID.value!=15 || this.f.clienteTipoID.value!=12){
      
             this.identificaSucursalOPrincipal();
@@ -892,7 +897,6 @@ onTipoDocumentoChange(tipo:ComboBox) {
   this.f.apellidos.setValue(null);
   this.buscarClienteByRncOCedula(this.f.documento.value,tipo.codigo);
   this.clearOrputValidatosSomeField();
-
   this.getTipoComprobante();
 }
 
