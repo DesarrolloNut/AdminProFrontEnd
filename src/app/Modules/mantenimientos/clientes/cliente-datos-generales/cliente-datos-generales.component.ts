@@ -644,6 +644,9 @@ buscarCliente(documento: string) {
 
 }
 buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
+  if(documento=="" || documento==null || documentoTipoID==0 || documentoTipoID==null){
+    return;
+  }
   this.buscandoDocumento = true;
 
   let parametros = new ParametrosCita();
