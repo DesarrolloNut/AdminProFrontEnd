@@ -40,4 +40,7 @@ export class Cotizacion {
     usuarioId = 0;
     listaPrecioID = 0;
     estadoAutorizacionID = 0;
+    estadoERPID = 0;
+    estadoDespachoID = 0;
+
 }
