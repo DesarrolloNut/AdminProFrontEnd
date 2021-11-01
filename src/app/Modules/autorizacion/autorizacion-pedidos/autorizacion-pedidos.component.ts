@@ -218,12 +218,18 @@ export class AutorizacionPedidosComponent implements OnInit {
 
   onBtnModalOk() {
 
+    if (!this.comentario || this.comentario.length < 10) {
+      this.toastService.warning("Ingresar comentario válido");
+      return;
+    }
+
     if (this.btnClicked == this.ACTIONSenum.AUTORIZAR) {
       this.autorizar()
       console.log("autorizando")
       return;
     }
     if (this.btnClicked == this.ACTIONSenum.DESAUTORIZAR) {
+      console.log("Desautorizando")
       this.desautorizar();
       return;
     }
@@ -236,11 +242,6 @@ export class AutorizacionPedidosComponent implements OnInit {
   }
 
   autorizar() {
-
-    if (!this.comentario || this.comentario.length < 10) {
-      this.toastService.warning("Ingresar comentario válido");
-      return;
-    }
 
     this.isAutorizando = true;
     this.actualizarEstadoArticulos(this.itemSeleccionado);

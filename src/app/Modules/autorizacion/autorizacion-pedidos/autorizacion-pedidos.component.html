@@ -91,11 +91,13 @@
                                     </button> -->
 
 
-                                    <!-- <ng-template  [ngIf]="estadoAutorizacionAnterior && item.estadoAutorizacionId == estadoAutorizacionAnterior.codigo"> -->
-                                    <ng-template [ngIf]="item.estadoAutorizacionId == 1">
+                                    <!-- <ng-template [ngIf]="estadoAutorizacionAnterior && item.estadoAutorizacionId == estadoAutorizacionAnterior.codigo"> -->
+                                    <ng-template
+                                        [ngIf]="item.estadoAutorizacionId == 0 || item.estadoAutorizacionId == 1">
                                         <!-- ESTADO PENDIENTE-->
 
-                                        <button class="btn btn-sm btn-success m-1" *ngIf="!item.cargando"
+                                        <button class="btn btn-sm btn-success m-1"
+                                            *ngIf="!item.cargando && (estadoAutorizacionUsuario >= item.estadoAutorizacionId)"
                                             (click)="openModalConfirm(modalConfirm,ACTIONSenum.AUTORIZAR,item)">
                                             <i class="fa fa-sm fa-check"></i>
                                         </button>
@@ -109,10 +111,12 @@
                                     </ng-template>
 
 
-                                    <ng-template [ngIf]="item.estadoAutorizacionId == estadoAutorizacionUsuario">
+                                    <!-- <ng-template [ngIf]="item.estadoAutorizacionId == estadoAutorizacionUsuario && estadoAutorizacionAnterior"> -->
+                                    <ng-template
+                                        [ngIf]="item.estadoAutorizacionId == 1 || item.estadoAutorizacionId == 2">
 
                                         <button *ngIf="!item.cargando" class="btn btn-sm btn-warning m-1"
-                                            (click)="desautorizar(item)">
+                                            (click)="openModalConfirm(modalConfirm,ACTIONSenum.DESAUTORIZAR,item)">
                                             <i class="fa fa-sm fa-times"></i>
                                         </button>
 
