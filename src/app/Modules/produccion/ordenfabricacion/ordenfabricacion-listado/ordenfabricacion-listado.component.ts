@@ -245,7 +245,7 @@ GetNameEstado(estadoId: number){
   OnSaveProducida() {
     this.loadingSaveProducida = true;
     let data = this.ordenfabricacion ?? new OrdenFabricacion();
-    console.log(data);
+    // console.log(data);
     this.httpService
       .DoPostAny<OrdenFabricacionVista>(
         DataApi.OrdenFabricacion,
@@ -299,7 +299,7 @@ GetNameEstado(estadoId: number){
   }
 
   openModalProducida(content, modal: OrdenFabricacionVista) {
-    console.log(modal)
+    // console.log(modal)
     this.getOrdenFabricacion(modal.id);
     this.modalService.open(content, {
       windowClass: "myCustomModalClass",
