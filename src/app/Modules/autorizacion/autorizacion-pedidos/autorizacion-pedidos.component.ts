@@ -299,7 +299,7 @@ export class AutorizacionPedidosComponent implements OnInit {
 
         } else {
           this.toastService.success("Realizado", "OK");
-          // this.enviarNotificacionCorreoUsuarios(param);
+          this.enviarNotificacionCorreoUsuarios(param);
           this.getData()
         }
         this.cargandoAutorizacion = false;
@@ -320,8 +320,8 @@ export class AutorizacionPedidosComponent implements OnInit {
 
 
   enviarNotificacionCorreoUsuarios(param: any) {
-    this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
-      "EnviarCorreoActualizacionEstadoPrecio", param).subscribe(response => {
+    this.httpService.DoPostAny<any>(DataApi.Cotizacion,
+      "EnviarCorreoAutorizacionPedido", param).subscribe(response => {
         if (!response.ok) {
           console.error(response.errores[0]);
         } else {
