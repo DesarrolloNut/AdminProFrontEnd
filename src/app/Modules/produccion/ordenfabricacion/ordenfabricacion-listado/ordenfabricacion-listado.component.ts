@@ -17,6 +17,8 @@ import { OrdenFabricacionEstadoEnum } from "../models/OrdenFabricacionEstadoEnum
 import { EstadosGeneralesKeyEnum } from "src/app/shared/enums/EstadosGeneralesKeyEnum";
 import { ComboBox } from "src/app/shared/model/ComboBox";
 import { LotesOrdenFabricacion } from "../models/LotesOrdenFabricacion";
+import { Console } from "console";
+import { Configuraciones } from "src/app/shared/enums/Configuraciones";
 
 @Component({
   selector: "app-ordenfabricacion-listado",
@@ -55,6 +57,8 @@ export class OrdenfabricacionListadoComponent implements OnInit {
   loadingLote: boolean;
   lote: LotesOrdenFabricacion = new LotesOrdenFabricacion();
   selectOrden: OrdenFabricacionVista = new OrdenFabricacionVista();
+  ORDENFABRICACION_CONSUMO_MAXIMO: number = 0;
+  ORDENFABRICACION_CONSUMO_MINIMO: number = 0;
 
 
   public get ValidOrden(): typeof OrdenFabricacionEstadoEnum {
@@ -74,6 +78,8 @@ export class OrdenfabricacionListadoComponent implements OnInit {
   ngOnInit(): void {
     this.getData();
     this.getEstadosAutorizacion();
+    this.getOrdenFabMaximo();
+    this.getOrdenFabMinimo();
   }
 
 GetNameEstado(estadoId: number){
@@ -142,12 +148,18 @@ GetNameEstado(estadoId: number){
 
   OnSubmitConsumido(model: OrdenFabricacionVista){
 
-    if (model.lote == "" && model.gestionado) {
+    let maximo = (model.cantidadRequerida * this.ORDENFABRICACION_CONSUMO_MAXIMO)
+    let minimo = ((model.cantidadRequerida * this.ORDENFABRICACION_CONSUMO_MINIMO) - 1)
+
+    console.log("maximo", maximo)
+    console.log("minimo", minimo)
+
+    if (model.lote == "" && model.gestionado == true) {
       this.toastService.warning("Digita el lote.");
       return;
     }
 
-    if (this.lote.cantidad <= 0 && model.gestionado) {
+    if (this.lote.cantidad <= 0 && model.gestionado == true) {
       this.toastService.warning("No a digitado un lote disponible.");
       return;
     }
@@ -157,19 +169,32 @@ GetNameEstado(estadoId: number){
       return;
     }
 
+    if (model.consumido < model.cantidadRequerida) {
+      this.toastService.warning("El valor consumido es menor a la cantidad requerida");
+      return;
+    }
+
+
+    if (model.consumido > maximo) {
+      this.toastService.warning("Esta consumiendo mas del parametro permitido.");
+      return;
+    }
+
+    // if (model.consumido < minimo) {
+    //   this.toastService.warning("Esta consumiendo menos del parametro permitido.");
+    //   return;
+    // }
+
     this.OnSaveConsumido(model);
   }
 
   OnSaveConsumido(articulosExtras: OrdenFabricacionVista) {
-    let requeridad = articulosExtras.cantidadRequerida;
-    let consumido = articulosExtras.consumido;
 
-    if (consumido < requeridad) {
-      this.toastService.warning("El valor consumido es menor a la cantidad requerida");
-    }
-    if(articulosExtras.lote == null || articulosExtras.lote.trim() == "" && articulosExtras.gestionado){
-      this.toastService.warning("Debe poner un lote.");
-    }
+
+    // if((articulosExtras.lote == null || articulosExtras.lote.trim() == "") && articulosExtras.gestionado == true){
+    //   this.toastService.warning("Debe poner un lote.");
+    //   return;
+    // }
       articulosExtras.loadingSaveConsumido = true;
       this.httpService
         .DoPostAny<OrdenFabricacionVista>(
@@ -227,7 +252,6 @@ GetNameEstado(estadoId: number){
   OnSubmitProducida(){
 
 
-
     if (this.ordenfabricacion.cantidadProducida <= 0) {
       this.toastService.warning("No a digitado una cantidad valida.");
       return;
@@ -254,19 +278,16 @@ GetNameEstado(estadoId: number){
       )
       .subscribe(
         (response) => {
+          console.log(response);
           if (!response.ok) {
             this.toastService.error(response.errores[0]);
           } else {
             this.IsPesajeProducida = !this.IsPesajeProducida;
             this.getOrdenFabricacion(this.ordenfabricacion.id);
-            this.getData()
+            this.updateOrdenFabricacionEstadoPendiente(this.ofheader.id, this.ordenfabricacion.estadoId)
+            this.getData();
+            this.modalService.dismissAll();
 
-
-            if (this.ordenfabricacion.cantidadProducida > 0 && this.ordenfabricacion.batch > 0) {
-              // this.updateOrdenFabricacionEstado(this.ofheader.id, this.ordenfabricacion.estadoId+1);
-              this.updateOrdenFabricacionEstadoPendiente(this.ofheader.id, this.ordenfabricacion.estadoId)
-              this.modalService.dismissAll();
-            }
 
           }
           this.loadingSaveProducida = false;
@@ -599,6 +620,56 @@ GetNameEstado(estadoId: number){
           }, 1000);
         }
       );
+  }
+
+  getOrdenFabMaximo() {
+    this.httpService.DoPostAny<any>(DataApi.Configuracion,
+      "GetConfiguracionValor", Number(Configuraciones.ORDENFABRICACION_CONSUMO_MAXIMO)).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+
+          if (response.records.length == 0 || response.records[0] < 1) {
+            this.toastService.error("No hay ORDENFABRICACION_CONSUMO_MAXIMO configurado");
+            console.error("No hay ORDENFABRICACION_CONSUMO_MAXIMO configurado")
+          } else {
+            this.ORDENFABRICACION_CONSUMO_MAXIMO = Number(response.records[0]);
+          }
+
+        }
+      }, error => {
+        this.toastService.error("No se pudo obtener las condiciones de pago", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getOrdenFabMaximo();
+        }, 1000);
+
+      });
+  }
+
+  getOrdenFabMinimo() {
+    this.httpService.DoPostAny<any>(DataApi.Configuracion,
+      "GetConfiguracionValor", Number(Configuraciones.ORDENFABRICACION_CONSUMO_MINIMO)).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+
+          if (response.records.length == 0 || response.records[0] < 1) {
+            this.toastService.error("No hay .ORDENFABRICACION_CONSUMO_MINIMO configurado");
+            console.error("No hay .ORDENFABRICACION_CONSUMO_MINIMO configurado")
+          } else {
+            this.ORDENFABRICACION_CONSUMO_MINIMO = Number(response.records[0]);
+          }
+
+        }
+      }, error => {
+        this.toastService.error("No se pudo obtener las condiciones de pago", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getOrdenFabMinimo();
+        }, 1000);
+
+      });
   }
 
 

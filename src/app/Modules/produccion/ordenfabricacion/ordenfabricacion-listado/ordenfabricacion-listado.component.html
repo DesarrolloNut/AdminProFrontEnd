@@ -55,6 +55,7 @@
                 <td>
                   <span class="font-weight-bold"> {{item.articuloPadre }} | {{item.articulo}}</span>
                   <small  class="d-block" > Fecha Creación: {{item.fechaCreacion | date:'medium'}}</small>
+                  <small class="text-info"> <i class=" fa fa-hashtag"></i> Codigo ERP Externo: <b>{{item.codigoReferencia }}</b>  </small>
                 </td>
                 <td>
                   <span> {{item.tipo}}</span>
@@ -269,7 +270,7 @@
                     <span class="sr-only">Loading...</span>
                   </button>
 
-                  <button class="btn btn-sm btn-danger m-1" *ngIf="articulext.isPesaje" (click)="OnChangeIsPesaje(articulext)">
+                  <button class="btn btn-sm btn-danger m-1" *ngIf="articulext.isPesaje && !articulext.loadingSaveConsumido" (click)="OnChangeIsPesaje(articulext)">
                     <i class="fa fa-sm fa-times"></i>
                   </button>
 
