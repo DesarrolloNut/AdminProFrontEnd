@@ -42,6 +42,7 @@
                 <th>Articulo</th>
                 <th>Tipo</th>
                 <th>Estado</th>
+                <th>Estado ERP Externo</th>
                 <th>Almacen</th>
                 <!-- <th>Fecha Creación</th> -->
                 <th>Cantidad Planificada</th>
@@ -70,6 +71,26 @@
 
                 }" >{{item.nombre}} </span>
                 </td>
+
+                <td>
+                  <div class="circulo" [ngClass]="{
+                  'bg-success' : item.estadoERPExternoId == 6,
+                  'bg-warning ' : item.estadoERPExternoId > 0 && item.estadoERPExternoId < 6
+
+                }"></div>
+                  <span class="text-dark">
+                    {{item.estadoERPExternoId > 0 && item.estadoERPExternoId < 6 ? "Pendiente": item.estadoERPExternoId == 6 ? "Sincronizado": "" }}
+                  </span>
+              </td>
+                <!-- <td>
+                  <span class=" m-1"
+                  [ngClass]="{
+                    'text-black' : item.estadoERPExternoId == 0,
+                  'text-success' : item.estadoERPExternoId == 6,
+                  'text-warning ' : item.estadoERPExternoId > 0 && item.estadoERPExternoId < 6
+
+                }" >{{item.estadoERPExternoId > 0 && item.estadoERPExternoId < 6 ? "Pendiente": item.estadoERPExternoId == 6 ? "Sincronizado": "Ninguna Accion" }} </span>
+                </td> -->
                 <td>
                   <span> {{item.almacen}}</span>
                 </td>
@@ -358,7 +379,7 @@
                     <i class="fa fa-sm fa-edit"></i>
                   </button>
 
-                   <button class="btn btn-sm btn-info m-1" *ngIf="articulo.unidadMedida != 'Unidad'" (click)="OnChangePagePesaje(ordenfabricacion, true)">
+                   <button class="btn btn-sm btn-info m-1" *ngIf="articulo.unidadMedida != 'Unidad' && !IsPesajeProducida" (click)="OnChangePagePesaje(ordenfabricacion, true)">
                     <i class="fa fa-sm fa-balance-scale"></i>
                   </button>
 
@@ -371,7 +392,7 @@
                     <span class="sr-only">Loading...</span>
                   </button>
 
-                  <button class="btn btn-sm btn-danger m-1" *ngIf="IsPesajeProducida" (click)="OnChangeProducida()">
+                  <button class="btn btn-sm btn-danger m-1" *ngIf="!IsPesajeProducida && loadingSaveProducida" (click)="OnChangeProducida()">
                     <i class="fa fa-sm fa-times"></i>
                   </button>
 

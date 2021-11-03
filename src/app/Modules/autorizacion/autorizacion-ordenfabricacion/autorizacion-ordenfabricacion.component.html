@@ -60,9 +60,9 @@
                   <ng-template
                   [ngIf]="estadoAutorizacionAnterior && item.estadoId == estadoAutorizacionAnterior.codigo">
 
-                  <button class="btn btn-sm  m-1"  *ngIf="!item.cargando" [ngClass]="{'btn-success': item.estadoId <= ValidOrden.PENDIENTECERRARSUPERVISORPRODUCCION, 'btn-info': item.estadoId > ValidOrden.PENDIENTECERRARSUPERVISORPRODUCCION}"
+                  <button class="btn btn-sm  m-1"  *ngIf="!item.cargando" [ngClass]="{'btn-success': item.estadoId < ValidOrden.PENDIENTECERRARSUPERVISORPRODUCCION, 'btn-info': item.estadoId >= ValidOrden.PENDIENTECERRARSUPERVISORPRODUCCION}"
                       (click)="autorizar(item, modalAutorizacionUsuario)">
-                      <i [ngClass]="{'fa-check': item.estadoId <= ValidOrden.PENDIENTECERRARSUPERVISORPRODUCCION, 'fa-eye': item.estadoId > ValidOrden.PENDIENTECERRARSUPERVISORPRODUCCION}" class="fa fa-sm fa-check"></i>
+                      <i [ngClass]="{'fa-check': item.estadoId < ValidOrden.PENDIENTECERRARSUPERVISORPRODUCCION, 'fa-eye': item.estadoId >= ValidOrden.PENDIENTECERRARSUPERVISORPRODUCCION}" class="fa fa-sm fa-check"></i>
                   </button>
 
                   <!-- boton cargando -->
@@ -75,7 +75,7 @@
               </ng-template>
 
 
-              <ng-template [ngIf]="item.estadoId == estadoAutorizacionUsuario && item.estadoId != ValidOrden.CERRADA">
+              <ng-template [ngIf]="item.estadoId == estadoAutorizacionUsuario && item.estadoId < ValidOrden.PENDIENTECERRARSUPERVISORPRODUCCION">
 
                   <button *ngIf="!item.cargando" class="btn btn-sm btn-warning m-1"
                       (click)="desautorizar(item)">

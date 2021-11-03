@@ -108,7 +108,7 @@ GetNameEstado(estadoId: number){
       )
       .subscribe(
         (x) => {
-          // console.log(x);
+          console.log(x);
           if (x.ok) {
             this.data = x.records;
             this.asignarPagination(x);
@@ -151,8 +151,8 @@ GetNameEstado(estadoId: number){
     let maximo = (model.cantidadRequerida * this.ORDENFABRICACION_CONSUMO_MAXIMO)
     let minimo = ((model.cantidadRequerida * this.ORDENFABRICACION_CONSUMO_MINIMO) - 1)
 
-    console.log("maximo", maximo)
-    console.log("minimo", minimo)
+    // console.log("maximo", maximo)
+    // console.log("minimo", minimo)
 
     if (model.lote == "" && model.gestionado == true) {
       this.toastService.warning("Digita el lote.");
@@ -277,16 +277,17 @@ GetNameEstado(estadoId: number){
         data
       )
       .subscribe(
-        (response) => {
-          console.log(response);
+         async (response) => {
+          // console.log(response);
           if (!response.ok) {
             this.toastService.error(response.errores[0]);
           } else {
             this.IsPesajeProducida = !this.IsPesajeProducida;
-            this.getOrdenFabricacion(this.ordenfabricacion.id);
-            this.updateOrdenFabricacionEstadoPendiente(this.ofheader.id, this.ordenfabricacion.estadoId)
-            this.getData();
-            this.modalService.dismissAll();
+            await this.updateOrdenFabricacionEstadoPendiente(this.ofheader.id, this.ordenfabricacion.estadoId)
+            // this.getOrdenFabricacion(this.ordenfabricacion.id);
+
+
+
 
 
           }
@@ -299,11 +300,12 @@ GetNameEstado(estadoId: number){
             "Error conexion al servidor"
           );
 
-          setTimeout(() => {
-            //this.getOrdenFabricacion();
-          }, 1000);
+          // setTimeout(() => {
+          //   //this.getOrdenFabricacion();
+          // }, 1000);
         }
       );
+
   }
 
   openModalComfirm(content, modal: OrdenFabricacionVista) {
@@ -606,8 +608,9 @@ GetNameEstado(estadoId: number){
         async (response) => {
           if (!response.ok) {
             this.toastService.error(response.errores[0]);
-          } else {
-
+          }else{
+            this.getData();
+            this.modalService.dismissAll();
           }
         },
         (error) => {
@@ -616,8 +619,8 @@ GetNameEstado(estadoId: number){
             "Error conexion al servidor"
           );
 
-          setTimeout(() => {
-          }, 1000);
+          // setTimeout(() => {
+          // }, 1000);
         }
       );
   }

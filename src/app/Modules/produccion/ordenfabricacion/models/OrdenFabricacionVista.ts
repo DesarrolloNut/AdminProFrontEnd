@@ -24,6 +24,7 @@ export class OrdenFabricacionVista {
     this.costoArticulo = 0;
     this.ordenFabricacionId = 0;
     this.estadoId = 0;
+    this.estadoERPExternoId = 0;
     this.noConsumido = 0;
     this.batch = 0;
     this.gestionado = false;
@@ -59,6 +60,7 @@ export class OrdenFabricacionVista {
   costoArticulo: number;
   ordenFabricacionId: number;
   estadoId: number;
+  estadoERPExternoId: number;
   noConsumido: number;
   batch: number;
   gestionado: boolean;
