@@ -244,13 +244,13 @@ export class AutorizacionPedidosComponent implements OnInit {
   autorizar() {
 
     this.isAutorizando = true;
-    this.actualizarEstadoArticulos(this.itemSeleccionado);
+    this.actualizarEstadoArticulos();
 
   }
 
   desautorizar() {
     this.isAutorizando = false;
-    this.actualizarEstadoArticulos(this.itemSeleccionado)
+    this.actualizarEstadoArticulos()
   }
 
   // autorizarMasiva() {
@@ -273,7 +273,7 @@ export class AutorizacionPedidosComponent implements OnInit {
   // }
 
 
-  actualizarEstadoArticulos(item: any) {
+  actualizarEstadoArticulos() {
 
     this.cargandoAutorizacion = true;
 

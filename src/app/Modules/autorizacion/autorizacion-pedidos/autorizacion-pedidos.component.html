@@ -91,9 +91,10 @@
                                     </button> -->
 
 
-                                    <!-- <ng-template [ngIf]="estadoAutorizacionAnterior && item.estadoAutorizacionId == estadoAutorizacionAnterior.codigo"> -->
                                     <ng-template
-                                        [ngIf]="item.estadoAutorizacionId == 0 || item.estadoAutorizacionId == 1">
+                                        [ngIf]="estadoAutorizacionAnterior && item.estadoAutorizacionId <= estadoAutorizacionAnterior.codigo">
+                                        <!-- <ng-template
+                                        [ngIf]="item.estadoAutorizacionId == 0 || item.estadoAutorizacionId == 1 && estadoAutorizacionUsuario > item.estadoAutorizacionId"> -->
                                         <!-- ESTADO PENDIENTE-->
 
                                         <button class="btn btn-sm btn-success m-1"
@@ -111,9 +112,10 @@
                                     </ng-template>
 
 
-                                    <!-- <ng-template [ngIf]="item.estadoAutorizacionId == estadoAutorizacionUsuario && estadoAutorizacionAnterior"> -->
                                     <ng-template
-                                        [ngIf]="item.estadoAutorizacionId == 1 || item.estadoAutorizacionId == 2">
+                                        [ngIf]="item.estadoAutorizacionId == estadoAutorizacionUsuario && estadoAutorizacionAnterior">
+                                        <!-- <ng-template
+                                        [ngIf]="estadoAutorizacionUsuario == 2 && (item.estadoAutorizacionId == 1 || item.estadoAutorizacionId == 2)"> -->
 
                                         <button *ngIf="!item.cargando" class="btn btn-sm btn-warning m-1"
                                             (click)="openModalConfirm(modalConfirm,ACTIONSenum.DESAUTORIZAR,item)">
