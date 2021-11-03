@@ -1,11 +1,11 @@
- 
+
 <div class="row">
   <div class="col-12">
     <div class="card">
       <div class="card-body">
         <div class="row">
           <div class="col-md-3 col-lg-3 col-12">
-            <h4 class="card-title font-weight-bold">Datos Finanzas</h4> 
+            <h4 class="card-title font-weight-bold">Datos Finanzas</h4>
 
           </div>
           <div class="col-md-9 col-lg-9 col-12 text-right">
@@ -16,8 +16,8 @@
           </div>
         </div>
         <app-loading-listado [hidden]="!cargando"></app-loading-listado>
-         <div   class="form_finanzas" 
-         [style.opacity]="cargando ? '0' : '1'" 
+         <div   class="form_finanzas"
+         [style.opacity]="cargando ? '0' : '1'"
          [style.visibility]="cargando ? 'hidden' : 'visible'" >
 
         <form class="form-row m-t-40" [formGroup]="FormFinanza" >
@@ -51,7 +51,7 @@
           <div class="form-group col-md-6" *ngIf="f.condicionPagoId.value==2">
             <label for="limiteCredito"><i class="fa fa-hashtag"></i> Límite
               Crédito</label>
-            <input [attr.disabled]="true" formControlName="limiteCredito" type="text" prefix="$ " mask="separator"
+            <input [attr.disabled]="f.clienteTipoId.value==12" formControlName="limiteCredito" type="text" prefix="$ " mask="separator"
               thousandSeparator="," name="limiteCredito" id="limiteCredito"
               [ngClass]="{'is-invalid' : submitted && f.limiteCredito.errors,  'form-control':true  }">
             <div class="invalid-feedback" *ngIf="submitted && f.limiteCredito.errors">
@@ -90,28 +90,28 @@
                             <div class="   col-md-12">
                             <app-loading-listado [hidden]="!cargandoAnexos"></app-loading-listado>
 
-                             </div>  
+                             </div>
                           <ng-container  *ngIf="filesFromInput.length>0 && !cargandoAnexos; else elseTemplate2">
-                         
+
                               <div class=" row  col-md-12">
 
                                 <div class="col-md-3  p-2 text-center" *ngFor="let item of filesFromInput; let i = index">
 
                                   <div class="row ml-1" *ngIf="!isImage(item)"  >
-                                    <div class="card  border rounded-sm "       
+                                    <div class="card  border rounded-sm "
                                     [ngClass]="{'border_Subido': item.uploaded == true, 'border_NoSubido' : item.uploaded == false }"
                                     style="width: 18rem;">
                                       <div style="background-image: url('assets/images/pdf.png');background-size: cover;
                                       min-height: 140px;
                                       background-repeat: no-repeat;
                                       background-position: center center;" class="card-img-top  img-responsive">
-                                   
+
                                               <p class="pending_subirp"  *ngIf="!item.uploaded">
                                                 <i class="fa fa-upload " aria-hidden="true"></i>
                                                 <span class="ml-1 span_text_subir" >Pendiente subir</span>
                                               </p>
- 
-  
+
+
                                       </div>
                                       <div class="card-body ">
                                         <h5 class="card-title" style="font-size: 13px; ">{{truncateString(item.name) }}</h5>
@@ -130,7 +130,7 @@
                                         </div>
                                         <hr>
 
- 
+
 
 
 
@@ -139,29 +139,29 @@
                                             <i class="spinner-border spinner-border-sm  mr-1"></i></button>
                                           <button class="btn btn btn-outline-danger btn-sm rounded" *ngIf="!item.loading" (click)="deleteFile(item,i)">
                                             <i class="fa fa-times  mr-1"></i>Quitar</button>
-         
+
                                           <button class="btn btn-outline-info btn-sm ml-2 rounded" *ngIf="item.uploaded" (click)="goPdf(item)"><i class="fa fa-eye mr-1"></i>Ver</button>
-                                      
+
                                         </div>
-                                 
+
                                       </div>
                                     </div>
                                   </div>
                                     <div class="row ml-1" *ngIf="isImage(item)">
-                                      <div class="card   border rounded-sm" 
+                                      <div class="card   border rounded-sm"
                                       [ngClass]="{'border_Subido': item.uploaded == true, 'border_NoSubido' : item.uploaded == false }"
                                       style="width: 18rem;">
-                                 
+
                                         <div [ngStyle]="{'background-image': 'url(' + formatUrlFile(item) + ')'}" style="background-size: cover;
                                         min-height: 140px;
                                         background-repeat: no-repeat;
                                         background-position: center center;" class="card-img-top  img-responsive" >
-                                      
+
                                           <p class="pending_subirp"  *ngIf="!item.uploaded">
                                             <i class="fa fa-upload " aria-hidden="true"></i>
                                             <span class="ml-1 span_text_subir" >Pendiente subir</span>
                                           </p>
-                                          
+
                                       </div>
                                         <div class="card-body ">
                                           <h5 class="card-title" style="font-size: 13px; ">{{truncateString(item.name) }}</h5>
@@ -194,13 +194,13 @@
                                               <i class="fa fa-times  mr-1"></i>Quitar</button>
 
                                             <button class="btn btn-outline-info btn-sm ml-2 rounded" (click)=" openModal(modalImagePreview,item)  "><i class="fa fa-eye mr-1"></i>Ver</button>
-                                       
+
                                           </div>
-                                   
+
                                         </div>
                                       </div>
                                     </div>
-                      
+
                                   </div>
 
 
@@ -248,7 +248,7 @@
       </div>
     </div>
   </div>
-</div> 
+</div>
 
 <ng-template #modalImagePreview let-modal>
   <div class="container-fluid">
@@ -270,8 +270,7 @@
 
 
   </div>
- 
+
 </ng-template>
 
 
- 

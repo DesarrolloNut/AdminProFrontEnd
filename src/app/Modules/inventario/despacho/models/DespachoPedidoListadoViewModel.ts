@@ -16,4 +16,15 @@ export interface DespachoPedidoListadoViewModel {
     estadoAutorizacionId: number;
     confirmado: number;
     loadingCancelPedido:boolean;
+
+
+}
+export interface DespachoListadoPreventaVM  {
+  fechaCreacion: string;
+  distribuidorId: number;
+  distribuidor: string;
+  distribuidorDocumento: string;
+  pedido: number;
+  despacho: number;
+  estadoDespacho: number;
 }

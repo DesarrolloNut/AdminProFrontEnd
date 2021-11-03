@@ -14,7 +14,7 @@ import { LoteAlmacen } from 'src/app/Modules/produccion/pesaje/models/LoteAlmace
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { DespachoPedidoDetalleArticuloViewModel, DespachoPedidoDetalleViewModel } from '../models/DespachoPedidoDetalleViewModel';
-import { DespachoPedidoListadoViewModel } from '../models/DespachoPedidoListadoViewModel';
+import { DespachoListadoPreventaVM, DespachoPedidoListadoViewModel } from '../models/DespachoPedidoListadoViewModel';
 
 @Component({
   selector: 'app-despacho-listado',
@@ -35,6 +35,7 @@ export class DespachoListadoComponent implements OnInit {
   paginaSize: number = 5;
   paginaTotalRecords: number = 0;
   data: DespachoPedidoListadoViewModel[] = [] //tu modelo
+  dataPreventa: DespachoListadoPreventaVM[] = [] //tu modelo
 
   despachoDetalles: DespachoPedidoDetalleViewModel[];
   despachoPedidoArticuloDetalleSelected: DespachoPedidoDetalleViewModel;
@@ -45,6 +46,7 @@ export class DespachoListadoComponent implements OnInit {
   pedidoEmpleadoSeleccionado: DespachoPedidoListadoViewModel;
   loadingEstadoAutorizacionCotizacion: boolean = false;
   loadingValidaExistPedidoSinFacturar: boolean = false;
+  loadingCanales: boolean = false;
 
 
   loadingInfoCliente: boolean;
@@ -52,7 +54,7 @@ export class DespachoListadoComponent implements OnInit {
   cliente: Cliente;
 
   canales:ComboBox[]=[];
-  canal:number=0;
+  canalId:number=1;
 
 
 
@@ -92,8 +94,9 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
 
 
   ngOnInit(): void {
-    this.getData();
-    this.fillComboCanales();
+   this.getDataByCondicional()
+
+    this.getCanales();
     this.getArticulosDePesosExtras();
     this.getAlmacenes();
     this.empezarAmbientePrueba();
@@ -101,14 +104,31 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
       this.cantidades.push(i)
     }
   }
-  
-  fillComboCanales(){
-    this.canales.push({codigo:0,nombre:"Todos",grupo:'',grupoID:''})
-    this.canales.push({codigo:1,nombre:"Preventa",grupo:'',grupoID:''})
-    this.canales.push({codigo:2,nombre:"Moderno",grupo:'',grupoID:''})
-    this.canales.push({codigo:3,nombre:"Empleado",grupo:'',grupoID:''})
-    this.canales.push({codigo:4,nombre:"Directo",grupo:'',grupoID:''})
+ getDataByCondicional(){
+  switch (this.canalId) {
+    case 1:
+         this.getDataPreventa()
+        break;
+    case 2:
+          this.getData()
+          break;
+    case 3:
+           this.getData()
+        break;
+    case 4:
+            this.getData()
+        break;
+    case 4:
+            this.getData()
+        break;
+    default:
+            this.getData()
+          break;
   }
+ }
+
+
+
   getData() {
     this.Cargando = true;
 
@@ -121,7 +141,7 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
         if (x.ok) {
           this.data = x.records;
           this.asignarPagination(x);
-        } else { 
+        } else {
           this.toastService.error(x.errores[0]);
           console.error(x.errores[0]);
         }
@@ -135,6 +155,30 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
   }
 
 
+  getDataPreventa() {
+    this.Cargando = true;
+
+    let parametros: Parametro[] = [{ key: "Search", value: this.Search }, ]
+
+    this.httpService.GetAllWithPagination<DespachoListadoPreventaVM>(DataApi.Despacho,
+       "GetDespachoPreventaListado", "FechaCreacion", this.paginaNumeroActual,
+      this.paginaSize,true, parametros).subscribe(x => {
+
+        if (x.ok) {
+          this.dataPreventa = x.valores[0];
+          this.asignarPagination(x);
+        } else {
+          this.toastService.error(x.errores[0]);
+          console.error(x.errores[0]);
+        }
+        this.Cargando = false;
+      }, error => {
+        console.error(error);
+        this.toastService.error("Error conexion al servidor");
+        this.Cargando = false;
+      });
+
+  }
   asignarPagination(x: ResponseContenido<any>) {
 
     if (x.pagina != null) {
@@ -187,7 +231,7 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
         this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
       });
   }
- 
+
 
 
   // CambiarEstadoAutorizacionCotizacion(cotizacionID: number) {
@@ -210,7 +254,7 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
   // }
 
 
- 
+
 
 
   cancelarDespacho() {
@@ -251,7 +295,7 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
         } else {
           //validar que existe
           if (response != null && response.records != null && response.records.length > 0) {
-           
+
             this.cliente = response.records[0];
             this.cliente.apellidos = this.cliente.apellidos==null?"":this.cliente.apellidos;
             this.clienteExiste=true;
@@ -354,10 +398,10 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
     this.despachoDetalles.filter(
       d=>d.id ==this.despachoPedidoArticuloDetalleSelected.id
       ).map(x=>{x.estadoId=1,x.estado='Si',x.estadoColor='success',x.selected=false})
-   
+
 
       let item=  this.despachoDetalles.filter(x=>x.estadoId!=1)[0];
-        
+
       item.selected=true;
       this.despachoPedidoArticuloDetalleSelected=item;
   }
@@ -369,7 +413,7 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
       let item= this.despachoDetalles[backIndex];
       this.despachoDetalles.map(x=>{x.selected=false})
       item.selected=true;
-      
+
       this.despachoPedidoArticuloDetalleSelected=item;
 
 
@@ -486,4 +530,29 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
     return (Math.floor(Math.random() * (max - min + 1)) + min)
   }
 
+
+
+
+
+  getCanales() {
+    this.loadingCanales = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetCanales", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.canales = response.records;
+        }
+        this.loadingCanales = false;
+      }, error => {
+        this.loadingCanales = false;
+        this.toastService.error("No se pudo obtener los canales", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getCanales()
+        }, 1000);
+
+      });
+  }
 }

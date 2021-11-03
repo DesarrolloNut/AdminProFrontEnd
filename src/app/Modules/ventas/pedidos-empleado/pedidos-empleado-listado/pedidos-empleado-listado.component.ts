@@ -12,7 +12,7 @@ import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { PedidoEmpleadoDetalleViewModel } from '../models/PedidoEmpleadoDetalleViewModel';
 import { PedidoEmpleadoListadoViewModel } from '../models/PedidoEmpleadoListadoViewModel';
- 
+
 
 @Component({
   selector: 'app-pedidos-empleado-listado',
@@ -73,6 +73,7 @@ export class PedidosEmpleadosListadoComponent implements OnInit {
 
         if (x.ok) {
           this.data = x.records;
+          console.log( this.data)
           this.asignarPagination(x);
         } else {
           this.toastService.error(x.errores[0]);
@@ -247,7 +248,7 @@ export class PedidosEmpleadosListadoComponent implements OnInit {
         } else {
           //validar que existe
           if (response != null && response.records != null && response.records.length > 0) {
-           
+
             this.cliente = response.records[0];
             this.cliente.apellidos = this.cliente.apellidos==null?"":this.cliente.apellidos;
             this.clienteExiste=true;
