@@ -33,7 +33,7 @@
           <div class="form-group col-md-6">
             <label for="codigoReferencia"> <i class="fa fa-hashtag"></i> Código de Referencia</label>
             <input formControlName="codigoReferencia" type="text" name="codigoReferencia" id="codigoReferencia"
-              [ngClass]="{'is-invalid' : submitted && f.codigoReferencia.errors,  'form-control':true  }">
+              [ngClass]="{'is-invalid' : submitted && f.codigoReferencia.errors,  'form-control':true  }" readonly>
             <div class="invalid-feedback" *ngIf="submitted && f.codigoReferencia.errors">
               <div *ngIf="f.codigoReferencia.errors.required">El campo es obligatorio</div>
             </div>
@@ -63,6 +63,15 @@
               [ngClass]="{'is-invalid' : submitted && f.costo.errors,  'form-control':true  }">
             <div class="invalid-feedback" *ngIf="submitted && f.costo.errors">
               <div *ngIf="f.costo.errors.required">El campo es obligatorio</div>
+            </div>
+          </div>
+
+          <div class="form-group col-md-4">
+            <label for="costoObjetivo"> Costo Objetivo</label>
+            <input formControlName="costoObjetivo" type="number" name="costoObjetivo" id="costoObjetivo"
+              [ngClass]="{'is-invalid' : submitted && f.costoObjetivo.errors,  'form-control':true  }">
+            <div class="invalid-feedback" *ngIf="submitted && f.costoObjetivo.errors">
+              <div *ngIf="f.costoObjetivo.errors.required">El campo es obligatorio</div>
             </div>
           </div>
 

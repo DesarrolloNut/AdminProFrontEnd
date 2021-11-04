@@ -34,6 +34,7 @@ export class OrdenFabricacionVista {
     this.isPesaje = false;
     this.loadingSaveConsumido = false;
     this.cargando = false;
+    this.isRPC = false;
 
   }
 
@@ -70,4 +71,5 @@ export class OrdenFabricacionVista {
   isPesaje: boolean;
   loadingSaveConsumido: boolean;
   cargando: boolean;
+  isRPC: boolean;
 }

@@ -227,8 +227,8 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
   }
 
   autorizarModal(){
-    this.estadoAutorizacionUsuario = this.ValidOrden.CERRADA;
-    this.actualizarEstadoArticulos(this.itemSeleccionado)
+    // this.estadoAutorizacionUsuario = this.ValidOrden.CERRADA;
+    this.actualizarEstadoArticulos(this.itemSeleccionado, this.ValidOrden.CERRADA)
   }
 
   desautorizar(item: any) {
@@ -238,8 +238,8 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
 
   desautorizarModal() {
     this.isAutorizando = false;
-    this.estadoAutorizacionUsuario = this.ValidOrden.PENDIENTECONSUMO
-    this.actualizarEstadoArticulos(this.itemSeleccionado)
+    // this.estadoAutorizacionUsuario = this.ValidOrden.PLANIFICADA
+    this.actualizarEstadoArticulos(this.itemSeleccionado, this.ValidOrden.PLANIFICADA)
   }
 
   getPorcentaje():number{
@@ -272,7 +272,7 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
   }
 
 
-  actualizarEstadoArticulos(item: any) {
+  actualizarEstadoArticulos(item: any, estado = null) {
 
 
     this.getEstaComsumido(item.id);
@@ -292,13 +292,17 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
       EstadoUsuariosNotificacion = this.estadoIDAutorizacionDefault;
     }
 
+    if(estado == null){
+      estado = this.isAutorizando ? this.estadoAutorizacionUsuario : this.estadoIDAutorizacionDefault;
+    }
+
     let ultimoEstado = this.estadosAutorizacion[this.estadosAutorizacion.length - 1].codigo;
     let articulos = []
     articulos.push(item)
     let param = {
       "IsAprobado": this.estadoAutorizacionUsuario == ultimoEstado && this.isAutorizando,
       "IsAutorizando": this.isAutorizando,
-      "EstadoAutorizacion": this.isAutorizando ? this.estadoAutorizacionUsuario : this.estadoIDAutorizacionDefault,
+      "EstadoAutorizacion": estado,
       "EstadoDefault": this.estadoIDAutorizacionDefault,
       "EstadoUsuariosNotificacion": EstadoUsuariosNotificacion,
       "Seleccion": articulos.

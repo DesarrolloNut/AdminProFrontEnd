@@ -20,6 +20,7 @@ import { ArticuloPesosExtrasViewModel } from '../../pesaje/models/ArticuloPesosE
 import { LoteAlmacen } from '../../pesaje/models/LoteAlmacen';
 import { OrdenFabricacionVista } from '../models/OrdenFabricacionVista';
 import { OrdenFabricacionEstadoEnum } from '../models/OrdenFabricacionEstadoEnum';
+import { Configuraciones } from 'src/app/shared/enums/Configuraciones';
 
 @Component({
   selector: 'app-ordenfabricacion-pesaje',
@@ -77,6 +78,8 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
   ListaArticuloDetalle: OrdenFabricacionVista[] = [];
 
   isTerminalReport: boolean = false;
+  ORDENFABRICACION_CONSUMO_MINIMO: number = 0;
+  ORDENFABRICACION_CONSUMO_MAXIMO: number = 0;
 
   constructor(
     private toastService: ToastrService,
@@ -90,11 +93,13 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    this.getHoraActual()
+    this.getHoraActual();
     // this.getAlmacenesUsuarioEnrroll()
     this.getAlmacenes();
-    this.subscribirPesoBalanzaCambios()
-    this.getUsuarioLogueado()
+    this.subscribirPesoBalanzaCambios();
+    this.getUsuarioLogueado();
+    this.getOrdenFabMaximo();
+    this.getOrdenFabMinimo();
 
     for (let i = 1; i <= 100; i++) {
       this.cantidades.push(i)
@@ -114,7 +119,7 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
       });
     }
 
-    // console.log(this.ordenfabricacionvista);
+    console.log(this.ordenfabricacionvista);
     // console.log(this.ListaArticuloDetalle);
     if (this.ordenfabricacionvista.almacen == null) {
       this.isTerminalReport = true;
@@ -164,7 +169,7 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
   empezarAmbientePrueba() {
 
     setInterval(() => {
-      this.pesoBalanza = this.getRandomInt(0, 500) + 'KGZ';
+      this.pesoBalanza = this.getRandomInt(0, 5) + 'KGZ';
       this.pesoBalanzaUltimaFecha = new Date();
 
       this.formatStringFromBalanza();
@@ -228,7 +233,8 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
 
 
   onSubmit() {
-
+    let maximo = (this.ordenfabricacionvista.requerida * this.ORDENFABRICACION_CONSUMO_MAXIMO)
+    let minimo = ((this.ordenfabricacionvista.requerida * this.ORDENFABRICACION_CONSUMO_MINIMO) - 1)
     //validaciones
 
     //if (
@@ -275,9 +281,20 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.ordenfabricacionvista.requerida < this.pesoNeto) {
+    if (this.pesoNeto < this.ordenfabricacionvista.requerida ) {
       this.toastService.warning("Está consumiendo menos de la cantidad requerida.");
+      return;
     }
+
+    if (this.pesoNeto > maximo) {
+      this.toastService.warning("Esta consumiendo mas del parametro permitido.");
+      return;
+    }
+
+    // if (model.consumido < minimo) {
+    //   this.toastService.warning("Esta consumiendo menos del parametro permitido.");
+    //   return;
+    // }
 
     if (this.lote.cantidad < this.pesoNeto && this.isTerminalReport == false) {
       this.toastService.warning(`No tiene lote disponible para hacer esta transferencia, favor verificar.`);
@@ -724,6 +741,56 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
       }, error => {
         this.cargando = false;
         this.toastService.error("Error conexion al servidor");
+      });
+  }
+
+  getOrdenFabMaximo() {
+    this.httpService.DoPostAny<any>(DataApi.Configuracion,
+      "GetConfiguracionValor", Number(Configuraciones.ORDENFABRICACION_CONSUMO_MAXIMO)).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+
+          if (response.records.length == 0 || response.records[0] < 1) {
+            this.toastService.error("No hay ORDENFABRICACION_CONSUMO_MAXIMO configurado");
+            console.error("No hay ORDENFABRICACION_CONSUMO_MAXIMO configurado")
+          } else {
+            this.ORDENFABRICACION_CONSUMO_MAXIMO = Number(response.records[0]);
+          }
+
+        }
+      }, error => {
+        this.toastService.error("No se pudo obtener las condiciones de pago", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getOrdenFabMaximo();
+        }, 1000);
+
+      });
+  }
+
+  getOrdenFabMinimo() {
+    this.httpService.DoPostAny<any>(DataApi.Configuracion,
+      "GetConfiguracionValor", Number(Configuraciones.ORDENFABRICACION_CONSUMO_MINIMO)).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+
+          if (response.records.length == 0 || response.records[0] < 1) {
+            this.toastService.error("No hay .ORDENFABRICACION_CONSUMO_MINIMO configurado");
+            console.error("No hay .ORDENFABRICACION_CONSUMO_MINIMO configurado")
+          } else {
+            this.ORDENFABRICACION_CONSUMO_MINIMO = Number(response.records[0]);
+          }
+
+        }
+      }, error => {
+        this.toastService.error("No se pudo obtener las condiciones de pago", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getOrdenFabMinimo();
+        }, 1000);
+
       });
   }
 

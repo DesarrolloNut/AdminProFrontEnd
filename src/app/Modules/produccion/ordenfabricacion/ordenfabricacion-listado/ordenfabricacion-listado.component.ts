@@ -108,7 +108,7 @@ GetNameEstado(estadoId: number){
       )
       .subscribe(
         (x) => {
-          console.log(x);
+          // console.log(x);
           if (x.ok) {
             this.data = x.records;
             this.asignarPagination(x);

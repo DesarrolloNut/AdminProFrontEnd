@@ -55,7 +55,7 @@ export class ArticuloListadoComponent implements OnInit {
 
     this.httpService.GetAllWithPagination<Articulo>(DataApi.Articulo, "GetArticuloListado", "id", this.paginaNumeroActual,
       this.paginaSize, false, parametros).subscribe(x => {
-
+      console.log(x)
         if (x.ok) {
           this.data = x.records;
           this.asignarPagination(x);
