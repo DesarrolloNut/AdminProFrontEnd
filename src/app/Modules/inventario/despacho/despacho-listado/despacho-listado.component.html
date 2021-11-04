@@ -22,7 +22,7 @@
                                     </span>
                                 </label>
                             </div>
-                            <input [(ngModel)]="Search" [disabled]="loadingValidaExistPedidoSinFacturar || !clienteExiste" (keyup)="getData()" type="text"
+                            <input [(ngModel)]="Search" (keyup)="getDataByCondicional()" type="text"
                                 style="border-left:none !important;" class="form-control" placeholder="Buscar">
                         </div>
                     </div>
@@ -45,7 +45,7 @@
 
                 <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
 
-                <div class="row " *ngIf="clienteExiste">
+                <div class="row " >
                     <div class="col-md-8 col-xs-12 ">
                         <ngb-pagination [collectionSize]="paginaTotalRecords" [(page)]="paginaNumeroActual"
                             [pageSize]="paginaSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="getDataByCondicional()">
@@ -75,31 +75,6 @@
 
 
 
-<ng-template #modalConfirmCancelarPedido let-modal>
-    <div class="container-fluid">
-      <div class="row"  >
-        <div class="col">
-          <div class="modal-header">
-            <h4 class="modal-title" id="modal-title">Confirmación</h4>
-            <button type="button" class="close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body text-center">
-            <i class="fa fa-question fa-3x text-info"></i>
-            <p class="mt-2"><strong>¿Estás seguro/a de cancelar este pedido?</strong></p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" (click)="modal.close('Close click')">Cancel</button>
-            <button type="button" class="btn btn-danger" (click)="  cancelarPedidoEmpleado()">Si</button>
-          </div>
-        </div>
-      </div>
-
-      <app-loading-listado [hidden]="!cargandoAutorizacion"></app-loading-listado>
-
-    </div>
-  </ng-template>
 
 
 
@@ -255,6 +230,10 @@
     </div>
 </ng-template>
 
+
+
+
+
 <ng-template  #tableData>
   <table class="table table-hover mb-0 no-wrap v-middle">
     <thead>
@@ -356,6 +335,124 @@
 </table>
 </ng-template>
 
+
+
+
+
+
+
+<ng-template #modalDetalleDespachoPreventa let-modal>
+  <div class="modal-header">
+      <h4 class="modal-title">Detalle de despacho</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">&times;</span>
+      </button>
+  </div>
+  <div class="modal-body">
+      <div class="row">
+      <div class=" col-md-6 row left_detalle">
+          <div class="col-md-12 m-2">
+              <h5 class="text-info"> <i class="fa fa-user"></i> Distribuidor: {{despachoPreventaSeleccionado.distribuidor}}</h5>
+              <h5> <i class="fa fa-calendar"></i> Fecha: {{despachoPreventaSeleccionado.fechaCreacion | date:'dd/MM/yy'}}</h5><br>
+
+          </div>
+
+          <div class="col-md-12" [hidden]="loadingCotizacionDetalle">
+
+              <div class=" w-100">
+                  <table class="table table_DetalleDespacho table-sm  mb-0 no-wrap v-middle">
+                      <thead style="background-color:white;color: black;">
+                          <tr>
+                              <th>Artículo</th>
+                              <th>Pedido</th>
+                              <th>Despacho</th>
+                              <th style="text-align: center;">¿Listo?</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+
+                          <tr (click)="onSelectArticuloInDetallePreventa(item)"
+                          [ngClass]="(item.selected)?'tr_detalle_articulo_selected':'tr_detalle_articulo_no_selected'"
+                            *ngFor="let item of despachoPreventaDetalles" class="tr_detalle">
+
+                              <td class="tdcss_DetalleDespacho column_a">
+                                  <span> {{item.codigoReferencia}} |  {{item.articulo}}</span>
+                              </td>
+                              <td class="tdcss_DetalleDespacho">
+                                  <span> {{item.pedido}}</span>
+                              </td>
+                              <td class="tdcss_DetalleDespacho">
+                                  <span> {{item.despacho}}</span>
+                              </td>
+
+                              <td class="tdcss_DetalleDespacho" style="vertical-align: initial;    text-align: center; ">
+                                  <input style="display:none" class="form-check-input input_check "  type="checkbox" [(ngModel)]="item.selected" >
+
+
+                                  <span *ngIf="item.estadoId==1" class="badge badge-danger">NO</span>
+                                  <span *ngIf="item.estadoId==2" class="badge badge-warning">INCOM</span>
+                                  <span *ngIf="item.estadoId==3" class="badge badge-success">SI</span>
+
+                                    <svg *ngIf="item.selected"
+                                    style="    position: absolute;
+                                    top: -20px;
+                                    right: -68px;
+                                    z-index: 10000000;
+                                    color: antiquewhite;"
+                                    xmlns="http://www.w3.org/2000/svg" width="95" height="95" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
+                                      <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
+                                    </svg>
+                              </td>
+                          </tr>
+                        <br >
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                      </tbody>
+                  </table>
+
+              </div>
+
+
+          </div>
+      </div>
+
+      <div class=" col-md-6 row right_detalle" *ngIf="this.despachoPreventaArticuloDetalleSelected">
+          <ng-container
+          *ngIf="this.despachoPreventaArticuloDetalleSelected.unidadMedida =='UNIDAD';
+                   then pickingArticuloUnidad
+                   else pickingArticuloLibra" >
+          </ng-container>
+      </div>
+
+          <!-- <div class="col-12 text-right">
+              <hr>
+              <h4>Subtotal: $ {{pedidoEmpleadoSeleccionado.subTotal | number:'1.2-2' }}</h4>
+              <h4>Descuento: $ {{pedidoEmpleadoSeleccionado.descuentoTotal | number:'1.2-2' }}</h4>
+              <h4>Impuesto: $ {{pedidoEmpleadoSeleccionado.impuestoTotal | number:'1.2-2' }}</h4>
+              <h4 class="font-weight-bold">Total Neto: $ {{pedidoEmpleadoSeleccionado.totalNeto | number:'1.2-2' }}</h4>
+          </div> -->
+
+          <div class="col-12">
+              <app-loading-listado [hidden]="!loadingCotizacionDetalle"></app-loading-listado>
+          </div>
+      </div>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
+  </div>
+</ng-template>
+
+
 <ng-template  #tableDataPreventa>
   <table class="table table-hover mb-0 no-wrap v-middle">
     <thead>
@@ -371,14 +468,13 @@
         <tr    *ngFor="let item of dataPreventa; let i = index">
             <td>
                 <button class="btn btn-sm  font-bold btn-success m-1"
-                    (click)="openModal(modalDetalleCotizacion,item)">
+                    (click)="openModal(modalDetalleDespachoPreventa,item)">
                     <i class="fa fa-sm  fa-list "></i> Despachar
                 </button>
 
                 <!-- <button class="btn btn-sm btn-info m-1" [disabled]="item.loadingCancelPedido"  *ngIf="item.estadoID == 2" [routerLink]="[item.id]">
                     <i class="fa fa-sm fa-edit"></i>
                 </button> -->
-
             </td>
 
               <td>
@@ -449,7 +545,7 @@
 
         <div class="card" style=" margin-left: 10px;">
             <div class="card-body">
-                <div class="row" *ngIf="despachoPedidoArticuloDetalleSelected">
+                <div class="row" >
 
 
           <!-- INFORMACION ARTICULO -->
@@ -457,8 +553,8 @@
                         <div class="row  p-1">
                             <div class="col">
                                 <h3 class="font-bold"> <i class="fa fa-shopping-bag"></i>
-                                    {{despachoPedidoArticuloDetalleSelected.codigoReferencia}} |
-                                   {{despachoPedidoArticuloDetalleSelected.articulo}}	</h3>
+                                    {{despachoPreventaArticuloDetalleSelected.codigoReferencia}} |
+                                   {{despachoPreventaArticuloDetalleSelected.articulo}}	</h3>
                             </div>
                         </div>
                     </div>
@@ -467,7 +563,7 @@
                     <div class="form-group col-md-6" >
                         <label for="inputEmail4">Almacén</label>
                         <ng-select bindLabel="nombre" bindValue="codigo"
-                            [(ngModel)]="despachoPedidoArticuloDetalleSelected.almacenId"
+                            [(ngModel)]="despachoPreventaArticuloDetalleSelected.almacenId"
                             [items]="almacenes" [clearable]="false" [loading]="loadingAlmacenes"
                             notFoundText="No resultados" [readonly]="true">
                         </ng-select>
@@ -637,7 +733,7 @@
 <ng-template #pickingArticuloUnidad>
     <div class="card" style=" margin-left: 10px;">
         <div class="card-body">
-            <div class="row" *ngIf="despachoPedidoArticuloDetalleSelected">
+            <div class="row" >
 
 
       <!-- INFORMACION ARTICULO -->
@@ -645,14 +741,14 @@
                     <div class="row  p-1">
                         <div class="col-md-12">
                             <h3 class="font-bold"> <i class="fa fa-shopping-bag"></i>
-                                {{despachoPedidoArticuloDetalleSelected.codigoReferencia}} |
-                               {{despachoPedidoArticuloDetalleSelected.articulo}}	</h3>
+                                {{despachoPreventaArticuloDetalleSelected.codigoReferencia}} |
+                               {{despachoPreventaArticuloDetalleSelected.articulo}}	</h3>
                         </div>
                               <!-- INPUTS LOTE -->
                         <div class="form-group col-md-6" >
                             <label for="inputEmail4">Almacén</label>
                             <ng-select bindLabel="nombre" bindValue="codigo"
-                                [(ngModel)]="despachoPedidoArticuloDetalleSelected.almacenId"
+                                [(ngModel)]="despachoPreventaArticuloDetalleSelected.almacenId"
                                 [items]="almacenes" [clearable]="false" [loading]="loadingAlmacenes"
                                 notFoundText="No resultados" [readonly]="true">
                             </ng-select>
@@ -668,14 +764,14 @@
                         <!-- CANTIDAD PEDIDO | CANTIDAD DESPACHO -->
                         <div class="form-group col-md-6" >
                             <label>Cantidad Pedido</label>
-                            <input [(ngModel)]="despachoPedidoArticuloDetalleSelected.cantidad"
+                            <input [(ngModel)]="despachoPreventaArticuloDetalleSelected.pedido"
                               [readonly]="true"  type="number" id="inputSearch"
                             class="form-control input_CantidadPedido" placeholder="Cantidad pedido">
                         </div>
 
                         <div class="form-group col-md-6" >
                             <label>Cantidad Despacho</label>
-                            <input [(ngModel)]="despachoPedidoArticuloDetalleSelected.cantidadDespacho"
+                            <input [(ngModel)]="despachoPreventaArticuloDetalleSelected.despacho"
                               type="number" id="inputSearch"
                             class="form-control input_CantidadDespacho" placeholder="0">
                         </div>

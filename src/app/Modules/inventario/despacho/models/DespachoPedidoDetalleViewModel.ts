@@ -27,11 +27,26 @@ export interface DespachoPedidoDetalleArticuloViewModel {
     DespachoId: number;
     articuloId: number;
     almacenId: number;
-    cantidad: number;
-    cantidadDespachada: number;
+    pedido: number;
+    despacho: number;
     articulo: string;
     codigoReferencia: string;
+    unidadMedida: string;
     almacen: string;
     selected:boolean;
+
+}
+export interface DespachoPreventaDetalleViewModel  {
+  fechaCreacion: string;
+  distribuidorId: number;
+  articuloId: number;
+  articulo: string;
+  almacenId: number;
+  codigoReferencia: string;
+  unidadMedida: string;
+  pedido: number;
+  despacho: number;
+  estadoId: number;
+  selected:boolean;
 
 }
