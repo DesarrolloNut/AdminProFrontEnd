@@ -71,7 +71,9 @@
                                 <th></th>
                                 <th>Pedido</th>
                                 <th>Cliente</th>
-                                <th>Total Neto</th>
+                                <th>Límite crédito</th>
+                                <th>Balance</th>
+                                <th>Total Pedido</th>
                             </tr>
                         </thead>
                         <tbody [hidden]="Cargando">
@@ -137,6 +139,12 @@
                                 </td>
                                 <td>
                                     <span>{{item.cliente }}</span>
+                                </td>
+                                <td>
+                                    <span>RD$ {{item.limiteCredito | number: '1.2'}}</span>
+                                </td>
+                                <td>
+                                    <span>RD$ {{item.balanceCliente | number: '1.2'}}</span>
                                 </td>
                                 <td>
                                     <span class="font-weight-bold">RD$ {{item.totalNeto | number: '1.2'}}</span>
@@ -210,6 +218,64 @@
                     </button>
                 </div>
                 <div class="modal-body text-center">
+
+                    <div class="row">
+
+                        <div class="col-12 text-left">
+                            <h4> Facturas pendientes</h4>
+                        </div>
+                        <div class="col-12" [hidden]="loadingFacturasPendientesPago">
+
+                            <div class="table-responsive" style="height: 200px;">
+                                <table class="table table-sm table-hover mb-0 no-wrap v-middle">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Factura</th>
+                                            <th>Vencimiento</th>
+                                            <th>Total</th>
+                                            <th>Pagado</th>
+                                            <th>Pendiente</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of facturasPendientesPago">
+                                            <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
+                                            <td>
+                                                <span> <b>#{{item.codigoReferencia}}</b></span>
+                                            </td>
+                                            <td>
+                                                <span> {{item.fechaVencimiento | date : 'dd/MM/yyyy'}}</span>
+                                            </td>
+                                            <td>
+                                                <span> ${{item.total | number:'1.2'}} </span>
+                                            </td>
+                                            <td>
+                                                <span> ${{item.pagos | number:'1.2'}}</span>
+                                            </td>
+                                            <td>
+                                                <span> ${{item.total - item.pagos | number:'1.2'}} </span>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-12 text-right">
+                            <hr>
+                            <h4 class="font-weight-bold">Total Pendiente: $ {{totalPendientePagar | number:'1.2-2' }}
+                            </h4>
+                        </div>
+
+                        <div class="col-12">
+                            <app-loading-listado [hidden]="!loadingFacturasPendientesPago"></app-loading-listado>
+                        </div>
+                    </div>
+
                     <div class="row">
                         <div class="col-12">
                             <i class="fa fa-question fa-3x text-info"></i>
@@ -252,6 +318,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
+
                     <div class="row" *ngIf="!cargandoModal">
                         <div class="col-md-12">
                             <div class="form-group">
@@ -363,7 +430,6 @@
 
                 </div>
 
-
             </div>
 
             <div class="col-12 text-right">
@@ -378,6 +444,7 @@
                 <app-loading-listado [hidden]="!loadingCotizacionDetalle"></app-loading-listado>
             </div>
         </div>
+
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>

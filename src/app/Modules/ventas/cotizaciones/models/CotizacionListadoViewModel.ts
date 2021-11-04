@@ -5,8 +5,13 @@ export interface CotizacionListadoViewModel {
     sucursal: string;
     vendedor: string;
     fechaCreacion: string;
+    
     cliente: string;
+    clienteId: number;
     clienteDocumento: string;
+    limiteCredito: number;
+    balanceCliente: number;
+    
     subTotal: number;
     descuentoTotal: number;
     impuestoTotal: number;

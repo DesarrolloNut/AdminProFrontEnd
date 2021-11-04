@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { json } from 'd3';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { Parametro } from 'src/app/core/http/model/Parametro';

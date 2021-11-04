@@ -54,7 +54,11 @@
                                     <span> {{item.moduloKey}}</span>
                                 </td>
                                 <td>
-                                    <span> {{item.estadoAutorizacion}}</span>
+                                    <h5>
+                                        <span> <i class="fa fa-circle"
+                                                [ngStyle]="{'color': item.estadoAutorizacionColor}"></i>
+                                            {{item.estadoAutorizacion}}</span>
+                                    </h5>
                                 </td>
                                 <td>
                                     <span class="text-muted"><i class="far fa-calendar"></i>
@@ -104,40 +108,28 @@
                                             item.jsonInfo.sucursalDestino }} )
                                         </span>
 
-
-
-                                        <!--   <span class="small  ">
-                                            Solicitante:
-                                        </span>
-                                        <span class="small font-weight-bold text-info">
-                                            {{ item.jsonInfo.solicitante }}
-                                        </span>
-                                        <br>
-                                        <span class="small">
-                                            Dep. :
-                                        </span>
-                                        <span class="small font-weight-bold  ">
-                                            {{ item.jsonInfo.departamentoSolicitante }}
-                                        </span>
-                                        <span class="small">
-                                            Suc. :
-                                        </span>
-                                        <span class="small font-weight-bold  ">
-                                            {{ item.jsonInfo.sucursalSolicitante }}
-                                        </span>
-                                        <br>
-                                        <span class="small"> Comprador: {{
-                                            item.jsonInfo.comprador }}</span>
-                                        <span class="small">
-                                            Destino:
-                                        </span>
-                                        <span class="small font-weight-bold  ">
-                                            {{ item.jsonInfo.departamentoDestino }} |
-                                        </span>
-                                        <span class="small font-weight-bold  ">
-                                            {{ item.jsonInfo.sucursalDestino }}
-                                        </span> -->
                                     </ng-template>
+
+
+                                    <ng-template [ngIf]="item.moduloKey == ESTADOSGENERALES.PEDIDO">
+
+                                        <span class="small font-weight-bold">Cliente: {{
+                                            item.jsonInfo.Pedido.Cliente }} | Pedido:
+                                            <b>#{{item.jsonInfo.Pedido.CodigoReferencia}}</b></span>
+                                        <br>
+                                        <span class="small">
+                                            Total Neto: 
+                                        </span> <span class="small font-weight-bold text-info"> RD$ {{
+                                            item.jsonInfo.Pedido.TotalNeto
+                                            | number : '1.2'
+                                            }}</span>
+
+                                        <!-- <span class="small"> | Lista Precio: {{
+                                            item.jsonInfo.listaPrecio }}</span> -->
+
+                                    </ng-template>
+
+
                                 </td>
                             </tr>
 

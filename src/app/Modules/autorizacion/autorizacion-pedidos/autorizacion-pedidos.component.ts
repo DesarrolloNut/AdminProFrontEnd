@@ -13,6 +13,7 @@ import { ArticuloListaPrecioViewModel } from '../../mantenimientos/articulos/mod
 import * as XLSX from 'xlsx';
 import { CotizacionListadoViewModel } from '../../ventas/cotizaciones/models/CotizacionListadoViewModel';
 import { CotizacionDetalleViewModel } from '../../ventas/cotizaciones/models/CotizacionDetalleViewModel';
+import { Factura } from '../../ventas/facturas/models/Factura';
 
 enum btnClickedEnum {
   AUTORIZAR = 1,
@@ -66,6 +67,9 @@ export class AutorizacionPedidosComponent implements OnInit {
   loadingCotizacionDetalle: boolean;
 
   ACTIONSenum = btnClickedEnum;
+  facturasPendientesPago: Factura[];
+  loadingFacturasPendientesPago: boolean;
+  totalPendientePagar: number;
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
@@ -209,8 +213,9 @@ export class AutorizacionPedidosComponent implements OnInit {
 
   }
 
-  openModalConfirm(content, btnClicked: number, item: any) {
+  openModalConfirm(content, btnClicked: number, item: CotizacionListadoViewModel) {
     this.comentario = null;
+    this.getFacturasPendientesPago(item.clienteId);
     this.modalService.open(content, { size: 'lg', backdrop: 'static' });
     this.btnClicked = btnClicked;
     this.itemSeleccionado = item;
@@ -484,6 +489,26 @@ export class AutorizacionPedidosComponent implements OnInit {
       }, error => {
         this.loadingCotizacionDetalle = false;
         this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
+      });
+  }
+
+
+  getFacturasPendientesPago(clienteID: number) {
+    this.loadingFacturasPendientesPago = true;
+    this.httpService.DoPostAny<Factura>(DataApi.Factura,
+      "GetFacturasPendientePago", clienteID).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0])
+        } else {
+          this.facturasPendientesPago = response.records;
+          this.totalPendientePagar = this.facturasPendientesPago.reduce((sum, current) => sum + (current.total - current.pagos), 0)
+        }
+        this.loadingFacturasPendientesPago = false;
+      }, error => {
+        this.loadingFacturasPendientesPago = false;
+        this.toastService.error("No se pudo obtener las facturas pendientes", "Error conexion al servidor");
       });
   }
 
