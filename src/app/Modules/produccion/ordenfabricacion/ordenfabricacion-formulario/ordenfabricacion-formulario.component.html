@@ -155,14 +155,14 @@
                                   <tr *ngFor="let articulext of articulosExtras">
                                     <th style="font-size: 14px;">{{articulext.articulo}}</th>
                                     <td  style="font-size: 14px;">{{articulext.nombre}}</td>
-                                    <td>
+                                    <!-- <td>
                                       <input type="text"
                                       [readonly]="!articulext.isRPC"
                                       [(ngModel)]="articulext.cantidadBase"
                                       [ngClass]="{'form-control-plaintext': !articulext.isRPC, 'form-control': articulext.isRPC}">
-                                    </td>
+                                    </td> -->
 
-                                    <!--
+
                                     <td>{{articulext.cantidadBase  | number:'1.4-4'}}</td>
                                     <td>{{(articulext.cantidadBase *  ofheader.cantidadPlanificada) | number:'1.4-4'}}</td>
                                     <td>{{articulext.consumido}}</td>
@@ -170,7 +170,7 @@
                                     <td>{{articulext.unidadMedida}}</td>
                                     <td>{{articulext.almacenCodigoReferencia}}</td>
                                     <td>{{articulext.metodoEmision == "M" ? "Manual" : "Automático"}}</td>
-                                  -->
+
                                   </tr>
 
                                 </tbody>
