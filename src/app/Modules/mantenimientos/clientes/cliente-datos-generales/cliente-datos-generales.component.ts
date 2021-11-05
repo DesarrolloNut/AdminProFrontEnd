@@ -229,7 +229,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       documento: [null, [Validators.required, Validators.minLength(9)]],
       documentoAnterior: [null],
 
-      email: [null, [Validators.required, Validators.email]],
+      email: ['', [ Validators.email]],
       telefono:[null,  [Validators.required] ],
       documentoTipoID: [1, [Validators.required]], //cedula por defecto
       fechaNacimiento: [null,  [Validators.required] ],
@@ -246,12 +246,10 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       provinciaID: [null, Validators.required],
       ciudadID: [null, Validators.required],
       sectorID: [null, Validators.required],
-      subSectorID: [null, Validators.required],
-
+      subSectorID: [0],
       tipoComprobante: [null, [Validators.required]],
-
       frecuenciaVisitaId: [0, [Validators.required]],
-      limiteCredito: [0, [Validators.required]],  
+      limiteCredito: [0, [Validators.required]],
       balance: [0, [Validators.required]],
       condicionPagoId: [0, [Validators.required]],
       plazoId: [0, [Validators.required]],
@@ -294,8 +292,6 @@ export class ClienteDatosGeneralesComponent implements OnInit {
 
 
    // console.log(this.FormGenerales)
-    let param = { "cliente": this.FormGenerales.value }
-
     this.f.numero.setValue(this.f.numero.value.toString())
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
       metodo, this.FormGenerales.value).subscribe(response => {
@@ -366,10 +362,9 @@ export class ClienteDatosGeneralesComponent implements OnInit {
             cliente.provinciaID = cliente.provinciaID<=0 ? null : cliente.provinciaID
             cliente.ciudadID = cliente.ciudadID<=0 ? null : cliente.ciudadID
             cliente.sectorID = cliente.sectorID<=0 ? null : cliente.sectorID
-            cliente.subSectorID = cliente.subSectorID<=0 ? null : cliente.subSectorID
+            cliente.subSectorID = cliente.subSectorID<=0 ? 0 : cliente.subSectorID
             cliente.tipoComprobante = cliente.tipoComprobante<=0 ? null : cliente.tipoComprobante
             cliente.clienteTipoID = cliente.clienteTipoID<=0 ? null : cliente.clienteTipoID
- 
 
             ///isClientPrincipal cuando su valor es 0
             cliente.isClientPrincipal=1;
@@ -662,15 +657,8 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
 
            //SI ESTE CLIENTE ES UN EMPLEADO NO SE PUEDE CREAR OTRO CLIENTE CON ESTE MISMO NO. DOCUMENTO
            if(this.clientePadreSearched.clienteTipoID==12 || this.clientePadreSearched.clienteTipoID==15 ){
-             
-            if(this.f.id.value!=this.clientePadreSearched.id){
-              // this.clientId=this.clientePadreSearched.id;
-              // this.onClienteCreado(this.clientId);
-              // this.getClienteByID(this.clientePadreSearched.id);
-              // this.router.navigateByUrl('/mantenimientos/cliente/'+this.clientId);
-              // this.toastService.warning("Editando cliente existente...");
 
-              // this.actualizando = true;
+            if(this.f.id.value!=this.clientePadreSearched.id){
               this.toastService.error('Ya existe un cliente de tipo empleado con este numero de documento');
             }
             this.buscandoDocumento = false;
@@ -678,10 +666,10 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
            }
           this.f.nombres.setValue(this.clientePadreSearched.nombres);
           this.f.apellidos.setValue(this.clientePadreSearched.apellidos!=null?this.clientePadreSearched.apellidos:"");
-          this.f.clienteNombre.setValue(this.clientePadreSearched.nombres +' ' +this.clientePadreSearched.apellidos)
+          this.f.clienteNombre.setValue(this.clientePadreSearched.nombres +' ' +    this.f.apellidos.value )
           this.f.fechaNacimiento.setValue(this.clientePadreSearched.fechaNacimiento);
           this.f.sexo.setValue(this.clientePadreSearched.sexo);
-  
+
 
             if(this.clientePadreSearched.clienteTipoID>0 &&  this.clientePadreSearched.clienteTipoID !=null)
             {
@@ -689,11 +677,16 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
             }
 
           if(this.f.clienteTipoID.value!=15 || this.f.clienteTipoID.value!=12){
-     
+
             this.identificaSucursalOPrincipal();
           }
 
         } else {
+          if(this.f.documentoTipoID.value==2){
+            this.toastService.error("Debe digitar un RNC valido/existente en la DGI.");
+            this.buscandoDocumento = false;
+            return;
+          }
           this.f.clientePadreId.setValue(0);
           this.toastService.warning("Datos no encontrados");
          // this.f.nombres.setValue(null);
@@ -880,12 +873,12 @@ onCoordsKeyUp() {
 onProvinciaChange() {
   this.f.ciudadID.setValue(null)
   this.f.sectorID.setValue(null)
-  this.f.subSectorID.setValue(null)
+  this.f.subSectorID.setValue(0)
   this.sectores = []
   this.getCiudades()
 }
 onSectorChange() {
-  this.f.subSectorID.setValue(null)
+  this.f.subSectorID.setValue(0)
   this.subSectores = []
   this.getSubSectores()
 }
