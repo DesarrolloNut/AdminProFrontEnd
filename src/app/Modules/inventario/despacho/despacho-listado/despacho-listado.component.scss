@@ -2,10 +2,20 @@
     max-width: 99%;
     width: 99%;
   }
-  
-  .tdcss{
+
+  .tdcss_DetalleDespacho{
     padding: 0.7rem;
+    max-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
+
+.table_DetalleDespachoPreventa {width: 100%;}
+
+.column_a {width: 70%;}
+
+
 
   .tr_detalle{
     font-size: 20px;
@@ -17,13 +27,13 @@
     background-color: #FCFCFC;
     border-right: 1px solid gainsboro;
     margin-top: -16px;
-    margin-bottom: -16px; 
+    margin-bottom: -16px;
     margin-left: -6px;
   }
 
   .right_detalle{
     margin-top: -16px;
-    margin-bottom: -16px; 
+    margin-bottom: -16px;
     margin-left: 15px;
   }
   .input_check{
@@ -43,7 +53,7 @@
   position: relative;
 }
 .tr_detalle_articulo_no_selected{
-  background-color: #FCFCFC; 
+  background-color: #FCFCFC;
 }
 
 
@@ -57,3 +67,5 @@
   font-size: 25px;
   height: 70px;
 }
+
+

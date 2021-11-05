@@ -15,7 +15,6 @@ export class PedidoEmpleado {
         this.totalNeto = 0;
         this.monedaId = 0;
         this.tasa = 0;
-        this.estadoId = 0;
         this.usuarioId = 0;
         this.listaPrecioID = 0;
     }
@@ -35,7 +34,17 @@ export class PedidoEmpleado {
     totalNeto = 0;
     monedaId = 0;
     tasa = 0;
-    estadoId = 0;
     usuarioId = 0;
     listaPrecioID = 0;
+
+
+    estadoDespachoID = 0;
+    estadoDespacho:string;
+    estadoDespachoColor:string;
+
+    estadoAutorizacionID = 0;
+    estadoERPID = 0;
+
+
+
 }

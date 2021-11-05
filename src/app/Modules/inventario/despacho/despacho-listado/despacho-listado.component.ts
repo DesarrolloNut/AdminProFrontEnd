@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
@@ -13,8 +14,8 @@ import { ArticuloPesosExtrasViewModel } from 'src/app/Modules/produccion/pesaje/
 import { LoteAlmacen } from 'src/app/Modules/produccion/pesaje/models/LoteAlmacen';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
-import { DespachoPedidoDetalleArticuloViewModel, DespachoPedidoDetalleViewModel } from '../models/DespachoPedidoDetalleViewModel';
-import { DespachoPedidoListadoViewModel } from '../models/DespachoPedidoListadoViewModel';
+import { DespachoPedidoDetalleArticuloViewModel, DespachoPedidoDetalleViewModel, DespachoPreventaDetalleViewModel } from '../models/DespachoPedidoDetalleViewModel';
+import { DespachoListadoPreventaVM, DespachoPedidoListadoViewModel } from '../models/DespachoPedidoListadoViewModel';
 
 @Component({
   selector: 'app-despacho-listado',
@@ -22,6 +23,9 @@ import { DespachoPedidoListadoViewModel } from '../models/DespachoPedidoListadoV
   styleUrls: ['./despacho-listado.component.scss']
 })
 export class DespachoListadoComponent implements OnInit {
+  public config: PerfectScrollbarConfigInterface = {
+
+  };
 
 
   // COPIAR AL CREAR UN LISTADO NUEVO
@@ -34,25 +38,29 @@ export class DespachoListadoComponent implements OnInit {
   totalPaginas: number = 0;
   paginaSize: number = 5;
   paginaTotalRecords: number = 0;
-  data: DespachoPedidoListadoViewModel[] = [] //tu modelo
 
+
+  data: DespachoPedidoListadoViewModel[] = [] //tu modelo
+  despachoSeleccionado: DespachoPedidoListadoViewModel;
   despachoDetalles: DespachoPedidoDetalleViewModel[];
   despachoPedidoArticuloDetalleSelected: DespachoPedidoDetalleViewModel;
+  loadingDespachoDetalle:boolean;
 
-  loadingPedidoEmpleadoDetalle:boolean;
   estados: ComboBox[] = []
   loadingEstados: boolean;
-  pedidoEmpleadoSeleccionado: DespachoPedidoListadoViewModel;
-  loadingEstadoAutorizacionCotizacion: boolean = false;
-  loadingValidaExistPedidoSinFacturar: boolean = false;
+  loadingCanales: boolean = false;
 
-
-  loadingInfoCliente: boolean;
-  clienteExiste=true;
-  cliente: Cliente;
 
   canales:ComboBox[]=[];
-  canal:number=0;
+  canalId:number=1;
+
+
+  //PREVENTA
+   despachoPreventaSeleccionado: DespachoListadoPreventaVM;
+   dataPreventa: DespachoListadoPreventaVM[] = [] //tu modelo
+   despachoPreventaDetalles: DespachoPreventaDetalleViewModel[];
+   despachoPreventaArticuloDetalleSelected: DespachoPreventaDetalleViewModel;
+   loadingDespachoPreventaDetalle:boolean;
 
 
 
@@ -92,8 +100,9 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
 
 
   ngOnInit(): void {
-    this.getData();
-    this.fillComboCanales();
+   this.getDataByCondicional()
+
+    this.getCanales();
     this.getArticulosDePesosExtras();
     this.getAlmacenes();
     this.empezarAmbientePrueba();
@@ -101,14 +110,22 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
       this.cantidades.push(i)
     }
   }
-  
-  fillComboCanales(){
-    this.canales.push({codigo:0,nombre:"Todos",grupo:'',grupoID:''})
-    this.canales.push({codigo:1,nombre:"Preventa",grupo:'',grupoID:''})
-    this.canales.push({codigo:2,nombre:"Moderno",grupo:'',grupoID:''})
-    this.canales.push({codigo:3,nombre:"Empleado",grupo:'',grupoID:''})
-    this.canales.push({codigo:4,nombre:"Directo",grupo:'',grupoID:''})
+ getDataByCondicional(){
+  switch (this.canalId) {
+    case 1:
+         this.getDataPreventa()
+        break;
+    case 2:
+          this.getData()
+          break;
+    default:
+            this.getData()
+          break;
   }
+ }
+
+
+
   getData() {
     this.Cargando = true;
 
@@ -121,7 +138,7 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
         if (x.ok) {
           this.data = x.records;
           this.asignarPagination(x);
-        } else { 
+        } else {
           this.toastService.error(x.errores[0]);
           console.error(x.errores[0]);
         }
@@ -133,6 +150,13 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
       });
 
   }
+
+
+
+
+
+
+
 
 
   asignarPagination(x: ResponseContenido<any>) {
@@ -150,26 +174,38 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
   }
 
 
-  openModal(content, pedidoEmpleado: DespachoPedidoListadoViewModel) {
-    this.despachoDetalles = [];
-    this.getPedidoEmpleadoDetalle(pedidoEmpleado.id);
-    this.pedidoEmpleadoSeleccionado = pedidoEmpleado;
+  openModal(content, despacho: any) {
+    console.log(despacho)
+    switch (this.canalId) {
+      case 1:
+          this.despachoPreventaDetalles = [];
+          this.getDespachoPreventaDetalle(despacho.fechaCreacion,despacho.distribuidorId);
+          this.despachoPreventaSeleccionado = despacho;
+          break;
+      case 2:
+            this.despachoDetalles = [];
+            this.getDespachoDetalle(despacho.id);
+            this.despachoSeleccionado = despacho;
+            break;
+      default:
+            this.despachoDetalles = [];
+            this.getDespachoDetalle(despacho.id);
+            this.despachoSeleccionado = despacho;
+            break;
+    }
     this.modalService.open(content, { windowClass: "myCustomModalClass", backdrop: "static", });
   }
 
-  openModalAutorizar(content, pedidoEmpleado: DespachoPedidoListadoViewModel) {
+  openModalAutorizar(content, despacho: DespachoPedidoListadoViewModel) {
     this.despachoDetalles = [];
-    this.getPedidoEmpleadoDetalle(pedidoEmpleado.id);
-    this.pedidoEmpleadoSeleccionado = pedidoEmpleado;
+    this.getDespachoDetalle(despacho.id);
+    this.despachoSeleccionado = despacho;
     this.modalService.open(content, { size: 'lg', });
   }
 
-  openModalCancelarPedido(content, pedidoEmpleado: DespachoPedidoListadoViewModel) {
-    this.pedidoEmpleadoSeleccionado = pedidoEmpleado;
-    this.modalService.open(content, { size: 'lg', });
-  }
-  getPedidoEmpleadoDetalle(pedidoEmpleadoId: number) {
-    this.loadingPedidoEmpleadoDetalle = true;
+
+  getDespachoDetalle(pedidoEmpleadoId: number) {
+    this.loadingDespachoDetalle = true;
     this.httpService.DoPostAny<DespachoPedidoDetalleViewModel>(DataApi.Despacho,
       "GetDespachoDetalles", pedidoEmpleadoId).subscribe(response => {
 
@@ -181,13 +217,13 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
           this.despachoPedidoArticuloDetalleSelected=this.despachoDetalles[0];
           console.log(this.despachoDetalles)
         }
-        this.loadingPedidoEmpleadoDetalle = false;
+        this.loadingDespachoDetalle = false;
       }, error => {
-        this.loadingPedidoEmpleadoDetalle = false;
+        this.loadingDespachoDetalle = false;
         this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
       });
   }
- 
+
 
 
   // CambiarEstadoAutorizacionCotizacion(cotizacionID: number) {
@@ -210,15 +246,15 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
   // }
 
 
- 
+
 
 
   cancelarDespacho() {
     this.modalService.dismissAll();
-   this.pedidoEmpleadoSeleccionado.loadingCancelPedido=true;
-   let pedido={"Id":this.pedidoEmpleadoSeleccionado.id
+   this.despachoSeleccionado.loadingCancelPedido=true;
+   let pedido={"Id":this.despachoSeleccionado.id
                ,"EstadoID": 4
-               ,"ClienteId":this.pedidoEmpleadoSeleccionado.clienteId
+               ,"ClienteId":this.despachoSeleccionado.clienteId
               }
               console.log(pedido)
     this.httpService.DoPostAny<ComboBox>(DataApi.Despacho,
@@ -231,42 +267,42 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
           this.getData();
           this.toastService.success("Despacho cancelado", "OK");
         }
-        this.pedidoEmpleadoSeleccionado.loadingCancelPedido=false;
+        this.despachoSeleccionado.loadingCancelPedido=false;
 
       }, error => {
-        this.pedidoEmpleadoSeleccionado.loadingCancelPedido=false;
+        this.despachoSeleccionado.loadingCancelPedido=false;
 
         this.getData()
         this.toastService.error("No se pudo cancelar el pedido", "Error conexion al servidor");
       });
 
   }
-  getClienteByUsuarioID(usuarioId: number) {
-    this.Cargando=true;
-    this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
-      "GetClienteByUsuarioID", usuarioId).subscribe(response => {
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-          this.Cargando=false;
-        } else {
-          //validar que existe
-          if (response != null && response.records != null && response.records.length > 0) {
-           
-            this.cliente = response.records[0];
-            this.cliente.apellidos = this.cliente.apellidos==null?"":this.cliente.apellidos;
-            this.clienteExiste=true;
-            this.getData()
-          } else {
-            this.clienteExiste=false;
-            this.Cargando=false;
-          }
-        }
+  // getClienteByUsuarioID(usuarioId: number) {
+  //   this.Cargando=true;
+  //   this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
+  //     "GetClienteByUsuarioID", usuarioId).subscribe(response => {
+  //       if (!response.ok) {
+  //         this.toastService.error(response.errores[0]);
+  //         this.Cargando=false;
+  //       } else {
+  //         //validar que existe
+  //         if (response != null && response.records != null && response.records.length > 0) {
 
-      }, error => {
-        this.Cargando=false;
-         this.toastService.error("Error conexion al servidor");
-      });
-  }
+  //           this.cliente = response.records[0];
+  //           this.cliente.apellidos = this.cliente.apellidos==null?"":this.cliente.apellidos;
+  //           this.clienteExiste=true;
+  //           this.getData()
+  //         } else {
+  //           this.clienteExiste=false;
+  //           this.Cargando=false;
+  //         }
+  //       }
+
+  //     }, error => {
+  //       this.Cargando=false;
+  //        this.toastService.error("Error conexion al servidor");
+  //     });
+  // }
 
 
 
@@ -354,10 +390,10 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
     this.despachoDetalles.filter(
       d=>d.id ==this.despachoPedidoArticuloDetalleSelected.id
       ).map(x=>{x.estadoId=1,x.estado='Si',x.estadoColor='success',x.selected=false})
-   
+
 
       let item=  this.despachoDetalles.filter(x=>x.estadoId!=1)[0];
-        
+
       item.selected=true;
       this.despachoPedidoArticuloDetalleSelected=item;
   }
@@ -369,7 +405,7 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
       let item= this.despachoDetalles[backIndex];
       this.despachoDetalles.map(x=>{x.selected=false})
       item.selected=true;
-      
+
       this.despachoPedidoArticuloDetalleSelected=item;
 
 
@@ -485,5 +521,103 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
     max = Math.floor(max);
     return (Math.floor(Math.random() * (max - min + 1)) + min)
   }
+
+
+
+
+
+  getCanales() {
+    this.loadingCanales = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetCanales", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.canales = response.records;
+        }
+        this.loadingCanales = false;
+      }, error => {
+        this.loadingCanales = false;
+        this.toastService.error("No se pudo obtener los canales", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getCanales()
+        }, 1000);
+
+      });
+  }
+
+
+
+
+
+
+
+
+  // CANAL PREVENTA   CANAL PREVENTA   CANAL PREVENTA   CANAL PREVENTA   CANAL PREVENTA   CANAL PREVENTA
+
+  getDataPreventa() {
+    this.Cargando = true;
+
+    let parametros: Parametro[] = [{ key: "Search", value: this.Search }, ]
+
+    this.httpService.GetAllWithPagination<DespachoListadoPreventaVM>(DataApi.Despacho,
+       "GetDespachoPreventaListado", "FechaCreacion", this.paginaNumeroActual,
+      this.paginaSize,true, parametros).subscribe(x => {
+
+        if (x.ok) {
+          this.dataPreventa = x.valores[0];
+          this.asignarPagination(x);
+        } else {
+          this.toastService.error(x.errores[0]);
+          console.error(x.errores[0]);
+        }
+        this.Cargando = false;
+      }, error => {
+        console.error(error);
+        this.toastService.error("Error conexion al servidor");
+        this.Cargando = false;
+      });
+
+  }
+
+  getDespachoPreventaDetalle(fecha:string,distribuidorId:number) {
+    this.loadingDespachoPreventaDetalle = true;
+    let parametros={
+     "Fecha":fecha
+    ,"DistribuidorId": distribuidorId
+   }
+
+    console.log(parametros)
+
+    this.httpService.DoPostAny<DespachoPreventaDetalleViewModel>(DataApi.Despacho,
+      "GetDespachoPreventaDetalles", parametros).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.despachoPreventaDetalles = response.valores[0];
+          if(this.despachoPreventaDetalles.length>0){
+            this.despachoPreventaDetalles[0].selected=true;
+            this.despachoPreventaArticuloDetalleSelected=this.despachoPreventaDetalles[0];
+
+          }
+          console.log(this.despachoPreventaDetalles)
+        }
+        this.loadingDespachoPreventaDetalle = false;
+      }, error => {
+        console.log(error)
+        this.loadingDespachoPreventaDetalle = false;
+        this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
+      });
+  }
+
+  onSelectArticuloInDetallePreventa(item:DespachoPreventaDetalleViewModel){
+    console.log(item)
+    this.despachoPreventaDetalles.map(x=>{x.selected=false})
+    item.selected=true;
+    this.despachoPreventaArticuloDetalleSelected=item;
+
+ }
 
 }
