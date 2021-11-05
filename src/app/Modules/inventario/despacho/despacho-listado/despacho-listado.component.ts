@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
@@ -22,6 +23,9 @@ import { DespachoListadoPreventaVM, DespachoPedidoListadoViewModel } from '../mo
   styleUrls: ['./despacho-listado.component.scss']
 })
 export class DespachoListadoComponent implements OnInit {
+  public config: PerfectScrollbarConfigInterface = {
+
+  };
 
 
   // COPIAR AL CREAR UN LISTADO NUEVO
