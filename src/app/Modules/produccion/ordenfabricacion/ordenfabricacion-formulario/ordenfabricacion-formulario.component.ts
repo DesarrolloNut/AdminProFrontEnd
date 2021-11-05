@@ -1,4 +1,4 @@
-import { OrdenFabricacionEstadoEnum } from './../models/OrdenFabricacionEstadoEnum';
+import { OrdenFabricacionEstadoEnum, OrdenFabricacionTipoEnum } from './../models/OrdenFabricacionEstadoEnum';
 import { OrdenFabricacion } from './../models/OrdenFabricacion';
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
@@ -13,6 +13,9 @@ import { ListaMaterialesHeader } from '../models/ListaMaterialesHeader';
 import { OrdenFabricacionDetalle } from '../models/OrdenFabricacionDetalle';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ArticuloDeReproceso } from '../models/ArticuloReproceso';
+import { Configuraciones } from 'src/app/shared/enums/Configuraciones';
 
 @Component({
   selector: 'app-ordenfabricacion-formulario',
@@ -22,6 +25,7 @@ import { AuthenticationService } from 'src/app/core/authentication/service/authe
 export class OrdenfabricacionFormularioComponent implements OnInit {
 
   articulo: Articulo;
+  articulosDeReproceso: Array<ArticuloDeReproceso> = [];
   almacenID: number;
   cargando: boolean;
   search: string;
@@ -51,10 +55,16 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
   ordenfabricaciondetalle: OrdenFabricacionDetalle = new OrdenFabricacionDetalle();
   IsNewData:boolean = true;
   estadoAutorizacionUsuario: number = 0;
+  ORDENFABRICACION_CONSUMO_REPROCESO: number = 0;
+  articuloMaterial: Articulo;
   // ValidOrden: OrdenFabricacionEstadoEnum;
 
   public get ValidOrden(): typeof OrdenFabricacionEstadoEnum {
     return OrdenFabricacionEstadoEnum;
+  }
+
+  public get ValidTipoOrden(): typeof OrdenFabricacionTipoEnum {
+    return OrdenFabricacionTipoEnum;
   }
 
   constructor(
@@ -62,6 +72,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
     private httpService: BackendService,
     private authService: AuthenticationService,
     private router: Router,
+    private modalService: NgbModal,
     private route: ActivatedRoute,
     )
     //
@@ -73,6 +84,8 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
     this.getOrdenFabricacionTipo();
     this.getEstadosAutorizacion();
     this.getEstadoAutorizacionUsuario();
+    this. getOrdenFabArticuloReprocesoCantidadBase();
+
 
     let id = Number(this.route.snapshot.paramMap.get('id'));
     if (id > 0) {
@@ -181,9 +194,74 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
 
   }
 
+  onSubmitReproceso() {
+
+    let cantidad = this.articulosDeReproceso.filter(x => x.isSelect == true).length;
+    if (cantidad > 3) {
+      this.toastService.warning("Solo puede selecionar 3 maximo.");
+      return;
+    }
 
 
+  this.onSaveReproceso();
+  }
 
+  async onChangeAlmacen(alm:ComboBox, art:ArticuloDeReproceso){
+    let Balance =  await this.getArticuloBalance(art.codigoReferencia, alm.grupo);
+    let articulo = this.articulosDeReproceso.find(x => x.codigoReferencia == art.codigoReferencia);
+    articulo.almacencodigoReferencia = alm.grupo;
+    articulo.almacenId = alm.codigo;
+    articulo.balance = Balance;
+  }
+
+
+  async onSaveReproceso() {
+    this.btnGuardarCargando = true;
+
+    let ArtRep = this.articulosDeReproceso.filter(x => x.isSelect == true);
+    let art = this.articulosExtras[0];
+    for (const key in ArtRep) {
+        const item = ArtRep[key];
+
+        let material: OrdenFabricacionVista = new OrdenFabricacionVista();
+        material.codigoReferencia = item.codigoReferencia;
+        material.articulo = item.codigoReferencia;
+        material.articuloId = item.id;
+        material.nombre = item.nombre;
+        material.cantidadBase = this.ORDENFABRICACION_CONSUMO_REPROCESO;
+        material.cantidadPlanificada = art.cantidadPlanificada;
+        material.metodoEmision = "M"
+        //buscar el articulo
+        //No trae la unidad de medida
+        //await this.getArticuloMaterialByCodigoReferencia(item.codigoReferencia);
+        //material.unidadMedida = this.articuloMaterial.unidadMedida;
+        //
+        material.almacenCodigoReferencia = item.almacencodigoReferencia;
+        material.almacenId = item.almacenId;
+        material.disponible = item.balance;
+
+        this.articulosExtras.push(material)
+
+    }
+
+    this.btnGuardarCargando = false;
+  }
+
+
+  openModal(content) {
+    this.getArticulosDeReproceso();
+    // this.getOrdenFabricacion(modal.id);
+    // this.selectOrden = modal;
+    this.modalService.open(content, {
+      windowClass: "myCustomModalClass",
+      backdrop: "static",
+    });
+  }
+
+  onChangeCheckBox(item: ArticuloDeReproceso){
+    let cantidadSelect = this.articulosDeReproceso.filter(x => x.isSelect == true).length;
+      // VALIDAR QUE SELECIONE SOLO 3
+  }
 
   // private CreateFormDetalle() {
 
@@ -258,6 +336,31 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
       });
   }
 
+  getArticuloMaterialByCodigoReferencia(codigoRefencia: string) {
+    this.searching = true;
+    this.httpService.DoPostAny<Articulo>(DataApi.Articulo,
+      "GetArticuloByCodigoReferencia", { codigoRefencia }).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          //validar que existe
+          if (response != null && response.records != null && response.records.length > 0) {
+            let record = response.records[0]
+            this.articuloMaterial = record;
+          }
+          else {
+            this.articuloMaterial = null;
+          }
+          this.searching = false;
+        }
+
+      }, error => {
+        this.searching = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
   getArticuloById(ArticuloID: number) {
     this.searching = true;
     this.httpService.DoPostAny<Articulo>(DataApi.Articulo,
@@ -271,6 +374,32 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
             let record = response.records[0]
             this.articulo = record;
 
+          }
+          else {
+            this.articulo = null;
+          }
+          this.searching = false;
+        }
+
+      }, error => {
+        this.searching = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
+  getArticulosDeReproceso() {
+    this.searching = true;
+    this.httpService.DoPostAny<ArticuloDeReproceso>(DataApi.Articulo,
+      "GetArticulosDeReproceso", {} ).subscribe(async response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          //validar que existe
+          if (response != null && response.records != null && response.records.length > 0) {
+            this.articulosDeReproceso = response.records;
+
+            // let Balance =  await this.getArticuloBalance(item.codigoReferencia, element.almacenCodigoReferencia);
           }
           else {
             this.articulo = null;
@@ -482,6 +611,31 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
 
       });
 
+  }
+
+  getOrdenFabArticuloReprocesoCantidadBase() {
+    this.httpService.DoPostAny<any>(DataApi.Configuracion,
+      "GetConfiguracionValor", Number(Configuraciones.ORDENFABRICACION_CONSUMO_REPROCESO)).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+
+          if (response.records.length == 0 || response.records[0] < 1) {
+            this.toastService.error("No hay ORDENFABRICACION_CONSUMO_REPROCESO configurado");
+            console.error("No hay ORDENFABRICACION_CONSUMO_REPROCESO configurado")
+          } else {
+            this.ORDENFABRICACION_CONSUMO_REPROCESO = Number(response.records[0]);
+          }
+
+        }
+      }, error => {
+        this.toastService.error("No se pudo obtener las condiciones de pago", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getOrdenFabArticuloReprocesoCantidadBase();
+        }, 1000);
+
+      });
   }
 
 

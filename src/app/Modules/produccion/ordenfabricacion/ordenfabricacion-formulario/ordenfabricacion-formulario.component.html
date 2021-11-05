@@ -151,10 +151,11 @@
                                 </thead>
 
                                 <tbody>
-
                                   <tr *ngFor="let articulext of articulosExtras">
+
                                     <th style="font-size: 14px;">{{articulext.articulo}}</th>
                                     <td  style="font-size: 14px;">{{articulext.nombre}}</td>
+
                                     <!-- <td>
                                       <input type="text"
                                       [readonly]="!articulext.isRPC"
@@ -163,7 +164,7 @@
                                     </td> -->
 
 
-                                    <td>{{articulext.cantidadBase  | number:'1.4-4'}}</td>
+                                   <td>{{articulext.cantidadBase  | number:'1.4-4'}}</td>
                                     <td>{{(articulext.cantidadBase *  ofheader.cantidadPlanificada) | number:'1.4-4'}}</td>
                                     <td>{{articulext.consumido}}</td>
                                     <td>{{articulext.disponible}}</td>
@@ -172,10 +173,15 @@
                                     <td>{{articulext.metodoEmision == "M" ? "Manual" : "Automático"}}</td>
 
                                   </tr>
-
                                 </tbody>
                             </table>
 
+                        </div>
+
+                        <div class="col-md-12 text-right" *ngIf="ofheader.tipoId == ValidTipoOrden.ESPECIAL">
+                          <button class="btn btn-sm  btn-info m-1" (click)="openModal(modalArticulo)">
+                            <i class="fa fa-sm fa-plus"></i> Agregar articulo de reproceso
+                          </button>
                         </div>
                     </div>
                 </div>
@@ -278,3 +284,75 @@
       </div>
   </div>
 </div>
+
+
+
+<ng-template #modalArticulo let-modal>
+  <div class="modal-header bg-dark">
+    <h4 class="modal-title text-white">Articulos para Reproceso</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+
+      <div class="col-12" [hidden]="loadingArticulosExtras">
+
+        <div class="table-responsive" style="overflow-y:auto; height: 500px;">
+          <table class="table table-sm ">
+            <thead class="sticky-top" >
+              <tr>
+                <th scope="col"></th>
+                <th scope="col">Articulo</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Almacen</th>
+                <th scope="col">Balance</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              <tr *ngFor="let art of articulosDeReproceso; let i = index">
+                <th style="font-size: 14px;">
+                  <div class="custom-control custom-checkbox">
+                    <input type="checkbox" id="customCheckbox-{{i}}" name="customCheck-{{i}}" class="custom-control-input" (change)="onChangeCheckBox(art)" [(ngModel)]="art.isSelect">
+                    <label class="custom-control-label" for="customCheckbox-{{i}}"></label>
+                  </div>
+                </th>
+                <th style="font-size: 14px;">{{art.codigoReferencia}}</th>
+                <td style="font-size: 14px;">{{art.nombre}}</td>
+                <td>
+                    <ng-select bindLabel="nombre" bindValue="codigo" [items]="almecenes"  [(ngModel)]="art.almacenId" (change)="onChangeAlmacen($event, art)"
+                    class ="form-control p-0"  notFoundText="No resultados" [clearable]="false">
+                    </ng-select>
+                </td>
+                <td>{{art.balance | number:'1.4-4'}}</td>
+              </tr>
+
+            </tbody>
+          </table>
+
+        </div>
+
+
+      </div>
+
+      <div class="col-12">
+        <app-loading-listado [hidden]="!searching"></app-loading-listado>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
+
+    <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="button" (click)=" onSubmitReproceso()">
+      <i class="fas fa-check"></i> Guardar
+  </button>
+
+  <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+      <span class="spinner-border spinner-border-sm"></span> Guardando
+  </button>
+  </div>
+</ng-template>
+

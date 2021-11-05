@@ -119,7 +119,7 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
       });
     }
 
-    console.log(this.ordenfabricacionvista);
+    // console.log(this.ordenfabricacionvista);
     // console.log(this.ListaArticuloDetalle);
     if (this.ordenfabricacionvista.almacen == null) {
       this.isTerminalReport = true;
@@ -281,12 +281,12 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.pesoNeto < this.ordenfabricacionvista.requerida ) {
+    if ((this.pesoNeto < this.ordenfabricacionvista.requerida) && this.isTerminalReport == false ) {
       this.toastService.warning("Está consumiendo menos de la cantidad requerida.");
       return;
     }
 
-    if (this.pesoNeto > maximo) {
+    if ((this.pesoNeto > maximo) && this.isTerminalReport == false) {
       this.toastService.warning("Esta consumiendo mas del parametro permitido.");
       return;
     }

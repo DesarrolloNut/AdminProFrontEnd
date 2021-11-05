@@ -23,7 +23,9 @@ export class Articulo {
     precio: number
     articuloDeCompra: number
     articuloDeVenta: number
-    articuloDeInventario: number
+    articuloDeInventario: number;
+    articuloDeReproceso: number;
     categoriaID: number
     gestionado: number
 }
+
