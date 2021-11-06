@@ -68,7 +68,13 @@
                                     <button class="btn btn-sm btn-info m-1" [routerLink]="[cliente.id]">
                                         <i class="fa fa-sm fa-edit"></i>
                                     </button>
-
+                                    <button   class="btn btn-sm btn-success m-1" (click)="autorizarCambiosCliente(cliente)"
+                                     *ngIf="showButtonAutorizar && cliente.estadoERPID==3 && !cliente.loadingAutorizarCambios">
+                                      <i class="fa fa-sm fa-check"></i>
+                                  </button>
+                                  <button *ngIf="cliente.loadingAutorizarCambios" disabled class="btn btn-sm btn-success m-1" type="button">
+                                    <span class="spinner-border spinner-border-sm"></span>
+                                </button>
                                     <!-- <button type="button" class="btn btn-sm btn-light m-1"
                                         *ngIf="!cliente.codigoReferencia || cliente.codigoReferencia == undefined || cliente.codigoReferencia == '' || cliente.codigoReferencia.length == 0 "
                                         (click)="enviarOrdenSmartService(item.citaID)">
