@@ -28,6 +28,8 @@ export class ClientesListadoComponent implements OnInit {
   clientes: Cliente[] = [] //tu modelo
   tipos:ComboBox[]=[];
   tipo:number=0;
+  usuarioId:number=0;
+  showButtonAutorizar = false;
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     public permissionsService: NgxPermissionsService,
@@ -38,7 +40,7 @@ export class ClientesListadoComponent implements OnInit {
   ngOnInit(): void {
     this.fillComboTipos();
     this.getClientes()
-    
+
   }
 
   fillComboTipos(){
@@ -47,16 +49,20 @@ export class ClientesListadoComponent implements OnInit {
     this.tipos.push({codigo:2,nombre:"Sucursales",grupo:'',grupoID:''})
   }
   getClientes() {
+    this.showButtonAutorizar=false;
     this.Cargando = true;
-
+    this.usuarioId = Number(this.authService.tokenDecoded.nameid) ;
     let parametros: Parametro[] = [
     { key: "Search", value: this.Search },
-    { key: "UsuarioId", value: Number(this.authService.tokenDecoded.nameid) },
+    { key: "UsuarioId", value:this.usuarioId},
     { key: "tipo", value: this.tipo },]
 
+    if(this.usuarioId==1015 ||  this.usuarioId==156 || this.usuarioId==1){
+      this.showButtonAutorizar=true;
+    }
     this.httpService.GetAllWithPagination<ClienteViewModelCustomized>(DataApi.Cliente, "GetClientesListadoCustomized", "ID", this.paginaNumeroActual,
       this.paginaSize, false, parametros).subscribe(x => {
-          
+
         if (x.ok) {
           this.clientes = x.valores[0];
           this.asignarPagination(x);
@@ -91,6 +97,33 @@ export class ClientesListadoComponent implements OnInit {
     }
 
   }
+
+  autorizarCambiosCliente(cliente:ClienteViewModelCustomized){
+
+   cliente.loadingAutorizarCambios=true;
+
+    this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
+      'AutorizaCambiosDeCliente', cliente.id).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+          cliente.loadingAutorizarCambios=false;
+        } else {
+            this.getClientes();
+            if(response.valores?.length>0){
+               this.toastService.success("Realizado", "OK");
+            }
+        }
+        cliente.loadingAutorizarCambios=false;
+
+      }, error => {
+        cliente.loadingAutorizarCambios=false;
+        this.toastService.error("Error conexion al servidor");
+      });
+
+
+
+}
+
 
   buscarCodigoReferenciaClienteSmart(clienteID) {
     // console.log(clienteID)

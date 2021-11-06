@@ -213,6 +213,8 @@ export class ClienteViewModelCustomized {
     estadoERP:string;
     estadoColorERP:string;
     clientePadreId: number;
+    loadingAutorizarCambios: boolean;
+
 
 }
 
