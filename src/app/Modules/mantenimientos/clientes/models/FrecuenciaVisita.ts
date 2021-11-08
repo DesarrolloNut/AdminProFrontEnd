@@ -17,6 +17,8 @@ export class FrecuenciaVisita {
     diaId: number;
     frecuenciaVisitaId: number;
     clienteId: number;
+    usuarioId: number;
+
     ordenVisita: number;
     tipoRutaId: number;
     rutaId:number;
@@ -38,6 +40,7 @@ export class FrecuenciaVisitaFormated {
     diaId: number;
     frecuenciaVisitaId: number;
     clienteId: number;
+    usuarioId: number;
     ordenVisita: number;
     tipoRutaId: number;
 
@@ -46,7 +49,7 @@ export class FrecuenciaVisitaResponse {
 
     constructor() {
         this.countId = 0;
-        this.clienteTabsValida = new ClienteTabsValida()  
+        this.clienteTabsValida = new ClienteTabsValida()
     }
 
     countId: number;

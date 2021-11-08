@@ -41,6 +41,7 @@ export class ClienteContactosRequest {
 
 
     clienteId: number;
+    usuarioId: number;
     CantRegistrados:number;
     contactos: ClienteContactos[];
 }
@@ -48,7 +49,7 @@ export class ContactosResponse {
 
     constructor() {
         this.id = 0;
-        this.clienteTabsValida = new ClienteTabsValida()  
+        this.clienteTabsValida = new ClienteTabsValida()
     }
 
     id: number;

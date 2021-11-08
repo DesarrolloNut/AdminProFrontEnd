@@ -263,6 +263,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       clientePadreId: [0],
       clientePadreTipoId: [0],
       isClientPrincipal: [0],
+      usuarioId: [Number(this.auth.tokenDecoded.nameid)],
       // contactos: new FormArray([])
     },
       {
@@ -400,8 +401,11 @@ export class ClienteDatosGeneralesComponent implements OnInit {
   }
   getClienteTabsValidaByID(id: number) {
     this.cargando = true;
+    let parametros = new ParametrosCita();
+    parametros.citaID = id;
+    parametros.servicioID = Number(this.auth.tokenDecoded.nameid);
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
-      "GetClienteTabsValidaByID", id).subscribe(response => {
+      "GetClienteTabsValidaByID", parametros).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {

@@ -7,7 +7,7 @@
                         <h4 class="card-title">Listado de clientes</h4>
                     </div>
                     <div class="col-md-6 text-right">
-                        <button [routerLink]="[0]" class="btn btn-info"> <i class="fa fa-plus"></i> Nuevo
+                        <button *ngxPermissionsOnly="['mantenimientos_cliente_crear']"  [routerLink]="[0]" class="btn btn-info"> <i class="fa fa-plus"></i> Nuevo
                             cliente
                         </button>
                     </div>
@@ -68,13 +68,18 @@
                                     <button class="btn btn-sm btn-info m-1" [routerLink]="[cliente.id]">
                                         <i class="fa fa-sm fa-edit"></i>
                                     </button>
-                                    <button   class="btn btn-sm btn-success m-1" (click)="autorizarCambiosCliente(cliente)"
-                                     *ngIf="showButtonAutorizar && cliente.estadoERPID==3 && !cliente.loadingAutorizarCambios">
-                                      <i class="fa fa-sm fa-check"></i>
-                                  </button>
-                                  <button *ngIf="cliente.loadingAutorizarCambios" disabled class="btn btn-sm btn-success m-1" type="button">
-                                    <span class="spinner-border spinner-border-sm"></span>
-                                </button>
+                                    <div  *ngxPermissionsOnly="['mantenimientos_cliente_autoriza_subidaSAP']" style="display: inline-block;">
+
+                                      <button   class="btn btn-sm btn-success m-1" (click)="autorizarCambiosCliente(cliente)"
+                                          *ngIf="cliente.estadoERPID==3 && !cliente.loadingAutorizarCambios">
+                                          <i class="fa fa-sm fa-check"></i>
+                                      </button>
+
+                                        <button *ngIf="cliente.loadingAutorizarCambios" disabled class="btn btn-sm btn-success m-1" type="button">
+                                          <span class="spinner-border spinner-border-sm"></span>
+                                      </button>
+                                    </div>
+
                                     <!-- <button type="button" class="btn btn-sm btn-light m-1"
                                         *ngIf="!cliente.codigoReferencia || cliente.codigoReferencia == undefined || cliente.codigoReferencia == '' || cliente.codigoReferencia.length == 0 "
                                         (click)="enviarOrdenSmartService(item.citaID)">
