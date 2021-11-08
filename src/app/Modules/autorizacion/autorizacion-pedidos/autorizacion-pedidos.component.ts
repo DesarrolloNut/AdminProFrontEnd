@@ -54,7 +54,7 @@ export class AutorizacionPedidosComponent implements OnInit {
   btnClicked: number;
   isAutorizando: boolean;
   cargandoAutorizacion: boolean;
-  itemSeleccionado: CotizacionListadoViewModel;
+  // itemSeleccionado: CotizacionListadoViewModel;
 
   //comentarios
   comentarios: any[];
@@ -70,6 +70,7 @@ export class AutorizacionPedidosComponent implements OnInit {
   facturasPendientesPago: Factura[];
   loadingFacturasPendientesPago: boolean;
   totalPendientePagar: number;
+  porcentajeCalculado: number;
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
@@ -190,8 +191,8 @@ export class AutorizacionPedidosComponent implements OnInit {
 
 
     if (this.estadoAutorizacionAnterior) {
-      // this.estadoAutorizacionComboModel = this.estadoAutorizacionAnterior.codigo;
-      this.estadoAutorizacionComboModel = 1;
+      this.estadoAutorizacionComboModel = this.estadoAutorizacionAnterior.codigo;
+      // this.estadoAutorizacionComboModel = 1;
 
     }
 
@@ -216,9 +217,15 @@ export class AutorizacionPedidosComponent implements OnInit {
   openModalConfirm(content, btnClicked: number, item: CotizacionListadoViewModel) {
     this.comentario = null;
     this.getFacturasPendientesPago(item.clienteId);
-    this.modalService.open(content, { size: 'lg', backdrop: 'static' });
+    this.modalService.open(content, { windowClass: "myCustomModalClass", backdrop: 'static' });
     this.btnClicked = btnClicked;
-    this.itemSeleccionado = item;
+    // this.itemSeleccionado = item;
+
+
+    this.cotizacionDetalles = [];
+    this.getCotizacionDetalle(item.id);
+    this.cotizacionSeleccionada = item;
+
   }
 
   onBtnModalOk() {
@@ -291,7 +298,7 @@ export class AutorizacionPedidosComponent implements OnInit {
       "EstadoAutorizacion": this.isAutorizando ? this.estadoAutorizacionUsuario : this.estadoIDAutorizacionDefault,
       "EstadoDefault": this.estadoIDAutorizacionDefault,
       "EstadoUsuariosNotificacion": this.getEstadoUsuariosEnviarCorreoNotificacion(),
-      "Pedido": this.itemSeleccionado,
+      "Pedido": this.cotizacionSeleccionada,
       "Comentario": this.comentario,
     }
 
@@ -340,7 +347,7 @@ export class AutorizacionPedidosComponent implements OnInit {
 
   openModalComments(content, item: any) {
     console.table(item)
-    this.itemSeleccionado = item;
+    this.cotizacionSeleccionada = item;
     this.getComentarios()
     this.modalService.open(content, { size: 'lg', scrollable: true });
     // this.articuloSeleccionado = item
@@ -351,7 +358,7 @@ export class AutorizacionPedidosComponent implements OnInit {
     this.comentarios = []
     this.comentario = ""
     let parametros = {
-      "ArticuloID": this.itemSeleccionado.id,
+      "ArticuloID": this.cotizacionSeleccionada.id,
       // "ListaPrecioID": this.itemSeleccionado.listaPrecioID
     }
     this.cargandoModal = true;
@@ -389,7 +396,7 @@ export class AutorizacionPedidosComponent implements OnInit {
       "Id": 0,
       "Comentario": this.comentario,
       // "ListaPrecioID": this.itemSeleccionado.listaPrecioID,
-      "ArticuloID": this.itemSeleccionado.id,
+      "ArticuloID": this.cotizacionSeleccionada.id,
       "UsuarioID": Number(this.authService.tokenDecoded.nameid),
       "Fecha": new Date(),
       "Usuario": this.authService.tokenDecoded.given_name,
@@ -467,14 +474,6 @@ export class AutorizacionPedidosComponent implements OnInit {
 
   //DETALLE PEDIDOS 
 
-  openModalDetalle(content, cotizacion: CotizacionListadoViewModel) {
-    this.cotizacionDetalles = [];
-    this.getCotizacionDetalle(cotizacion.id);
-    this.cotizacionSeleccionada = cotizacion;
-    this.modalService.open(content, { size: 'lg', });
-  }
-
-
   getCotizacionDetalle(cotizacionID: number) {
     this.loadingCotizacionDetalle = true;
     this.httpService.DoPostAny<CotizacionDetalleViewModel>(DataApi.Cotizacion,
@@ -485,6 +484,7 @@ export class AutorizacionPedidosComponent implements OnInit {
         } else {
           this.cotizacionDetalles = response.records;
         }
+        this.calcularPorcentaje();
         this.loadingCotizacionDetalle = false;
       }, error => {
         this.loadingCotizacionDetalle = false;
@@ -505,6 +505,7 @@ export class AutorizacionPedidosComponent implements OnInit {
           this.facturasPendientesPago = response.records;
           this.totalPendientePagar = this.facturasPendientesPago.reduce((sum, current) => sum + (current.total - current.pagos), 0)
         }
+        this.calcularPorcentaje();
         this.loadingFacturasPendientesPago = false;
       }, error => {
         this.loadingFacturasPendientesPago = false;
@@ -512,6 +513,14 @@ export class AutorizacionPedidosComponent implements OnInit {
       });
   }
 
+  calcularPorcentaje() {
+
+    if (this.cotizacionSeleccionada) {
+      this.porcentajeCalculado = ((this.cotizacionSeleccionada.limiteCredito - this.cotizacionSeleccionada.totalNeto -
+        this.totalPendientePagar) / this.cotizacionSeleccionada.limiteCredito) * 100;
+    }
+
+  }
 
 
 
