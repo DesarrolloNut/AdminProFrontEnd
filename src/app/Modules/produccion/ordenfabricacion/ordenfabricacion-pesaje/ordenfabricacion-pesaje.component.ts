@@ -119,8 +119,11 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
       });
     }
 
+    // console.log("###########################################");
     // console.log(this.ordenfabricacionvista);
     // console.log(this.ListaArticuloDetalle);
+    // console.log("###########################################");
+
     if (this.ordenfabricacionvista.almacen == null) {
       this.isTerminalReport = true;
     }
@@ -138,8 +141,8 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
     // });
 
 
-    this.startPingingBalanza();
-    // this. empezarAmbientePrueba();
+    // this.startPingingBalanza();
+    this. empezarAmbientePrueba();
 
 
   }
@@ -266,12 +269,12 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.loteSearch == "" && this.isTerminalReport == false) {
+    if (this.loteSearch == "" && this.isTerminalReport == false && this.ordenfabricacionvista.gestionado == true) {
       this.toastService.warning("Digita el lote.");
       return;
     }
 
-    if (this.lote.cantidad <= 0 && this.isTerminalReport == false) {
+    if (this.lote.cantidad <= 0 && this.isTerminalReport == false && this.ordenfabricacionvista.gestionado == true) {
       this.toastService.warning("No a digitado un lote disponible.");
       return;
     }

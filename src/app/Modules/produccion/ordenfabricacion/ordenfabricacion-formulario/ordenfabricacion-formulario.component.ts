@@ -41,8 +41,6 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
   loadingTipo: boolean;
   Tipos: ComboBox[];
   TipoId: number = 1;
-  Turnos: ComboBox[] = [{codigo: 1, nombre:'Diurno', grupo:'', grupoID:'' },{codigo: 2, nombre:'Nocturno', grupo:'', grupoID:'' }];
-  TurnoId: number = 1;
 
   loadingEstado: boolean;
   estadosAutorizacion: ComboBox[];
@@ -130,7 +128,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
       codigoReferencia:"",
       lote: "",
       batch: 0,
-      turno: this.TurnoId,
+      turno: 0,
       fechaCierre: new Date(),
       fechaCreacion: new Date(),
       fechaInicio: new Date(),
@@ -206,20 +204,28 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
   this.onSaveReproceso();
   }
 
-  async onChangeAlmacen(alm:ComboBox, art:ArticuloDeReproceso){
-    let Balance =  await this.getArticuloBalance(art.codigoReferencia, alm.grupo);
-    let articulo = this.articulosDeReproceso.find(x => x.codigoReferencia == art.codigoReferencia);
-    articulo.almacencodigoReferencia = alm.grupo;
-    articulo.almacenId = alm.codigo;
-    articulo.balance = Balance;
-  }
+  // async onChangeAlmacen(alm:ComboBox, art:ArticuloDeReproceso){
+  //   let Balance =  await this.getArticuloBalance(art.codigoReferencia, alm.grupo);
+  //   let articulo = this.articulosDeReproceso.find(x => x.codigoReferencia == art.codigoReferencia);
+  //   articulo.almacencodigoReferencia = alm.grupo;
+  //   articulo.almacenId = alm.codigo;
+  //   articulo.balance = Balance;
+  // }
 
 
   async onSaveReproceso() {
-    this.btnGuardarCargando = true;
 
+    let cantidadRPC = this.articulosExtras.filter(x => x.isRPC == true).length;
+    if(cantidadRPC == 3){
+      this.toastService.warning("Ha excedido el limite de agregar articulo.");
+      return;
+    }
+
+    this.btnGuardarCargando = true;
     let ArtRep = this.articulosDeReproceso.filter(x => x.isSelect == true);
     let art = this.articulosExtras[0];
+      let listaMaterialRPC:Array<OrdenFabricacionVista> = [];
+
     for (const key in ArtRep) {
         const item = ArtRep[key];
 
@@ -236,13 +242,53 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
         //await this.getArticuloMaterialByCodigoReferencia(item.codigoReferencia);
         //material.unidadMedida = this.articuloMaterial.unidadMedida;
         //
-        material.almacenCodigoReferencia = item.almacencodigoReferencia;
-        material.almacenId = item.almacenId;
+        material.almacenCodigoReferencia = art.almacenCodigoReferencia;
+        material.almacenId = art.almacenId;
         material.disponible = item.balance;
+        material.isRPC = true;
 
-        this.articulosExtras.push(material)
+       listaMaterialRPC.push(material)
 
     }
+
+
+    if(listaMaterialRPC.length > 0){
+
+      var props = ['articulo', 'nombre'];
+      let articulosEX = this.articulosExtras;
+
+      var result = listaMaterialRPC.filter(function(o1){
+        // filter out (!) items in result2
+        return !articulosEX.some(function(o2){
+            return o1.articulo === o2.articulo;          // assumes unique id
+        });
+    });
+
+    //   var result = listaMaterialRPC.filter(function(o1){
+    //     // filter out (!) items in result2
+    //     return !articulosEX.some(function(o2){
+    //         return o1.articulo === o2.articulo;          // assumes unique id
+    //     });
+    // }).map(function(o){
+    //     // use reduce to make objects with only the required properties
+    //     // and map to apply this to the filtered array as a whole
+    //     return props.reduce(function(newo, name){
+    //         newo[name] = o[name];
+    //         return newo;
+    //     }, {});
+    // });
+
+
+      for (const key in result) {
+          const element = result[key];
+          this.articulosExtras.push(element);
+
+      }
+
+    }
+
+
+
 
     this.btnGuardarCargando = false;
   }
@@ -258,10 +304,6 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
     });
   }
 
-  onChangeCheckBox(item: ArticuloDeReproceso){
-    let cantidadSelect = this.articulosDeReproceso.filter(x => x.isSelect == true).length;
-      // VALIDAR QUE SELECIONE SOLO 3
-  }
 
   // private CreateFormDetalle() {
 
@@ -398,6 +440,13 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
           //validar que existe
           if (response != null && response.records != null && response.records.length > 0) {
             this.articulosDeReproceso = response.records;
+            let art = this.articulosExtras[0];
+
+            this.articulosDeReproceso.forEach(async x => {
+              x.almacenId = art.almacenId;
+              x.almacencodigoReferencia = art.almacenCodigoReferencia;
+              x.balance = await this.getArticuloBalance(x.codigoReferencia, art.almacenCodigoReferencia);
+            });
 
             // let Balance =  await this.getArticuloBalance(item.codigoReferencia, element.almacenCodigoReferencia);
           }
@@ -411,6 +460,17 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
         this.searching = false;
         this.toastService.error("Error conexion al servidor");
       });
+  }
+
+  onDeleteItem(model:OrdenFabricacionVista){
+
+    // let item = this.articulosExtras.findIndex(x => x.articulo === model.articulo);
+    const index = this.articulosExtras.indexOf(model);
+
+    if (index > -1) {
+      this.articulosExtras.splice(index, 1);
+    }
+
   }
 
 
@@ -616,12 +676,11 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
   getOrdenFabArticuloReprocesoCantidadBase() {
     this.httpService.DoPostAny<any>(DataApi.Configuracion,
       "GetConfiguracionValor", Number(Configuraciones.ORDENFABRICACION_CONSUMO_REPROCESO)).subscribe(response => {
-
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
 
-          if (response.records.length == 0 || response.records[0] < 1) {
+          if (response.records.length == 0) {
             this.toastService.error("No hay ORDENFABRICACION_CONSUMO_REPROCESO configurado");
             console.error("No hay ORDENFABRICACION_CONSUMO_REPROCESO configurado")
           } else {
@@ -636,6 +695,35 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
         }, 1000);
 
       });
+  }
+
+  onChangeTipo(){
+      let value = <OrdenFabricacionTipoEnum> this.ofheader.tipoId;
+    switch (value) {
+      case OrdenFabricacionTipoEnum.ESTANDAR:
+        let itemsRemove = this.articulosExtras.filter(x => x.isRPC == true);
+        for (const key in itemsRemove) {
+            const element = itemsRemove[key];
+            const index = this.articulosExtras.indexOf(element);
+            this.articulosExtras.splice(index, 1);
+        }
+      break;
+      case OrdenFabricacionTipoEnum.ESPECIAL:
+
+      break;
+      case OrdenFabricacionTipoEnum.DESMONTAR:
+
+      break;
+
+
+
+
+    }
+
+
+
+
+
   }
 
 
