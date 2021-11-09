@@ -18,6 +18,7 @@ export class Articulo {
     chasis: string
     tipoArticuloID: number
     placa: string
+    unidadMedida: string
     costo: number
     costoObjetivo: number;
     precio: number

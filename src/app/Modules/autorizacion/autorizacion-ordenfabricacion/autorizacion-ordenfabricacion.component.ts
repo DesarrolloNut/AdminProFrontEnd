@@ -219,8 +219,7 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
           this.modalService.open(content, { size: 'lg' });
           //this.getPorcentaje();
       }else if (this.estadoAutorizacionUsuario == this.ValidOrden.PENDIENTECERRARSUPERVISORPRODUCCION && this.isAutorizando) {
-        this.estadoAutorizacionUsuario = this.ValidOrden.CERRADA;
-        this.actualizarEstadoArticulos(item)
+        this.actualizarEstadoArticulos(item, this.ValidOrden.CERRADA)
     }else{
         this.actualizarEstadoArticulos(item)
       }
@@ -323,7 +322,7 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
           console.error(response.errores[0]);
 
         } else {
-          if( this.estadoAutorizacionUsuario == ultimoEstado && this.isAutorizando){
+          if(estado == OrdenFabricacionEstadoEnum.CERRADA ){
             this.UpdateFechaCerrada(item.id);
             this.UpdateEstadoERPExterno(item.id);
           }

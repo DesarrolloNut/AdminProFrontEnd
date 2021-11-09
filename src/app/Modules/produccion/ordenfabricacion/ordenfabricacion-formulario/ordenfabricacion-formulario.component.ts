@@ -55,6 +55,11 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
   estadoAutorizacionUsuario: number = 0;
   ORDENFABRICACION_CONSUMO_REPROCESO: number = 0;
   articuloMaterial: Articulo;
+  articulosDeCambios: Array<ArticuloDeReproceso> = [];
+  cantidadArticuloDeCambio: number = 0;
+  selectArticuloOriginal: OrdenFabricacionVista;
+  articulosDeCambiosSelect: ArticuloDeReproceso;
+  MostrarBtnReproceso: boolean = false;
   // ValidOrden: OrdenFabricacionEstadoEnum;
 
   public get ValidOrden(): typeof OrdenFabricacionEstadoEnum {
@@ -83,6 +88,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
     this.getEstadosAutorizacion();
     this.getEstadoAutorizacionUsuario();
     this. getOrdenFabArticuloReprocesoCantidadBase();
+    // this.getArticulosDeCambio(80);
 
 
     let id = Number(this.route.snapshot.paramMap.get('id'));
@@ -204,14 +210,6 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
   this.onSaveReproceso();
   }
 
-  // async onChangeAlmacen(alm:ComboBox, art:ArticuloDeReproceso){
-  //   let Balance =  await this.getArticuloBalance(art.codigoReferencia, alm.grupo);
-  //   let articulo = this.articulosDeReproceso.find(x => x.codigoReferencia == art.codigoReferencia);
-  //   articulo.almacencodigoReferencia = alm.grupo;
-  //   articulo.almacenId = alm.codigo;
-  //   articulo.balance = Balance;
-  // }
-
 
   async onSaveReproceso() {
 
@@ -237,11 +235,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
         material.cantidadBase = this.ORDENFABRICACION_CONSUMO_REPROCESO;
         material.cantidadPlanificada = art.cantidadPlanificada;
         material.metodoEmision = "M"
-        //buscar el articulo
-        //No trae la unidad de medida
-        //await this.getArticuloMaterialByCodigoReferencia(item.codigoReferencia);
-        //material.unidadMedida = this.articuloMaterial.unidadMedida;
-        //
+        material.unidadMedida = item.unidadMedida;
         material.almacenCodigoReferencia = art.almacenCodigoReferencia;
         material.almacenId = art.almacenId;
         material.disponible = item.balance;
@@ -294,12 +288,63 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
   }
 
 
+  async onSaveArticuloDeCambio() {
+
+    this.btnGuardarCargando = true;
+    try {
+      let ArtCam = this.articulosDeCambiosSelect;
+      if(ArtCam != null){
+        let ArtOrig = this.selectArticuloOriginal;
+        let Balance =  await this.getArticuloBalance(ArtCam.codigoReferencia, ArtOrig.almacenCodigoReferencia);
+
+        // Remover el original del array
+        const index = this.articulosExtras.indexOf(ArtOrig);
+        this.articulosExtras.splice(index, 1);
+
+        // Remplazar Informacion
+        ArtOrig.articuloId = ArtCam.id;
+        ArtOrig.articulo = ArtCam.codigoReferencia;
+        ArtOrig.unidadMedida = ArtCam.unidadMedida;
+        ArtOrig.nombre = ArtCam.nombre;
+        ArtOrig.disponible = Balance;
+
+        // agregar nuevo articulo
+        this.articulosExtras.unshift(ArtOrig);
+      }
+      this.modalService.dismissAll();
+      this.toastService.success("OK");
+    } catch (error) {
+
+    }
+
+
+
+
+    this.btnGuardarCargando = false;
+  }
+
+
+
+
+
+
   openModal(content) {
     this.getArticulosDeReproceso();
     // this.getOrdenFabricacion(modal.id);
     // this.selectOrden = modal;
     this.modalService.open(content, {
       windowClass: "myCustomModalClass",
+      backdrop: "static",
+    });
+  }
+
+
+  openModalArticuloCambio(content, model:OrdenFabricacionVista) {
+    this.getArticulosDeCambio(model.id);
+    this.selectArticuloOriginal = model;
+    this.modalService.open(content, {
+      size: 'lg',
+      // windowClass: "myCustomModalClass",
       backdrop: "static",
     });
   }
@@ -365,6 +410,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
             let record = response.records[0]
             this.articulo = record;
             this.getArticulosDeMateriales();
+            this.OnChangeMostrarBtnReproceso();
           }
           else {
             this.articulo = null;
@@ -415,7 +461,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0]
             this.articulo = record;
-
+            this.OnChangeMostrarBtnReproceso();
           }
           else {
             this.articulo = null;
@@ -431,7 +477,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
 
   getArticulosDeReproceso() {
     this.searching = true;
-    this.httpService.DoPostAny<ArticuloDeReproceso>(DataApi.Articulo,
+    this.httpService.DoPostAny<Articulo>(DataApi.Articulo,
       "GetArticulosDeReproceso", {} ).subscribe(async response => {
 
         if (!response.ok) {
@@ -439,19 +485,60 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
         } else {
           //validar que existe
           if (response != null && response.records != null && response.records.length > 0) {
-            this.articulosDeReproceso = response.records;
             let art = this.articulosExtras[0];
-
-            this.articulosDeReproceso.forEach(async x => {
-              x.almacenId = art.almacenId;
-              x.almacencodigoReferencia = art.almacenCodigoReferencia;
-              x.balance = await this.getArticuloBalance(x.codigoReferencia, art.almacenCodigoReferencia);
+            response.records.forEach(async x => {
+              let item:ArticuloDeReproceso = new ArticuloDeReproceso();
+              item.id = x.id
+              item.codigoReferencia = x.codigoReferencia;
+              item.nombre = x.nombre;
+              item.unidadMedida = x.unidadMedida;
+              item.almacenId = art.almacenId;
+              item.almacencodigoReferencia = art.almacenCodigoReferencia;
+              item.balance = await this.getArticuloBalance(x.codigoReferencia, art.almacenCodigoReferencia);
+              this.articulosDeReproceso.push(item);
             });
+
+            // this.articulosDeReproceso.forEach(async x => {
+            //   x.almacenId = art.almacenId;
+            //   x.almacencodigoReferencia = art.almacenCodigoReferencia;
+            //   x.balance = await this.getArticuloBalance(x.codigoReferencia, art.almacenCodigoReferencia);
+            // });
 
             // let Balance =  await this.getArticuloBalance(item.codigoReferencia, element.almacenCodigoReferencia);
           }
           else {
-            this.articulo = null;
+          }
+          this.searching = false;
+        }
+
+      }, error => {
+        this.searching = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
+  getArticulosDeCambio(ArticuloOriginal:number) {
+    this.searching = true;
+    this.httpService.DoPostAny<Articulo>(DataApi.Articulo,
+      "GetArticulosDeCambios", ArticuloOriginal ).subscribe(async response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          //validar que existe
+          if (response != null && response.records != null && response.records.length > 0) {
+             this.articulosDeCambios = [];
+            response.records.forEach(x => {
+              let item:ArticuloDeReproceso = new ArticuloDeReproceso();
+              item.id = x.id
+              item.codigoReferencia = x.codigoReferencia;
+              item.nombre = x.nombre;
+              item.unidadMedida = x.unidadMedida;
+
+              this.articulosDeCambios.push(item);
+            });
+            this.cantidadArticuloDeCambio = response.records.length;
+          }
+          else {
           }
           this.searching = false;
         }
@@ -709,24 +796,26 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
         }
       break;
       case OrdenFabricacionTipoEnum.ESPECIAL:
-
+        this.OnChangeMostrarBtnReproceso();
       break;
       case OrdenFabricacionTipoEnum.DESMONTAR:
 
       break;
 
-
-
-
     }
-
-
-
-
 
   }
 
-
+  OnChangeMostrarBtnReproceso(){
+    let num = parseInt(this.articulo.codigoReferencia);
+    if (!isNaN(num)) {
+      if(num >= 400000 && num < 500000){
+        this.MostrarBtnReproceso = true;
+      }else{
+        this.MostrarBtnReproceso = false;
+      }
+    }
+  }
 
 
 }
