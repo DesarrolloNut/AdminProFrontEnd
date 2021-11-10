@@ -35,7 +35,7 @@ export class ClienteContactosComponent implements OnInit {
    cargadoPuestos         = false;
    cargandoDelete         = false;
    buscandoDocumento      = false;
-  //LISTA 
+  //LISTA
    puestos                : ComboBox[];
    clienteContactos       : ClienteContactos[];
 
@@ -61,7 +61,7 @@ export class ClienteContactosComponent implements OnInit {
     this.GetContactosByClienteID();
     this.actualizando = true;
   }
-  
+
 
   }
 
@@ -78,6 +78,7 @@ export class ClienteContactosComponent implements OnInit {
 
     this.FormContactos = this.formBuilder.group({
       clienteId: [this.clientId, [Validators.required]],
+      usuarioId: [Number(this.auth.tokenDecoded.nameid)],
       contactos: new FormArray([])
     }
      );
@@ -90,7 +91,7 @@ export class ClienteContactosComponent implements OnInit {
   guardarOActualizarClienteContacto(){
       this.f.clienteId.setValue(this.clientId);
       this.btnGuardarCargando = true;
-  
+
       this.httpService.DoPostAny<ClienteContactos>(DataApi.ClienteContacto,
         'InsertarOActualizarClienteContacto', this.FormContactos.value).subscribe(response => {
           if (!response.ok) {
@@ -162,7 +163,7 @@ export class ClienteContactosComponent implements OnInit {
     this.onAddContact();
   }
 
-  
+
   generateAndShowContact(){
     this.clienteContactos.forEach(x=>{
        this.onAddContact(x);
@@ -205,13 +206,13 @@ export class ClienteContactosComponent implements OnInit {
     }
 
   }
- 
+
 
   getPuestos() {
     this.cargadoPuestos = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
       "GetPuestos", null).subscribe(response => {
-  
+
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
@@ -221,11 +222,11 @@ export class ClienteContactosComponent implements OnInit {
       }, error => {
         this.cargadoPuestos = false;
         this.toastService.error("No se pudo obtener los puestos", "Error conexion al servidor");
-  
+
         setTimeout(() => {
           this.getPuestos()
         }, 1000);
-  
+
       });
   }
 
@@ -244,38 +245,38 @@ export class ClienteContactosComponent implements OnInit {
   }
   buscarCliente(documento: string) {
     this.buscandoDocumento = true;
-  
+
     let parametros = new ParametrosCita();
     parametros.clienteDocumento = documento;
-  
+
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
       "GetClienteOPadronDatos", parametros).subscribe(response => {
-  
+
         if (response.ok) {
           if (response != null && response.ok && response.records != null && response.records.length > 0) {
             let cliente = response.records[0];
-  
+
             this.f.nombres.setValue(cliente.nombres);
             this.f.apellidos.setValue(cliente.apellidos);
             // this.f.celular.setValue(cliente.celular);
-   
+
           } else {
             this.toastService.warning("Datos no encontrados");
             // this.f.nombres.setValue(null);
             // this.f.apellidos.setValue(null);
             // this.f.celular.setValue(null);
           }
-  
+
         } else {
           this.toastService.error(response.errores[0]);
         }
-  
+
         this.buscandoDocumento = false;
       }, error => {
         this.buscandoDocumento = false;
         this.toastService.error("Error conexion al servidor");
       });
-  
+
   }
   //METODOS LOGIC
 onDocumentoKeyUp(contact: FormGroup) {
@@ -286,14 +287,14 @@ onDocumentoKeyUp(contact: FormGroup) {
 }
   buscarClienteByRncOCedula(documento: string,documentoTipoID:number,contact: FormGroup) {
     this.buscandoDocumento = true;
-  
+
     let parametros = new ParametrosCita();
     parametros.clienteDocumento = documento;
     parametros.documentoTipoID = documentoTipoID;
-  
+
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
       "GetClienteByCedulaOrRnc", parametros).subscribe(response => {
-  
+
         if (response.ok) {
           if (response != null && response.ok && response.records != null && response.records.length > 0) {
             let cliente = response.records[0];
@@ -313,7 +314,7 @@ onDocumentoKeyUp(contact: FormGroup) {
         this.buscandoDocumento = false;
         this.toastService.error("Error conexion al servidor");
       });
-  
+
   }
 
   openModal(content, contact: FormGroup,index:any) {
@@ -332,6 +333,6 @@ onDocumentoKeyUp(contact: FormGroup) {
      }
     this.modalService.dismissAll()
   }
-  
- 
+
+
 }

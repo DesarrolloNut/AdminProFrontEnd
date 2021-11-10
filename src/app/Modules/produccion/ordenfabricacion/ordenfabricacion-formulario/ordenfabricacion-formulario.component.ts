@@ -122,6 +122,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
 
   guardar() {
 
+
     let OrdenFabricacion: OrdenFabricacion =  {
       almacenId: this.ofheader.almacenId,
       articuloId: this.articulo.id,
@@ -170,6 +171,8 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
 
     let ActionName = this.IsNewData ? "RegistrarOrdenFabricacionAndOrdenFabricacionDetalleViewModel" : "UpdateOrdenFabricacionAndOrdenFabricacionDetalleViewModel";
 
+    this.btnGuardarCargando = true;
+
     this.httpService.DoPostAny<OrdenFabricacion>(DataApi.OrdenFabricacion,
       ActionName, { OrdenFabricacion: OrdenFabricacion, OrdenFabricacionDetalles: OrdenFabricacionDetalle }).subscribe(response => {
 
@@ -187,11 +190,11 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
           else {
             // this.articulo = null;
           }
-          this.searching = false;
+          this.btnGuardarCargando = false;
         }
 
       }, error => {
-        this.searching = false;
+        this.btnGuardarCargando = false;
         this.toastService.error("Error conexion al servidor");
       });
 

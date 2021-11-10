@@ -675,6 +675,14 @@ GetNameEstado(estadoId: number){
       });
   }
 
+  MostrarBtnBalanza(model: OrdenFabricacionVista): boolean {
+    if (model.unidadMedida.toLocaleUpperCase() == "LBS" || model.unidadMedida.toLocaleUpperCase() == "KILOGRAMOS") {
+      return true;
+    }
+
+    return false;
+  }
+
 
 
 }

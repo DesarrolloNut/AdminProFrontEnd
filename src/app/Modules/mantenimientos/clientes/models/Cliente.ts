@@ -86,6 +86,8 @@ export class Cliente {
     isClientPrincipal: number;
     clientePadreTipoId :number;
     salario: number;
+    usuarioId: number;
+
 
     // contactos: Array<ClienteContactos>
 }

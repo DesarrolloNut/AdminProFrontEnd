@@ -263,6 +263,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       clientePadreId: [0],
       clientePadreTipoId: [0],
       isClientPrincipal: [0],
+      usuarioId: [Number(this.auth.tokenDecoded.nameid)],
       // contactos: new FormArray([])
     },
       {
@@ -289,10 +290,10 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       this.f.fechaNacimiento.setValue(new Date());
       this.f.sexo.setValue('');
     }
-
-
    // console.log(this.FormGenerales)
     this.f.numero.setValue(this.f.numero.value.toString())
+   this.f.usuarioId.setValue(Number(this.auth.tokenDecoded.nameid));
+
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
       metodo, this.FormGenerales.value).subscribe(response => {
 
@@ -400,8 +401,11 @@ export class ClienteDatosGeneralesComponent implements OnInit {
   }
   getClienteTabsValidaByID(id: number) {
     this.cargando = true;
+    let parametros = new ParametrosCita();
+    parametros.citaID = id;
+    parametros.servicioID = Number(this.auth.tokenDecoded.nameid);
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
-      "GetClienteTabsValidaByID", id).subscribe(response => {
+      "GetClienteTabsValidaByID", parametros).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {

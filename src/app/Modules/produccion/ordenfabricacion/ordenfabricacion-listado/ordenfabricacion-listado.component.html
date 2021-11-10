@@ -274,26 +274,59 @@
                 <td>{{articulext.almacenCodigoReferencia}}</td>
                 <!-- <td>{{articulext.metodoEmision == "M" ? "Manual" : "Automático"}}</td> -->
                 <td>
-                  <button class="btn btn-sm  btn-light m-1" *ngIf="!articulext.isPesaje" (click)="OnChangeIsPesaje(articulext)">
-                    <i class="fa fa-sm fa-edit"></i>
-                  </button>
 
-                  <button class="btn btn-sm btn-info m-1"  *ngIf="!articulext.isPesaje" (click)="OnChangePagePesaje(articulext, false)">
+                  <div *ngxPermissionsOnly="['produccion_ordenfabricacion_consumomanual']" class="d-inline-block">
+                    <div *ngIf="MostrarBtnBalanza(articulext)" class="d-inline-block">
+
+
+                      <button class="btn btn-sm  btn-light m-1" *ngIf="!articulext.isPesaje" (click)="OnChangeIsPesaje(articulext)">
+                        <i class="fa fa-sm fa-edit"></i>
+                      </button>
+
+                      <button class="btn btn-sm btn-success m-1" *ngIf="articulext.isPesaje && !articulext.loadingSaveConsumido" (click)="getLote(articulext)">
+                        <i class="fa fa-sm fa-check"></i>
+                      </button>
+
+                      <button class="btn btn-sm btn-success m-1" *ngIf="articulext.loadingSaveConsumido">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span class="sr-only">Loading...</span>
+                      </button>
+
+                      <button class="btn btn-sm btn-danger m-1" *ngIf="articulext.isPesaje && !articulext.loadingSaveConsumido" (click)="OnChangeIsPesaje(articulext)">
+                        <i class="fa fa-sm fa-times"></i>
+                      </button>
+
+
+                    </div>
+                  </div>
+
+
+
+                  <div   *ngIf="!MostrarBtnBalanza(articulext)" class="d-inline-block">
+
+                    <button class="btn btn-sm  btn-light m-1" *ngIf="!articulext.isPesaje" (click)="OnChangeIsPesaje(articulext)">
+                      <i class="fa fa-sm fa-edit"></i>
+                    </button>
+
+                    <button class="btn btn-sm btn-success m-1" *ngIf="articulext.isPesaje && !articulext.loadingSaveConsumido" (click)="getLote(articulext)">
+                      <i class="fa fa-sm fa-check"></i>
+                    </button>
+
+                    <button class="btn btn-sm btn-success m-1" *ngIf="articulext.loadingSaveConsumido">
+                      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                      <span class="sr-only">Loading...</span>
+                    </button>
+
+                    <button class="btn btn-sm btn-danger m-1" *ngIf="articulext.isPesaje && !articulext.loadingSaveConsumido" (click)="OnChangeIsPesaje(articulext)">
+                      <i class="fa fa-sm fa-times"></i>
+                    </button>
+
+                  </div>
+
+                  <button class="btn btn-sm btn-info m-1"  *ngIf="!articulext.isPesaje && MostrarBtnBalanza(articulext)" (click)="OnChangePagePesaje(articulext, false)">
                     <i class="fa fa-sm fa-balance-scale"></i>
                   </button>
 
-                  <button class="btn btn-sm btn-success m-1" *ngIf="articulext.isPesaje && !articulext.loadingSaveConsumido" (click)="getLote(articulext)">
-                    <i class="fa fa-sm fa-check"></i>
-                  </button>
-
-                  <button class="btn btn-sm btn-success m-1" *ngIf="articulext.loadingSaveConsumido">
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    <span class="sr-only">Loading...</span>
-                  </button>
-
-                  <button class="btn btn-sm btn-danger m-1" *ngIf="articulext.isPesaje && !articulext.loadingSaveConsumido" (click)="OnChangeIsPesaje(articulext)">
-                    <i class="fa fa-sm fa-times"></i>
-                  </button>
 
                 </td>
               </tr>
@@ -375,13 +408,16 @@
 
                 <td>
 
-                  <button class="btn btn-sm  btn-light m-1" *ngIf="!IsPesajeProducida" (click)="OnChangeProducida()">
-                    <i class="fa fa-sm fa-edit"></i>
-                  </button>
 
-                   <button class="btn btn-sm btn-info m-1" *ngIf="articulo.unidadMedida != 'Unidad' && !IsPesajeProducida" (click)="OnChangePagePesaje(ordenfabricacion, true)">
+                  <button class="btn btn-sm btn-info m-1" *ngIf="MostrarBtnBalanza(articulo)" (click)="OnChangePagePesaje(ordenfabricacion, true)">
                     <i class="fa fa-sm fa-balance-scale"></i>
                   </button>
+
+                  <div *ngxPermissionsOnly="['produccion_ordenfabricacion_consumomanual']" class="d-inline-block">
+
+                      <button class="btn btn-sm  btn-light m-1" *ngIf="!IsPesajeProducida" (click)="OnChangeProducida()">
+                        <i class="fa fa-sm fa-edit"></i>
+                      </button>
 
                   <button class="btn btn-sm btn-success m-1" *ngIf="IsPesajeProducida && !loadingSaveProducida" (click)="OnSubmitProducida()">
                     <i class="fa fa-sm fa-check"></i>
@@ -395,6 +431,11 @@
                   <button class="btn btn-sm btn-danger m-1" *ngIf="!IsPesajeProducida && loadingSaveProducida" (click)="OnChangeProducida()">
                     <i class="fa fa-sm fa-times"></i>
                   </button>
+
+                  </div>
+
+
+
 
                 </td>
               </tr>
