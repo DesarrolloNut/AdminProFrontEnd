@@ -141,8 +141,8 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
     // });
 
 
-    // this.startPingingBalanza();
-    this. empezarAmbientePrueba();
+    this.startPingingBalanza();
+    // this. empezarAmbientePrueba();
 
 
   }

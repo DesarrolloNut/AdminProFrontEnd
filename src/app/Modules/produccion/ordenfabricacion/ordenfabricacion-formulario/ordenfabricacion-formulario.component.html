@@ -233,7 +233,7 @@
                 </div>
 
                 <div
-                  class="col-md-12 text-right"  *ngIf="MostrarBtnReproceso && ofheader.estadoId == ValidOrden.PLANIFICADA">
+                  class="col-md-12 text-right"  *ngIf="MostrarBtnReproceso && ofheader.estadoId == ValidOrden.PLANIFICADA && ofheader.tipoId == ValidTipoOrden.ESPECIAL">
                   <button class="btn btn-sm btn-info m-1"   (click)="openModal(modalArticulo)">
                     <i class="fa fa-sm fa-plus"></i> Agregar articulo de
                     reproceso
