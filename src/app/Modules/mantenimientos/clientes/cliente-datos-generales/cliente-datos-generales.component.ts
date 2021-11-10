@@ -290,10 +290,10 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       this.f.fechaNacimiento.setValue(new Date());
       this.f.sexo.setValue('');
     }
-
-
    // console.log(this.FormGenerales)
     this.f.numero.setValue(this.f.numero.value.toString())
+   this.f.usuarioId.setValue(Number(this.auth.tokenDecoded.nameid));
+
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
       metodo, this.FormGenerales.value).subscribe(response => {
 
