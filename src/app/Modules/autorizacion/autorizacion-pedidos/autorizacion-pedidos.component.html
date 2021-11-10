@@ -71,8 +71,6 @@
                                 <th></th>
                                 <th>Pedido</th>
                                 <th>Cliente</th>
-                                <!-- <th>Límite crédito</th>
-                                <th>Balance</th> -->
                                 <th>Total Pedido</th>
                             </tr>
                         </thead>
@@ -87,17 +85,23 @@
                                     </button> -->
 
 
+                                    <button class="btn btn-sm btn-light m-1" *ngIf="!item.cargando"
+                                        (click)="openModalConfirm(modalConfirm,item)">
+                                        <i class="fa fa-sm fa-eye"></i>
+                                    </button>
+
+
                                     <ng-template
                                         [ngIf]="estadoAutorizacionAnterior && item.estadoAutorizacionId <= estadoAutorizacionAnterior.codigo">
                                         <!-- <ng-template
                                         [ngIf]="item.estadoAutorizacionId == 0 || item.estadoAutorizacionId == 1 && estadoAutorizacionUsuario > item.estadoAutorizacionId"> -->
                                         <!-- ESTADO PENDIENTE-->
 
-                                        <button class="btn btn-sm btn-success m-1"
+                                        <!-- <button class="btn btn-sm btn-success m-1"
                                             *ngIf="!item.cargando && (estadoAutorizacionUsuario >= item.estadoAutorizacionId)"
                                             (click)="openModalConfirm(modalConfirm,ACTIONSenum.AUTORIZAR,item)">
                                             <i class="fa fa-sm fa-check"></i>
-                                        </button>
+                                        </button> -->
 
                                         <!-- boton cargando -->
                                         <button *ngIf="item.cargando && isAutorizando" disabled
@@ -113,10 +117,10 @@
                                         <!-- <ng-template
                                         [ngIf]="estadoAutorizacionUsuario == 2 && (item.estadoAutorizacionId == 1 || item.estadoAutorizacionId == 2)"> -->
 
-                                        <button *ngIf="!item.cargando" class="btn btn-sm btn-warning m-1"
+                                        <!-- <button *ngIf="!item.cargando" class="btn btn-sm btn-warning m-1"
                                             (click)="openModalConfirm(modalConfirm,ACTIONSenum.DESAUTORIZAR,item)">
                                             <i class="fa fa-sm fa-times"></i>
-                                        </button>
+                                        </button> -->
 
                                         <!-- boton cargando -->
                                         <button *ngIf="item.cargando && !isAutorizando " disabled
@@ -127,19 +131,12 @@
                                     </ng-template>
 
                                 </td>
-                                <!-- <td><span class="badge badge-light text-info ">{{item.id}}</span></td> -->
                                 <td>
                                     <span> {{ item.codigoReferencia }}</span>
                                 </td>
                                 <td>
                                     <span>{{item.cliente }}</span>
                                 </td>
-                                <!-- <td>
-                                    <span>RD$ {{item.limiteCredito | number: '1.2'}}</span>
-                                </td>
-                                <td>
-                                    <span>RD$ {{item.balanceCliente | number: '1.2'}}</span>
-                                </td> -->
                                 <td>
                                     <span class="font-weight-bold">RD$ {{item.totalNeto | number: '1.2'}}</span>
                                 </td>
@@ -257,7 +254,7 @@
                                                         <span> ${{item.precio | number:'1.2-2'}} </span>
                                                     </td>
                                                     <td>
-                                                        <span> %{{item.porcientoDescuento | number:'1.2-2'}}</span>
+                                                        <span> {{item.porcientoDescuento | number:'1.2-2'}}</span>
                                                     </td>
                                                     <td>
                                                         <span> ${{item.subtotal | number:'1.2-2'}} </span>
@@ -346,6 +343,12 @@
 
                                 <div class="col-12 text-right">
                                     <hr>
+                                    <h4 class="font-weight-bold">Última factura :
+                                        {{cotizacionSeleccionada.fechaUltimaFactura | date : 'dd/MM/yyyy'}}
+                                        (<span>
+                                            {{cotizacionSeleccionada.diasUltimaFechaFactura}} días
+                                        </span>)
+                                    </h4>
                                     <h4 class="font-weight-bold">Límite de crédito : $
                                         {{cotizacionSeleccionada.limiteCredito |
                                         number:'1.2-2' }}
@@ -361,11 +364,8 @@
                                     <h4 class="font-weight-bold" [ngClass]=" {
                                         'text-success': porcentajeCalculado <= 35,
                                         'text-warning': porcentajeCalculado > 35 && porcentajeCalculado <= 65,
-                                        'text-danger': porcentajeCalculado > 65
-                                }
-                                    ">
-                                        {{ porcentajeCalculado | number :
-                                        '1.0-0' }}%
+                                        'text-danger': porcentajeCalculado > 65 }">
+                                        {{ porcentajeCalculado | number : '1.0-0' }}%
                                     </h4>
                                 </div>
 
@@ -380,23 +380,82 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-12 text-center">
+                        <!-- <div class="col-12 text-center">
                             <hr>
-                            <i class="fa fa-question fa-3x text-info"></i>
+                            <i class="fa fa-question fa-2x text-info"></i>
                             <p class="mt-2"><strong>¿Estás seguro?</strong></p>
-                        </div>
+                        </div> -->
+
+
+
                         <div class="col-12">
-                            <div class="form-group">
-                                <!-- <label for="exampleFormControlTextarea1">Escribe tu comen</label> -->
-                                <textarea placeholder="Escribe tu comentario" class="form-control"
-                                    [(ngModel)]="comentario" id="exampleFormControlTextarea1" rows="3"></textarea>
+
+                            <div class="row">
+
+                                <div class="form-group col-md-4">
+                                    <label for="example-email">Tipo promesa</label>
+                                    <ng-select [items]="[]" bindLabel="nombre" bindValue="codigo"
+                                        notFoundText="No resultados">
+                                    </ng-select>
+                                </div>
+                                <div class="form-group col-4">
+                                    <label>Fecha promesa</label>
+                                    <ejs-datepicker [format]="'dd-MM-yyyy'"></ejs-datepicker>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <!-- <label for="exampleFormControlTextarea1">Escribe tu comen</label> -->
+                                    <textarea placeholder="Escribe tu comentario" class="form-control"
+                                        [(ngModel)]="comentario" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger m-1" (click)="onBtnModalOk()">Desautorizar</button>
-                    <button type="button" class="btn btn-success m-1" (click)="onBtnModalOk()">Autorizar</button>
+
+                    <ng-template
+                        [ngIf]="estadoAutorizacionAnterior && cotizacionSeleccionada.estadoAutorizacionId <= estadoAutorizacionAnterior.codigo">
+                        <!-- <ng-template
+                    [ngIf]="item.estadoAutorizacionId == 0 || item.estadoAutorizacionId == 1 && estadoAutorizacionUsuario > item.estadoAutorizacionId"> -->
+                        <!-- ESTADO PENDIENTE-->
+
+                        <button class="btn btn-sm btn-success m-1"
+                            *ngIf="!cotizacionSeleccionada.cargando && (estadoAutorizacionUsuario >= cotizacionSeleccionada.estadoAutorizacionId)"
+                            (click)="autorizar()">
+                            <i class="fa fa-sm fa-check"></i> Autorizar
+                        </button>
+
+                        <!-- boton cargando -->
+                        <button *ngIf="cotizacionSeleccionada.cargando && isAutorizando" disabled
+                            class="btn btn-success m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span>
+                        </button>
+
+                    </ng-template>
+
+
+                    <ng-template
+                        [ngIf]="cotizacionSeleccionada.estadoAutorizacionId == estadoAutorizacionUsuario && estadoAutorizacionAnterior">
+                        <!-- <ng-template
+                    [ngIf]="estadoAutorizacionUsuario == 2 && (item.estadoAutorizacionId == 1 || item.estadoAutorizacionId == 2)"> -->
+
+                        <button *ngIf="!cotizacionSeleccionada.cargando" class="btn btn-sm btn-danger m-1"
+                            (click)="desautorizar()">
+                            <i class="fa fa-sm fa-times"></i> Desautorizar
+                        </button>
+
+                        <!-- boton cargando -->
+                        <button *ngIf="cotizacionSeleccionada.cargando && !isAutorizando " disabled
+                            class="btn btn-warning m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span>
+                        </button>
+
+                    </ng-template>
+
+
+                    <!-- <button type="button" class="btn btn-danger m-1" (click)="desautorizar()">Desautorizar</button>
+                    <button type="button" class="btn btn-success m-1" (click)="autorizar()">Autorizar</button> -->
                 </div>
             </div>
         </div>

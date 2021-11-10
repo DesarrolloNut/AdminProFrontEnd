@@ -51,7 +51,7 @@ export class AutorizacionPedidosComponent implements OnInit {
   estadoAutorizacionSiguiente: ComboBox;
   estadoAutorizacionAnterior: ComboBox;
 
-  btnClicked: number;
+  // btnClicked: number;
   isAutorizando: boolean;
   cargandoAutorizacion: boolean;
   // itemSeleccionado: CotizacionListadoViewModel;
@@ -214,11 +214,11 @@ export class AutorizacionPedidosComponent implements OnInit {
 
   }
 
-  openModalConfirm(content, btnClicked: number, item: CotizacionListadoViewModel) {
+  openModalConfirm(content, item: CotizacionListadoViewModel) {
     this.comentario = null;
     this.getFacturasPendientesPago(item.clienteId);
-    this.modalService.open(content, { windowClass: "myCustomModalClass", backdrop: 'static' });
-    this.btnClicked = btnClicked;
+    this.modalService.open(content, { windowClass: "myCustomModalClass" });
+    // this.btnClicked = btnClicked;
     // this.itemSeleccionado = item;
 
 
@@ -235,19 +235,19 @@ export class AutorizacionPedidosComponent implements OnInit {
       return;
     }
 
-    if (this.btnClicked == this.ACTIONSenum.AUTORIZAR) {
-      this.autorizar()
-      console.log("autorizando")
-      return;
-    }
-    if (this.btnClicked == this.ACTIONSenum.DESAUTORIZAR) {
-      console.log("Desautorizando")
-      this.desautorizar();
-      return;
-    }
-    if (this.btnClicked == 3) {
-      return;
-    }
+    // if (this.btnClicked == this.ACTIONSenum.AUTORIZAR) {
+    //   this.autorizar()
+    //   console.log("autorizando")
+    //   return;
+    // }
+    // if (this.btnClicked == this.ACTIONSenum.DESAUTORIZAR) {
+    //   console.log("Desautorizando")
+    //   this.desautorizar();
+    //   return;
+    // }
+    // if (this.btnClicked == 3) {
+    //   return;
+    // }
 
     this.modalService.dismissAll()
 
@@ -255,12 +255,25 @@ export class AutorizacionPedidosComponent implements OnInit {
 
   autorizar() {
 
+    //comentario obligatorioc cuando sea gestionar
+    if (this.estadoAutorizacionUsuario == 1 && (!this.comentario || this.comentario.length < 10)) {
+      this.toastService.warning("Ingresar comentario válido");
+      return;
+    }
+
     this.isAutorizando = true;
     this.actualizarEstadoArticulos();
 
   }
 
   desautorizar() {
+
+    //comentario obligatorioc cuando sea gestionar
+    if (this.estadoAutorizacionUsuario == 1 && (!this.comentario || this.comentario.length < 10)) {
+      this.toastService.warning("Ingresar comentario válido");
+      return;
+    }
+
     this.isAutorizando = false;
     this.actualizarEstadoArticulos()
   }
@@ -515,7 +528,9 @@ export class AutorizacionPedidosComponent implements OnInit {
 
   calcularPorcentaje() {
 
-    if (this.cotizacionSeleccionada) {
+    this.porcentajeCalculado = 0
+
+    if (this.cotizacionSeleccionada && this.cotizacionSeleccionada.limiteCredito > 0) {
       this.porcentajeCalculado = ((this.cotizacionSeleccionada.limiteCredito - this.cotizacionSeleccionada.totalNeto -
         this.totalPendientePagar) / this.cotizacionSeleccionada.limiteCredito) * 100;
     }
