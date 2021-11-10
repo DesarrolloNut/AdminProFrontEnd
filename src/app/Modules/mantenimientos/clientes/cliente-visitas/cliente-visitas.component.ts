@@ -34,8 +34,8 @@ export class ClienteVisitasComponent implements OnInit {
    cargandoTiposRuta      = false;
    cargandoFVisitasCombo  = false;
    cargadoRutas           = false;
-  
-  //LISTA 
+
+  //LISTA
    diaSemana: Dias[] = new Array<Dias>();
    frecuenciaVisita  : FrecuenciaVisita[] = new Array<FrecuenciaVisita>();
    frecuenciaVisitas : any[];
@@ -76,6 +76,7 @@ export class ClienteVisitasComponent implements OnInit {
 
     this.FormVisitas = this.formBuilder.group({
       clienteId: [this.clientId, [Validators.required]],
+      usuarioId: [Number(this.auth.tokenDecoded.nameid)],
       rutaId:[0,[Validators.required]],
       tipoRutaId: [1, [Validators.required]],
       frecuenciaVisitaId:[0,[Validators.required]],
@@ -97,7 +98,7 @@ export class ClienteVisitasComponent implements OnInit {
 
       this.f.clienteId.setValue(this.clientId);
       this.btnGuardarCargando = true;
-  
+
       this.httpService.DoPostAny<FrecuenciaVisita>(DataApi.ClienteFrecuenciaVisitaRuta,
         'InsertarOActualizarFrecuenciaVisitas', this.FormVisitas.value).subscribe(response => {
           if (!response.ok) {
@@ -105,7 +106,7 @@ export class ClienteVisitasComponent implements OnInit {
             this.btnGuardarCargando = false;
           } else {
               if(response.valores?.length>0){
-            
+
                 let f:FrecuenciaVisitaResponse= response.valores[0];
 
                  if(f.countId>0){
@@ -122,13 +123,13 @@ export class ClienteVisitasComponent implements OnInit {
           this.btnGuardarCargando = false;
           this.toastService.error("Error conexion al servidor");
         });
-  
-  
+
+
 
   }
 
 
- 
+
   GetFrecuenciaVisitasByClienteID() {
     this.cargando = true;
     this.httpService.DoPostAny<FrecuenciaVisita>(DataApi.ClienteFrecuenciaVisitaRuta,
@@ -139,7 +140,7 @@ export class ClienteVisitasComponent implements OnInit {
       }, error => {
         this.cargando = false;
         this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
- 
+
         // setTimeout(() => {
         //   this.getDias();
         // }, 1000);
@@ -190,7 +191,7 @@ export class ClienteVisitasComponent implements OnInit {
 
     }
   }
-   
+
   }
 
 

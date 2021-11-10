@@ -57,9 +57,7 @@ export class ClientesListadoComponent implements OnInit {
     { key: "UsuarioId", value:this.usuarioId},
     { key: "tipo", value: this.tipo },]
 
-    if(this.usuarioId==1015 ||  this.usuarioId==156 || this.usuarioId==1){
-      this.showButtonAutorizar=true;
-    }
+
     this.httpService.GetAllWithPagination<ClienteViewModelCustomized>(DataApi.Cliente, "GetClientesListadoCustomized", "ID", this.paginaNumeroActual,
       this.paginaSize, false, parametros).subscribe(x => {
 

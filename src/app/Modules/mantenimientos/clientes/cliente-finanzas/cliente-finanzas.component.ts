@@ -29,7 +29,7 @@ export class ClienteFinanzasComponent implements OnInit {
 
   FormFinanza: FormGroup;
   public state : TipoAnexoEnum;
-  
+
 
   //BOOLEANOS
   cargando    = false;
@@ -38,13 +38,13 @@ export class ClienteFinanzasComponent implements OnInit {
   submitted             = false;
   loadingCondicionPagos = false;
   loadingPlazos         = false;
- 
+
   //LISTAS
     CondicionesPagos: ComboBox[];
     Plazos: ComboBox[];
     DocumentosTipoAnexo: ComboBox[];
  ///
- 
+
  filesFromInput: any[] = [];
  filesSubidos: FilesUploaded[] = [];
 
@@ -58,7 +58,7 @@ export class ClienteFinanzasComponent implements OnInit {
    loadingDeleteFile: boolean;
 
    imageFilselected = new FilesUploaded();
-   
+
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
@@ -69,7 +69,7 @@ export class ClienteFinanzasComponent implements OnInit {
     private auth: AuthenticationService,
     private formBuilder: FormBuilder,
     ) { }
-    
+
 
 
   ngOnInit() {
@@ -87,7 +87,7 @@ export class ClienteFinanzasComponent implements OnInit {
 
 
   onSubmit() {
-    this.submitted = true; 
+    this.submitted = true;
     if (this.FormFinanza.invalid)
       return;
     this.guardarOActualizarClienteFinanza();
@@ -97,6 +97,7 @@ export class ClienteFinanzasComponent implements OnInit {
 
     this.FormFinanza = this.formBuilder.group({
       clienteId: [this.clientId],
+      usuarioId: [Number(this.auth.tokenDecoded.nameid)],
       limiteCredito: [0, [Validators.required]],
       clienteTipoId: [0],
       condicionPagoId: [null, [Validators.required]],
@@ -113,10 +114,10 @@ export class ClienteFinanzasComponent implements OnInit {
       //SI LA CONDICION DE PAGO ES CONTADO
 
       this.f.plazoId.setValue(0)
-      
+
      }else if(this.f.condicionPagoId.value==2){
       //SI LA CONDICION DE PAGO ES CREDITO
-      
+
       //SI EL CLIENTE TIPO ES DIFERENTE DE EMPLEADO
       if( this.f.clienteTipoId.value!=12 && this.f.clienteTipoId.value!=15){
 
@@ -172,7 +173,7 @@ getClienteFinanzaByID(id: number) {
            }
            this.FormFinanza.setValue(clientefinanza);
            this.getArchivosSubidos();
-       
+
         } else {
           this.toastService.warning("Información no encontrado");
           this.router.navigateByUrl('/mantenimientos/cliente');
@@ -220,7 +221,7 @@ getNameTipoAnexo(item:any):string{
       });
   }
 
-  
+
   getDocumentosTipoAnexo() {
      this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
       "GetDocumentoTipoAnexo", null).subscribe(response => {
@@ -284,7 +285,7 @@ getNameTipoAnexo(item:any):string{
           })
      });
 
-   
+
     const formData = new FormData();
     formData.append("clienteId", this.clientId + '');
 
@@ -319,7 +320,7 @@ getNameTipoAnexo(item:any):string{
 
          this.btnGuardarCargando = false;
       }, error => {
-        this.btnGuardarCargando = false; 
+        this.btnGuardarCargando = false;
         this.toastService.error("Error conexion al servidor");
       });
 
@@ -336,7 +337,7 @@ getNameTipoAnexo(item:any):string{
           this.toastService.error(response.errores[0], "Error");
         } else {
           this.filesFromInput = response.records;
-          
+
         }
         this.cargandoAnexos = false;
 
@@ -388,7 +389,7 @@ getNameTipoAnexo(item:any):string{
     // this.modalService.dismissAll();
   }
 
- 
+
   onDeleteitem(item:any,index: number) {
     this.filesFromInput.splice(index, 1);
     item.loading=false;
@@ -441,7 +442,7 @@ getNameTipoAnexo(item:any):string{
     if( a.length === 1 || ( a[0] === "" && a.length === 2 ) ) {
         return "";
     }
-    return a.pop().toLowerCase();   
+    return a.pop().toLowerCase();
   }
 
 
@@ -459,7 +460,7 @@ getNameTipoAnexo(item:any):string{
     }else{
       return file.url ;
     }
- 
+
   }
  goPdf(item:any){
   window.open(
@@ -468,11 +469,11 @@ getNameTipoAnexo(item:any):string{
   );
  }
   openModal(content,item:any) {
-  
+
     this.imageFilselected.id = item.id;
     this.imageFilselected.name = item.name;
     this.imageFilselected.url = this.formatUrlFile(item);
-    
+
     this.modalService.open(content, { size: 'lg',centered:true });
     // this.articuloSeleccionado = item
   }
