@@ -65,9 +65,10 @@
 
                             <tr *ngFor="let cliente of clientes">
                                 <td>
-                                    <button class="btn btn-sm btn-info m-1" [routerLink]="[cliente.id]">
+                                    <button class="btn btn-sm btn-info m-1"  *ngxPermissionsOnly="['mantenimientos_cliente_editar']" [routerLink]="[cliente.id]">
                                         <i class="fa fa-sm fa-edit"></i>
                                     </button>
+
                                     <div  *ngxPermissionsOnly="['mantenimientos_cliente_autoriza_subidaSAP']" style="display: inline-block;">
 
                                       <button   class="btn btn-sm btn-success m-1" (click)="autorizarCambiosCliente(cliente)"
