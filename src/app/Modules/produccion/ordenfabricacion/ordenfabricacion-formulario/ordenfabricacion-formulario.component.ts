@@ -159,7 +159,8 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
         unidadMedida: x.unidadMedida,
         costoArticulo: x.costoArticulo,
         id: x.id,
-        ordenFabricacionId: 0
+        ordenFabricacionId: 0,
+        estadoId: 0
 
       };
       OrdenFabricacionDetalle.push(ofd);

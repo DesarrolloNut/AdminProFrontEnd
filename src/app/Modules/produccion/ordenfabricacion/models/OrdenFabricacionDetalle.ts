@@ -14,6 +14,7 @@ export class OrdenFabricacionDetalle {
     this.unidadMedida = "";
     this.metodoEmisionId = 0;
     this.costoArticulo = 0;
+    this.estadoId = 0;
   }
 
   id: number;
@@ -29,4 +30,5 @@ export class OrdenFabricacionDetalle {
   unidadMedida: string;
   metodoEmisionId: number;
   costoArticulo: number;
+  estadoId: number;
 }

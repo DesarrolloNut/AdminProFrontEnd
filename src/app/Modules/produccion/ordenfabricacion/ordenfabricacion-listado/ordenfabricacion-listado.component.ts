@@ -30,6 +30,7 @@ export class OrdenfabricacionListadoComponent implements OnInit {
   Search: string = "";
   paginaNumeroActual = 1;
   Cargando: boolean = false;
+  btnGuardarCargando: boolean = false;
   CargandoBar: boolean = false;
   totalPaginas: number = 0;
   paginaSize: number = 5;
@@ -59,6 +60,7 @@ export class OrdenfabricacionListadoComponent implements OnInit {
   selectOrden: OrdenFabricacionVista = new OrdenFabricacionVista();
   ORDENFABRICACION_CONSUMO_MAXIMO: number = 0;
   ORDENFABRICACION_CONSUMO_MINIMO: number = 0;
+  selectMaterial: OrdenFabricacionVista = new OrdenFabricacionVista();
 
 
   public get ValidOrden(): typeof OrdenFabricacionEstadoEnum {
@@ -146,8 +148,9 @@ GetNameEstado(estadoId: number){
     this.router.navigateByUrl("/produccion/ordenfabricacionpesaje");
   }
 
-  OnSubmitConsumido(model: OrdenFabricacionVista){
-
+  OnSubmitConsumido(model: OrdenFabricacionVista, content){
+    // console.log(model);
+    this.selectMaterial = model;
     let maximo = (model.cantidadRequerida * this.ORDENFABRICACION_CONSUMO_MAXIMO)
     let minimo = ((model.cantidadRequerida * this.ORDENFABRICACION_CONSUMO_MINIMO) - 1)
 
@@ -170,7 +173,8 @@ GetNameEstado(estadoId: number){
     }
 
     if (model.consumido < model.cantidadRequerida) {
-      this.toastService.warning("El valor consumido es menor a la cantidad requerida");
+      this.modalService.open(content, { size:'lg'});
+      // this.toastService.warning("El valor consumido es menor a la cantidad requerida");
       return;
     }
 
@@ -188,54 +192,36 @@ GetNameEstado(estadoId: number){
     this.OnSaveConsumido(model);
   }
 
-  OnSaveConsumido(articulosExtras: OrdenFabricacionVista) {
+  OnSaveConsumido(model: OrdenFabricacionVista) {
 
-
-    // if((articulosExtras.lote == null || articulosExtras.lote.trim() == "") && articulosExtras.gestionado == true){
-    //   this.toastService.warning("Debe poner un lote.");
-    //   return;
-    // }
-      articulosExtras.loadingSaveConsumido = true;
+    // if((model.lote == null || model.lote.trim() == "") && model.gestionado == true){
+      //   this.toastService.warning("Debe poner un lote.");
+      //   return;
+      // }
+      model.loadingSaveConsumido = true;
+      model.estadoId = 1;
       this.httpService
         .DoPostAny<OrdenFabricacionVista>(
           DataApi.OrdenFabricacionDetalle,
           "UpdateConsumidoYCostoReal",
-          articulosExtras
+          model
         )
         .subscribe(
           (response) => {
             if (!response.ok) {
               this.toastService.error(response.errores[0]);
             } else {
-              articulosExtras.isPesaje = !articulosExtras.isPesaje;
-              this.getOrdenFabricacion(articulosExtras.ordenFabricacionId);
-              // this.updateOrdenFabricacionEstado(this.ofheader.id);
-              this.getData();
-
-              // let dataOfb = this.data.filter(x => x.id == this.selectOrden.id);
-
-              // if (dataOfb.length > 0) {
-              //   let num = dataOfb[0].noConsumido;
-                let ArtCantidad = this.articulosExtras.length;
-                let ArtCunsumido = this.articulosExtras.filter(x => x.consumido > 0).length;
-
-                if (ArtCunsumido == 1 && ArtCantidad == 1) {
-                  this.updateOrdenFabricacionEstado(this.ofheader.id, this.selectOrden.estadoId+2);
-                  this.modalService.dismissAll();
-                }else if(ArtCunsumido == 1 && ArtCantidad > 1 && this.selectOrden.estadoId == OrdenFabricacionEstadoEnum.PENDIENTECONSUMO){
-                  this.updateOrdenFabricacionEstado(this.ofheader.id, this.selectOrden.estadoId+1);
-                }else if(ArtCantidad == ArtCunsumido && ArtCantidad > 1 && ArtCunsumido > 1){
-                  this.updateOrdenFabricacionEstado(this.ofheader.id, this.selectOrden.estadoId+1);
-                  this.modalService.dismissAll();
-                }
-              //}
+              model.isPesaje = !model.isPesaje;
+              this.getOrdenFabricacion(model.ordenFabricacionId);
+                this.getData();
+                this.updateEstadoOrden();
 
 
             }
-            articulosExtras.loadingSaveConsumido = false;
+            model.loadingSaveConsumido = false;
           },
           (error) => {
-            articulosExtras.loadingSaveConsumido = false;
+            model.loadingSaveConsumido = false;
             this.toastService.error(
               "No se pudo obtener los articulos extras",
               "Error conexion al servidor"
@@ -247,6 +233,26 @@ GetNameEstado(estadoId: number){
           }
         );
 
+  }
+
+  updateEstadoOrden(){
+
+    let ArtCantidad = this.articulosExtras.length;
+    let ArtCunsumido = this.articulosExtras.filter(x => x.consumido > 0).length;
+    let EstaPendiente = this.articulosExtras.filter(x => x.estadoHijoId == 2).length >= 1 ? true : false;
+
+    // SI TODOS LOS ARTICULOS ESTAN COSUMIDO
+    if (ArtCantidad == ArtCunsumido) {
+      let estado =  EstaPendiente ? OrdenFabricacionEstadoEnum.PENDIENTEAUTORIZARCONSUMO : OrdenFabricacionEstadoEnum.PENDIENTETERMINALREPORT;
+      this.updateOrdenFabricacionEstado(this.ofheader.id, estado);
+      if (!EstaPendiente) {
+        this.modalService.dismissAll();
+      }
+    }
+
+    if(ArtCunsumido >= 1 && ArtCantidad > 1 && this.selectOrden.estadoId == OrdenFabricacionEstadoEnum.PENDIENTECONSUMO){
+      this.updateOrdenFabricacionEstado(this.ofheader.id, OrdenFabricacionEstadoEnum.PROCESANDOCONSUMO);
+    }
   }
 
   OnSubmitProducida(){
@@ -329,6 +335,53 @@ GetNameEstado(estadoId: number){
       backdrop: "static",
     });
   }
+
+
+  EnviarAutorizarModal(){
+    this.btnGuardarCargando = true;
+
+    const index =  this.articulosExtras.indexOf(this.selectMaterial);
+    let ordendetalle = this.articulosExtras[index];
+
+    let model:OrdenFabricacionDetalle = new OrdenFabricacionDetalle();
+    model.id = ordendetalle.id
+    model.estadoId = 2;
+
+    this.httpService
+      .DoPostAny<OrdenFabricacion>(
+        DataApi.OrdenFabricacionDetalle,
+        "UpdateEstadoOrdenFabricacionDetalle",
+        model
+      )
+      .subscribe(
+        async (response) => {
+          if (!response.ok) {
+            this.toastService.error(response.errores[0]);
+          } else {
+             await this.getOrdenFabricacionDetalle(this.selectOrden.id);
+             await this.updateEstadoOrden();
+            //  console.log(this.articulosExtras);
+          }
+          this.btnGuardarCargando = false;
+        },
+        (error) => {
+          this.btnGuardarCargando = false;
+          this.toastService.error(
+            "No se pudo obtener los articulos extras",
+            "Error conexion al servidor"
+          );
+
+          setTimeout(() => {
+            //this.getOrdenFabricacion();
+          }, 1000);
+        }
+      );
+  }
+
+
+
+
+
 
   getOrdenFabricacion(id: number) {
     this.loadingArticulosExtras = true;
@@ -553,7 +606,7 @@ GetNameEstado(estadoId: number){
       });
   }
 
-  getLote(model: OrdenFabricacionVista) {
+  getLote(model: OrdenFabricacionVista, content) {
     model.loadingSaveConsumido = true;
 
       if (model.gestionado) {
@@ -576,7 +629,7 @@ GetNameEstado(estadoId: number){
                 }
                 this.lote = record ?? new LotesOrdenFabricacion();
 
-                this.OnSubmitConsumido(model);
+                this.OnSubmitConsumido(model, content);
 
               }
               else {
@@ -590,7 +643,7 @@ GetNameEstado(estadoId: number){
             this.toastService.error("Error conexion al servidor");
           });
       }else{
-        this.OnSubmitConsumido(model);
+        this.OnSubmitConsumido(model, content);
         model.loadingSaveConsumido = false;
       }
 

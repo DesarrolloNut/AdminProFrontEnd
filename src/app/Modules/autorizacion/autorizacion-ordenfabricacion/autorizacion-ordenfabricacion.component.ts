@@ -48,7 +48,7 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
   ModelSelected: OrdenFabricacionVista;
   CargandoDetalle: boolean;
   dataDetalle: OrdenFabricacionVista[];
-  IsComsumido: boolean = false;
+  // IsComsumido: boolean = false;
   ordenfabricacion: OrdenFabricacion =  new OrdenFabricacion();
   articulo: Articulo = new Articulo();
   porcentajeDesviacion: number = 0;
@@ -274,11 +274,11 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
   actualizarEstadoArticulos(item: any, estado = null) {
 
 
-    this.getEstaComsumido(item.id);
-    if(this.IsComsumido && OrdenFabricacionEstadoEnum.PENDIENTECONSUMO == item.estadoId){
-      this.toastService.warning("No se a consumido todos los materiales de la orden de fabricación. ");
-      return;
-    }
+    // this.getEstaComsumido(item.id);
+    // if(this.IsComsumido && OrdenFabricacionEstadoEnum.PENDIENTECONSUMO == item.estadoId){
+    //  this.toastService.warning("No se a consumido todos los materiales de la orden de fabricación. ");
+    //   return;
+    // }
 
 
     item.cargando = true;
@@ -364,21 +364,21 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
 
   }
 
-  getEstaComsumido(Id:number) {
-    this.httpService.DoPostAny<any>(DataApi.OrdenFabricacion, "GetEstaComsumido", Id).subscribe(x => {
-        if (x.ok) {
-          // console.log(x.records);
-          this.IsComsumido = x.records[0];
-        } else {
-          this.toastService.error(x.errores[0]);
-          console.error(x.errores[0]);
-        }
-      }, error => {
-        console.error(error);
-        this.toastService.error("Error conexion al servidor");
-      });
+  // getEstaComsumido(Id:number) {
+  //   this.httpService.DoPostAny<any>(DataApi.OrdenFabricacion, "GetEstaComsumido", Id).subscribe(x => {
+  //       if (x.ok) {
+  //         // console.log(x.records);
+  //         this.IsComsumido = x.records[0];
+  //       } else {
+  //         this.toastService.error(x.errores[0]);
+  //         console.error(x.errores[0]);
+  //       }
+  //     }, error => {
+  //       console.error(error);
+  //       this.toastService.error("Error conexion al servidor");
+  //     });
 
-  }
+  // }
 
   UpdateFechaCerrada(Id:number) {
 

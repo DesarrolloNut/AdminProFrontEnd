@@ -141,8 +141,8 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
     // });
 
 
-    this.startPingingBalanza();
-    // this. empezarAmbientePrueba();
+    // this.startPingingBalanza();
+    this. empezarAmbientePrueba();
 
 
   }
@@ -172,7 +172,7 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
   empezarAmbientePrueba() {
 
     setInterval(() => {
-      this.pesoBalanza = this.getRandomInt(0, 5) + 'KGZ';
+      this.pesoBalanza = this.getRandomInt(1, 10) + 'KGZ';
       this.pesoBalanzaUltimaFecha = new Date();
 
       this.formatStringFromBalanza();
@@ -389,18 +389,34 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
     let ArtCantidad = this.ListaArticuloDetalle.length;
     let ArtCunsumido = this.ListaArticuloDetalle.filter(x => x.consumido > 0).length;
     let id = this.ordenfabricacionvista.ordenFabricacionId;
-    let estado = this.ordenfabricacionvista.estadoId; //this.selectOrden.estadoId;
+    let estadoOrden = this.ordenfabricacionvista.estadoId; //this.selectOrden.estadoId;
+    let EstaPendiente = this.ListaArticuloDetalle.filter(x => x.estadoHijoId == 1).length > 1 ? true : false;
 
 
-    if (ArtCunsumido == 1 && ArtCantidad == 1) {
-      let num = estado == OrdenFabricacionEstadoEnum.PENDIENTETERMINALREPORT ? 1 : 2;
+    // if (ArtCunsumido == 1 && ArtCantidad == 1) {
+    //   let num = estado == OrdenFabricacionEstadoEnum.PENDIENTETERMINALREPORT ? 1 : 2;
 
-      this.updateOrdenFabricacionEstado(id, estado + num);
-    }else if(ArtCunsumido == 1 && ArtCantidad > 1 && estado == OrdenFabricacionEstadoEnum.PENDIENTECONSUMO){
-      this.updateOrdenFabricacionEstado(id, estado + 1);
-    }else if(ArtCantidad == ArtCunsumido && ArtCantidad > 1 && ArtCunsumido > 1){
-      this.updateOrdenFabricacionEstado(id, estado + 1);
+    //   this.updateOrdenFabricacionEstado(id, estado + num);
+    // }else if(ArtCunsumido == 1 && ArtCantidad > 1 && estado == OrdenFabricacionEstadoEnum.PENDIENTECONSUMO){
+    //   this.updateOrdenFabricacionEstado(id, estado + 1);
+    // }else if(ArtCantidad == ArtCunsumido && ArtCantidad > 1 && ArtCunsumido > 1){
+    //   this.updateOrdenFabricacionEstado(id, estado + 1);
+    // }
+
+
+
+
+    // SI TODOS LOS ARTICULOS ESTAN COSUMIDO
+    if (ArtCantidad == ArtCunsumido) {
+      let estado =  EstaPendiente ? OrdenFabricacionEstadoEnum.PENDIENTEAUTORIZARCONSUMO : OrdenFabricacionEstadoEnum.PENDIENTETERMINALREPORT;
+      this.updateOrdenFabricacionEstado(id, estado);
     }
+
+    if(ArtCunsumido >= 1 && ArtCantidad > 1 && estadoOrden == OrdenFabricacionEstadoEnum.PENDIENTECONSUMO){
+      this.updateOrdenFabricacionEstado(id, OrdenFabricacionEstadoEnum.PROCESANDOCONSUMO);
+    }
+
+
   }
 
   updateOrdenFabricacionEstado(id: number, estado: number) {
