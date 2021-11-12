@@ -291,7 +291,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       this.f.sexo.setValue('');
     }
    // console.log(this.FormGenerales)
-    this.f.numero.setValue(this.f.numero.value.toString())
+   this.f.numero.setValue(this.f.numero.value.toString())
    this.f.usuarioId.setValue(Number(this.auth.tokenDecoded.nameid));
 
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
@@ -357,6 +357,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
           //validar que existe
           if (response.records.length > 0) {
             let cliente = response.records[0];
+            console.log( response.records[0])
 
             //Transforma DATA
             cliente.documentoTipoID = cliente.documentoTipoID<=0 ? null : cliente.documentoTipoID
@@ -366,7 +367,6 @@ export class ClienteDatosGeneralesComponent implements OnInit {
             cliente.subSectorID = cliente.subSectorID<=0 ? 0 : cliente.subSectorID
             cliente.tipoComprobante = cliente.tipoComprobante<=0 ? null : cliente.tipoComprobante
             cliente.clienteTipoID = cliente.clienteTipoID<=0 ? null : cliente.clienteTipoID
-
             ///isClientPrincipal cuando su valor es 0
             cliente.isClientPrincipal=1;
 
@@ -376,6 +376,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
             }
 
             this.FormGenerales.setValue(cliente);
+            this.f.numero.setValue(Number(cliente.numero))
 
             this.clienteExtraInfo.emit(cliente);
 
