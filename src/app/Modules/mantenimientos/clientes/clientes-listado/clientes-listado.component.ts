@@ -27,7 +27,7 @@ export class ClientesListadoComponent implements OnInit {
   arrayLoading = new Array(this.paginaSize);
   clientes: Cliente[] = [] //tu modelo
   tipos:ComboBox[]=[];
-  tipo:number=0;
+  tipo:number=1;
   usuarioId:number=0;
   showButtonAutorizar = false;
   constructor(private toastService: ToastrService,
@@ -44,9 +44,9 @@ export class ClientesListadoComponent implements OnInit {
   }
 
   fillComboTipos(){
-    this.tipos.push({codigo:0,nombre:"Todos",grupo:'',grupoID:''})
-    this.tipos.push({codigo:1,nombre:"Principales",grupo:'',grupoID:''})
-    this.tipos.push({codigo:2,nombre:"Sucursales",grupo:'',grupoID:''})
+    this.tipos.push({codigo:1,nombre:"Todos",grupo:'',grupoID:''})
+    this.tipos.push({codigo:2,nombre:"Principales",grupo:'',grupoID:''})
+    this.tipos.push({codigo:3,nombre:"Sucursales",grupo:'',grupoID:''})
   }
   getClientes() {
     this.showButtonAutorizar=false;
@@ -55,7 +55,7 @@ export class ClientesListadoComponent implements OnInit {
     let parametros: Parametro[] = [
     { key: "Search", value: this.Search },
     { key: "UsuarioId", value:this.usuarioId},
-    { key: "tipo", value: this.tipo },]
+    { key: "Tipo", value: this.tipo },]
 
 
     this.httpService.GetAllWithPagination<ClienteViewModelCustomized>(DataApi.Cliente, "GetClientesListadoCustomized", "ID", this.paginaNumeroActual,
