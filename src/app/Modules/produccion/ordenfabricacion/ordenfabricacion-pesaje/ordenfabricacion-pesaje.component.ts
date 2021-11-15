@@ -340,7 +340,7 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
 
       if(this.ordenfabricacionvista.id > 0 && this.isTerminalReport == false) {
     this.btnGuardarCargando = true;
-    this.ordenfabricacionvista.estadoId = estado;
+    this.ordenfabricacionvista.estadoHijoId = estado;
         this.httpService.DoPostAny<ArticuloPesaje>(DataApi.OrdenFabricacionDetalle,
           "UpdateConsumidoYCostoReal", this.ordenfabricacionvista).subscribe(response => {
             // console.log(response);
@@ -395,35 +395,27 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
   updateEstado(){
 
     let ArtCantidad = this.ListaArticuloDetalle.length;
-    let ArtCunsumido = this.ListaArticuloDetalle.filter(x => x.consumido > 0).length;
+    let ArtCunsumido = this.ListaArticuloDetalle.filter(x =>  x.estadoHijoId == OrdenFabricacionDetalleEstadoEnum.CONSUMIDO).length;
     let id = this.ordenfabricacionvista.ordenFabricacionId;
     let estadoOrden = this.ordenfabricacionvista.estadoId; //this.selectOrden.estadoId;
-    let EstaPendiente = this.ListaArticuloDetalle.filter(x => x.estadoHijoId == 1).length > 1 ? true : false;
-
-
-    // if (ArtCunsumido == 1 && ArtCantidad == 1) {
-    //   let num = estado == OrdenFabricacionEstadoEnum.PENDIENTETERMINALREPORT ? 1 : 2;
-
-    //   this.updateOrdenFabricacionEstado(id, estado + num);
-    // }else if(ArtCunsumido == 1 && ArtCantidad > 1 && estado == OrdenFabricacionEstadoEnum.PENDIENTECONSUMO){
-    //   this.updateOrdenFabricacionEstado(id, estado + 1);
-    // }else if(ArtCantidad == ArtCunsumido && ArtCantidad > 1 && ArtCunsumido > 1){
-    //   this.updateOrdenFabricacionEstado(id, estado + 1);
-    // }
+    let EstaPendiente = this.ListaArticuloDetalle.filter(x =>  x.estadoHijoId == OrdenFabricacionDetalleEstadoEnum.PENDIENTEAUTORIZAR).length > 1 ? true : false;
 
 
 
+        if(ArtCunsumido >= 1 && ArtCantidad > 1 && estadoOrden == OrdenFabricacionEstadoEnum.PENDIENTECONSUMO){
+          this.updateOrdenFabricacionEstado(id, OrdenFabricacionEstadoEnum.PROCESANDOCONSUMO);
+        }
 
-    // SI TODOS LOS ARTICULOS ESTAN COSUMIDO
-    if (ArtCantidad == ArtCunsumido) {
-      let estado =  EstaPendiente ? OrdenFabricacionEstadoEnum.PENDIENTEAUTORIZARCONSUMO : OrdenFabricacionEstadoEnum.PENDIENTETERMINALREPORT;
-      this.updateOrdenFabricacionEstado(id, estado);
-      this.modalService.dismissAll();
-    }
+      // SI TODOS LOS ARTICULOS ESTAN COSUMIDO
+      if (ArtCantidad == ArtCunsumido) {
+        this.updateOrdenFabricacionEstado(id, OrdenFabricacionEstadoEnum.PENDIENTETERMINALREPORT);
+        this.modalService.dismissAll();
+      }
 
-    if(ArtCunsumido >= 1 && ArtCantidad > 1 && estadoOrden == OrdenFabricacionEstadoEnum.PENDIENTECONSUMO){
-      this.updateOrdenFabricacionEstado(id, OrdenFabricacionEstadoEnum.PROCESANDOCONSUMO);
-    }
+      if (ArtCantidad != ArtCunsumido && EstaPendiente) {
+        this.updateOrdenFabricacionEstado(id, OrdenFabricacionEstadoEnum.PENDIENTEAUTORIZARCONSUMO);
+        this.modalService.dismissAll();
+      }
 
 
   }

@@ -1,4 +1,4 @@
-import { OrdenFabricacionEstadoEnum } from './../../produccion/ordenfabricacion/models/OrdenFabricacionEstadoEnum';
+import { OrdenFabricacionDetalleEstadoEnum, OrdenFabricacionEstadoEnum } from './../../produccion/ordenfabricacion/models/OrdenFabricacionEstadoEnum';
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsService } from 'ngx-permissions';
@@ -56,6 +56,10 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
 
   public get ValidOrden(): typeof OrdenFabricacionEstadoEnum {
     return OrdenFabricacionEstadoEnum;
+  }
+
+  public get ValidOrdenDetalle(): typeof OrdenFabricacionDetalleEstadoEnum {
+    return OrdenFabricacionDetalleEstadoEnum;
   }
 
   constructor(private toastService: ToastrService,
@@ -229,6 +233,9 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
     // this.estadoAutorizacionUsuario = this.ValidOrden.CERRADA;
     this.actualizarEstadoArticulos(this.itemSeleccionado, this.ValidOrden.CERRADA)
   }
+  autorizarModalDetalle(model:OrdenFabricacionVista){
+    this.updateOrdenDetalle(model, true);
+  }
 
   desautorizar(item: any) {
     this.isAutorizando = false;
@@ -241,6 +248,10 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
     this.actualizarEstadoArticulos(this.itemSeleccionado, this.ValidOrden.PLANIFICADA)
   }
 
+  desautorizarModalDetalle(model:OrdenFabricacionVista) {
+    this.updateOrdenDetalle(model, false);
+  }
+
   getPorcentaje():number{
       let costoUnitario = (this.ordenfabricacion.costoReal / this.ordenfabricacion.cantidad);
       let diferencia = (costoUnitario / this.articulo.costoObjetivo);
@@ -251,22 +262,31 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
 
   }
 
-  autorizarMasiva() {
+  updateOrdenDetalle(model:OrdenFabricacionVista, IsAutorizado: boolean) {
 
-    // this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
-    //   "AutorizarArticulosMasivoSegunNivelUsuario", Number(this.authService.tokenDecoded.nameid)).subscribe(response => {
+    model.cargando = true;
 
-    //     if (!response.ok) {
-    //       this.toastService.error(response.errores[0]);
-    //       console.error(response.errores[0]);
-    //     } else {
-    //       this.toastService.success("Realizado", "OK");
-    //       this.getData()
-    //     }
-    //   }, error => {
-    //     this.toastService.error("No se pudo realizar", "Error conexion al servidor");
-    //     console.error(error)
-    //   });
+    this.httpService.DoPostAny<any>(DataApi.OrdenFabricacionDetalle,
+      "UpdateOrdenFabricacionDetalleEnAutorizacion", {OrdenDetalleId: model.id, Autorizado: IsAutorizado}).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+          model.cargando = false;
+
+        } else {
+          this.toastService.success("Realizado", "OK");
+          this.getData()
+          this.getDataDetalle(this.ModelSelected.id);
+          model.cargando = false;
+
+        }
+      }, error => {
+        this.toastService.error("No se pudo realizar", "Error conexion al servidor");
+        console.error(error)
+        model.cargando = false;
+
+      });
 
   }
 
@@ -340,7 +360,7 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
   openModalDevolucionDetalle(content, model: OrdenFabricacionVista) {
     this.ModelSelected = model;
     this.getDataDetalle(model.id);
-    this.modalService.open(content, { size: 'xl', backdrop: "static", });
+    this.modalService.open(content, { windowClass: "myCustomModalClass", backdrop: "static", });
   }
 
   getDataDetalle(Id:number) {
@@ -350,6 +370,7 @@ export class AutorizacionOrdenfabricacionComponent implements OnInit {
 
         if (x.ok) {
           this.dataDetalle = x.records;
+          // console.log(x.records);
 
         } else {
           this.toastService.error(x.errores[0]);

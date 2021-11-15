@@ -58,7 +58,7 @@
 
 
                   <ng-template
-                  [ngIf]="estadoAutorizacionAnterior && item.estadoId == estadoAutorizacionAnterior.codigo">
+                  [ngIf]="estadoAutorizacionAnterior && item.estadoId == estadoAutorizacionAnterior.codigo && item.estadoId != ValidOrden.PENDIENTEAUTORIZARCONSUMO">
 
                   <button class="btn btn-sm  m-1"  *ngIf="!item.cargando" [ngClass]="{'btn-success': item.estadoId < ValidOrden.PENDIENTECERRARSUPERVISORPRODUCCION, 'btn-info': item.estadoId >= ValidOrden.PENDIENTECERRARSUPERVISORPRODUCCION}"
                       (click)="autorizar(item, modalAutorizacionUsuario)">
@@ -75,7 +75,7 @@
               </ng-template>
 
 
-              <ng-template [ngIf]="item.estadoId == estadoAutorizacionUsuario && item.estadoId < ValidOrden.PENDIENTECERRARSUPERVISORPRODUCCION">
+              <ng-template [ngIf]="item.estadoId == estadoAutorizacionUsuario && item.estadoId < ValidOrden.PENDIENTECERRARSUPERVISORPRODUCCION && item.estadoId != ValidOrden.PENDIENTEAUTORIZARCONSUMO">
 
                   <button *ngIf="!item.cargando" class="btn btn-sm btn-warning m-1"
                       (click)="desautorizar(item)">
@@ -217,12 +217,14 @@
                 <th scope="col">Disponible</th>
                 <th scope="col">Costo Real</th>
                 <th scope="col">Almacén</th>
+                <th scope="col">Estado</th>
                 <th></th>
               </tr>
             </thead>
             <tbody [hidden]="CargandoDetalle">
 
               <tr *ngFor="let item of dataDetalle">
+
                 <th style="font-size: 14px;">{{item.articulo}}</th>
                 <td style="font-size: 14px;">
                  <span class="font-weight-bold">{{item.nombre}}</span>
@@ -234,16 +236,52 @@
                 </td>
                 <td>{{item.cantidadBase }}</td>
                 <td>{{item.requerida }}</td>
+                <td class="font-weight-bold" [ngClass]="{
+                  'text-success' : item.estadoHijoId == ValidOrdenDetalle.CONSUMIDO,
+                  'text-warning ' : item.estadoHijoId == ValidOrdenDetalle.PENDIENTEAUTORIZAR
 
-                <td>
-
-                  <input type="text" mask="separator.6" thousandSeparator=","  [readonly]="!item.isPesaje" [(ngModel)]="item.consumido" [ngClass]="{'form-control-plaintext': !item.isPesaje, 'form-control': item.isPesaje}">
-                </td>
+                }">{{item.consumido}}</td>
                 <td>{{item.disponible}}</td>
                 <td>{{item.costoReal}}</td>
                 <!-- <td>{{item.unidadMedida}}</td> -->
                 <td>{{item.almacenCodigoReferencia}}</td>
                 <!-- <td>{{item.metodoEmision == "M" ? "Manual" : "Automático"}}</td> -->
+                <td>
+                  <div class="circulo" [ngClass]="{
+                  'bg-success' : item.estadoHijoId == ValidOrdenDetalle.CONSUMIDO,
+                  'bg-warning ' : item.estadoHijoId == ValidOrdenDetalle.PENDIENTEAUTORIZAR
+
+                }"></div>
+                  <span class="text-dark">
+                    {{item.estadoHijoId == ValidOrdenDetalle.PENDIENTEAUTORIZAR ? "Pendiente Autorizar": item.estadoHijoId == ValidOrdenDetalle.CONSUMIDO ? "Consumido": "" }}
+                  </span>
+              </td>
+              <td>
+
+                <button class="btn btn-sm btn-success m-1"  *ngIf="!item.cargando && item.estadoHijoId == ValidOrdenDetalle.PENDIENTEAUTORIZAR"
+                (click)="autorizarModalDetalle(item)">
+                  <i class="fa fa-sm fa-check"></i>
+                </button>
+
+              <!-- boton cargando -->
+              <button *ngIf="item.cargando" disabled class="btn btn-success m-1" type="button">
+                  <span class="spinner-border spinner-border-sm"></span>
+              </button>
+
+              <button *ngIf="!item.cargando && item.estadoHijoId == ValidOrdenDetalle.PENDIENTEAUTORIZAR" class="btn btn-sm btn-warning m-1"
+               (click)="desautorizarModalDetalle(item)">
+                  <i class="fa fa-sm fa-times"></i>
+              </button>
+
+            <!-- boton cargando -->
+            <button *ngIf="item.cargando" disabled class="btn btn-warning m-1" type="button">
+                <span class="spinner-border spinner-border-sm"></span>
+            </button>
+
+
+
+
+              </td>
               </tr>
             </tbody>
           </table>

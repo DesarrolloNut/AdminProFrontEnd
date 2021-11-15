@@ -60,7 +60,7 @@ export class OrdenfabricacionListadoComponent implements OnInit {
   selectOrden: OrdenFabricacionVista = new OrdenFabricacionVista();
   ORDENFABRICACION_CONSUMO_MAXIMO: number = 0;
   ORDENFABRICACION_CONSUMO_MINIMO: number = 0;
-  selectMaterial: OrdenFabricacionVista = new OrdenFabricacionVista();
+  selectMaterial: OrdenFabricacionVista;
 
 
   public get ValidOrden(): typeof OrdenFabricacionEstadoEnum {
@@ -154,7 +154,7 @@ GetNameEstado(estadoId: number){
   }
 
   OnSubmitConsumido(model: OrdenFabricacionVista, content){
-    // console.log(model);
+    console.log(model);
     this.selectMaterial = model;
     let maximo = (model.cantidadRequerida * this.ORDENFABRICACION_CONSUMO_MAXIMO)
     let minimo = ((model.cantidadRequerida * this.ORDENFABRICACION_CONSUMO_MINIMO) - 1)
@@ -203,7 +203,7 @@ GetNameEstado(estadoId: number){
       //   return;
       // }
       model.loadingSaveConsumido = true;
-      model.estadoId = estado;
+      model.estadoHijoId = estado;
       this.httpService
         .DoPostAny<OrdenFabricacionVista>(
           DataApi.OrdenFabricacionDetalle,
@@ -217,8 +217,8 @@ GetNameEstado(estadoId: number){
             } else {
               model.isPesaje = !model.isPesaje;
               await this.getOrdenFabricacion(model.ordenFabricacionId);
-              await this.getData();
               await this.updateEstadoOrden();
+              await this.getData();
 
 
             }
@@ -241,20 +241,32 @@ GetNameEstado(estadoId: number){
 
   updateEstadoOrden(){
 
+    // console.log(this.articulosExtras);
     let ArtCantidad = this.articulosExtras.length;
-    let ArtCunsumido = this.articulosExtras.filter(x => x.consumido > 0).length;
-    let EstaPendiente = this.articulosExtras.filter(x => x.estadoHijoId == 2).length >= 1 ? true : false;
+    let ArtCunsumido = this.articulosExtras.filter(x => x.estadoHijoId == OrdenFabricacionDetalleEstadoEnum.CONSUMIDO).length;
+    let EstaPendiente = this.articulosExtras.filter(x => x.estadoHijoId == OrdenFabricacionDetalleEstadoEnum.PENDIENTEAUTORIZAR).length >= 1 ? true : false;
+
+    //  console.log(ArtCantidad)
+    //  console.log(ArtCunsumido)
+    //  console.log(EstaPendiente)
+
+      if(ArtCunsumido >= 1 && ArtCantidad > 1 && this.selectOrden.estadoId == OrdenFabricacionEstadoEnum.PENDIENTECONSUMO){
+        this.updateOrdenFabricacionEstado(this.ofheader.id, OrdenFabricacionEstadoEnum.PROCESANDOCONSUMO);
+      }
 
     // SI TODOS LOS ARTICULOS ESTAN COSUMIDO
     if (ArtCantidad == ArtCunsumido) {
-      let estado =  EstaPendiente ? OrdenFabricacionEstadoEnum.PENDIENTEAUTORIZARCONSUMO : OrdenFabricacionEstadoEnum.PENDIENTETERMINALREPORT;
-      this.updateOrdenFabricacionEstado(this.ofheader.id, estado);
+      this.updateOrdenFabricacionEstado(this.ofheader.id, OrdenFabricacionEstadoEnum.PENDIENTETERMINALREPORT);
         this.modalService.dismissAll();
     }
 
-    if(ArtCunsumido >= 1 && ArtCantidad > 1 && this.selectOrden.estadoId == OrdenFabricacionEstadoEnum.PENDIENTECONSUMO){
-      this.updateOrdenFabricacionEstado(this.ofheader.id, OrdenFabricacionEstadoEnum.PROCESANDOCONSUMO);
+    if (ArtCantidad != ArtCunsumido && EstaPendiente) {
+      this.updateOrdenFabricacionEstado(this.ofheader.id, OrdenFabricacionEstadoEnum.PENDIENTEAUTORIZARCONSUMO);
+        this.modalService.dismissAll();
     }
+
+
+
   }
 
   OnSubmitProducida(){
@@ -340,7 +352,7 @@ GetNameEstado(estadoId: number){
 
     const index =  this.articulosExtras.indexOf(this.selectMaterial);
     let ordendetalle = this.articulosExtras[index];
-
+    console.log(ordendetalle)
     this.OnSaveConsumido(ordendetalle, OrdenFabricacionDetalleEstadoEnum.PENDIENTEAUTORIZAR);
     this.btnGuardarCargando = false;
   }
