@@ -16,7 +16,10 @@ export enum OrdenFabricacionTipoEnum {
   ESTANDAR = 1,
   ESPECIAL = 2,
   DESMONTAR = 3,
+}
 
-
-
+export enum OrdenFabricacionDetalleEstadoEnum {
+  NOCONSUMIDO = 0,
+  CONSUMIDO = 1,
+  PENDIENTEAUTORIZAR = 2
 }

@@ -19,8 +19,11 @@ import { ArticuloPesosExtras } from '../../pesaje/models/ArticuloPesosExtras';
 import { ArticuloPesosExtrasViewModel } from '../../pesaje/models/ArticuloPesosExtrasViewModel';
 import { LoteAlmacen } from '../../pesaje/models/LoteAlmacen';
 import { OrdenFabricacionVista } from '../models/OrdenFabricacionVista';
-import { OrdenFabricacionEstadoEnum } from '../models/OrdenFabricacionEstadoEnum';
+import { OrdenFabricacionDetalleEstadoEnum, OrdenFabricacionEstadoEnum } from '../models/OrdenFabricacionEstadoEnum';
 import { Configuraciones } from 'src/app/shared/enums/Configuraciones';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { OrdenFabricacionDetalle } from '../models/OrdenFabricacionDetalle';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-ordenfabricacion-pesaje',
@@ -80,12 +83,14 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
   isTerminalReport: boolean = false;
   ORDENFABRICACION_CONSUMO_MINIMO: number = 0;
   ORDENFABRICACION_CONSUMO_MAXIMO: number = 0;
+  pesoNetoOrden: number;
 
   constructor(
     private toastService: ToastrService,
     private httpService: BackendService,
     private authService: AuthenticationService,
     private signalRService: BalanzaPesajeSignalrService,
+    private modalService: NgbModal,
     private router: Router,
     private ordenfabriService: OrdenfabricacionPesajeService,
     private route: ActivatedRoute,
@@ -235,7 +240,7 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
   }
 
 
-  onSubmit() {
+  onSubmit(content) {
     let maximo = (this.ordenfabricacionvista.requerida * this.ORDENFABRICACION_CONSUMO_MAXIMO)
     let minimo = ((this.ordenfabricacionvista.requerida * this.ORDENFABRICACION_CONSUMO_MINIMO) - 1)
     //validaciones
@@ -285,7 +290,9 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
     }
 
     if ((this.pesoNeto < this.ordenfabricacionvista.requerida) && this.isTerminalReport == false ) {
-      this.toastService.warning("Está consumiendo menos de la cantidad requerida.");
+      this.pesoNetoOrden = this.pesoNeto;
+      this.modalService.open(content, { size:'lg'});
+      //this.toastService.warning("Está consumiendo menos de la cantidad requerida.");
       return;
     }
 
@@ -304,25 +311,25 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.guardar()
+    this.guardar(OrdenFabricacionDetalleEstadoEnum.CONSUMIDO)
   }
 
-  guardar() {
+  guardar(estado:OrdenFabricacionDetalleEstadoEnum) {
 
-    let request: ArticuloPesaje = {
-      id: 0,
-      estadoID: 1,
-      articuloID: this.articulo.id,
-      almacenDesde: 0,
-      almacenHasta: 0,
-      fechaVencimiento: this.fechaVencimiento,
-      pesoCanastos: this.pesoCanastos,
-      pesoNeto: this.pesoNeto,
-      pesoBalanza: this.pesoBalanzaLBNumber,
-      lote: this.loteSearch,
-      usuarioID: Number(this.authService.tokenDecoded.nameid),
-      detalleJSON: JSON.stringify(this.articulosExtras.filter(x => x.pesoSeleccionado && x.cantidadSeleccionada > 0)),
-    };
+    // let request: ArticuloPesaje = {
+    //   id: 0,
+    //   estadoID: 1,
+    //   articuloID: this.articulo.id,
+    //   almacenDesde: 0,
+    //   almacenHasta: 0,
+    //   fechaVencimiento: this.fechaVencimiento,
+    //   pesoCanastos: this.pesoCanastos,
+    //   pesoNeto: this.pesoNeto,
+    //   pesoBalanza: this.pesoBalanzaLBNumber,
+    //   lote: this.loteSearch,
+    //   usuarioID: Number(this.authService.tokenDecoded.nameid),
+    //   detalleJSON: JSON.stringify(this.articulosExtras.filter(x => x.pesoSeleccionado && x.cantidadSeleccionada > 0)),
+    // };
 
     this.ordenfabricacionvista.consumido = this.pesoNeto;
     this.ordenfabricacionvista.lote = this.lote.lote;
@@ -333,6 +340,7 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
 
       if(this.ordenfabricacionvista.id > 0 && this.isTerminalReport == false) {
     this.btnGuardarCargando = true;
+    this.ordenfabricacionvista.estadoId = estado;
         this.httpService.DoPostAny<ArticuloPesaje>(DataApi.OrdenFabricacionDetalle,
           "UpdateConsumidoYCostoReal", this.ordenfabricacionvista).subscribe(response => {
             // console.log(response);
@@ -410,6 +418,7 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
     if (ArtCantidad == ArtCunsumido) {
       let estado =  EstaPendiente ? OrdenFabricacionEstadoEnum.PENDIENTEAUTORIZARCONSUMO : OrdenFabricacionEstadoEnum.PENDIENTETERMINALREPORT;
       this.updateOrdenFabricacionEstado(id, estado);
+      this.modalService.dismissAll();
     }
 
     if(ArtCunsumido >= 1 && ArtCantidad > 1 && estadoOrden == OrdenFabricacionEstadoEnum.PENDIENTECONSUMO){
@@ -812,6 +821,16 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
 
       });
   }
+
+
+
+  EnviarAutorizarModal(){
+
+    this.guardar(OrdenFabricacionDetalleEstadoEnum.PENDIENTEAUTORIZAR);
+
+  }
+
+
 
 
   // ngAfterViewInit() {

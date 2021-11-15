@@ -13,7 +13,7 @@ import { OrdenFabricacion } from "../models/OrdenFabricacion";
 import { ListaMaterialesHeader } from "../models/ListaMaterialesHeader";
 import { Router, ActivatedRoute } from "@angular/router";
 import { OrdenfabricacionPesajeService } from "src/app/Services/ordenfabricacion-pesaje.service";
-import { OrdenFabricacionEstadoEnum } from "../models/OrdenFabricacionEstadoEnum";
+import { OrdenFabricacionDetalleEstadoEnum, OrdenFabricacionEstadoEnum } from "../models/OrdenFabricacionEstadoEnum";
 import { EstadosGeneralesKeyEnum } from "src/app/shared/enums/EstadosGeneralesKeyEnum";
 import { ComboBox } from "src/app/shared/model/ComboBox";
 import { LotesOrdenFabricacion } from "../models/LotesOrdenFabricacion";
@@ -65,6 +65,11 @@ export class OrdenfabricacionListadoComponent implements OnInit {
 
   public get ValidOrden(): typeof OrdenFabricacionEstadoEnum {
     return OrdenFabricacionEstadoEnum;
+  }
+
+
+  public get ValidOrdenDetalle(): typeof OrdenFabricacionDetalleEstadoEnum {
+    return OrdenFabricacionDetalleEstadoEnum;
   }
 
   constructor(
@@ -189,17 +194,16 @@ GetNameEstado(estadoId: number){
     //   return;
     // }
 
-    this.OnSaveConsumido(model);
+    this.OnSaveConsumido(model, OrdenFabricacionDetalleEstadoEnum.CONSUMIDO);
   }
 
-  OnSaveConsumido(model: OrdenFabricacionVista) {
-
+  OnSaveConsumido(model: OrdenFabricacionVista, estado:OrdenFabricacionDetalleEstadoEnum) {
     // if((model.lote == null || model.lote.trim() == "") && model.gestionado == true){
       //   this.toastService.warning("Debe poner un lote.");
       //   return;
       // }
       model.loadingSaveConsumido = true;
-      model.estadoId = 1;
+      model.estadoId = estado;
       this.httpService
         .DoPostAny<OrdenFabricacionVista>(
           DataApi.OrdenFabricacionDetalle,
@@ -207,14 +211,14 @@ GetNameEstado(estadoId: number){
           model
         )
         .subscribe(
-          (response) => {
+          async (response) => {
             if (!response.ok) {
               this.toastService.error(response.errores[0]);
             } else {
               model.isPesaje = !model.isPesaje;
-              this.getOrdenFabricacion(model.ordenFabricacionId);
-                this.getData();
-                this.updateEstadoOrden();
+              await this.getOrdenFabricacion(model.ordenFabricacionId);
+              await this.getData();
+              await this.updateEstadoOrden();
 
 
             }
@@ -245,9 +249,7 @@ GetNameEstado(estadoId: number){
     if (ArtCantidad == ArtCunsumido) {
       let estado =  EstaPendiente ? OrdenFabricacionEstadoEnum.PENDIENTEAUTORIZARCONSUMO : OrdenFabricacionEstadoEnum.PENDIENTETERMINALREPORT;
       this.updateOrdenFabricacionEstado(this.ofheader.id, estado);
-      if (!EstaPendiente) {
         this.modalService.dismissAll();
-      }
     }
 
     if(ArtCunsumido >= 1 && ArtCantidad > 1 && this.selectOrden.estadoId == OrdenFabricacionEstadoEnum.PENDIENTECONSUMO){
@@ -291,10 +293,6 @@ GetNameEstado(estadoId: number){
             this.IsPesajeProducida = !this.IsPesajeProducida;
             await this.updateOrdenFabricacionEstadoPendiente(this.ofheader.id, this.ordenfabricacion.estadoId)
             // this.getOrdenFabricacion(this.ordenfabricacion.id);
-
-
-
-
 
           }
           this.loadingSaveProducida = false;
@@ -343,39 +341,8 @@ GetNameEstado(estadoId: number){
     const index =  this.articulosExtras.indexOf(this.selectMaterial);
     let ordendetalle = this.articulosExtras[index];
 
-    let model:OrdenFabricacionDetalle = new OrdenFabricacionDetalle();
-    model.id = ordendetalle.id
-    model.estadoId = 2;
-
-    this.httpService
-      .DoPostAny<OrdenFabricacion>(
-        DataApi.OrdenFabricacionDetalle,
-        "UpdateEstadoOrdenFabricacionDetalle",
-        model
-      )
-      .subscribe(
-        async (response) => {
-          if (!response.ok) {
-            this.toastService.error(response.errores[0]);
-          } else {
-             await this.getOrdenFabricacionDetalle(this.selectOrden.id);
-             await this.updateEstadoOrden();
-            //  console.log(this.articulosExtras);
-          }
-          this.btnGuardarCargando = false;
-        },
-        (error) => {
-          this.btnGuardarCargando = false;
-          this.toastService.error(
-            "No se pudo obtener los articulos extras",
-            "Error conexion al servidor"
-          );
-
-          setTimeout(() => {
-            //this.getOrdenFabricacion();
-          }, 1000);
-        }
-      );
+    this.OnSaveConsumido(ordendetalle, OrdenFabricacionDetalleEstadoEnum.PENDIENTEAUTORIZAR);
+    this.btnGuardarCargando = false;
   }
 
 

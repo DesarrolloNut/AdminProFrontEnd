@@ -242,7 +242,7 @@
                           <i class="fas fa-times"></i> Cancelar
                       </button>
 
-                      <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="button" (click)="onSubmit()">
+                      <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="button" (click)="onSubmit(modalAutorizaMaterial)">
                           <i class="fas fa-check"></i> Guardar
                       </button>
 
@@ -256,3 +256,71 @@
       </div>
   </div>
 </div>
+
+<ng-template #modalAutorizaMaterial let-modal>
+  <div class="modal-header bg-dark">
+    <h4 class="modal-title text-white">Articulo para autorizar</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')" >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+
+    <!-- <div class="row" *ngIf="cantidadArticuloDeCambio == 0 && searching">
+      <div class="col-12">
+        <h2>No hay articulo para autorizar.</h2>
+      </div>
+    </div> -->
+
+    <div class="row">
+      <div class="col-12" [hidden]="searching">
+        <div class="table-responsive" style="overflow-y: auto; height: 500px">
+          <table class="table table-sm">
+            <thead class="sticky-top">
+              <tr>
+                <th scope="col">Articulo</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Cantidad Requerida</th>
+                <th scope="col">Peso Neto</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <th style="font-size: 14px">{{ ordenfabricacionvista.articulo }}</th>
+                <td style="font-size: 14px">{{ ordenfabricacionvista.nombre }}</td>
+                <td style="font-size: 14px">{{ ordenfabricacionvista.cantidadRequerida | number:'1.4-4' }}</td>
+                <td style="font-size: 14px">{{ pesoNetoOrden | number:'1.4-4' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <app-loading-listado [hidden]="!searching"></app-loading-listado>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')" > Cerrar</button>
+
+    <button type="button" *ngIf="!btnGuardarCargando" class="btn btn-success m-1" (click)="EnviarAutorizarModal()" ><i class="fa fa-sm fa-check"></i> Enviar Autorizar</button>
+    <button *ngIf="btnGuardarCargando" disabled class="btn btn-success m-1" type="button">
+      <span class="spinner-border spinner-border-sm"></span> Enviando
+  </button>
+  </div>
+</ng-template>
+
+
+
+
+
+
+
+
+
+
+
+
+

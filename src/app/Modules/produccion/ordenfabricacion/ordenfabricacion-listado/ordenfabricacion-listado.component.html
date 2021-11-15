@@ -235,13 +235,13 @@
                 <th scope="col">Nombre</th>
                 <th scope="col">Base</th>
                 <th scope="col">Requerida</th>
+                <th scope="col">Estado</th>
                 <th scope="col">Consumido</th>
                 <th scope="col">Lote</th>
                 <th scope="col">Disponible</th>
                 <th scope="col">Costo Real</th>
                 <!-- <th scope="col">Unidad</th> -->
                 <th scope="col">Almacén</th>
-                <!-- <th scope="col">Método</th> -->
                 <th></th>
               </tr>
             </thead>
@@ -260,6 +260,16 @@
                 </td>
                 <td>{{articulext.cantidadBase }}</td>
                 <td>{{articulext.cantidadRequerida }}</td>
+                <td>
+                  <div class="circulo" [ngClass]="{
+                  'bg-success' : articulext.estadoHijoId == ValidOrdenDetalle.CONSUMIDO,
+                  'bg-warning ' : articulext.estadoHijoId == ValidOrdenDetalle.PENDIENTEAUTORIZAR
+
+                }"></div>
+                  <span class="text-dark">
+                    {{articulext.estadoHijoId == ValidOrdenDetalle.PENDIENTEAUTORIZAR ? "Pendiente Autorizar": articulext.estadoHijoId == ValidOrdenDetalle.CONSUMIDO ? "Consumido": "" }}
+                  </span>
+              </td>
 
                 <td>
                   <input type="number"   [readonly]="!articulext.isPesaje" [(ngModel)]="articulext.consumido" [ngClass]="{'form-control-plaintext': !articulext.isPesaje, 'form-control': articulext.isPesaje}">
@@ -276,7 +286,7 @@
                 <td>
 
                   <div *ngxPermissionsOnly="['produccion_ordenfabricacion_consumomanual']" class="d-inline-block">
-                    <div *ngIf="MostrarBtnBalanza(articulext)" class="d-inline-block">
+                    <div *ngIf="MostrarBtnBalanza(articulext) && articulext.estadoHijoId != ValidOrdenDetalle.PENDIENTEAUTORIZAR" class="d-inline-block">
 
 
                       <button class="btn btn-sm  btn-light m-1" *ngIf="!articulext.isPesaje" (click)="OnChangeIsPesaje(articulext)">
@@ -302,7 +312,7 @@
 
 
 
-                  <div   *ngIf="!MostrarBtnBalanza(articulext)" class="d-inline-block">
+                  <div   *ngIf="!MostrarBtnBalanza(articulext) && articulext.estadoHijoId != ValidOrdenDetalle.PENDIENTEAUTORIZAR" class="d-inline-block">
 
                     <button class="btn btn-sm  btn-light m-1" *ngIf="!articulext.isPesaje" (click)="OnChangeIsPesaje(articulext)">
                       <i class="fa fa-sm fa-edit"></i>
@@ -323,7 +333,7 @@
 
                   </div>
 
-                  <button class="btn btn-sm btn-info m-1"  *ngIf="!articulext.isPesaje && MostrarBtnBalanza(articulext)" (click)="OnChangePagePesaje(articulext, false)">
+                  <button class="btn btn-sm btn-info m-1"  *ngIf="!articulext.isPesaje && MostrarBtnBalanza(articulext) && articulext.estadoHijoId != ValidOrdenDetalle.PENDIENTEAUTORIZAR" (click)="OnChangePagePesaje(articulext, false)">
                     <i class="fa fa-sm fa-balance-scale"></i>
                   </button>
 
