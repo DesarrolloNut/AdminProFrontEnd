@@ -1,6 +1,6 @@
 export interface CotizacionListadoViewModel {
     id: number;
-    codigoReferencia: number;
+    codigoReferencia: string;
     cotizador: string;
     sucursal: string;
     vendedor: string;

@@ -20,12 +20,6 @@
                             class="btn btn-success ml-2"> <i class="fa fa-file-excel"></i>
                         </button> -->
 
-                        <!-- boton cargando -->
-                        <button *ngIf="loadingReporteExcel" disabled class="btn btn-success ml-2" type="button">
-                            <span class="spinner-border spinner-border-sm"></span>
-                        </button>
-
-
                     </div>
 
                     <div class="col-md-8 p-2">
@@ -86,7 +80,7 @@
 
 
                                     <button class="btn btn-sm btn-light m-1" *ngIf="!item.cargando"
-                                        (click)="openModalConfirm(modalConfirm,item)">
+                                        (click)="openModalAutorizar(modalConfirm,item)">
                                         <i class="fa fa-sm fa-eye"></i>
                                     </button>
 
@@ -192,7 +186,7 @@
         <div class="row" *ngIf="!cargandoAutorizacion">
             <div class="col">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="modal-title">Confirmación</h4>
+                    <h4 class="modal-title" id="modal-title">Pedido #{{cotizacionSeleccionada.codigoReferencia}}</h4>
                     <button type="button" class="close" aria-describedby="modal-title"
                         (click)="modal.dismiss('Cross click')">
                         <span aria-hidden="true">&times;</span>
@@ -203,29 +197,171 @@
 
                     <div class="row">
 
-
                         <div class="col-12">
                             <h5 class="text-info"> <i class="fa fa-user"></i> Cliente:
                                 {{cotizacionSeleccionada.cliente}}</h5>
                             <h5> <i class="fa fa-id-card"></i> Documento:
                                 {{cotizacionSeleccionada.clienteDocumento}}</h5>
-                            <!-- <h5> <i class="fa fa-calendar"></i> Pedido creación: {{cotizacionSeleccionada.fechaCreacion
-                                |
-                                date:'dd/MM/yyyy'}}</h5> -->
                             <hr>
-                            <!-- <h5> <i class="fa fa-user-circle"></i> Cotizador: {{cotizacionSeleccionada.cotizador}}</h5> -->
-                            <!-- <h5> <i class="fa fa-map-marker"></i> Sucursal: {{cotizacionSeleccionada.sucursal}}</h5>
-                            <h5> <i class="fa fa-user-circle"></i>Vendedor: {{cotizacionSeleccionada.vendedor}}</h5> -->
+
                         </div>
 
-                        <div class="col-6">
+                        <!-- WIDGETS DATA INFO -->
+                        <div class="col-12">
+                            <div class="row">
+
+                                <div class="col-lg-2 col-md-6">
+                                    <div class="card border-bottom border-info">
+                                        <div class="card-body">
+                                            <div class="d-flex no-block align-items-center">
+                                                <div>
+                                                    <h4 class="font-weight-bold">
+                                                        <span class="font-weight-bold"
+                                                            *ngIf="cotizacionSeleccionada.diasUltimaFechaFactura > 0">
+                                                            <!-- Hace
+                                                            {{cotizacionSeleccionada.diasUltimaFechaFactura}} días -->
+                                                            {{cotizacionSeleccionada.fechaUltimaFactura | date :
+                                                            'dd/MM/yyyy'}}
+                                                        </span>
+                                                        <small class="font-weight-bold"
+                                                            *ngIf="cotizacionSeleccionada.diasUltimaFechaFactura  <= 0">
+                                                            No hay factura
+                                                        </small>
+                                                    </h4>
+                                                    <h6 class="text-info">Última factura</h6>
+                                                </div>
+                                                <div class="ml-auto"><span class="text-info display-6"><i
+                                                            class="ti-calendar"></i></span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-2 col-md-6">
+                                    <div class="card border-bottom border-cyan">
+                                        <div class="card-body">
+                                            <div class="d-flex no-block align-items-center">
+                                                <div>
+                                                    <h3 class="font-weight-bold">{{cotizacionSeleccionada.limiteCredito
+                                                        |
+                                                        number:'1.2-2' }}</h3>
+                                                    <h6 class="text-cyan">Límite</h6>
+                                                </div>
+                                                <div class="ml-auto"><span class="text-cyan display-6"><i
+                                                            class="ti-money"></i></span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-2 col-md-6">
+                                    <div class="card border-bottom border-success">
+                                        <div class="card-body">
+                                            <div class="d-flex no-block align-items-center">
+                                                <div>
+                                                    <h3 class="font-weight-bold"> {{totalPendientePagar | number:'1.2-2'
+                                                        }}</h3>
+                                                    <h6 class="text-success">Pendiente</h6>
+                                                </div>
+                                                <div class="ml-auto"><span class="text-success display-6"><i
+                                                            class="ti-wallet"></i></span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-2 col-md-6">
+                                    <div class="card border-bottom border-orange">
+                                        <div class="card-body">
+                                            <div class="d-flex no-block align-items-center">
+                                                <div>
+                                                    <h3 class="font-weight-bold">{{ cotizacionSeleccionada.limiteCredito
+                                                        -
+                                                        cotizacionSeleccionada.totalNeto - totalPendientePagar
+                                                        | number:'1.2-2' }}</h3>
+                                                    <h6 class="text-orange">Balance</h6>
+                                                </div>
+                                                <div class="ml-auto"><span class="text-orange display-6"><i
+                                                            class="ti-file"></i></span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-2 col-md-6">
+                                    <div class="card border-bottom border-primary">
+                                        <div class="card-body">
+                                            <div class="d-flex no-block align-items-center">
+                                                <div>
+                                                    <h3 class="font-weight-bold">{{ promedioDias | number:'1.2' }}</h3>
+                                                    <h6 class="text-primary">Promedio días</h6>
+                                                </div>
+                                                <div class="ml-auto"><span class="text-primary display-6"><i
+                                                            class="ti-bar-chart"></i></span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-2 col-md-6">
+                                    <div class="card border-bottom" [ngClass]=" {
+                                        'border-success': porcentajeCalculado <= 35,
+                                        'border-orange': porcentajeCalculado > 35 && porcentajeCalculado <= 65,
+                                        'border-danger': porcentajeCalculado > 65 }">
+                                        <div class="card-body">
+
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <h3 class="font-weight-bold" [ngClass]=" {
+                                                        'text-success': porcentajeCalculado <= 35,
+                                                        'text-orange': porcentajeCalculado > 35 && porcentajeCalculado <= 65,
+                                                        'text-danger': porcentajeCalculado > 65 }">
+                                                        {{ porcentajeCalculado | number : '1.0-0' }}%
+                                                    </h3>
+                                                    <h6 style="font-size: 10px;" [ngClass]=" {
+                                                        'text-success': porcentajeCalculado <= 35,
+                                                        'text-orange': porcentajeCalculado > 35 && porcentajeCalculado <= 65,
+                                                        'text-danger': porcentajeCalculado > 65 }">Porcentaje</h6>
+                                                </div>
+                                                <div class="col-12">
+                                                    <div class="progress">
+                                                        <div role="progressbar" aria-valuenow="25" aria-valuemin="0"
+                                                            aria-valuemax="100" class="progress-bar" [ngClass]=" {
+                                                                'bg-success': porcentajeCalculado <= 35,
+                                                                'bg-orange': porcentajeCalculado > 35 && porcentajeCalculado <= 65,
+                                                                'bg-danger': porcentajeCalculado > 65 }"
+                                                            style="height: 6px;"
+                                                            [ngStyle]="{'width': porcentajeCalculado + '%'}">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <hr>
+                        </div>
+
+                        <!-- TABLA DEL PEDIDO -->
+                        <div class="col-lg-6 col-md-12">
                             <div class="row">
                                 <div class="col-12">
-                                    <h4> Pedido</h4>
+                                    <h4> Pedido
+                                        <span style="font-size: 15px;"
+                                            class="badge font-weight-bold badge-light badge-pill">
+                                            {{cotizacionSeleccionada.totalNeto | currency }}
+                                        </span>
+                                    </h4>
                                 </div>
                                 <div class="col-12" [hidden]="loadingCotizacionDetalle">
 
-                                    <div class="table-responsive" style="height: 200px;">
+                                    <div class="table-responsive" style="height: 100px;">
                                         <table class="table table-sm table-hover mb-0 no-wrap v-middle">
                                             <thead>
                                                 <tr>
@@ -233,10 +369,6 @@
                                                     <th>Artículo</th>
                                                     <th>Cantidad</th>
                                                     <th>Precio</th>
-                                                    <th>% Desc</th>
-                                                    <th>SubTotal</th>
-                                                    <th>Desc</th>
-                                                    <th>Impuesto</th>
                                                     <th>Total Neto</th>
                                                 </tr>
                                             </thead>
@@ -254,18 +386,6 @@
                                                         <span> ${{item.precio | number:'1.2-2'}} </span>
                                                     </td>
                                                     <td>
-                                                        <span> {{item.porcientoDescuento | number:'1.2-2'}}</span>
-                                                    </td>
-                                                    <td>
-                                                        <span> ${{item.subtotal | number:'1.2-2'}} </span>
-                                                    </td>
-                                                    <td>
-                                                        <span> ${{item.totalDescuento | number:'1.2-2'}} </span>
-                                                    </td>
-                                                    <td>
-                                                        <span> ${{item.totalImpuesto | number:'1.2-2'}} </span>
-                                                    </td>
-                                                    <td>
                                                         <span class="font-weight-bold"> ${{item.totalNeto |
                                                             number:'1.2-2'}} </span>
                                                     </td>
@@ -278,30 +398,31 @@
 
                                 </div>
 
-                                <div class="col-12 text-right">
+                                <!-- <div class="col-12 text-right">
                                     <hr>
-                                    <!-- <h4>Subtotal: $ {{cotizacionSeleccionada.subTotal | number:'1.2-2' }}</h4>
-                                    <h4>Descuento: $ {{cotizacionSeleccionada.descuentoTotal | number:'1.2-2' }}</h4>
-                                    <h4>Impuesto: $ {{cotizacionSeleccionada.impuestoTotal | number:'1.2-2' }}</h4> -->
                                     <h4 class="font-weight-bold">Total Pedido: $ {{cotizacionSeleccionada.totalNeto |
                                         number:'1.2-2' }}</h4>
-                                </div>
+                                </div> -->
 
                                 <div class="col-12">
                                     <app-loading-listado [hidden]="!loadingCotizacionDetalle"></app-loading-listado>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-6">
+
+                        <!-- TABLA FACTURAS PENDIENTES -->
+                        <div class="col-lg-6 col-md-12">
 
                             <div class="row">
 
                                 <div class="col-12">
-                                    <h4> Facturas pendientes</h4>
+                                    <h4> Facturas pendientes <span
+                                            class="badge badge-info badge-pill">{{facturasPendientesPago.length}}</span>
+                                    </h4>
                                 </div>
                                 <div class="col-12" [hidden]="loadingFacturasPendientesPago">
 
-                                    <div class="table-responsive" style="height: 200px;">
+                                    <div class="table-responsive" style="height: 100px;">
                                         <table class="table table-sm table-hover mb-0 no-wrap v-middle">
                                             <thead>
                                                 <tr>
@@ -341,34 +462,6 @@
 
                                 </div>
 
-                                <div class="col-12 text-right">
-                                    <hr>
-                                    <h4 class="font-weight-bold">Última factura :
-                                        {{cotizacionSeleccionada.fechaUltimaFactura | date : 'dd/MM/yyyy'}}
-                                        (<span>
-                                            {{cotizacionSeleccionada.diasUltimaFechaFactura}} días
-                                        </span>)
-                                    </h4>
-                                    <h4 class="font-weight-bold">Límite de crédito : $
-                                        {{cotizacionSeleccionada.limiteCredito |
-                                        number:'1.2-2' }}
-                                    </h4>
-                                    <h4 class="font-weight-bold">Total Pendiente: $ {{totalPendientePagar |
-                                        number:'1.2-2' }}
-                                    </h4>
-                                    <h4 class="font-weight-bold">Balance: $ {{
-                                        cotizacionSeleccionada.limiteCredito - cotizacionSeleccionada.totalNeto -
-                                        totalPendientePagar
-                                        | number:'1.2-2' }}
-                                    </h4>
-                                    <h4 class="font-weight-bold" [ngClass]=" {
-                                        'text-success': porcentajeCalculado <= 35,
-                                        'text-warning': porcentajeCalculado > 35 && porcentajeCalculado <= 65,
-                                        'text-danger': porcentajeCalculado > 65 }">
-                                        {{ porcentajeCalculado | number : '1.0-0' }}%
-                                    </h4>
-                                </div>
-
                                 <div class="col-12">
                                     <app-loading-listado [hidden]="!loadingFacturasPendientesPago">
                                     </app-loading-listado>
@@ -380,37 +473,85 @@
                     </div>
 
                     <div class="row">
-                        <!-- <div class="col-12 text-center">
+
+                        <div class="col-12 mt-2">
+                            <!-- <h4> Autorización</h4> -->
                             <hr>
-                            <i class="fa fa-question fa-2x text-info"></i>
-                            <p class="mt-2"><strong>¿Estás seguro?</strong></p>
-                        </div> -->
+                        </div>
 
+                        <!-- TIME LINE -->
+                        <div class="col-lg-6 col-md-12">
+                            <div class="card">
+                                <h3 class="card-title">
+                                    Histórico autorizaciones
+                                </h3>
 
+                                <div class="card-body pt-0">
+                                    <div class="table-responsive" style="height: 300px;">
+                                        <ul class="timeline timeline-right">
+                                            <li class="timeline-item" *ngFor="let item of autorizacionHistorico">
+                                                <div class="timeline-badge">
+                                                    <i class="fa fa-circle"
+                                                        [ngStyle]="{'color': item.estadoAutorizacionColor}"></i>
+                                                </div>
+                                                <div class="timeline-panel">
+                                                    <div class="timeline-heading">
+                                                        <h4 class="timeline-title">{{item.usuario}}</h4>
+                                                        <p>
 
-                        <div class="col-12">
+                                                            <small>
+                                                                <i class="fa fa-circle"
+                                                                    [ngStyle]="{'color': item.estadoAutorizacionColor}"></i>
+                                                                {{item.estadoAutorizacion}}
+                                                            </small>
 
+                                                            <small class="text-muted">
+                                                                <i class="fa fa-clock"></i>
+                                                                {{item.fechaAutorizacion
+                                                                | date : 'd MMM y, h:mm:ss a' }}
+                                                            </small>
+                                                        </p>
+                                                    </div>
+                                                    <div class="timeline-body">
+                                                        <p *ngIf="item.comentario"> <i class="fa fa-comment"></i>
+                                                            {{item.comentario}}</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- tipo promesa -->
+                        <div class="col-lg-6 col-md-12">
                             <div class="row">
-
-                                <div class="form-group col-md-4">
-                                    <label for="example-email">Tipo promesa</label>
-                                    <ng-select [items]="[]" bindLabel="nombre" bindValue="codigo"
+                                <div class="form-group col-md-6">
+                                    <label for="example-email">Tipo</label>
+                                    <ng-select [(ngModel)]="cotizacionPromesaSelected" [items]="cotizacionPromesaTipos"
+                                        [clearable]="false" bindLabel="nombre" bindValue="codigo"
                                         notFoundText="No resultados">
                                     </ng-select>
                                 </div>
-                                <div class="form-group col-4">
-                                    <label>Fecha promesa</label>
-                                    <ejs-datepicker [format]="'dd-MM-yyyy'"></ejs-datepicker>
+                                <div class="form-group col-6" [hidden]="cotizacionPromesaSelected != 2">
+                                    <label>Fecha</label>
+                                    <ejs-datepicker [(ngModel)]="fechaPromesaModel" [showClearButton]="false"
+                                        [format]="'dd-MM-yyyy'"></ejs-datepicker>
                                 </div>
+
                                 <div class="form-group col-md-12">
                                     <!-- <label for="exampleFormControlTextarea1">Escribe tu comen</label> -->
                                     <textarea placeholder="Escribe tu comentario" class="form-control"
                                         [(ngModel)]="comentario" id="exampleFormControlTextarea1" rows="3"></textarea>
                                 </div>
-                            </div>
 
+                            </div>
                         </div>
+
                     </div>
+
+
                 </div>
                 <div class="modal-footer">
 
@@ -456,58 +597,6 @@
 
                     <!-- <button type="button" class="btn btn-danger m-1" (click)="desautorizar()">Desautorizar</button>
                     <button type="button" class="btn btn-success m-1" (click)="autorizar()">Autorizar</button> -->
-                </div>
-            </div>
-        </div>
-
-        <app-loading-listado [hidden]="!cargandoAutorizacion"></app-loading-listado>
-
-    </div>
-</ng-template>
-
-
-
-
-<ng-template #modalComments let-modal>
-    <div class="container-fluid">
-        <div class="row" *ngIf="!cargandoAutorizacion">
-            <div class="col">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="modal-title">Caja de comentarios</h4>
-                    <button type="button" class="close" aria-describedby="modal-title"
-                        (click)="modal.dismiss('Cross click')">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-
-                    <div class="row" *ngIf="!cargandoModal">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <!-- <label for="exampleFormControlTextarea1">Escribe tu comen</label> -->
-                                <textarea placeholder="Escribe tu comentario" class="form-control"
-                                    [(ngModel)]="comentario" id="exampleFormControlTextarea1" rows="3"></textarea>
-                            </div>
-                            <button type="submit" (click)="guardarComentario()" class="btn btn-info">Comentar</button>
-                        </div>
-                        <div class="col-md-12" style="height: 350px;">
-                            <hr>
-                            <div class="row border-top p-2" *ngFor="let c of comentarios">
-                                <div class="col-2">
-                                    <i class="fa fa-user-circle fa-3x"></i>
-                                </div>
-                                <div class="col-10">
-                                    <h5>{{c.usuario | titlecase }}</h5>
-                                    <p>{{c.comentario}}</p>
-                                    <div>
-                                        <span class="text-muted float-md-right">{{c.fecha | date : 'medium' }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <app-loading-listado [hidden]="!cargandoModal"></app-loading-listado>
                 </div>
             </div>
         </div>

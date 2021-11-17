@@ -14,6 +14,7 @@ import * as XLSX from 'xlsx';
 import { CotizacionListadoViewModel } from '../../ventas/cotizaciones/models/CotizacionListadoViewModel';
 import { CotizacionDetalleViewModel } from '../../ventas/cotizaciones/models/CotizacionDetalleViewModel';
 import { Factura } from '../../ventas/facturas/models/Factura';
+import { AutorizacionHistoricoListadoViewModel } from '../models/AutorizacionHistoricoListadoViewModel';
 
 enum btnClickedEnum {
   AUTORIZAR = 1,
@@ -26,9 +27,6 @@ enum btnClickedEnum {
   templateUrl: './autorizacion-pedidos.component.html',
   styleUrls: ['./autorizacion-pedidos.component.scss']
 })
-
-
-
 export class AutorizacionPedidosComponent implements OnInit {
 
   // COPIAR AL CREAR UN LISTADO NUEVO
@@ -57,20 +55,23 @@ export class AutorizacionPedidosComponent implements OnInit {
   // itemSeleccionado: CotizacionListadoViewModel;
 
   //comentarios
-  comentarios: any[];
   comentario: string;
-  cargandoModal: boolean = false;
-  loadingReporteExcel: boolean;
-  fechaFiltro: Date = new Date();
+
   cotizacionDetalles: any[];
   cotizacionSeleccionada: CotizacionListadoViewModel;
   loadingCotizacionDetalle: boolean;
 
   ACTIONSenum = btnClickedEnum;
-  facturasPendientesPago: Factura[];
+  facturasPendientesPago: Factura[] = [];
   loadingFacturasPendientesPago: boolean;
   totalPendientePagar: number;
   porcentajeCalculado: number;
+
+  cotizacionPromesaTipos: ComboBox[];
+  cotizacionPromesaSelected: number = 1;
+  fechaPromesaModel: any;
+  autorizacionHistorico: AutorizacionHistoricoListadoViewModel[];
+  promedioDias: number = 0;
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
@@ -81,6 +82,7 @@ export class AutorizacionPedidosComponent implements OnInit {
 
 
   ngOnInit(): void {
+    this.getCotizacionPromesaTipo()
     this.getEstadoAutorizacionUsuario()
   }
 
@@ -180,20 +182,12 @@ export class AutorizacionPedidosComponent implements OnInit {
   getAnteriorEstadoAutorizacion() {
     let estadoUsuario = this.estadosAutorizacion.find(x => x.codigo == this.estadoAutorizacionUsuario);
 
-    console.log(estadoUsuario)
-
-
     let estadoActualPosicion = this.estadosAutorizacion.indexOf(estadoUsuario);
     this.estadoAutorizacionAnterior = this.estadosAutorizacion[estadoActualPosicion - 1]
-
-    console.log(this.estadoAutorizacionAnterior)
-
-
 
     if (this.estadoAutorizacionAnterior) {
       this.estadoAutorizacionComboModel = this.estadoAutorizacionAnterior.codigo;
       // this.estadoAutorizacionComboModel = 1;
-
     }
 
   }
@@ -214,17 +208,19 @@ export class AutorizacionPedidosComponent implements OnInit {
 
   }
 
-  openModalConfirm(content, item: CotizacionListadoViewModel) {
+  openModalAutorizar(content, item: CotizacionListadoViewModel) {
     this.comentario = null;
-    this.getFacturasPendientesPago(item.clienteId);
-    this.modalService.open(content, { windowClass: "myCustomModalClass" });
-    // this.btnClicked = btnClicked;
-    // this.itemSeleccionado = item;
-
-
+    this.fechaPromesaModel = null;
+    this.cotizacionPromesaSelected = 1
     this.cotizacionDetalles = [];
-    this.getCotizacionDetalle(item.id);
+
     this.cotizacionSeleccionada = item;
+
+    this.getFacturasPendientesPago(item.clienteId);
+    this.getCotizacionDetalle(item.id);
+    this.getAutorizacionesHistorico();
+
+    this.modalService.open(content, { windowClass: "myCustomModalClass" });
 
   }
 
@@ -256,7 +252,7 @@ export class AutorizacionPedidosComponent implements OnInit {
   autorizar() {
 
     //comentario obligatorioc cuando sea gestionar
-    if (this.estadoAutorizacionUsuario == 1 && (!this.comentario || this.comentario.length < 10)) {
+    if (this.estadoAutorizacionComboModel == 1 && (!this.comentario || this.comentario.length < 10)) {
       this.toastService.warning("Ingresar comentario válido");
       return;
     }
@@ -269,7 +265,7 @@ export class AutorizacionPedidosComponent implements OnInit {
   desautorizar() {
 
     //comentario obligatorioc cuando sea gestionar
-    if (this.estadoAutorizacionUsuario == 1 && (!this.comentario || this.comentario.length < 10)) {
+    if (this.estadoAutorizacionComboModel == 1 && (!this.comentario || this.comentario.length < 10)) {
       this.toastService.warning("Ingresar comentario válido");
       return;
     }
@@ -278,31 +274,18 @@ export class AutorizacionPedidosComponent implements OnInit {
     this.actualizarEstadoArticulos()
   }
 
-  // autorizarMasiva() {
-
-  //   this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
-  //     "AutorizarArticulosMasivoSegunNivelUsuario", Number(this.authService.tokenDecoded.nameid)).subscribe(response => {
-
-  //       if (!response.ok) {
-  //         this.toastService.error(response.errores[0]);
-  //         console.error(response.errores[0]);
-  //       } else {
-  //         this.toastService.success("Realizado", "OK");
-  //         this.getData()
-  //       }
-  //     }, error => {
-  //       this.toastService.error("No se pudo realizar", "Error conexion al servidor");
-  //       console.error(error)
-  //     });
-
-  // }
-
 
   actualizarEstadoArticulos() {
 
     this.cargandoAutorizacion = true;
 
     let ultimoEstado = this.estadosAutorizacion[this.estadosAutorizacion.length - 1].codigo;
+
+    let fechaPromesa = this.cotizacionPromesaSelected == 2 && this.isAutorizando ?
+      this.fechaPromesaModel : null;
+
+    this.cotizacionSeleccionada.fechaPromesa = fechaPromesa;
+    this.cotizacionSeleccionada.tipoPromesaID = this.isAutorizando ? this.cotizacionPromesaSelected : 0;
 
     let param = {
       "IsAprobado": this.estadoAutorizacionUsuario == ultimoEstado && this.isAutorizando,
@@ -357,134 +340,6 @@ export class AutorizacionPedidosComponent implements OnInit {
       });
   }
 
-
-  openModalComments(content, item: any) {
-    console.table(item)
-    this.cotizacionSeleccionada = item;
-    this.getComentarios()
-    this.modalService.open(content, { size: 'lg', scrollable: true });
-    // this.articuloSeleccionado = item
-  }
-
-
-  getComentarios() {
-    this.comentarios = []
-    this.comentario = ""
-    let parametros = {
-      "ArticuloID": this.cotizacionSeleccionada.id,
-      // "ListaPrecioID": this.itemSeleccionado.listaPrecioID
-    }
-    this.cargandoModal = true;
-    this.httpService.DoPostAny<ComboBox>(DataApi.ListaPrecio,
-      "GetListaPrecioArticuloComentarios", parametros).subscribe(response => {
-
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-          console.error(response.errores[0]);
-        } else {
-          this.comentarios = response.records;
-        }
-        this.cargandoModal = false;
-
-      }, error => {
-        this.cargandoModal = false;
-        this.toastService.error("No se pudo obtener los comentarios.", "Error conexion al servidor");
-        setTimeout(() => {
-          this.getEstadosAutorizacion()
-        }, 1000);
-
-      });
-
-  }
-
-
-
-  guardarComentario() {
-
-    if (this.comentario.trim().length < 3) {
-      return
-    }
-
-    let parametros = {
-      "Id": 0,
-      "Comentario": this.comentario,
-      // "ListaPrecioID": this.itemSeleccionado.listaPrecioID,
-      "ArticuloID": this.cotizacionSeleccionada.id,
-      "UsuarioID": Number(this.authService.tokenDecoded.nameid),
-      "Fecha": new Date(),
-      "Usuario": this.authService.tokenDecoded.given_name,
-      // "ListaPrecio": this.itemSeleccionado.listaPrecio,
-      // "Articulo": this.itemSeleccionado.nombre
-    }
-
-    this.cargandoModal = true;
-    this.httpService.DoPostAny<any>(DataApi.ListaPrecio,
-      "InsertarListaPrecioArticuloComentario", parametros).subscribe(response => {
-
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-          console.error(response.errores[0]);
-
-        } else {
-          this.toastService.success("Realizado", "OK");
-          this.comentario = ""
-          this.enviarNotificacionCorreoNuevoComentario(parametros)
-          this.getComentarios()
-        }
-      }, error => {
-        this.cargandoModal = false;
-        this.toastService.error("No se pudo actualizar el estado.",
-          "Error conexion al servidor");
-      });
-  }
-
-  enviarNotificacionCorreoNuevoComentario(param: any) {
-
-    this.httpService.DoPostAny<any>(DataApi.ListaPrecio,
-      "EnviarCorreoNotificacionArticuloComentario", param).subscribe(response => {
-
-        if (!response.ok) {
-          // this.toastService.error(response.errores[0]);
-          console.error(response.errores[0]);
-        } else {
-          // this.toastService.success("Notificaciones enviadas", "OK");
-        }
-      }, error => {
-        console.error(error)
-      });
-
-  }
-
-
-  exportarReporteExcel() {
-    this.loadingReporteExcel = true;
-
-    this.httpService.DoPostAny<ArticuloListaPrecioViewModel>(DataApi.Articulo,
-      "GetArticulosAutorizacionExcelExport", null).subscribe(response => {
-
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-
-          const ws2: XLSX.WorkSheet = XLSX.utils.json_to_sheet(response.records);
-
-          /* generate workbook and add the worksheet */
-          const wb: XLSX.WorkBook = XLSX.utils.book_new();
-          XLSX.utils.book_append_sheet(wb, ws2, 'Autorizaciones');
-
-          /* save to file */
-          XLSX.writeFile(wb, "Autorización listado | Reporte.xlsx");
-        }
-
-
-        this.loadingReporteExcel = false;
-      }, error => {
-        this.loadingReporteExcel = false;
-        this.toastService.error("No se pudo obtener el reporte", "Error conexion al servidor");
-      });
-  }
-
-
   //DETALLE PEDIDOS 
 
   getCotizacionDetalle(cotizacionID: number) {
@@ -516,7 +371,14 @@ export class AutorizacionPedidosComponent implements OnInit {
           console.error(response.errores[0])
         } else {
           this.facturasPendientesPago = response.records;
+
+          console.table(this.facturasPendientesPago)
+
           this.totalPendientePagar = this.facturasPendientesPago.reduce((sum, current) => sum + (current.total - current.pagos), 0)
+          this.promedioDias = this.facturasPendientesPago.reduce((sum, current) => sum + current.diasVencimiento, 0) / this.facturasPendientesPago.length;
+
+          this.promedioDias = this.promedioDias ? this.promedioDias : 0
+
         }
         this.calcularPorcentaje();
         this.loadingFacturasPendientesPago = false;
@@ -536,6 +398,52 @@ export class AutorizacionPedidosComponent implements OnInit {
     }
 
   }
+
+
+
+  getCotizacionPromesaTipo() {
+    let parametros: Parametro[] = []
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetCotizacionPromesaTipo", parametros).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+          this.cotizacionPromesaTipos = response.records;
+        }
+
+      }, error => {
+        this.toastService.error("No se pudo obtener los tipos promesa.", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getCotizacionPromesaTipo()
+        }, 1000);
+
+      });
+  }
+
+
+  getAutorizacionesHistorico() {
+    this.httpService.DoPostAny<AutorizacionHistoricoListadoViewModel>(DataApi.AutorizacionHistorico,
+      "GetAutorizacionesHistoricoByPedidoID", Number(this.cotizacionSeleccionada.codigoReferencia)).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+          this.autorizacionHistorico = response.records;
+          console.table(this.autorizacionHistorico)
+        }
+
+      }, error => {
+        this.toastService.error("No se pudo obtener el historial de autorizaciones.", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getAutorizacionesHistorico()
+        }, 1000);
+
+      });
+  }
+
 
 
 

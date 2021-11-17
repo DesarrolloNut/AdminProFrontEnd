@@ -22,4 +22,5 @@ export interface Factura {
     usuarioEntregaId: number;
     pagos: number;
     fechaVencimiento: Date;
+    diasVencimiento: number;
 }
