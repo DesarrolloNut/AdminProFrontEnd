@@ -353,7 +353,7 @@
       <div class=" col-md-6 row left_detalle">
           <div class="col-md-12 m-2">
               <h2 class="text-info"> <i class="fa fa-user"></i> DISTRIBUIDOR: {{despachoPreventaSeleccionado.distribuidor | uppercase}}</h2>
-              <h2> <i class="fa fa-calendar"></i> FECHA: {{despachoPreventaSeleccionado.fechaCreacion | date:'dd/MM/yy'}}</h2><br>
+              <h2> <i class="fa fa-calendar"></i> FECHA: {{despachoPreventaSeleccionado.fechaEntrega | date:'dd/MM/yy'}}</h2><br>
 
           </div>
 
@@ -376,7 +376,7 @@
                             *ngFor="let item of despachoPreventaDetalles" class="tr_detalle">
 
                               <td class="tdcss_DetalleDespacho column_a">
-                                  <span> {{item.codigoReferencia}} |  {{item.articulo}}</span>
+                                  <span> {{item.codigoArticulo}} |  {{item.articulo}}</span>
                               </td>
                               <td class="tdcss_DetalleDespacho">
                                   <span> {{item.pedido}}</span>
@@ -459,29 +459,21 @@
                     (click)="openModal(modalDetalleDespachoPreventa,item)">
                     <i class="fa fa-sm  fa-list "></i> Despachar
                 </button>
-
-                <!-- <button class="btn btn-sm btn-info m-1" [disabled]="item.loadingCancelPedido"  *ngIf="item.estadoID == 2" [routerLink]="[item.id]">
-                    <i class="fa fa-sm fa-edit"></i>
-                </button> -->
             </td>
 
               <td>
                 <span class="text-dark font-bold"><i class="far fa-calendar"></i>
-                    {{item.fechaCreacion | date:'MMM d, y' }}
+                    {{item.fechaEntrega | date:'MMM d, y' }}
                 </span>
             </td>
 
             <td>
                 <div class="d-flex align-items-center">
-                    <!-- <i class="fa fa-user-circle fa-3x text-light"></i> -->
                     <div class="ml-3">
                         <p class="font-bold mb-0">{{item.distribuidor | titlecase }}</p>
-                        <small class="text-info"> <i class="fa fa-id-card"></i>
-                            {{item.distribuidorDocumento | uppercase }}</small>
                     </div>
                 </div>
             </td>
-
 
             <td>
                 <span *ngIf="item.estadoDespacho==1" class="badge badge-warning">PENDIENTE</span>
@@ -541,7 +533,7 @@
                         <div class="row  p-1">
                             <div class="col">
                                 <h3 class="font-bold"> <i class="fa fa-shopping-bag"></i>
-                                    {{despachoPreventaArticuloDetalleSelected.codigoReferencia}} |
+                                    {{despachoPreventaArticuloDetalleSelected.codigoArticulo}} |
                                    {{despachoPreventaArticuloDetalleSelected.articulo}}	</h3>
                             </div>
                         </div>
@@ -549,23 +541,55 @@
 
           <!-- INPUTS LOTE -->
                     <div class="form-group col-md-6" >
-                        <label for="inputEmail4">Almacén</label>
+                        <label for="inputEmail4">Almacén Origen </label>
                         <ng-select bindLabel="nombre" bindValue="codigo"
-                            [(ngModel)]="despachoPreventaArticuloDetalleSelected.almacenId"
+                            [(ngModel)]="despachoPreventaArticuloDetalleSelected.almacenOrigenId"
                             [items]="almacenes" [clearable]="false" [loading]="loadingAlmacenes"
                             notFoundText="No resultados" [readonly]="true">
                         </ng-select>
                     </div>
-
                     <div class="form-group col-md-6" >
-                        <label>Lote</label>
-                        <input  [readonly]="true"  type="text" id="inputSearch"
-                        class="form-control" placeholder="Lote">
-                    </div>
+                      <label for="inputEmail4">Almacén Destino </label>
+                      <ng-select bindLabel="nombre" bindValue="codigo"
+                          [(ngModel)]="despachoPreventaArticuloDetalleSelected.almacenDestinoId"
+                          [items]="almacenes" [clearable]="false" [readonly]="true" [loading]="loadingAlmacenes"
+                          notFoundText="No resultados" >
+                      </ng-select>
+                  </div>
+                    <div class="form-group col-md-6" >
+                      <label>Lote</label>
+                      <div class="input-group">
 
+                        <input (input)="despachoPreventaArticuloDetalleSelected.lote=despachoPreventaArticuloDetalleSelected.lote.toUpperCase()"
+                        [(ngModel)]="despachoPreventaArticuloDetalleSelected.lote"
+                        type="text" id="inputSearch"
+                        class="form-control input_Lote" placeholder="Lote">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-info" type="button" id="button-addon2">
+                              <i class="ti-search"></i> </button>
+                      </div>
+                    </div>
+                  </div>
+
+
+
+                    <!-- CANTIDAD PEDIDO | CANTIDAD DESPACHO -->
+                    <div class="form-group col-md-3" >
+                      <label>Cantidad Pedido</label>
+                      <input [(ngModel)]="despachoPreventaArticuloDetalleSelected.pedido"
+                        [readonly]="true"  type="number" id="inputSearch"
+                      class="form-control input_CantidadPedido" placeholder="Cantidad pedido">
+                  </div>
+
+                  <div class="form-group col-md-3" >
+                      <label>Cantidad Despacho</label>
+                      <input [(ngModel)]="despachoPreventaArticuloDetalleSelected.despacho"
+                        type="number" id="inputSearch"
+                      class="form-control input_CantidadDespacho" placeholder="0">
+                  </div>
 
          <!-- LISTADO DE ARTICULOS EXTRAS -->
-                    <div class="col-md-12">
+                    <!-- <div class="col-md-12">
                         <table class="table table-hover mb-0 no-wrap v-middle">
                                             <thead>
                                                 <tr>
@@ -607,12 +631,12 @@
                                                 </tr>
                                             </tbody>
                         </table>
-                    </div>
+                    </div> -->
 
 
 
         <!-- TOTALES DEL PESO -->
-                    <div class=" col-md-12 row">
+                    <!-- <div class=" col-md-12 row">
                       <div class="col-12">
                         <br>
                       </div>
@@ -685,7 +709,28 @@
                                <i class="fa fa-arrow-right" aria-hidden="true"></i>
                             </button>
                         </div>
-                    </div>
+                    </div> -->
+                    <div class=" col-md-12  row " style="position: absolute; bottom: 0px;">
+                      <div class="col-md-12"><hr></div>
+                     <div class="col-md-1"></div>
+                      <div class="col-md-5 text-left">
+                          <button (click)="onBackItem()"  style="width: 100%;  color:#4183D7;     font-size: 18px;   height: 50px;"
+                           *ngIf="!btnGuardarCargando"
+                           class="btn btn-outline-light font-bold  m-1" type="button" >
+                              <i class="fa fa-arrow-left"  aria-hidden="true"></i>    Anterior
+                          </button>
+                      </div>
+
+                      <div class="col-md-5 text-right">
+                          <button
+                             style="width: 100%;  height: 50px;     font-size: 18px;"
+                             *ngIf="!btnGuardarCargando" class="btn btn-success font-bold  m-1"
+                              type="button" (click)="onNextItemSubmit()">
+                              Guardar  y Siguiente
+                             <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                          </button>
+                      </div>
+                  </div>
                 </div>
             </div>
         </div>
@@ -729,35 +774,51 @@
                     <div class="row  p-1">
                         <div class="col-md-12">
                             <h3 class="font-bold"> <i class="fa fa-shopping-bag"></i>
-                                {{despachoPreventaArticuloDetalleSelected.codigoReferencia}} |
+                                {{despachoPreventaArticuloDetalleSelected.codigoArticulo}} |
                                {{despachoPreventaArticuloDetalleSelected.articulo}}	</h3>
                         </div>
                               <!-- INPUTS LOTE -->
-                        <div class="form-group col-md-6" >
-                            <label for="inputEmail4">Almacén</label>
-                            <ng-select bindLabel="nombre" bindValue="codigo"
-                                [(ngModel)]="despachoPreventaArticuloDetalleSelected.almacenId"
-                                [items]="almacenes" [clearable]="false" [loading]="loadingAlmacenes"
-                                notFoundText="No resultados" [readonly]="true">
-                            </ng-select>
-                        </div>
+                              <div class="form-group col-md-6" >
+                                <label for="inputEmail4">Almacén Origen </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo"
+                                    [(ngModel)]="despachoPreventaArticuloDetalleSelected.almacenOrigenId"
+                                    [items]="almacenes" [clearable]="false" [loading]="loadingAlmacenes"
+                                    notFoundText="No resultados" [readonly]="true">
+                                </ng-select>
+                            </div>
+                            <div class="form-group col-md-6" >
+                              <label for="inputEmail4">Almacén Destino </label>
+                              <ng-select bindLabel="nombre" bindValue="codigo"
+                                  [(ngModel)]="despachoPreventaArticuloDetalleSelected.almacenDestinoId"
+                                  [items]="almacenes" [clearable]="false" [readonly]="true" [loading]="loadingAlmacenes"
+                                  notFoundText="No resultados" >
+                              </ng-select>
+                          </div>
+                            <div class="form-group col-md-6" >
+                              <label>Lote</label>
+                              <div class="input-group">
 
-                        <div class="form-group col-md-6" >
-                            <label>Lote</label>
-                            <input  [readonly]="true"  type="text" id="inputSearch"
-                            class="form-control" placeholder="Lote">
-                        </div>
+                                <input (input)="despachoPreventaArticuloDetalleSelected.lote=despachoPreventaArticuloDetalleSelected.lote.toUpperCase()"
+                                [(ngModel)]="despachoPreventaArticuloDetalleSelected.lote"
+                                type="text" id="inputSearch"
+                                class="form-control input_Lote" placeholder="Lote">
+                                <div class="input-group-prepend">
+                                    <button class="btn btn-info" type="button" id="button-addon2">
+                                      <i class="ti-search"></i> </button>
+                              </div>
+                            </div>
+                          </div>
 
 
                         <!-- CANTIDAD PEDIDO | CANTIDAD DESPACHO -->
-                        <div class="form-group col-md-6" >
+                        <div class="form-group col-md-3" >
                             <label>Cantidad Pedido</label>
                             <input [(ngModel)]="despachoPreventaArticuloDetalleSelected.pedido"
                               [readonly]="true"  type="number" id="inputSearch"
                             class="form-control input_CantidadPedido" placeholder="Cantidad pedido">
                         </div>
 
-                        <div class="form-group col-md-6" >
+                        <div class="form-group col-md-3" >
                             <label>Cantidad Despacho</label>
                             <input [(ngModel)]="despachoPreventaArticuloDetalleSelected.despacho"
                               type="number" id="inputSearch"

@@ -179,7 +179,7 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
     switch (this.canalId) {
       case 1:
           this.despachoPreventaDetalles = [];
-          this.getDespachoPreventaDetalle(despacho.fechaCreacion,despacho.distribuidorId);
+          this.getDespachoPreventaDetalle(despacho.fechaEntrega,despacho.distribuidorId);
           this.despachoPreventaSeleccionado = despacho;
           break;
       case 2:
@@ -422,6 +422,7 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
           if (response != null && response.valores != null && response.valores.length > 0) {
             let record = response.valores[0]
             this.despachoPedidoArticuloDetalleSelected = record;
+            console.log( this.despachoPedidoArticuloDetalleSelected )
           } else {
             this.toastService.warning("Articulo no encontrado");
           }
@@ -563,7 +564,7 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
     let parametros: Parametro[] = [{ key: "Search", value: this.Search }, ]
 
     this.httpService.GetAllWithPagination<DespachoListadoPreventaVM>(DataApi.Despacho,
-       "GetDespachoPreventaListado", "FechaCreacion", this.paginaNumeroActual,
+       "GetDespachoPreventaListado", "FechaEntrega", this.paginaNumeroActual,
       this.paginaSize,true, parametros).subscribe(x => {
 
         if (x.ok) {
@@ -584,12 +585,12 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
 
   getDespachoPreventaDetalle(fecha:string,distribuidorId:number) {
     this.loadingDespachoPreventaDetalle = true;
+
     let parametros={
      "Fecha":fecha
     ,"DistribuidorId": distribuidorId
    }
 
-    console.log(parametros)
 
     this.httpService.DoPostAny<DespachoPreventaDetalleViewModel>(DataApi.Despacho,
       "GetDespachoPreventaDetalles", parametros).subscribe(response => {
