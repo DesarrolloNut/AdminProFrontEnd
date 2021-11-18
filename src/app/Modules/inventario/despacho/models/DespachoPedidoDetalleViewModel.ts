@@ -56,5 +56,10 @@ export interface DespachoPreventaDetalleViewModel   {
   estadoId: number;
   lote: string;
   selected:boolean;
-
+}
+export class SAPLoteDespachoPedido{
+  articulo: string;
+  almacen: string;
+  lote: string;
+  cantidad: number;
 }
