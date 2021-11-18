@@ -146,8 +146,8 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
     // });
 
 
-    // this.startPingingBalanza();
-    this. empezarAmbientePrueba();
+    this.startPingingBalanza();
+    // this. empezarAmbientePrueba();
 
 
   }
@@ -398,7 +398,7 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
     let ArtCunsumido = this.ListaArticuloDetalle.filter(x =>  x.estadoHijoId == OrdenFabricacionDetalleEstadoEnum.CONSUMIDO).length;
     let id = this.ordenfabricacionvista.ordenFabricacionId;
     let estadoOrden = this.ordenfabricacionvista.estadoId; //this.selectOrden.estadoId;
-    let EstaPendiente = this.ListaArticuloDetalle.filter(x =>  x.estadoHijoId == OrdenFabricacionDetalleEstadoEnum.PENDIENTEAUTORIZAR).length > 1 ? true : false;
+    let EstaPendiente = this.ListaArticuloDetalle.filter(x =>  x.estadoHijoId == OrdenFabricacionDetalleEstadoEnum.PENDIENTEAUTORIZAR).length;
 
 
 
@@ -412,9 +412,10 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
         this.modalService.dismissAll();
       }
 
-      if (ArtCantidad != ArtCunsumido && EstaPendiente) {
+
+      if (ArtCantidad == (ArtCunsumido + EstaPendiente) && ArtCantidad != ArtCunsumido) {
         this.updateOrdenFabricacionEstado(id, OrdenFabricacionEstadoEnum.PENDIENTEAUTORIZARCONSUMO);
-        this.modalService.dismissAll();
+          this.modalService.dismissAll();
       }
 
 

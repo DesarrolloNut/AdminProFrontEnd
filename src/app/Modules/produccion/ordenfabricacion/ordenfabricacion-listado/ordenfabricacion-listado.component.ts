@@ -244,7 +244,7 @@ GetNameEstado(estadoId: number){
     // console.log(this.articulosExtras);
     let ArtCantidad = this.articulosExtras.length;
     let ArtCunsumido = this.articulosExtras.filter(x => x.estadoHijoId == OrdenFabricacionDetalleEstadoEnum.CONSUMIDO).length;
-    let EstaPendiente = this.articulosExtras.filter(x => x.estadoHijoId == OrdenFabricacionDetalleEstadoEnum.PENDIENTEAUTORIZAR).length >= 1 ? true : false;
+    let EstaPendiente = this.articulosExtras.filter(x => x.estadoHijoId == OrdenFabricacionDetalleEstadoEnum.PENDIENTEAUTORIZAR).length;
 
     //  console.log(ArtCantidad)
     //  console.log(ArtCunsumido)
@@ -260,7 +260,7 @@ GetNameEstado(estadoId: number){
         this.modalService.dismissAll();
     }
 
-    if (ArtCantidad != ArtCunsumido && EstaPendiente) {
+    if (ArtCantidad == (ArtCunsumido + EstaPendiente) && ArtCantidad != ArtCunsumido) {
       this.updateOrdenFabricacionEstado(this.ofheader.id, OrdenFabricacionEstadoEnum.PENDIENTEAUTORIZARCONSUMO);
         this.modalService.dismissAll();
     }
