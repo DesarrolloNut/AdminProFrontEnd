@@ -688,6 +688,12 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
     this.toastService.warning("La cantidad a despachar excede la cantidad disponible del lote especificado.");
     return;
   }
+  if(this.despachoPreventaArticuloDetalleSelected.pedido<this.despachoPreventaArticuloDetalleSelected.despacho){
+    this.toastService.warning("La cantidad a despachar excede la cantidad pedida.");
+    return;
+  }
+
+
 
   let estadoId= this.getEstadoByInfoItem(this.despachoPreventaArticuloDetalleSelected);
 
@@ -699,6 +705,8 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
     let item=  this.despachoPreventaDetalles.filter(x=>x.estadoId!=3)[0];
     item.selected=true;
     this.despachoPreventaArticuloDetalleSelected=item;
+
+    this.lote= new SAPLoteDespachoPedido();
 }
 
 getEstadoByInfoItem(item:DespachoPreventaDetalleViewModel):number{
