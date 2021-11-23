@@ -226,7 +226,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
+        <button type="button" class="btn btn-light m-1" (click)="modalDespachoDetalleClose()">Cerrar</button>
     </div>
 </ng-template>
 
@@ -359,7 +359,7 @@
 
           <div class="col-md-12" [hidden]="loadingCotizacionDetalle">
             <!-- [perfectScrollbar]="config" style="    height: 640px;"   -->
-              <div class=" w-100"   >
+              <div class=" w-100"  style=" min-height: 500px;"  >
                   <table class="table table_DetalleDespacho table-sm  mb-0 no-wrap v-middle" >
                       <thead style="background-color:white;color: black;">
                           <tr>
@@ -373,7 +373,7 @@
 
                           <tr (click)="onSelectArticuloInDetallePreventa(item)"
                           [ngClass]="(item.selected)?'tr_detalle_articulo_selected':'tr_detalle_articulo_no_selected'"
-                            *ngFor="let item of despachoPreventaDetalles" class="tr_detalle">
+                            *ngFor="let item of paginateDataDetalleDespacho" class="tr_detalle">
 
                               <td class="tdcss_DetalleDespacho column_a">
                                   <span> {{item.codigoArticulo}} |  {{item.articulo}}</span>
@@ -408,8 +408,14 @@
                       </tbody>
                   </table>
 
-              </div>
 
+              </div>
+              <div class="d-flex justify-content-between p-2">
+
+                <ngb-pagination  size="md" [collectionSize]="collectionSizeDetalleDespacho" [(page)]="pageDetalleDespacho" [pageSize]="pageSizeDetalleDespacho" (pageChange)="getDespachoPreventaDetalles();">
+                </ngb-pagination>
+
+              </div>
 
           </div>
       </div>
@@ -436,7 +442,7 @@
       </div>
   </div>
   <div class="modal-footer">
-      <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
+      <button type="button" class="btn btn-light m-1" (click)="modalDespachoDetalleClose()">Cerrar</button>
   </div>
 </ng-template>
 
@@ -585,7 +591,10 @@
                       <label> Pedido</label>
                       <input
                         [(ngModel)]="despachoPreventaArticuloDetalleSelected.pedido"
-                        [readonly]="true"  type="number" id="inputSearch"
+                        [readonly]="true"
+                        step="0.01"
+                        [min]="0"
+                        type="number" id="inputSearch"
                       class="form-control input_CantidadPedido" placeholder="Cantidad pedido">
                   </div>
 
@@ -596,7 +605,6 @@
                         type="number" id="inputSearch"
                         step="0.01"
                         [min]="0"
-                        [attr.max]="20"
                         [readonly]="lote.cantidad==undefined || lote.cantidad<=0 "
                       class="form-control input_CantidadDespacho" placeholder="0">
                   </div>
@@ -759,11 +767,22 @@
                       <div class="col-md-5 text-right">
                           <button
                              style="width: 100%;  height: 50px;     font-size: 18px;"
-                             *ngIf="!btnGuardarCargando" class="btn btn-success font-bold  m-1"
+                             *ngIf="!btnGuardarDespachoCargando" class="btn btn-success font-bold  m-1"
                               type="button"  (click)="onNextItemPreventaSubmit()">
                               Guardar  y Siguiente
                              <i class="fa fa-arrow-right" aria-hidden="true"></i>
                           </button>
+
+                          <button
+                          *ngIf="btnGuardarDespachoCargando"
+                          disabled
+                          style="width: 100%;  height: 50px;     font-size: 18px;"
+                          class="btn btn-success font-bold  m-1"
+                           type="button" >
+                           Guardando despacho...
+                       </button>
+
+
                       </div>
                   </div>
 
@@ -838,7 +857,9 @@
 
                         <div class="form-group col-md-3" >
                             <label> Despacho</label>
-                            <input [(ngModel)]="despachoPreventaArticuloDetalleSelected.despacho"
+                            <input
+                            [readonly]="lote.cantidad==undefined || lote.cantidad<=0 "
+                            [(ngModel)]="despachoPreventaArticuloDetalleSelected.despacho"
                               type="number" id="inputSearch"
                             class="form-control input_CantidadDespacho" placeholder="0">
                         </div>
@@ -851,9 +872,12 @@
                             <h6 class="font-weight-bold text-warning"   style=" font-size: 20px;" *ngIf="lote.cantidad <= 0 && lote.lote != '' &&  !loadingLote ">
                               <i class="fa fa-info-circle"></i> LOTE ENCONTRADO Y NO DISPONIBLE ({{lote.cantidad}})
                             </h6>
-                            <h6 class="font-weight-bold text-info"  *ngIf="lote.lote==undefined && !loadingLote && despachoPreventaArticuloDetalleSelected.lote==undefined"  style=" font-size: 20px;">
-                              <i class="fa fa-info-circle"></i> DIGITE UN LOTE PARA ENCONTRAR INVENTARIO
-                            </h6>
+                            <h6 class="font-weight-bold text-info"  *ngIf="lote.lote==undefined && !loadingLote
+                            && (despachoPreventaArticuloDetalleSelected.lote==undefined ||  despachoPreventaArticuloDetalleSelected.lote=='')"
+                            style=" font-size: 20px;">
+                          <i class="fa fa-info-circle"></i> DIGITE UN LOTE PARA ENCONTRAR INVENTARIO
+                        </h6>
+
                           </div>
                        </div>
 
@@ -875,13 +899,23 @@
                     </div>
 
                     <div class="col-md-5 text-right">
-                        <button
-                           style="width: 100%;  height: 50px;     font-size: 18px;"
-                           *ngIf="!btnGuardarCargando" class="btn btn-success font-bold  m-1"
-                            type="button" (click)="onNextItemPreventaSubmit()">
-                            Guardar  y Siguiente
-                           <i class="fa fa-arrow-right" aria-hidden="true"></i>
-                        </button>
+                      <button
+                      style="width: 100%;  height: 50px;     font-size: 18px;"
+                      *ngIf="!btnGuardarDespachoCargando" class="btn btn-success font-bold  m-1"
+                       type="button"  (click)="onNextItemPreventaSubmit()">
+                       Guardar  y Siguiente
+                      <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                   </button>
+
+                   <button
+                   *ngIf="btnGuardarDespachoCargando"
+                   disabled
+                   style="width: 100%;  height: 50px;     font-size: 18px;"
+                   class="btn btn-success font-bold  m-1"
+                    type="button" >
+                    Guardando despacho...
+                </button>
+
                     </div>
                 </div>
             </div>

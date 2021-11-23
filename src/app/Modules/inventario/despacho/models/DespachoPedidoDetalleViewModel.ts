@@ -43,9 +43,9 @@ export interface DespachoPreventaDetalleViewModel   {
   distribuidor: string;
   distribuidorId: number;
   ruta: number;
-  almacen_Origen: number;
+  almacen_Origen: string;
   almacenOrigenId: number;
-  almacen_Destino: number;
+  almacen_Destino: string;
   almacenDestinoId: number;
   codigoArticulo: string;
   articuloId: number;
@@ -56,6 +56,17 @@ export interface DespachoPreventaDetalleViewModel   {
   estadoId: number;
   lote: string;
   selected:boolean;
+}
+
+export class DespachoPreventaRequestModel {
+  fechaEntrega: string;
+  ruta: number;
+  almacen_Origen: string;
+  almacen_Destino: string;
+  articuloId: number;
+  lote: string;
+  pedido: number;
+  despacho: number;
 }
 export class SAPLoteDespachoPedido{
   articulo: string;
