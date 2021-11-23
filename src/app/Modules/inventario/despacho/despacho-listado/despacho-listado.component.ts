@@ -1,4 +1,4 @@
-import { SAPLoteDespachoPedido } from './../models/DespachoPedidoDetalleViewModel';
+import { DespachoPreventaRequestModel, SAPLoteDespachoPedido } from './../models/DespachoPedidoDetalleViewModel';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -50,7 +50,7 @@ export class DespachoListadoComponent implements OnInit {
   estados: ComboBox[] = []
   loadingEstados: boolean;
   loadingCanales: boolean = false;
-
+  btnGuardarDespachoCargando =false;
 
   canales:ComboBox[]=[];
   canalId:number=1;
@@ -66,6 +66,12 @@ export class DespachoListadoComponent implements OnInit {
    lote: SAPLoteDespachoPedido = new SAPLoteDespachoPedido();
 
 
+
+   //PAGINACION MODAL DETALLE DESPACHO
+   paginateDataDetalleDespacho: DespachoPreventaDetalleViewModel[] = [];
+   pageDetalleDespacho = 1;
+   pageSizeDetalleDespacho= 8;
+   collectionSizeDetalleDespacho = 0;
 
 // MOVER A OTRO COMPONENTE
 loadingArticulosExtras: boolean;
@@ -181,7 +187,7 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
     switch (this.canalId) {
       case 1:
           this.despachoPreventaDetalles = [];
-          this.getDespachoPreventaDetalle(despacho.fechaEntrega,despacho.distribuidorId);
+          this.getDespachoPreventaDetalleFromAPi(despacho.fechaEntrega,despacho.distribuidorId);
           this.despachoPreventaSeleccionado = despacho;
           break;
       case 2:
@@ -632,7 +638,7 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
 
   }
 
-  getDespachoPreventaDetalle(fecha:string,distribuidorId:number) {
+  getDespachoPreventaDetalleFromAPi(fecha:string,distribuidorId:number) {
     this.loadingDespachoPreventaDetalle = true;
 
     let parametros={
@@ -651,6 +657,12 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
             this.despachoPreventaDetalles[0].selected=true;
             this.despachoPreventaArticuloDetalleSelected=this.despachoPreventaDetalles[0];
 
+            this.collectionSizeDetalleDespacho = this.despachoPreventaDetalles.length;
+
+            this.paginateDataDetalleDespacho =  this.despachoPreventaDetalles
+            .slice((this.pageDetalleDespacho - 1) * this.pageSizeDetalleDespacho,
+             (this.pageDetalleDespacho - 1) * this.pageSizeDetalleDespacho + this.pageSizeDetalleDespacho);
+
           }
           console.log(this.despachoPreventaDetalles)
         }
@@ -662,7 +674,23 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
       });
   }
 
+  getDespachoPreventaDetalles() {
+
+
+    this.collectionSizeDetalleDespacho = this.despachoPreventaDetalles.length;
+    
+    
+    this.paginateDataDetalleDespacho =  this.despachoPreventaDetalles
+    .slice((this.pageDetalleDespacho - 1) * this.pageSizeDetalleDespacho,
+     (this.pageDetalleDespacho - 1) * this.pageSizeDetalleDespacho + this.pageSizeDetalleDespacho);
+
+
+  }
+
+
   onSelectArticuloInDetallePreventa(item:DespachoPreventaDetalleViewModel){
+    if(this.btnGuardarDespachoCargando){return;}
+
     if(item.estadoId==1){
        item.lote="";
     }
@@ -674,7 +702,11 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
 
  }
 
+
+
+
  onNextItemPreventaSubmit(){
+
 
   if(this.lote.lote==undefined){
     this.toastService.warning("Debe digitar un lote existente");
@@ -693,22 +725,62 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
     return;
   }
 
+  this.btnGuardarDespachoCargando = true;
+
+  let p= new DespachoPreventaRequestModel();
+  p.articuloId = this.despachoPreventaArticuloDetalleSelected.articuloId;
+  p.almacen_Origen = this.despachoPreventaArticuloDetalleSelected.almacen_Origen;
+  p.almacen_Destino = this.despachoPreventaArticuloDetalleSelected.almacen_Destino;
+  p.ruta = this.despachoPreventaArticuloDetalleSelected.ruta;
+  p.lote = this.despachoPreventaArticuloDetalleSelected.lote;
+  p.pedido = this.despachoPreventaArticuloDetalleSelected.pedido;
+  p.despacho = this.despachoPreventaArticuloDetalleSelected.despacho;
+  p.fechaEntrega = this.despachoPreventaArticuloDetalleSelected.fechaEntrega;
+
+  this.httpService.DoPostAny<DespachoPreventaDetalleViewModel>(DataApi.Despacho,
+    'registra_o_actualiza_DespachoPreventa', p).subscribe(response => {
+      if (!response.ok) {
+        this.toastService.error(response.errores[0], "Error");
+        this.btnGuardarDespachoCargando = false;
+      } else {
+        if(response.records?.length>0){
+
+         console.log(response)
+
+          let estadoId= this.getEstadoByInfoItem(this.despachoPreventaArticuloDetalleSelected);
+
+          this.despachoPreventaDetalles.filter(
+            d=>d.codigoArticulo ==this.despachoPreventaArticuloDetalleSelected.codigoArticulo
+             && d.almacenOrigenId==this.despachoPreventaArticuloDetalleSelected.almacenOrigenId
+             && d.almacenDestinoId==this.despachoPreventaArticuloDetalleSelected.almacenDestinoId
+            ).map(x=>{x.estadoId=estadoId,x.selected=false})
+            let item=  this.despachoPreventaDetalles.filter(x=>x.estadoId!=3)[0];
+            item.selected=true;
+            this.despachoPreventaArticuloDetalleSelected=item;
+            
+            this.pageDetalleDespacho= this.getPageByIndexItem(this.despachoPreventaDetalles.indexOf(this.despachoPreventaArticuloDetalleSelected));
+
+            this.lote= new SAPLoteDespachoPedido();
+             this.toastService.success("Realizado", "OK");
+        }
+      }
+      this.btnGuardarDespachoCargando = false;
+
+    }, error => {
+    this.btnGuardarDespachoCargando = false;
+  console.log(error)
+      this.toastService.error("Error conexion al servidor");
+    });
 
 
-  let estadoId= this.getEstadoByInfoItem(this.despachoPreventaArticuloDetalleSelected);
-
-  this.despachoPreventaDetalles.filter(
-    d=>d.codigoArticulo ==this.despachoPreventaArticuloDetalleSelected.codigoArticulo
-     && d.almacenOrigenId==this.despachoPreventaArticuloDetalleSelected.almacenOrigenId
-     && d.almacenDestinoId==this.despachoPreventaArticuloDetalleSelected.almacenDestinoId
-    ).map(x=>{x.estadoId=estadoId,x.selected=false})
-    let item=  this.despachoPreventaDetalles.filter(x=>x.estadoId!=3)[0];
-    item.selected=true;
-    this.despachoPreventaArticuloDetalleSelected=item;
-
-    this.lote= new SAPLoteDespachoPedido();
 }
 
+
+getPageByIndexItem(indexItem:number):number{
+ let pages = this.despachoPreventaDetalles.length/this.pageSizeDetalleDespacho;
+  
+ return 0;
+}
 getEstadoByInfoItem(item:DespachoPreventaDetalleViewModel):number{
   if(item.despacho==item.pedido){
     //ESTADO DESPACHADO
@@ -722,7 +794,7 @@ getEstadoByInfoItem(item:DespachoPreventaDetalleViewModel):number{
   }
 }
 onBackItemPreventa(){
-
+  if(this.btnGuardarDespachoCargando){return;}
   let backIndex=this.despachoPreventaDetalles.indexOf(this.despachoPreventaArticuloDetalleSelected)-1;
    if(backIndex<0){
       return;
@@ -739,5 +811,9 @@ onBackItemPreventa(){
 onLoteInput(){
   this.lote = new SAPLoteDespachoPedido();
   this.despachoPreventaArticuloDetalleSelected.lote=this.despachoPreventaArticuloDetalleSelected.lote?.toUpperCase();
+}
+modalDespachoDetalleClose(){
+  this.getDataByCondicional();
+  this.modalService.dismissAll();
 }
 }
