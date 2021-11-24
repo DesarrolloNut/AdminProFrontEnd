@@ -344,7 +344,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
 
 
   openModalArticuloCambio(content, model:OrdenFabricacionVista) {
-    this.getArticulosDeCambio(model.id);
+    this.getArticulosDeCambio(model.articuloId);
     this.selectArticuloOriginal = model;
     this.modalService.open(content, {
       size: 'lg',
@@ -521,10 +521,10 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
       });
   }
 
-  getArticulosDeCambio(ArticuloOriginal:number) {
+  getArticulosDeCambio(ArticuloId:number) {
     this.searching = true;
     this.httpService.DoPostAny<Articulo>(DataApi.Articulo,
-      "GetArticulosDeCambios", ArticuloOriginal ).subscribe(async response => {
+      "GetArticulosDeCambios", ArticuloId ).subscribe(async response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
