@@ -226,7 +226,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
+        <button type="button" class="btn btn-light m-1" (click)="modalDespachoDetalleClose()">Cerrar</button>
     </div>
 </ng-template>
 
@@ -343,23 +343,24 @@
 
 <ng-template #modalDetalleDespachoPreventa let-modal>
   <div class="modal-header">
-      <h4 class="modal-title">Detalle de despacho</h4>
-      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-          <span aria-hidden="true">&times;</span>
-      </button>
+
+      <h3 class="modal-title">DETALLE DESPACHO</h3>
+
+      <button type="button" class="btn btn-light m-1" (click)="modalDespachoDetalleClose()">Cerrar</button>
+
   </div>
   <div class="modal-body">
       <div class="row">
       <div class=" col-md-6 row left_detalle">
           <div class="col-md-12 m-2">
-              <h2 class="text-info"> <i class="fa fa-user"></i> DISTRIBUIDOR: {{despachoPreventaSeleccionado.distribuidor | uppercase}}</h2>
-              <h2> <i class="fa fa-calendar"></i> FECHA: {{despachoPreventaSeleccionado.fechaCreacion | date:'dd/MM/yy'}}</h2><br>
+              <h3 class="text-info"> <i class="fa fa-user"></i> DISTRIBUIDOR: {{despachoPreventaSeleccionado.distribuidor | uppercase}}</h3>
+              <h3> <i class="fa fa-calendar"></i> FECHA: {{despachoPreventaSeleccionado.fechaEntrega | date:'dd/MM/yy'}}</h3><br>
 
           </div>
 
           <div class="col-md-12" [hidden]="loadingCotizacionDetalle">
             <!-- [perfectScrollbar]="config" style="    height: 640px;"   -->
-              <div class=" w-100"   >
+              <div class=" w-100"  style=" min-height: 500px;"  >
                   <table class="table table_DetalleDespacho table-sm  mb-0 no-wrap v-middle" >
                       <thead style="background-color:white;color: black;">
                           <tr>
@@ -373,10 +374,10 @@
 
                           <tr (click)="onSelectArticuloInDetallePreventa(item)"
                           [ngClass]="(item.selected)?'tr_detalle_articulo_selected':'tr_detalle_articulo_no_selected'"
-                            *ngFor="let item of despachoPreventaDetalles" class="tr_detalle">
+                            *ngFor="let item of paginateDataDetalleDespacho" class="tr_detalle">
 
                               <td class="tdcss_DetalleDespacho column_a">
-                                  <span> {{item.codigoReferencia}} |  {{item.articulo}}</span>
+                                  <span> {{item.codigoArticulo}} |  {{item.articulo}}</span>
                               </td>
                               <td class="tdcss_DetalleDespacho">
                                   <span> {{item.pedido}}</span>
@@ -408,8 +409,14 @@
                       </tbody>
                   </table>
 
-              </div>
 
+              </div>
+              <div class="d-flex justify-content-between p-2">
+
+                <ngb-pagination  size="md" [collectionSize]="collectionSizeDetalleDespacho" [(page)]="pageDetalleDespacho" [pageSize]="pageSizeDetalleDespacho" (pageChange)="getDespachoPreventaDetalles();">
+                </ngb-pagination>
+
+              </div>
 
           </div>
       </div>
@@ -436,7 +443,16 @@
       </div>
   </div>
   <div class="modal-footer">
-      <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
+
+    <button type="button"  *ngIf="!btnFinalizarDespachoCargando && despachoPreventaSeleccionado.finalizado==0" class="btn mr-auto ml-auto btn-info btn-lg"  (click)="finalizaDespacho()">
+      FINALIZAR DESPACHO
+    </button>
+
+    <button type="button" disabled=true *ngIf="btnFinalizarDespachoCargando && despachoPreventaSeleccionado.finalizado==0" class="btn mr-auto ml-auto btn-info btn-lg">
+      FINALIZANDO DESPACHO...
+    </button>
+    <h3 *ngIf="despachoPreventaSeleccionado.finalizado==1"
+    class="text-success font-bold mr-auto ml-auto">DESPACHO FINALIZADO</h3>
   </div>
 </ng-template>
 
@@ -459,34 +475,28 @@
                     (click)="openModal(modalDetalleDespachoPreventa,item)">
                     <i class="fa fa-sm  fa-list "></i> Despachar
                 </button>
-
-                <!-- <button class="btn btn-sm btn-info m-1" [disabled]="item.loadingCancelPedido"  *ngIf="item.estadoID == 2" [routerLink]="[item.id]">
-                    <i class="fa fa-sm fa-edit"></i>
-                </button> -->
             </td>
 
               <td>
                 <span class="text-dark font-bold"><i class="far fa-calendar"></i>
-                    {{item.fechaCreacion | date:'MMM d, y' }}
+                    {{item.fechaEntrega | date:'MMM d, y' }}
                 </span>
             </td>
 
             <td>
                 <div class="d-flex align-items-center">
-                    <!-- <i class="fa fa-user-circle fa-3x text-light"></i> -->
                     <div class="ml-3">
                         <p class="font-bold mb-0">{{item.distribuidor | titlecase }}</p>
-                        <small class="text-info"> <i class="fa fa-id-card"></i>
-                            {{item.distribuidorDocumento | uppercase }}</small>
                     </div>
                 </div>
             </td>
 
-
             <td>
-                <span *ngIf="item.estadoDespacho==1" class="badge badge-warning">PENDIENTE</span>
-                <span *ngIf="item.estadoDespacho==2" class="badge badge-info">EN PROCESO</span>
-                <span *ngIf="item.estadoDespacho==3" class="badge badge-success">DESPACHADO</span>
+                <span *ngIf="item.estadoDespacho==1  && item.finalizado==0" class="badge badge-warning">PENDIENTE</span>
+                <span *ngIf="item.estadoDespacho==2  && item.finalizado==0" class="badge badge-info">EN PROCESO</span>
+                <span *ngIf="item.estadoDespacho==3 && item.finalizado==0" class="badge badge-warning">PENDIENTE FINALIZAR DESPACHO</span>
+                <span *ngIf="item.finalizado==1" class="badge badge-success">DESPACHO FINALIZADO</span>
+
             </td>
             <!-- <td>
                 <ng-select style="width: 120px;" [items]="estados" bindLabel="nombre"
@@ -539,33 +549,101 @@
           <!-- INFORMACION ARTICULO -->
                     <div class="col-md-12">
                         <div class="row  p-1">
-                            <div class="col">
+                            <div class="col-md-12">
                                 <h3 class="font-bold"> <i class="fa fa-shopping-bag"></i>
-                                    {{despachoPreventaArticuloDetalleSelected.codigoReferencia}} |
+                                    {{despachoPreventaArticuloDetalleSelected.codigoArticulo}} |
                                    {{despachoPreventaArticuloDetalleSelected.articulo}}	</h3>
                             </div>
-                        </div>
-                    </div>
+
 
           <!-- INPUTS LOTE -->
                     <div class="form-group col-md-6" >
-                        <label for="inputEmail4">Almacén</label>
+                        <label for="inputEmail4">Almacén Origen </label>
                         <ng-select bindLabel="nombre" bindValue="codigo"
-                            [(ngModel)]="despachoPreventaArticuloDetalleSelected.almacenId"
+                            [(ngModel)]="despachoPreventaArticuloDetalleSelected.almacenOrigenId"
                             [items]="almacenes" [clearable]="false" [loading]="loadingAlmacenes"
                             notFoundText="No resultados" [readonly]="true">
                         </ng-select>
                     </div>
-
                     <div class="form-group col-md-6" >
-                        <label>Lote</label>
-                        <input  [readonly]="true"  type="text" id="inputSearch"
-                        class="form-control" placeholder="Lote">
+                      <label for="inputEmail4">Almacén Destino </label>
+                      <ng-select bindLabel="nombre" bindValue="codigo"
+                          [(ngModel)]="despachoPreventaArticuloDetalleSelected.almacenDestinoId"
+                          [items]="almacenes" [clearable]="false" [readonly]="true" [loading]="loadingAlmacenes"
+                          notFoundText="No resultados" >
+                      </ng-select>
+                  </div>
+                    <div class="form-group col-md-6" >
+                      <label>Lote</label>
+                      <div class="input-group">
+
+                        <input [disabled]="loadingLote || despachoPreventaSeleccionado.finalizado==1"
+                        (input)="onLoteInput()"
+                        [(ngModel)]="despachoPreventaArticuloDetalleSelected.lote"
+                        type="text" id="inputSearch"
+                        class="form-control input_Lote" placeholder="Lote">
+                        <div class="input-group-prepend">
+                          <!-- <button class="btn btn-warning" [disabled]="true" *ngIf="!loadingLote" type="button" id="button-addon2">
+                            <i class="ti-pencil"></i>
+                          </button> -->
+                            <button class="btn btn-info" *ngIf="!loadingLote && despachoPreventaSeleccionado.finalizado==0" (click)="getLote()" type="button" id="button-addon2">
+                              <i class="ti-search"></i>
+                            </button>
+                            <button class="btn btn-info" *ngIf="loadingLote" [attr.disabled]="true"  type="button" id="button-addon2">
+                              <span class="spinner-border spinner-border-sm"></span>
+                            </button>
+                      </div>
                     </div>
+                  </div>
 
 
-         <!-- LISTADO DE ARTICULOS EXTRAS -->
-                    <div class="col-md-12">
+
+                    <!-- CANTIDAD PEDIDO | CANTIDAD DESPACHO -->
+                    <div class="form-group col-md-3" >
+                      <label> Pedido</label>
+                      <input
+                        [(ngModel)]="despachoPreventaArticuloDetalleSelected.pedido"
+                        [readonly]="true"
+                        step="0.01"
+                        [min]="0"
+                        type="number" id="inputSearch"
+                      class="form-control input_CantidadPedido" placeholder="Cantidad pedido">
+                  </div>
+
+                  <div class="form-group col-md-3" >
+                      <label> Despacho</label>
+                      <input
+                        [(ngModel)]="despachoPreventaArticuloDetalleSelected.despacho"
+                        type="number" id="inputSearch"
+                        step="0.01"
+                        [min]="0"
+                        [readonly]="lote.cantidad==undefined || lote.cantidad<=0 "
+                      class="form-control input_CantidadDespacho" placeholder="0">
+                  </div>
+                 <div class="col-md-12" *ngIf="despachoPreventaSeleccionado.finalizado==0">
+                    <div class="alert alert-light text-center" role="alert">
+                      <h6 class="font-weight-bold text-success"  style=" font-size: 20px;" *ngIf="lote.cantidad > 0 && !loadingLote ">
+                        <i class="fa fa-check-circle"></i>  LOTE ENCONTRADO | CANT. DISPONIBLE ({{lote.cantidad}})
+                    </h6>
+                      <h6 class="font-weight-bold text-warning"   style=" font-size: 20px;" *ngIf="lote.cantidad <= 0 && lote.lote != '' &&  !loadingLote ">
+                        <i class="fa fa-info-circle"></i> LOTE ENCONTRADO | CANT. NO DISPONIBLE ({{lote.cantidad}})
+                      </h6>
+                      <h6 class="font-weight-bold text-info"  *ngIf="lote.lote==undefined && !loadingLote
+                          && (despachoPreventaArticuloDetalleSelected.lote==undefined ||  despachoPreventaArticuloDetalleSelected.lote=='')"
+                          style=" font-size: 20px;">
+                        <i class="fa fa-info-circle"></i> DIGITE UN LOTE PARA ENCONTRAR INVENTARIO
+                      </h6>
+                      <h6 class="font-weight-bold text-secondary"  *ngIf=" loadingLote"
+                      style=" font-size: 20px;">
+                    <i class="fa fa-info-circle"></i> VERIFICANDO LOTE...
+                  </h6>
+                    </div>
+                 </div>
+                </div>
+              </div>
+
+           <!-- LISTADO DE ARTICULOS EXTRAS -->
+                    <!-- <div class="col-md-12">
                         <table class="table table-hover mb-0 no-wrap v-middle">
                                             <thead>
                                                 <tr>
@@ -607,12 +685,12 @@
                                                 </tr>
                                             </tbody>
                         </table>
-                    </div>
+                    </div> -->
 
 
 
-        <!-- TOTALES DEL PESO -->
-                    <div class=" col-md-12 row">
+          <!-- TOTALES DEL PESO -->
+                    <!-- <div class=" col-md-12 row">
                       <div class="col-12">
                         <br>
                       </div>
@@ -685,37 +763,46 @@
                                <i class="fa fa-arrow-right" aria-hidden="true"></i>
                             </button>
                         </div>
-                    </div>
+                    </div> -->
+                    <div class=" col-md-12  row "  *ngIf="despachoPreventaSeleccionado.finalizado==0" style="position: absolute; bottom: 0px;">
+                      <div class="col-md-12"><hr></div>
+                     <div class="col-md-1"></div>
+                      <div class="col-md-5 text-left">
+                          <button (click)="onBackItemPreventa()"  style="width: 100%;  color:#4183D7;     font-size: 18px;   height: 50px;"
+                           *ngIf="!btnGuardarCargando"
+                           class="btn btn-outline-light font-bold  m-1" type="button" >
+                              <i class="fa fa-arrow-left"  aria-hidden="true"></i>    Anterior
+                          </button>
+                      </div>
+
+                      <div class="col-md-5 text-right">
+                          <button
+                             style="width: 100%;  height: 50px;     font-size: 18px;"
+                             *ngIf="!btnGuardarDespachoCargando" class="btn btn-success font-bold  m-1"
+                              type="button"  (click)="onNextItemPreventaSubmit()">
+                              Guardar  y Siguiente
+                             <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                          </button>
+
+                          <button
+                          *ngIf="btnGuardarDespachoCargando"
+                          disabled
+                          style="width: 100%;  height: 50px;     font-size: 18px;"
+                          class="btn btn-success font-bold  m-1"
+                           type="button" >
+                           Guardando despacho...
+                       </button>
+
+
+                      </div>
+                  </div>
+
                 </div>
             </div>
         </div>
 
 
-  <!-- <div class="row" >
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                <div class="row">
 
-                    <div class="col text-right">
-                        <button class="btn btn-light m-1" routerLink="/produccion/ordenfabricacion" type="button">
-                            <i class="fas fa-times"></i> Cancelar
-                        </button>
-
-                        <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="button" (click)="onSubmit()">
-                            <i class="fas fa-check"></i> Guardar
-                        </button>
-
-                        <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
-                            <span class="spinner-border spinner-border-sm"></span> Guardando
-                        </button>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-  </div> -->
 </ng-template>
 
 <ng-template #pickingArticuloUnidad>
@@ -729,51 +816,96 @@
                     <div class="row  p-1">
                         <div class="col-md-12">
                             <h3 class="font-bold"> <i class="fa fa-shopping-bag"></i>
-                                {{despachoPreventaArticuloDetalleSelected.codigoReferencia}} |
+                                {{despachoPreventaArticuloDetalleSelected.codigoArticulo}} |
                                {{despachoPreventaArticuloDetalleSelected.articulo}}	</h3>
                         </div>
                               <!-- INPUTS LOTE -->
-                        <div class="form-group col-md-6" >
-                            <label for="inputEmail4">Almacén</label>
-                            <ng-select bindLabel="nombre" bindValue="codigo"
-                                [(ngModel)]="despachoPreventaArticuloDetalleSelected.almacenId"
-                                [items]="almacenes" [clearable]="false" [loading]="loadingAlmacenes"
-                                notFoundText="No resultados" [readonly]="true">
-                            </ng-select>
-                        </div>
-
-                        <div class="form-group col-md-6" >
+                              <div class="form-group col-md-6" >
+                                <label for="inputEmail4">Almacén Origen </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo"
+                                    [(ngModel)]="despachoPreventaArticuloDetalleSelected.almacenOrigenId"
+                                    [items]="almacenes" [clearable]="false" [loading]="loadingAlmacenes"
+                                    notFoundText="No resultados" [readonly]="true">
+                                </ng-select>
+                            </div>
+                            <div class="form-group col-md-6" >
+                              <label for="inputEmail4">Almacén Destino </label>
+                              <ng-select bindLabel="nombre" bindValue="codigo"
+                                  [(ngModel)]="despachoPreventaArticuloDetalleSelected.almacenDestinoId"
+                                  [items]="almacenes" [clearable]="false" [readonly]="true" [loading]="loadingAlmacenes"
+                                  notFoundText="No resultados" >
+                              </ng-select>
+                          </div>
+                          <div class="form-group col-md-6" >
                             <label>Lote</label>
-                            <input  [readonly]="true"  type="text" id="inputSearch"
-                            class="form-control" placeholder="Lote">
+                            <div class="input-group">
+
+                              <input [disabled]="loadingLote || despachoPreventaSeleccionado.finalizado==1"
+                              (input)="despachoPreventaArticuloDetalleSelected.lote=despachoPreventaArticuloDetalleSelected.lote.toUpperCase()"
+                              [(ngModel)]="despachoPreventaArticuloDetalleSelected.lote"
+                              type="text" id="inputSearch"
+                              class="form-control input_Lote" placeholder="Lote">
+                              <div class="input-group-prepend">
+                                <button class="btn btn-info" *ngIf="!loadingLote && despachoPreventaSeleccionado.finalizado==0" (click)="getLote()" type="button" id="button-addon2">
+                                  <i class="ti-search"></i>
+                                </button>
+                                  <button class="btn btn-info" *ngIf="loadingLote" [attr.disabled]="true"  type="button" id="button-addon2">
+                                    <span class="spinner-border spinner-border-sm"></span>
+                                  </button>
+                            </div>
+                          </div>
                         </div>
 
 
-                        <!-- CANTIDAD PEDIDO | CANTIDAD DESPACHO -->
-                        <div class="form-group col-md-6" >
-                            <label>Cantidad Pedido</label>
+
+                          <!-- CANTIDAD PEDIDO | CANTIDAD DESPACHO -->
+                          <div class="form-group col-md-3" >
+                            <label> Pedido</label>
                             <input [(ngModel)]="despachoPreventaArticuloDetalleSelected.pedido"
                               [readonly]="true"  type="number" id="inputSearch"
                             class="form-control input_CantidadPedido" placeholder="Cantidad pedido">
                         </div>
 
-                        <div class="form-group col-md-6" >
-                            <label>Cantidad Despacho</label>
-                            <input [(ngModel)]="despachoPreventaArticuloDetalleSelected.despacho"
+                        <div class="form-group col-md-3" >
+                            <label> Despacho</label>
+                            <input
+                            [readonly]="lote.cantidad==undefined || lote.cantidad<=0 "
+                            [(ngModel)]="despachoPreventaArticuloDetalleSelected.despacho"
                               type="number" id="inputSearch"
                             class="form-control input_CantidadDespacho" placeholder="0">
                         </div>
+
+                       <div class="col-md-12"  *ngIf="despachoPreventaSeleccionado.finalizado==0" >
+                          <div class="alert alert-light text-center" role="alert">
+                            <h6 class="font-weight-bold text-success"  style=" font-size: 20px;" *ngIf="lote.cantidad > 0 && !loadingLote ">
+                              <i class="fa fa-check-circle"></i>  LOTE ENCONTRADO Y DISPONIBLE ({{lote.cantidad}})
+                          </h6>
+                            <h6 class="font-weight-bold text-warning"   style=" font-size: 20px;" *ngIf="lote.cantidad <= 0 && lote.lote != '' &&  !loadingLote ">
+                              <i class="fa fa-info-circle"></i> LOTE ENCONTRADO Y NO DISPONIBLE ({{lote.cantidad}})
+                            </h6>
+                            <h6 class="font-weight-bold text-info"  *ngIf="lote.lote==undefined && !loadingLote
+                            && (despachoPreventaArticuloDetalleSelected.lote==undefined ||  despachoPreventaArticuloDetalleSelected.lote=='')"
+                            style=" font-size: 20px;">
+                          <i class="fa fa-info-circle"></i> DIGITE UN LOTE PARA ENCONTRAR INVENTARIO
+                        </h6>
+                        <h6 class="font-weight-bold text-secondary"  *ngIf=" loadingLote"
+                        style=" font-size: 20px;">
+                      <i class="fa fa-info-circle"></i> VERIFICANDO LOTE...
+                    </h6>
+                          </div>
+                       </div>
+
 
                     </div>
                 </div>
 
 
 
-                <div class=" col-md-12  row " style="position: absolute; bottom: 0px;">
+                <div class=" col-md-12  row " *ngIf="despachoPreventaSeleccionado.finalizado==0" style="position: absolute; bottom: 0px;">
                     <div class="col-md-12"><hr></div>
                    <div class="col-md-1"></div>
                     <div class="col-md-5 text-left">
-                        <button (click)="onBackItem()"  style="width: 100%;  color:#4183D7;     font-size: 18px;   height: 50px;"
+                        <button (click)="onBackItemPreventa()"  style="width: 100%;  color:#4183D7;     font-size: 18px;   height: 50px;"
                          *ngIf="!btnGuardarCargando"
                          class="btn btn-outline-light font-bold  m-1" type="button" >
                             <i class="fa fa-arrow-left"  aria-hidden="true"></i>    Anterior
@@ -781,13 +913,23 @@
                     </div>
 
                     <div class="col-md-5 text-right">
-                        <button
-                           style="width: 100%;  height: 50px;     font-size: 18px;"
-                           *ngIf="!btnGuardarCargando" class="btn btn-success font-bold  m-1"
-                            type="button" (click)="onNextItemSubmit()">
-                            Guardar  y Siguiente
-                           <i class="fa fa-arrow-right" aria-hidden="true"></i>
-                        </button>
+                      <button
+                      style="width: 100%;  height: 50px;     font-size: 18px;"
+                      *ngIf="!btnGuardarDespachoCargando" class="btn btn-success font-bold  m-1"
+                       type="button"  (click)="onNextItemPreventaSubmit()">
+                       Guardar  y Siguiente
+                      <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                   </button>
+
+                   <button
+                   *ngIf="btnGuardarDespachoCargando"
+                   disabled
+                   style="width: 100%;  height: 50px;     font-size: 18px;"
+                   class="btn btn-success font-bold  m-1"
+                    type="button" >
+                    Guardando despacho...
+                </button>
+
                     </div>
                 </div>
             </div>

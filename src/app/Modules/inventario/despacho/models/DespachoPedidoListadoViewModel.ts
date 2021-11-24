@@ -20,10 +20,12 @@ export interface DespachoPedidoListadoViewModel {
 
 }
 export interface DespachoListadoPreventaVM  {
-  fechaCreacion: string;
+  fechaEntrega: string;
+  canalId: number;
   distribuidorId: number;
   distribuidor: string;
-  distribuidorDocumento: string;
+  rutaId: number;
+  finalizado: number;
   pedido: number;
   despacho: number;
   estadoDespacho: number;
