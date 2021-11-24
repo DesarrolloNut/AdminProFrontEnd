@@ -56,6 +56,7 @@ export interface DespachoPreventaDetalleViewModel   {
   estadoId: number;
   lote: string;
   selected:boolean;
+  page:number;
 }
 
 export class DespachoPreventaRequestModel {

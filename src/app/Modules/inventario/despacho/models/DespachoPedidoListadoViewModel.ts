@@ -24,6 +24,8 @@ export interface DespachoListadoPreventaVM  {
   canalId: number;
   distribuidorId: number;
   distribuidor: string;
+  rutaId: number;
+  finalizado: number;
   pedido: number;
   despacho: number;
   estadoDespacho: number;

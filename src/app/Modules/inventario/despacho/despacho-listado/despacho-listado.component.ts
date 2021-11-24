@@ -51,7 +51,7 @@ export class DespachoListadoComponent implements OnInit {
   loadingEstados: boolean;
   loadingCanales: boolean = false;
   btnGuardarDespachoCargando =false;
-
+  btnFinalizarDespachoCargando =false;
   canales:ComboBox[]=[];
   canalId:number=1;
 
@@ -420,7 +420,6 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
 
       this.despachoPedidoArticuloDetalleSelected=item;
 
-
   }
 
   GetDespachoDetalleByID(id: number) {
@@ -450,8 +449,8 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
 
 
   getLote() {
+    if(this.btnFinalizarDespachoCargando){return;}
 
-    console.log(this.despachoPreventaArticuloDetalleSelected.lote)
     if(this.despachoPreventaArticuloDetalleSelected.lote==""
        || this.despachoPreventaArticuloDetalleSelected.lote==undefined){
        this.toastService.warning("Debe digitar un lote.");
@@ -658,13 +657,13 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
             this.despachoPreventaArticuloDetalleSelected=this.despachoPreventaDetalles[0];
 
             this.collectionSizeDetalleDespacho = this.despachoPreventaDetalles.length;
-
+            this.asignaPageToItme();
             this.paginateDataDetalleDespacho =  this.despachoPreventaDetalles
             .slice((this.pageDetalleDespacho - 1) * this.pageSizeDetalleDespacho,
              (this.pageDetalleDespacho - 1) * this.pageSizeDetalleDespacho + this.pageSizeDetalleDespacho);
 
+
           }
-          console.log(this.despachoPreventaDetalles)
         }
         this.loadingDespachoPreventaDetalle = false;
       }, error => {
@@ -678,23 +677,37 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
 
 
     this.collectionSizeDetalleDespacho = this.despachoPreventaDetalles.length;
-    
-    
+
+
     this.paginateDataDetalleDespacho =  this.despachoPreventaDetalles
     .slice((this.pageDetalleDespacho - 1) * this.pageSizeDetalleDespacho,
      (this.pageDetalleDespacho - 1) * this.pageSizeDetalleDespacho + this.pageSizeDetalleDespacho);
 
+    this.paginateDataDetalleDespacho.map(x=>x.page=this.pageDetalleDespacho);
 
   }
 
+  asignaPageToItme(){
+    this.paginateDataDetalleDespacho.map(x=>x.page=this.pageDetalleDespacho);
 
+   let countpages=  Math.trunc(
+     this.despachoPreventaDetalles.length / this.pageSizeDetalleDespacho
+      + (this.despachoPreventaDetalles.length % this.pageSizeDetalleDespacho > 0 ? 1 : 0));
+
+      for (let index = 1; index <=countpages; index++) {
+        let array =  this.despachoPreventaDetalles
+        .slice((index - 1) * this.pageSizeDetalleDespacho,
+         (index - 1) * this.pageSizeDetalleDespacho + this.pageSizeDetalleDespacho);
+         array.map(x=>x.page=index);
+      }
+    }
   onSelectArticuloInDetallePreventa(item:DespachoPreventaDetalleViewModel){
     if(this.btnGuardarDespachoCargando){return;}
+    if(this.loadingLote){return;}
 
     if(item.estadoId==1){
        item.lote="";
     }
-    console.log(item)
     this.lote = new SAPLoteDespachoPedido();
     this.despachoPreventaDetalles.map(x=>{x.selected=false})
     item.selected=true;
@@ -706,7 +719,8 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
 
 
  onNextItemPreventaSubmit(){
-
+  if(this.loadingLote){return;}
+  if(this.btnFinalizarDespachoCargando){return;}
 
   if(this.lote.lote==undefined){
     this.toastService.warning("Debe digitar un lote existente");
@@ -757,9 +771,9 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
             let item=  this.despachoPreventaDetalles.filter(x=>x.estadoId!=3)[0];
             item.selected=true;
             this.despachoPreventaArticuloDetalleSelected=item;
-            
-            this.pageDetalleDespacho= this.getPageByIndexItem(this.despachoPreventaDetalles.indexOf(this.despachoPreventaArticuloDetalleSelected));
 
+            this.pageDetalleDespacho=  this.despachoPreventaArticuloDetalleSelected.page;
+             this.getDespachoPreventaDetalles();
             this.lote= new SAPLoteDespachoPedido();
              this.toastService.success("Realizado", "OK");
         }
@@ -776,11 +790,7 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
 }
 
 
-getPageByIndexItem(indexItem:number):number{
- let pages = this.despachoPreventaDetalles.length/this.pageSizeDetalleDespacho;
-  
- return 0;
-}
+
 getEstadoByInfoItem(item:DespachoPreventaDetalleViewModel):number{
   if(item.despacho==item.pedido){
     //ESTADO DESPACHADO
@@ -795,6 +805,9 @@ getEstadoByInfoItem(item:DespachoPreventaDetalleViewModel):number{
 }
 onBackItemPreventa(){
   if(this.btnGuardarDespachoCargando){return;}
+  if(this.btnFinalizarDespachoCargando){return;}
+
+
   let backIndex=this.despachoPreventaDetalles.indexOf(this.despachoPreventaArticuloDetalleSelected)-1;
    if(backIndex<0){
       return;
@@ -808,11 +821,47 @@ onBackItemPreventa(){
 
 }
 
+
+
+finalizaDespacho(){
+
+  this.btnFinalizarDespachoCargando=true;
+
+  let p= new DespachoPreventaRequestModel();
+  p.ruta = this.despachoPreventaSeleccionado.rutaId;
+  p.fechaEntrega = this.despachoPreventaSeleccionado.fechaEntrega;
+
+  this.httpService.DoPostAny<DespachoPreventaDetalleViewModel>(DataApi.Despacho,
+    'finalizaDespachoPreventa', p).subscribe(response => {
+      if (!response.ok) {
+        this.toastService.error(response.errores[0], "Error");
+        this.btnFinalizarDespachoCargando = false;
+      } else {
+        if(response.valores?.length>0){
+
+              if(response.valores[0]>0){
+                this.despachoPreventaSeleccionado.finalizado=1;
+              }
+             this.toastService.success("Realizado", "OK");
+        }
+      }
+      this.btnFinalizarDespachoCargando = false;
+
+    }, error => {
+     this.btnFinalizarDespachoCargando = false;
+      this.toastService.error("Error conexion al servidor");
+    });
+
+
+}
+
+
 onLoteInput(){
   this.lote = new SAPLoteDespachoPedido();
   this.despachoPreventaArticuloDetalleSelected.lote=this.despachoPreventaArticuloDetalleSelected.lote?.toUpperCase();
 }
 modalDespachoDetalleClose(){
+  this.pageDetalleDespacho=1;
   this.getDataByCondicional();
   this.modalService.dismissAll();
 }

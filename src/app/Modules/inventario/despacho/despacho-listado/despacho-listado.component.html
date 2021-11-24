@@ -343,17 +343,18 @@
 
 <ng-template #modalDetalleDespachoPreventa let-modal>
   <div class="modal-header">
-      <h4 class="modal-title">Detalle de despacho</h4>
-      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-          <span aria-hidden="true">&times;</span>
-      </button>
+
+      <h3 class="modal-title">DETALLE DESPACHO</h3>
+
+      <button type="button" class="btn btn-light m-1" (click)="modalDespachoDetalleClose()">Cerrar</button>
+
   </div>
   <div class="modal-body">
       <div class="row">
       <div class=" col-md-6 row left_detalle">
           <div class="col-md-12 m-2">
-              <h2 class="text-info"> <i class="fa fa-user"></i> DISTRIBUIDOR: {{despachoPreventaSeleccionado.distribuidor | uppercase}}</h2>
-              <h2> <i class="fa fa-calendar"></i> FECHA: {{despachoPreventaSeleccionado.fechaEntrega | date:'dd/MM/yy'}}</h2><br>
+              <h3 class="text-info"> <i class="fa fa-user"></i> DISTRIBUIDOR: {{despachoPreventaSeleccionado.distribuidor | uppercase}}</h3>
+              <h3> <i class="fa fa-calendar"></i> FECHA: {{despachoPreventaSeleccionado.fechaEntrega | date:'dd/MM/yy'}}</h3><br>
 
           </div>
 
@@ -442,7 +443,16 @@
       </div>
   </div>
   <div class="modal-footer">
-      <button type="button" class="btn btn-light m-1" (click)="modalDespachoDetalleClose()">Cerrar</button>
+
+    <button type="button"  *ngIf="!btnFinalizarDespachoCargando && despachoPreventaSeleccionado.finalizado==0" class="btn mr-auto ml-auto btn-info btn-lg"  (click)="finalizaDespacho()">
+      FINALIZAR DESPACHO
+    </button>
+
+    <button type="button" disabled=true *ngIf="btnFinalizarDespachoCargando && despachoPreventaSeleccionado.finalizado==0" class="btn mr-auto ml-auto btn-info btn-lg">
+      FINALIZANDO DESPACHO...
+    </button>
+    <h3 *ngIf="despachoPreventaSeleccionado.finalizado==1"
+    class="text-success font-bold mr-auto ml-auto">DESPACHO FINALIZADO</h3>
   </div>
 </ng-template>
 
@@ -482,9 +492,11 @@
             </td>
 
             <td>
-                <span *ngIf="item.estadoDespacho==1" class="badge badge-warning">PENDIENTE</span>
-                <span *ngIf="item.estadoDespacho==2" class="badge badge-info">EN PROCESO</span>
-                <span *ngIf="item.estadoDespacho==3" class="badge badge-success">DESPACHADO</span>
+                <span *ngIf="item.estadoDespacho==1  && item.finalizado==0" class="badge badge-warning">PENDIENTE</span>
+                <span *ngIf="item.estadoDespacho==2  && item.finalizado==0" class="badge badge-info">EN PROCESO</span>
+                <span *ngIf="item.estadoDespacho==3 && item.finalizado==0" class="badge badge-warning">PENDIENTE FINALIZAR DESPACHO</span>
+                <span *ngIf="item.finalizado==1" class="badge badge-success">DESPACHO FINALIZADO</span>
+
             </td>
             <!-- <td>
                 <ng-select style="width: 120px;" [items]="estados" bindLabel="nombre"
@@ -565,7 +577,7 @@
                       <label>Lote</label>
                       <div class="input-group">
 
-                        <input [disabled]="loadingLote"
+                        <input [disabled]="loadingLote || despachoPreventaSeleccionado.finalizado==1"
                         (input)="onLoteInput()"
                         [(ngModel)]="despachoPreventaArticuloDetalleSelected.lote"
                         type="text" id="inputSearch"
@@ -574,7 +586,7 @@
                           <!-- <button class="btn btn-warning" [disabled]="true" *ngIf="!loadingLote" type="button" id="button-addon2">
                             <i class="ti-pencil"></i>
                           </button> -->
-                            <button class="btn btn-info" *ngIf="!loadingLote" (click)="getLote()" type="button" id="button-addon2">
+                            <button class="btn btn-info" *ngIf="!loadingLote && despachoPreventaSeleccionado.finalizado==0" (click)="getLote()" type="button" id="button-addon2">
                               <i class="ti-search"></i>
                             </button>
                             <button class="btn btn-info" *ngIf="loadingLote" [attr.disabled]="true"  type="button" id="button-addon2">
@@ -608,8 +620,7 @@
                         [readonly]="lote.cantidad==undefined || lote.cantidad<=0 "
                       class="form-control input_CantidadDespacho" placeholder="0">
                   </div>
-
-                 <div class="col-md-12">
+                 <div class="col-md-12" *ngIf="despachoPreventaSeleccionado.finalizado==0">
                     <div class="alert alert-light text-center" role="alert">
                       <h6 class="font-weight-bold text-success"  style=" font-size: 20px;" *ngIf="lote.cantidad > 0 && !loadingLote ">
                         <i class="fa fa-check-circle"></i>  LOTE ENCONTRADO | CANT. DISPONIBLE ({{lote.cantidad}})
@@ -753,7 +764,7 @@
                             </button>
                         </div>
                     </div> -->
-                    <div class=" col-md-12  row " style="position: absolute; bottom: 0px;">
+                    <div class=" col-md-12  row "  *ngIf="despachoPreventaSeleccionado.finalizado==0" style="position: absolute; bottom: 0px;">
                       <div class="col-md-12"><hr></div>
                      <div class="col-md-1"></div>
                       <div class="col-md-5 text-left">
@@ -829,15 +840,15 @@
                             <label>Lote</label>
                             <div class="input-group">
 
-                              <input [disabled]="loadingLote"
+                              <input [disabled]="loadingLote || despachoPreventaSeleccionado.finalizado==1"
                               (input)="despachoPreventaArticuloDetalleSelected.lote=despachoPreventaArticuloDetalleSelected.lote.toUpperCase()"
                               [(ngModel)]="despachoPreventaArticuloDetalleSelected.lote"
                               type="text" id="inputSearch"
                               class="form-control input_Lote" placeholder="Lote">
                               <div class="input-group-prepend">
-                                  <button class="btn btn-info" *ngIf="!loadingLote" (click)="getLote()" type="button" id="button-addon2">
-                                    <i class="ti-search"></i>
-                                  </button>
+                                <button class="btn btn-info" *ngIf="!loadingLote && despachoPreventaSeleccionado.finalizado==0" (click)="getLote()" type="button" id="button-addon2">
+                                  <i class="ti-search"></i>
+                                </button>
                                   <button class="btn btn-info" *ngIf="loadingLote" [attr.disabled]="true"  type="button" id="button-addon2">
                                     <span class="spinner-border spinner-border-sm"></span>
                                   </button>
@@ -864,7 +875,7 @@
                             class="form-control input_CantidadDespacho" placeholder="0">
                         </div>
 
-                       <div class="col-md-12">
+                       <div class="col-md-12"  *ngIf="despachoPreventaSeleccionado.finalizado==0" >
                           <div class="alert alert-light text-center" role="alert">
                             <h6 class="font-weight-bold text-success"  style=" font-size: 20px;" *ngIf="lote.cantidad > 0 && !loadingLote ">
                               <i class="fa fa-check-circle"></i>  LOTE ENCONTRADO Y DISPONIBLE ({{lote.cantidad}})
@@ -877,7 +888,10 @@
                             style=" font-size: 20px;">
                           <i class="fa fa-info-circle"></i> DIGITE UN LOTE PARA ENCONTRAR INVENTARIO
                         </h6>
-
+                        <h6 class="font-weight-bold text-secondary"  *ngIf=" loadingLote"
+                        style=" font-size: 20px;">
+                      <i class="fa fa-info-circle"></i> VERIFICANDO LOTE...
+                    </h6>
                           </div>
                        </div>
 
@@ -887,7 +901,7 @@
 
 
 
-                <div class=" col-md-12  row " style="position: absolute; bottom: 0px;">
+                <div class=" col-md-12  row " *ngIf="despachoPreventaSeleccionado.finalizado==0" style="position: absolute; bottom: 0px;">
                     <div class="col-md-12"><hr></div>
                    <div class="col-md-1"></div>
                     <div class="col-md-5 text-left">
