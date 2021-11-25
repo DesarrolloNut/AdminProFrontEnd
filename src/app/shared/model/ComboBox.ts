@@ -5,3 +5,10 @@ export class ComboBox {
     grupoID: string;
     disabled?:boolean;
 }
+export class ComboBoxLote {
+  codigo: string;
+  nombre: string;
+  grupo: string
+  grupoID: number;
+  disabled?:boolean;
+}

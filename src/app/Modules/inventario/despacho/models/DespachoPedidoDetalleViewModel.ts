@@ -69,9 +69,12 @@ export class DespachoPreventaRequestModel {
   pedido: number;
   despacho: number;
 }
-export class SAPLoteDespachoPedido{
+
+export class SAPLoteDespachoPedido   {
   articulo: string;
   almacen: string;
   lote: string;
-  cantidad: number;
+  fechExpira: string;
+  disponible: number;
+  cantidadPedida: number;
 }
