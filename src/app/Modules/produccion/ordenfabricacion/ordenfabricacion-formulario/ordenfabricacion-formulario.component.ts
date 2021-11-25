@@ -117,7 +117,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
   }
 
   OnlyInterger(){
-    this.ofheader.cantidadPlanificada = this.ofheader.cantidadPlanificada > 0 ? parseInt(this.ofheader.cantidadPlanificada.toString()) : this.ofheader.cantidadPlanificada ;
+    this.ofheader.cantidadPlanificada = this.ofheader.cantidadPlanificada > 0 ? parseInt(this.ofheader.cantidadPlanificada.toString()) : 1 ;
   }
 
   guardar() {
@@ -522,6 +522,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
   }
 
   getArticulosDeCambio(ArticuloId:number) {
+    this.articulosDeCambios = [];
     this.searching = true;
     this.httpService.DoPostAny<Articulo>(DataApi.Articulo,
       "GetArticulosDeCambios", ArticuloId ).subscribe(async response => {
@@ -530,7 +531,6 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
         } else {
           //validar que existe
           if (response != null && response.records != null && response.records.length > 0) {
-             this.articulosDeCambios = [];
             response.records.forEach(x => {
               let item:ArticuloDeReproceso = new ArticuloDeReproceso();
               item.id = x.id

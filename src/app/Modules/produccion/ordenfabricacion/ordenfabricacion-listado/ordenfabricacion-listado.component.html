@@ -79,7 +79,13 @@
 
                 }"></div>
                   <span class="text-dark">
-                    {{item.estadoERPExternoId > 0 && item.estadoERPExternoId < 6 ? "Pendiente": item.estadoERPExternoId == 6 ? "Sincronizado": "" }}
+                    {{item.estadoERPExternoId == 1 ? "Creado en SAP": ""}}
+                    {{item.estadoERPExternoId == 2 ? "Pendiente Liberar en SAP": ""}}
+                    {{item.estadoERPExternoId == 3 ? "Pendiente emision en SAP": ""}}
+                    {{item.estadoERPExternoId == 4 ? "Pendiente recibo en SAP": ""}}
+                    {{item.estadoERPExternoId == 5 ? "Pendiente Cerrada en SAP": ""}}
+                    {{item.estadoERPExternoId == 6 ? "Sincronizado en SAP": ""}}
+
                   </span>
               </td>
                 <!-- <td>
