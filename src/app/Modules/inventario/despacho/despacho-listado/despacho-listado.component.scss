@@ -75,3 +75,21 @@
 
 
 
+.circulo {
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+  border-radius: 50%;
+}
+
+
+.ng-select.customSelect_lote {
+  height: 70px !important;
+}
+.ng-select.customSelect_lote .ng-select-container  {
+  height: 70px !important;
+}
+
+.ng-select.customSelect_lote ::ng-deep .ng-select-container  {
+  height: 70px !important;
+}

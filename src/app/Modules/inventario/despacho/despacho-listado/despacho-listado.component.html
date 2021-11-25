@@ -357,6 +357,17 @@
               <h3> <i class="fa fa-calendar"></i> FECHA: {{despachoPreventaSeleccionado.fechaEntrega | date:'dd/MM/yy'}}</h3><br>
 
           </div>
+          <!-- <div class="col-md-12  " style="justify-content: center !important;">
+            <div class="circulo" [ngStyle]="{'background-color': '#82E0AA'}"></div>
+            <span class="text-dark">
+                  Completado
+            </span>
+            <div class="circulo" [ngStyle]="{'background-color': '#F1948A'}"></div>
+            <span class="text-dark">
+                  Pendiente
+            </span>
+            <br>
+           </div> -->
 
           <div class="col-md-12" [hidden]="loadingCotizacionDetalle">
             <!-- [perfectScrollbar]="config" style="    height: 640px;"   -->
@@ -471,10 +482,14 @@
 
         <tr    *ngFor="let item of dataPreventa; let i = index">
             <td>
-                <button class="btn btn-sm  font-bold btn-success m-1"
+                <button *ngIf="item.finalizado==0" class="btn btn-sm  font-bold btn-success m-1"
                     (click)="openModal(modalDetalleDespachoPreventa,item)">
                     <i class="fa fa-sm  fa-list "></i> Despachar
                 </button>
+                <button *ngIf="item.finalizado==1" class="btn btn-sm  font-bold btn-success m-1"
+                (click)="openModal(modalDetalleDespachoPreventa,item)">
+                <i class="fa fa-sm  fa-list "></i> Ver Despacho
+            </button>
             </td>
 
               <td>
@@ -573,29 +588,51 @@
                           notFoundText="No resultados" >
                       </ng-select>
                   </div>
-                    <div class="form-group col-md-6" >
+
+
+                    <div class="form-group col-md-6"
+                    *ngIf="despachoPreventaArticuloDetalleSelected.lote!=null
+                            &&
+                            despachoPreventaArticuloDetalleSelected.lote!=undefined
+                              &&  despachoPreventaArticuloDetalleSelected.lote!=''" >
                       <label>Lote</label>
                       <div class="input-group">
 
-                        <input [disabled]="loadingLote || despachoPreventaSeleccionado.finalizado==1"
+                        <input [disabled]="true"
                         (input)="onLoteInput()"
                         [(ngModel)]="despachoPreventaArticuloDetalleSelected.lote"
                         type="text" id="inputSearch"
                         class="form-control input_Lote" placeholder="Lote">
-                        <div class="input-group-prepend">
-                          <!-- <button class="btn btn-warning" [disabled]="true" *ngIf="!loadingLote" type="button" id="button-addon2">
-                            <i class="ti-pencil"></i>
-                          </button> -->
-                            <button class="btn btn-info" *ngIf="!loadingLote && despachoPreventaSeleccionado.finalizado==0" (click)="getLote()" type="button" id="button-addon2">
-                              <i class="ti-search"></i>
-                            </button>
-                            <button class="btn btn-info" *ngIf="loadingLote" [attr.disabled]="true"  type="button" id="button-addon2">
-                              <span class="spinner-border spinner-border-sm"></span>
-                            </button>
-                      </div>
                     </div>
                   </div>
 
+
+                  <div class="form-group col-md-6" *ngIf="despachoPreventaArticuloDetalleSelected.lote==null
+                  || despachoPreventaArticuloDetalleSelected.lote==undefined ||  despachoPreventaArticuloDetalleSelected.lote==''" >
+                    <label for="inputEmail4">Lote</label>
+                    <ng-select (change)="onLoteInput()" style="  font-size: 30px;" class="customSelect_lote" bindLabel="lote" [items]="lotesDisponibles"
+                        [ngModelOptions]="{standalone: true}"
+                        [searchable]="false"
+                        [(ngModel)]="lote"
+                        [loading]="loadingLote" [clearable]="false" notFoundText="No se encontraron lotes">
+                        <ng-template ng-label-tmp let-item="item">
+                          <span>
+                             {{item.lote}}
+                          </span>
+                      </ng-template>
+                      <ng-template ng-option-tmp let-item="item" let-index="index">
+                          <h3>
+                            <span class="font-weight-bold">Lote:</span> {{item.lote}}
+                          </h3>
+                          <h4>
+                           <span  class="font-weight-bold">Disponible: </span> {{item.disponible}}
+                          </h4>
+                          <h5>
+                            <span  class="font-weight-bold">Vencimiento: </span>  {{item.fechExpira | date: 'mediumDate'}}
+                          </h5>
+                        </ng-template>
+                    </ng-select>
+                </div>
 
 
                     <!-- CANTIDAD PEDIDO | CANTIDAD DESPACHO -->
@@ -617,25 +654,25 @@
                         type="number" id="inputSearch"
                         step="0.01"
                         [min]="0"
-                        [readonly]="lote.cantidad==undefined || lote.cantidad<=0 "
+                        [readonly]="lote.disponible==undefined || lote.disponible<=0 "
                       class="form-control input_CantidadDespacho" placeholder="0">
                   </div>
                  <div class="col-md-12" *ngIf="despachoPreventaSeleccionado.finalizado==0">
                     <div class="alert alert-light text-center" role="alert">
-                      <h6 class="font-weight-bold text-success"  style=" font-size: 20px;" *ngIf="lote.cantidad > 0 && !loadingLote ">
-                        <i class="fa fa-check-circle"></i>  LOTE ENCONTRADO | CANT. DISPONIBLE ({{lote.cantidad}})
+                      <h6 class="font-weight-bold text-success"  style=" font-size: 20px;" *ngIf="lote.disponible > 0 && !loadingLote ">
+                        <i class="fa fa-check-circle"></i>  LOTE SELECCIONADO | CANT. DISPONIBLE ({{lote.disponible}})
                     </h6>
-                      <h6 class="font-weight-bold text-warning"   style=" font-size: 20px;" *ngIf="lote.cantidad <= 0 && lote.lote != '' &&  !loadingLote ">
-                        <i class="fa fa-info-circle"></i> LOTE ENCONTRADO | CANT. NO DISPONIBLE ({{lote.cantidad}})
+                      <h6 class="font-weight-bold text-warning"   style=" font-size: 20px;" *ngIf="lote.disponible <= 0 && lote.lote != '' &&  !loadingLote ">
+                        <i class="fa fa-info-circle"></i> LOTE ENCONTRADO | CANT. NO DISPONIBLE ({{lote.disponible}})
                       </h6>
                       <h6 class="font-weight-bold text-info"  *ngIf="lote.lote==undefined && !loadingLote
                           && (despachoPreventaArticuloDetalleSelected.lote==undefined ||  despachoPreventaArticuloDetalleSelected.lote=='')"
                           style=" font-size: 20px;">
-                        <i class="fa fa-info-circle"></i> DIGITE UN LOTE PARA ENCONTRAR INVENTARIO
+                        <i class="fa fa-info-circle"></i> SELECIONE UN LOTE PARA ENCONTRAR INVENTARIO
                       </h6>
                       <h6 class="font-weight-bold text-secondary"  *ngIf=" loadingLote"
                       style=" font-size: 20px;">
-                    <i class="fa fa-info-circle"></i> VERIFICANDO LOTE...
+                    <i class="fa fa-info-circle"></i> BUSCANDO LOTES...
                   </h6>
                     </div>
                  </div>
@@ -836,28 +873,49 @@
                                   notFoundText="No resultados" >
                               </ng-select>
                           </div>
-                          <div class="form-group col-md-6" >
+                          <div class="form-group col-md-6"
+                          *ngIf="despachoPreventaArticuloDetalleSelected.lote!=null
+                                  &&
+                                  despachoPreventaArticuloDetalleSelected.lote!=undefined
+                                    &&  despachoPreventaArticuloDetalleSelected.lote!=''" >
                             <label>Lote</label>
                             <div class="input-group">
 
-                              <input [disabled]="loadingLote || despachoPreventaSeleccionado.finalizado==1"
-                              (input)="despachoPreventaArticuloDetalleSelected.lote=despachoPreventaArticuloDetalleSelected.lote.toUpperCase()"
+                              <input [disabled]="true"
+                              (input)="onLoteInput()"
                               [(ngModel)]="despachoPreventaArticuloDetalleSelected.lote"
                               type="text" id="inputSearch"
                               class="form-control input_Lote" placeholder="Lote">
-                              <div class="input-group-prepend">
-                                <button class="btn btn-info" *ngIf="!loadingLote && despachoPreventaSeleccionado.finalizado==0" (click)="getLote()" type="button" id="button-addon2">
-                                  <i class="ti-search"></i>
-                                </button>
-                                  <button class="btn btn-info" *ngIf="loadingLote" [attr.disabled]="true"  type="button" id="button-addon2">
-                                    <span class="spinner-border spinner-border-sm"></span>
-                                  </button>
-                            </div>
                           </div>
                         </div>
 
 
-
+                        <div class="form-group col-md-6" *ngIf="despachoPreventaArticuloDetalleSelected.lote==null
+                        || despachoPreventaArticuloDetalleSelected.lote==undefined ||  despachoPreventaArticuloDetalleSelected.lote==''" >
+                          <label for="inputEmail4">Lote</label>
+                          <ng-select (change)="onLoteInput()" style="  font-size: 30px;" class="customSelect_lote" bindLabel="lote" [items]="lotesDisponibles"
+                              [ngModelOptions]="{standalone: true}"
+                              [searchable]="false"
+                              [(ngModel)]="lote"
+                              [loading]="loadingLote" [clearable]="false" notFoundText="No se encontraron lotes">
+                              <ng-template ng-label-tmp let-item="item">
+                                <span>
+                                   {{item.lote}}
+                                </span>
+                            </ng-template>
+                            <ng-template ng-option-tmp let-item="item" let-index="index">
+                                <h3>
+                                  <span class="font-weight-bold">Lote:</span> {{item.lote}}
+                                </h3>
+                                <h4>
+                                 <span  class="font-weight-bold">Disponible: </span> {{item.disponible}}
+                                </h4>
+                                <h5>
+                                  <span  class="font-weight-bold">Vencimiento: </span>  {{item.fechExpira | date: 'mediumDate'}}
+                                </h5>
+                              </ng-template>
+                          </ng-select>
+                      </div>
                           <!-- CANTIDAD PEDIDO | CANTIDAD DESPACHO -->
                           <div class="form-group col-md-3" >
                             <label> Pedido</label>
@@ -869,7 +927,7 @@
                         <div class="form-group col-md-3" >
                             <label> Despacho</label>
                             <input
-                            [readonly]="lote.cantidad==undefined || lote.cantidad<=0 "
+                            [readonly]="lote.disponible==undefined || lote.disponible<=0 "
                             [(ngModel)]="despachoPreventaArticuloDetalleSelected.despacho"
                               type="number" id="inputSearch"
                             class="form-control input_CantidadDespacho" placeholder="0">
@@ -878,7 +936,7 @@
                        <div class="col-md-12"  *ngIf="despachoPreventaSeleccionado.finalizado==0" >
                           <div class="alert alert-light text-center" role="alert">
                             <h6 class="font-weight-bold text-success"  style=" font-size: 20px;" *ngIf="lote.cantidad > 0 && !loadingLote ">
-                              <i class="fa fa-check-circle"></i>  LOTE ENCONTRADO Y DISPONIBLE ({{lote.cantidad}})
+                              <i class="fa fa-check-circle"></i>  LOTE SELECCIONADO Y DISPONIBLE ({{lote.cantidad}})
                           </h6>
                             <h6 class="font-weight-bold text-warning"   style=" font-size: 20px;" *ngIf="lote.cantidad <= 0 && lote.lote != '' &&  !loadingLote ">
                               <i class="fa fa-info-circle"></i> LOTE ENCONTRADO Y NO DISPONIBLE ({{lote.cantidad}})
@@ -886,11 +944,11 @@
                             <h6 class="font-weight-bold text-info"  *ngIf="lote.lote==undefined && !loadingLote
                             && (despachoPreventaArticuloDetalleSelected.lote==undefined ||  despachoPreventaArticuloDetalleSelected.lote=='')"
                             style=" font-size: 20px;">
-                          <i class="fa fa-info-circle"></i> DIGITE UN LOTE PARA ENCONTRAR INVENTARIO
+                          <i class="fa fa-info-circle"></i> SELECIONE UN LOTE PARA ENCONTRAR INVENTARIO
                         </h6>
                         <h6 class="font-weight-bold text-secondary"  *ngIf=" loadingLote"
                         style=" font-size: 20px;">
-                      <i class="fa fa-info-circle"></i> VERIFICANDO LOTE...
+                      <i class="fa fa-info-circle"></i> BUSCANDO LOTES...
                     </h6>
                           </div>
                        </div>
