@@ -361,7 +361,7 @@
                                 </div>
                                 <div class="col-12" [hidden]="loadingCotizacionDetalle">
 
-                                    <div class="table-responsive" style="height: 100px;">
+                                    <div class="table-responsive" style="height: 123px;">
                                         <table class="table table-sm table-hover mb-0 no-wrap v-middle">
                                             <thead>
                                                 <tr>
@@ -422,7 +422,7 @@
                                 </div>
                                 <div class="col-12" [hidden]="loadingFacturasPendientesPago">
 
-                                    <div class="table-responsive" style="height: 100px;">
+                                    <div class="table-responsive" style="height: 123px;">
                                         <table class="table table-sm table-hover mb-0 no-wrap v-middle">
                                             <thead>
                                                 <tr>
@@ -443,6 +443,10 @@
                                                     </td>
                                                     <td>
                                                         <span> {{item.fechaVencimiento | date : 'dd/MM/yyyy'}}</span>
+                                                        <span class="badge badge-light"
+                                                            [ngClass]="{
+                                                                'badge-danger': item.diasVencimiento < 0}">{{item.diasVencimiento}}
+                                                            días</span>
                                                     </td>
                                                     <td>
                                                         <span> ${{item.total | number:'1.2'}} </span>
@@ -480,7 +484,7 @@
                         </div>
 
                         <!-- TIME LINE -->
-                        <div class="col-lg-6 col-md-12">
+                        <div class="col-lg-6 col-md-12" *ngIf="autorizacionHistorico.length > 0">
                             <div class="card">
                                 <h3 class="card-title">
                                     Histórico autorizaciones
@@ -496,15 +500,20 @@
                                                 </div>
                                                 <div class="timeline-panel">
                                                     <div class="timeline-heading">
-                                                        <h4 class="timeline-title">{{item.usuario}}</h4>
-                                                        <p>
+                                                        <h4 class="timeline-title d-inline">{{item.usuario}}</h4>
 
+                                                        <span *ngIf="item.jsonInfo.Pedido.FechaPromesa" class=" badge
+                                                            badge-light float-right"><i class="fa fa-calendar"></i>
+                                                            Promesa pago:
+                                                            {{item.jsonInfo.Pedido.FechaPromesa |
+                                                            date : 'd MMM y'}}</span>
+
+                                                        <p>
                                                             <small>
                                                                 <i class="fa fa-circle"
                                                                     [ngStyle]="{'color': item.estadoAutorizacionColor}"></i>
-                                                                {{item.estadoAutorizacion}}
+                                                                {{item.estadoAutorizacion + ' | '}}
                                                             </small>
-
                                                             <small class="text-muted">
                                                                 <i class="fa fa-clock"></i>
                                                                 {{item.fechaAutorizacion
@@ -513,6 +522,8 @@
                                                         </p>
                                                     </div>
                                                     <div class="timeline-body">
+
+
                                                         <p *ngIf="item.comentario"> <i class="fa fa-comment"></i>
                                                             {{item.comentario}}</p>
                                                     </div>

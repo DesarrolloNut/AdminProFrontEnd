@@ -213,6 +213,7 @@ export class AutorizacionPedidosComponent implements OnInit {
     this.fechaPromesaModel = null;
     this.cotizacionPromesaSelected = 1
     this.cotizacionDetalles = [];
+    this.promedioDias = 0
 
     this.cotizacionSeleccionada = item;
 
@@ -424,6 +425,7 @@ export class AutorizacionPedidosComponent implements OnInit {
 
 
   getAutorizacionesHistorico() {
+
     this.httpService.DoPostAny<AutorizacionHistoricoListadoViewModel>(DataApi.AutorizacionHistorico,
       "GetAutorizacionesHistoricoByPedidoID", Number(this.cotizacionSeleccionada.codigoReferencia)).subscribe(response => {
 
@@ -432,7 +434,11 @@ export class AutorizacionPedidosComponent implements OnInit {
           console.error(response.errores[0]);
         } else {
           this.autorizacionHistorico = response.records;
-          console.table(this.autorizacionHistorico)
+          if (this.autorizacionHistorico) {
+            this.autorizacionHistorico.forEach(a => a.jsonInfo = JSON.parse(a.jsonInfo)[0]);
+            // console.log(this.autorizacionHistorico)
+          }
+
         }
 
       }, error => {
