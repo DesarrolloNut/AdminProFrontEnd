@@ -1,6 +1,6 @@
 import { ComboBoxLote } from './../../../../shared/model/ComboBox';
 import { DespachoPreventaRequestModel, SAPLoteDespachoPedido } from './../models/DespachoPedidoDetalleViewModel';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
@@ -25,6 +25,7 @@ import { DespachoListadoPreventaVM, DespachoPedidoListadoViewModel } from '../mo
   styleUrls: ['./despacho-listado.component.scss']
 })
 export class DespachoListadoComponent implements OnInit {
+
   public config: PerfectScrollbarConfigInterface = {
 
   };
@@ -52,6 +53,7 @@ export class DespachoListadoComponent implements OnInit {
   loadingEstados: boolean;
   loadingCanales: boolean = false;
   btnGuardarDespachoCargando =false;
+  btnGuardarCanastoDespachoCargando=false;
   btnFinalizarDespachoCargando =false;
   canales:ComboBox[]=[];
   canalId:number=1;
@@ -652,6 +654,9 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
         } else {
           this.despachoPreventaDetalles = response.valores[0];
           if(this.despachoPreventaDetalles.length>0){
+            this.despachoPreventaDetalles.filter(x=>x.codigoArticulo=='600124').map(x=>x.unidadMedida='CANASTO')
+
+
             this.despachoPreventaDetalles[0].selected=true;
             this.despachoPreventaArticuloDetalleSelected=this.despachoPreventaDetalles[0];
             this.getLote();
@@ -704,6 +709,7 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
   onSelectArticuloInDetallePreventa(item:DespachoPreventaDetalleViewModel){
     if(this.btnGuardarDespachoCargando){return;}
     if(this.loadingLote){return;}
+    if(this.btnGuardarCanastoDespachoCargando){return;}
 
     // if(item.estadoId==1){
     //    item.lote="";
@@ -716,7 +722,9 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
       this.despachoPreventaArticuloDetalleSelected.lote==undefined ||
       this.despachoPreventaArticuloDetalleSelected.lote==''
       ){
-        this.getLote()
+        if(this.despachoPreventaArticuloDetalleSelected.unidadMedida!='CANASTO'){
+          this.getLote()
+        }
       }
  }
 
@@ -726,22 +734,25 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
  onNextItemPreventaSubmit(){
   if(this.loadingLote){return;}
   if(this.btnFinalizarDespachoCargando){return;}
+  if(this.btnGuardarCanastoDespachoCargando){return;}
+  if(this.despachoPreventaArticuloDetalleSelected.unidadMedida!='CANASTO'){
+    if(this.lote.lote==undefined){
+      this.toastService.warning("Debe digitar un lote existente");
+      return;
+    }
+    if(this.lote.disponible<=0){
+      this.toastService.warning("El lote especificado no tiene cantidad disponible");
+      return;
+    }
+    if(this.lote.disponible<this.despachoPreventaArticuloDetalleSelected.despacho){
+      this.toastService.warning("La cantidad a despachar excede la cantidad disponible del lote especificado.");
+      return;
+    }
+    if(this.despachoPreventaArticuloDetalleSelected.pedido<this.despachoPreventaArticuloDetalleSelected.despacho){
+      this.toastService.warning("La cantidad a despachar excede la cantidad pedida.");
+      return;
+    }
 
-  if(this.lote.lote==undefined){
-    this.toastService.warning("Debe digitar un lote existente");
-    return;
-  }
-  if(this.lote.disponible<=0){
-    this.toastService.warning("El lote especificado no tiene cantidad disponible");
-    return;
-  }
-  if(this.lote.disponible<this.despachoPreventaArticuloDetalleSelected.despacho){
-    this.toastService.warning("La cantidad a despachar excede la cantidad disponible del lote especificado.");
-    return;
-  }
-  if(this.despachoPreventaArticuloDetalleSelected.pedido<this.despachoPreventaArticuloDetalleSelected.despacho){
-    this.toastService.warning("La cantidad a despachar excede la cantidad pedida.");
-    return;
   }
 
   this.btnGuardarDespachoCargando = true;
@@ -773,10 +784,13 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
              && d.almacenDestinoId==this.despachoPreventaArticuloDetalleSelected.almacenDestinoId
             ).map(x=>{x.estadoId=estadoId,x.selected=false})
             let item=  this.despachoPreventaDetalles.filter(x=>x.estadoId!=3 && x.estadoId!=2)[0];
-            item.selected=true;
-            this.despachoPreventaArticuloDetalleSelected=item;
-            this.pageDetalleDespacho=  this.despachoPreventaArticuloDetalleSelected.page;
-             this.getDespachoPreventaDetalles();
+
+            if(item!=undefined && item!=null){
+              item.selected=true;
+              this.despachoPreventaArticuloDetalleSelected=item;
+              this.pageDetalleDespacho=  this.despachoPreventaArticuloDetalleSelected.page;
+            }
+              this.getDespachoPreventaDetalles();
               this.getLote()
              this.toastService.success("Realizado", "OK");
         }
@@ -790,6 +804,71 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
     });
 
 
+}
+
+agregarCanastoPreventa(){
+  if(this.loadingLote){return;}
+  if(this.btnFinalizarDespachoCargando){return;}
+  if(this.despachoPreventaDetalles.filter(x=>x.unidadMedida=='CANASTO').length>0){return;}
+
+  let item=this.despachoPreventaDetalles[0];
+
+
+  let p= new DespachoPreventaRequestModel();
+  p.articuloId = 180;
+  p.almacen_Origen = item.almacen_Origen;
+  p.almacen_Destino = item.almacen_Destino;
+  p.ruta = item.ruta;
+  p.pedido = 0;
+  p.despacho = item.despacho;
+  p.fechaEntrega =item.fechaEntrega;
+  this.btnGuardarCanastoDespachoCargando=true;
+
+  this.httpService.DoPostAny<DespachoPreventaDetalleViewModel>(DataApi.Despacho,
+    'RegistraCanastoDespahoPreventa', p).subscribe(response => {
+      if (!response.ok) {
+        this.toastService.error(response.errores[0], "Error");
+        this.btnGuardarCanastoDespachoCargando = false;
+      } else {
+        console.log(response.valores)
+
+        if(response.valores?.length>0){
+          this.despachoPreventaDetalles.unshift({
+            fechaEntrega:item.fechaEntrega,
+            canalId:item.canalId,
+            distribuidor: item.distribuidor,
+            distribuidorId: item.distribuidorId,
+            ruta:item.ruta,
+            almacenOrigenId:item.almacenOrigenId,
+            almacen_Origen:item.almacen_Origen,
+            almacenDestinoId:item.almacenDestinoId,
+            almacen_Destino:item.almacen_Destino,
+            codigoArticulo: '600124',
+            articuloId: 180,
+            articulo:'Canastos',
+            unidadMedida: 'CANASTO',
+            pedido: 0,
+            despacho: 0,
+            estadoId: 0,
+            lote: '',
+            selected:false,
+            page:1
+            });
+            this.getDespachoPreventaDetalles();
+             this.toastService.success("Realizado", "OK");
+        }
+      }
+      this.btnGuardarCanastoDespachoCargando = false;
+
+    }, error => {
+    this.btnGuardarCanastoDespachoCargando = false;
+  console.log(error)
+      this.toastService.error("Error conexion al servidor");
+    });
+
+
+
+  console.log(this.despachoPreventaDetalles)
 }
 
 
@@ -827,7 +906,8 @@ onBackItemPreventa(){
 
 
 finalizaDespacho(){
-
+  if(this.btnGuardarCanastoDespachoCargando){return;}
+  this.modalService.dismissAll();
   this.btnFinalizarDespachoCargando=true;
 
   let p= new DespachoPreventaRequestModel();
@@ -845,6 +925,7 @@ finalizaDespacho(){
               if(response.valores[0]>0){
                 this.despachoPreventaSeleccionado.finalizado=1;
               }
+              this.getDataByCondicional()
              this.toastService.success("Realizado", "OK");
         }
       }
@@ -857,6 +938,11 @@ finalizaDespacho(){
 
 
 }
+openModalConfirmFinalizaDespacho(content) {
+  this.modalService.open(content, { size: 'sm',centered:true });
+  // this.articuloSeleccionado = item
+}
+
 
 
 onLoteInput(){
