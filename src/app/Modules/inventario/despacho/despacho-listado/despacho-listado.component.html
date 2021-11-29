@@ -12,9 +12,10 @@
                             pedido
                         </button> -->
                     </div>
-                    <div class="col-md-10 pt-3">
-
+                    <div class="col-md-6 pt-2">
+                      <label for="">Busqueda</label>
                         <div class="input-group">
+
                             <div class="input-group-prepend">
                                 <label for="search" class="input-group-text bg-white">
                                     <span class="bg-white" style="border-right:none">
@@ -26,7 +27,17 @@
                                 style="border-left:none !important;" class="form-control" placeholder="Buscar">
                         </div>
                     </div>
-                    <div class="form-group col-md-2 pt-3">
+                    <div class="form-group col-md-4 pt-2">
+                      <label for="">Fecha</label>
+                      <ng-select [items]="opcionesFecha" bindLabel="nombre" bindValue="codigo"
+                      [loading]="loadingCanales"
+                      (change)="getDataByCondicional()"
+                      placeholder="Selecciona" [clearable]="false"
+                      notFoundText="No resultados" [(ngModel)]="opcionFechaId" >
+                      </ng-select>
+                  </div>
+                    <div class="form-group col-md-2 pt-2">
+                      <label for="">Canal</label>
                         <ng-select [items]="canales" bindLabel="nombre" bindValue="codigo"
                         [loading]="loadingCanales"
                         (change)="getDataByCondicional()"
@@ -359,8 +370,8 @@
       <div class="row">
       <div class=" col-md-6 row left_detalle">
           <div class="col-md-12 m-2">
-              <h3 class="text-info"> <i class="fa fa-user"></i> DISTRIBUIDOR: {{despachoPreventaSeleccionado.distribuidor | uppercase}}</h3>
-              <h3> <i class="fa fa-calendar"></i> FECHA: {{despachoPreventaSeleccionado.fechaEntrega | date:'dd/MM/yy'}}</h3><br>
+              <h4 class="text-info"> <i class="fa fa-user"></i> DISTRIBUIDOR: {{despachoPreventaSeleccionado.distribuidor | uppercase}}</h4>
+              <h4> <i class="fa fa-calendar"></i> FECHA: {{despachoPreventaSeleccionado.fechaEntrega | date:'dd/MM/yy'}}</h4>
 
           </div>
           <!-- <div class="col-md-12  " style="justify-content: center !important;">
@@ -377,7 +388,7 @@
 
           <div class="col-md-12" [hidden]="loadingCotizacionDetalle">
             <!-- [perfectScrollbar]="config" style="    height: 640px;"   -->
-              <div class=" w-100"  style=" min-height: 500px;"  >
+              <div class=" w-100"  style="min-height: 380px;"  >
                   <table class="table table_DetalleDespacho table-sm  mb-0 no-wrap v-middle" >
                       <thead style="background-color:white;color: black;">
                           <tr>
@@ -428,21 +439,28 @@
 
 
               </div>
-              <div class="d-flex justify-content-between p-2">
+              <div class="row">
 
-                <ngb-pagination  size="md" [collectionSize]="collectionSizeDetalleDespacho" [(page)]="pageDetalleDespacho" [pageSize]="pageSizeDetalleDespacho" (pageChange)="getDespachoPreventaDetalles();">
-                </ngb-pagination>
-                <button *ngIf="despachoPreventaSeleccionado.finalizado==0 && btnGuardarCanastoDespachoCargando==false"
-                 style=" color:#4183D7;   "
-                class="btn btn-outline-light font-bold" (click)="agregarCanastoPreventa()" type="button" >
-                <i class="fa fa-plus mr-1" aria-hidden="true"></i>Agregar Canasto
-               </button>
+                  <div class="col-md-7 col-xs-12">
+                    <ngb-pagination   [collectionSize]="collectionSizeDetalleDespacho"
+                    [(page)]="pageDetalleDespacho"  [maxSize]="4"  [pageSize]="pageSizeDetalleDespacho" (pageChange)="getDespachoPreventaDetalles();">
+                    </ngb-pagination>
+                  </div>
 
-               <button *ngIf="despachoPreventaSeleccionado.finalizado==0 && btnGuardarCanastoDespachoCargando"
-               [disabled]="true"  style=" color:#4183D7;   "
-               class="btn btn-outline-light font-bold" (click)="agregarCanastoPreventa()" type="button" >
-                Agregando...
-              </button>
+                  <div class="col-md-5 col-xs-12 text-right">
+                    <button *ngIf="despachoPreventaSeleccionado.finalizado==0 && btnGuardarCanastoDespachoCargando==false"
+                    style=" color:#4183D7;   "
+                   class="btn btn-outline-light font-bold" (click)="agregarCanastoPreventa()" type="button" >
+                   <i class="fa fa-plus mr-1" aria-hidden="true"></i>Agregar Canasto
+                  </button>
+
+                  <button *ngIf="despachoPreventaSeleccionado.finalizado==0 && btnGuardarCanastoDespachoCargando"
+                  [disabled]="true"  style=" color:#4183D7;   "
+                  class="btn btn-outline-light font-bold" (click)="agregarCanastoPreventa()" type="button" >
+                   Agregando...
+                 </button>
+                  </div>
+
               </div>
 
           </div>
@@ -476,11 +494,11 @@
   </div>
   <div class="modal-footer">
 
-    <button type="button"  *ngIf="!btnFinalizarDespachoCargando && despachoPreventaSeleccionado.finalizado==0" class="btn mr-auto ml-auto btn-info btn-lg"  (click)="openModalConfirmFinalizaDespacho(modalConfirm)" >
+    <button type="button"  *ngIf="!btnFinalizarDespachoCargando && despachoPreventaSeleccionado.finalizado==0" class="btn mr-auto ml-auto btn-info btn-md"  (click)="openModalConfirmFinalizaDespacho(modalConfirm)" >
       FINALIZAR DESPACHO
     </button>
 
-    <button type="button" disabled=true *ngIf="btnFinalizarDespachoCargando && despachoPreventaSeleccionado.finalizado==0" class="btn mr-auto ml-auto btn-info btn-lg">
+    <button type="button" disabled=true *ngIf="btnFinalizarDespachoCargando && despachoPreventaSeleccionado.finalizado==0" class="btn mr-auto ml-auto btn-info btn-md">
       FINALIZANDO DESPACHO...
     </button>
     <h3 *ngIf="despachoPreventaSeleccionado.finalizado==1"
@@ -826,7 +844,7 @@
                       <div class="col-md-12"><hr></div>
                      <div class="col-md-1"></div>
                       <div class="col-md-5 text-left">
-                          <button (click)="onBackItemPreventa()"  style="width: 100%;  color:#4183D7;     font-size: 18px;   height: 50px;"
+                          <button (click)="onBackItemPreventa()"  style="width: 100%;  color:#4183D7;     font-size: 18px;   height: 65px;"
                            *ngIf="!btnGuardarCargando"
                            class="btn btn-outline-light font-bold  m-1" type="button" >
                               <i class="fa fa-arrow-left"  aria-hidden="true"></i>    Anterior
@@ -834,18 +852,25 @@
                       </div>
 
                       <div class="col-md-5 text-right">
-                          <button
-                             style="width: 100%;  height: 50px;     font-size: 18px;"
-                             *ngIf="!btnGuardarDespachoCargando" class="btn btn-success font-bold  m-1"
+                          <button *ngIf="btnGuardarDespachoCargando==false"
+                             style="width: 100%;  height: 65px;     font-size: 18px;"
+                             class="btn btn-success font-bold  m-1"
                               type="button"  (click)="onNextItemPreventaSubmit()">
-                              Guardar  y Siguiente
+                              Guardar y Siguiente
                              <i class="fa fa-arrow-right" aria-hidden="true"></i>
                           </button>
-
+<!--
+                          <button
+                          style="width: 100%;  height: 65px;     font-size: 18px;"
+                          *ngIf="despachoPreventaSeleccionado.estadoId!=1   && btnGuardarDespachoCargando==false" class="btn btn-success font-bold  m-1"
+                           type="button"  (click)="onNextItemPreventaSubmit()">
+                           Siguiente
+                          <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                       </button> -->
                           <button
                           *ngIf="btnGuardarDespachoCargando"
                           disabled
-                          style="width: 100%;  height: 50px;     font-size: 18px;"
+                          style="width: 100%;  height: 65px;     font-size: 18px;"
                           class="btn btn-success font-bold  m-1"
                            type="button" >
                            Guardando...
@@ -984,7 +1009,7 @@
                     <div class="col-md-12"><hr></div>
                    <div class="col-md-1"></div>
                     <div class="col-md-5 text-left">
-                        <button (click)="onBackItemPreventa()"  style="width: 100%;  color:#4183D7;     font-size: 18px;   height: 50px;"
+                        <button (click)="onBackItemPreventa()"  style="width: 100%;  color:#4183D7;     font-size: 18px;   height: 65px;"
                          *ngIf="!btnGuardarCargando"
                          class="btn btn-outline-light font-bold  m-1" type="button" >
                             <i class="fa fa-arrow-left"  aria-hidden="true"></i>    Anterior
@@ -993,7 +1018,7 @@
 
                     <div class="col-md-5 text-right">
                       <button
-                      style="width: 100%;  height: 50px;     font-size: 18px;"
+                      style="width: 100%;  height: 65px;     font-size: 18px;"
                       *ngIf="!btnGuardarDespachoCargando" class="btn btn-success font-bold  m-1"
                        type="button"  (click)="onNextItemPreventaSubmit()">
                        Guardar  y Siguiente
@@ -1003,7 +1028,7 @@
                    <button
                    *ngIf="btnGuardarDespachoCargando"
                    disabled
-                   style="width: 100%;  height: 50px;     font-size: 18px;"
+                   style="width: 100%;  height: 65px;     font-size: 18px;"
                    class="btn btn-success font-bold  m-1"
                     type="button" >
                     Guardando...
@@ -1076,7 +1101,7 @@
                   <div class="col-md-12"><hr></div>
                  <div class="col-md-1"></div>
                   <div class="col-md-5 text-left">
-                      <button (click)="onBackItemPreventa()"  style="width: 100%;  color:#4183D7;     font-size: 18px;   height: 50px;"
+                      <button (click)="onBackItemPreventa()"  style="width: 100%;  color:#4183D7;     font-size: 18px;   height: 65px;"
                        *ngIf="!btnGuardarCargando"
                        class="btn btn-outline-light font-bold  m-1" type="button" >
                           <i class="fa fa-arrow-left"  aria-hidden="true"></i>    Anterior
@@ -1085,7 +1110,7 @@
 
                   <div class="col-md-5 text-right">
                     <button
-                    style="width: 100%;  height: 50px;     font-size: 18px;"
+                    style="width: 100%;  height: 65px;     font-size: 18px;"
                     *ngIf="!btnGuardarDespachoCargando" class="btn btn-success font-bold  m-1"
                      type="button"  (click)="onNextItemPreventaSubmit()">
                      Guardar  y Siguiente
@@ -1095,7 +1120,7 @@
                  <button
                  *ngIf="btnGuardarDespachoCargando"
                  disabled
-                 style="width: 100%;  height: 50px;     font-size: 18px;"
+                 style="width: 100%;  height: 65px;     font-size: 18px;"
                  class="btn btn-success font-bold  m-1"
                   type="button" >
                   Guardando...

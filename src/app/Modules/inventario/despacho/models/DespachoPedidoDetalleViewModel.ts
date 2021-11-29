@@ -55,6 +55,7 @@ export interface DespachoPreventaDetalleViewModel   {
   despacho: number;
   estadoId: number;
   lote: string;
+  noTieneLote:boolean;
   selected:boolean;
   page:number;
 }
