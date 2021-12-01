@@ -1,4 +1,4 @@
-export interface DespachoPedidoListadoViewModel {
+export class DespachoPedidoListadoViewModel {
     id: number;
     cotizador: string;
     sucursal: string;
@@ -19,13 +19,14 @@ export interface DespachoPedidoListadoViewModel {
 
 
 }
-export interface DespachoListadoPreventaVM  {
+export class DespachoListadoPreventaVM  {
   fechaEntrega: string;
   canalId: number;
   distribuidorId: number;
   distribuidor: string;
   rutaId: number;
   finalizado: number;
+  inUse: boolean;
   pedido: number;
   despacho: number;
   estadoDespacho: number;

@@ -185,13 +185,17 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
 
   }
 
+  validaDespachoEnUsoBeforeOpenModal(content, despacho: any){
+    this.openModal(content,despacho)
+  }
 
   openModal(content, despacho: any) {
     console.log(despacho)
     switch (this.canalId) {
       case 1:
           this.despachoPreventaDetalles = [];
-          this.getDespachoPreventaDetalleFromAPi(despacho.fechaEntrega,despacho.distribuidorId);
+
+          this.getDespachoPreventaDetalleFromAPi(despacho.fechaEntrega,despacho.rutaId);
           this.despachoPreventaSeleccionado = despacho;
           break;
       case 2:
@@ -470,8 +474,8 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
           this.toastService.error(response.errores[0]);
         } else {
           //validar que existe
-          if (response != null && response.records != null && response.records.length > 0) {
-            if( response.records == null || response.records.length==0  || response.records[0] == null ){
+          if (response != null && response.valores != null && response.valores.length > 0) {
+            if( response.valores == null || response.valores.length==0  || response.valores[0] == null ){
               this.toastService.warning("No se encontro el lote.");
               this.despachoPreventaArticuloDetalleSelected.noTieneLote=true;
               this.loadingLote = false;
@@ -479,8 +483,8 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
             }
             //  this.lote = record ?? new SAPLoteDespachoPedido();
             // console.log(this.lote)
-              console.log(response.records)
-             this.lotesDisponibles=response.records;
+              console.log(response.valores)
+             this.lotesDisponibles=response.valores[0];
           }
           else {
             this.lote = new SAPLoteDespachoPedido();
@@ -640,13 +644,15 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
 
   }
 
-  getDespachoPreventaDetalleFromAPi(fecha:string,distribuidorId:number) {
 
+
+  getDespachoPreventaDetalleFromAPi(fecha:string,rutaId:number) {
+    this.limpiarDataPreventa()
     this.loadingDespachoPreventaDetalle = true;
 
     let parametros={
      "Fecha":fecha
-    ,"DistribuidorId": distribuidorId
+    ,"RutaId": rutaId
    }
 
 
@@ -655,23 +661,13 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
+
+
           this.despachoPreventaDetalles = response.valores[0];
-          if(this.despachoPreventaDetalles.length>0){
-            this.despachoPreventaDetalles.filter(x=>x.codigoArticulo=='600124').map(x=>x.unidadMedida='CANASTO')
 
 
-            this.despachoPreventaDetalles[0].selected=true;
-            this.despachoPreventaArticuloDetalleSelected=this.despachoPreventaDetalles[0];
-            this.getLote();
+          this.formatDespachoPreventaDetalles();
 
-            this.collectionSizeDetalleDespacho = this.despachoPreventaDetalles.length;
-            this.asignaPageToItme();
-            this.paginateDataDetalleDespacho =  this.despachoPreventaDetalles
-            .slice((this.pageDetalleDespacho - 1) * this.pageSizeDetalleDespacho,
-             (this.pageDetalleDespacho - 1) * this.pageSizeDetalleDespacho + this.pageSizeDetalleDespacho);
-
-
-          }
         }
         this.loadingDespachoPreventaDetalle = false;
       }, error => {
@@ -681,9 +677,40 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
       });
   }
 
-  getDespachoPreventaDetalles() {
+  formatDespachoPreventaDetalles() {
 
 
+    if(this.despachoPreventaDetalles.length>0){
+
+      // this.despachoPreventaDetalles.sort((left, right) => {
+      //         if (left.estadoId < right.estadoId) return -1;
+      //         if (left.estadoId > right.estadoId) return 1;
+      //         return 0;
+      //   })
+      //   this.despachoPreventaDetalles.sort((left, right) => {
+      //     if (left.ubicacion < right.ubicacion) return -1;
+      //     if (left.ubicacion > right.ubicacion) return 1;
+      //     return 0;
+      // })
+
+      this.despachoPreventaDetalles.sort((a, b) => a.estadoId - b.estadoId || a.ubicacion - b.ubicacion);
+
+
+      this.despachoPreventaDetalles.filter(x=>x.codigoArticulo=='600124').map(x=>x.unidadMedida='CANASTO')
+
+
+      this.despachoPreventaDetalles[0].selected=true;
+      this.despachoPreventaArticuloDetalleSelected=this.despachoPreventaDetalles[0];
+      this.getLote();
+
+      this.collectionSizeDetalleDespacho = this.despachoPreventaDetalles.length;
+      this.asignaPageToItme();
+      this.paginateDataDetalleDespacho =  this.despachoPreventaDetalles
+      .slice((this.pageDetalleDespacho - 1) * this.pageSizeDetalleDespacho,
+       (this.pageDetalleDespacho - 1) * this.pageSizeDetalleDespacho + this.pageSizeDetalleDespacho);
+
+
+    }
     this.collectionSizeDetalleDespacho = this.despachoPreventaDetalles.length;
 
 
@@ -796,7 +823,7 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
               this.despachoPreventaArticuloDetalleSelected=item;
               this.pageDetalleDespacho=  this.despachoPreventaArticuloDetalleSelected.page;
             }
-              this.getDespachoPreventaDetalles();
+              this.formatDespachoPreventaDetalles();
               this.getLote()
              this.toastService.success("Realizado", "OK");
         }
@@ -859,9 +886,11 @@ agregarCanastoPreventa(){
             lote: '',
             selected:false,
             page:1,
-            noTieneLote:true
+            noTieneLote:true,
+            peso:0  ,
+            ubicacion:9
             });
-            this.getDespachoPreventaDetalles();
+            this.formatDespachoPreventaDetalles();
              this.toastService.success("Realizado", "OK");
         }
       }
@@ -971,12 +1000,17 @@ onLoteInput(){
   //this.despachoPreventaArticuloDetalleSelected.lote= this.lote.lote;
 }
 modalDespachoDetalleClose(){
-  this.pageDetalleDespacho=1;
-  this.despachoPreventaDetalles=[];
-  this.paginateDataDetalleDespacho=[];
+  this.limpiarDataPreventa()
   this.getDataByCondicional();
   this.modalService.dismissAll();
 }
 
-
+limpiarDataPreventa(){
+  this.collectionSizeDetalleDespacho=0
+  this.pageDetalleDespacho=1;
+  this.despachoPreventaDetalles=[];
+  this.paginateDataDetalleDespacho=[];
+  this.despachoPreventaSeleccionado= new DespachoListadoPreventaVM();
+  this.despachoPreventaArticuloDetalleSelected = new DespachoPreventaDetalleViewModel();
+}
 }
