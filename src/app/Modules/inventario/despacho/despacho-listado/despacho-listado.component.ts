@@ -54,6 +54,7 @@ export class DespachoListadoComponent implements OnInit {
   btnGuardarDespachoCargando =false;
   btnGuardarCanastoDespachoCargando=false;
   btnFinalizarDespachoCargando =false;
+  btnCargandoPrint: boolean = false;
   canales:ComboBox[]=[];
   opcionesFecha:ComboBox[]=[{codigo:1,nombre:"Hoy en adelante",grupo:"",grupoID:"1"}];
   opcionFechaId:number=1;
@@ -112,6 +113,8 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
 
 
   ngOnInit(): void {
+
+
    this.getDataByCondicional()
 
     this.getCanales();
@@ -664,8 +667,6 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
 
 
           this.despachoPreventaDetalles = response.valores[0];
-
-
           this.formatDespachoPreventaDetalles();
 
         }
@@ -720,6 +721,49 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
 
     this.paginateDataDetalleDespacho.map(x=>x.page=this.pageDetalleDespacho);
 
+  }
+
+
+
+  printDespachoPreventaDetalle(despacho:any) {
+    this.btnCargandoPrint=true;
+    this.limpiarDataPreventa()
+    this.despachoPreventaSeleccionado = despacho;
+
+    let parametros={
+     "Fecha":despacho.fechaEntrega
+    ,"RutaId": despacho.rutaId
+   }
+
+
+    this.httpService.DoPostAny<DespachoPreventaDetalleViewModel>(DataApi.Despacho,
+      "GetDespachoPreventaDetalles", parametros).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          this.btnCargandoPrint=false;
+
+        } else {
+
+
+          this.despachoPreventaDetalles = response.valores[0];
+          console.log(this.despachoPreventaDetalles)
+          this.router.navigate(['/impresion/inventario/print-d-preventa-detalles'],
+          { queryParams:
+
+            {
+              despachopreventa: JSON.stringify(this.despachoPreventaSeleccionado),
+              despachopreventadetalles: JSON.stringify(this.despachoPreventaDetalles),
+            },
+            });
+
+
+        }
+        this.btnCargandoPrint=false;
+      }, error => {
+        console.log(error)
+        this.btnCargandoPrint=false;
+        this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
+      });
   }
 
   asignaPageToItme(){

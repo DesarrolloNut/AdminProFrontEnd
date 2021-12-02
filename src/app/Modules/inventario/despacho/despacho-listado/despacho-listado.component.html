@@ -530,14 +530,18 @@
 
         <tr    *ngFor="let item of dataPreventa; let i = index">
             <td>
-                <button *ngIf="item.finalizado==0" class="btn btn-sm  font-bold btn-success m-1"
+                <button *ngIf="item.finalizado==0" [disabled]="btnCargandoPrint"   class="btn btn font-bold btn-success m-1"
                     (click)="validaDespachoEnUsoBeforeOpenModal(modalDetalleDespachoPreventa,item)">
                     <i class="fa fa-sm  fa-list "></i> Despachar
                 </button>
-                <button *ngIf="item.finalizado==1" class="btn btn-sm  font-bold btn-success m-1"
+                <button *ngIf="item.finalizado==1" [disabled]="btnCargandoPrint"  class="btn btn  font-bold btn-success m-1"
                 (click)="openModal(modalDetalleDespachoPreventa,item)">
                 <i class="fa fa-sm  fa-list "></i> Ver Despacho
-            </button>
+               </button>
+               <button [disabled]="btnCargandoPrint" class="btn  font-bold btn-secondary m-1"
+               (click)="printDespachoPreventaDetalle(item)">
+               <i class="fa fa-print" aria-hidden="true"></i>
+              </button>
             </td>
 
               <td>
