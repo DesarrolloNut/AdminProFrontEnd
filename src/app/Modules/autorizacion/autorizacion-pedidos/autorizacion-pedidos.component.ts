@@ -72,7 +72,7 @@ export class AutorizacionPedidosComponent implements OnInit {
   fechaPromesaModel: any;
   autorizacionHistorico: AutorizacionHistoricoListadoViewModel[];
   promedioDias: number = 0;
-
+  _math = Math;
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private authService: AuthenticationService,
@@ -427,7 +427,7 @@ export class AutorizacionPedidosComponent implements OnInit {
   getAutorizacionesHistorico() {
 
     this.httpService.DoPostAny<AutorizacionHistoricoListadoViewModel>(DataApi.AutorizacionHistorico,
-      "GetAutorizacionesHistoricoByPedidoID", Number(this.cotizacionSeleccionada.codigoReferencia)).subscribe(response => {
+      "GetAutorizacionesHistoricoByPedidoID", Number(this.cotizacionSeleccionada.id)).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
@@ -436,7 +436,6 @@ export class AutorizacionPedidosComponent implements OnInit {
           this.autorizacionHistorico = response.records;
           if (this.autorizacionHistorico) {
             this.autorizacionHistorico.forEach(a => a.jsonInfo = JSON.parse(a.jsonInfo)[0]);
-            // console.log(this.autorizacionHistorico)
           }
 
         }

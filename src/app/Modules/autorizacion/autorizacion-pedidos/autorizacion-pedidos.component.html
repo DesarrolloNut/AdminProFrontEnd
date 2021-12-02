@@ -126,7 +126,7 @@
 
                                 </td>
                                 <td>
-                                    <span> {{ item.codigoReferencia }}</span>
+                                    <span> {{ item.id }}</span>
                                 </td>
                                 <td>
                                     <span>{{item.cliente }}</span>
@@ -186,7 +186,7 @@
         <div class="row" *ngIf="!cargandoAutorizacion">
             <div class="col">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="modal-title">Pedido #{{cotizacionSeleccionada.codigoReferencia}}</h4>
+                    <h4 class="modal-title" id="modal-title">Pedido #{{cotizacionSeleccionada.id}}</h4>
                     <button type="button" class="close" aria-describedby="modal-title"
                         (click)="modal.dismiss('Cross click')">
                         <span aria-hidden="true">&times;</span>
@@ -293,7 +293,8 @@
                                         <div class="card-body">
                                             <div class="d-flex no-block align-items-center">
                                                 <div>
-                                                    <h3 class="font-weight-bold">{{ promedioDias | number:'1.2' }}</h3>
+                                                    <h3 class="font-weight-bold">{{ promedioDias | number:'1.0-1' }}
+                                                    </h3>
                                                     <h6 class="text-primary">Promedio días</h6>
                                                 </div>
                                                 <div class="ml-auto"><span class="text-primary display-6"><i
@@ -443,9 +444,14 @@
                                                     </td>
                                                     <td>
                                                         <span> {{item.fechaVencimiento | date : 'dd/MM/yyyy'}}</span>
-                                                        <span class="badge badge-light"
-                                                            [ngClass]="{
-                                                                'badge-danger': item.diasVencimiento < 0}">{{item.diasVencimiento}}
+                                                        <span class="badge " [ngClass]=" {
+                                                                'badge-danger': item.diasVencimiento > 0,
+                                                                'badge-light':item.diasVencimiento <= 0
+                                                            }
+                                                                ">
+                                                            <span *ngIf="item.diasVencimiento< 0">En </span>
+                                                            <span *ngIf="item.diasVencimiento> 0">Hace </span>
+                                                            {{_math.abs(item.diasVencimiento)}}
                                                             días</span>
                                                     </td>
                                                     <td>
@@ -484,7 +490,8 @@
                         </div>
 
                         <!-- TIME LINE -->
-                        <div class="col-lg-6 col-md-12" *ngIf="autorizacionHistorico.length > 0">
+                        <div class="col-lg-6 col-md-12"
+                            *ngIf="autorizacionHistorico && autorizacionHistorico.length > 0">
                             <div class="card">
                                 <h3 class="card-title">
                                     Histórico autorizaciones
