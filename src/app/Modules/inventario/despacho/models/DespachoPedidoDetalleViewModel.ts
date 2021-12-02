@@ -1,4 +1,4 @@
-export interface DespachoPedidoDetalleViewModel {
+export class DespachoPedidoDetalleViewModel {
     id: number;
     cotizacionId: number;
     articuloId: number;
@@ -22,7 +22,7 @@ export interface DespachoPedidoDetalleViewModel {
     estado:string;
     estadoColor:string;
 }
-export interface DespachoPedidoDetalleArticuloViewModel {
+export class DespachoPedidoDetalleArticuloViewModel {
     DespachoDetalleId: number;
     DespachoId: number;
     articuloId: number;
@@ -37,7 +37,7 @@ export interface DespachoPedidoDetalleArticuloViewModel {
 
 }
 
-export interface DespachoPreventaDetalleViewModel   {
+export class DespachoPreventaDetalleViewModel   {
   fechaEntrega: string;
   canalId: string;
   distribuidor: string;
@@ -53,6 +53,8 @@ export interface DespachoPreventaDetalleViewModel   {
   unidadMedida: string;
   pedido: number;
   despacho: number;
+  peso: number;
+  ubicacion: number;
   estadoId: number;
   lote: string;
   noTieneLote:boolean;
@@ -63,6 +65,8 @@ export interface DespachoPreventaDetalleViewModel   {
 export class DespachoPreventaRequestModel {
   fechaEntrega: string;
   ruta: number;
+  usuarioId:number;
+  estadoId:number;
   almacen_Origen: string;
   almacen_Destino: string;
   articuloId: number;

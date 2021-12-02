@@ -13,7 +13,12 @@ const routes: Routes = [
     canActivateChild: [AuthGuard],
     children: [
       {
-        path: 'produccion', loadChildren: () => import('../impresion/impresion-produccion/impresion-produccion.module').then(m => m.ImpresionProduccionModule)
+        path: 'produccion', loadChildren: () => import('./impresion-produccion/impresion-produccion.module').then(m => m.ImpresionProduccionModule),
+
+      },
+      {
+        path: 'inventario', loadChildren: () => import('./impresion-inventario/impresion-inventario.module').then(m => m.ImpresionInventarioModule)
+
       },
     ],
   },
