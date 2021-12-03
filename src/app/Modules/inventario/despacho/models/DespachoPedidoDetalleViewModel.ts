@@ -61,7 +61,18 @@ export class DespachoPreventaDetalleViewModel   {
   selected:boolean;
   page:number;
 }
-
+export class DespachoPreventaDetalleExcelVM   {
+  FechaEntrega: string;
+  CodigoArticulo: string;
+  Descripcion: string;
+  Almacen_Desde: string;
+  Almacen_Hasta: string;
+  Unidad: string;
+  Peso: number;
+  Cantidad: number;
+  Despacho: number;
+  Lote: string;
+}
 export class DespachoPreventaRequestModel {
   fechaEntrega: string;
   ruta: number;

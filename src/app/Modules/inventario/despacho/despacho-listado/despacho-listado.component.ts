@@ -1,5 +1,5 @@
 import { ComboBoxLote } from './../../../../shared/model/ComboBox';
-import { DespachoPreventaRequestModel, SAPLoteDespachoPedido } from './../models/DespachoPedidoDetalleViewModel';
+import { DespachoPreventaDetalleExcelVM, DespachoPreventaRequestModel, SAPLoteDespachoPedido } from './../models/DespachoPedidoDetalleViewModel';
 import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -18,7 +18,7 @@ import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { DespachoPedidoDetalleArticuloViewModel, DespachoPedidoDetalleViewModel, DespachoPreventaDetalleViewModel } from '../models/DespachoPedidoDetalleViewModel';
 import { DespachoListadoPreventaVM, DespachoPedidoListadoViewModel } from '../models/DespachoPedidoListadoViewModel';
-
+import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-despacho-listado',
   templateUrl: './despacho-listado.component.html',
@@ -725,7 +725,10 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
 
 
 
-  printDespachoPreventaDetalle(despacho:any) {
+  exportDespachoPreventaDetalle(despacho:any,tipo:number) {
+
+    //TIPO 1 = PRINT
+    //TIPO 2 = EXPORTAR EXCEL
     this.btnCargandoPrint=true;
     this.limpiarDataPreventa()
     this.despachoPreventaSeleccionado = despacho;
@@ -744,19 +747,12 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
 
         } else {
 
-
           this.despachoPreventaDetalles = response.valores[0];
-          console.log(this.despachoPreventaDetalles)
-          this.router.navigate(['/impresion/inventario/print-d-preventa-detalles'],
-          { queryParams:
-
-            {
-              despachopreventa: JSON.stringify(this.despachoPreventaSeleccionado),
-              despachopreventadetalles: JSON.stringify(this.despachoPreventaDetalles),
-            },
-            });
-
-
+          if(tipo==1){
+             this.despachoPreventaDetalleToPrinter(this.despachoPreventaDetalles)
+          }else if(tipo==2){
+            this.despachoPreventaDetalleToExcel(this.despachoPreventaDetalles)
+          }
         }
         this.btnCargandoPrint=false;
       }, error => {
@@ -764,6 +760,52 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
         this.btnCargandoPrint=false;
         this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
       });
+  }
+  despachoPreventaDetalleToPrinter(data:DespachoPreventaDetalleViewModel[]) {
+    this.router.navigate(['/impresion/inventario/print-d-preventa-detalles'],
+    { queryParams:
+
+      {
+        despachopreventa: JSON.stringify(this.despachoPreventaSeleccionado),
+        despachopreventadetalles: JSON.stringify(this.despachoPreventaDetalles),
+      },
+      });
+  }
+  despachoPreventaDetalleToExcel(data:DespachoPreventaDetalleViewModel[]) {
+
+         let dataFormated:DespachoPreventaDetalleExcelVM[] = [];
+         data.forEach(x=>{
+            dataFormated.push({
+
+              FechaEntrega:x.fechaEntrega,
+              CodigoArticulo:x.codigoArticulo,
+              Descripcion:x.articulo,
+              Almacen_Desde:x.almacen_Origen,
+              Almacen_Hasta:x.almacen_Destino,
+              Unidad:x.unidadMedida,
+              Peso:x.peso,
+              Lote:x.lote,
+              Cantidad:x.pedido,
+              Despacho:x.despacho,
+            })
+         });
+
+          const ws2: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataFormated);
+
+          /* generate workbook and add the worksheet */
+          const wb: XLSX.WorkBook = XLSX.utils.book_new();
+
+
+
+
+
+
+        //Add Row and formatting
+
+          XLSX.utils.book_append_sheet(wb, ws2, 'Despacho'+"-("+this.despachoPreventaSeleccionado.almacen_Destino+")");
+           let nombreDistribuidor=this.despachoPreventaSeleccionado.distribuidor.split(" ").join("");
+          /* save to file */
+          XLSX.writeFile(wb, ""+nombreDistribuidor+"("+this.despachoPreventaSeleccionado.almacen_Destino+")-"+"Despacho.xlsx");
   }
 
   asignaPageToItme(){

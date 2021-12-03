@@ -538,10 +538,18 @@
                 (click)="openModal(modalDetalleDespachoPreventa,item)">
                 <i class="fa fa-sm  fa-list "></i> Ver Despacho
                </button>
+
                <button [disabled]="btnCargandoPrint" class="btn  font-bold btn-secondary m-1"
-               (click)="printDespachoPreventaDetalle(item)">
+               (click)="exportDespachoPreventaDetalle(item,1)">
                <i class="fa fa-print" aria-hidden="true"></i>
               </button>
+
+              <button [disabled]="btnCargandoPrint" class="btn  font-bold btn-secondary m-1"
+              (click)="exportDespachoPreventaDetalle(item,2)">
+              <i class="fa fa-file-excel" aria-hidden="true"></i>
+
+             </button>
+
             </td>
 
               <td>
