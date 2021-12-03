@@ -51,7 +51,7 @@
           <div class="form-group col-md-6" *ngIf="f.condicionPagoId.value==2">
             <label for="limiteCredito"><i class="fa fa-hashtag"></i> Límite
               Crédito</label>
-            <input [attr.disabled]="f.clienteTipoId.value==12" formControlName="limiteCredito" type="text" prefix="$ " mask="separator"
+            <input  formControlName="limiteCredito" type="text" prefix="$ " mask="separator"
               thousandSeparator="," name="limiteCredito" id="limiteCredito"
               [ngClass]="{'is-invalid' : submitted && f.limiteCredito.errors,  'form-control':true  }">
             <div class="invalid-feedback" *ngIf="submitted && f.limiteCredito.errors">
