@@ -172,6 +172,11 @@ GetNameEstado(estadoId: number){
       return;
     }
 
+    if (this.lote.cantidad < maximo) {
+      this.toastService.warning("El lote no tiene disponible la cantidad que desea consumir.");
+      return;
+    }
+
     if (model.consumido <= 0) {
       this.toastService.warning("No a digitado una cantidad valida.");
       return;
@@ -596,6 +601,7 @@ GetNameEstado(estadoId: number){
 
          this.httpService.DoPostAny<LotesOrdenFabricacion>(DataApi.OrdenFabricacionDetalle,
           "GetLote", ap).subscribe(response => {
+            console.log(response);
 
             if (!response.ok) {
               this.toastService.error(response.errores[0]);
