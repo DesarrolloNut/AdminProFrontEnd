@@ -62,14 +62,14 @@ export class DespachoPreventaDetalleViewModel   {
   page:number;
 }
 export class DespachoPreventaDetalleExcelVM   {
-  FechaEntrega: string;
+  FechaEntrega?: string;
   CodigoArticulo: string;
   Descripcion: string;
   Almacen_Desde: string;
   Almacen_Hasta: string;
   Unidad: string;
   Peso: number;
-  Cantidad: number;
+  Pedido: number;
   Despacho: number;
   Lote: string;
 }

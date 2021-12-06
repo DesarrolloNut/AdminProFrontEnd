@@ -777,7 +777,6 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
          data.forEach(x=>{
             dataFormated.push({
 
-              FechaEntrega:x.fechaEntrega,
               CodigoArticulo:x.codigoArticulo,
               Descripcion:x.articulo,
               Almacen_Desde:x.almacen_Origen,
@@ -785,7 +784,7 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
               Unidad:x.unidadMedida,
               Peso:x.peso,
               Lote:x.lote,
-              Cantidad:x.pedido,
+              Pedido:x.pedido,
               Despacho:x.despacho,
             })
          });
