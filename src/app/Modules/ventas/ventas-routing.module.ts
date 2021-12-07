@@ -10,6 +10,7 @@ import { ReporteprontopagoComponent } from './reporteprontopago/reporteprontopag
 import { VentasComponent } from './ventas.component';
 import { PedidosEmpleadoFormularioComponent } from './pedidos-empleado/pedidos-empleado-formulario/pedidos-empleado-formulario.component';
 import { PedidosEmpleadosListadoComponent } from './pedidos-empleado/pedidos-empleado-listado/pedidos-empleado-listado.component';
+import { CotizacionesSeguimientoComponent } from './cotizaciones/cotizaciones-seguimiento/cotizaciones-seguimiento.component';
 
 
 const routes: Routes = [
@@ -75,8 +76,18 @@ const routes: Routes = [
           ]
         }
       },
+      {
+        path: 'cotizacion-seguimiento', component: CotizacionesSeguimientoComponent, data: {
+          title: 'Cotizaciones Seguimiento',
+          urls: [
+            { title: 'Ventas' },
+            { title: 'Cotizaciones Seguimiento' },
+          ]
+        }
+      },
 
-      // Cotizacion
+
+
       {
         path: 'pedidos-empleado', component: PedidosEmpleadosListadoComponent, data: {
           title: 'Pedidos Empleado',

@@ -15,6 +15,7 @@ import { ReporteprontopagoComponent } from './reporteprontopago/reporteprontopag
 import { AutorizacionCotizacionComponent } from './cotizaciones/autorizacion-cotizacion/autorizacion-cotizacion.component';
 import { PedidosEmpleadosListadoComponent } from './pedidos-empleado/pedidos-empleado-listado/pedidos-empleado-listado.component';
 import { PedidosEmpleadoFormularioComponent } from './pedidos-empleado/pedidos-empleado-formulario/pedidos-empleado-formulario.component';
+import { CotizacionesSeguimientoComponent } from './cotizaciones/cotizaciones-seguimiento/cotizaciones-seguimiento.component';
 
 
 @NgModule({
@@ -29,7 +30,9 @@ import { PedidosEmpleadoFormularioComponent } from './pedidos-empleado/pedidos-e
    PedidosEmpleadoFormularioComponent,
     ReporteprontopagoComponent,
 
-  AutorizacionCotizacionComponent],
+  AutorizacionCotizacionComponent,
+
+  CotizacionesSeguimientoComponent],
   imports: [ 
     CommonModule,
     SharedModule,
