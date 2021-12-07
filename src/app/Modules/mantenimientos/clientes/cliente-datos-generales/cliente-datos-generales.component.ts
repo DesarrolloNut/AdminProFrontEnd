@@ -264,6 +264,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       clientePadreTipoId: [0],
       isClientPrincipal: [0],
       usuarioId: [Number(this.auth.tokenDecoded.nameid)],
+      updateMobile: [0],
       // contactos: new FormArray([])
     },
       {

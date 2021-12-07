@@ -43,6 +43,7 @@ export class Cliente {
         this.clientePadreId=0
         this.isClientPrincipal=0
         this.salario=0
+        this.updateMobile=0
     }
 
 
@@ -87,6 +88,7 @@ export class Cliente {
     clientePadreTipoId :number;
     salario: number;
     usuarioId: number;
+    updateMobile: number;
 
 
     // contactos: Array<ClienteContactos>
