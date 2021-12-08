@@ -6,8 +6,8 @@
 
                     <div class="col-md-3">
                         <label> Fecha</label>
-                        <ejs-datepicker [showClearButton]="false" (change)="getData()" [(ngModel)]="fecha"
-                            [format]="'dd-MM-yyyy'">
+                        <ejs-datepicker [showClearButton]="false" (change)="onChangeFechaFiltro($event)"
+                            [(ngModel)]="fecha" [format]="'dd-MM-yyyy'">
                         </ejs-datepicker>
                     </div>
 
@@ -32,12 +32,12 @@
                     <div class="col-md-5  ">
                         <label>Vendedor</label>
                         <ng-select [items]="vendedores" bindLabel="nombre" bindValue="codigo" [searchable]="false"
-                            (change)="getData()" [(ngModel)]="vendedorID" [clearable]="false">
+                            (change)="getData()" [(ngModel)]="vendedorID" [clearable]="true">
 
                             <ng-template ng-label-tmp let-item="item">
                                 <span>
                                     <i class="fa fa-user text-muted"></i>
-                                    {{item.nombre}} 
+                                    {{item.nombre}}
                                 </span>
                             </ng-template>
                             <ng-template ng-option-tmp let-item="item" let-index="index">

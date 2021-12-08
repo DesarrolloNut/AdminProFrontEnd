@@ -61,7 +61,7 @@ export class CotizacionesSeguimientoComponent implements OnInit {
     let parametros: Parametro[] = [
       { key: "Fecha", value: this.fecha },
       { key: "EstadoID", value: this.estadoID },
-      { key: "VendedorID", value: this.vendedorID }
+      { key: "VendedorID", value: this.vendedorID ? this.vendedorID : 0 }
     ]
 
     this.httpService.GetAllWithPagination<CotizacionListadoViewModel>(DataApi.Cotizacion, "GetCotizacionSeguimientoListado", "ID", this.paginaNumeroActual,
@@ -161,6 +161,13 @@ export class CotizacionesSeguimientoComponent implements OnInit {
 
   }
 
+  onChangeFechaFiltro(evento: any) {
+
+    this.fecha = new Date(evento.value)
+    this.getData();
+
+  }
+
   // getEstados() {
   //   this.loadingEstados = true;
   //   this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
@@ -184,23 +191,23 @@ export class CotizacionesSeguimientoComponent implements OnInit {
   // }
 
 
-  onChangeEstado(cotizacion: CotizacionListadoViewModel, index: number) {
+  // onChangeEstado(cotizacion: CotizacionListadoViewModel, index: number) {
 
-    this.httpService.DoPostAny<ComboBox>(DataApi.Cotizacion,
-      "UpdateCotizacionEstado", cotizacion).subscribe(response => {
+  //   this.httpService.DoPostAny<ComboBox>(DataApi.Cotizacion,
+  //     "UpdateCotizacionEstado", cotizacion).subscribe(response => {
 
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-          console.error(response.errores[0]);
-        } else {
-          this.toastService.success("Estado actualizado", "OK");
-        }
-      }, error => {
-        this.getData()
-        this.toastService.error("No se actualizar el estado", "Error conexion al servidor");
-      });
+  //       if (!response.ok) {
+  //         this.toastService.error(response.errores[0]);
+  //         console.error(response.errores[0]);
+  //       } else {
+  //         this.toastService.success("Estado actualizado", "OK");
+  //       }
+  //     }, error => {
+  //       this.getData()
+  //       this.toastService.error("No se actualizar el estado", "Error conexion al servidor");
+  //     });
 
-  }
+  // }
 
 
   getVendedores() {
