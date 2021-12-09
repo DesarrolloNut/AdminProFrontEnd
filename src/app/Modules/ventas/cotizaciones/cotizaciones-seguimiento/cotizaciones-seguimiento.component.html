@@ -3,28 +3,53 @@
         <div class="card">
             <div class="card-body">
                 <div class="row mb-2">
-                    <div class="col-md-6 align-middle">
-                        <h4 class="card-title">Listado de cotizaciones</h4>
-                    </div>
-                    <div class="col-md-6 text-right">
-                        <button [routerLink]="[0]" class="btn btn-info"> <i class="fa fa-plus"></i> Nueva
-                            cotización
-                        </button>
-                    </div>
-                    <div class="col-md-12 p-2">
 
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <label for="search" class="input-group-text bg-white">
-                                    <span class="bg-white" style="border-right:none">
-                                        <i class="ti-search"></i>
-                                    </span>
-                                </label>
-                            </div>
-                            <input [(ngModel)]="Search" (keyup)="getData()" type="text"
-                                style="border-left:none !important;" class="form-control" placeholder="Buscar">
-                        </div>
+                    <div class="col-md-3">
+                        <label> Fecha</label>
+                        <ejs-datepicker [showClearButton]="false" (change)="onChangeFechaFiltro($event)"
+                            [(ngModel)]="fecha" [format]="'dd-MM-yyyy'">
+                        </ejs-datepicker>
                     </div>
+
+                    <div class="col-md-4  ">
+                        <label>Estado</label>
+                        <ng-select [items]="estados" bindLabel="nombre" bindValue="codigo" [searchable]="false"
+                            (change)="getData()" [(ngModel)]="estadoID" [clearable]="false">
+
+                            <ng-template ng-label-tmp let-item="item">
+                                <span>
+                                    <i class="fa fa-circle" [ngStyle]="{'color': item.grupo}"></i> {{item.nombre}}
+                                </span>
+                            </ng-template>
+                            <ng-template ng-option-tmp let-item="item" let-index="index">
+                                <span>
+                                    <i class="fa fa-circle" [ngStyle]="{'color': item.grupo}"></i> {{item.nombre}}
+                                </span>
+                            </ng-template>
+                        </ng-select>
+
+                    </div>
+                    <div class="col-md-5  ">
+                        <label>Vendedor</label>
+                        <ng-select [items]="vendedores" bindLabel="nombre" bindValue="codigo" [searchable]="false"
+                            (change)="getData()" [(ngModel)]="vendedorID" [clearable]="true">
+
+                            <ng-template ng-label-tmp let-item="item">
+                                <span>
+                                    <i class="fa fa-user text-muted"></i>
+                                    {{item.nombre}}
+                                </span>
+                            </ng-template>
+                            <ng-template ng-option-tmp let-item="item" let-index="index">
+                                <span>
+                                    <i class="fa fa-user text-muted"></i>
+                                    {{item.nombre}}
+                                </span>
+                            </ng-template>
+                        </ng-select>
+
+                    </div>
+
                 </div>
 
                 <div class="table-responsive">

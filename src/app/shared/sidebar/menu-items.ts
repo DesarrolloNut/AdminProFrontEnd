@@ -60,6 +60,17 @@ export const ROUTES: RouteInfo[] = [
         permisos: ["ventas_cotizacion"],
       },
       {
+        path: '/ventas/cotizacion-seguimiento',
+        label: '',
+        labelClass: '',
+        title: 'Cotiz. Seguimiento',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["ventas_cotizacion_seguimiento"],
+      },
+      {
         path: '/ventas/pedidos-empleado',
         label: '',
         labelClass: '',
