@@ -26,10 +26,12 @@ export class DespachoListadoPreventaVM  {
   distribuidor: string;
   rutaId: number;
   finalizado: number;
+  noEditable: number;
   inUse: boolean;
   pedido: number;
   despacho: number;
   almacen_Origen: number;
   almacen_Destino: number;
   estadoDespacho: number;
+  rutasVendedoresDistribuidor:string;
 }

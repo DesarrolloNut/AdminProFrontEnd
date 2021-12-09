@@ -67,11 +67,11 @@ export class DespachoPreventaDetalleExcelVM   {
   Descripcion: string;
   Almacen_Desde: string;
   Almacen_Hasta: string;
-  Unidad: string;
+  Unidad?: string;
   Peso: number;
   Pedido: number;
-  Despacho: number;
-  Lote: string;
+  Despacho?: number;
+  Lote?: string;
 }
 export class DespachoPreventaRequestModel {
   fechaEntrega: string;

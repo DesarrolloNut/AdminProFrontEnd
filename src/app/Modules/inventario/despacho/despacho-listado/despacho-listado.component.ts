@@ -72,35 +72,35 @@ export class DespachoListadoComponent implements OnInit {
 
    lotesDisponibles:SAPLoteDespachoPedido[]=[];
 
-   //PAGINACION MODAL DETALLE DESPACHO
-   paginateDataDetalleDespacho: DespachoPreventaDetalleViewModel[] = [];
-   pageDetalleDespacho = 1;
-   pageSizeDetalleDespacho= 6;
-   collectionSizeDetalleDespacho = 0;
+    //PAGINACION MODAL DETALLE DESPACHO
+    paginateDataDetalleDespacho: DespachoPreventaDetalleViewModel[] = [];
+    pageDetalleDespacho = 1;
+    pageSizeDetalleDespacho= 6;
+    collectionSizeDetalleDespacho = 0;
 
-// MOVER A OTRO COMPONENTE
-loadingArticulosExtras: boolean;
-articulosExtrasComboBox: ArticuloPesosExtras[];
-articulosExtras: ArticuloPesosExtrasViewModel[];
-cantidades: number[] = [];
+    // MOVER A OTRO COMPONENTE
+    loadingArticulosExtras: boolean;
+    articulosExtrasComboBox: ArticuloPesosExtras[];
+    articulosExtras: ArticuloPesosExtrasViewModel[];
+    cantidades: number[] = [];
 
-loteSearch: string
-loadingLote: boolean;
-loadingAlmacenes: boolean;
-almacenes: any[];
+    loteSearch: string
+    loadingLote: boolean;
+    loadingAlmacenes: boolean;
+    almacenes: any[];
 
 
 
-pesoBalanza: string = "0.00 KG";
-pesoBalanzaUltimaFecha: Date = new Date();
-pesoBalanzaLBNumber: number = 0;
+    pesoBalanza: string = "0.00 KG";
+    pesoBalanzaUltimaFecha: Date = new Date();
+    pesoBalanzaLBNumber: number = 0;
 
-pesoArticuloBalanza: number
-pesoCanastos: number = 0;
-pesoNeto: number = 0;
+    pesoArticuloBalanza: number
+    pesoCanastos: number = 0;
+    pesoNeto: number = 0;
 
-readonly PESO_BALANZA_DEFAULT_VALUE: string = "0.00 KG";
-readonly KILOGRAMO_A_LIBRA: number = 2.20462;
+    readonly PESO_BALANZA_DEFAULT_VALUE: string = "0.00 KG";
+    readonly KILOGRAMO_A_LIBRA: number = 2.20462;
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
@@ -762,6 +762,8 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
       });
   }
   despachoPreventaDetalleToPrinter(data:DespachoPreventaDetalleViewModel[]) {
+    data.sort((a, b) =>  a.codigoArticulo.localeCompare(b.codigoArticulo) );
+
     this.router.navigate(['/impresion/inventario/print-d-preventa-detalles'],
     { queryParams:
 
@@ -772,6 +774,7 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
       });
   }
   despachoPreventaDetalleToExcel(data:DespachoPreventaDetalleViewModel[]) {
+    data.sort((a, b) =>  a.codigoArticulo.localeCompare(b.codigoArticulo) );
 
          let dataFormated:DespachoPreventaDetalleExcelVM[] = [];
          data.forEach(x=>{
@@ -781,11 +784,8 @@ readonly KILOGRAMO_A_LIBRA: number = 2.20462;
               Descripcion:x.articulo,
               Almacen_Desde:x.almacen_Origen,
               Almacen_Hasta:x.almacen_Destino,
-              Unidad:x.unidadMedida,
               Peso:x.peso,
-              Lote:x.lote,
               Pedido:x.pedido,
-              Despacho:x.despacho,
             })
          });
 
@@ -1040,7 +1040,6 @@ finalizaDespacho(){
   if(this.loadingLote){return;}
   if(this.btnGuardarDespachoCargando){return;}
   if(this.btnGuardarCanastoDespachoCargando){return;}
-
   this.modalService.dismissAll();
 
   this.btnFinalizarDespachoCargando=true;
@@ -1059,6 +1058,7 @@ finalizaDespacho(){
 
               if(response.valores[0]>0){
                 this.despachoPreventaSeleccionado.finalizado=1;
+                this.despachoPreventaSeleccionado.noEditable=1;
               }
               this.getDataByCondicional()
              this.toastService.success("Realizado", "OK");
@@ -1098,4 +1098,5 @@ limpiarDataPreventa(){
   this.despachoPreventaSeleccionado= new DespachoListadoPreventaVM();
   this.despachoPreventaArticuloDetalleSelected = new DespachoPreventaDetalleViewModel();
 }
+
 }
