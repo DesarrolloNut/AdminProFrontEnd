@@ -32,6 +32,7 @@ export class DespachoListadoComponent implements OnInit {
 
   // COPIAR AL CREAR UN LISTADO NUEVO
   Search: string = "";
+  sucursalId: number = 0;
   paginaNumeroActual = 1;
   Cargando: boolean = false;
   CargandoDespachoDetalle: boolean = false;
@@ -59,7 +60,8 @@ export class DespachoListadoComponent implements OnInit {
   opcionesFecha:ComboBox[]=[{codigo:1,nombre:"Hoy en adelante",grupo:"",grupoID:"1"}];
   opcionFechaId:number=1;
   canalId:number=1;
-
+  sucursales  : ComboBox[];
+  loadingSucursales = false;
 
   //PREVENTA
    despachoPreventaSeleccionado: DespachoListadoPreventaVM;
@@ -115,9 +117,9 @@ export class DespachoListadoComponent implements OnInit {
   ngOnInit(): void {
 
 
-   this.getDataByCondicional()
 
     this.getCanales();
+    this.getSucursalByUsuarioId();
     this.getArticulosDePesosExtras();
     this.getAlmacenes();
    // this.empezarAmbientePrueba();
@@ -139,6 +141,40 @@ export class DespachoListadoComponent implements OnInit {
   }
  }
 
+
+
+getSucursalByUsuarioId() {
+  let UsuarioId = Number(this.authService.tokenDecoded.nameid);
+  let parametros: Parametro[] = [
+    { key: "UsuarioId", value: UsuarioId },
+  ]
+
+  this.loadingSucursales = true;
+  this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+    "GetSucursalesByUsuarioId", parametros).subscribe(response => {
+
+      if (!response.ok) {
+
+        this.toastService.error(response.errores[0]);
+      } else {
+        if(response.records.length> 0  && response.records!=null){
+          this.sucursalId = response.records[0].codigo;
+          this.getDataByCondicional()
+        }
+        this.sucursales = response.records;
+
+      }
+      this.loadingSucursales = false;
+    }, error => {
+      this.loadingSucursales = false;
+      this.toastService.error("No se pudo obtener las sucursales", "Error conexion al servidor");
+
+      setTimeout(() => {
+        this.getSucursalByUsuarioId()
+      }, 1000);
+
+    });
+}
 
 
   getData() {
@@ -625,7 +661,10 @@ export class DespachoListadoComponent implements OnInit {
   getDataPreventa() {
     this.Cargando = true;
 
-    let parametros: Parametro[] = [{ key: "Search", value: this.Search }, ]
+    let parametros: Parametro[] = [
+      { key: "Search", value: this.Search },
+      { key: "sucursalId", value: this.sucursalId },
+     ]
 
     this.httpService.GetAllWithPagination<DespachoListadoPreventaVM>(DataApi.Despacho,
        "GetDespachoPreventaListado", "FechaEntrega", this.paginaNumeroActual,

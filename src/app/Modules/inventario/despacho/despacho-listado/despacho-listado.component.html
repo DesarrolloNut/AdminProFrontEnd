@@ -12,7 +12,7 @@
                             pedido
                         </button> -->
                     </div>
-                    <div class="col-md-6 pt-2">
+                    <div class="col-md-4 pt-2">
                       <label for="">Busqueda</label>
                         <div class="input-group">
 
@@ -28,14 +28,26 @@
                         </div>
                     </div>
                     <div class="form-group col-md-4 pt-2">
-                      <label for="">Fecha</label>
-                      <ng-select [items]="opcionesFecha" bindLabel="nombre" bindValue="codigo"
-                      [loading]="loadingCanales"
-                      (change)="getDataByCondicional()"
-                      placeholder="Selecciona" [clearable]="false"
-                      notFoundText="No resultados" [(ngModel)]="opcionFechaId" >
+                        <label for="">Sucursal</label>
+                        <ng-select
+                          bindLabel="nombre" bindValue="codigo" [items]="sucursales"
+                          [loading]="loadingSucursales"
+                          [(ngModel)]="sucursalId"
+                          (change)="getDataByCondicional()"
+                          notFoundText="No resultados" >
                       </ng-select>
-                  </div>
+                      </div>
+
+                      <div class="form-group col-md-2 pt-2">
+                        <label for="">Fecha</label>
+                        <ng-select [items]="opcionesFecha" bindLabel="nombre" bindValue="codigo"
+                        [loading]="loadingCanales"
+                        (change)="getDataByCondicional()"
+                        placeholder="Selecciona" [clearable]="false"
+                        notFoundText="No resultados" [(ngModel)]="opcionFechaId" >
+                        </ng-select>
+                    </div>
+
                     <div class="form-group col-md-2 pt-2">
                       <label for="">Canal</label>
                         <ng-select [items]="canales" bindLabel="nombre" bindValue="codigo"
@@ -45,6 +57,7 @@
                         notFoundText="No resultados" [(ngModel)]="canalId" >
                         </ng-select>
                     </div>
+
                 </div>
 
                 <div class="table-responsive">
