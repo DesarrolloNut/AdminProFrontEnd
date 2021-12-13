@@ -59,7 +59,7 @@
                                 <th></th>
                                 <th></th>
                                 <th>Cliente</th>
-                                <th>SubTotal</th>
+                                <!-- <th>SubTotal</th> -->
                                 <th>Desc.</th>
                                 <th>Imp.</th>
                                 <th>Total Neto</th>
@@ -77,15 +77,9 @@
                                         <i class="fa fa-sm fa-eye"></i>
                                     </button>
 
-                                    <button class="btn btn-sm btn-info m-1" [routerLink]="[item.id]">
+                                    <!-- <button class="btn btn-sm btn-info m-1" [routerLink]="[item.id]">
                                         <i class="fa fa-sm fa-edit"></i>
-                                    </button>
-
-
-                                    <button class="btn btn-sm btn-success m-1" *ngIf="item.estadoID == 1"
-                                        (click)="openModalAutorizar(modalAutorizarCotizacion,item)">
-                                        <i class="fa fa-sm fa-check"></i>
-                                    </button>
+                                    </button> -->
 
                                 </td>
                                 <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
@@ -99,9 +93,9 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td>
+                                <!-- <td>
                                     <span> ${{item.subTotal | number:'1.2-2'}}</span>
-                                </td>
+                                </td> -->
                                 <td>
                                     <span> ${{item.descuentoTotal | number:'1.2-2'}}</span>
                                 </td>
@@ -169,139 +163,6 @@
 
 
 
-
-
-
-<!--
-<ng-template #modalAutorizarCotizacion let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title">Autorizar cotización</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body">
-        <div class="row">
-
-
-
-            <div class="col-12">
-                <app-loading-listado [hidden]="!loadingCotizacionDetalle"></app-loading-listado>
-            </div>
-        </div>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
-        <button type="button" class="btn btn-success m-1">  <i class="fa fa-sm fa-shield-alt"></i> Enviar a autorizar</button>
-    </div>
-</ng-template> -->
-
-
-
-<ng-template #modalAutorizarCotizacion let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title">Detalle de cotización</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body">
-        <div class="row">
-
-            <div class="col-12">
-                <h5 class="text-info"> <i class="fa fa-user"></i> Cliente: {{cotizacionSeleccionada.cliente}}</h5>
-                <h5> <i class="fa fa-id-card"></i> Documento: {{cotizacionSeleccionada.clienteDocumento}}</h5>
-                <h5> <i class="fa fa-calendar"></i> Fecha: {{cotizacionSeleccionada.fechaCreacion |
-                    date:'dd/MM/yy'}}</h5>
-                <hr>
-                <h5> <i class="fa fa-user-circle"></i> Cotizador: {{cotizacionSeleccionada.cotizador}}</h5>
-                <h5> <i class="fa fa-map-marker"></i> Sucursal: {{cotizacionSeleccionada.sucursal}}</h5>
-                <h5> <i class="fa fa-user-circle"></i>Vendedor: {{cotizacionSeleccionada.vendedor}}</h5>
-            </div>
-
-            <div class="col-12" [hidden]="loadingCotizacionDetalle">
-
-                <div class="table-responsive">
-                    <table class="table table-sm table-hover mb-0 no-wrap v-middle">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>Artículo</th>
-                                <th>Cantidad</th>
-                                <th>Precio</th>
-                                <th>% Desc</th>
-                                <th>SubTotal</th>
-                                <th>Desc</th>
-                                <th>Impuesto</th>
-                                <th>Total Neto</th>
-
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                            <tr *ngFor="let item of cotizacionDetalles">
-                                <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
-                                <td>
-                                    <span> {{item.articulo}}</span>
-                                </td>
-                                <td>
-                                    <span> {{item.cantidad}}</span>
-                                </td>
-                                <td>
-                                    <span> ${{item.precio | number:'1.2-2'}} </span>
-                                </td>
-                                <td>
-                                    <span> %{{item.porcientoDescuento | number:'1.2-2'}}</span>
-                                </td>
-                                <td>
-                                    <span> ${{item.subtotal | number:'1.2-2'}} </span>
-                                </td>
-                                <td>
-                                    <span> ${{item.totalDescuento | number:'1.2-2'}} </span>
-                                </td>
-                                <td>
-                                    <span> ${{item.totalImpuesto | number:'1.2-2'}} </span>
-                                </td>
-                                <td>
-                                    <span class="font-weight-bold"> ${{item.totalNeto | number:'1.2-2'}} </span>
-                                </td>
-                            </tr>
-
-                        </tbody>
-                    </table>
-
-                </div>
-
-
-            </div>
-
-            <div class="col-12 text-right">
-                <hr>
-                <h4>Subtotal: $ {{cotizacionSeleccionada.subTotal | number:'1.2-2' }}</h4>
-                <h4>Descuento: $ {{cotizacionSeleccionada.descuentoTotal | number:'1.2-2' }}</h4>
-                <h4>Impuesto: $ {{cotizacionSeleccionada.impuestoTotal | number:'1.2-2' }}</h4>
-                <h4 class="font-weight-bold">Total Neto: $ {{cotizacionSeleccionada.totalNeto | number:'1.2-2' }}</h4>
-            </div>
-
-            <div class="col-12">
-                <app-loading-listado [hidden]="!loadingCotizacionDetalle"></app-loading-listado>
-            </div>
-        </div>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
-        <button type="button" class="btn btn-success m-1" *ngIf="!loadingEstadoAutorizacionCotizacion"
-            (click)="CambiarEstadoAutorizacionCotizacion(cotizacionSeleccionada.id)">
-            <i class="fa fa-sm fa-check"></i> Enviar a autorizar</button>
-        <!-- boton cargando -->
-        <button *ngIf="loadingEstadoAutorizacionCotizacion" disabled class="btn btn-success m-1" type="button">
-            <span class="spinner-border spinner-border-sm"></span> Enviando
-        </button>
-    </div>
-</ng-template>
-
-
-
 <ng-template #modalDetalleCotizacion let-modal>
     <div class="modal-header">
         <h4 class="modal-title">Detalle de cotización</h4>
@@ -317,10 +178,10 @@
                 <h5> <i class="fa fa-id-card"></i> Documento: {{cotizacionSeleccionada.clienteDocumento}}</h5>
                 <h5> <i class="fa fa-calendar"></i> Fecha: {{cotizacionSeleccionada.fechaCreacion |
                     date:'dd/MM/yy'}}</h5>
-                <hr>
+                <!-- <hr>
                 <h5> <i class="fa fa-user-circle"></i> Cotizador: {{cotizacionSeleccionada.cotizador}}</h5>
                 <h5> <i class="fa fa-map-marker"></i> Sucursal: {{cotizacionSeleccionada.sucursal}}</h5>
-                <h5> <i class="fa fa-user-circle"></i>Vendedor: {{cotizacionSeleccionada.vendedor}}</h5>
+                <h5> <i class="fa fa-user-circle"></i>Vendedor: {{cotizacionSeleccionada.vendedor}}</h5> -->
             </div>
 
             <div class="col-12" [hidden]="loadingCotizacionDetalle">
@@ -334,7 +195,7 @@
                                 <th>Cantidad</th>
                                 <th>Precio</th>
                                 <th>% Desc</th>
-                                <th>SubTotal</th>
+                                <!-- <th>SubTotal</th> -->
                                 <th>Desc</th>
                                 <th>Impuesto</th>
                                 <th>Total Neto</th>
@@ -357,9 +218,9 @@
                                 <td>
                                     <span> %{{item.porcientoDescuento | number:'1.2-2'}}</span>
                                 </td>
-                                <td>
+                                <!-- <td>
                                     <span> ${{item.subtotal | number:'1.2-2'}} </span>
-                                </td>
+                                </td> -->
                                 <td>
                                     <span> ${{item.totalDescuento | number:'1.2-2'}} </span>
                                 </td>
@@ -381,7 +242,7 @@
 
             <div class="col-12 text-right">
                 <hr>
-                <h4>Subtotal: $ {{cotizacionSeleccionada.subTotal | number:'1.2-2' }}</h4>
+                <!-- <h4>Subtotal: $ {{cotizacionSeleccionada.subTotal | number:'1.2-2' }}</h4> -->
                 <h4>Descuento: $ {{cotizacionSeleccionada.descuentoTotal | number:'1.2-2' }}</h4>
                 <h4>Impuesto: $ {{cotizacionSeleccionada.impuestoTotal | number:'1.2-2' }}</h4>
                 <h4 class="font-weight-bold">Total Neto: $ {{cotizacionSeleccionada.totalNeto | number:'1.2-2' }}</h4>

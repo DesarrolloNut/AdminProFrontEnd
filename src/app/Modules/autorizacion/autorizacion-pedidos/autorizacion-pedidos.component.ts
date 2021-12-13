@@ -158,7 +158,8 @@ export class AutorizacionPedidosComponent implements OnInit {
           console.error(response.errores[0]);
         } else {
           this.estadosAutorizacion = response.records;
-          this.estadoIDAutorizacionDefault = response.records[0].codigo;
+          // this.estadoIDAutorizacionDefault = response.records[0].codigo; //para cuando mande a rechazar
+          this.estadoIDAutorizacionDefault = 1; //para cuando mande a rechazar
           this.getSiguienteEstado()//almacena en una variable el siguiente estado
           this.getAnteriorEstadoAutorizacion()//almacena en una variable el anterior estado
           this.getData()
@@ -186,8 +187,8 @@ export class AutorizacionPedidosComponent implements OnInit {
     this.estadoAutorizacionAnterior = this.estadosAutorizacion[estadoActualPosicion - 1]
 
     if (this.estadoAutorizacionAnterior) {
-      this.estadoAutorizacionComboModel = this.estadoAutorizacionAnterior.codigo;
-      // this.estadoAutorizacionComboModel = 1;
+      // this.estadoAutorizacionComboModel = this.estadoAutorizacionAnterior.codigo;
+      this.estadoAutorizacionComboModel = 0;
     }
 
   }
