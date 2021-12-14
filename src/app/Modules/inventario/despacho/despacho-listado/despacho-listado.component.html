@@ -516,9 +516,11 @@
             <th>Zonas Vendedores</th>
         </tr>
     </thead>
-    <tbody [hidden]="Cargando">
+    <tbody [hidden]="Cargando" style="    height: 200px;
+    min-height: 200px;">
 
         <tr    *ngFor="let item of dataPreventa; let i = index">
+
             <td>
                 <button *ngIf="item.noEditable==0" [disabled]="btnCargandoPrint"   class="btn btn font-bold btn-success m-1"
                     (click)="validaDespachoEnUsoBeforeOpenModal(modalDetalleDespachoPreventa,item)">
@@ -585,7 +587,38 @@
 
     </tbody>
 
+
 </table>
+<div class="over" *ngIf="!despachoPuedeHorario || loadingRangosFechaDespacho" style=" position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(255,255,255,0.5);
+z-index: 1;
+backdrop-filter: blur(5px);">
+  <div class="row justify-content-center  text-center align-items-center " style="font-size: 20px;     height: 100%;">
+    <h3 *ngIf="!loadingRangosFechaDespacho" class="font-weight-bold" style="background-color: #fdfdfd;
+    padding: 14px;
+    border-radius: 7px;
+    border: 1px solid gainsboro; ">
+      <i class="fa fa-clock" style="font-size: 30px;" aria-hidden="true"></i>
+       <br>
+      El horario a despachar debe ser entre {{fDesde | date:'shortTime'}} - {{fHasta | date:'shortTime'}}
+    </h3>
+
+    <h3 *ngIf="loadingRangosFechaDespacho" class="font-weight-bold" style="background-color: #fdfdfd;
+    padding: 14px;
+    border-radius: 7px;
+    border: 1px solid gainsboro; ">
+        <i class="spinner-border spinner-border-sm"></i>
+
+        <br>
+         Cargando...
+    </h3>
+
+  </div>
+</div>
 </ng-template>
 
 
