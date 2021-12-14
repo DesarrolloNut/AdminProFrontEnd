@@ -69,6 +69,7 @@ export class DespachoListadoComponent implements OnInit {
    fDesde = new Date();
    fHasta = new Date();
    fahoraServidor = new Date();
+   despachoOn = 1
 
    despachoPuedeHorario = false;
    loadingRangosFechaDespacho =false;
@@ -190,6 +191,7 @@ getRangosFechaDespacho() {
 
         this.fHasta = new Date(this.fHasta.setHours(response.valores[1]));
         this.fahoraServidor = new Date(response.valores[2]);
+        this.despachoOn = parseInt(response.valores[3]);
 
         this.validaPuedeDespachoHorario();
 
