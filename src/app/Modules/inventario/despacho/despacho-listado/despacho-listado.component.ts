@@ -68,7 +68,10 @@ export class DespachoListadoComponent implements OnInit {
 
    fDesde = new Date();
    fHasta = new Date();
+   fahoraServidor = new Date();
+
    despachoPuedeHorario = false;
+   loadingRangosFechaDespacho =false;
 
   //PREVENTA
    despachoPreventaSeleccionado: DespachoListadoPreventaVM;
@@ -125,15 +128,15 @@ export class DespachoListadoComponent implements OnInit {
      //this.validaPuedeDespachoHorario()
      this.getRangosFechaDespacho();
 
-    this.getCanales();
-    this.getSucursalByUsuarioId();
-    this.getArticulosDePesosExtras();
-    this.getAlmacenes();
-   // this.empezarAmbientePrueba();
-    for (let i = 1; i <= 100; i++) {
-      this.cantidades.push(i)
-    }
   }
+
+getAllData(){
+  this.getCanales();
+  this.getSucursalByUsuarioId();
+  this.getArticulosDePesosExtras();
+  this.getAlmacenes();
+}
+
  getDataByCondicional(){
   switch (this.canalId) {
     case 1:
@@ -155,9 +158,16 @@ validaPuedeDespachoHorario(){
   this.fHasta.setDate( this.fHasta.getDate()+1)
   this.fHasta = new Date( this.fHasta.setMinutes(0));
   this.fHasta = new Date( this.fHasta.setSeconds(0));
-  var fAhora = new Date();
-  if((fAhora.getTime()>=this.fDesde.getTime()) && fAhora.getTime() <= this.fHasta.getTime()){
+
+
+   if((this.fahoraServidor.getTime()>=this.fDesde.getTime()) && this.fahoraServidor.getTime() <= this.fHasta.getTime()){
     this.despachoPuedeHorario=true;
+    this.getAllData()
+  }
+  else if(this.fahoraServidor.getHours()<=this.fHasta.getHours())
+  {
+   this.despachoPuedeHorario=true;
+   this.getAllData()
   }else{
     this.despachoPuedeHorario=false;
   }
@@ -166,7 +176,7 @@ validaPuedeDespachoHorario(){
 
 
 getRangosFechaDespacho() {
-
+ this.loadingRangosFechaDespacho=true;
   this.httpService.DoPostAny<string>(DataApi.Despacho,
     "GetDespachoRangoValor", null).subscribe(response => {
 
@@ -179,10 +189,15 @@ getRangosFechaDespacho() {
         this.fDesde = new Date(this.fDesde.setHours(response.valores[0]));
 
         this.fHasta = new Date(this.fHasta.setHours(response.valores[1]));
+        this.fahoraServidor = new Date(response.valores[2]);
+
         this.validaPuedeDespachoHorario();
 
       }
+      this.loadingRangosFechaDespacho=false;
+
     }, error => {
+      this.loadingRangosFechaDespacho=false;
       console.error(error)
       this.toastService.error("ha ocurrido un error", "Error conexion al servidor");
     });
