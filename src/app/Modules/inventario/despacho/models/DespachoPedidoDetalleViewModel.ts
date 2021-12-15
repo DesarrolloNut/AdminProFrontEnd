@@ -94,3 +94,8 @@ export class SAPLoteDespachoPedido   {
   disponible: number;
   cantidadPedida: number;
 }
+export class DespachoInUseVM  {
+  usuario: string;
+  mensaje: string;
+  estado: number;
+}
