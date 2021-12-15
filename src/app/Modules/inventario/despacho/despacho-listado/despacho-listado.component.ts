@@ -63,6 +63,17 @@ export class DespachoListadoComponent implements OnInit {
   sucursales  : ComboBox[];
   loadingSucursales = false;
 
+
+
+
+   fDesde = new Date();
+   fHasta = new Date();
+   fahoraServidor = new Date();
+   despachoOn = 1
+
+   despachoPuedeHorario = false;
+   loadingRangosFechaDespacho =false;
+
   //PREVENTA
    despachoPreventaSeleccionado: DespachoListadoPreventaVM;
    dataPreventa: DespachoListadoPreventaVM[] = [] //tu modelo
@@ -115,18 +126,18 @@ export class DespachoListadoComponent implements OnInit {
 
 
   ngOnInit(): void {
+     //this.validaPuedeDespachoHorario()
+     this.getRangosFechaDespacho();
 
-
-
-    this.getCanales();
-    this.getSucursalByUsuarioId();
-    this.getArticulosDePesosExtras();
-    this.getAlmacenes();
-   // this.empezarAmbientePrueba();
-    for (let i = 1; i <= 100; i++) {
-      this.cantidades.push(i)
-    }
   }
+
+getAllData(){
+  this.getCanales();
+  this.getSucursalByUsuarioId();
+  this.getArticulosDePesosExtras();
+  this.getAlmacenes();
+}
+
  getDataByCondicional(){
   switch (this.canalId) {
     case 1:
@@ -141,6 +152,58 @@ export class DespachoListadoComponent implements OnInit {
   }
  }
 
+validaPuedeDespachoHorario(){
+
+  this.fDesde = new Date(this.fDesde.setMinutes(0));
+  this.fDesde = new Date(this.fDesde.setSeconds(0));
+  this.fHasta.setDate( this.fHasta.getDate()+1)
+  this.fHasta = new Date( this.fHasta.setMinutes(0));
+  this.fHasta = new Date( this.fHasta.setSeconds(0));
+
+
+   if((this.fahoraServidor.getTime()>=this.fDesde.getTime()) && this.fahoraServidor.getTime() <= this.fHasta.getTime()){
+    this.despachoPuedeHorario=true;
+    this.getAllData()
+  }
+  else if(this.fahoraServidor.getHours()<=this.fHasta.getHours())
+  {
+   this.despachoPuedeHorario=true;
+   this.getAllData()
+  }else{
+    this.despachoPuedeHorario=false;
+  }
+}
+
+
+
+getRangosFechaDespacho() {
+ this.loadingRangosFechaDespacho=true;
+  this.httpService.DoPostAny<string>(DataApi.Despacho,
+    "GetDespachoRangoValor", null).subscribe(response => {
+
+      if (!response.ok) {
+        this.toastService.error(response.errores[0]);
+      } else {
+
+        console.log(response)
+
+        this.fDesde = new Date(this.fDesde.setHours(response.valores[0]));
+
+        this.fHasta = new Date(this.fHasta.setHours(response.valores[1]));
+        this.fahoraServidor = new Date(response.valores[2]);
+        this.despachoOn = parseInt(response.valores[3]);
+
+        this.validaPuedeDespachoHorario();
+
+      }
+      this.loadingRangosFechaDespacho=false;
+
+    }, error => {
+      this.loadingRangosFechaDespacho=false;
+      console.error(error)
+      this.toastService.error("ha ocurrido un error", "Error conexion al servidor");
+    });
+}
 
 
 getSucursalByUsuarioId() {

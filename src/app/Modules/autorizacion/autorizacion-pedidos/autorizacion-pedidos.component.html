@@ -261,7 +261,7 @@
                                                 <div>
                                                     <h3 class="font-weight-bold"> {{totalPendientePagar | number:'1.2-2'
                                                         }}</h3>
-                                                    <h6 class="text-success">Pendiente</h6>
+                                                    <h6 class="text-success">Pendiente pago</h6>
                                                 </div>
                                                 <div class="ml-auto"><span class="text-success display-6"><i
                                                             class="ti-wallet"></i></span></div>
@@ -279,7 +279,7 @@
                                                         -
                                                         cotizacionSeleccionada.totalNeto - totalPendientePagar
                                                         | number:'1.2-2' }}</h3>
-                                                    <h6 class="text-orange">Balance</h6>
+                                                    <h6 class="text-orange">Balance disp.</h6>
                                                 </div>
                                                 <div class="ml-auto"><span class="text-orange display-6"><i
                                                             class="ti-file"></i></span></div>
@@ -573,10 +573,29 @@
                 </div>
                 <div class="modal-footer">
 
+
+                    <!-- <ng-template
+                        [ngIf]="cotizacionSeleccionada.estadoAutorizacionId == estadoAutorizacionUsuario && estadoAutorizacionAnterior"> -->
+                    <ng-template [ngIf]="estadoAutorizacionComboModel  == 0 || estadoAutorizacionComboModel == 2">
+
+                        <button *ngIf="!cotizacionSeleccionada.cargando" class="btn btn-sm btn-danger m-1"
+                            (click)="desautorizar()">
+                            <i class="fa fa-sm fa-times"></i> Desautorizar
+                        </button>
+
+                        <!-- boton cargando -->
+                        <button *ngIf="cotizacionSeleccionada.cargando && !isAutorizando " disabled
+                            class="btn btn-warning m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span>
+                        </button>
+
+                    </ng-template>
+
+
                     <ng-template
                         [ngIf]="estadoAutorizacionAnterior && cotizacionSeleccionada.estadoAutorizacionId <= estadoAutorizacionAnterior.codigo">
                         <!-- <ng-template
-                    [ngIf]="item.estadoAutorizacionId == 0 || item.estadoAutorizacionId == 1 && estadoAutorizacionUsuario > item.estadoAutorizacionId"> -->
+                [ngIf]="item.estadoAutorizacionId == 0 || item.estadoAutorizacionId == 1 && estadoAutorizacionUsuario > item.estadoAutorizacionId"> -->
                         <!-- ESTADO PENDIENTE-->
 
                         <button class="btn btn-sm btn-success m-1"
@@ -593,28 +612,6 @@
 
                     </ng-template>
 
-
-                    <ng-template
-                        [ngIf]="cotizacionSeleccionada.estadoAutorizacionId == estadoAutorizacionUsuario && estadoAutorizacionAnterior">
-                        <!-- <ng-template
-                    [ngIf]="estadoAutorizacionUsuario == 2 && (item.estadoAutorizacionId == 1 || item.estadoAutorizacionId == 2)"> -->
-
-                        <button *ngIf="!cotizacionSeleccionada.cargando" class="btn btn-sm btn-danger m-1"
-                            (click)="desautorizar()">
-                            <i class="fa fa-sm fa-times"></i> Desautorizar
-                        </button>
-
-                        <!-- boton cargando -->
-                        <button *ngIf="cotizacionSeleccionada.cargando && !isAutorizando " disabled
-                            class="btn btn-warning m-1" type="button">
-                            <span class="spinner-border spinner-border-sm"></span>
-                        </button>
-
-                    </ng-template>
-
-
-                    <!-- <button type="button" class="btn btn-danger m-1" (click)="desautorizar()">Desautorizar</button>
-                    <button type="button" class="btn btn-success m-1" (click)="autorizar()">Autorizar</button> -->
                 </div>
             </div>
         </div>
