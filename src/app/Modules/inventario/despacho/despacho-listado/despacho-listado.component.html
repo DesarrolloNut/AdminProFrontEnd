@@ -521,8 +521,11 @@
             <th>Acciones</th>
             <th>Fecha</th>
             <th>Distribuidor</th>
-            <th>Estado Despacho</th>
-            <th>Zonas Vendedores</th>
+            <th>Estado </th>
+            <th>Total </th>
+            <th>Total Despacho </th>
+
+            <!-- <th>Zonas Vendedores</th> -->
         </tr>
     </thead>
     <tbody [hidden]="Cargando" style="    height: 200px;
@@ -575,12 +578,21 @@
 
             </td>
 
+             <td>
+              <p class="font-bold mb-0">{{item.totalMontoPedido | currency}}</p>
+             </td>
+
+              <td>
+                <p class="font-bold mb-0">  {{item.totalMontoDespacho | currency}}</p>
+
+             </td>
+
             <td>
-              <div class="alert alert alert-dark text-left" role="alert">
+              <!-- <div class="alert alert alert-dark text-left" role="alert">
 
                 {{item.rutasVendedoresDistribuidor}}
 
-              </div>
+              </div> -->
 
 
           </td>

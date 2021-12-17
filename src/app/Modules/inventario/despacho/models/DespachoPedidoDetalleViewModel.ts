@@ -53,6 +53,9 @@ export class DespachoPreventaDetalleViewModel   {
   unidadMedida: string;
   pedido: number;
   despacho: number;
+  precio: number;
+  totalMonto: number;
+  totalMontoDespacho: number;
   peso: number;
   ubicacion: number;
   estadoId: number;
@@ -82,6 +85,7 @@ export class DespachoPreventaRequestModel {
   almacen_Destino: string;
   articuloId: number;
   lote: string;
+  precio
   pedido: number;
   despacho: number;
 }

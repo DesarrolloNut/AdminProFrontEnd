@@ -988,6 +988,7 @@ getSucursalByUsuarioId() {
   p.despacho = this.despachoPreventaArticuloDetalleSelected.despacho;
   p.fechaEntrega = this.despachoPreventaArticuloDetalleSelected.fechaEntrega;
   p.lote=this.lote.lote;
+  p.precio= this.despachoPreventaArticuloDetalleSelected.precio;
   this.httpService.DoPostAny<DespachoPreventaDetalleViewModel>(DataApi.Despacho,
     'registra_o_actualiza_DespachoPreventa', p).subscribe(response => {
       if (!response.ok) {
@@ -1076,7 +1077,10 @@ agregarCanastoPreventa(){
             page:1,
             noTieneLote:true,
             peso:0  ,
-            ubicacion:9
+            ubicacion:9,
+            totalMonto:0,
+            totalMontoDespacho:0,
+            precio:0
             });
             this.formatDespachoPreventaDetalles();
              this.toastService.success("Realizado", "OK");
