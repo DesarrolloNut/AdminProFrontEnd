@@ -30,6 +30,8 @@ export class DespachoListadoPreventaVM  {
   inUse: boolean;
   pedido: number;
   despacho: number;
+  totalMontoPedido: number;
+  totalMontoDespacho: number;
   almacen_Origen: number;
   almacen_Destino: number;
   estadoDespacho: number;

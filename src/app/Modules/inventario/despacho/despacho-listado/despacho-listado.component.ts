@@ -1,5 +1,5 @@
 import { ComboBoxLote } from './../../../../shared/model/ComboBox';
-import { DespachoPreventaDetalleExcelVM, DespachoPreventaRequestModel, SAPLoteDespachoPedido } from './../models/DespachoPedidoDetalleViewModel';
+import { DespachoInUseVM, DespachoPreventaDetalleExcelVM, DespachoPreventaRequestModel, SAPLoteDespachoPedido } from './../models/DespachoPedidoDetalleViewModel';
 import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -80,7 +80,7 @@ export class DespachoListadoComponent implements OnInit {
    despachoPreventaDetalles: DespachoPreventaDetalleViewModel[];
    despachoPreventaArticuloDetalleSelected: DespachoPreventaDetalleViewModel;
    loadingDespachoPreventaDetalle:boolean;
-
+   despachoInUseVM= new DespachoInUseVM();
    lote: SAPLoteDespachoPedido = new SAPLoteDespachoPedido();
 
    lotesDisponibles:SAPLoteDespachoPedido[]=[];
@@ -299,6 +299,7 @@ getSucursalByUsuarioId() {
 
           this.getDespachoPreventaDetalleFromAPi(despacho.fechaEntrega,despacho.rutaId);
           this.despachoPreventaSeleccionado = despacho;
+          this.registraDespachoPreventaInUse();
           break;
       case 2:
             this.despachoDetalles = [];
@@ -987,6 +988,7 @@ getSucursalByUsuarioId() {
   p.despacho = this.despachoPreventaArticuloDetalleSelected.despacho;
   p.fechaEntrega = this.despachoPreventaArticuloDetalleSelected.fechaEntrega;
   p.lote=this.lote.lote;
+  p.precio= this.despachoPreventaArticuloDetalleSelected.precio;
   this.httpService.DoPostAny<DespachoPreventaDetalleViewModel>(DataApi.Despacho,
     'registra_o_actualiza_DespachoPreventa', p).subscribe(response => {
       if (!response.ok) {
@@ -1075,7 +1077,10 @@ agregarCanastoPreventa(){
             page:1,
             noTieneLote:true,
             peso:0  ,
-            ubicacion:9
+            ubicacion:9,
+            totalMonto:0,
+            totalMontoDespacho:0,
+            precio:0
             });
             this.formatDespachoPreventaDetalles();
              this.toastService.success("Realizado", "OK");
@@ -1138,6 +1143,53 @@ onBackItemPreventa(){
 
 
 
+registraDespachoPreventaInUse(){
+
+
+  this.btnFinalizarDespachoCargando=true;
+
+  let p= new DespachoPreventaRequestModel();
+  p.ruta = this.despachoPreventaSeleccionado.rutaId;
+  p.fechaEntrega = this.despachoPreventaSeleccionado.fechaEntrega;
+  p.usuarioId =  Number(this.authService.tokenDecoded.nameid)
+
+  this.httpService.DoPostAny<DespachoPreventaDetalleViewModel>(DataApi.Despacho,
+    'RegistraDespachoPreventaInUse', p).subscribe(response => {
+      if (!response.ok) {
+        this.toastService.error(response.errores[0], "Error");
+        this.btnFinalizarDespachoCargando = false;
+      } else {
+        if(response.valores?.length>0){
+
+                this.despachoInUseVM =response.valores[0];
+                console.log(  this.despachoInUseVM.mensaje)
+                if(this.despachoPreventaSeleccionado.finalizado==1){
+                this.despachoPreventaSeleccionado.noEditable=1;
+
+                    this.despachoInUseVM.estado=4
+                    this.despachoInUseVM.mensaje="DESPACHO FINALIZADO"
+
+                }else{
+                  if(this.despachoInUseVM.estado==2){
+                    this.despachoPreventaSeleccionado.noEditable=1;
+                  }else{
+                    this.toastService.info(this.despachoInUseVM.mensaje, "OK");
+
+                  }
+                }
+        }
+      }
+      this.btnFinalizarDespachoCargando = false;
+
+    }, error => {
+     this.btnFinalizarDespachoCargando = false;
+      this.toastService.error("Error conexion al servidor");
+    });
+
+
+}
+
+
 finalizaDespacho(){
   if(this.loadingLote){return;}
   if(this.btnGuardarDespachoCargando){return;}
@@ -1175,6 +1227,9 @@ finalizaDespacho(){
 
 
 }
+
+
+
 openModalConfirmFinalizaDespacho(content) {
   this.modalService.open(content, { size: 'sm',centered:true });
   // this.articuloSeleccionado = item
@@ -1199,6 +1254,7 @@ limpiarDataPreventa(){
   this.paginateDataDetalleDespacho=[];
   this.despachoPreventaSeleccionado= new DespachoListadoPreventaVM();
   this.despachoPreventaArticuloDetalleSelected = new DespachoPreventaDetalleViewModel();
+  this.despachoInUseVM= new DespachoInUseVM();
 }
 
 }
