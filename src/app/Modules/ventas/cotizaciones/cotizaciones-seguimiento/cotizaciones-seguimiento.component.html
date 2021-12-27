@@ -1,13 +1,216 @@
 <div class="row">
     <div class="col-12">
+
+        <div class="d-none d-md-block">
+            <div class="row">
+
+                <!-- COTIZADO -->
+                <div class="col-lg-2 col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h3 class="">
+                                        <i [hidden]="!loadingSeguimientoCount" class="fa fa-spin fa-spinner text-light">
+                                        </i>
+                                        <span [hidden]="loadingSeguimientoCount">
+                                            {{ (seguimientoCount?.cotizado / seguimientoCountTotal) | percent}}
+                                        </span>
+                                    </h3>
+                                    <h6 class="card-subtitle text-dark">Cotizado ({{seguimientoCount?.cotizado |number
+                                        }})
+                                    </h6>
+                                </div>
+                                <div class="col-12">
+                                    <div class="progress">
+                                        <div role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"
+                                            class="progress-bar bg-dark" style="height: 6px;"
+                                            [ngStyle]="{'width':(seguimientoCount?.cotizado / seguimientoCountTotal) | percent}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PEDIDO -->
+                <div class="col-lg-2 col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h3 class="">
+                                        <i [hidden]="!loadingSeguimientoCount" class="fa fa-spin fa-spinner text-light">
+                                        </i>
+                                        <span [hidden]="loadingSeguimientoCount">
+                                            {{ (seguimientoCount?.pedido / seguimientoCountTotal) | percent}}
+                                        </span>
+                                    </h3>
+                                    <h6 class="card-subtitle text-primary">Pedido ({{seguimientoCount?.pedido |number
+                                        }})
+                                    </h6>
+                                </div>
+                                <div class="col-12">
+                                    <div class="progress">
+                                        <div role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"
+                                            class="progress-bar bg-primary" style="height: 6px;"
+                                            [ngStyle]="{'width':(seguimientoCount?.pedido / seguimientoCountTotal) | percent}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FINANZAS -->
+                <div class="col-lg-2 col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h3 class="">
+                                        <i [hidden]="!loadingSeguimientoCount" class="fa fa-spin fa-spinner text-light">
+                                        </i>
+                                        <span [hidden]="loadingSeguimientoCount">
+                                            {{ (seguimientoCount?.pendienteFinanzas / seguimientoCountTotal) | percent}}
+                                        </span>
+                                    </h3>
+                                    <h6 class="card-subtitle text-warning">Finanzas
+                                        ({{seguimientoCount?.pendienteFinanzas |number
+                                        }})
+                                    </h6>
+                                </div>
+                                <div class="col-12">
+                                    <div class="progress">
+                                        <div role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"
+                                            class="progress-bar bg-warning" style="height: 6px;"
+                                            [ngStyle]="{'width':(seguimientoCount?.pendienteFinanzas / seguimientoCountTotal) | percent}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DESPACHO -->
+                <div class="col-lg-2 col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h3 class="">
+                                        <i [hidden]="!loadingSeguimientoCount" class="fa fa-spin fa-spinner text-light">
+                                        </i>
+                                        <span [hidden]="loadingSeguimientoCount">
+                                            {{ (seguimientoCount?.pendienteDespacho / seguimientoCountTotal) | percent}}
+                                        </span>
+                                    </h3>
+                                    <h6 class="card-subtitle text-warning">Despacho
+                                        ({{seguimientoCount?.pendienteDespacho |number
+                                        }})
+                                    </h6>
+                                </div>
+                                <div class="col-12">
+                                    <div class="progress">
+                                        <div role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"
+                                            class="progress-bar bg-warning" style="height: 6px;"
+                                            [ngStyle]="{'width':(seguimientoCount?.pendienteDespacho / seguimientoCountTotal) | percent}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FACTURADO -->
+                <div class="col-lg-2 col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h3 class="">
+                                        <i [hidden]="!loadingSeguimientoCount" class="fa fa-spin fa-spinner text-light">
+                                        </i>
+                                        <span [hidden]="loadingSeguimientoCount">
+                                            {{ (seguimientoCount?.facturado / seguimientoCountTotal) | percent}}
+                                        </span>
+                                    </h3>
+                                    <h6 class="card-subtitle text-info">Facturado
+                                        ({{seguimientoCount?.facturado |number
+                                        }})
+                                    </h6>
+                                </div>
+                                <div class="col-12">
+                                    <div class="progress">
+                                        <div role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"
+                                            class="progress-bar bg-info" style="height: 6px;"
+                                            [ngStyle]="{'width':(seguimientoCount?.facturado / seguimientoCountTotal) | percent}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ENTREGADO -->
+                <div class="col-lg-2 col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h3 class="">
+                                        <i [hidden]="!loadingSeguimientoCount" class="fa fa-spin fa-spinner text-light">
+                                        </i>
+                                        <span [hidden]="loadingSeguimientoCount">
+                                            {{ (seguimientoCount?.entregado / seguimientoCountTotal) | percent}}
+                                        </span>
+                                    </h3>
+                                    <h6 class="card-subtitle text-success">Entregado
+                                        ({{seguimientoCount?.entregado |number
+                                        }})
+                                    </h6>
+                                </div>
+                                <div class="col-12">
+                                    <div class="progress">
+                                        <div role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"
+                                            class="progress-bar bg-success" style="height: 6px;"
+                                            [ngStyle]="{'width':(seguimientoCount?.entregado / seguimientoCountTotal) | percent}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+
+
         <div class="card">
             <div class="card-body">
+
+
                 <div class="row mb-2">
 
-                    <div class="col-md-3">
-                        <label> Fecha</label>
-                        <ejs-datepicker [showClearButton]="false" (change)="onChangeFechaFiltro($event)"
-                            [(ngModel)]="fecha" [format]="'dd-MM-yyyy'">
+                    <div class="col-md-2">
+                        <label> Desde</label>
+                        <ejs-datepicker [showClearButton]="false" (change)="onChangeFechaDesdeFiltro($event)"
+                            [max]="fechaHasta" [(ngModel)]="fechaDesde" [format]="'dd-MM-yyyy'">
+                        </ejs-datepicker>
+                    </div>
+
+                    <div class="col-md-2">
+                        <label> Hasta</label>
+                        <ejs-datepicker [showClearButton]="false" (change)="onChangeFechaHastaFiltro($event)"
+                            [(ngModel)]="fechaHasta" [format]="'dd-MM-yyyy'" [min]="fechaDesde">
                         </ejs-datepicker>
                     </div>
 
@@ -25,14 +228,17 @@
                                 <span>
                                     <i class="fa fa-circle" [ngStyle]="{'color': item.grupo}"></i> {{item.nombre}}
                                 </span>
+
+                                <!-- <span class="badge badge-light badge-pill"> {{10}} </span> -->
+
                             </ng-template>
                         </ng-select>
 
                     </div>
-                    <div class="col-md-5  ">
+                    <div class="col-md-4  ">
                         <label>Vendedor</label>
                         <ng-select [items]="vendedores" bindLabel="nombre" bindValue="codigo" [searchable]="false"
-                            (change)="getData()" [(ngModel)]="vendedorID" [clearable]="true">
+                            (change)="onVendedorComboChange()" [(ngModel)]="vendedorID" [clearable]="true">
 
                             <ng-template ng-label-tmp let-item="item">
                                 <span>

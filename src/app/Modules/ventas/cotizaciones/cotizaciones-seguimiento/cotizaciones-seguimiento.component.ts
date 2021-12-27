@@ -9,6 +9,7 @@ import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { CotizacionDetalleViewModel } from '../models/CotizacionDetalleViewModel';
 import { CotizacionListadoViewModel } from '../models/CotizacionListadoViewModel';
+import { CotizacionSeguimientoCountVModel } from '../models/CotizacionSeguimientoCountVModel';
 
 @Component({
   selector: 'app-cotizaciones-seguimiento',
@@ -16,7 +17,6 @@ import { CotizacionListadoViewModel } from '../models/CotizacionListadoViewModel
   styleUrls: ['./cotizaciones-seguimiento.component.scss']
 })
 export class CotizacionesSeguimientoComponent implements OnInit {
-
 
   // COPIAR AL CREAR UN LISTADO NUEVO
   // Search: string = "";
@@ -29,9 +29,10 @@ export class CotizacionesSeguimientoComponent implements OnInit {
   data: CotizacionListadoViewModel[] = [] //tu modelo
 
   //filtros
-  vendedorID: number = 0;
+  vendedorID: number;
   estadoID: number = 1;
-  fecha: Date = new Date();
+  fechaDesde: Date;
+  fechaHasta: Date;
   estados: ComboBox[] = []
 
   //modal
@@ -43,6 +44,11 @@ export class CotizacionesSeguimientoComponent implements OnInit {
   loadingVendedores: boolean;
   vendedores: ComboBox[];
 
+  //count cards
+  loadingSeguimientoCount: boolean;
+  seguimientoCount: CotizacionSeguimientoCountVModel;
+  seguimientoCountTotal: number;
+
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private modalService: NgbModal,
@@ -51,15 +57,29 @@ export class CotizacionesSeguimientoComponent implements OnInit {
 
 
   ngOnInit(): void {
+
+    this.configRangeDates();
     this.getEstados()
     this.getData()
     this.getVendedores()
+
   }
+
+  configRangeDates() {
+    var date = new Date();
+    var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+    var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+    this.fechaDesde = firstDay;
+    this.fechaHasta = lastDay;
+  }
+
   getData() {
     this.Cargando = true;
 
     let parametros: Parametro[] = [
-      { key: "Fecha", value: this.fecha },
+      { key: "FechaDesde", value: this.fechaDesde },
+      { key: "FechaHasta", value: this.fechaHasta },
       { key: "EstadoID", value: this.estadoID },
       { key: "VendedorID", value: this.vendedorID ? this.vendedorID : 0 }
     ]
@@ -162,34 +182,23 @@ export class CotizacionesSeguimientoComponent implements OnInit {
 
   }
 
-  onChangeFechaFiltro(evento: any) {
-
-    this.fecha = new Date(evento.value)
+  onChangeFechaDesdeFiltro(evento: any) {
+    this.fechaDesde = new Date(evento.value)
     this.getData();
+    this.getCotizacionSeguimientoCount()
+  }
+
+  onChangeFechaHastaFiltro(evento: any) {
+    this.fechaHasta = new Date(evento.value)
+    this.getData();
+    this.getCotizacionSeguimientoCount()
 
   }
 
-  // getEstados() {
-  //   this.loadingEstados = true;
-  //   this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-  //     "GetEstadosCotizacion", null).subscribe(response => {
-
-  //       if (!response.ok) {
-  //         this.toastService.error(response.errores[0]);
-  //       } else {
-  //         this.estados = response.records;
-  //       }
-  //       this.loadingEstados = false;
-  //     }, error => {
-  //       this.loadingEstados = false;
-  //       this.toastService.error("No se pudo obtener los estados", "Error conexion al servidor");
-
-  //       setTimeout(() => {
-  //         this.getEstados();
-  //       }, 1000);
-
-  //     });
-  // }
+  onVendedorComboChange() {
+    this.getData();
+    this.getCotizacionSeguimientoCount()
+  }
 
 
   // onChangeEstado(cotizacion: CotizacionListadoViewModel, index: number) {
@@ -232,6 +241,44 @@ export class CotizacionesSeguimientoComponent implements OnInit {
 
       });
   }
+
+
+  getCotizacionSeguimientoCount() {
+    this.loadingSeguimientoCount = true;
+    this.httpService.DoPostAny<CotizacionSeguimientoCountVModel>(DataApi.Cotizacion,
+      "GetCotizacionSeguimientoCount", {
+      FechaDesde: this.fechaDesde,
+      FechaHasta: this.fechaHasta,
+      VendedorID: this.vendedorID ?? 0
+    }).subscribe(response => {
+
+      if (!response.ok) {
+        this.toastService.error(response.errores[0]);
+      } else {
+        this.seguimientoCount = response.records[0];
+        this.seguimientoCountTotal = 0;
+
+        for (const key in this.seguimientoCount) {
+          if (Object.prototype.hasOwnProperty.call(this.seguimientoCount, key)) {
+            const value = this.seguimientoCount[key];
+            this.seguimientoCountTotal += value;
+          }
+        }
+        // console.table(this.seguimientoCount)
+        // console.table(this.seguimientoCountTotal)
+      }
+      this.loadingSeguimientoCount = false;
+    }, error => {
+      this.loadingSeguimientoCount = false;
+      this.toastService.error("No se pudo obtener las camtidades de cotizaciones", "Error conexion al servidor");
+
+      setTimeout(() => {
+        this.getCotizacionSeguimientoCount();
+      }, 1000);
+
+    });
+  }
+
 
 
 
