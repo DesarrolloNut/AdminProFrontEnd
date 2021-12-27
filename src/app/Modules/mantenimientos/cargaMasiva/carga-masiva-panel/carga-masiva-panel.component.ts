@@ -35,19 +35,19 @@ export class CargaMasivaPanelComponent implements OnInit {
   @ViewChild('myInputFileReestructuracliente')
   myInputFileReestructuracliente: ElementRef;
 
- ///ESTO ES PARA REESTRUCTURACION DE CLIENTE | PENDIENTE MOVER A OTRO COMPONENTE SEPARADO
-   // COPIAR AL CREAR UN LISTADO NUEVO
-   Search: string = "";
-   paginaNumeroActual = 1;
-   Cargando: boolean = false;
-   totalPaginas: number = 0;
-   paginaSize: number = 1;
-   paginaTotalRecords: number = 0;
-   arrayLoading = new Array(this.paginaSize);
-   cargasMasivasReestructuracionCliente: CargaMasiva[] = [] //tu modelo
-   detalleCargaMasivaReestructuracionCliente: DetalleReestructuracionClient[] = [] //tu modelo
-   cargasMasivaRCliente: CargaMasiva; //tu modelo
-   loadingDetalleRcliente: boolean;
+  ///ESTO ES PARA REESTRUCTURACION DE CLIENTE | PENDIENTE MOVER A OTRO COMPONENTE SEPARADO
+  // COPIAR AL CREAR UN LISTADO NUEVO
+  Search: string = "";
+  paginaNumeroActual = 1;
+  Cargando: boolean = false;
+  totalPaginas: number = 0;
+  paginaSize: number = 1;
+  paginaTotalRecords: number = 0;
+  arrayLoading = new Array(this.paginaSize);
+  cargasMasivasReestructuracionCliente: CargaMasiva[] = [] //tu modelo
+  detalleCargaMasivaReestructuracionCliente: DetalleReestructuracionClient[] = [] //tu modelo
+  cargasMasivaRCliente: CargaMasiva; //tu modelo
+  loadingDetalleRcliente: boolean;
 
 
   constructor(
@@ -55,10 +55,10 @@ export class CargaMasivaPanelComponent implements OnInit {
     config: NgbModalConfig,
     private modalService: NgbModal,
     private httpService: BackendService,
-    private formBuilder: FormBuilder) { 
-      config.backdrop = 'static';
-      config.keyboard = false;
-    }
+    private formBuilder: FormBuilder) {
+    config.backdrop = 'static';
+    config.keyboard = false;
+  }
 
   ngOnInit(): void {
   }
@@ -140,7 +140,7 @@ export class CargaMasivaPanelComponent implements OnInit {
         this.metodoEndPoint = "UploadExcelFileClienteActualizaRuta"
         this.subirDatosExcel()
       }
-    }else if(this.accionId==3){
+    } else if (this.accionId == 3) {
       if (this.validarCargaClienteRutaTipo()) {
 
         this.dataTransformed = this.dataExcel.map((x) => {
@@ -150,7 +150,7 @@ export class CargaMasivaPanelComponent implements OnInit {
             "Memo ": arrayValues[1],
             "DiaVisita": Number(arrayValues[2]),
             "RutaCodigoReferencia": Number(arrayValues[3]),
-            "Prioridad": arrayValues[4] ==null?"" :arrayValues[4],
+            "Prioridad": arrayValues[4] == null ? "" : arrayValues[4],
             "TerritorioId": Number(arrayValues[5])
           };
         });
@@ -158,13 +158,16 @@ export class CargaMasivaPanelComponent implements OnInit {
 
         this.dataApi = DataApi.Cliente;
         this.metodoEndPoint = "UploadExcelFileReestructuraCliente"
-       this.subirDatosExcel()
+        this.subirDatosExcel()
       }
     }
 
   }
 
   subirDatosExcel() {
+
+    console.table(this.dataTransformed)
+
 
     if (this.dataExcel.length <= 0) {
       this.toastService.warning("No hay records para subir.")
@@ -216,10 +219,10 @@ export class CargaMasivaPanelComponent implements OnInit {
   }
   validarCargaReestructuracionCliente(): boolean {
 
-  //  if (this.dataExcel.some(x => !x.Cardcode)) {
-  //      this.toastService.warning("Hay records sin código de referencia")
-  //      return false;
-  //    }
+    //  if (this.dataExcel.some(x => !x.Cardcode)) {
+    //      this.toastService.warning("Hay records sin código de referencia")
+    //      return false;
+    //    }
 
     return true;
   }
@@ -239,8 +242,8 @@ export class CargaMasivaPanelComponent implements OnInit {
 
   ///PENDIENTE MOVER A OTRO COMPONENTE
 
-  getCargasReestructuracion(){
-    this.showCargasReestructuracion =true;
+  getCargasReestructuracion() {
+    this.showCargasReestructuracion = true;
     this.getCargasMasivasReestructuracionclientes();
   }
   getCargasMasivasReestructuracionclientes() {
@@ -250,8 +253,8 @@ export class CargaMasivaPanelComponent implements OnInit {
 
     this.httpService.GetAllWithPagination<CargaMasiva>(DataApi.Cliente, "GetCargasMasivasReestructuracionclientes", "Id", this.paginaNumeroActual,
       this.paginaSize, false, parametros).subscribe(x => {
-          
-        if (x.ok) { 
+
+        if (x.ok) {
           this.cargasMasivasReestructuracionCliente = x.valores[0];
           console.log(x);
           this.asignarPagination(x);
@@ -287,7 +290,7 @@ export class CargaMasivaPanelComponent implements OnInit {
 
 
   getDetalleCargasMasivasReestructuracionclientes(id: number) {
-    this.loadingDetalleRcliente=true;
+    this.loadingDetalleRcliente = true;
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
       "GetDetalleCargasMasivasReestructuracionclientes", id).subscribe(response => {
         if (!response.ok) {
@@ -295,29 +298,29 @@ export class CargaMasivaPanelComponent implements OnInit {
         } else {
           //validar que existe
           if (response.valores?.length > 0) {
-              this.detalleCargaMasivaReestructuracionCliente= response.valores[0];
-             console.log(response.valores);
-              
+            this.detalleCargaMasivaReestructuracionCliente = response.valores[0];
+            console.log(response.valores);
+
           } else {
             this.toastService.warning("Ha ocurrido un error");
           }
         }
-        this.loadingDetalleRcliente=false;
+        this.loadingDetalleRcliente = false;
       }, error => {
-        this.loadingDetalleRcliente=false;
+        this.loadingDetalleRcliente = false;
 
         this.toastService.error("Error conexion al servidor");
       });
   }
 
-  openModalDetalle(cm:CargaMasiva,content){
+  openModalDetalle(cm: CargaMasiva, content) {
     this.cargasMasivaRCliente = cm;
-    this.modalService.open(content, { windowClass: "myCustomModalClass", backdrop: "static",});
+    this.modalService.open(content, { windowClass: "myCustomModalClass", backdrop: "static", });
 
     this.getDetalleCargasMasivasReestructuracionclientes(cm.id);
-  } 
+  }
 
-  formatDescripcionByEstado(estado:number){
+  formatDescripcionByEstado(estado: number) {
     switch (estado) {
       case 0:
         return 'Sincronizado'
@@ -327,14 +330,14 @@ export class CargaMasivaPanelComponent implements OnInit {
         'Error';
     }
 
-}
+  }
 
-modalClose(){
-  this.modalService.dismissAll();
-  this.resetInputsFile();
-}
+  modalClose() {
+    this.modalService.dismissAll();
+    this.resetInputsFile();
+  }
 
-resetInputsFile() {
-  this.myInputFileReestructuracliente.nativeElement.value = "";
-}v
+  resetInputsFile() {
+    this.myInputFileReestructuracliente.nativeElement.value = "";
+  } v
 }

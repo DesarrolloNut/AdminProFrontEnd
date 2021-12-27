@@ -154,7 +154,8 @@ export class CotizacionesSeguimientoComponent implements OnInit {
     this.estados = [
       { codigo: 1, nombre: "Cotizado", grupo: "#BFBFBF", grupoID: "", },
       { codigo: 2, nombre: "Pedido", grupo: "#33B0FF", grupoID: "", },
-      { codigo: 3, nombre: "Pendiente Finanzas", grupo: "#FCB644", grupoID: "", },
+      { codigo: 3, nombre: "Pendiente Finanzas", grupo: "#FCB700", grupoID: "", },
+      { codigo: 6, nombre: "Pendiente Despacho", grupo: "#FCB690", grupoID: "", },
       { codigo: 4, nombre: "Facturado", grupo: "#7BE7CE", grupoID: "", },
       { codigo: 5, nombre: "Entregado", grupo: "#5EE553", grupoID: "", },
     ]

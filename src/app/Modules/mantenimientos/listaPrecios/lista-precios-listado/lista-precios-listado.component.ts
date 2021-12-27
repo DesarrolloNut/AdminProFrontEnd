@@ -204,6 +204,7 @@ export class ListaPreciosListadoComponent implements OnInit {
     let param = this.confirmed.map(x => {
       return { "ArticuloID": x.id, "ListaPrecioID": this.listaSeleccionada }
     })
+
     this.guardandoArticulos = true;
     this.httpService.DoPostAny<any>(DataApi.Articulo,
       "RegistrarArticulosAListaPrecio", param).subscribe(response => {
