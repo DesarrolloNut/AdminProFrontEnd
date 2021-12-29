@@ -188,10 +188,10 @@
                 <h5> <i class="fa fa-id-card"></i> Documento: {{cotizacionSeleccionada.clienteDocumento}}</h5>
                 <h5> <i class="fa fa-calendar"></i> Fecha: {{cotizacionSeleccionada.fechaCreacion |
                     date:'dd/MM/yy'}}</h5>
-                <hr>
+                <!-- <hr>
                 <h5> <i class="fa fa-user-circle"></i> Cotizador: {{cotizacionSeleccionada.cotizador}}</h5>
                 <h5> <i class="fa fa-map-marker"></i> Sucursal: {{cotizacionSeleccionada.sucursal}}</h5>
-                <h5> <i class="fa fa-user-circle"></i>Vendedor: {{cotizacionSeleccionada.vendedor}}</h5>
+                <h5> <i class="fa fa-user-circle"></i>Vendedor: {{cotizacionSeleccionada.vendedor}}</h5> -->
             </div>
 
             <div class="col-12" [hidden]="loadingCotizacionDetalle">
@@ -292,10 +292,10 @@
                 <h5> <i class="fa fa-id-card"></i> Documento: {{cotizacionSeleccionada.clienteDocumento}}</h5>
                 <h5> <i class="fa fa-calendar"></i> Fecha: {{cotizacionSeleccionada.fechaCreacion |
                     date:'dd/MM/yy'}}</h5>
-                <hr>
+                <!-- <hr>
                 <h5> <i class="fa fa-user-circle"></i> Cotizador: {{cotizacionSeleccionada.cotizador}}</h5>
                 <h5> <i class="fa fa-map-marker"></i> Sucursal: {{cotizacionSeleccionada.sucursal}}</h5>
-                <h5> <i class="fa fa-user-circle"></i>Vendedor: {{cotizacionSeleccionada.vendedor}}</h5>
+                <h5> <i class="fa fa-user-circle"></i>Vendedor: {{cotizacionSeleccionada.vendedor}}</h5> -->
             </div>
 
             <div class="col-12" [hidden]="loadingCotizacionDetalle">
@@ -354,6 +354,11 @@
 
             </div>
 
+            <div class="col-12">
+                <app-loading-listado [hidden]="!loadingCotizacionDetalle"></app-loading-listado>
+            </div>
+
+
             <div class="col-12 text-right">
                 <hr>
                 <h4>Subtotal: $ {{cotizacionSeleccionada.subTotal | number:'1.2-2' }}</h4>
@@ -362,9 +367,7 @@
                 <h4 class="font-weight-bold">Total Neto: $ {{cotizacionSeleccionada.totalNeto | number:'1.2-2' }}</h4>
             </div>
 
-            <div class="col-12">
-                <app-loading-listado [hidden]="!loadingCotizacionDetalle"></app-loading-listado>
-            </div>
+
         </div>
     </div>
     <div class="modal-footer">

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
@@ -16,7 +16,7 @@ import { CotizacionSeguimientoCountVModel } from '../models/CotizacionSeguimient
   templateUrl: './cotizaciones-seguimiento.component.html',
   styleUrls: ['./cotizaciones-seguimiento.component.scss']
 })
-export class CotizacionesSeguimientoComponent implements OnInit {
+export class CotizacionesSeguimientoComponent implements OnInit, OnDestroy {
 
   // COPIAR AL CREAR UN LISTADO NUEVO
   // Search: string = "";
@@ -49,6 +49,10 @@ export class CotizacionesSeguimientoComponent implements OnInit {
   seguimientoCount: CotizacionSeguimientoCountVModel;
   seguimientoCountTotal: number;
 
+  //extra
+  intervalRefreshData: NodeJS.Timeout
+
+
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private modalService: NgbModal,
@@ -63,6 +67,11 @@ export class CotizacionesSeguimientoComponent implements OnInit {
     this.getData()
     this.getVendedores()
 
+    this.intervalRefreshData = setInterval(() => {
+      this.getCotizacionSeguimientoCount(false);
+      this.getData(false);
+    }, 10000)
+
   }
 
   configRangeDates() {
@@ -74,8 +83,8 @@ export class CotizacionesSeguimientoComponent implements OnInit {
     this.fechaHasta = lastDay;
   }
 
-  getData() {
-    this.Cargando = true;
+  getData(showLoading: boolean = true) {
+    this.Cargando = showLoading;
 
     let parametros: Parametro[] = [
       { key: "FechaDesde", value: this.fechaDesde },
@@ -243,8 +252,8 @@ export class CotizacionesSeguimientoComponent implements OnInit {
   }
 
 
-  getCotizacionSeguimientoCount() {
-    this.loadingSeguimientoCount = true;
+  getCotizacionSeguimientoCount(showLoading: boolean = true) {
+    this.loadingSeguimientoCount = showLoading;
     this.httpService.DoPostAny<CotizacionSeguimientoCountVModel>(DataApi.Cotizacion,
       "GetCotizacionSeguimientoCount", {
       FechaDesde: this.fechaDesde,
@@ -279,7 +288,9 @@ export class CotizacionesSeguimientoComponent implements OnInit {
     });
   }
 
-
+  ngOnDestroy(): void {
+    window.clearInterval(this.intervalRefreshData)
+  }
 
 
 }

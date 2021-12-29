@@ -200,21 +200,21 @@
 
                 <div class="row mb-2">
 
-                    <div class="col-md-2">
+                    <div class="col-lg-2 col-md-6">
                         <label> Desde</label>
                         <ejs-datepicker [showClearButton]="false" (change)="onChangeFechaDesdeFiltro($event)"
                             [max]="fechaHasta" [(ngModel)]="fechaDesde" [format]="'dd-MM-yyyy'">
                         </ejs-datepicker>
                     </div>
 
-                    <div class="col-md-2">
+                    <div class="col-lg-2 col-md-6">
                         <label> Hasta</label>
                         <ejs-datepicker [showClearButton]="false" (change)="onChangeFechaHastaFiltro($event)"
                             [(ngModel)]="fechaHasta" [format]="'dd-MM-yyyy'" [min]="fechaDesde">
                         </ejs-datepicker>
                     </div>
 
-                    <div class="col-md-4  ">
+                    <div class="col-lg-4 col-md-6 ">
                         <label>Estado</label>
                         <ng-select [items]="estados" bindLabel="nombre" bindValue="codigo" [searchable]="false"
                             (change)="getData()" [(ngModel)]="estadoID" [clearable]="false">
@@ -235,7 +235,7 @@
                         </ng-select>
 
                     </div>
-                    <div class="col-md-4  ">
+                    <div class="col-lg-4 col-md-6 ">
                         <label>Vendedor</label>
                         <ng-select [items]="vendedores" bindLabel="nombre" bindValue="codigo" [searchable]="false"
                             (change)="onVendedorComboChange()" [(ngModel)]="vendedorID" [clearable]="true">
