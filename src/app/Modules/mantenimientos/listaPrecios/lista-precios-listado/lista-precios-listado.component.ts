@@ -12,6 +12,8 @@ import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
+import { ArticuloListaPrecioViewModel } from '../../articulos/models/ArticuloListaPrecioViewModel';
+import { ArticuloPrecioUploadExcelModel } from '../models/ArticuloPrecioUploadExcelModel';
 import { ListaPrecio } from '../models/ListaPrecio';
 
 @Component({
@@ -67,6 +69,15 @@ export class ListaPreciosListadoComponent implements OnInit {
   isAutorizando: boolean
   fechaActual: Date;
 
+
+  //modal subir precios masivo
+  listasPrecio: ComboBox[];
+  cargandoListaPrecio: boolean;
+  preciosParaSubir: ArticuloPrecioUploadExcelModel[] = [];
+  guardandoPrecios: boolean;
+
+
+
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private modalService: NgbModal,
@@ -82,8 +93,19 @@ export class ListaPreciosListadoComponent implements OnInit {
     this.getArticulos()
     this.getEstadoAutorizacionDefault()
     this.getHoraActual()
+
+    this.addPrecioParaSubirEmptyItem();
+
   }
 
+
+  addPrecioParaSubirEmptyItem() {
+    let fecha = new Date();
+
+    fecha.setDate(fecha.getDate() + 1);
+    this.preciosParaSubir.push({ "articuloCodigoReferencia": null, "listaPrecioCodigoReferencia": null, "fechaAplicacion": fecha, "precio": null });
+
+  }
 
 
   getData() {
@@ -132,6 +154,9 @@ export class ListaPreciosListadoComponent implements OnInit {
     this.listaSeleccionada = listaId;
     this.getArticulosSeleccionadosLista(listaId);
   }
+
+
+
 
   getArticulosSeleccionadosLista(listaId: number) {
     this.loadingArticulosSeleccionados = true;
@@ -435,6 +460,112 @@ export class ListaPreciosListadoComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
       });
   }
+
+
+
+  //#region ASIGACION DE PRECIOS MASIVA
+
+
+  openModalAsignacionPreciosMasiva(content, listaId: number) {
+    this.modalService.open(content, { windowClass: "myCustomModalClass", backdrop: "static", });
+    this.listaSeleccionada = listaId;
+    this.getArticulosSeleccionadosLista(listaId);
+    this.getListasPrecio()
+
+  }
+
+
+
+  getListasPrecio() {
+    this.cargandoListaPrecio = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetListaPreciosComboBox", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.listasPrecio = response.records;
+        }
+
+        this.cargandoListaPrecio = false;
+      }, error => {
+        this.cargandoListaPrecio = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
+
+  onListaPrecioChange() {
+    this.getArticulosSeleccionadosLista(this.listaSeleccionada);
+  }
+
+
+  onSubmit() {
+ 
+    let listaPrecioCodRef: string = this.listasPrecio.find(l => l.codigo == this.listaSeleccionada)?.grupo;
+
+    if (!listaPrecioCodRef) {
+      this.toastService.warning("Código de lista de precio no encontrado.");
+      return;
+    }
+
+    if (this.preciosParaSubir.some(x => x.precio <= 0 && x.articuloCodigoReferencia != null)) {
+      this.toastService.warning("Hay artículos sin precio válido.");
+      return;
+    }
+
+    if (!this.preciosParaSubir.some(x => x.articuloCodigoReferencia != null)) {
+      this.toastService.warning("Debes de tener al menos 1 artículo.");
+      return;
+    }
+
+    this.preciosParaSubir.forEach(x => {
+      x.listaPrecioCodigoReferencia = listaPrecioCodRef
+      x.precio = Number(x.precio)
+    })
+
+    this.guardarPreciosMasivo();
+  }
+
+  guardarPreciosMasivo() {
+
+    let param = this.preciosParaSubir.filter(x => x.articuloCodigoReferencia != null);
+
+    this.guardandoPrecios = true;
+    this.httpService.DoPostAny<any>(DataApi.Articulo,
+      "UploadExcelFilePreciosArticulos", param).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.toastService.success("Realizado");
+        }
+        this.guardandoPrecios = false;
+      }, error => {
+        this.guardandoPrecios = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+
+  }
+
+
+  onArticuloChange(event: ArticuloListaPrecioViewModel) {
+
+    if (!this.preciosParaSubir.some(x => x.articuloCodigoReferencia == null)) {
+      this.addPrecioParaSubirEmptyItem();
+    }
+
+  }
+
+  onDeleteItem(index: number) {
+    this.preciosParaSubir.splice(index, 1);
+    if (!this.preciosParaSubir.some(x => x.articuloCodigoReferencia == null)) {
+      this.addPrecioParaSubirEmptyItem()
+    }
+  }
+
+
+  //#endregion
 
 
 

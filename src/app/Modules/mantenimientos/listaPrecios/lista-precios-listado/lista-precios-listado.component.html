@@ -53,19 +53,24 @@
                                 <!-- <td>
                                     <span>  {{item.descripcion |  slice:0:60}} ...</span>
                                 </td> -->
-                                <td>
+                                <td class="text-right">
 
+
+                                    <button class="btn btn-sm btn-success m-1"
+                                        (click)="openModalAsignacionPreciosMasiva(modalAsignacionPreciosMasivo,item.id)">
+                                        <i class=" fa fa-sm fa-dollar-sign"></i> Precios
+                                    </button>
 
 
                                     <button class="btn btn-sm btn-success m-1"
                                         (click)="openModal(modalArticuloAsignacion,item.id)">
-                                        <i class=" fa fa-sm fa-th-list"></i>
+                                        <i class=" fa fa-sm fa-th-list"></i> Artículos
                                     </button>
 
-                                    <button class="btn btn-sm btn-success m-1"
+                                    <!-- <button class="btn btn-sm btn-success m-1"
                                         (click)="openModal(modalArticuloPrecio,item.id)">
                                         <i class=" fa fa-sm fa-dollar-sign"></i>
-                                    </button>
+                                    </button> -->
 
                                     <button class="btn btn-sm btn-info" [routerLink]="[item.id]">
                                         <i class="fa fa-sm fa-edit"></i>
@@ -108,6 +113,87 @@
 
 
 
+<ng-template #modalAsignacionPreciosMasivo let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Asignación de precios</h4>
+        <!-- <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button> -->
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-6 ">
+                <ng-select [items]="listasPrecio" bindLabel="nombre" bindValue="codigo" [clearable]="false"
+                    [loading]="cargandoListaPrecio" (change)="onListaPrecioChange()" [(ngModel)]="listaSeleccionada"
+                    notFoundText="No resultados">
+                </ng-select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col mt-4">
+                <!-- <h3>Artículos</h3> -->
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th scope="col">Artículo</th>
+                            <th scope="col">Precio</th>
+                            <th scope="col">Fecha</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody [hidden]="loadingArticulosSeleccionados">
+                        <tr *ngFor="let item of preciosParaSubir; let i = index">
+                            <td style="width: 500px;">
+                                <div>
+                                    <ng-select [(ngModel)]="item.articuloCodigoReferencia" [items]="confirmed"
+                                        (change)="onArticuloChange($event)" bindLabel="nombre"
+                                        bindValue="codigoReferencia" [clearable]="false" notFoundText="No resultados">
+                                    </ng-select>
+                                </div>
+                            </td>
+                            <td style="width: 300px;">
+                                <div>
+                                    <input [(ngModel)]="item.precio" type="text" mask="separator.2"
+                                        thousandSeparator="," class="form-control">
+                                </div>
+                            </td>
+                            <td style="width: 300px;">
+                                <div>
+                                    <ejs-datepicker [(ngModel)]="item.fechaAplicacion" [showClearButton]="false"
+                                        [format]="'dd-MM-yyyy'" [min]="fechaActual">
+                                    </ejs-datepicker>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    <button (click)="onDeleteItem(i)" class="btn btn-light btn-sm">
+                                        <i class="fa fa-times "></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <app-loading-listado [hidden]="!loadingArticulosSeleccionados"></app-loading-listado>
+
+            </div>
+        </div>
+
+
+    </div>
+    <div class="modal-footer" *ngIf="!mostrarBtnCancelarAceptar">
+        <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cancelar</button>
+        <button type="button" class="btn btn-success m-1" *ngIf="!guardandoPrecios"
+            (click)="onSubmit()">Guardar</button>
+        <!-- boton cargando -->
+        <button *ngIf="guardandoPrecios" disabled class="btn btn-success m-1" type="button">
+            <span class="spinner-border spinner-border-sm"></span> Guardando
+        </button>
+    </div>
+</ng-template>
 
 
 
@@ -140,7 +226,6 @@
         </button>
     </div>
 </ng-template>
-
 
 
 
