@@ -70,7 +70,7 @@ export class CotizacionesSeguimientoComponent implements OnInit, OnDestroy {
     this.intervalRefreshData = setInterval(() => {
       this.getCotizacionSeguimientoCount(false);
       this.getData(false);
-    }, 10000)
+    }, 15000)
 
   }
 
