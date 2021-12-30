@@ -32,6 +32,7 @@
                         <ng-select
                           bindLabel="nombre" bindValue="codigo" [items]="sucursales"
                           [loading]="loadingSucursales"
+                          [clearable]=false
                           [(ngModel)]="sucursalId"
                           (change)="getDataByCondicional()"
                           notFoundText="No resultados" >
@@ -538,6 +539,7 @@
                     (click)="validaDespachoEnUsoBeforeOpenModal(modalDetalleDespachoPreventa,item)">
                     <i class="fa fa-sm  fa-list "></i> Despachar
                 </button>
+
                 <button *ngIf="item.noEditable==1" [disabled]="btnCargandoPrint"  class="btn border  font-bold btn-outline-info m-1"
                 (click)="openModal(modalDetalleDespachoPreventa,item)">
                 <i class="fa fa-eye" aria-hidden="true"></i>    Despacho
@@ -755,7 +757,7 @@
                       class="form-control input_CantidadPedido" placeholder="Cantidad pedido">
                   </div>
 
-                  <div class="form-group col-md-3" >
+                  <div class="form-group col-md-3" *ngIf="!despachoInUseVM.hasPermisoValidador  || despachoPreventaSeleccionado.finalizado==0" >
                       <label> Despacho</label>
                       <input
                         [(ngModel)]="despachoPreventaArticuloDetalleSelected.despacho"
@@ -767,6 +769,17 @@
                       class="form-control input_CantidadDespacho" placeholder="0">
                   </div>
 
+
+                <div class="form-group col-md-3"  *ngIf="despachoInUseVM.hasPermisoValidador  && despachoPreventaSeleccionado.finalizado==1" >
+                  <label> Validado</label>
+                  <input
+                    [(ngModel)]="despachoPreventaArticuloDetalleSelected.validado"
+                    type="number" id="inputSearch"
+                    step="0.01"
+                    pattern="^[a-zA-Z0-9\.]*$"
+                    [min]="0"
+                  class="form-control input_CantidadDespacho" placeholder="0">
+                </div>
 
                  <div class="col-md-12" >
                    <div class="alert alert-light text-center" role="alert">
@@ -914,7 +927,7 @@
                             </button>
                         </div>
                     </div> -->
-                    <div class=" col-md-12  row "  *ngIf="despachoPreventaSeleccionado.noEditable==0" style="position: absolute; bottom: 0px;">
+                    <div class=" col-md-12  row "  *ngIf="despachoPreventaSeleccionado.noEditable==0 || despachoInUseVM.hasPermisoValidador" style="position: absolute; bottom: 0px;">
                       <div class="col-md-12"><hr></div>
                      <div class="col-md-1"></div>
                       <div class="col-md-5 text-left">
@@ -1044,13 +1057,22 @@
                             class="form-control input_CantidadPedido" placeholder="Cantidad pedido">
                         </div>
 
-                        <div class="form-group col-md-3" >
+                        <div class="form-group col-md-3" *ngIf="!despachoInUseVM.hasPermisoValidador">
                             <label> Despacho</label>
                             <input
                             [readonly]="lote.disponible==undefined || lote.disponible<=0 "
                             [(ngModel)]="despachoPreventaArticuloDetalleSelected.despacho"
                               type="number" id="inputSearch"
                             class="form-control input_CantidadDespacho" placeholder="0">
+                        </div>
+
+                         <div class="form-group col-md-3" *ngIf="despachoInUseVM.hasPermisoValidador">
+                          <label> Validado</label>
+                          <input
+                            [(ngModel)]="despachoPreventaArticuloDetalleSelected.validado"
+                            type="number" id="inputSearch"
+                            [min]="0"
+                          class="form-control input_CantidadDespacho" placeholder="0">
                         </div>
 
                        <div class="col-md-12"  *ngIf="despachoPreventaSeleccionado.noEditable==0" >
@@ -1079,7 +1101,7 @@
 
 
 
-                <div class=" col-md-12  row " *ngIf="despachoPreventaSeleccionado.noEditable==0" style="position: absolute; bottom: 0px;">
+                <div class=" col-md-12  row " *ngIf="despachoPreventaSeleccionado.noEditable==0 || despachoInUseVM.hasPermisoValidador" style="position: absolute; bottom: 0px;">
                     <div class="col-md-12"><hr></div>
                    <div class="col-md-1"></div>
                     <div class="col-md-5 text-left">

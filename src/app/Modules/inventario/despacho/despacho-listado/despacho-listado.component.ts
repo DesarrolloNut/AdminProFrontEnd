@@ -1,8 +1,8 @@
 import { ComboBoxLote } from './../../../../shared/model/ComboBox';
 import { DespachoInUseVM, DespachoPreventaDetalleExcelVM, DespachoPreventaRequestModel, SAPLoteDespachoPedido } from './../models/DespachoPedidoDetalleViewModel';
-import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
@@ -90,6 +90,10 @@ export class DespachoListadoComponent implements OnInit {
     pageDetalleDespacho = 1;
     pageSizeDetalleDespacho= 6;
     collectionSizeDetalleDespacho = 0;
+
+
+     confirmFinalizaModal: NgbModalRef;
+
 
     // MOVER A OTRO COMPONENTE
     loadingArticulosExtras: boolean;
@@ -185,7 +189,6 @@ getRangosFechaDespacho() {
         this.toastService.error(response.errores[0]);
       } else {
 
-        console.log(response)
 
         this.fDesde = new Date(this.fDesde.setHours(response.valores[0]));
 
@@ -292,7 +295,6 @@ getSucursalByUsuarioId() {
   }
 
   openModal(content, despacho: any) {
-    console.log(despacho)
     switch (this.canalId) {
       case 1:
           this.despachoPreventaDetalles = [];
@@ -334,7 +336,6 @@ getSucursalByUsuarioId() {
           this.despachoDetalles = response.records;
           this.despachoDetalles[0].selected=true;
           this.despachoPedidoArticuloDetalleSelected=this.despachoDetalles[0];
-          console.log(this.despachoDetalles)
         }
         this.loadingDespachoDetalle = false;
       }, error => {
@@ -375,7 +376,6 @@ getSucursalByUsuarioId() {
                ,"EstadoID": 4
                ,"ClienteId":this.despachoSeleccionado.clienteId
               }
-              console.log(pedido)
     this.httpService.DoPostAny<ComboBox>(DataApi.Despacho,
       "CancelarDespacho",  pedido).subscribe(response => {
 
@@ -561,6 +561,10 @@ getSucursalByUsuarioId() {
 
 
   getLote() {
+    if( this.despachoPreventaSeleccionado.finalizado==1 )
+    {
+         return;
+    }
     this.lote = new SAPLoteDespachoPedido();
     this.lotesDisponibles=[];
     if(this.btnFinalizarDespachoCargando){return;}
@@ -725,8 +729,10 @@ getSucursalByUsuarioId() {
   getDataPreventa() {
     this.Cargando = true;
 
+
     let parametros: Parametro[] = [
       { key: "Search", value: this.Search },
+      {  key: "UsuarioId",value:Number(this.authService.tokenDecoded.nameid)},
       { key: "sucursalId", value: this.sucursalId },
      ]
 
@@ -736,6 +742,8 @@ getSucursalByUsuarioId() {
 
         if (x.ok) {
           this.dataPreventa = x.valores[0];
+
+          console.log( this.dataPreventa)
           this.asignarPagination(x);
         } else {
           this.toastService.error(x.errores[0]);
@@ -950,30 +958,33 @@ getSucursalByUsuarioId() {
 
 
  onNextItemPreventaSubmit(){
+   if( this.despachoPreventaSeleccionado.finalizado==0 && !this.despachoInUseVM.hasPermisoValidador)
+   {
+    if(this.despachoPreventaArticuloDetalleSelected.unidadMedida!='CANASTO'){
+      if(this.lote.lote==undefined){
+        this.toastService.warning("Debe digitar un lote existente");
+        return;
+      }
+      if(this.lote.disponible<=0){
+        this.toastService.warning("El lote especificado no tiene cantidad disponible");
+        return;
+      }
+      if(this.lote.disponible<this.despachoPreventaArticuloDetalleSelected.despacho){
+        this.toastService.warning("La cantidad a despachar excede la cantidad disponible del lote especificado.");
+        return;
+      }
+    }
+    if(this.despachoPreventaArticuloDetalleSelected.estadoId==3 || this.despachoPreventaArticuloDetalleSelected.estadoId==2){
+      return;
+    }
+
+   }
 
   if(this.loadingLote){return;}
   if(this.btnFinalizarDespachoCargando){return;}
   if(this.btnGuardarCanastoDespachoCargando){return;}
 
-  if(this.despachoPreventaArticuloDetalleSelected.estadoId==3 || this.despachoPreventaArticuloDetalleSelected.estadoId==2){
 
-    return;
-}
-  if(this.despachoPreventaArticuloDetalleSelected.unidadMedida!='CANASTO'){
-    if(this.lote.lote==undefined){
-      this.toastService.warning("Debe digitar un lote existente");
-      return;
-    }
-    if(this.lote.disponible<=0){
-      this.toastService.warning("El lote especificado no tiene cantidad disponible");
-      return;
-    }
-    if(this.lote.disponible<this.despachoPreventaArticuloDetalleSelected.despacho){
-      this.toastService.warning("La cantidad a despachar excede la cantidad disponible del lote especificado.");
-      return;
-    }
-
-  }
 
 
 
@@ -987,8 +998,10 @@ getSucursalByUsuarioId() {
   p.pedido = this.despachoPreventaArticuloDetalleSelected.pedido;
   p.despacho = this.despachoPreventaArticuloDetalleSelected.despacho;
   p.fechaEntrega = this.despachoPreventaArticuloDetalleSelected.fechaEntrega;
-  p.lote=this.lote.lote;
+  p.lote = this.lote.lote;
   p.precio= this.despachoPreventaArticuloDetalleSelected.precio;
+  p.validado=  this.despachoPreventaArticuloDetalleSelected.validado;
+
   this.httpService.DoPostAny<DespachoPreventaDetalleViewModel>(DataApi.Despacho,
     'registra_o_actualiza_DespachoPreventa', p).subscribe(response => {
       if (!response.ok) {
@@ -1013,6 +1026,7 @@ getSucursalByUsuarioId() {
               this.pageDetalleDespacho=  this.despachoPreventaArticuloDetalleSelected.page;
             }
               this.formatDespachoPreventaDetalles();
+
               this.getLote()
              this.toastService.success("Realizado", "OK");
         }
@@ -1052,7 +1066,6 @@ agregarCanastoPreventa(){
         this.toastService.error(response.errores[0], "Error");
         this.btnGuardarCanastoDespachoCargando = false;
       } else {
-        console.log(response.valores)
 
         if(response.valores?.length>0){
           this.despachoPreventaDetalles.unshift({
@@ -1071,6 +1084,7 @@ agregarCanastoPreventa(){
             unidadMedida: 'CANASTO',
             pedido: 0,
             despacho: 0,
+            validado:0,
             estadoId: 0,
             lote: '',
             selected:false,
@@ -1153,7 +1167,7 @@ registraDespachoPreventaInUse(){
   p.fechaEntrega = this.despachoPreventaSeleccionado.fechaEntrega;
   p.usuarioId =  Number(this.authService.tokenDecoded.nameid)
 
-  this.httpService.DoPostAny<DespachoPreventaDetalleViewModel>(DataApi.Despacho,
+  this.httpService.DoPostAny<DespachoInUseVM>(DataApi.Despacho,
     'RegistraDespachoPreventaInUse', p).subscribe(response => {
       if (!response.ok) {
         this.toastService.error(response.errores[0], "Error");
@@ -1162,21 +1176,22 @@ registraDespachoPreventaInUse(){
         if(response.valores?.length>0){
 
                 this.despachoInUseVM =response.valores[0];
-                console.log(  this.despachoInUseVM.mensaje)
-                if(this.despachoPreventaSeleccionado.finalizado==1){
-                this.despachoPreventaSeleccionado.noEditable=1;
 
-                    this.despachoInUseVM.estado=4
-                    this.despachoInUseVM.mensaje="DESPACHO FINALIZADO"
+                if(!this.despachoInUseVM.hasPermisoValidador){
 
-                }else{
-                  if(this.despachoInUseVM.estado==2){
-                    this.despachoPreventaSeleccionado.noEditable=1;
-                  }else{
-                    this.toastService.info(this.despachoInUseVM.mensaje, "OK");
-
-                  }
-                }
+                      if(this.despachoPreventaSeleccionado.finalizado==1){
+                        this.despachoPreventaSeleccionado.noEditable=1;
+                        this.despachoInUseVM.estado=4
+                        this.despachoInUseVM.mensaje="DESPACHO FINALIZADO"
+                      }else{
+                        if(this.despachoInUseVM.estado==2){
+                          this.despachoPreventaSeleccionado.noEditable=1;
+                        }else{
+                          this.toastService.info(this.despachoInUseVM.mensaje, "OK");
+                        }
+                      }
+              }
+                console.log(response.valores)
         }
       }
       this.btnFinalizarDespachoCargando = false;
@@ -1191,29 +1206,34 @@ registraDespachoPreventaInUse(){
 
 
 finalizaDespacho(){
-  if(this.loadingLote){return;}
-  if(this.btnGuardarDespachoCargando){return;}
-  if(this.btnGuardarCanastoDespachoCargando){return;}
-  this.modalService.dismissAll();
+
+ this.confirmFinalizaModal.dismiss();
+ this.despachoPreventaSeleccionado.noEditable=1;
 
   this.btnFinalizarDespachoCargando=true;
 
   let p= new DespachoPreventaRequestModel();
   p.ruta = this.despachoPreventaSeleccionado.rutaId;
   p.fechaEntrega = this.despachoPreventaSeleccionado.fechaEntrega;
-
   this.httpService.DoPostAny<DespachoPreventaDetalleViewModel>(DataApi.Despacho,
     'finalizaDespachoPreventa', p).subscribe(response => {
       if (!response.ok) {
         this.toastService.error(response.errores[0], "Error");
+        this.despachoPreventaSeleccionado.noEditable=0;
         this.btnFinalizarDespachoCargando = false;
       } else {
         if(response.valores?.length>0){
 
+          console.log(response.valores)
+          console.log(response.valores[0])
               if(response.valores[0]>0){
                 this.despachoPreventaSeleccionado.finalizado=1;
                 this.despachoPreventaSeleccionado.noEditable=1;
+                this.despachoPreventaSeleccionado.estadoDespacho=4;
+                console.log(  this.despachoPreventaSeleccionado)
               }
+              this.despachoInUseVM.estado=4
+              this.despachoInUseVM.mensaje="DESPACHO FINALIZADO"
               this.getDataByCondicional()
              this.toastService.success("Realizado", "OK");
         }
@@ -1221,7 +1241,8 @@ finalizaDespacho(){
       this.btnFinalizarDespachoCargando = false;
 
     }, error => {
-     this.btnFinalizarDespachoCargando = false;
+      this.despachoPreventaSeleccionado.noEditable=0;
+      this.btnFinalizarDespachoCargando = false;
       this.toastService.error("Error conexion al servidor");
     });
 
@@ -1231,7 +1252,7 @@ finalizaDespacho(){
 
 
 openModalConfirmFinalizaDespacho(content) {
-  this.modalService.open(content, { size: 'sm',centered:true });
+  this.confirmFinalizaModal=this.modalService.open(content, { size: 'sm',centered:true });
   // this.articuloSeleccionado = item
 }
 
