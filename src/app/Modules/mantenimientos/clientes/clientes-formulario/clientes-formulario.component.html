@@ -11,7 +11,7 @@
   </div>
 </div>
 
-  
+
 <div class="row">
 
   <div class="col-md-12">
@@ -29,12 +29,13 @@
               NUEVO CLIENTE
             </span>
             <span *ngIf="clienteId>0">
-              {{clienteInfo.nombres | uppercase}} {{clienteInfo.apellidos | uppercase }}  
-              |
+                  <!-- {{clienteInfo.nombres | uppercase}} {{clienteInfo.apellidos | uppercase }}   -->
+                  {{clienteInfo.clienteNombre | uppercase}}
+                  |
             </span>
           <!-- FIRST PART TEXT HEADER -->
- 
-      
+
+
          <!-- SECOND PART TEXT HEADER -->
             <span class="badge badge-info" style="font-weight: 700 !important;" *ngIf=" clienteId>0 && clienteInfo.clientePadreId<=0 || clienteInfo.clientePadreId==null ">
                     PRINCIPAL
@@ -97,7 +98,7 @@
                 </div>
             </b></ng-template>
             <ng-template ngbTabContent>
-            <app-cliente-contactos 
+            <app-cliente-contactos
               [clientId]="clienteId"
               (goTabByKey)="changeTabByKey($event)"
               (isnotNecesaryFieldsCompleteO)="isnotNecesaryFieldsCompleteInContactos=$event"
@@ -106,7 +107,7 @@
             </ng-template>
           </ngb-tab>
 
-          <ngb-tab *ngxPermissionsOnly="['mantenimientos_cliente_finanzas']" 
+          <ngb-tab *ngxPermissionsOnly="['mantenimientos_cliente_finanzas']"
           id="FINANZAS" [disabled]="clienteId<=0">
             <ng-template ngbTabTitle>
               <b>Finanzas
@@ -116,7 +117,7 @@
                 </div>
               </b></ng-template>
             <ng-template ngbTabContent>
-              <app-cliente-finanzas 
+              <app-cliente-finanzas
                [clientId]="clienteId"
                [clientExtraInfo]="clienteInfo"
                (goTabByKey)="changeTabByKey($event)"
