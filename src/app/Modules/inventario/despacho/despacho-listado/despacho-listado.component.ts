@@ -509,8 +509,6 @@ getSucursalByUsuarioId() {
 
   onNextItemSubmit(){
 
-
-
     this.despachoDetalles.filter(
       d=>d.id ==this.despachoPedidoArticuloDetalleSelected.id
       ).map(x=>{x.estadoId=1,x.estado='Si',x.estadoColor='success',x.selected=false})
@@ -994,11 +992,15 @@ getSucursalByUsuarioId() {
   p.almacen_Origen = this.despachoPreventaArticuloDetalleSelected.almacen_Origen;
   p.almacen_Destino = this.despachoPreventaArticuloDetalleSelected.almacen_Destino;
   p.ruta = this.despachoPreventaArticuloDetalleSelected.ruta;
+
   p.lote = this.despachoPreventaArticuloDetalleSelected.lote;
   p.pedido = this.despachoPreventaArticuloDetalleSelected.pedido;
   p.despacho = this.despachoPreventaArticuloDetalleSelected.despacho;
   p.fechaEntrega = this.despachoPreventaArticuloDetalleSelected.fechaEntrega;
   p.lote = this.lote.lote;
+
+
+
   p.precio= this.despachoPreventaArticuloDetalleSelected.precio;
   p.validado=  this.despachoPreventaArticuloDetalleSelected.validado;
 
@@ -1009,8 +1011,10 @@ getSucursalByUsuarioId() {
         this.btnGuardarDespachoCargando = false;
       } else {
         if(response.records?.length>0){
+         if(this.lote.lote!=undefined){
+          this.despachoPreventaArticuloDetalleSelected.lote=this.lote.lote;
+         }
 
-         this.despachoPreventaArticuloDetalleSelected.lote=this.lote.lote;
           let estadoId= this.getEstadoByInfoItem(this.despachoPreventaArticuloDetalleSelected);
 
           this.despachoPreventaDetalles.filter(
@@ -1176,10 +1180,11 @@ registraDespachoPreventaInUse(){
         if(response.valores?.length>0){
 
                 this.despachoInUseVM =response.valores[0];
-
                 if(!this.despachoInUseVM.hasPermisoValidador){
+                  console.log( this.despachoInUseVM )
 
                       if(this.despachoPreventaSeleccionado.finalizado==1){
+
                         this.despachoPreventaSeleccionado.noEditable=1;
                         this.despachoInUseVM.estado=4
                         this.despachoInUseVM.mensaje="DESPACHO FINALIZADO"
@@ -1191,7 +1196,6 @@ registraDespachoPreventaInUse(){
                         }
                       }
               }
-                console.log(response.valores)
         }
       }
       this.btnFinalizarDespachoCargando = false;
