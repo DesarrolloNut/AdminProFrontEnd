@@ -53,6 +53,7 @@ export class DespachoPreventaDetalleViewModel   {
   unidadMedida: string;
   pedido: number;
   despacho: number;
+  validado: number;
   precio: number;
   totalMonto: number;
   totalMontoDespacho: number;
@@ -88,6 +89,7 @@ export class DespachoPreventaRequestModel {
   precio
   pedido: number;
   despacho: number;
+  validado: number;
 }
 
 export class SAPLoteDespachoPedido   {
@@ -102,4 +104,5 @@ export class DespachoInUseVM  {
   usuario: string;
   mensaje: string;
   estado: number;
+  hasPermisoValidador: boolean;
 }
