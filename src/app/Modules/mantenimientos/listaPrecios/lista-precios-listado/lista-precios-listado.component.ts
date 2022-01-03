@@ -221,14 +221,13 @@ export class ListaPreciosListadoComponent implements OnInit {
 
   guardarArticulosSeleccionados() {
 
-    if (this.confirmed.length < 1) {
-      this.toastService.warning("Selecciona uno o más artículos");
-      return;
-    }
-
     let param = this.confirmed.map(x => {
       return { "ArticuloID": x.id, "ListaPrecioID": this.listaSeleccionada }
     })
+
+    if (param.length == 0) {
+      param.push({ "ListaPrecioID": this.listaSeleccionada, "ArticuloID": 0 })
+    }
 
     this.guardandoArticulos = true;
     this.httpService.DoPostAny<any>(DataApi.Articulo,
@@ -501,7 +500,7 @@ export class ListaPreciosListadoComponent implements OnInit {
 
 
   onSubmit() {
- 
+
     let listaPrecioCodRef: string = this.listasPrecio.find(l => l.codigo == this.listaSeleccionada)?.grupo;
 
     if (!listaPrecioCodRef) {
@@ -550,6 +549,12 @@ export class ListaPreciosListadoComponent implements OnInit {
 
 
   onArticuloChange(event: ArticuloListaPrecioViewModel) {
+
+    if (this.preciosParaSubir.filter(x => x.articuloCodigoReferencia == event.codigoReferencia).length > 1) {
+      this.toastService.warning("No puedes seleccionar el mismo artículo 2 veces.")
+      this.preciosParaSubir.pop();
+    }
+
 
     if (!this.preciosParaSubir.some(x => x.articuloCodigoReferencia == null)) {
       this.addPrecioParaSubirEmptyItem();

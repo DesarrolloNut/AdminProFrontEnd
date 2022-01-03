@@ -53,7 +53,7 @@
 
 
                     </div>
-                   
+
                     <div class="col-md-5 p-2">
 
                         <div class="input-group">
@@ -80,8 +80,15 @@
                                 <th></th>
                                 <!-- <th></th> -->
                                 <th>Artículo</th>
-                                <th>Precio Ant.</th>
-                                <th>Precio</th>
+                                <th>
+                                    <span *ngIf="estadoAutorizacionComboModel < 3">Precio Actual</span>
+                                    <span *ngIf="estadoAutorizacionComboModel == 3">Precio Anterior</span>
+                                </th>
+                                <th>
+                                    <span *ngIf="estadoAutorizacionComboModel == 3">Precio Actual</span>
+                                    <span *ngIf="estadoAutorizacionComboModel < 3">Precio Sugerido</span>
+                                </th>
+                                <!-- <th>Precio SAP</th> -->
                                 <th>Lista</th>
                                 <th>Aplicación</th>
                                 <th>Estado</th>
@@ -159,6 +166,9 @@
                                 <td>
                                     <span>RD$ {{item.precioAnterior}}</span>
                                 </td>
+                                <!-- <td>
+                                    <span>RD$ {{item.preciofo}}</span>
+                                </td> -->
                                 <td>
                                     <span class="font-weight-bold">RD$ {{item.precio}}</span>
                                 </td>
@@ -177,7 +187,7 @@
                                             </p>
 
 
-                                            <span>
+                                            <span *ngIf="item.estadoID < 3 && item.estadoID > 0 ">
                                                 <small class="text-danger" *ngIf="item.diasRestantes < 0">
                                                     {{item.diasRestantes }} días pasados.
                                                 </small>
