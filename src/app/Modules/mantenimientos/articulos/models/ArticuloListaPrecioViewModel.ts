@@ -6,6 +6,7 @@ export interface ArticuloListaPrecioViewModel {
     listaPrecio: string;
     precio: number;
     precioAnterior: number;
+    precioConfirmado: number;
     costo: number;
     fechaAplicacion: string;
     estadoID: number;

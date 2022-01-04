@@ -78,6 +78,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
 
         if (x.ok) {
           this.data = x.records;
+          console.log(x.records)
           this.asignarPagination(x);
         } else {
           this.toastService.error(x.errores[0]);
@@ -155,13 +156,13 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
 
   getAnteriorEstadoAutorizacion() {
     let estadoUsuario = this.estadosAutorizacion.find(x => x.codigo == this.estadoAutorizacionUsuario);
-    let estadoActualPosicion = this.estadosAutorizacion.indexOf(estadoUsuario); 
+    let estadoActualPosicion = this.estadosAutorizacion.indexOf(estadoUsuario);
     this.estadoAutorizacionAnterior = this.estadosAutorizacion[estadoActualPosicion - 1]
 
     if (this.estadoAutorizacionAnterior) {
       this.estadoAutorizacionComboModel = this.estadoAutorizacionAnterior.codigo;
     }
-    
+
   }
 
 

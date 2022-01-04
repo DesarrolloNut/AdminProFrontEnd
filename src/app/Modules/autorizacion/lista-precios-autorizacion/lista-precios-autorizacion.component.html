@@ -9,7 +9,7 @@
                     <div class="col-md-6 text-right">
 
                         <button type="button"
-                            [disabled]="!data || data.length == 0 || estadoAutorizacionComboModel != estadoAutorizacionUsuario"
+                            [disabled]="!data || data.length == 0 || estadoAutorizacionComboModel != estadoAutorizacionUsuario || estadoAutorizacionComboModel == 3"
                             (click)="autorizarMasiva()" class="btn btn-info"> <i class="fa fa-check"></i> Autorizar
                             todos
                         </button>
@@ -88,7 +88,7 @@
                                     <span *ngIf="estadoAutorizacionComboModel == 3">Precio Actual</span>
                                     <span *ngIf="estadoAutorizacionComboModel < 3">Precio Sugerido</span>
                                 </th>
-                                <!-- <th>Precio SAP</th> -->
+                                <th>Precio ERP</th>
                                 <th>Lista</th>
                                 <th>Aplicación</th>
                                 <th>Estado</th>
@@ -140,7 +140,6 @@
                                     </ng-template>
 
 
-
                                     <ng-template
                                         ngxPermissionsOnly="mantenimientos_listas_precios_autorizacion_puede_reiniciar_precio">
 
@@ -161,16 +160,22 @@
                                 </td>
                                 <!-- <td><span class="badge badge-light text-info ">{{item.id}}</span></td> -->
                                 <td>
-                                    <span> {{ item.nombre | titlecase }}</span>
+                                    <span> {{ item.nombre | slice: 0:25 | titlecase }}...</span>
                                 </td>
                                 <td>
                                     <span>RD$ {{item.precioAnterior}}</span>
                                 </td>
-                                <!-- <td>
-                                    <span>RD$ {{item.preciofo}}</span>
-                                </td> -->
                                 <td>
                                     <span class="font-weight-bold">RD$ {{item.precio}}</span>
+                                </td>
+                                <td>
+                                    <span *ngIf="estadoAutorizacionComboModel == 3"
+                                        [ngClass]="{'text-danger': item.precioConfirmado != item.precio}">RD$
+                                        {{item.precioConfirmado}}</span>
+
+                                    <span *ngIf="estadoAutorizacionComboModel < 3"
+                                        [ngClass]="{'text-danger': item.precioConfirmado != item.precioAnterior}">RD$
+                                        {{item.precioConfirmado}}</span>
                                 </td>
                                 <td>
                                     <span> {{item.listaPrecio}}</span>
