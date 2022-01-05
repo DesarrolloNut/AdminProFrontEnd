@@ -23,7 +23,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   paginaNumeroActual = 1;
   Cargando: boolean = false;
   totalPaginas: number = 0;
-  paginaSize: number = 150;
+  paginaSize: number = 100;
   paginaTotalRecords: number = 0;
   data: ArticuloListaPrecioViewModel[] = [] //tu modelo
 

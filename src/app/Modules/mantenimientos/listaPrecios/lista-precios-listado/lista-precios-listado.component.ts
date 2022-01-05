@@ -468,8 +468,10 @@ export class ListaPreciosListadoComponent implements OnInit {
   openModalAsignacionPreciosMasiva(content, listaId: number) {
     this.modalService.open(content, { windowClass: "myCustomModalClass", backdrop: "static", });
     this.listaSeleccionada = listaId;
+    this.preciosParaSubir = []
+    this.addPrecioParaSubirEmptyItem();
     this.getArticulosSeleccionadosLista(listaId);
-    this.getListasPrecio()
+    // this.getListasPrecio()
 
   }
 
@@ -537,6 +539,7 @@ export class ListaPreciosListadoComponent implements OnInit {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
+          this.modalService.dismissAll()
           this.toastService.success("Realizado");
         }
         this.guardandoPrecios = false;
