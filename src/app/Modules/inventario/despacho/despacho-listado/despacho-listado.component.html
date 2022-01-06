@@ -284,18 +284,22 @@
 
         <tr    *ngFor="let item of data; let i = index">
             <td>
-                <button class="btn  font-bold btn-sm btn-danger m-1" *ngIf="item.estadoID == 2 && !item.loadingCancelPedido"
-                (click)="openModalCancelarPedido(modalConfirmCancelarPedido,item)">
-                  <i class="fa fa-sm fa-times"></i>
-              </button>
-              <button class="btn btn-sm btn-danger m-1" *ngIf="item.loadingCancelPedido" >
-              <i class="spinner-border spinner-border-sm"></i>
-            </button>
+                    <button class="btn  font-bold btn-sm btn-danger m-1" *ngIf="item.estadoID == 2 && !item.loadingCancelPedido"
+                    (click)="openModalCancelarPedido(modalConfirmCancelarPedido,item)">
+                      <i class="fa fa-sm fa-times"></i>
+                  </button>
+                  <button class="btn btn-sm btn-danger m-1" *ngIf="item.loadingCancelPedido" >
+                  <i class="spinner-border spinner-border-sm"></i>
+                </button>
                 <button class="btn btn-sm  font-bold btn-success m-1"
                     (click)="openModal(modalDetalleCotizacion,item)">
                     <i class="fa fa-sm  fa-list "></i> Despachar
                 </button>
 
+                <button class="btn btn-sm  font-bold btn-success m-1"
+                    (click)="openModal(modalDetalleCotizacion,item)">
+                    <i class="fa fa-paper-plane" aria-hidden="true"></i>Manual
+               </button>
                 <!-- <button class="btn btn-sm btn-info m-1" [disabled]="item.loadingCancelPedido"  *ngIf="item.estadoID == 2" [routerLink]="[item.id]">
                     <i class="fa fa-sm fa-edit"></i>
                 </button> -->
@@ -535,10 +539,15 @@
         <tr    *ngFor="let item of dataPreventa; let i = index">
 
             <td>
-                <button *ngIf="item.noEditable==0" [disabled]="btnCargandoPrint"   class="btn btn font-bold btn-success m-1"
+                <!-- <button *ngIf="item.noEditable==0" [disabled]="btnCargandoPrint"   class="btn btn font-bold btn-success m-1"
                     (click)="validaDespachoEnUsoBeforeOpenModal(modalDetalleDespachoPreventa,item)">
                     <i class="fa fa-sm  fa-list "></i> Despachar
-                </button>
+                </button> -->
+                <button *ngIf="item.noEditable==0" [disabled]="btnCargandoPrint"   class="btn btn font-bold btn-info m-1"
+                (click)="openModalConfirmFinalizaDespacho(modalConfirm,1,item)" >
+                  <i class="fa  fa-hand-paper mr-1" aria-hidden="true"></i>Manual
+
+            </button>
 
                 <button *ngIf="item.noEditable==1" [disabled]="btnCargandoPrint"  class="btn border  font-bold btn-outline-info m-1"
                 (click)="openModal(modalDetalleDespachoPreventa,item)">
@@ -1241,7 +1250,7 @@
         </div>
         <div class="modal-body text-center">
           <i class="fa fa-question fa-3x text-info"></i>
-          <p class="mt-2"><strong>¿Estás seguro/a de finalizar este despacho?</strong></p>
+          <p class="mt-2"><strong>¿Estás seguro/a de finalizar/efectuar manualmente este despacho?</strong></p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" (click)="modal.close('Close click')">Cancel</button>

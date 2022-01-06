@@ -893,7 +893,6 @@ getSucursalByUsuarioId() {
               Descripcion:x.articulo,
               Almacen_Desde:x.almacen_Origen,
               Almacen_Hasta:x.almacen_Destino,
-              Peso:x.peso,
               Pedido:x.pedido,
             })
          });
@@ -1212,7 +1211,8 @@ registraDespachoPreventaInUse(){
 finalizaDespacho(){
 
  this.confirmFinalizaModal.dismiss();
- this.despachoPreventaSeleccionado.noEditable=1;
+  this.despachoPreventaSeleccionado.noEditable=1;
+
 
   this.btnFinalizarDespachoCargando=true;
 
@@ -1255,7 +1255,11 @@ finalizaDespacho(){
 
 
 
-openModalConfirmFinalizaDespacho(content) {
+openModalConfirmFinalizaDespacho(content,is,item) {
+  if(is==1){
+    this.despachoPreventaSeleccionado=item;
+  }
+
   this.confirmFinalizaModal=this.modalService.open(content, { size: 'sm',centered:true });
   // this.articuloSeleccionado = item
 }

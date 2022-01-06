@@ -72,7 +72,7 @@ export class DespachoPreventaDetalleExcelVM   {
   Almacen_Desde: string;
   Almacen_Hasta: string;
   Unidad?: string;
-  Peso: number;
+  Peso?: number;
   Pedido: number;
   Despacho?: number;
   Lote?: string;
