@@ -116,29 +116,17 @@
 <ng-template #modalAsignacionPreciosMasivo let-modal>
     <div class="modal-header">
         <h4 class="modal-title">Asignación de precios</h4>
-        <!-- <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-            <span aria-hidden="true">&times;</span>
-        </button> -->
+   
     </div>
     <div class="modal-body">
-        <!-- <div class="row">
-            <div class="col-md-6 ">
-                <ng-select [items]="listasPrecio" bindLabel="nombre" bindValue="codigo" [clearable]="false"
-                    [loading]="cargandoListaPrecio" (change)="onListaPrecioChange()" [(ngModel)]="listaSeleccionada"
-                    notFoundText="No resultados">
-                </ng-select>
-            </div>
-        </div> -->
 
         <div class="row">
             <div class="col mt-4">
-                <!-- <h3>Artículos</h3> -->
                 <table class="table table-sm">
                     <thead>
                         <tr>
                             <th scope="col"></th>
                             <th scope="col">Artículo</th>
-                            <!-- <th scope="col">Precio Actual</th> -->
                             <th scope="col">Precio Nuevo</th>
                             <th scope="col">Fecha</th>
                         </tr>
@@ -154,13 +142,6 @@
                             </td>
                             <td style="width: 500px;">
                                 <div>
-
-                                    <!-- <ng-select [(ngModel)]="item.articuloCodigoReferencia" [items]="confirmed"
-                                        (change)="onArticuloChange($event)" bindLabel="nombre"
-                                        bindValue="codigoReferencia" [clearable]="false" notFoundText="No resultados">
-                                    </ng-select> -->
-
-
 
                                     <ng-select [(ngModel)]="item.articuloCodigoReferencia" [items]="confirmed"
                                         (change)="onArticuloChange($event)" bindLabel="nombre"
@@ -232,9 +213,6 @@
 <ng-template #modalArticuloAsignacion let-modal>
     <div class="modal-header">
         <h4 class="modal-title">Asignación de artículos a la lista</h4>
-        <!-- <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-            <span aria-hidden="true">&times;</span>
-        </button> -->
     </div>
     <div class="modal-body">
         <div class="row">
@@ -262,47 +240,12 @@
 
 
 
-<ng-template #modalArticuloPrecio let-modal>
+<!-- <ng-template #modalArticuloPrecio let-modal>
     <div class="modal-header">
         <h4 class="modal-title">Asignación de precio a artículos</h4>
-        <!-- <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-            <span aria-hidden="true">&times;</span>
-        </button> -->
     </div>
     <div class="modal-body">
-        <div class="row">
-            <div class="col-12 text-right">
-
-                <!-- 
-                <ng-template [ngIf]="!mostrarBtnCancelarAceptar" [ngIfElse]="botonesAceptarCancelar">
-
-                    <button class="btn btn-success mx-1" (click)="onBtnAutorizarClick()">
-                        Autorizar
-                    </button>
-
-                    <button class="btn btn-warning mx-1" (click)="onBtnDesautorizarClick()">
-                        Desautorizar
-                    </button>
-
-                </ng-template>
-
-                <ng-template #botonesAceptarCancelar>
-
-                    <button class="btn btn-success mx-1" (click)="onBtnAceptarClick()">
-                        <i class="fa fa-check"></i> Aceptar
-                    </button>
-
-                    <button class="btn btn-light mx-1" (click)="onBtnCancelarClick()">
-                        <i class="fa fa-times"></i> Cancelar
-                    </button>
-
-                </ng-template> -->
-
-            </div>
-
-
-
-        </div>
+       
         <div class="row">
             <div class="col-md-12 p-2">
                 <div class="input-group">
@@ -332,8 +275,6 @@
                                         </label>
                                     </div>
                                 </th>
-                                <!-- <th scope="col">#</th> -->
-                                <!-- <th scope="col">Estado</th> -->
                                 <th scope="col">Artículo</th>
                                 <th scope="col">Precio</th>
                                 <th scope="col">Fecha de aplicación</th>
@@ -357,13 +298,7 @@
                                         </label>
                                     </div>
                                 </td>
-                                <!-- <td>
-                                    <span class="badge badge-info"> {{item.estado}}</span>
-                                </td> -->
                                 <td>
-                                    <!-- <span class="badge badge-info"> {{item.estado}}</span>
-                                    <span> {{item.nombre}}</span> -->
-
                                     <span>
                                         <i class="fa fa-circle" [ngStyle]="{'color': item.colorEstado}"></i>
                                         {{item.estado}}
@@ -402,9 +337,6 @@
         <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cancelar</button>
         <button type="button" class="btn btn-success m-1" *ngIf="!guardandoArticulos"
             (click)="guardarArticulosSeleccionadosPrecios()">Guardar</button>
-        <!-- boton cargando -->
-        <!-- <button *ngIf="guardandoArticulos" disabled class="btn btn-success m-1" type="button">
-            <span class="spinner-border spinner-border-sm"></span> Guardando
-        </button>-->
+      
     </div>
-</ng-template>
+</ng-template> -->

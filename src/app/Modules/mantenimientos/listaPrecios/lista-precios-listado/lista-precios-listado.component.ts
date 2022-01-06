@@ -256,34 +256,34 @@ export class ListaPreciosListadoComponent implements OnInit {
 
   //#region MODAL ASIGNACION PRECIOS
 
-  guardarArticulosSeleccionadosPrecios() {
+  // guardarArticulosSeleccionadosPrecios() { //ya no se usa ni existe
 
-    if (this.confirmed.length < 1) {
-      this.toastService.warning("No hay artículos");
-      return;
-    }
+  //   if (this.confirmed.length < 1) {
+  //     this.toastService.warning("No hay artículos");
+  //     return;
+  //   }
 
-    this.confirmed.filter(x => x.estadoID < this.estadoIDAutorizacionDefault).forEach(x => x.estadoID = this.estadoIDAutorizacionDefault)
+  //   this.confirmed.filter(x => x.estadoID < this.estadoIDAutorizacionDefault).forEach(x => x.estadoID = this.estadoIDAutorizacionDefault)
 
-    this.guardandoArticulos = true;
-    this.httpService.DoPostAny<any>(DataApi.Articulo,
-      "RegistrarPreciosArticulosAsignados", this.confirmed).subscribe(response => {
+  //   this.guardandoArticulos = true;
+  //   this.httpService.DoPostAny<any>(DataApi.Articulo,
+  //     "RegistrarPreciosArticulosAsignados", this.confirmed).subscribe(response => {
 
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-          console.error(response.errores[0]);
-        } else {
-          this.modalService.dismissAll();
-          this.toastService.success("Realizado", "OK");
-        }
-        this.guardandoArticulos = false;
-      }, error => {
-        this.guardandoArticulos = false;
-        this.toastService.error("No se pudo guardar", "Error conexion al servidor");
-        console.error(error);
-      });
+  //       if (!response.ok) {
+  //         this.toastService.error(response.errores[0]);
+  //         console.error(response.errores[0]);
+  //       } else {
+  //         this.modalService.dismissAll();
+  //         this.toastService.success("Realizado", "OK");
+  //       }
+  //       this.guardandoArticulos = false;
+  //     }, error => {
+  //       this.guardandoArticulos = false;
+  //       this.toastService.error("No se pudo guardar", "Error conexion al servidor");
+  //       console.error(error);
+  //     });
 
-  }
+  // }
 
   toggleSelection() {
 
