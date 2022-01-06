@@ -25,14 +25,15 @@
               <tr>
                 <th scope="col">Codigo</th>
                 <th scope="col">Descripcion</th>
-                <th scope="col">Unidad </th>
-                <th scope="col">Lote</th>
-                <th scope="col">Piezas</th>
-                <th scope="col">Pedido</th>
+                <th scope="col">Unidad de medida</th>
+                <!-- <th scope="col">Lote</th> -->
+                <!-- <th scope="col">Piezas</th> -->
+                <th scope="col">Cantidad</th>
                 <th scope="col"> </th>
-                <th scope="col">Despacho</th>
                 <th scope="col"> </th>
-                <th scope="col">Real</th>
+                <th scope="col">Despachado</th>
+                <th scope="col"> </th>
+                <!-- <th scope="col">Real</th> -->
               </tr>
             </thead>
             <tbody>
@@ -50,15 +51,18 @@
                     <span> {{item.unidadMedida}}</span>
                   </td>
 
-                  <td>
+                  <!-- <td>
                   <span> {{item.lote}}</span>
-                  </td>
-
+                  </td> -->
+<!--
                 <td>
                   <span>   {{(item.pedido / item.peso) | number : '1.1-2'}}</span>
-              </td>
+              </td> -->
                   <td>
                     <span>{{item.pedido}} </span>
+                  </td>
+                  <td>
+                    <span></span>
                   </td>
                   <td>
                     <span></span>
@@ -70,9 +74,9 @@
               <td>
                 <span></span>
             </td>
-                <td>
+                <!-- <td>
                   <span></span>
-              </td>
+              </td> -->
 
               </tr>
 
