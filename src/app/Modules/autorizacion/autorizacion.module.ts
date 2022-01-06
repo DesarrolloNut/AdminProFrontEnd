@@ -12,6 +12,7 @@ import { TreeviewModule } from 'ngx-treeview';
 import { SharedModule } from '../shared/shared.module';
 import { AutorizacionOrdenfabricacionComponent } from './autorizacion-ordenfabricacion/autorizacion-ordenfabricacion.component';
 import { AutorizacionPedidosComponent } from './autorizacion-pedidos/autorizacion-pedidos.component';
+import { ChartsModule } from 'ng2-charts';
 
 
 @NgModule({
@@ -23,7 +24,9 @@ import { AutorizacionPedidosComponent } from './autorizacion-pedidos/autorizacio
     SharedModule,
     NgbModule,
     AutorizacionRoutingModule,
-    TreeviewModule.forRoot()
+    TreeviewModule.forRoot(),
+    ChartsModule,
+
   ]
 })
 export class AutorizacionModule { }

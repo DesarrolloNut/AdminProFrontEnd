@@ -471,7 +471,7 @@ export class ListaPreciosListadoComponent implements OnInit {
     this.preciosParaSubir = []
     this.addPrecioParaSubirEmptyItem();
     this.getArticulosSeleccionadosLista(listaId);
-    // this.getListasPrecio()
+    this.getListasPrecio()
 
   }
 

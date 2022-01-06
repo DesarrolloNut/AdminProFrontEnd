@@ -100,13 +100,13 @@ export class CotizacionesSeguimientoComponent implements OnInit, OnDestroy {
           this.data = x.records;
           this.asignarPagination(x);
         } else {
-          this.toastService.error(x.errores[0]);
+          // this.toastService.error(x.errores[0]);
           console.error(x.errores[0]);
         }
         this.Cargando = false;
       }, error => {
         console.error(error);
-        this.toastService.error("Error conexion al servidor");
+        // this.toastService.error("Error conexion al servidor");
         this.Cargando = false;
       });
 
