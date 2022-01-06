@@ -539,10 +539,10 @@
         <tr    *ngFor="let item of dataPreventa; let i = index">
 
             <td>
-                <button *ngIf="item.noEditable==0" [disabled]="btnCargandoPrint"   class="btn btn font-bold btn-success m-1"
+                <!-- <button *ngIf="item.noEditable==0" [disabled]="btnCargandoPrint"   class="btn btn font-bold btn-success m-1"
                     (click)="validaDespachoEnUsoBeforeOpenModal(modalDetalleDespachoPreventa,item)">
                     <i class="fa fa-sm  fa-list "></i> Despachar
-                </button>
+                </button> -->
                 <button *ngIf="item.noEditable==0" [disabled]="btnCargandoPrint"   class="btn btn font-bold btn-info m-1"
                 (click)="openModalConfirmFinalizaDespacho(modalConfirm,1,item)" >
                   <i class="fa  fa-hand-paper mr-1" aria-hidden="true"></i>Manual
