@@ -55,11 +55,12 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   //chart line
 
   public lineChartData: ChartDataSets[] = [
-    { data: [61, 59, 80, 65, 45, 55, 40, 56, 76, 65, 77, 60], label: 'Apple' },
-    { data: [57, 50, 75, 87, 43, 46, 37, 48, 67, 56, 70, 50], label: 'Mi' },
+    // { data: [61, 59, 80, 65, 45, 55, 40, 56, 76, 65, 77, 60], label: 'Apple' },
+    // { data: [57, 50, 75, 87, 43, 46, 37, 48, 67, 56, 70, 50], label: 'Mi' },
   ];
 
-  public lineChartLabels: Label[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  public lineChartLabels: Label[] = []
+  //  ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
   public lineChartOptions = {
     responsive: true,
@@ -68,6 +69,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
   public lineChartLegend = true;
   public lineChartType = 'line';
   public lineChartPlugins = [];
+  dataGrafico: any[];
 
 
 
@@ -492,11 +494,72 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
 
   //grafico
 
-  openModalGRaphics(content, btnClicked: number, item: any) {
+  openModalGraphics(content, btnClicked: number, item: any) {
     this.modalService.open(content, { size: 'lg' });
     this.btnClicked = btnClicked
-    // this.articuloSeleccionado = item
+    this.itemSeleccionado = item
+
+    this.dataGrafico = []
+    this.lineChartData = []
+    this.lineChartLabels = []
+
+    this.getGraficoData();
   }
+
+
+
+  getGraficoData() {
+    let parametros = { "ArticuloID": this.itemSeleccionado.id, "ListaPrecioID": this.itemSeleccionado.listaPrecioID }
+    this.cargandoModal = true;
+    this.httpService.DoPostAny<any>(DataApi.Articulo,
+      "GetArticulosHistoricoGraficoData", parametros).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+
+          this.dataGrafico = response.records;
+
+          if (this.dataGrafico) {
+            this.lineChartData.push({
+              data: this.dataGrafico.map(d => d.precio),
+              label: 'Histórico'
+            })
+
+            this.dataGrafico.forEach(d => {
+              this.lineChartLabels.push(d.fechaAplicacion);
+            })
+          }
+
+          // public lineChartData: ChartDataSets[] = [
+          //   // { data: [61, 59, 80, 65, 45, 55, 40, 56, 76, 65, 77, 60], label: 'Apple' },
+          //   // { data: [57, 50, 75, 87, 43, 46, 37, 48, 67, 56, 70, 50], label: 'Mi' },
+          // ];
+          // public lineChartLabels: Label[] = []
+          // //  ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+          console.table(this.dataGrafico);
+        }
+        this.cargandoModal = false;
+
+      }, error => {
+        this.cargandoModal = false;
+        this.toastService.error("No se pudo obtener el gráfico.", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getGraficoData()
+        }, 1000);
+
+      });
+
+  }
+
+
+
+
+
+
+
 
 
 

@@ -1,18 +1,21 @@
+
 export interface ArticuloListaPrecioViewModel {
     id: number;
     nombre: string;
     codigoReferencia: string;
     listaPrecioID: number;
     listaPrecio: string;
-    precio: number;
+    precioSugerido: number;
+    precioActual: number;
     precioAnterior: number;
     precioConfirmado: number;
     costo: number;
     fechaAplicacion: string;
     estadoID: number;
     estado: string;
-    colorEstado: string;
     diasRestantes: number;
-    cargando: boolean;
     usuarioAutorizacion: string;
+    colorEstado: string;
+
+    cargando: boolean;
 }

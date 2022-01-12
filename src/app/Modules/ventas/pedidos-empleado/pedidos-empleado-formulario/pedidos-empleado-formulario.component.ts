@@ -344,7 +344,7 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
 
 
   onSelectArticulo(item: ArticuloListaPrecioViewModel, index: number) {
-    this.pedidoEmpleadoDetalles[index].precio = item.precio;
+    this.pedidoEmpleadoDetalles[index].precio = item.precioActual;
     this.pedidoEmpleadoDetalles[index].costo = item.costo;
     if (!this.pedidoEmpleadoDetalles.some(x => x.articuloId <= 0)) {
       this.agregarDetalleVacio()

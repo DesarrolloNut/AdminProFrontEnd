@@ -289,7 +289,7 @@ export class CotizacionesFormularioComponent implements OnInit {
 
 
   onSelectArticulo(item: ArticuloListaPrecioViewModel, index: number) {
-    this.cotizacionDetalles[index].precio = item.precio;
+    this.cotizacionDetalles[index].precio = item.precioActual;
     this.cotizacionDetalles[index].costo = item.costo;
     if (!this.cotizacionDetalles.some(x => x.articuloId <= 0)) {
       this.agregarDetalleVacio()

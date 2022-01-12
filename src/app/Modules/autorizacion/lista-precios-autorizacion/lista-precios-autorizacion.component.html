@@ -8,12 +8,12 @@
                         <h4 class="card-title">Listado de artículos por autorizar</h4>
                     </div>
                     <div class="col-md-6 text-right">
-
+                        <!-- 
                         <button type="button"
                             [disabled]="!data || data.length == 0 || estadoAutorizacionComboModel != estadoAutorizacionUsuario || estadoAutorizacionComboModel == 3"
                             (click)="autorizarMasiva()" class="btn btn-info"> <i class="fa fa-check"></i> Autorizar
                             todos
-                        </button>
+                        </button> -->
 
                         <button *ngIf="!loadingReporteExcel" type="button" (click)="exportarReporteExcel()"
                             class="btn btn-success ml-2"> <i class="fa fa-file-excel"></i>
@@ -78,18 +78,17 @@
                         <thead>
                             <tr>
                                 <th></th>
-                                <!-- <th></th> -->
                                 <th>Artículo</th>
                                 <th>
-                                    <span>Precio Anterior</span>
-                                    <!-- <span *ngIf="estadoAutorizacionComboModel < 3">Precio Actual</span>
-                                    <span *ngIf="estadoAutorizacionComboModel == 3">Precio Anterior</span> -->
+                                    <span>Precio Actual</span>
                                 </th>
-                                <th>
-                                    <span *ngIf="estadoAutorizacionComboModel == 3">Precio Actual</span>
-                                    <span *ngIf="estadoAutorizacionComboModel < 3">Precio Sugerido</span>
+                                <th [hidden]="estadoAutorizacionComboModel == 3">
+                                    <span>Precio Sugerido</span>
                                 </th>
                                 <th>Precio ERP</th>
+                                <th>
+                                    <span>Precio Anterior</span>
+                                </th>
                                 <th>Lista</th>
                                 <th>Aplicación</th>
                                 <th>Estado</th>
@@ -108,13 +107,13 @@
 
 
                                     <button class="btn btn-sm btn-light m-1" *ngIf="!item.cargando"
-                                        (click)="openModalGRaphics(modalPriceGraphics,0,null)">
+                                        (click)="openModalGraphics(modalPriceGraphics,0,item)">
                                         <i class="fa fa-sm fa-chart-line text"></i>
                                     </button>
 
 
                                     <ng-template
-                                        [ngIf]="estadoAutorizacionAnterior && item.estadoID == estadoAutorizacionAnterior.codigo">
+                                        [ngIf]="estadoAutorizacionAnterior && item.estadoID <= estadoAutorizacionAnterior.codigo">
 
                                         <button class="btn btn-sm btn-success m-1" *ngIf="!item.cargando"
                                             (click)="autorizar(item)">
@@ -170,19 +169,20 @@
                                     <span> {{ item.nombre | slice: 0:25 | titlecase }}...</span>
                                 </td>
                                 <td>
-                                    <span>RD$ {{item.precioAnterior}}</span>
+                                    <span class="font-weight-bold">RD$ {{item.precioActual}}</span>
                                 </td>
-                                <td>
-                                    <span class="font-weight-bold">RD$ {{item.precio}}</span>
-                                </td>
-                                <td>
-                                    <span *ngIf="estadoAutorizacionComboModel == 3"
-                                        [ngClass]="{'text-danger': item.precioConfirmado != item.precio}">RD$
-                                        {{item.precioConfirmado}}</span>
 
-                                    <span *ngIf="estadoAutorizacionComboModel < 3"
-                                        [ngClass]="{'text-danger': item.precioConfirmado != item.precioAnterior}">RD$
+                                <td [hidden]="estadoAutorizacionComboModel == 3">
+                                    <span class="text-info font-weight-bold">RD$ {{item.precioSugerido}} </span>
+                                </td>
+                                <td>
+                                    <span [ngClass]="{'text-danger': item.precioActual != item.precioConfirmado}">
+                                        <i *ngIf="item.precioActual != item.precioConfirmado"
+                                            class="fa fa-exclamation-triangle text-danger"></i> RD$
                                         {{item.precioConfirmado}}</span>
+                                </td>
+                                <td>
+                                    <span>RD$ {{item.precioAnterior}}</span>
                                 </td>
                                 <td>
                                     <span> {{item.listaPrecio}}</span>
@@ -368,7 +368,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="row">
+                    <div class="row" *ngIf="!cargandoModal">
                         <div class="col-md-12">
                             <div>
                                 <canvas baseChart [datasets]="lineChartData" [labels]="lineChartLabels"
@@ -379,7 +379,7 @@
                         </div>
                     </div>
 
-                    <!-- <app-loading-listado [hidden]="!cargandoModal"></app-loading-listado> -->
+                    <app-loading-listado [hidden]="!cargandoModal"></app-loading-listado>
                 </div>
             </div>
         </div>
