@@ -84,7 +84,10 @@ export class CotizacionesSeguimientoComponent implements OnInit, OnDestroy {
   }
 
   getData(showLoading: boolean = true) {
-    this.Cargando = showLoading;
+
+    if (showLoading) {
+      this.Cargando = true;
+    }
 
     let parametros: Parametro[] = [
       { key: "FechaDesde", value: this.fechaDesde },
@@ -103,11 +106,17 @@ export class CotizacionesSeguimientoComponent implements OnInit, OnDestroy {
           // this.toastService.error(x.errores[0]);
           console.error(x.errores[0]);
         }
-        this.Cargando = false;
+
+        if (showLoading) {
+          this.Cargando = false;
+        }
+
       }, error => {
         console.error(error);
         // this.toastService.error("Error conexion al servidor");
-        this.Cargando = false;
+        if (showLoading) {
+          this.Cargando = false;
+        }
       });
 
   }
