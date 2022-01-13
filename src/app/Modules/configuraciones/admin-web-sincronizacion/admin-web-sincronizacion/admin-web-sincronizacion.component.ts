@@ -13,6 +13,7 @@ export class AdminWebSincronizacionComponent implements OnInit {
   loadingSincronizacionRutas: boolean;
   loadingSincronizacionClientes: boolean;
   loadingSincronizacionArticulosEnrrolados: boolean;
+  loadingsincronizarCotizacionesFromSAP: boolean;
 
   constructor(
     private toastService: ToastrService,
@@ -99,6 +100,26 @@ export class AdminWebSincronizacionComponent implements OnInit {
       }, error => {
         this.loadingSincronizacionArticulosEnrrolados = false;
         this.toastService.error("No se pudo actualizar los articulos enrrolados.", "Error conexion al servidor");
+      });
+  }
+
+  sincronizarCotizacionesFromSAP() {
+    this.loadingsincronizarCotizacionesFromSAP = true;
+
+    this.httpService.DoPostAny<any>(DataApi.SAPCotizacion,
+      "SincronizarCotizacionesFromSAP", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0])
+        } else {
+          this.toastService.success("Actualizado", "OK")
+        }
+
+        this.loadingsincronizarCotizacionesFromSAP = false;
+      }, error => {
+        this.loadingsincronizarCotizacionesFromSAP = false;
+        this.toastService.error("No se pudo actualizar las Cotizaciones.", "Error conexion al servidor");
       });
   }
 

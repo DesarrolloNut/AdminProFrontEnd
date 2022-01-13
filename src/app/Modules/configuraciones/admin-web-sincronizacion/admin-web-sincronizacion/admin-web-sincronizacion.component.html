@@ -75,6 +75,29 @@
 
 
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12"
+                        *ngxPermissionsOnly="['configuraciones_admin_panel_sincronizacion_puede_sincronizar_cotizaciones']">
+                        <div class="box-part text-center border rounded border-warning">
+                            <i class="fa fa-file-alt fa-3x my-3 text-warning" aria-hidden="true"></i>
+                            <div class="title">
+                                <h4>Cotizaciones</h4>
+                            </div>
+                            <div class="text">
+                                <span>Obtén todas las cotizaciones desde SAP.</span>
+                            </div>
+                            <button type="button" class="btn btn-warning"
+                                (click)="sincronizarCotizacionesFromSAP()"
+                                *ngIf="!loadingsincronizarCotizacionesFromSAP">
+                                Sincronizar
+                            </button>
+                            <button *ngIf="loadingsincronizarCotizacionesFromSAP" disabled class="btn btn-primary"
+                                type="button">
+                                <span class="spinner-border spinner-border-sm"></span> Sincronizando
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12"
                         *ngxPermissionsOnly="['configuraciones_admin_panel_sincronizacion_puede_sincronizar_articulos_enrrolados']">
                         <div class="box-part text-center border rounded border-info">
                             <i class="fa fa-dollar-sign fa-3x my-3" aria-hidden="true"></i>
