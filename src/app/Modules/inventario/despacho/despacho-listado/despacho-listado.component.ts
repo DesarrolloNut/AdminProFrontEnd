@@ -39,7 +39,7 @@ export class DespachoListadoComponent implements OnInit {
 
   CargandoBar: boolean = false;
   totalPaginas: number = 0;
-  paginaSize: number = 5;
+  paginaSize: number = 6;
   paginaTotalRecords: number = 0;
 
 
@@ -70,6 +70,8 @@ export class DespachoListadoComponent implements OnInit {
    fHasta = new Date();
    fahoraServidor = new Date();
    despachoOn = 1
+   Diferencia_Minima_Despacho = 0
+
 
    despachoPuedeHorario = false;
    loadingRangosFechaDespacho =false;
@@ -140,12 +142,15 @@ getAllData(){
   this.getSucursalByUsuarioId();
   this.getArticulosDePesosExtras();
   this.getAlmacenes();
+  let that = this;
+  setInterval(function () { that.getDataByCondicional(false)}, 5000);
+
 }
 
- getDataByCondicional(){
+ getDataByCondicional(showLoading=true){
   switch (this.canalId) {
     case 1:
-         this.getDataPreventa()
+         this.getDataPreventa(showLoading)
         break;
     case 2:
           this.getData()
@@ -195,7 +200,7 @@ getRangosFechaDespacho() {
         this.fHasta = new Date(this.fHasta.setHours(response.valores[1]));
         this.fahoraServidor = new Date(response.valores[2]);
         this.despachoOn = parseInt(response.valores[3]);
-
+        this.Diferencia_Minima_Despacho=parseFloat(response.valores[4])
         this.validaPuedeDespachoHorario();
 
       }
@@ -291,17 +296,19 @@ getSucursalByUsuarioId() {
   }
 
   validaDespachoEnUsoBeforeOpenModal(content, despacho: any){
-    this.openModal(content,despacho)
+    this.openModal(content,despacho,false)
   }
 
-  openModal(content, despacho: any) {
+  openModal(content, despacho: any,onlyView:boolean) {
     switch (this.canalId) {
       case 1:
           this.despachoPreventaDetalles = [];
 
           this.getDespachoPreventaDetalleFromAPi(despacho.fechaEntrega,despacho.rutaId);
           this.despachoPreventaSeleccionado = despacho;
-          this.registraDespachoPreventaInUse();
+          if(!onlyView){
+            this.registraDespachoPreventaInUse();
+          }
           break;
       case 2:
             this.despachoDetalles = [];
@@ -724,8 +731,12 @@ getSucursalByUsuarioId() {
 
   // CANAL PREVENTA   CANAL PREVENTA   CANAL PREVENTA   CANAL PREVENTA   CANAL PREVENTA   CANAL PREVENTA
 
-  getDataPreventa() {
-    this.Cargando = true;
+  getDataPreventa(showLoading=true) {
+
+     if(showLoading){
+      this.Cargando = true;
+
+     }
 
 
     let parametros: Parametro[] = [
@@ -747,11 +758,20 @@ getSucursalByUsuarioId() {
           this.toastService.error(x.errores[0]);
           console.error(x.errores[0]);
         }
-        this.Cargando = false;
+
+     if(showLoading){
+      this.Cargando = false;
+
+     }
+
       }, error => {
         console.error(error);
         this.toastService.error("Error conexion al servidor");
-        this.Cargando = false;
+
+        if(showLoading){
+          this.Cargando = false;
+
+         }
       });
 
   }
@@ -1208,7 +1228,10 @@ registraDespachoPreventaInUse(){
 }
 
 
-finalizaDespacho(){
+finalizaDespacho(estado:number){
+
+ //ESTADO 2 INDICA QUE EL DESPACHO SE PICKEARA DE MANERA MANUAL
+ //ESTADO 3 INDICA QUE EL DESPACHO SE PICKEO MEDIANTE LA PLATAFORMA WEB
 
  this.confirmFinalizaModal.dismiss();
   this.despachoPreventaSeleccionado.noEditable=1;
@@ -1219,6 +1242,8 @@ finalizaDespacho(){
   let p= new DespachoPreventaRequestModel();
   p.ruta = this.despachoPreventaSeleccionado.rutaId;
   p.fechaEntrega = this.despachoPreventaSeleccionado.fechaEntrega;
+  p.estadoId=estado;
+
   this.httpService.DoPostAny<DespachoPreventaDetalleViewModel>(DataApi.Despacho,
     'finalizaDespachoPreventa', p).subscribe(response => {
       if (!response.ok) {
@@ -1285,5 +1310,16 @@ limpiarDataPreventa(){
   this.despachoPreventaArticuloDetalleSelected = new DespachoPreventaDetalleViewModel();
   this.despachoInUseVM= new DespachoInUseVM();
 }
+
+validaDiferenciaMinimaDespacho(item: DespachoListadoPreventaVM){
+
+    let diff= item.totalMontoPedidoERP-item.totalMontoPedido;
+    if(item.totalMontoPedido==0){return false}
+    if(item.totalMontoPedidoERP< Math.trunc( item.totalMontoPedido)){return false}
+    if(diff<=this.Diferencia_Minima_Despacho){
+      return true;
+    }else{return false}
+}
+
 
 }

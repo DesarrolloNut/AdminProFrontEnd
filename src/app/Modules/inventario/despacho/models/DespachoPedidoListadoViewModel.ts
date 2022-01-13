@@ -24,6 +24,7 @@ export class DespachoListadoPreventaVM  {
   canalId: number;
   distribuidorId: number;
   distribuidor: string;
+  ruta: number;
   rutaId: number;
   finalizado: number;
   noEditable: number;
@@ -31,6 +32,7 @@ export class DespachoListadoPreventaVM  {
   pedido: number;
   despacho: number;
   totalMontoPedido: number;
+  totalMontoPedidoERP: number;
   totalMontoDespacho: number;
   almacen_Origen: number;
   almacen_Destino: number;
