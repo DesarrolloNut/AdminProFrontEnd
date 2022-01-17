@@ -95,6 +95,37 @@
                     </div>
                 </div>
 
+                <!-- FACTURADO -->
+                <div class="col-lg-2 col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h3 class="">
+                                        <i [hidden]="!loadingSeguimientoCount" class="fa fa-spin fa-spinner text-light">
+                                        </i>
+                                        <span [hidden]="loadingSeguimientoCount">
+                                            {{ (seguimientoCount?.facturado / seguimientoCountTotal) | percent}}
+                                        </span>
+                                    </h3>
+                                    <h6 class="card-subtitle text-info">Facturado
+                                        ({{seguimientoCount?.facturado |number
+                                        }})
+                                    </h6>
+                                </div>
+                                <div class="col-12">
+                                    <div class="progress">
+                                        <div role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"
+                                            class="progress-bar bg-info" style="height: 6px;"
+                                            [ngStyle]="{'width':(seguimientoCount?.facturado / seguimientoCountTotal) | percent}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- DESPACHO -->
                 <div class="col-lg-2 col-md-4">
                     <div class="card">
@@ -126,36 +157,7 @@
                     </div>
                 </div>
 
-                <!-- FACTURADO -->
-                <div class="col-lg-2 col-md-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-12">
-                                    <h3 class="">
-                                        <i [hidden]="!loadingSeguimientoCount" class="fa fa-spin fa-spinner text-light">
-                                        </i>
-                                        <span [hidden]="loadingSeguimientoCount">
-                                            {{ (seguimientoCount?.facturado / seguimientoCountTotal) | percent}}
-                                        </span>
-                                    </h3>
-                                    <h6 class="card-subtitle text-info">Facturado
-                                        ({{seguimientoCount?.facturado |number
-                                        }})
-                                    </h6>
-                                </div>
-                                <div class="col-12">
-                                    <div class="progress">
-                                        <div role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"
-                                            class="progress-bar bg-info" style="height: 6px;"
-                                            [ngStyle]="{'width':(seguimientoCount?.facturado / seguimientoCountTotal) | percent}">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
 
                 <!-- ENTREGADO -->
                 <div class="col-lg-2 col-md-4">

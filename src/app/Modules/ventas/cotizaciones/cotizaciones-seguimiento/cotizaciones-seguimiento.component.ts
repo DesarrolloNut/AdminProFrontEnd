@@ -104,7 +104,7 @@ export class CotizacionesSeguimientoComponent implements OnInit, OnDestroy {
           this.asignarPagination(x);
         } else {
           // this.toastService.error(x.errores[0]);
-          console.error(x.errores[0]);
+          console.error(x.errores);
         }
 
         if (showLoading) {
@@ -271,7 +271,9 @@ export class CotizacionesSeguimientoComponent implements OnInit, OnDestroy {
     }).subscribe(response => {
 
       if (!response.ok) {
-        this.toastService.error(response.errores[0]);
+        // this.toastService.error(response.errores[0]);
+        console.error(response.errores)
+
       } else {
         this.seguimientoCount = response.records[0];
         this.seguimientoCountTotal = 0;
@@ -288,8 +290,8 @@ export class CotizacionesSeguimientoComponent implements OnInit, OnDestroy {
       this.loadingSeguimientoCount = false;
     }, error => {
       this.loadingSeguimientoCount = false;
-      this.toastService.error("No se pudo obtener las camtidades de cotizaciones", "Error conexion al servidor");
-
+      // this.toastService.error("No se pudo obtener las cantidades de cotizaciones", "Error conexion al servidor");
+      console.error(error)
       setTimeout(() => {
         this.getCotizacionSeguimientoCount();
       }, 1000);
