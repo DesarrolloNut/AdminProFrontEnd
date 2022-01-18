@@ -35,6 +35,7 @@ export class DespachoListadoComponent implements OnInit {
   sucursalId: number = 0;
   paginaNumeroActual = 1;
   Cargando: boolean = false;
+  CargandoRealtime =false;
   CargandoDespachoDetalle: boolean = false;
 
   CargandoBar: boolean = false;
@@ -64,7 +65,8 @@ export class DespachoListadoComponent implements OnInit {
   loadingSucursales = false;
 
 
-
+  //extra
+  intervalRefreshData: NodeJS.Timeout
 
    fDesde = new Date();
    fHasta = new Date();
@@ -142,8 +144,10 @@ getAllData(){
   this.getSucursalByUsuarioId();
   this.getArticulosDePesosExtras();
   this.getAlmacenes();
-  let that = this;
-  setInterval(function () { that.getDataByCondicional(false)}, 5000);
+  this.intervalRefreshData = setInterval(() => {
+    this.getDataByCondicional(false)
+  }, 10000)
+
 
 }
 
@@ -733,9 +737,14 @@ getSucursalByUsuarioId() {
 
   getDataPreventa(showLoading=true) {
 
+     if(this.Cargando){
+       return;
+     }
      if(showLoading){
       this.Cargando = true;
 
+     }else{
+      this.CargandoRealtime =true;
      }
 
 
@@ -761,17 +770,17 @@ getSucursalByUsuarioId() {
 
      if(showLoading){
       this.Cargando = false;
-
      }
-
+     this.CargandoRealtime =false;
       }, error => {
         console.error(error);
         this.toastService.error("Error conexion al servidor");
 
         if(showLoading){
           this.Cargando = false;
-
          }
+         this.CargandoRealtime =false;
+
       });
 
   }
@@ -1319,6 +1328,10 @@ validaDiferenciaMinimaDespacho(item: DespachoListadoPreventaVM){
     if(diff<=this.Diferencia_Minima_Despacho){
       return true;
     }else{return false}
+}
+
+ngOnDestroy(): void {
+  window.clearInterval(this.intervalRefreshData)
 }
 
 

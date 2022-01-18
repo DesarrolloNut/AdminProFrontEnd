@@ -1,3 +1,4 @@
+import { LoadingRealTimeComponent } from './../../shared/loading-realtime/loading-realtime.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 //import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 //import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -18,7 +19,7 @@ import { FilterFuncPipe } from 'src/app/shared/pipes/filterFunc.pipe';
 export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
 
 @NgModule({
-    declarations: [LoadingListadoComponent, ErrorConnectionInternetComponent, ErrorPermissionDeniedComponent , FilterPipe, FilterFuncPipe],
+    declarations: [LoadingListadoComponent, LoadingRealTimeComponent, ErrorConnectionInternetComponent, ErrorPermissionDeniedComponent , FilterPipe, FilterFuncPipe],
     imports: [
         NgxPermissionsModule.forChild(),
         NgSelectModule,
@@ -27,7 +28,7 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
         NgbPaginationModule,
         NgxMaskModule.forRoot(),
         PerfectScrollbarModule,
- 
+
     ], exports: [
         NgxPermissionsModule,
         NgxMaskModule,
@@ -38,6 +39,7 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
         DatePickerModule,
         NgbPaginationModule,
         LoadingListadoComponent,
+        LoadingRealTimeComponent,
         ErrorConnectionInternetComponent,
         ErrorPermissionDeniedComponent,
         FilterPipe,
