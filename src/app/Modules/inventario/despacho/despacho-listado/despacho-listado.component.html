@@ -535,6 +535,18 @@
             <!-- <th>Zonas Vendedores</th> -->
         </tr>
     </thead>
+    <tfoot>
+      <tr style="background-color: #f9f6f3; font-size: 20px;" *ngIf="dataPreventa">
+        <th class="text-center"> <span class="font-bold">TOTALES</span></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th><span style="color: #4cc25b;" class=" font-bold">{{405175 | currency}}</span> </th>
+        <th><span style="color: #4cc25b;" class="font-bold">{{405175 | currency}}</span> </th>
+        <th><span style="color: #4cc25b;" class="font-bold">{{405175 | currency}}</span> </th>
+
+      </tr>
+             </tfoot>
     <tbody [hidden]="Cargando" style="    height: 200px;
     min-height: 200px;">
 
@@ -544,10 +556,10 @@
 
 
                 <div class="acciones-btn" *ngIf="validaDiferenciaMinimaDespacho(item)">
-                      <!-- <button *ngIf="item.noEditable==0" [disabled]="btnCargandoPrint"   class="btn btn font-bold btn-success m-1"
+                      <button *ngIf="item.noEditable==0" [disabled]="btnCargandoPrint"   class="btn btn font-bold btn-success m-1"
                                     (click)="validaDespachoEnUsoBeforeOpenModal(modalDetalleDespachoPreventa,item)">
                                     <i class="fa fa-sm  fa-list "></i> Despachar
-                      </button> -->
+                      </button>
                       <button *ngIf="item.noEditable==0" [disabled]="btnCargandoPrint"   class="btn btn font-bold btn-info m-1"
                       (click)="openModalConfirmFinalizaDespacho(modalConfirmManual,1,item)" >
                         <i class="fa  fa-hand-paper mr-1" aria-hidden="true"></i> D. Manual
