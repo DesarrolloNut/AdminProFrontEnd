@@ -1,3 +1,4 @@
+import { DespachoListadoPreventaVMTotales } from './../models/DespachoPedidoListadoViewModel';
 import { ComboBoxLote } from './../../../../shared/model/ComboBox';
 import { DespachoInUseVM, DespachoPreventaDetalleExcelVM, DespachoPreventaRequestModel, SAPLoteDespachoPedido } from './../models/DespachoPedidoDetalleViewModel';
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
@@ -40,7 +41,7 @@ export class DespachoListadoComponent implements OnInit {
 
   CargandoBar: boolean = false;
   totalPaginas: number = 0;
-  paginaSize: number = 6;
+  paginaSize: number = 5;
   paginaTotalRecords: number = 0;
 
 
@@ -81,11 +82,16 @@ export class DespachoListadoComponent implements OnInit {
   //PREVENTA
    despachoPreventaSeleccionado: DespachoListadoPreventaVM;
    dataPreventa: DespachoListadoPreventaVM[] = [] //tu modelo
+   dataPreventaTotales: DespachoListadoPreventaVMTotales[] = [] //tu modelo
+
    despachoPreventaDetalles: DespachoPreventaDetalleViewModel[];
    despachoPreventaArticuloDetalleSelected: DespachoPreventaDetalleViewModel;
    loadingDespachoPreventaDetalle:boolean;
    despachoInUseVM= new DespachoInUseVM();
    lote: SAPLoteDespachoPedido = new SAPLoteDespachoPedido();
+
+   fecha= new Date()
+   primeraVez= 0;
 
    lotesDisponibles:SAPLoteDespachoPedido[]=[];
 
@@ -732,7 +738,11 @@ getSucursalByUsuarioId() {
 
 
 
-
+  onChangeFechaDesdeFiltro(evento: any) {
+    if(++this.primeraVez==1){return;}
+    this.fecha = new Date(evento.value)
+    this.getDataByCondicional()
+  }
   // CANAL PREVENTA   CANAL PREVENTA   CANAL PREVENTA   CANAL PREVENTA   CANAL PREVENTA   CANAL PREVENTA
 
   getDataPreventa(showLoading=true) {
@@ -751,17 +761,18 @@ getSucursalByUsuarioId() {
     let parametros: Parametro[] = [
       { key: "Search", value: this.Search },
       {  key: "UsuarioId",value:Number(this.authService.tokenDecoded.nameid)},
-      { key: "sucursalId", value: this.sucursalId },
+      { key: "SucursalId", value: this.sucursalId },
+      { key: "Fecha", value: this.fecha },
      ]
-
+console.log(parametros)
     this.httpService.GetAllWithPagination<DespachoListadoPreventaVM>(DataApi.Despacho,
        "GetDespachoPreventaListado", "FechaEntrega", this.paginaNumeroActual,
       this.paginaSize,true, parametros).subscribe(x => {
-
         if (x.ok) {
+
           this.dataPreventa = x.valores[0];
 
-          console.log( this.dataPreventa)
+          this.dataPreventaTotales= x.valores[1];
           this.asignarPagination(x);
         } else {
           this.toastService.error(x.errores[0]);

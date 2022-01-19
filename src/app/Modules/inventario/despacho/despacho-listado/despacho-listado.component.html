@@ -3,18 +3,16 @@
         <div class="card">
             <div class="card-body">
                 <div class="row mb-2">
-                    <div class="col-md-6 align-middle">
+                    <div class="col-md-9 align-middle ">
                         <h4 class="card-title">Listado de pedidos para despachar </h4>
                     </div>
-                    <div class="col-md-6 text-right">
+                    <div class="col-md-3 text-right">
                         <!-- <button  [disabled]="loadingValidaExistPedidoSinFacturar || !clienteExiste" (click)="validExistPedidoSinFacturar()"
-                         class="btn btn-info"> <i class="fa fa-plus"></i> Nuevo
-                            pedido
+                         class="btn btn-info"> <i class="fa fa-plus"></i> Nuevo  pedido
                         </button> -->
                         <app-loading-realtime [hidden]="!CargandoRealtime"></app-loading-realtime>
-
                     </div>
-                    <div class="col-md-4 pt-2">
+                    <div class="col-md-3 pt-2">
                       <label for="">Busqueda</label>
                         <div class="input-group">
 
@@ -29,7 +27,7 @@
                                 style="border-left:none !important;" class="form-control" placeholder="Buscar">
                         </div>
                     </div>
-                    <div class="form-group col-md-4 pt-2">
+                    <div class="form-group col-md-3 pt-2">
                         <label for="">Sucursal</label>
                         <ng-select
                           bindLabel="nombre" bindValue="codigo" [items]="sucursales"
@@ -41,17 +39,14 @@
                       </ng-select>
                       </div>
 
-                      <div class="form-group col-md-2 pt-2">
+                      <div class="form-group col-md-3 pt-2">
                         <label for="">Fecha</label>
-                        <ng-select [items]="opcionesFecha" bindLabel="nombre" bindValue="codigo"
-                        [loading]="loadingCanales"
-                        (change)="getDataByCondicional()"
-                        placeholder="Selecciona" [clearable]="false"
-                        notFoundText="No resultados" [(ngModel)]="opcionFechaId" >
-                        </ng-select>
+                        <ejs-datepicker [showClearButton]="false" (change)="onChangeFechaDesdeFiltro($event)"
+                           [(ngModel)]="fecha" [format]="'dd-MM-yyyy'">
+                        </ejs-datepicker>
                     </div>
 
-                    <div class="form-group col-md-2 pt-2">
+                    <div class="form-group col-md-3 pt-2">
                       <label for="">Canal</label>
                         <ng-select [items]="canales" bindLabel="nombre" bindValue="codigo"
                         [loading]="loadingCanales"
@@ -60,6 +55,44 @@
                         notFoundText="No resultados" [(ngModel)]="canalId" >
                         </ng-select>
                     </div>
+
+                    <!-- <div class="col-md-12 mt-1 mb-1 ">
+                      <div class="row">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-3">
+                          <div class="d-flex no-block align-items-center">
+                            <div><span class="text-success display-7"><i class="ti-pie-chart"></i></span></div>
+                            <div class="ml-3 text-right">
+                                <h4 class="font-weight-bold">{{3000526 | currency}} </h4>
+                                <h5 class="text-success">Total Pedido</h5>
+                            </div>
+                          </div>
+                       </div>
+
+                       <div class="col-md-3">
+                        <div class="d-flex no-block align-items-center">
+                          <div><span class="text-warning display-7"><i class="ti-pie-chart"></i></span></div>
+                          <div class="ml-3 text-right">
+                              <h4 class="font-weight-bold">{{3000526 | currency}} </h4>
+                              <h5 class="text-warning">Total Despacho</h5>
+                          </div>
+                        </div>
+                     </div>
+
+                     <div class="col-md-3">
+                      <div class="d-flex no-block align-items-center">
+                        <div><span class="text-success display-7"><i class="ti-pie-chart"></i></span></div>
+                        <div class="ml-3 text-success">
+                            <h4 class="font-weight-bold">{{3000526 | currency}} </h4>
+                            <h5 class="text-success">Total ERP</h5>
+                        </div>
+                      </div>
+
+
+                   </div>
+                      </div>
+                    </div> -->
+
 
                 </div>
 
@@ -80,7 +113,7 @@
                     <div class="col-md-4 text-right d-none d-md-block  ">
                         <select class="form-control d-block" name="paginaSize" [(ngModel)]="paginaSize"
                             (change)="getDataByCondicional()">
-                            <option [ngValue]="6">6 registro por pagina</option>
+                            <option [ngValue]="5">5 registro por pagina</option>
                             <option [ngValue]="10">10 registro por pagina</option>
                             <option [ngValue]="15">15 registro por pagina</option>
                         </select>
@@ -141,12 +174,6 @@
                                 <th>Despacho</th>
                                 <th style="text-align: center;">¿Listo?</th>
 
-                                <!-- <th>Precio</th> -->
-                                <!-- <th>% Desc</th>
-                                <th>SubTotal</th>
-                                <th>Desc</th>
-                                <th>Impuesto</th>
-                                <th>Total Neto</th> -->
 
                             </tr>
                         </thead>
@@ -186,24 +213,6 @@
                                         <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
                                       </svg>
                                 </td>
-                                <!-- <td>
-                                    <span> ${{item.precio | number:'1.2-2'}} </span>
-                                </td> -->
-                                <!-- <td>
-                                    <span> %{{item.porcientoDescuento | number:'1.2-2'}}</span>
-                                </td>
-                                <td>
-                                    <span> ${{item.subtotal | number:'1.2-2'}} </span>
-                                </td>
-                                <td>
-                                    <span> ${{item.totalDescuento | number:'1.2-2'}} </span>
-                                </td>
-                                <td>
-                                    <span> ${{item.totalImpuesto | number:'1.2-2'}} </span>
-                                </td>
-                                <td>
-                                    <span class="font-weight-bold"> ${{item.totalNeto | number:'1.2-2'}} </span>
-                                </td> -->
                             </tr>
                           <br >
                           <br>
@@ -535,7 +544,20 @@
             <!-- <th>Zonas Vendedores</th> -->
         </tr>
     </thead>
-    <tbody [hidden]="Cargando" style="    height: 200px;
+    <tfoot>
+      <tr style="background-color: #f8f8f8; font-size: 17px;" *ngIf="dataPreventa.length>0">
+        <th class="text-center"> <span class="font-bold">TOTAL GENERAL</span></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th><span style="color: #4cc25b;" class=" font-bold">{{dataPreventaTotales?.totalPedido | currency}}</span> </th>
+        <th><span style="color: #4cc25b;" class="font-bold">{{dataPreventaTotales?.totalDespacho | currency}}</span> </th>
+        <th><span style="color: #4cc25b;" class="font-bold">{{dataPreventaTotales?.totalERP | currency}}</span> </th>
+
+      </tr>
+   </tfoot>
+
+    <tbody [hidden]="Cargando" style="    height: 230px;
     min-height: 200px;">
 
         <tr    *ngFor="let item of dataPreventa; let i = index">
