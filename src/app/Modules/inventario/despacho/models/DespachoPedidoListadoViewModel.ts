@@ -38,4 +38,12 @@ export class DespachoListadoPreventaVM  {
   almacen_Destino: number;
   estadoDespacho: number;
   rutasVendedoresDistribuidor:string;
+  totales:DespachoListadoPreventaVMTotales = new DespachoListadoPreventaVMTotales();
+}
+export class DespachoListadoPreventaVMTotales {
+  fechaEntrega: string;
+  sucursalId: number;
+  totalPedido: number;
+  totalDespacho: number;
+  totalERP: number;
 }
