@@ -9,8 +9,6 @@ import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
-import { ArticuloListaPrecioViewModel } from '../../mantenimientos/articulos/models/ArticuloListaPrecioViewModel';
-import * as XLSX from 'xlsx';
 import { CotizacionListadoViewModel } from '../../ventas/cotizaciones/models/CotizacionListadoViewModel';
 import { CotizacionDetalleViewModel } from '../../ventas/cotizaciones/models/CotizacionDetalleViewModel';
 import { Factura } from '../../ventas/facturas/models/Factura';
@@ -57,7 +55,7 @@ export class AutorizacionPedidosComponent implements OnInit {
   //comentarios
   comentario: string;
 
-  cotizacionDetalles: any[];
+  cotizacionDetalles: CotizacionDetalleViewModel[];
   cotizacionSeleccionada: CotizacionListadoViewModel;
   loadingCotizacionDetalle: boolean;
 
@@ -73,6 +71,7 @@ export class AutorizacionPedidosComponent implements OnInit {
   autorizacionHistorico: AutorizacionHistoricoListadoViewModel[];
   promedioDias: number = 0;
   _math = Math;
+  totalNetoCalculado: number;
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private authService: AuthenticationService,
@@ -212,9 +211,12 @@ export class AutorizacionPedidosComponent implements OnInit {
   openModalAutorizar(content, item: CotizacionListadoViewModel) {
     this.comentario = null;
     this.fechaPromesaModel = null;
-    this.cotizacionPromesaSelected = 1
     this.cotizacionDetalles = [];
+
+    this.cotizacionPromesaSelected = 1
     this.promedioDias = 0
+    this.totalPendientePagar = 0
+    this.porcentajeCalculado = 0
 
     this.cotizacionSeleccionada = item;
 
@@ -232,20 +234,6 @@ export class AutorizacionPedidosComponent implements OnInit {
       this.toastService.warning("Ingresar comentario válido");
       return;
     }
-
-    // if (this.btnClicked == this.ACTIONSenum.AUTORIZAR) {
-    //   this.autorizar()
-    //   console.log("autorizando")
-    //   return;
-    // }
-    // if (this.btnClicked == this.ACTIONSenum.DESAUTORIZAR) {
-    //   console.log("Desautorizando")
-    //   this.desautorizar();
-    //   return;
-    // }
-    // if (this.btnClicked == 3) {
-    //   return;
-    // }
 
     this.modalService.dismissAll()
 
@@ -353,13 +341,20 @@ export class AutorizacionPedidosComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.cotizacionDetalles = response.records;
+          console.table(this.cotizacionDetalles)
         }
+        this.calcularTotalNeto();
         this.calcularPorcentaje();
         this.loadingCotizacionDetalle = false;
       }, error => {
         this.loadingCotizacionDetalle = false;
         this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
       });
+  }
+
+  calcularTotalNeto() {
+    this.totalNetoCalculado =
+      this.cotizacionDetalles.reduce((sum, c) => sum + c.total, 0);
   }
 
 
@@ -377,8 +372,10 @@ export class AutorizacionPedidosComponent implements OnInit {
           console.table(this.facturasPendientesPago)
 
           this.totalPendientePagar = this.facturasPendientesPago.reduce((sum, current) => sum + (current.total - current.pagos), 0)
-          this.promedioDias = this.facturasPendientesPago.reduce((sum, current) => sum + current.diasVencimiento, 0) / this.facturasPendientesPago.length;
 
+
+          this.promedioDias = this.facturasPendientesPago.filter(x => x.diasVencimiento > 0)
+            .reduce((sum, current) => sum + (current.diasVencimiento), 0) / this.facturasPendientesPago.filter(x => x.diasVencimiento > 0).length;
           this.promedioDias = this.promedioDias ? this.promedioDias : 0
 
         }
@@ -395,8 +392,11 @@ export class AutorizacionPedidosComponent implements OnInit {
     this.porcentajeCalculado = 0
 
     if (this.cotizacionSeleccionada && this.cotizacionSeleccionada.limiteCredito > 0) {
-      this.porcentajeCalculado = ((this.cotizacionSeleccionada.limiteCredito - this.cotizacionSeleccionada.totalNeto -
-        this.totalPendientePagar) / this.cotizacionSeleccionada.limiteCredito) * 100;
+      // this.porcentajeCalculado = ((this.cotizacionSeleccionada.limiteCredito - this.cotizacionSeleccionada.totalNeto -
+      //   this.totalPendientePagar) / this.cotizacionSeleccionada.limiteCredito) * 100;
+
+      this.porcentajeCalculado = (this.totalPendientePagar / this.cotizacionSeleccionada.limiteCredito) * 100
+
     }
 
   }

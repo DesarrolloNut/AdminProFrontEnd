@@ -11,6 +11,7 @@ export interface CotizacionListadoViewModel {
     clienteDocumento: string;
     limiteCredito: number;
     balanceCliente: number;
+    diasPlazo: number;
 
     subTotal: number;
     descuentoTotal: number;

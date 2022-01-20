@@ -186,7 +186,7 @@
         <div class="row" *ngIf="!cargandoAutorizacion">
             <div class="col">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="modal-title">Pedido #{{cotizacionSeleccionada.id}}</h4>
+                    <h4 class="modal-title" id="modal-title">#{{cotizacionSeleccionada.id}}</h4>
                     <button type="button" class="close" aria-describedby="modal-title"
                         (click)="modal.dismiss('Cross click')">
                         <span aria-hidden="true">&times;</span>
@@ -202,6 +202,8 @@
                                 {{cotizacionSeleccionada.cliente}}</h5>
                             <h5> <i class="fa fa-id-card"></i> Documento:
                                 {{cotizacionSeleccionada.clienteDocumento}}</h5>
+                            <h5> <i class="fa fa-user"></i> Vendedor:
+                                {{cotizacionSeleccionada.vendedor}}</h5>
                             <hr>
 
                         </div>
@@ -228,7 +230,7 @@
                                                             No hay factura
                                                         </small>
                                                     </h4>
-                                                    <h6 class="text-info">Última factura</h6>
+                                                    <h6 class="text-info">Última factura </h6>
                                                 </div>
                                                 <div class="ml-auto"><span class="text-info display-6"><i
                                                             class="ti-calendar"></i></span></div>
@@ -275,9 +277,8 @@
                                         <div class="card-body">
                                             <div class="d-flex no-block align-items-center">
                                                 <div>
-                                                    <h3 class="font-weight-bold">{{ cotizacionSeleccionada.limiteCredito
-                                                        -
-                                                        cotizacionSeleccionada.totalNeto - totalPendientePagar
+                                                    <h3 class="font-weight-bold">{{
+                                                        cotizacionSeleccionada.balanceCliente
                                                         | number:'1.2-2' }}</h3>
                                                     <h6 class="text-orange">Balance disp.</h6>
                                                 </div>
@@ -293,12 +294,17 @@
                                         <div class="card-body">
                                             <div class="d-flex no-block align-items-center">
                                                 <div>
-                                                    <h3 class="font-weight-bold">{{ promedioDias | number:'1.0-1' }}
-                                                    </h3>
-                                                    <h6 class="text-primary">Promedio días</h6>
+                                                    <h4 class="font-weight-bold">{{ promedioDias | number:'1.0-1' }} |
+                                                        <span style="font-size: 12px;"
+                                                            class="float-right badge badge-info">Plazo
+                                                            {{cotizacionSeleccionada.diasPlazo}}</span>
+                                                    </h4>
+                                                    <h6 class="text-primary">Prom. días venc.</h6>
                                                 </div>
-                                                <div class="ml-auto"><span class="text-primary display-6"><i
-                                                            class="ti-bar-chart"></i></span></div>
+                                                <div class="ml-auto">
+                                                    <span class="text-primary display-6"><i class="ti-bar-chart"></i>
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -313,25 +319,27 @@
 
                                             <div class="row">
                                                 <div class="col-12">
-                                                    <h3 class="font-weight-bold" [ngClass]=" {
-                                                        'text-success': porcentajeCalculado <= 35,
-                                                        'text-orange': porcentajeCalculado > 35 && porcentajeCalculado <= 65,
-                                                        'text-danger': porcentajeCalculado > 65 }">
+                                                    <h3 class="font-weight-bold"
+                                                        [ngClass]=" {
+                                                        'text-success': porcentajeCalculado >= 0 && porcentajeCalculado <= 50,
+                                                        'text-orange': porcentajeCalculado > 50 && porcentajeCalculado <= 100,
+                                                        'text-danger': porcentajeCalculado < 0 || porcentajeCalculado > 100  }">
                                                         {{ porcentajeCalculado | number : '1.0-0' }}%
                                                     </h3>
-                                                    <h6 style="font-size: 10px;" [ngClass]=" {
-                                                        'text-success': porcentajeCalculado <= 35,
-                                                        'text-orange': porcentajeCalculado > 35 && porcentajeCalculado <= 65,
-                                                        'text-danger': porcentajeCalculado > 65 }">Porcentaje</h6>
+                                                    <h6 style="font-size: 10px;"
+                                                        [ngClass]=" {
+                                                        'text-success': porcentajeCalculado >= 0 && porcentajeCalculado <= 50,
+                                                        'text-orange': porcentajeCalculado > 50 && porcentajeCalculado <= 100,
+                                                        'text-danger': porcentajeCalculado < 0 || porcentajeCalculado > 100 }">Porcentaje</h6>
                                                 </div>
                                                 <div class="col-12">
                                                     <div class="progress">
                                                         <div role="progressbar" aria-valuenow="25" aria-valuemin="0"
-                                                            aria-valuemax="100" class="progress-bar" [ngClass]=" {
-                                                                'bg-success': porcentajeCalculado <= 35,
-                                                                'bg-orange': porcentajeCalculado > 35 && porcentajeCalculado <= 65,
-                                                                'bg-danger': porcentajeCalculado > 65 }"
-                                                            style="height: 6px;"
+                                                            aria-valuemax="100" class="progress-bar"
+                                                            [ngClass]=" {
+                                                                'bg-success': porcentajeCalculado >= 0 && porcentajeCalculado <= 50,
+                                                                'bg-orange': porcentajeCalculado > 50 && porcentajeCalculado <= 100,
+                                                                'bg-danger': porcentajeCalculado < 0 || porcentajeCalculado > 100 }" style="height: 6px;"
                                                             [ngStyle]="{'width': porcentajeCalculado + '%'}">
                                                         </div>
                                                     </div>
@@ -356,29 +364,31 @@
                                     <h4> Pedido
                                         <span style="font-size: 15px;"
                                             class="badge font-weight-bold badge-light badge-pill">
-                                            {{cotizacionSeleccionada.totalNeto | currency }}
+                                            {{totalNetoCalculado | currency }}
                                         </span>
                                     </h4>
                                 </div>
                                 <div class="col-12" [hidden]="loadingCotizacionDetalle">
 
-                                    <div class="table-responsive" style="height: 123px;">
+                                    <div class="table-responsive" style="height: 250px;">
                                         <table class="table table-sm table-hover mb-0 no-wrap v-middle">
                                             <thead>
                                                 <tr>
-                                                    <th></th>
+                                                    <!-- <th></th> -->
                                                     <th>Artículo</th>
-                                                    <th>Cantidad</th>
+                                                    <th>Cant</th>
                                                     <th>Precio</th>
-                                                    <th>Total Neto</th>
+                                                    <th>Desc</th>
+                                                    <!-- <th>Imp</th>  -->
+                                                    <th>Total</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr *ngFor="let item of cotizacionDetalles">
-                                                    <td><span class="badge badge-light text-info ">{{item.id}}</span>
-                                                    </td>
+                                                    <!-- <td><span class="badge badge-light text-info ">{{item.id}}</span>
+                                                    </td> -->
                                                     <td>
-                                                        <span> {{item.articulo}}</span>
+                                                        <span>{{item.articuloCodRef}} {{item.articulo }} </span>
                                                     </td>
                                                     <td>
                                                         <span> {{item.cantidad}}</span>
@@ -387,7 +397,13 @@
                                                         <span> ${{item.precio | number:'1.2-2'}} </span>
                                                     </td>
                                                     <td>
-                                                        <span class="font-weight-bold"> ${{item.totalNeto |
+                                                        <span> ${{item.totalDescuento | number:'1.2-2'}} </span>
+                                                    </td>
+                                                    <!-- <td>
+                                                        <span> ${{item.totalImpuesto | number:'1.2-2'}} </span>
+                                                    </td> -->
+                                                    <td>
+                                                        <span class="font-weight-bold"> ${{ item.total|
                                                             number:'1.2-2'}} </span>
                                                     </td>
                                                 </tr>
@@ -398,12 +414,6 @@
                                     </div>
 
                                 </div>
-
-                                <!-- <div class="col-12 text-right">
-                                    <hr>
-                                    <h4 class="font-weight-bold">Total Pedido: $ {{cotizacionSeleccionada.totalNeto |
-                                        number:'1.2-2' }}</h4>
-                                </div> -->
 
                                 <div class="col-12">
                                     <app-loading-listado [hidden]="!loadingCotizacionDetalle"></app-loading-listado>
@@ -423,7 +433,7 @@
                                 </div>
                                 <div class="col-12" [hidden]="loadingFacturasPendientesPago">
 
-                                    <div class="table-responsive" style="height: 123px;">
+                                    <div class="table-responsive" style="height: 250px;">
                                         <table class="table table-sm table-hover mb-0 no-wrap v-middle">
                                             <thead>
                                                 <tr>
