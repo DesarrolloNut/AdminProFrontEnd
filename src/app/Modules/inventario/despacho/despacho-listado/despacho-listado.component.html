@@ -545,14 +545,14 @@
         </tr>
     </thead>
     <tfoot>
-      <tr style="background-color: #f8f8f8; font-size: 17px;" *ngIf="dataPreventa.length>0">
+      <tr style="background-color: #f8f8f8; font-size: 17px;" *ngIf="dataPreventa.length>0 && !Cargando">
         <th class="text-center"> <span class="font-bold">TOTAL GENERAL</span></th>
         <th></th>
         <th></th>
         <th></th>
         <th><span style="color: #4cc25b;" class=" font-bold">{{dataPreventaTotales?.totalPedido | currency}}</span> </th>
         <th><span style="color: #4cc25b;" class="font-bold">{{dataPreventaTotales?.totalDespacho | currency}}</span> </th>
-        <th><span style="color: #4cc25b;" class="font-bold">{{dataPreventaTotales?.totalERP | currency}}</span> </th>
+        <!-- <th><span style="color: #4cc25b;" class="font-bold">{{dataPreventaTotales?.totalERP | currency}}</span> </th> -->
 
       </tr>
    </tfoot>
@@ -566,15 +566,22 @@
 
 
                 <div class="acciones-btn" *ngIf="validaDiferenciaMinimaDespacho(item)">
-                      <!-- <button *ngIf="item.noEditable==0" [disabled]="btnCargandoPrint"   class="btn btn font-bold btn-success m-1"
-                                    (click)="validaDespachoEnUsoBeforeOpenModal(modalDetalleDespachoPreventa,item)">
-                                    <i class="fa fa-sm  fa-list "></i> Despachar
-                      </button> -->
-                      <button *ngIf="item.noEditable==0" [disabled]="btnCargandoPrint"   class="btn btn font-bold btn-info m-1"
-                      (click)="openModalConfirmFinalizaDespacho(modalConfirmManual,1,item)" >
-                        <i class="fa  fa-hand-paper mr-1" aria-hidden="true"></i> D. Manual
+                      <!-- -->
 
-                    </button>
+                      <div  *ngxPermissionsOnly="['dispositivo_despacho']" style="display:inline-block">
+                          <button *ngIf="item.noEditable==0" [disabled]="btnCargandoPrint"   class="btn btn font-bold btn-success m-1"
+                            (click)="validaDespachoEnUsoBeforeOpenModal(modalDetalleDespachoPreventa,item)">
+                            <i class="fa fa-sm  fa-list "></i> Despachar
+                        </button>
+                      </div>
+
+                      <div  *ngxPermissionsOnly="['manual_despacho']" style="display:inline-block">
+                        <button *ngIf="item.noEditable==0" [disabled]="btnCargandoPrint"   class="btn btn font-bold btn-info m-1"
+                        (click)="openModalConfirmFinalizaDespacho(modalConfirmManual,1,item)" >
+                          <i class="fa  fa-hand-paper mr-1" aria-hidden="true"></i> D. Manual
+                      </button>
+                      </div>
+
 
                       <button *ngIf="item.noEditable==1" [disabled]="btnCargandoPrint"  class="btn border  font-bold btn-outline-info m-1"
                       (click)="openModal(modalDetalleDespachoPreventa,item,true)">

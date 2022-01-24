@@ -152,7 +152,7 @@ getAllData(){
   this.getAlmacenes();
   this.intervalRefreshData = setInterval(() => {
     this.getDataByCondicional(false)
-  }, 10000)
+  }, 13000)
 
 
 }
@@ -313,9 +313,9 @@ getSucursalByUsuarioId() {
     switch (this.canalId) {
       case 1:
           this.despachoPreventaDetalles = [];
-
-          this.getDespachoPreventaDetalleFromAPi(despacho.fechaEntrega,despacho.rutaId);
           this.despachoPreventaSeleccionado = despacho;
+          this.getDespachoPreventaDetalleFromAPi(despacho.fechaEntrega,despacho.rutaId);
+
           if(!onlyView){
             this.registraDespachoPreventaInUse();
           }
@@ -588,7 +588,7 @@ getSucursalByUsuarioId() {
     ap.articulo = this.despachoPreventaArticuloDetalleSelected.codigoArticulo;
     ap.almacen = this.despachoPreventaArticuloDetalleSelected.almacen_Origen.toString();
     ap.cantidadPedida = this.despachoPreventaArticuloDetalleSelected.pedido;
-
+     console.log(ap)
     this.httpService.DoPostAny<SAPLoteDespachoPedido>(DataApi.Despacho,
       "GetLote", ap).subscribe(response => {
 
@@ -603,9 +603,7 @@ getSucursalByUsuarioId() {
               this.loadingLote = false;
               return;
             }
-            //  this.lote = record ?? new SAPLoteDespachoPedido();
-            // console.log(this.lote)
-              console.log(response.valores)
+
              this.lotesDisponibles=response.valores[0];
           }
           else {
@@ -851,7 +849,6 @@ console.log(parametros)
 
       this.despachoPreventaDetalles[0].selected=true;
       this.despachoPreventaArticuloDetalleSelected=this.despachoPreventaDetalles[0];
-      this.getLote();
 
       this.collectionSizeDetalleDespacho = this.despachoPreventaDetalles.length;
       this.asignaPageToItme();
@@ -859,6 +856,7 @@ console.log(parametros)
       .slice((this.pageDetalleDespacho - 1) * this.pageSizeDetalleDespacho,
        (this.pageDetalleDespacho - 1) * this.pageSizeDetalleDespacho + this.pageSizeDetalleDespacho);
 
+       this.getLote();
 
     }
     this.collectionSizeDetalleDespacho = this.despachoPreventaDetalles.length;
@@ -1042,6 +1040,8 @@ console.log(parametros)
 
   p.precio= this.despachoPreventaArticuloDetalleSelected.precio;
   p.validado=  this.despachoPreventaArticuloDetalleSelected.validado;
+
+
 
   this.httpService.DoPostAny<DespachoPreventaDetalleViewModel>(DataApi.Despacho,
     'registra_o_actualiza_DespachoPreventa', p).subscribe(response => {
@@ -1316,6 +1316,7 @@ onLoteInput(){
   //this.despachoPreventaArticuloDetalleSelected.lote= this.lote.lote;
 }
 modalDespachoDetalleClose(){
+  this.despachoPreventaSeleccionado= new DespachoListadoPreventaVM();
   this.limpiarDataPreventa()
   this.getDataByCondicional();
   this.modalService.dismissAll();
@@ -1326,7 +1327,6 @@ limpiarDataPreventa(){
   this.pageDetalleDespacho=1;
   this.despachoPreventaDetalles=[];
   this.paginateDataDetalleDespacho=[];
-  this.despachoPreventaSeleccionado= new DespachoListadoPreventaVM();
   this.despachoPreventaArticuloDetalleSelected = new DespachoPreventaDetalleViewModel();
   this.despachoInUseVM= new DespachoInUseVM();
 }
@@ -1342,7 +1342,7 @@ validaDiferenciaMinimaDespacho(item: DespachoListadoPreventaVM){
 }
 
 ngOnDestroy(): void {
-  window.clearInterval(this.intervalRefreshData)
+   window.clearInterval(this.intervalRefreshData)
 }
 
 
