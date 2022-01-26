@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { ComboBox } from '../../shared/model/ComboBox';
 import { AuthenticationService } from '../../core/authentication/service/authentication.service';
@@ -9,6 +9,7 @@ import { Parametro } from 'src/app/core/http/model/Parametro';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ToastrService } from 'ngx-toastr';
 import { Permiso } from 'src/app/core/authentication/model/Permiso';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'app-login',
@@ -32,20 +33,28 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     timeOut: NodeJS.Timeout;
 
+
+    FormularioChangePassword: FormGroup;
+    submittedPassword: boolean
+    loadingButtonCambiar: boolean;
+    @ViewChild('modalChangePw') modalChangePw: ElementRef<HTMLDivElement>;
+
     constructor(
         public formBuilder: FormBuilder,
         public route: ActivatedRoute,
         public router: Router,
         public httpService: BackendService,
         public toastService: ToastrService,
+        private modalService: NgbModal,
         //public permissionsService: NgxPermissionsService,
         //public toastService: ToastService,
         public authenticationService: AuthenticationService
     ) {
     }
 
-
     ngOnInit(): void {
+
+
         if (this.authenticationService.loggedIn()) {
             this.router.navigate(['/']);
         }
@@ -55,10 +64,26 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.loginForm = this.formBuilder.group({
             usuario: ['', Validators.required],
             sucursalID: [null, Validators.required],
-            password: ['', Validators.required]
+            password: ['', [Validators.required]]
         });
 
+
+        //modal change pass
+        this.CreateFormChangePassword();
     }
+
+
+    private CreateFormChangePassword() {
+
+        this.FormularioChangePassword = this.formBuilder.group({
+            password: [null, [Validators.required, Validators.minLength(8)]],
+            passwordConfirm: [null, [Validators.required]],
+        }, {
+            validator: this.MustMatch('password', 'passwordConfirm')
+        })
+
+    }
+    get fC() { return this.FormularioChangePassword.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
 
     // convenience getter for easy access to form fields
     get f() { return this.loginForm.controls; }
@@ -69,7 +94,6 @@ export class LoginComponent implements OnInit, OnDestroy {
         if (this.loginForm.invalid)
             return;
 
-        // this.router.navigateByUrl("/home");
         this.loading = true;
         this.authenticationService.login(this.loginForm.value).subscribe(response => {
 
@@ -80,12 +104,16 @@ export class LoginComponent implements OnInit, OnDestroy {
                 return;
             }
 
-            console.log(response.records)
             let permisos = <Permiso[]>response.valores[1];
             let permisosNombres = permisos.map(p => p.nombre.trim().toLowerCase())
 
             this.redireccionarARuta(permisosNombres)
-            // this.router.navigateByUrl("/home");
+
+            //validate default password change
+            let showModalChangePass: boolean = response.valores[2];
+
+            showModalChangePass ? this.openModalChangePw() : 0
+
             this.loading = false;
         }, error => {
             console.log(error)
@@ -184,6 +212,73 @@ export class LoginComponent implements OnInit, OnDestroy {
     //    });
 
     //}
+
+
+
+
+
+    //change password modal
+
+    openModalChangePw() {
+        this.modalService.open(this.modalChangePw,
+            { ariaLabelledBy: 'modal-basic-title', backdrop: 'static', keyboard: false });
+    }
+
+
+    onSubmitChangePassword() {
+        this.submittedPassword = true;
+        console.log(this.FormularioChangePassword.controls)
+        if (this.FormularioChangePassword.invalid) {
+            return;
+        }
+
+        this.changePassword()
+    }
+
+    changePassword() {
+
+        let param = { "UsuarioId": Number(this.authenticationService.tokenDecoded.nameid), "PasswordNueva": this.fC.passwordConfirm.value, };
+
+        this.loadingButtonCambiar = true;
+        this.httpService.DoPostAny<any>(DataApi.Usuario,
+            'ResetPassword', param).subscribe(response => {
+                this.loadingButtonCambiar = false;
+                if (!response.ok) {
+                    this.toastService.error(response.errores[0], "Error");
+                } else {
+                    this.modalService.dismissAll();
+                    this.FormularioChangePassword.reset();
+
+                    this.submittedPassword = false;
+                    this.toastService.success("Realizado", "OK");
+
+                }
+            }, error => {
+                this.loadingButtonCambiar = false;
+                this.toastService.error("Error conexion al servidor");
+            });
+    }
+
+    MustMatch(controlName: string, matchingControlName: string) {
+        return (formGroup: FormGroup) => {
+            const control = formGroup.controls[controlName];
+            const matchingControl = formGroup.controls[matchingControlName];
+
+            if (matchingControl.errors && !matchingControl.errors.mustMatch) {
+                // return if another validator has already found an error on the matchingControl
+                return;
+            }
+
+            // set error on matchingControl if validation fails
+            if (control.value !== matchingControl.value) {
+                matchingControl.setErrors({ mustMatch: true });
+            } else {
+                matchingControl.setErrors(null);
+            }
+        }
+    }
+
+
 
 
 

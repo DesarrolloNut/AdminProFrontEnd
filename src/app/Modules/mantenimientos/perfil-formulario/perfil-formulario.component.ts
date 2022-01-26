@@ -174,6 +174,7 @@ export class PerfilFormularioComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
       });
   }
+  
   guardarUsuario() {
     let documentoSinGuion: string = `${this.f.documento.value}`.replace(/-/g, ''); // eliminar guiones
     this.f.documento.setValue(documentoSinGuion)
