@@ -27,6 +27,7 @@ export class DespachoListadoPreventaVM  {
   ruta: number;
   rutaId: number;
   finalizado: number;
+  estadoERP: number;
   noEditable: number;
   inUse: boolean;
   pedido: number;

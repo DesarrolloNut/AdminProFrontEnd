@@ -551,9 +551,8 @@
         <th></th>
         <th></th>
         <th><span style="color: #4cc25b;" class=" font-bold">{{dataPreventaTotales?.totalPedido | currency}}</span> </th>
-        <th><span style="color: #4cc25b;" class="font-bold">{{dataPreventaTotales?.totalDespacho | currency}}</span> </th>
-        <!-- <th><span style="color: #4cc25b;" class="font-bold">{{dataPreventaTotales?.totalERP | currency}}</span> </th> -->
-
+         <th><span style="color: #4cc25b;" class="font-bold">{{dataPreventaTotales?.totalDespacho | currency}}</span> </th>
+        <th><span style="color: #4cc25b;" class="font-bold"></span> </th>
       </tr>
    </tfoot>
 
@@ -620,12 +619,17 @@
                 </div>
             </td>
 
-            <td>
+            <td >
                 <span *ngIf="item.estadoDespacho==1  && item.noEditable==0" class="badge badge-warning">PENDIENTE</span>
                 <span *ngIf="item.estadoDespacho==2  && item.noEditable==0" class="badge badge-info">EN PROCESO</span>
                 <span *ngIf="item.estadoDespacho==3 && item.noEditable==0" class="badge badge-warning">PENDIENTE FINALIZAR</span>
-                <span *ngIf="item.noEditable==1" class="badge badge-success">FINALIZADO</span>
 
+                <span *ngIf="item.noEditable==1" class="badge badge-success">FINALIZADO </span>
+
+                <div *ngIf="item.noEditable==1 && item.estadoERP==1" class="circulo"  style="background-color: #ffc107;"></div>
+                <!-- <div *ngIf="item.noEditable==1 && item.estadoERP==0" class="circulo"  style="background-color: #06d79c;"></div> -->
+
+                <!-- <span *ngIf="item.noEditable==1" >|</span> -->
             </td>
 
              <td>
