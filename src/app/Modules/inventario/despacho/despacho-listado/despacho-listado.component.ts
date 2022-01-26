@@ -315,7 +315,6 @@ getSucursalByUsuarioId() {
           this.despachoPreventaDetalles = [];
           this.despachoPreventaSeleccionado = despacho;
           this.getDespachoPreventaDetalleFromAPi(despacho.fechaEntrega,despacho.rutaId);
-
           if(!onlyView){
             this.registraDespachoPreventaInUse();
           }
@@ -582,7 +581,10 @@ getSucursalByUsuarioId() {
     }
     this.lote = new SAPLoteDespachoPedido();
     this.lotesDisponibles=[];
-    if(this.btnFinalizarDespachoCargando){return;}
+    // if(this.btnFinalizarDespachoCargando){return;}
+
+    console.log(this.despachoPreventaSeleccionado)
+
     this.loadingLote = true;
     let ap = new SAPLoteDespachoPedido();
     ap.articulo = this.despachoPreventaArticuloDetalleSelected.codigoArticulo;
