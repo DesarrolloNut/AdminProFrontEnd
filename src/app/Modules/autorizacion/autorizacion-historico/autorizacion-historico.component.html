@@ -113,12 +113,13 @@
 
                                     <ng-template [ngIf]="item.moduloKey == ESTADOSGENERALES.PEDIDO">
 
-                                        <span class="small font-weight-bold">Cliente: {{
-                                            item.jsonInfo.Pedido.Cliente }} | Pedido:
-                                            <b>#{{item.jsonInfo.Pedido.CodigoReferencia}}</b></span>
+                                        <span class="small font-weight-bold">
+                                            <b>#{{item.jsonInfo.Pedido.CodigoReferencia}}</b>
+                                            Cliente: {{ item.jsonInfo.Pedido.Cliente }}
+                                        </span>
                                         <br>
                                         <span class="small">
-                                            Total Neto: 
+                                            Total Neto:
                                         </span> <span class="small font-weight-bold text-info"> RD$ {{
                                             item.jsonInfo.Pedido.TotalNeto
                                             | number : '1.2'
