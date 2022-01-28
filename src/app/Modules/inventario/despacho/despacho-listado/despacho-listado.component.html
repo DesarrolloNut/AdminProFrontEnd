@@ -583,7 +583,7 @@
 
 
                       <button *ngIf="item.noEditable==1" [disabled]="btnCargandoPrint"  class="btn border  font-bold btn-outline-info m-1"
-                      (click)="openModal(modalDetalleDespachoPreventa,item,true)">
+                      (click)="openModal(modalDetalleDespachoPreventa,item,false)">
                       <i class="fa fa-eye" aria-hidden="true"></i>    Despacho
                     </button>
 
@@ -797,7 +797,7 @@
 
 
                     <!-- CANTIDAD PEDIDO | CANTIDAD DESPACHO -->
-                    <div class="form-group col-md-3" >
+                    <div class="form-group col-md-3" *ngIf="!despachoInUseVM.hasPermisoValidador  || despachoPreventaSeleccionado.finalizado==0" >
                       <label> Pedido</label>
                       <input
                         [(ngModel)]="despachoPreventaArticuloDetalleSelected.pedido"
@@ -808,7 +808,7 @@
                       class="form-control input_CantidadPedido" placeholder="Cantidad pedido">
                   </div>
 
-                  <div class="form-group col-md-3" *ngIf="!despachoInUseVM.hasPermisoValidador  || despachoPreventaSeleccionado.finalizado==0" >
+                  <div class="form-group col-md-3"  >
                       <label> Despacho</label>
                       <input
                         [(ngModel)]="despachoPreventaArticuloDetalleSelected.despacho"
@@ -1101,14 +1101,14 @@
                           </ng-select>
                       </div>
                           <!-- CANTIDAD PEDIDO | CANTIDAD DESPACHO -->
-                          <div class="form-group col-md-3" >
+                          <div class="form-group col-md-3"  *ngIf="!despachoInUseVM.hasPermisoValidador  || despachoPreventaSeleccionado.finalizado==0">
                             <label> Pedido</label>
                             <input [(ngModel)]="despachoPreventaArticuloDetalleSelected.pedido"
                               [readonly]="true"  type="number" id="inputSearch"
                             class="form-control input_CantidadPedido" placeholder="Cantidad pedido">
                         </div>
 
-                        <div class="form-group col-md-3" *ngIf="!despachoInUseVM.hasPermisoValidador">
+                        <div class="form-group col-md-3">
                             <label> Despacho</label>
                             <input
                             [readonly]="lote.disponible==undefined || lote.disponible<=0 "

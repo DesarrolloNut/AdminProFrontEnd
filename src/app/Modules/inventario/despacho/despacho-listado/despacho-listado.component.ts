@@ -142,6 +142,7 @@ export class DespachoListadoComponent implements OnInit {
   ngOnInit(): void {
      //this.validaPuedeDespachoHorario()
      this.getRangosFechaDespacho();
+     this.fecha.setHours(14)
 
   }
 
@@ -315,6 +316,7 @@ getSucursalByUsuarioId() {
           this.despachoPreventaDetalles = [];
           this.despachoPreventaSeleccionado = despacho;
           this.getDespachoPreventaDetalleFromAPi(despacho.fechaEntrega,despacho.rutaId);
+          console.log(onlyView)
           if(!onlyView){
             this.registraDespachoPreventaInUse();
           }
