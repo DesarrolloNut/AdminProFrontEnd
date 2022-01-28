@@ -7,5 +7,6 @@ export interface AutorizacionHistoricoListadoViewModel {
     fechaAutorizacion: Date;
     jsonInfo: any;
     comentario: string;
+    showDetailsAuth: boolean;
 
 }   

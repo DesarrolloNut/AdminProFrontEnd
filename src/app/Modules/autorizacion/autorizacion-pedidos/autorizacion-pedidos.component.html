@@ -550,40 +550,39 @@
 
                                                         <hr>
 
-                                                        <div class="row">
+                                                        <div class="row" *ngIf="item.jsonInfo.DatosGenerales">
                                                             <div class="col-12">
                                                                 <div class="row">
+                                                                    <div class="col-12 text-right">
+                                                                        <button class="btn btn-link btn-sm"
+                                                                            (click)="item.showDetailsAuth = !item.showDetailsAuth">
+                                                                            Detalles <i class="fa fa-angle-down"
+                                                                                [ngClass]="{
+                                                                            'fa-angle-down': !item.showDetailsAuth,
+                                                                            'fa-angle-up': item.showDetailsAuth
+                                                                        }"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="row" [hidden]="!item.showDetailsAuth">
 
                                                                     <div class="col-md-4">
                                                                         <div class="card border-bottom border-info">
-                                                                            <div class="card-body">
-                                                                                <div
-                                                                                    class="d-flex no-block align-items-center">
+                                                                            <div class="card-body p-1">
+                                                                                <div class=" align-items-center">
                                                                                     <div>
                                                                                         <h4
                                                                                             class="font-weight-bold small">
                                                                                             <span
-                                                                                                class="font-weight-bold"
-                                                                                                *ngIf="cotizacionSeleccionada.diasUltimaFechaFactura > 0">
-                                                                                                <!-- Hace
-                                                                                                {{cotizacionSeleccionada.diasUltimaFechaFactura}} días -->
-                                                                                                {{cotizacionSeleccionada.fechaUltimaFactura
-                                                                                                | date :
-                                                                                                'dd/MM/yyyy'}}
+                                                                                                class="font-weight-bold">
+                                                                                                {{item.jsonInfo.DatosGenerales.UltimaFactura
+                                                                                                | date : 'dd/MM/yyyy'}}
                                                                                             </span>
-                                                                                            <small
-                                                                                                class="font-weight-bold small"
-                                                                                                *ngIf="cotizacionSeleccionada.diasUltimaFechaFactura  <= 0">
-                                                                                                No hay factura
-                                                                                            </small>
                                                                                         </h4>
                                                                                         <span
                                                                                             class="text-info small">Última
                                                                                             factura </span>
-                                                                                    </div>
-                                                                                    <div class="ml-auto"><span
-                                                                                            class="text-info small"><i
-                                                                                                class="ti-calendar"></i></span>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -592,23 +591,18 @@
 
                                                                     <div class="col-md-4">
                                                                         <div class="card border-bottom border-cyan">
-                                                                            <div class="card-body">
-                                                                                <div
-                                                                                    class="d-flex no-block align-items-center">
+                                                                            <div class="card-body p-1">
+                                                                                <div class=" align-items-center">
                                                                                     <div>
                                                                                         <h3
                                                                                             class="font-weight-bold small">
-                                                                                            {{cotizacionSeleccionada.limiteCredito
-                                                                                            |
-                                                                                            number:'1.2-2' }}</h3>
+                                                                                            {{item.jsonInfo.DatosGenerales.Limite
+                                                                                            | number:'1.2-2' }}</h3>
                                                                                         <span
                                                                                             class="text-cyan small">Límite
                                                                                         </span>
                                                                                     </div>
-                                                                                    <div class="ml-auto"><span
-                                                                                            class="text-cyan small"><i
-                                                                                                class="ti-money"></i></span>
-                                                                                    </div>
+
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -616,23 +610,18 @@
 
                                                                     <div class="col-md-4">
                                                                         <div class="card border-bottom border-success">
-                                                                            <div class="card-body">
-                                                                                <div
-                                                                                    class="d-flex no-block align-items-center">
+                                                                            <div class="card-body p-1">
+                                                                                <div class=" align-items-center">
                                                                                     <div>
                                                                                         <h3
                                                                                             class="font-weight-bold small">
-                                                                                            {{totalPendientePagar |
-                                                                                            number:'1.2-2'
-                                                                                            }}</h3>
+                                                                                            {{item.jsonInfo.DatosGenerales.PendientePago
+                                                                                            | number:'1.2-2' }}</h3>
                                                                                         <span
                                                                                             class="text-success small">
                                                                                             Pendiente pago</span>
                                                                                     </div>
-                                                                                    <div class="ml-auto"><span
-                                                                                            class="text-success small"><i
-                                                                                                class="ti-wallet"></i></span>
-                                                                                    </div>
+
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -640,23 +629,20 @@
 
                                                                     <div class="col-md-4">
                                                                         <div class="card border-bottom border-orange">
-                                                                            <div class="card-body">
-                                                                                <div
-                                                                                    class="d-flex no-block align-items-center">
+                                                                            <div class="card-body p-1">
+                                                                                <div class=" align-items-center">
                                                                                     <div>
                                                                                         <h3
                                                                                             class="font-weight-bold small">
                                                                                             {{
-                                                                                            cotizacionSeleccionada.balanceCliente
-                                                                                            | number:'1.2-2' }}</h3>
-                                                                                        <span
-                                                                                            class="text-orange small">Balance
-                                                                                            disp.</span>
+                                                                                            item.jsonInfo.DatosGenerales.BalanceDisponible
+                                                                                            | number:'1.2-2' }}
+                                                                                        </h3>
+                                                                                        <span class="text-orange small">
+                                                                                            Balance disp.
+                                                                                        </span>
                                                                                     </div>
-                                                                                    <div class="ml-auto"><span
-                                                                                            class="text-orange small"><i
-                                                                                                class="ti-file"></i></span>
-                                                                                    </div>
+
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -664,30 +650,32 @@
 
                                                                     <div class="col-md-4">
                                                                         <div class="card border-bottom border-primary">
-                                                                            <div class="card-body">
-                                                                                <div
-                                                                                    class="d-flex no-block align-items-center">
+                                                                            <div class="card-body p-1">
+                                                                                <div class="align-items-center">
                                                                                     <div>
                                                                                         <h4
                                                                                             class="font-weight-bold small">
                                                                                             {{
-                                                                                            promedioDias |
+                                                                                            item.jsonInfo.DatosGenerales.PromedioDiasVencimiento
+                                                                                            |
                                                                                             number:'1.0-1' }} |
                                                                                             <span
                                                                                                 style="font-size: 12px;"
-                                                                                                class="float-right badge badge-info">Plazo
-                                                                                                {{cotizacionSeleccionada.diasPlazo}}</span>
+                                                                                                class="float-right badge badge-info">
+                                                                                                Plazo {{
+                                                                                                item.jsonInfo.DatosGenerales.PlazoCliente
+                                                                                                }}</span>
                                                                                         </h4>
                                                                                         <span
                                                                                             class="text-primary small">Prom.
                                                                                             días venc.</span>
                                                                                     </div>
-                                                                                    <div class="ml-auto">
+                                                                                    <!-- <div class="ml-auto">
                                                                                         <span
                                                                                             class="text-primary small"><i
                                                                                                 class="ti-bar-chart"></i>
                                                                                         </span>
-                                                                                    </div>
+                                                                                    </div> -->
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -696,26 +684,28 @@
                                                                     <div class="col-md-4">
                                                                         <div class="card border-bottom"
                                                                             [ngClass]=" {
-                                                                            'border-success': porcentajeCalculado <= 35,
-                                                                            'border-orange': porcentajeCalculado > 35 && porcentajeCalculado <= 65,
-                                                                            'border-danger': porcentajeCalculado > 65 }">
-                                                                            <div class="card-body">
+                                                                            'border-success':  item.jsonInfo.DatosGenerales.Porcentaje <= 35,
+                                                                            'border-orange':  item.jsonInfo.DatosGenerales.Porcentaje > 35 &&  item.jsonInfo.DatosGenerales.Porcentaje <= 65,
+                                                                            'border-danger':  item.jsonInfo.DatosGenerales.Porcentaje > 65 }">
+                                                                            <div class="card-body p-1">
 
                                                                                 <div class="row">
                                                                                     <div class="col-12">
                                                                                         <h3 class="font-weight-bold small"
                                                                                             [ngClass]=" {
-                                                                                            'text-success': porcentajeCalculado >= 0 && porcentajeCalculado <= 50,
-                                                                                            'text-orange': porcentajeCalculado > 50 && porcentajeCalculado <= 100,
-                                                                                            'text-danger': porcentajeCalculado < 0 || porcentajeCalculado > 100  }">
-                                                                                            {{ porcentajeCalculado |
+                                                                                            'text-success':  item.jsonInfo.DatosGenerales.Porcentaje >= 0 &&  item.jsonInfo.DatosGenerales.Porcentaje <= 50,
+                                                                                            'text-orange':  item.jsonInfo.DatosGenerales.Porcentaje > 50 &&  item.jsonInfo.DatosGenerales.Porcentaje <= 100,
+                                                                                            'text-danger':  item.jsonInfo.DatosGenerales.Porcentaje < 0 ||  item.jsonInfo.DatosGenerales.Porcentaje > 100  }">
+                                                                                            {{
+                                                                                            item.jsonInfo.DatosGenerales.Porcentaje
+                                                                                            |
                                                                                             number : '1.0-0' }}%
                                                                                         </h3>
-                                                                                        <span style="font-size: 10px;"
+                                                                                        <span class="small"
                                                                                             [ngClass]=" {
-                                                                                            'text-success': porcentajeCalculado >= 0 && porcentajeCalculado <= 50,
-                                                                                            'text-orange': porcentajeCalculado > 50 && porcentajeCalculado <= 100,
-                                                                                            'text-danger': porcentajeCalculado < 0 || porcentajeCalculado > 100 }">
+                                                                                            'text-success':  item.jsonInfo.DatosGenerales.Porcentaje >= 0 &&  item.jsonInfo.DatosGenerales.Porcentaje <= 50,
+                                                                                            'text-orange':  item.jsonInfo.DatosGenerales.Porcentaje > 50 &&  item.jsonInfo.DatosGenerales.Porcentaje <= 100,
+                                                                                            'text-danger':  item.jsonInfo.DatosGenerales.Porcentaje < 0 ||  item.jsonInfo.DatosGenerales.Porcentaje > 100 }">
                                                                                             Porcentaje</span>
                                                                                     </div>
                                                                                     <div class="col-12">
@@ -726,11 +716,11 @@
                                                                                                 aria-valuemax="100"
                                                                                                 class="progress-bar"
                                                                                                 [ngClass]=" {
-                                                                                                    'bg-success': porcentajeCalculado >= 0 && porcentajeCalculado <= 50,
-                                                                                                    'bg-orange': porcentajeCalculado > 50 && porcentajeCalculado <= 100,
-                                                                                                    'bg-danger': porcentajeCalculado < 0 || porcentajeCalculado > 100 }"
+                                                                                                    'bg-success':  item.jsonInfo.DatosGenerales.Porcentaje >= 0 &&  item.jsonInfo.DatosGenerales.Porcentaje <= 50,
+                                                                                                    'bg-orange':  item.jsonInfo.DatosGenerales.Porcentaje > 50 &&  item.jsonInfo.DatosGenerales.Porcentaje <= 100,
+                                                                                                    'bg-danger':  item.jsonInfo.DatosGenerales.Porcentaje < 0 ||  item.jsonInfo.DatosGenerales.Porcentaje > 100 }"
                                                                                                 style="height: 6px;"
-                                                                                                [ngStyle]="{'width': porcentajeCalculado + '%'}">
+                                                                                                [ngStyle]="{'width':  item.jsonInfo.DatosGenerales.Porcentaje + '%'}">
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
