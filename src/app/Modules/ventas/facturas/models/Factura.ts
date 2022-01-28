@@ -23,4 +23,5 @@ export interface Factura {
     pagos: number;
     fechaVencimiento: Date;
     diasVencimiento: number;
+    codigoDocNum: string;
 }

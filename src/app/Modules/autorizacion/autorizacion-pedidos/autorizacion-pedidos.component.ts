@@ -286,6 +286,17 @@ export class AutorizacionPedidosComponent implements OnInit {
       "EstadoUsuariosNotificacion": this.getEstadoUsuariosEnviarCorreoNotificacion(),
       "Pedido": this.cotizacionSeleccionada,
       "Comentario": this.comentario,
+
+      "DatosGenerales": {
+        "UltimaFactura": this.cotizacionSeleccionada.fechaUltimaFactura,
+        "Limite": this.cotizacionSeleccionada.limiteCredito,
+        "PendientePago": this.totalPendientePagar,
+        "BalanceDisponible": this.cotizacionSeleccionada.balanceCliente,
+        "PromedioDiasVencimiento": this.promedioDias,
+        "PlazoCliente": this.cotizacionSeleccionada.diasPlazo,
+        "Porcentaje": this.porcentajeCalculado,
+      }
+
     }
 
     this.httpService.DoPostAny<any>(DataApi.Cotizacion,
@@ -438,6 +449,8 @@ export class AutorizacionPedidosComponent implements OnInit {
           if (this.autorizacionHistorico) {
             this.autorizacionHistorico.forEach(a => a.jsonInfo = JSON.parse(a.jsonInfo)[0]);
           }
+
+          console.log(this.autorizacionHistorico)
 
         }
 
