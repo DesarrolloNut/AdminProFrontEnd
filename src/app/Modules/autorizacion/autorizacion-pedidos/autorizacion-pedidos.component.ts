@@ -72,6 +72,12 @@ export class AutorizacionPedidosComponent implements OnInit {
   promedioDias: number = 0;
   _math = Math;
   totalNetoCalculado: number;
+
+  //filtros
+  fechaDesde: Date;
+  fechaHasta: Date;
+
+
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private authService: AuthenticationService,
@@ -81,10 +87,19 @@ export class AutorizacionPedidosComponent implements OnInit {
 
 
   ngOnInit(): void {
+    this.configRangeDates();
     this.getCotizacionPromesaTipo()
     this.getEstadoAutorizacionUsuario()
   }
 
+  configRangeDates() {
+    var date = new Date();
+    // var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+    var desde = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 5);
+
+    this.fechaDesde = desde;
+    this.fechaHasta = date;
+  }
 
   getEstadoAutorizacionUsuario() {
     let parametro = {
@@ -119,6 +134,8 @@ export class AutorizacionPedidosComponent implements OnInit {
     let parametros: Parametro[] = [
       { key: "EstadoAutorizacionID", value: this.estadoAutorizacionComboModel },
       { key: "Search", value: this.Search },
+      { key: "FechaDesde", value: this.fechaDesde },
+      { key: "FechaHasta", value: this.fechaHasta },
     ]
 
     this.httpService.GetAllWithPagination<CotizacionListadoViewModel>(DataApi.Cotizacion, "GetPedidosListadoAutorizacion", "Id", this.paginaNumeroActual,
@@ -463,6 +480,16 @@ export class AutorizacionPedidosComponent implements OnInit {
       });
   }
 
+
+  onChangeFechaDesdeFiltro(evento: any) {
+    this.fechaDesde = new Date(evento.value)
+    this.getData();
+  }
+
+  onChangeFechaHastaFiltro(evento: any) {
+    this.fechaHasta = new Date(evento.value)
+    this.getData();
+  }
 
 
 
