@@ -28,5 +28,6 @@ export interface CotizacionListadoViewModel {
 
     tipoPromesaID: number;
     fechaPromesa: Date;
+    saldocxc:number;
 
 }

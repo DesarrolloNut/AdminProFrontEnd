@@ -140,7 +140,6 @@ export class AutorizacionPedidosComponent implements OnInit {
 
     this.httpService.GetAllWithPagination<CotizacionListadoViewModel>(DataApi.Cotizacion, "GetPedidosListadoAutorizacion", "Id", this.paginaNumeroActual,
       this.paginaSize, false, parametros).subscribe(x => {
-
         if (x.ok) {
           this.data = x.records;
           this.asignarPagination(x);
@@ -232,7 +231,7 @@ export class AutorizacionPedidosComponent implements OnInit {
 
     this.cotizacionPromesaSelected = 1
     this.promedioDias = 0
-    this.totalPendientePagar = 0
+    this.totalPendientePagar = item.saldocxc;
     this.porcentajeCalculado = 0
 
     this.cotizacionSeleccionada = item;
@@ -399,7 +398,7 @@ export class AutorizacionPedidosComponent implements OnInit {
 
           console.table(this.facturasPendientesPago)
 
-          this.totalPendientePagar = this.facturasPendientesPago.reduce((sum, current) => sum + (current.total - current.pagos), 0)
+          //this.totalPendientePagar = this.facturasPendientesPago.reduce((sum, current) => sum + (current.total - current.pagos), 0)
 
 
           this.promedioDias = this.facturasPendientesPago.filter(x => x.diasVencimiento > 0)
