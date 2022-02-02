@@ -154,7 +154,7 @@ GetNameEstado(estadoId: number){
   }
 
   OnSubmitConsumido(model: OrdenFabricacionVista, content){
-    console.log(model);
+    // console.log(model);
     this.selectMaterial = model;
     let maximo = (model.cantidadRequerida * this.ORDENFABRICACION_CONSUMO_MAXIMO)
     let minimo = ((model.cantidadRequerida * this.ORDENFABRICACION_CONSUMO_MINIMO) - 1)
@@ -172,7 +172,7 @@ GetNameEstado(estadoId: number){
       return;
     }
 
-    if (this.lote.cantidad < maximo) {
+    if (this.lote.cantidad < maximo && model.gestionado == true) {
       this.toastService.warning("El lote no tiene disponible la cantidad que desea consumir.");
       return;
     }
@@ -357,7 +357,7 @@ GetNameEstado(estadoId: number){
 
     const index =  this.articulosExtras.indexOf(this.selectMaterial);
     let ordendetalle = this.articulosExtras[index];
-    console.log(ordendetalle)
+    // console.log(ordendetalle)
     this.OnSaveConsumido(ordendetalle, OrdenFabricacionDetalleEstadoEnum.PENDIENTEAUTORIZAR);
     this.btnGuardarCargando = false;
   }
