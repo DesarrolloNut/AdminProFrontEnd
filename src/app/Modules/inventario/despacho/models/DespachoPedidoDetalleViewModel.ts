@@ -106,3 +106,6 @@ export class DespachoInUseVM  {
   estado: number;
   hasPermisoValidador: boolean;
 }
+export class DespachoRangoHoraRequestModel {
+  fecha: Date;
+}

@@ -30,6 +30,7 @@
                     <div class="form-group col-md-3 pt-2">
                         <label for="">Sucursal</label>
                         <ng-select
+                        [searchable]="false"
                           bindLabel="nombre" bindValue="codigo" [items]="sucursales"
                           [loading]="loadingSucursales"
                           [clearable]=false
@@ -41,14 +42,19 @@
 
                       <div class="form-group col-md-3 pt-2">
                         <label for="">Fecha</label>
-                        <ejs-datepicker [showClearButton]="false" (change)="onChangeFechaDesdeFiltro($event)"
+                        <ejs-datepicker
+                          [allowEdit]="false"
+                          [showClearButton]="false" (change)="onChangeFechaDesdeFiltro($event)"
                            [(ngModel)]="fecha" [format]="'dd-MM-yyyy'">
                         </ejs-datepicker>
                     </div>
 
                     <div class="form-group col-md-3 pt-2">
                       <label for="">Canal</label>
-                        <ng-select [items]="canales" bindLabel="nombre" bindValue="codigo"
+                        <ng-select
+                        [items]="canales"
+                        [searchable]="false"
+                        bindLabel="nombre" bindValue="codigo"
                         [loading]="loadingCanales"
                         (change)="getDataByCondicional()"
                         placeholder="Seleccionar canal" [clearable]="false"
@@ -660,33 +666,36 @@
             </td> -->
 
         </tr>
+        <div class="over_despacho" *ngIf="!despachoPuedeHorario || loadingRangosFechaDespacho || despachoOn==0">
+          <div class="row justify-content-center  text-center align-items-center " style="font-size: 20px;     height: 100%;">
+            <h3 *ngIf="!loadingRangosFechaDespacho  && despachoOn==1" class="font-weight-bold h3_over_despacho" >
+              <i class="fa fa-clock" style="font-size: 30px;" aria-hidden="true"></i>
+              {{dia | uppercase}}
 
+               <br>
+              El horario a despachar es entre {{fDesde | date:'shortTime'}} - {{fHasta | date:'shortTime'}}
+            </h3>
+
+
+            <h3 *ngIf="!loadingRangosFechaDespacho && despachoOn==0" class="font-weight-bold h3_over_despacho" >
+              <i class="fa fa-clock" style="font-size: 30px;" aria-hidden="true"></i>
+               <br>
+               No se puede despachar en este momento
+            </h3>
+
+            <h3 *ngIf="loadingRangosFechaDespacho" class="font-weight-bold h3_over_despacho">
+                <i class="spinner-border spinner-border-sm"></i>
+
+                <br>
+                 Cargando...
+            </h3>
+
+          </div>
+        </div>
     </tbody>
+
 </table>
-<div class="over_despacho" *ngIf="!despachoPuedeHorario || loadingRangosFechaDespacho || despachoOn==0">
-  <div class="row justify-content-center  text-center align-items-center " style="font-size: 20px;     height: 100%;">
-    <h3 *ngIf="!loadingRangosFechaDespacho  && despachoOn==1" class="font-weight-bold h3_over_despacho" >
-      <i class="fa fa-clock" style="font-size: 30px;" aria-hidden="true"></i>
-       <br>
-      El horario a despachar debe ser entre {{fDesde | date:'shortTime'}} - {{fHasta | date:'shortTime'}}
-    </h3>
 
-
-    <h3 *ngIf="!loadingRangosFechaDespacho && despachoOn==0" class="font-weight-bold h3_over_despacho" >
-      <i class="fa fa-clock" style="font-size: 30px;" aria-hidden="true"></i>
-       <br>
-       No se puede despachar en este momento
-    </h3>
-
-    <h3 *ngIf="loadingRangosFechaDespacho" class="font-weight-bold h3_over_despacho">
-        <i class="spinner-border spinner-border-sm"></i>
-
-        <br>
-         Cargando...
-    </h3>
-
-  </div>
-</div>
 </ng-template>
 
 
