@@ -1,6 +1,6 @@
-import { DespachoListadoPreventaVMTotales } from './../models/DespachoPedidoListadoViewModel';
+import { DepachoHorasVM, DespachoListadoPreventaVMTotales } from './../models/DespachoPedidoListadoViewModel';
 import { ComboBoxLote } from './../../../../shared/model/ComboBox';
-import { DespachoInUseVM, DespachoPreventaDetalleExcelVM, DespachoPreventaRequestModel, SAPLoteDespachoPedido } from './../models/DespachoPedidoDetalleViewModel';
+import { DespachoInUseVM, DespachoPreventaDetalleExcelVM, DespachoPreventaRequestModel, DespachoRangoHoraRequestModel, SAPLoteDespachoPedido } from './../models/DespachoPedidoDetalleViewModel';
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
@@ -71,6 +71,7 @@ export class DespachoListadoComponent implements OnInit {
 
    fDesde = new Date();
    fHasta = new Date();
+   dia : string;
    fahoraServidor = new Date();
    despachoOn = 1
    Diferencia_Minima_Despacho = 0
@@ -140,25 +141,25 @@ export class DespachoListadoComponent implements OnInit {
 
 
   ngOnInit(): void {
-     //this.validaPuedeDespachoHorario()
-     this.getRangosFechaDespacho();
-     this.fecha.setHours(14)
-
+    this.getDiferenciaMinima()
+    this.getCanales();
+    this.getSucursalByUsuarioId();
+    // this.getArticulosDePesosExtras();
+    this.getAlmacenes();
+     this.validaHorarioDespacho();
   }
 
 getAllData(){
-  this.getCanales();
-  this.getSucursalByUsuarioId();
-  this.getArticulosDePesosExtras();
-  this.getAlmacenes();
+
   this.intervalRefreshData = setInterval(() => {
-    this.getDataByCondicional(false)
+    this.getDataByCondicional(false,false)
   }, 13000)
 
 
 }
 
- getDataByCondicional(showLoading=true){
+ getDataByCondicional(showLoading=true,validaHorario=true){
+   if(validaHorario){this.validaHorarioDespacho()}
   switch (this.canalId) {
     case 1:
          this.getDataPreventa(showLoading)
@@ -172,53 +173,56 @@ getAllData(){
   }
  }
 
-validaPuedeDespachoHorario(){
-
-  this.fDesde = new Date(this.fDesde.setMinutes(0));
-  this.fDesde = new Date(this.fDesde.setSeconds(0));
-  this.fHasta.setDate( this.fHasta.getDate()+1)
-  this.fHasta = new Date( this.fHasta.setMinutes(0));
-  this.fHasta = new Date( this.fHasta.setSeconds(0));
-
-
-   if((this.fahoraServidor.getTime()>=this.fDesde.getTime()) && this.fahoraServidor.getTime() <= this.fHasta.getTime()){
-    this.despachoPuedeHorario=true;
-    this.getAllData()
-  }
-  else if(this.fahoraServidor.getHours()<=this.fHasta.getHours())
-  {
-   this.despachoPuedeHorario=true;
-   this.getAllData()
-  }else{
-    this.despachoPuedeHorario=false;
-  }
-}
 
 
 
-getRangosFechaDespacho() {
+
+ validaHorarioDespacho() {
  this.loadingRangosFechaDespacho=true;
+ let p= new DespachoRangoHoraRequestModel();
+ p.fecha = this.fecha;
+
   this.httpService.DoPostAny<string>(DataApi.Despacho,
-    "GetDespachoRangoValor", null).subscribe(response => {
+    "GetDespachoRangoValor", p).subscribe(response => {
 
       if (!response.ok) {
         this.toastService.error(response.errores[0]);
       } else {
+         console.log(response)
+          let h:DepachoHorasVM =  response.valores[0]
+          this.despachoPuedeHorario=h.puedeDespachar;
+          this.dia=h.diaNombre;
 
+          this.fDesde.setHours(h.horaDesde.hours);
+          this.fDesde.setMinutes(h.horaDesde.minutes);
+          this.fHasta.setHours(h.horaHasta.hours);
+          this.fHasta.setMinutes(h.horaHasta.minutes);
 
-        this.fDesde = new Date(this.fDesde.setHours(response.valores[0]));
-
-        this.fHasta = new Date(this.fHasta.setHours(response.valores[1]));
-        this.fahoraServidor = new Date(response.valores[2]);
-        this.despachoOn = parseInt(response.valores[3]);
-        this.Diferencia_Minima_Despacho=parseFloat(response.valores[4])
-        this.validaPuedeDespachoHorario();
-
+        if (this.despachoPuedeHorario) {
+           this.getAllData()
+        }else{
+             window.clearInterval(this.intervalRefreshData);
+        }
       }
       this.loadingRangosFechaDespacho=false;
 
     }, error => {
       this.loadingRangosFechaDespacho=false;
+      console.error(error)
+      this.toastService.error("ha ocurrido un error", "Error conexion al servidor");
+    });
+}
+
+getDiferenciaMinima(){
+  this.httpService.DoPostAny<string>(DataApi.Despacho,
+    "GetDiferenciaMinimaDespacho", null).subscribe(response => {
+
+      if (!response.ok) {
+        this.toastService.error(response.errores[0]);
+      } else {
+           this.Diferencia_Minima_Despacho=parseFloat(response.valores[0])
+      }
+    }, error => {
       console.error(error)
       this.toastService.error("ha ocurrido un error", "Error conexion al servidor");
     });
@@ -1346,8 +1350,11 @@ validaDiferenciaMinimaDespacho(item: DespachoListadoPreventaVM){
 }
 
 ngOnDestroy(): void {
-   window.clearInterval(this.intervalRefreshData)
+  window.clearInterval(this.intervalRefreshData)
+
 }
+
+
 
 
 }
