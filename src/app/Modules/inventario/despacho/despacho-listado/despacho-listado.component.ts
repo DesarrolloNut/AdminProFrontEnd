@@ -77,7 +77,7 @@ export class DespachoListadoComponent implements OnInit {
    Diferencia_Minima_Despacho = 0
 
 
-   despachoPuedeHorario = false;
+   despachoPuedeHorario = true;
    loadingRangosFechaDespacho =false;
 
   //PREVENTA
@@ -146,20 +146,22 @@ export class DespachoListadoComponent implements OnInit {
     this.getSucursalByUsuarioId();
     // this.getArticulosDePesosExtras();
     this.getAlmacenes();
-     this.validaHorarioDespacho();
   }
 
 getAllData(){
+  this.getDataByCondicional(true,false)
 
   this.intervalRefreshData = setInterval(() => {
     this.getDataByCondicional(false,false)
+    console.log(new Date())
   }, 13000)
 
 
 }
 
  getDataByCondicional(showLoading=true,validaHorario=true){
-   if(validaHorario){this.validaHorarioDespacho()}
+   if(validaHorario){this.validaHorarioDespacho(); return;}
+
   switch (this.canalId) {
     case 1:
          this.getDataPreventa(showLoading)
@@ -178,6 +180,9 @@ getAllData(){
 
 
  validaHorarioDespacho() {
+  window.clearInterval(this.intervalRefreshData);
+  this.dataPreventa =  [];
+  this.dataPreventaTotales= [];
  this.loadingRangosFechaDespacho=true;
  let p= new DespachoRangoHoraRequestModel();
  p.fecha = this.fecha;
@@ -188,7 +193,6 @@ getAllData(){
       if (!response.ok) {
         this.toastService.error(response.errores[0]);
       } else {
-         console.log(response)
           let h:DepachoHorasVM =  response.valores[0]
           this.despachoPuedeHorario=h.puedeDespachar;
           this.dia=h.diaNombre;
@@ -200,8 +204,6 @@ getAllData(){
 
         if (this.despachoPuedeHorario) {
            this.getAllData()
-        }else{
-             window.clearInterval(this.intervalRefreshData);
         }
       }
       this.loadingRangosFechaDespacho=false;
@@ -245,9 +247,11 @@ getSucursalByUsuarioId() {
       } else {
         if(response.records.length> 0  && response.records!=null){
           this.sucursalId = response.records[0].codigo;
-          this.getDataByCondicional()
+       //   this.getDataByCondicional()
         }
+
         this.sucursales = response.records;
+        this.getDataByCondicional();
 
       }
       this.loadingSucursales = false;
@@ -746,6 +750,8 @@ getSucursalByUsuarioId() {
 
   onChangeFechaDesdeFiltro(evento: any) {
     if(++this.primeraVez==1){return;}
+
+
     this.fecha = new Date(evento.value)
     this.getDataByCondicional()
   }
@@ -770,7 +776,6 @@ getSucursalByUsuarioId() {
       { key: "SucursalId", value: this.sucursalId },
       { key: "Fecha", value: this.fecha },
      ]
-console.log(parametros)
     this.httpService.GetAllWithPagination<DespachoListadoPreventaVM>(DataApi.Despacho,
        "GetDespachoPreventaListado", "FechaEntrega", this.paginaNumeroActual,
       this.paginaSize,true, parametros).subscribe(x => {
