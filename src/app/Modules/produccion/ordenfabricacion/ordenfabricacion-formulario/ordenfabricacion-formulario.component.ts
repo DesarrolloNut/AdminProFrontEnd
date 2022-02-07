@@ -47,7 +47,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
   EstadoId: number = 1;
 
   loadingArticulosExtras: boolean;
-  articulosExtras: OrdenFabricacionVista[];
+  articulosExtras: OrdenFabricacionVista[] = [];
   ofheader: ListaMaterialesHeader = new ListaMaterialesHeader();
   ordenfabricacion: OrdenFabricacion = new OrdenFabricacion();
   ordenfabricaciondetalle: OrdenFabricacionDetalle = new OrdenFabricacionDetalle();
@@ -109,6 +109,11 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
 
     if (this.ofheader.cantidadPlanificada <= 0) {
       this.toastService.warning("No digitado la cantidad planificada disponible.");
+      return;
+    }
+
+    if (this.articulosExtras.length == 0) {
+      this.toastService.warning("No se puede crear orden de fabricacion sin materiales.");
       return;
     }
 
@@ -574,16 +579,21 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          this.articulosExtras = response.records;
-          for (const key in this.articulosExtras) {
-            let element = this.articulosExtras[key];
-            let Balance =  await this.getArticuloBalance(element.articulo, element.almacenCodigoReferencia);
-             element.disponible = Balance;
+          if(response.records.length > 0){
+            this.articulosExtras = response.records;
+            for (const key in this.articulosExtras) {
+              let element = this.articulosExtras[key];
+              let Balance =  await this.getArticuloBalance(element.articulo, element.almacenCodigoReferencia);
+               element.disponible = Balance;
+            }
+            // console.log(response.records);
+            this.ofheader.almacenId = response.records[0].almacenId;
+            // this.FormHeader.setValue(response.records);
+            //this.formatArticulosExtras()
+          }else{
+            this.toastService.info("No se pudo obtener los Materiales", "Lista de materiales");
           }
-          // console.log(response.records);
-          this.ofheader.almacenId = response.records[0].almacenId;
-          // this.FormHeader.setValue(response.records);
-          //this.formatArticulosExtras()
+
         }
         this.loadingArticulosExtras = false;
       }, error => {

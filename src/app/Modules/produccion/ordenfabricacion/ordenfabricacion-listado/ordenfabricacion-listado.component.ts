@@ -7,7 +7,7 @@ import { Parametro } from "src/app/core/http/model/Parametro";
 import { ResponseContenido } from "src/app/core/http/model/ResponseContenido";
 import { BackendService } from "src/app/core/http/service/backend.service";
 import { DataApi } from "src/app/shared/enums/DataApi.enum";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { NgbModal, NgbModalRef } from "@ng-bootstrap/ng-bootstrap";
 import { Articulo } from "src/app/Modules/servicios/recepcion/models/Articulo";
 import { OrdenFabricacion } from "../models/OrdenFabricacion";
 import { ListaMaterialesHeader } from "../models/ListaMaterialesHeader";
@@ -61,6 +61,7 @@ export class OrdenfabricacionListadoComponent implements OnInit {
   ORDENFABRICACION_CONSUMO_MAXIMO: number = 0;
   ORDENFABRICACION_CONSUMO_MINIMO: number = 0;
   selectMaterial: OrdenFabricacionVista;
+  ModalAutorizarArticulo: NgbModalRef;
 
 
   public get ValidOrden(): typeof OrdenFabricacionEstadoEnum {
@@ -183,7 +184,7 @@ GetNameEstado(estadoId: number){
     }
 
     if (model.consumido < model.cantidadRequerida) {
-      this.modalService.open(content, { size:'lg'});
+      this.ModalAutorizarArticulo = this.modalService.open(content, { size:'lg'});
       // this.toastService.warning("El valor consumido es menor a la cantidad requerida");
       return;
     }
@@ -267,7 +268,7 @@ GetNameEstado(estadoId: number){
               await this.getOrdenFabricacion(model.ordenFabricacionId);
               await this.updateEstadoOrden();
               await this.getData();
-
+              this.ModalAutorizarArticulo.dismiss();
 
             }
             model.loadingSaveConsumido = false;
