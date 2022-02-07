@@ -48,3 +48,19 @@ export class DespachoListadoPreventaVMTotales {
   totalDespacho: number;
   totalERP: number;
 }
+export class DepachoHorasVM   {
+  diaNombre: string;
+  horaDesde: HoraTimeObject;
+  horaDesdeSTR: string;
+  horaHasta: HoraTimeObject;
+  horaHastaSTR: string;
+  horaActual: HoraTimeObject;
+  horaActualSTR: string;
+  puedeDespachar: boolean;
+}
+export class HoraTimeObject   {
+  hours: number;
+  minutes: number;
+  seconds: number;
+  ticks: number;
+}
