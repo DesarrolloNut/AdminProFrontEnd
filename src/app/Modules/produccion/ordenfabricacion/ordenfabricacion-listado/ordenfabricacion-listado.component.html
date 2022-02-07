@@ -299,7 +299,7 @@
                         <i class="fa fa-sm fa-edit"></i>
                       </button>
 
-                      <button class="btn btn-sm btn-success m-1" *ngIf="articulext.isPesaje && !articulext.loadingSaveConsumido" (click)="getLote(articulext, modalAutorizaMaterial)">
+                      <button class="btn btn-sm btn-success m-1" *ngIf="articulext.isPesaje && !articulext.loadingSaveConsumido" (click)="getLote(modalAutorizaArticulo, articulext)">
                         <i class="fa fa-sm fa-check"></i>
                       </button>
 
@@ -324,7 +324,7 @@
                       <i class="fa fa-sm fa-edit"></i>
                     </button>
 
-                    <button class="btn btn-sm btn-success m-1" *ngIf="articulext.isPesaje && !articulext.loadingSaveConsumido" (click)="getLote(articulext)">
+                    <button class="btn btn-sm btn-success m-1" *ngIf="articulext.isPesaje && !articulext.loadingSaveConsumido" (click)="getLote(modalAutorizaArticulo, articulext)">
                       <i class="fa fa-sm fa-check"></i>
                     </button>
 
@@ -482,7 +482,10 @@
   </div>
 </ng-template>
 
-<ng-template #modalAutorizaMaterial let-modal>
+
+
+
+<ng-template #modalAutorizaArticulo let-modal>
   <div class="modal-header bg-dark">
     <h4 class="modal-title text-white">Articulo para autorizar</h4>
     <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')" >

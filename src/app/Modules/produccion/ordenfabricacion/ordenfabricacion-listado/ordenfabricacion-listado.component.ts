@@ -199,10 +199,53 @@ GetNameEstado(estadoId: number){
     //   return;
     // }
 
-    this.OnSaveConsumido(model, OrdenFabricacionDetalleEstadoEnum.CONSUMIDO);
+    this.OnSaveConsumido(model);
   }
 
-  OnSaveConsumido(model: OrdenFabricacionVista, estado:OrdenFabricacionDetalleEstadoEnum) {
+  OnSaveConsumido(model: OrdenFabricacionVista) {
+    // if((model.lote == null || model.lote.trim() == "") && model.gestionado == true){
+      //   this.toastService.warning("Debe poner un lote.");
+      //   return;
+      // }
+      model.loadingSaveConsumido = true;
+      
+      this.httpService
+        .DoPostAny<OrdenFabricacionVista>(
+          DataApi.OrdenFabricacionDetalle,
+          "UpdateConsumido",
+          model
+        )
+        .subscribe( (response) => {
+            if (!response.ok) {
+              this.toastService.error(response.errores[0]);
+            } else {
+              model.isPesaje = !model.isPesaje;
+              model.estadoHijoId = OrdenFabricacionDetalleEstadoEnum.CONSUMIDO;
+              this.updateEstadoOrdenFabricacionDetalle(model);
+              this.getOrdenFabricacion(model.ordenFabricacionId);
+              this.updateEstadoOrden();
+              this.getData();
+
+
+            }
+            model.loadingSaveConsumido = false;
+          },
+          (error) => {
+            model.loadingSaveConsumido = false;
+            this.toastService.error(
+              "No se pudo obtener los articulos extras",
+              "Error conexion al servidor"
+            );
+
+            setTimeout(() => {
+              //this.getOrdenFabricacion();
+            }, 1000);
+          }
+        );
+
+  }
+
+  OnSaveConsumidoParaAutorizar(model: OrdenFabricacionVista, estado:OrdenFabricacionDetalleEstadoEnum) {
     // if((model.lote == null || model.lote.trim() == "") && model.gestionado == true){
       //   this.toastService.warning("Debe poner un lote.");
       //   return;
@@ -212,7 +255,7 @@ GetNameEstado(estadoId: number){
       this.httpService
         .DoPostAny<OrdenFabricacionVista>(
           DataApi.OrdenFabricacionDetalle,
-          "UpdateConsumidoYCostoReal",
+          "UpdateConsumido",
           model
         )
         .subscribe(
@@ -358,7 +401,7 @@ GetNameEstado(estadoId: number){
     const index =  this.articulosExtras.indexOf(this.selectMaterial);
     let ordendetalle = this.articulosExtras[index];
     // console.log(ordendetalle)
-    this.OnSaveConsumido(ordendetalle, OrdenFabricacionDetalleEstadoEnum.PENDIENTEAUTORIZAR);
+    this.OnSaveConsumidoParaAutorizar(ordendetalle, OrdenFabricacionDetalleEstadoEnum.PENDIENTEAUTORIZAR);
     this.btnGuardarCargando = false;
   }
 
@@ -494,6 +537,42 @@ GetNameEstado(estadoId: number){
       );
   }
 
+  updateEstadoOrdenFabricacionDetalle(model: OrdenFabricacionVista) {
+    this.loadingEnviando = true;
+
+    this.httpService
+      .DoPostAny<OrdenFabricacionVista>(
+        DataApi.OrdenFabricacionDetalle,
+        "UpdateEstadoOrdenFabricacionDetalle",
+        model
+      )
+      .subscribe(
+        async (response) => {
+          if (!response.ok) {
+            this.toastService.error(response.errores[0]);
+          } else {
+            // console.log(response.records);
+            // this.toastService.success("Procesado");
+            // this.modalService.dismissAll();
+            this.getData();
+
+          }
+          this.loadingEnviando = false;
+        },
+        (error) => {
+          this.loadingEnviando = false;
+          this.toastService.error(
+            "No se pudo obtener los datos",
+            "Error conexion al servidor"
+          );
+
+          setTimeout(() => {
+            //this.getOrdenFabricacionDetalle();
+          }, 1000);
+        }
+      );
+  }
+
   async getArticuloBalance(
     codigoArticulo: string,
     codigoAlmacen: string
@@ -590,7 +669,7 @@ GetNameEstado(estadoId: number){
       });
   }
 
-  getLote(model: OrdenFabricacionVista, content) {
+  getLote(content, model: OrdenFabricacionVista) {
     model.loadingSaveConsumido = true;
 
       if (model.gestionado) {

@@ -342,7 +342,7 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
     this.btnGuardarCargando = true;
     this.ordenfabricacionvista.estadoHijoId = estado;
         this.httpService.DoPostAny<ArticuloPesaje>(DataApi.OrdenFabricacionDetalle,
-          "UpdateConsumidoYCostoReal", this.ordenfabricacionvista).subscribe(response => {
+          "UpdateConsumido", this.ordenfabricacionvista).subscribe(response => {
             // console.log(response);
             if (response.ok) {
               this.toastService.success("Procesado");

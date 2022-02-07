@@ -570,7 +570,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
 
     this.httpService.DoPostAny<OrdenFabricacionVista>(DataApi.OrdenFabricacion,
       "GetOrdenFabricacionListadoMateriales", {CodigoRefencia:this.articulo.codigoReferencia}).subscribe(async response => {
-
+          
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
