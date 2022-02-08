@@ -22,13 +22,34 @@
                     </div>
                     <div class="col-md-6 col-lg-6 col-12 text-right" *ngIf="actualizandoUsuario">
 
+                      <div class="btn-group mr-3">
+                        <button type="button" class="btn btn-outline-info"> Configuraciones</button>
+                        <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
+                          <button class="btn btn-info" ngbDropdownToggle></button>
+                          <div class="dropdown-menu" ngbDropdownMenu>
+                            <button
+                                    (click)="openModalNivelAutorizacion(modalNivelAutorizacion)"
+                                     ngbDropdownItem>Nivel autorización</button>
+                            <button
+                                     (click)="openModalAsignacionSucursales(modalAsignacionSucursales)"
+                                     ngbDropdownItem>Asignación sucursales</button>
+                            <button
+                                     (click)="openModalAsignacionClienteTipo(modalAsignacionClienteTipo)"
+                                     ngbDropdownItem>Asignación cliente tipo</button>
+                            <button
+                                      (click)="open1(content1)"
+                                      ngbDropdownItem>Actualizar contraseña</button>
+                          </div>
+                        </div>
+                      </div>
+<!--
                         <button class="btn btn-sm btn-light m-1"
                             (click)="openModalNivelAutorizacion(modalNivelAutorizacion)">
                             Nivel autorización
                         </button>
 
                         <button class="btn btn-sm btn-light m-1" (click)="open1(content1)">
-                            Actualizar contraseña</button>
+                            Actualizar contraseña</button> -->
 
                         <!-- <button class="btn btn-sm btn-light m-1" (click)="openModalCambiaContrasena()">
                             <i class=" fa fa-sm fa-envelope-open"></i> Enviar correo
@@ -358,4 +379,66 @@
             <span class="spinner-border spinner-border-sm"></span> Guardando
         </button>
     </div>
+</ng-template>
+
+
+
+
+<ng-template #modalAsignacionSucursales let-modal>
+  <div class="modal-header">
+      <h4 class="modal-title">Asignación de  sucursales</h4>
+      <!-- <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">&times;</span>
+      </button> -->
+  </div>
+  <div class="modal-body">
+      <div class="row">
+          <div class="col-12" [hidden]="loadingSucursalByUsuario">
+              <dual-list [sort]="keepSorted" [source]="source" [key]="key" [display]="display" [filter]="filter"
+                  [(destination)]="confirmed" height="265px" [format]="format" [disabled]="disabled"></dual-list>
+          </div>
+
+          <div class="col-12">
+              <app-loading-listado [hidden]="!loadingSucursalByUsuario"></app-loading-listado>
+          </div>
+      </div>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cancelar</button>
+      <button type="button" class="btn btn-success m-1" *ngIf="!guardandoSucursalesAsignadas"
+          (click)="guardarAsignacionSucursalesSeleccionadas()">Guardar</button>
+      <button *ngIf="guardandoSucursalesAsignadas" disabled class="btn btn-success m-1" type="button">
+          <span class="spinner-border spinner-border-sm"></span> Guardando
+      </button>
+  </div>
+</ng-template>
+
+
+<ng-template #modalAsignacionClienteTipo let-modal>
+  <div class="modal-header">
+      <h4 class="modal-title">Asignación de cliente tipos</h4>
+      <!-- <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">&times;</span>
+      </button> -->
+  </div>
+  <div class="modal-body">
+      <div class="row">
+          <div class="col-12" [hidden]="loadingNiveles">
+              <dual-list [sort]="keepSorted" [source]="source" [key]="key" [display]="display" [filter]="filter"
+                  [(destination)]="confirmed" height="265px" [format]="format" [disabled]="disabled"></dual-list>
+          </div>
+
+          <div class="col-12">
+              <app-loading-listado [hidden]="!loadingNiveles"></app-loading-listado>
+          </div>
+      </div>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cancelar</button>
+      <button type="button" class="btn btn-success m-1" *ngIf="!guardandoNivelesAsignados"
+          (click)="guardarNivelesAutorizacionSeleccionados()">Guardar</button>
+      <button *ngIf="guardandoNivelesAsignados" disabled class="btn btn-success m-1" type="button">
+          <span class="spinner-border spinner-border-sm"></span> Guardando
+      </button>
+  </div>
 </ng-template>
