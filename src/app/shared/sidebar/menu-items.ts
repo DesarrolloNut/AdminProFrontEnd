@@ -79,7 +79,7 @@ export const ROUTES: RouteInfo[] = [
         class: '',
         extralink: false,
         submenu: [],
-        permisos: ["ventas_cotizacion"],
+        permisos: ["ventas_pedido_empleado"],
       },
       {
         path: '/ventas/ofertas-consulta-factura',

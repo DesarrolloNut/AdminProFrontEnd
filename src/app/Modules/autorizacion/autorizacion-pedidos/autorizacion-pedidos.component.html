@@ -797,13 +797,12 @@
                 </div>
                 <div class="modal-footer">
 
+                    <!-- MAYELIN -->
+                    <ng-template [ngIf]="estadoAutorizacionUsuario == 3">
 
-                    <!-- <ng-template
-                        [ngIf]="cotizacionSeleccionada.estadoAutorizacionId == estadoAutorizacionUsuario && estadoAutorizacionAnterior"> -->
-                    <ng-template [ngIf]="estadoAutorizacionComboModel  == 0 || estadoAutorizacionComboModel == 2">
-
-                        <button *ngIf="!cotizacionSeleccionada.cargando" class="btn btn-sm btn-danger m-1"
-                            (click)="desautorizar()">
+                        <!-- RECHAZAR -->
+                        <button *ngIf="!cotizacionSeleccionada.cargando && estadoAutorizacionComboModel != 1"
+                            class="btn btn-sm btn-danger m-1" (click)="desautorizar()">
                             <i class="fa fa-sm fa-times"></i> Rechazar
                         </button>
 
@@ -813,15 +812,8 @@
                             <span class="spinner-border spinner-border-sm"></span>
                         </button>
 
-                    </ng-template>
 
-
-                    <ng-template
-                        [ngIf]="estadoAutorizacionAnterior && cotizacionSeleccionada.estadoAutorizacionId <= estadoAutorizacionAnterior.codigo">
-                        <!-- <ng-template
-                [ngIf]="item.estadoAutorizacionId == 0 || item.estadoAutorizacionId == 1 && estadoAutorizacionUsuario > item.estadoAutorizacionId"> -->
-                        <!-- ESTADO PENDIENTE-->
-
+                        <!-- AUTORIZAR -->
                         <button class="btn btn-sm btn-success m-1"
                             *ngIf="!cotizacionSeleccionada.cargando && (estadoAutorizacionUsuario >= cotizacionSeleccionada.estadoAutorizacionId)"
                             (click)="autorizar()">
@@ -835,6 +827,41 @@
                         </button>
 
                     </ng-template>
+
+                    <!-- FLORIAN -->
+                    <ng-template
+                        [ngIf]="estadoAutorizacionUsuario == 2 && cotizacionSeleccionada.estadoAutorizacionId == 1">
+
+
+                        <!-- RECHAZAR -->
+                        <button *ngIf="!cotizacionSeleccionada.cargando && estadoAutorizacionComboModel != 1"
+                            class="btn btn-sm btn-danger m-1" (click)="desautorizar()">
+                            <i class="fa fa-sm fa-times"></i> Rechazar
+                        </button>
+
+                        <!-- boton cargando -->
+                        <button *ngIf="cotizacionSeleccionada.cargando && !isAutorizando " disabled
+                            class="btn btn-warning m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span>
+                        </button>
+
+
+                        <!-- AUTORIZAR -->
+                        <button class="btn btn-sm btn-success m-1"
+                            *ngIf="!cotizacionSeleccionada.cargando && (estadoAutorizacionUsuario >= cotizacionSeleccionada.estadoAutorizacionId)"
+                            (click)="autorizar()">
+                            <i class="fa fa-sm fa-check"></i> Autorizar
+                        </button>
+
+                        <!-- boton cargando -->
+                        <button *ngIf="cotizacionSeleccionada.cargando && isAutorizando" disabled
+                            class="btn btn-success m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span>
+                        </button>
+
+                    </ng-template>
+
+
 
                 </div>
             </div>
