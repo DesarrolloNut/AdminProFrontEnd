@@ -82,7 +82,8 @@ export class UsuarioFormularioComponent implements OnInit {
   loadingSucursalByUsuario =false;
   guardandoSucursalesAsignadas: boolean;
 
-  loadingClienteTipoByUsuario =false;
+  loadingClienteTipo          =false;
+  guardandoClienteTiposAsignados: boolean;
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
@@ -696,10 +697,35 @@ export class UsuarioFormularioComponent implements OnInit {
 
 
  //CONFIGURACIONES | ASIGNACION CLIENTE TIPO
+ getClienteTipos() {
 
+  this.loadingClienteTipo = true;
+
+
+
+  this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+    "GetTipoClienteComboBox",null).subscribe(response => {
+
+      if (!response.ok) {
+        this.toastService.error(response.errores[0]);
+      } else {
+        this.source = response.records;
+      }
+      this.loadingClienteTipo = false;
+    }, error => {
+      console.log(error)
+      this.loadingClienteTipo = false;
+      this.toastService.error("No se pudo obtener los tipos de cliente", "Error conexion al servidor");
+
+      setTimeout(() => {
+        this.getClienteTipos();
+      }, 1000);
+
+    });
+}
   getClienteTiposByUsuario() {
 
-    this.loadingClienteTipoByUsuario = true;
+    this.loadingClienteTipo = true;
 
 
     let parametros: Parametro[] = [{ key: "usuario", value: this.usuarioID}]
@@ -710,11 +736,11 @@ export class UsuarioFormularioComponent implements OnInit {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          this.source = response.records;
+          this.confirmed = response.records;
         }
-        this.loadingClienteTipoByUsuario = false;
+        this.loadingClienteTipo = false;
       }, error => {
-        this.loadingClienteTipoByUsuario = false;
+        this.loadingClienteTipo = false;
         this.toastService.error("No se pudo obtener los tipos de cliente", "Error conexion al servidor");
 
         setTimeout(() => {
@@ -723,9 +749,33 @@ export class UsuarioFormularioComponent implements OnInit {
 
       });
   }
+
+
+  guardarAsignacionClienteTiposSeleccionados() {
+    let param = this.confirmed.map(x => { return { "UsuarioID": this.usuarioID, "ClienteTipoID": x.codigo }; });
+    this.guardandoClienteTiposAsignados = true;
+    this.httpService.DoPostAny<any>(DataApi.Usuario,
+      "AsignaClienteTiposAUsuario", param).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+          this.modalService.dismissAll();
+          this.toastService.success("Realizado", "OK");
+        }
+        this.guardandoClienteTiposAsignados = false;
+      }, error => {
+        this.guardandoClienteTiposAsignados = false;
+        this.toastService.error("No se pudo guardar", "Error conexion al servidor");
+        console.error(error);
+      });
+
+  }
+
   openModalAsignacionClienteTipo(content) {
+    this.getClienteTipos();
     this.getClienteTiposByUsuario();
-    // this.getNivelesAutorizacionPorUsuario();
     this.modalService.open(content, { size: 'lg', backdrop: "static", });
   }
 

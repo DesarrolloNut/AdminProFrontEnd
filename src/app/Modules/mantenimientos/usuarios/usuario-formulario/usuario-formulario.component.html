@@ -27,18 +27,21 @@
                         <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
                           <button class="btn btn-info" ngbDropdownToggle></button>
                           <div class="dropdown-menu" ngbDropdownMenu>
-                            <button
-                                    (click)="openModalNivelAutorizacion(modalNivelAutorizacion)"
-                                     ngbDropdownItem>Nivel autorización</button>
-                            <button
-                                     (click)="openModalAsignacionSucursales(modalAsignacionSucursales)"
-                                     ngbDropdownItem>Asignación sucursales</button>
-                            <button
-                                     (click)="openModalAsignacionClienteTipo(modalAsignacionClienteTipo)"
-                                     ngbDropdownItem>Asignación cliente tipo</button>
-                            <button
-                                      (click)="open1(content1)"
-                                      ngbDropdownItem>Actualizar contraseña</button>
+                              <button
+                                      (click)="openModalNivelAutorizacion(modalNivelAutorizacion)"
+                                      ngbDropdownItem> <i class="fa fa-check-circle" aria-hidden="true"></i> Nivel autorización</button>
+                              <button
+                                      (click)="openModalAsignacionSucursales(modalAsignacionSucursales)"
+                                      ngbDropdownItem><i class="fa fa-map-marker"></i> Asignación sucursales</button>
+                              <button
+                                      (click)="openModalAsignacionClienteTipo(modalAsignacionClienteTipo)"
+                                      ngbDropdownItem> <i class="fa fa-user" aria-hidden="true"></i>   Asignación cliente tipo</button>
+
+                              <div class="dropdown-divider"></div>
+
+                              <button
+                                        (click)="open1(content1)"
+                                        ngbDropdownItem><i class="fa fa-key"></i> Actualizar contraseña</button>
                           </div>
                         </div>
                       </div>
@@ -305,7 +308,7 @@
 
 <ng-template #content1 let-modal>
     <div class="modal-header">
-        <h4 class="modal-title" id="modal-basic-title">Actualizar Contraseña</h4>
+        <h4 class="modal-title" id="modal-basic-title"> <span class="font-weight-bold"> {{f.nombres.value}}</span> | Actualizar Contraseña</h4>
         <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -354,7 +357,7 @@
 
 <ng-template #modalNivelAutorizacion let-modal>
     <div class="modal-header">
-        <h4 class="modal-title">Asignación de niveles de autorización</h4>
+        <h4 class="modal-title"><span class="font-weight-bold"> {{f.nombres.value}}</span> | Asignación de niveles de autorización</h4>
         <!-- <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button> -->
@@ -386,7 +389,7 @@
 
 <ng-template #modalAsignacionSucursales let-modal>
   <div class="modal-header">
-      <h4 class="modal-title">Asignación de  sucursales</h4>
+      <h4 class="modal-title"><span class="font-weight-bold"> {{f.nombres.value}}</span> | Asignación de  sucursales</h4>
       <!-- <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
           <span aria-hidden="true">&times;</span>
       </button> -->
@@ -416,28 +419,28 @@
 
 <ng-template #modalAsignacionClienteTipo let-modal>
   <div class="modal-header">
-      <h4 class="modal-title">Asignación de cliente tipos</h4>
+      <h4 class="modal-title"><span class="font-weight-bold"> {{f.nombres.value}}</span> | Asignación de cliente tipos</h4>
       <!-- <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
           <span aria-hidden="true">&times;</span>
       </button> -->
   </div>
   <div class="modal-body">
       <div class="row">
-          <div class="col-12" [hidden]="loadingNiveles">
+          <div class="col-12" [hidden]="loadingClienteTipo">
               <dual-list [sort]="keepSorted" [source]="source" [key]="key" [display]="display" [filter]="filter"
                   [(destination)]="confirmed" height="265px" [format]="format" [disabled]="disabled"></dual-list>
           </div>
 
           <div class="col-12">
-              <app-loading-listado [hidden]="!loadingNiveles"></app-loading-listado>
+              <app-loading-listado [hidden]="!loadingClienteTipo"></app-loading-listado>
           </div>
       </div>
   </div>
   <div class="modal-footer">
       <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cancelar</button>
-      <button type="button" class="btn btn-success m-1" *ngIf="!guardandoNivelesAsignados"
-          (click)="guardarNivelesAutorizacionSeleccionados()">Guardar</button>
-      <button *ngIf="guardandoNivelesAsignados" disabled class="btn btn-success m-1" type="button">
+      <button type="button" class="btn btn-success m-1" *ngIf="!guardandoClienteTiposAsignados"
+          (click)="guardarAsignacionClienteTiposSeleccionados()">Guardar</button>
+      <button *ngIf="guardandoClienteTiposAsignados" disabled class="btn btn-success m-1" type="button">
           <span class="spinner-border spinner-border-sm"></span> Guardando
       </button>
   </div>
