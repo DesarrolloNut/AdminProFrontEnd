@@ -77,6 +77,13 @@ export class UsuarioFormularioComponent implements OnInit {
   loadingDepartamentos: boolean;
 
 
+
+  //VARIABLES | CONFIGURACIONES
+  loadingSucursalByUsuario =false;
+  guardandoSucursalesAsignadas: boolean;
+
+  loadingClienteTipo          =false;
+  guardandoClienteTiposAsignados: boolean;
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
@@ -475,6 +482,70 @@ export class UsuarioFormularioComponent implements OnInit {
   }
 
 
+
+  getRutasbyRol(RolId: number = 0) {
+    this.loadingRutas = true;
+    this.MostrarRutas = false;
+    let parametros: Parametro[] = [{ key: "RolId", value: RolId == 0 ? RolId : this.f.rolID.value }];
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetRutasByRolComboBox", parametros).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+          this.MostrarRutas = false;
+        } else {
+          this.rutas = response.records;
+          if (response.records.length > 0) {
+            this.MostrarRutas = true;
+
+          }
+          // console.table(this.confirmed)
+        }
+
+        this.loadingRutas = false;
+      }, error => {
+        this.loadingRutas = false;
+        this.MostrarRutas = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
+  VerificarRutaEnUso(ruta) {
+
+    let RutaID: number = Number(ruta.codigo);
+
+    this.httpService.DoPostAny<any>(DataApi.Ruta,
+      "GetDisponiblesRutas", RutaID).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          //validar que existe
+          if (!response.ok) {
+            this.toastService.error(response.errores[0]);
+            console.error(response.errores[0]);
+
+          } else {
+            if (response.records.length > 0) {
+              let usuario = response.records[0];
+              this.f.rutaId.setValue(null);
+              this.toastService.error("Lo sentimos, esta ruta esta en uso. Por el usuario: " + usuario.userName + " y la ruta: " + usuario.rutaId);
+            }
+          }
+        }
+
+      }, error => {
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
+
+
+
+
+
+  //CONFIGURACIONES
+  //CONFIGURACIONES | NIVEL AUTORIZACION
   openModalNivelAutorizacion(content) {
     this.getNivelesAutorizacion();
     this.getNivelesAutorizacionPorUsuario();
@@ -554,65 +625,159 @@ export class UsuarioFormularioComponent implements OnInit {
 
 
 
-  getRutasbyRol(RolId: number = 0) {
-    this.loadingRutas = true;
-    this.MostrarRutas = false;
-    let parametros: Parametro[] = [{ key: "RolId", value: RolId == 0 ? RolId : this.f.rolID.value }];
+
+
+ //CONFIGURACIONES | ASIGNACION SUCURSALES
+
+
+  openModalAsignacionSucursales(content) {
+    this.source=this.sucursales;
+    this.getSucursalByUsuarioId();
+    this.modalService.open(content, { size: 'lg', backdrop: "static", });
+  }
+  getSucursalByUsuarioId() {
+
+    let parametros: Parametro[] = [
+      { key: "UsuarioId", value: this.usuarioID },
+    ]
+
+    this.loadingSucursalByUsuario = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetRutasByRolComboBox", parametros).subscribe(response => {
+      "GetSucursalesByUsuarioId", parametros).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+           this.confirmed=response.records;
+
+
+        }
+        this.loadingSucursalByUsuario = false;
+      }, error => {
+        this.loadingSucursalByUsuario = false;
+        this.toastService.error("No se pudo obtener las sucursales", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getSucursalByUsuarioId()
+        }, 1000);
+
+      });
+  }
+  guardarAsignacionSucursalesSeleccionadas() {
+
+    // if (this.confirmed.length < 1) {
+    //   this.toastService.warning("Selecciona uno o más");
+    //   return;
+    // }
+
+    let param = this.confirmed.map(x => { return { "UsuarioID": this.usuarioID, "SucursalID": x.codigo }; });
+    console.table(param);
+    this.guardandoSucursalesAsignadas = true;
+    this.httpService.DoPostAny<any>(DataApi.Usuario,
+      "AsignaSucursalesAUsuario", param).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
           console.error(response.errores[0]);
-          this.MostrarRutas = false;
         } else {
-          this.rutas = response.records;
-          if (response.records.length > 0) {
-            this.MostrarRutas = true;
-
-          }
-          // console.table(this.confirmed)
+          this.modalService.dismissAll();
+          this.toastService.success("Realizado", "OK");
         }
-
-        this.loadingRutas = false;
+        this.guardandoSucursalesAsignadas = false;
       }, error => {
-        this.loadingRutas = false;
-        this.MostrarRutas = false;
-        this.toastService.error("Error conexion al servidor");
+        this.guardandoSucursalesAsignadas = false;
+        this.toastService.error("No se pudo guardar", "Error conexion al servidor");
+        console.error(error);
       });
+
   }
 
-  VerificarRutaEnUso(ruta) {
 
-    let RutaID: number = Number(ruta.codigo);
 
-    this.httpService.DoPostAny<any>(DataApi.Ruta,
-      "GetDisponiblesRutas", RutaID).subscribe(response => {
+
+
+ //CONFIGURACIONES | ASIGNACION CLIENTE TIPO
+ getClienteTipos() {
+
+  this.loadingClienteTipo = true;
+
+
+
+  this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+    "GetTipoClienteComboBox",null).subscribe(response => {
+
+      if (!response.ok) {
+        this.toastService.error(response.errores[0]);
+      } else {
+        this.source = response.records;
+      }
+      this.loadingClienteTipo = false;
+    }, error => {
+      console.log(error)
+      this.loadingClienteTipo = false;
+      this.toastService.error("No se pudo obtener los tipos de cliente", "Error conexion al servidor");
+
+      setTimeout(() => {
+        this.getClienteTipos();
+      }, 1000);
+
+    });
+}
+  getClienteTiposByUsuario() {
+
+    this.loadingClienteTipo = true;
+
+
+    let parametros: Parametro[] = [{ key: "usuario", value: this.usuarioID}]
+
+    this.httpService.DoPostAny<ComboBox>(DataApi.ComboBox,
+      "GetTipoClienteComboBoxByUsuario",parametros[0]).subscribe(response => {
+
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          //validar que existe
-          if (!response.ok) {
-            this.toastService.error(response.errores[0]);
-            console.error(response.errores[0]);
-
-          } else {
-            if (response.records.length > 0) {
-              let usuario = response.records[0];
-              this.f.rutaId.setValue(null);
-              this.toastService.error("Lo sentimos, esta ruta esta en uso. Por el usuario: " + usuario.userName + " y la ruta: " + usuario.rutaId);
-            }
-          }
+          this.confirmed = response.records;
         }
-
+        this.loadingClienteTipo = false;
       }, error => {
-        this.toastService.error("Error conexion al servidor");
+        this.loadingClienteTipo = false;
+        this.toastService.error("No se pudo obtener los tipos de cliente", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getClienteTiposByUsuario();
+        }, 1000);
+
       });
   }
 
 
+  guardarAsignacionClienteTiposSeleccionados() {
+    let param = this.confirmed.map(x => { return { "UsuarioID": this.usuarioID, "ClienteTipoID": x.codigo }; });
+    this.guardandoClienteTiposAsignados = true;
+    this.httpService.DoPostAny<any>(DataApi.Usuario,
+      "AsignaClienteTiposAUsuario", param).subscribe(response => {
 
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+          this.modalService.dismissAll();
+          this.toastService.success("Realizado", "OK");
+        }
+        this.guardandoClienteTiposAsignados = false;
+      }, error => {
+        this.guardandoClienteTiposAsignados = false;
+        this.toastService.error("No se pudo guardar", "Error conexion al servidor");
+        console.error(error);
+      });
 
+  }
+
+  openModalAsignacionClienteTipo(content) {
+    this.getClienteTipos();
+    this.getClienteTiposByUsuario();
+    this.modalService.open(content, { size: 'lg', backdrop: "static", });
+  }
 
 }
 
