@@ -312,6 +312,8 @@ export class AutorizacionPedidosComponent implements OnInit {
         "PromedioDiasVencimiento": this.promedioDias,
         "PlazoCliente": this.cotizacionSeleccionada.diasPlazo,
         "Porcentaje": this.porcentajeCalculado,
+        "CantidadFacturasPendientes": this.facturasPendientesPago.length,
+        "CantidadFacturasVencidas": this.facturasPendientesPago.filter(f => f.diasVencimiento > 0).length,
       }
 
     }
@@ -325,7 +327,7 @@ export class AutorizacionPedidosComponent implements OnInit {
 
         } else {
           this.toastService.success("Realizado", "OK");
-          this.enviarNotificacionCorreoUsuarios(param);
+          // this.enviarNotificacionCorreoUsuarios(param);
           this.getData()
         }
         this.cargandoAutorizacion = false;
