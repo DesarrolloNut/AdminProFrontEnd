@@ -22,13 +22,37 @@
                     </div>
                     <div class="col-md-6 col-lg-6 col-12 text-right" *ngIf="actualizandoUsuario">
 
+                      <div class="btn-group mr-3">
+                        <button type="button" class="btn btn-outline-info"> Configuraciones</button>
+                        <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
+                          <button class="btn btn-info" ngbDropdownToggle></button>
+                          <div class="dropdown-menu" ngbDropdownMenu>
+                              <button
+                                      (click)="openModalNivelAutorizacion(modalNivelAutorizacion)"
+                                      ngbDropdownItem> <i class="fa fa-check-circle" aria-hidden="true"></i> Nivel autorización</button>
+                              <button
+                                      (click)="openModalAsignacionSucursales(modalAsignacionSucursales)"
+                                      ngbDropdownItem><i class="fa fa-map-marker"></i> Asignación sucursales</button>
+                              <button
+                                      (click)="openModalAsignacionClienteTipo(modalAsignacionClienteTipo)"
+                                      ngbDropdownItem> <i class="fa fa-user" aria-hidden="true"></i>   Asignación cliente tipo</button>
+
+                              <div class="dropdown-divider"></div>
+
+                              <button
+                                        (click)="open1(content1)"
+                                        ngbDropdownItem><i class="fa fa-key"></i> Actualizar contraseña</button>
+                          </div>
+                        </div>
+                      </div>
+<!--
                         <button class="btn btn-sm btn-light m-1"
                             (click)="openModalNivelAutorizacion(modalNivelAutorizacion)">
                             Nivel autorización
                         </button>
 
                         <button class="btn btn-sm btn-light m-1" (click)="open1(content1)">
-                            Actualizar contraseña</button>
+                            Actualizar contraseña</button> -->
 
                         <!-- <button class="btn btn-sm btn-light m-1" (click)="openModalCambiaContrasena()">
                             <i class=" fa fa-sm fa-envelope-open"></i> Enviar correo
@@ -284,7 +308,7 @@
 
 <ng-template #content1 let-modal>
     <div class="modal-header">
-        <h4 class="modal-title" id="modal-basic-title">Actualizar Contraseña</h4>
+        <h4 class="modal-title" id="modal-basic-title"> <span class="font-weight-bold"> {{f.nombres.value}}</span> | Actualizar Contraseña</h4>
         <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -333,7 +357,7 @@
 
 <ng-template #modalNivelAutorizacion let-modal>
     <div class="modal-header">
-        <h4 class="modal-title">Asignación de niveles de autorización</h4>
+        <h4 class="modal-title"><span class="font-weight-bold"> {{f.nombres.value}}</span> | Asignación de niveles de autorización</h4>
         <!-- <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button> -->
@@ -358,4 +382,66 @@
             <span class="spinner-border spinner-border-sm"></span> Guardando
         </button>
     </div>
+</ng-template>
+
+
+
+
+<ng-template #modalAsignacionSucursales let-modal>
+  <div class="modal-header">
+      <h4 class="modal-title"><span class="font-weight-bold"> {{f.nombres.value}}</span> | Asignación de  sucursales</h4>
+      <!-- <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">&times;</span>
+      </button> -->
+  </div>
+  <div class="modal-body">
+      <div class="row">
+          <div class="col-12" [hidden]="loadingSucursalByUsuario">
+              <dual-list [sort]="keepSorted" [source]="source" [key]="key" [display]="display" [filter]="filter"
+                  [(destination)]="confirmed" height="265px" [format]="format" [disabled]="disabled"></dual-list>
+          </div>
+
+          <div class="col-12">
+              <app-loading-listado [hidden]="!loadingSucursalByUsuario"></app-loading-listado>
+          </div>
+      </div>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cancelar</button>
+      <button type="button" class="btn btn-success m-1" *ngIf="!guardandoSucursalesAsignadas"
+          (click)="guardarAsignacionSucursalesSeleccionadas()">Guardar</button>
+      <button *ngIf="guardandoSucursalesAsignadas" disabled class="btn btn-success m-1" type="button">
+          <span class="spinner-border spinner-border-sm"></span> Guardando
+      </button>
+  </div>
+</ng-template>
+
+
+<ng-template #modalAsignacionClienteTipo let-modal>
+  <div class="modal-header">
+      <h4 class="modal-title"><span class="font-weight-bold"> {{f.nombres.value}}</span> | Asignación de cliente tipos</h4>
+      <!-- <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">&times;</span>
+      </button> -->
+  </div>
+  <div class="modal-body">
+      <div class="row">
+          <div class="col-12" [hidden]="loadingClienteTipo">
+              <dual-list [sort]="keepSorted" [source]="source" [key]="key" [display]="display" [filter]="filter"
+                  [(destination)]="confirmed" height="265px" [format]="format" [disabled]="disabled"></dual-list>
+          </div>
+
+          <div class="col-12">
+              <app-loading-listado [hidden]="!loadingClienteTipo"></app-loading-listado>
+          </div>
+      </div>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cancelar</button>
+      <button type="button" class="btn btn-success m-1" *ngIf="!guardandoClienteTiposAsignados"
+          (click)="guardarAsignacionClienteTiposSeleccionados()">Guardar</button>
+      <button *ngIf="guardandoClienteTiposAsignados" disabled class="btn btn-success m-1" type="button">
+          <span class="spinner-border spinner-border-sm"></span> Guardando
+      </button>
+  </div>
 </ng-template>
