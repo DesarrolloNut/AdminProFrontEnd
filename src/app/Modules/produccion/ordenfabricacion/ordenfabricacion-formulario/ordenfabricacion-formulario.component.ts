@@ -572,7 +572,7 @@ export class OrdenfabricacionFormularioComponent implements OnInit {
 
    getArticulosDeMateriales() {
     this.loadingArticulosExtras = true;
-
+    this.articulosExtras = [];
     this.httpService.DoPostAny<OrdenFabricacionVista>(DataApi.OrdenFabricacion,
       "GetOrdenFabricacionListadoMateriales", {CodigoRefencia:this.articulo.codigoReferencia}).subscribe(async response => {
           
