@@ -798,10 +798,11 @@
                 <div class="modal-footer">
 
                     <!-- MAYELIN -->
-                    <ng-template [ngIf]="estadoAutorizacionUsuario == 3">
+                    <ng-template [ngIf]="estadoAutorizacionUsuario == estadoEnum.AUTORIZADO">
 
                         <!-- RECHAZAR -->
-                        <button *ngIf="!cotizacionSeleccionada.cargando && estadoAutorizacionComboModel != 1"
+                        <button
+                            *ngIf="!cotizacionSeleccionada.cargando && estadoAutorizacionComboModel != estadoEnum.RECHAZADO"
                             class="btn btn-sm btn-danger m-1" (click)="desautorizar()">
                             <i class="fa fa-sm fa-times"></i> Rechazar
                         </button>
@@ -830,11 +831,12 @@
 
                     <!-- FLORIAN -->
                     <ng-template
-                        [ngIf]="estadoAutorizacionUsuario == 2 && cotizacionSeleccionada.estadoAutorizacionId == 1">
+                        [ngIf]="estadoAutorizacionUsuario == estadoEnum.GESTIONAR && cotizacionSeleccionada.estadoAutorizacionId == estadoEnum.RECHAZADO">
 
 
                         <!-- RECHAZAR -->
-                        <button *ngIf="!cotizacionSeleccionada.cargando && estadoAutorizacionComboModel != 1"
+                        <button
+                            *ngIf="!cotizacionSeleccionada.cargando && estadoAutorizacionComboModel != estadoEnum.RECHAZADO"
                             class="btn btn-sm btn-danger m-1" (click)="desautorizar()">
                             <i class="fa fa-sm fa-times"></i> Rechazar
                         </button>

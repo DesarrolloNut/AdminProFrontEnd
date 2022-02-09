@@ -13,6 +13,7 @@ import { CotizacionListadoViewModel } from '../../ventas/cotizaciones/models/Cot
 import { CotizacionDetalleViewModel } from '../../ventas/cotizaciones/models/CotizacionDetalleViewModel';
 import { Factura } from '../../ventas/facturas/models/Factura';
 import { AutorizacionHistoricoListadoViewModel } from '../models/AutorizacionHistoricoListadoViewModel';
+import { EstadoPedidoAutorizacionEnum } from '../models/EstadoPedidoAutorizacionEnum';
 
 enum btnClickedEnum {
   AUTORIZAR = 1,
@@ -41,6 +42,7 @@ export class AutorizacionPedidosComponent implements OnInit {
   // AUTORIZACION
   estadosAutorizacion: ComboBox[];
   estadoAutorizacionComboModel: number = 0;
+  estadoEnum = EstadoPedidoAutorizacionEnum;
 
   estadoAutorizacionUsuario: number;
   estadoIDAutorizacionDefault: number;
