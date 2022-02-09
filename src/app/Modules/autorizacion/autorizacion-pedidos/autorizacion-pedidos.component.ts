@@ -177,6 +177,8 @@ export class AutorizacionPedidosComponent implements OnInit {
           this.estadosAutorizacion = response.records;
           // this.estadoIDAutorizacionDefault = response.records[0].codigo; //para cuando mande a rechazar
           this.estadoIDAutorizacionDefault = 1; //para cuando mande a rechazar
+
+
           this.getSiguienteEstado()//almacena en una variable el siguiente estado
           this.getAnteriorEstadoAutorizacion()//almacena en una variable el anterior estado
           this.getData()
@@ -203,10 +205,7 @@ export class AutorizacionPedidosComponent implements OnInit {
     let estadoActualPosicion = this.estadosAutorizacion.indexOf(estadoUsuario);
     this.estadoAutorizacionAnterior = this.estadosAutorizacion[estadoActualPosicion - 1]
 
-    if (this.estadoAutorizacionAnterior) {
-      // this.estadoAutorizacionComboModel = this.estadoAutorizacionAnterior.codigo;
-      this.estadoAutorizacionComboModel = 0;
-    }
+    this.estadoAutorizacionComboModel = this.estadoAutorizacionUsuario == 2 ? this.estadoEnum.RECHAZADO : this.estadoEnum.PENDIENTE;
 
   }
 
