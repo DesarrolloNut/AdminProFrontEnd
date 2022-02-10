@@ -52,6 +52,7 @@ export enum DataApi {
     Despacho = 77,
     ComprobanteFiscal = 78,
     SAPCotizacion = 79,
+    ChequeDevuelto = 80,
 
 
 
@@ -142,6 +143,7 @@ export const dataApiRootMap: { [api: string]: string } = {
     "77": "api/Despacho",
     "78": "api/ComprobanteFiscal",
     "79": "api/SAPCotizacion",
+    "80": "api/ChequeDevuelto",
 
 
 
