@@ -9,6 +9,7 @@ import { Cliente, ClienteViewModelCustomized } from '../models/Cliente';
 import { ParametrosCita } from 'src/app/Modules/turno/models/ParametrosCita';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
+import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 
 @Component({
   selector: 'app-clientes-listado',
@@ -30,23 +31,55 @@ export class ClientesListadoComponent implements OnInit {
   tipo:number=1;
   usuarioId:number=0;
   showButtonAutorizar = false;
+
+
+  estadosERP:ComboBox[]=[];
+  estadoERPSelected=4
+
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     public permissionsService: NgxPermissionsService,
-    private authService: AuthenticationService,
+    private authService: AuthenticationService
   ) { }
 
 
   ngOnInit(): void {
     this.fillComboTipos();
+    this.getEstadosERP();
     this.getClientes()
 
   }
+
 
   fillComboTipos(){
     this.tipos.push({codigo:1,nombre:"Todos",grupo:'',grupoID:''})
     this.tipos.push({codigo:2,nombre:"Principales",grupo:'',grupoID:''})
     this.tipos.push({codigo:3,nombre:"Sucursales",grupo:'',grupoID:''})
+  }
+
+  getEstadosERP() {
+    let parametros: Parametro[] = [{
+      key: "NameKey",
+      value: EstadosGeneralesKeyEnum.ESTADOSERP
+    }]
+
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetEstadoForKeyComboBox", parametros).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+          this.estadosERP = response.records;
+          this.estadosERP.unshift({codigo:4,nombre:"Todos",grupo:"gray",grupoID:"4"})
+        }
+      }, error => {
+        this.toastService.error("No se pudo obtener los estados.", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getEstadosERP()
+        }, 5000);
+
+      });
   }
   getClientes() {
     this.showButtonAutorizar=false;
