@@ -526,3 +526,20 @@
    </div>
 </ng-template>
 
+
+<ng-template #contentConfirmSucursalModal let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Confirmación </h4>
+  </div>
+  <div class="modal-body text-center">
+    <i class="fa fa-exclamation-triangle  fa-3x text-info"></i>
+    <h4 class="mt-2"><strong>Hey, ya existe un cliente principal con este numero de documento</strong></h4>
+    <h4 class="mt-2 text-warning"><strong>Este cliente se creará como sucursal</strong></h4>
+  </div>
+  <div class="modal-footer " style="justify-content: center !important;">
+    <br>
+    <button type="button" class="btn btn-secondary" (click)="cancelCreacionSucursal()">Cancel</button>
+    <button type="button" class="btn btn-info" (click)="onSubmit(true)">Si, Crear sucursal</button>
+   </div>
+</ng-template>
+

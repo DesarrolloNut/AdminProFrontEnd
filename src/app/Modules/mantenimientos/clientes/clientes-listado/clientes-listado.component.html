@@ -3,6 +3,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="row mb-2">
+
                     <div class="col-md-6 align-middle">
                         <h4 class="card-title">Listado de clientes</h4>
                     </div>
@@ -11,8 +12,8 @@
                             cliente
                         </button>
                     </div>
-
                     <div class="col-md-10 pt-3">
+                      <label for="">Busqueda</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <label for="search" class="input-group-text bg-white">
@@ -27,12 +28,36 @@
                         </div>
 
                     </div>
-                    <div class="form-group col-md-2 pt-3">
-                        <ng-select [items]="tipos" bindLabel="nombre" bindValue="codigo" (change)="onChangeTipo($event)"
+                    <!-- <div class="form-group col-md-2 pt-3" id="section_EstadoERP">
+                      <label for="">Estado ERP</label>
+                        <ng-select [items]="estadosERP" [searchable]="false" bindLabel="nombre" bindValue="codigo" (change)="onChangeTipo($event)"
                         placeholder="Seleccionar tipo" [clearable]="false"
-                        notFoundText="No resultados" [(ngModel)]="tipo" >
+                        notFoundText="No resultados" [(ngModel)]="estadoERPSelected" >
+
+                        <ng-template ng-label-tmp let-item="item">
+                          <span>
+                              <i class="fa fa-circle" [ngStyle]="{'color': item.grupo}"></i> {{item.nombre}}
+                          </span>
+                      </ng-template>
+                      <ng-template ng-option-tmp let-item="item" let-index="index">
+                          <span>
+                              <i class="fa fa-circle" [ngStyle]="{'color': item.grupo}"></i> {{item.nombre}}
+                          </span>
+
+                      </ng-template>
                         </ng-select>
-                    </div>
+
+
+
+                   </div> -->
+
+                <div class="form-group col-md-2 pt-3">
+                  <label for="">¿Principal?</label>
+                    <ng-select [items]="tipos" [searchable]="false" bindLabel="nombre" bindValue="codigo" (change)="onChangeTipo($event)"
+                    placeholder="Seleccionar tipo" [clearable]="false"
+                    notFoundText="No resultados" [(ngModel)]="tipo" >
+                    </ng-select>
+                </div>
                 </div>
                 <!-- <h6 class="card-subtitle">Create responsive tables by wrapping any <code>.table</code> in <code>.table-responsive </code></h6>-->
 
@@ -260,4 +285,6 @@
             </div>
         </div>
     </div>
+
 </div>
+
