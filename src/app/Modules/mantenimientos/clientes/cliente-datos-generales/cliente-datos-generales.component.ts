@@ -1,7 +1,7 @@
 import { MapsAPILoader, Marker } from '@agm/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { ViewportScroller } from '@angular/common';
-import { Component, ElementRef, EventEmitter, HostListener, Input, NgZone, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, NgZone, OnInit, Output, ViewChild, AfterViewInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -33,7 +33,7 @@ const fadeInOut = trigger('fadeInOut', [
   animations: [fadeInOut]
 })
 
-export class ClienteDatosGeneralesComponent implements OnInit {
+export class ClienteDatosGeneralesComponent implements OnInit,AfterViewInit {
   @Input() clientId = 0;
   @Output() clienteIdCreado = new EventEmitter();
   @Output() clienteTabsValida = new EventEmitter<ClienteTabsValida>();
@@ -42,6 +42,7 @@ export class ClienteDatosGeneralesComponent implements OnInit {
   minDate: Date ;
   clientIsPrincipal:boolean;
   @ViewChild('contentModal') content: any;
+  @ViewChild('contentConfirmSucursalModal') contentConfirmSucursalModal: any;
 
   FormGenerales: FormGroup;
 
@@ -126,9 +127,9 @@ export class ClienteDatosGeneralesComponent implements OnInit {
     this.clearOrputValidatosSomeField();
     this.scrollToTop();
     this.getHoraActual()
-
-
   }
+
+
   regexValidator(regex: RegExp, error: ValidationErrors): ValidatorFn {
     return (control: AbstractControl): {[key: string]: any} => {
       if (!control.value) {
@@ -144,8 +145,8 @@ export class ClienteDatosGeneralesComponent implements OnInit {
       coors.latitud= 0;
       coors.longitud= 0;
       this.coordenadas.emit(coors);
-
     }
+
   }
 
   getHoraActual() {
@@ -164,42 +165,31 @@ export class ClienteDatosGeneralesComponent implements OnInit {
             this.toastService.error("Error conexion al servidor");
         });
 }
-  onSubmit() {
-    this.submitted = true;
-    // if(this.f.clientePadreId.value>0){
-    //    if(this.f.documentoTipoID.value==2){
-    //      if(this.clientePadreSearched.nombres==this.f.nombres.value){
-    //         this.toastService
-    //         .error("La sucursal que esta creando/actualizando no puede tener el mismo de nombre que la principal");
-    //         return;
-    //      }
-    //    }
-    // }
+  onSubmit(confirmSucursal=false) {
+    this.btnGuardarCargando=false;
 
-    // if (!this.actualizando)
-    //   this.f.sucursalID.setValue(Number(this.auth.tokenDecoded.groupsid))
+    this.modalService.dismissAll()
 
 
+    if (this.FormGenerales.invalid)
+      return;
 
-   if(this.f.clientePadreId.value>0){
+
+   if(this.f.clientePadreId.value>0 || confirmSucursal){
+
+    this.identificaSucursalOPrincipal()
       if(this.clientePadreSearched.clienteTipoID!=this.f.clienteTipoID.value){
-        this.identificaSucursalOPrincipal();
         this.toastService.error("Debes seleccionar el mismo tipo de cliente que tiene la principal");
         return;
 
       }
    }
 
-    if (this.FormGenerales.invalid)
-      return;
-    if(this.f.documentoTipoID.value==2){
-      this.f.nombres.setValue(this.f.clienteNombre.value);
-    }
+
     if(this.f.clienteTipoID.value==15 || this.f.clienteTipoID.value==12){
       this.f.isClientPrincipal.setValue(0);
     }
-
-
+    this.submitted = true;
     this.guardarCliente();
   }
   onSubmitWithoutAction() {
@@ -302,14 +292,19 @@ export class ClienteDatosGeneralesComponent implements OnInit {
           this.toastService.error(response.errores[0], "Error");
           this.btnGuardarCargando = false;
         } else {
+            if(response.valores[0].tienePadre){
+              this.openModal(this.contentConfirmSucursalModal);
+              return;
+            }
             this.scrollToTop();
             this.toastService.success("Realizado", "OK");
           if(!this.actualizando){
+
             this.clientId=response.valores[0].clienteId;
             this.onClienteCreado(this.clientId);
-      //      this.onClienteTabsValida(response.valores[0])
             this.getClienteByID(this.clientId);
           }
+
           this.clienteExtraInfo.emit(this.FormGenerales.value)
           this.router.navigateByUrl('/mantenimientos/cliente/'+this.clientId);
         }
@@ -662,19 +657,22 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
            this.clientePadreSearched = response.records[0];
 
            //SI ESTE CLIENTE ES UN EMPLEADO NO SE PUEDE CREAR OTRO CLIENTE CON ESTE MISMO NO. DOCUMENTO
-           if(this.clientePadreSearched.clienteTipoID==12 || this.clientePadreSearched.clienteTipoID==15 ){
+           if(this.clientePadreSearched.clienteTipoID==12 || this.clientePadreSearched.clienteTipoID==15 )
+              {
 
-            if(this.f.id.value!=this.clientePadreSearched.id){
-              this.toastService.error('Ya existe un cliente de tipo empleado con este numero de documento');
-            }
-            this.buscandoDocumento = false;
-            return;
-           }
-          this.f.nombres.setValue(this.clientePadreSearched.nombres);
-          this.f.apellidos.setValue(this.clientePadreSearched.apellidos!=null?this.clientePadreSearched.apellidos:"");
-          this.f.clienteNombre.setValue(this.clientePadreSearched.nombres +' ' +    this.f.apellidos.value )
-          this.f.fechaNacimiento.setValue(this.clientePadreSearched.fechaNacimiento);
-          this.f.sexo.setValue(this.clientePadreSearched.sexo);
+                if(this.f.id.value!=this.clientePadreSearched.id){
+                  this.toastService.error('Ya existe un cliente de tipo empleado con este numero de documento');
+                }
+                this.buscandoDocumento = false;
+                return;
+              }
+
+
+              this.f.nombres.setValue(this.clientePadreSearched.nombres);
+              this.f.apellidos.setValue(this.clientePadreSearched.apellidos!=null?this.clientePadreSearched.apellidos:"");
+              this.f.clienteNombre.setValue(this.clientePadreSearched.nombres +' ' +    this.f.apellidos.value )
+              this.f.fechaNacimiento.setValue(this.clientePadreSearched.fechaNacimiento);
+              this.f.sexo.setValue(this.clientePadreSearched.sexo);
 
 
             if(this.clientePadreSearched.clienteTipoID>0 &&  this.clientePadreSearched.clienteTipoID !=null)
@@ -1008,6 +1006,10 @@ formatPermisionByKeyName(keyName:string){
       '';
   }
 
+}
+cancelCreacionSucursal(){
+  this.btnGuardarCargando=false;
+  this.modalService.dismissAll()
 }
 
 }

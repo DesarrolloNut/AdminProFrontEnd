@@ -7,4 +7,5 @@ export enum EstadosGeneralesKeyEnum {
     ORDENFABRICACION = 'ORDENFABRICACION',
     PRODUCCION = 'PRODUCCION',
     PEDIDO = 'PEDIDO',
+    ESTADOSERP = 'ESTADOSERP',
 }
