@@ -28,8 +28,10 @@ export interface CotizacionListadoViewModel {
 
     tipoPromesaID: number;
     fechaPromesa: Date;
-    saldocxc:number;
+    saldocxc: number;
 
-    fechaRegistro: Date;
+    fechaRegistro?: Date;
+    fechaUltimoPago?: Date;
+    // fechaRegistro: Date;
 
 }

@@ -104,11 +104,7 @@ export class AutorizacionPedidosComponent implements OnInit {
   }
 
   getHours(fecha: Date): number {
-    console.log(fecha)
     let date = new Date(fecha)
-    console.log(date)
-    console.log(date.getHours())
-
     return date.getHours();
   }
 
