@@ -3,24 +3,9 @@
         <div class="card">
             <div class="card-body">
                 <div class="row mb-2">
-                    <div class="col-md-6 align-middle">
+                    <div class="col-md-12 align-middle">
                         <!-- <h4 class="card-title">Pedidos por autorizar</h4> -->
                         <label for="">Fechas</label>
-                    </div>
-                    <div class="col-md-6 text-right">
-
-
-
-                        <!-- <button type="button"
-                            [disabled]="!data || data.length == 0 || estadoAutorizacionComboModel != estadoAutorizacionUsuario"
-                            (click)="autorizarMasiva()" class="btn btn-info"> <i class="fa fa-check"></i> Autorizar
-                            todos
-                        </button> -->
-
-                        <!-- <button *ngIf="!loadingReporteExcel" type="button" (click)="exportarReporteExcel()"
-                            class="btn btn-success ml-2"> <i class="fa fa-file-excel"></i>
-                        </button> -->
-
                     </div>
 
                     <div class="col-lg-2 col-md-6 p-1 col-6">
@@ -82,6 +67,7 @@
                                 <th>Pedido</th>
                                 <th>Cliente</th>
                                 <th>Fecha</th>
+                                <th>Hora</th>
                                 <th>Total Pedido</th>
                             </tr>
                         </thead>
@@ -89,12 +75,6 @@
 
                             <tr *ngFor="let item of data">
                                 <td>
-
-                                    <!-- <button class="btn btn-sm btn-light m-1" *ngIf="!item.cargando"
-                                        (click)="openModalComments(modalComments,item)">
-                                        <i class="fa fa-sm fa-comment-dots"></i>
-                                    </button> -->
-
 
                                     <button class="btn btn-sm btn-light m-1" *ngIf="!item.cargando"
                                         (click)="openModalAutorizar(modalConfirm,item)">
@@ -104,15 +84,6 @@
 
                                     <ng-template
                                         [ngIf]="estadoAutorizacionAnterior && item.estadoAutorizacionId <= estadoAutorizacionAnterior.codigo">
-                                        <!-- <ng-template
-                                        [ngIf]="item.estadoAutorizacionId == 0 || item.estadoAutorizacionId == 1 && estadoAutorizacionUsuario > item.estadoAutorizacionId"> -->
-                                        <!-- ESTADO PENDIENTE-->
-
-                                        <!-- <button class="btn btn-sm btn-success m-1"
-                                            *ngIf="!item.cargando && (estadoAutorizacionUsuario >= item.estadoAutorizacionId)"
-                                            (click)="openModalConfirm(modalConfirm,ACTIONSenum.AUTORIZAR,item)">
-                                            <i class="fa fa-sm fa-check"></i>
-                                        </button> -->
 
                                         <!-- boton cargando -->
                                         <button *ngIf="item.cargando && isAutorizando" disabled
@@ -125,13 +96,6 @@
 
                                     <ng-template
                                         [ngIf]="item.estadoAutorizacionId == estadoAutorizacionUsuario && estadoAutorizacionAnterior">
-                                        <!-- <ng-template
-                                        [ngIf]="estadoAutorizacionUsuario == 2 && (item.estadoAutorizacionId == 1 || item.estadoAutorizacionId == 2)"> -->
-
-                                        <!-- <button *ngIf="!item.cargando" class="btn btn-sm btn-warning m-1"
-                                            (click)="openModalConfirm(modalConfirm,ACTIONSenum.DESAUTORIZAR,item)">
-                                            <i class="fa fa-sm fa-times"></i>
-                                        </button> -->
 
                                         <!-- boton cargando -->
                                         <button *ngIf="item.cargando && !isAutorizando " disabled
@@ -150,7 +114,16 @@
                                 </td>
                                 <td>
                                     <span class="text-muted">
-                                        <i class="fa fa-calendar-alt"></i> {{item.fechaCreacion |date:'dd/MM/yy' }}
+                                        <i class="fa fa-calendar-alt"></i>
+                                        {{item.fechaCreacion |date : 'dd/MM/yy'}}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span [ngClass]="{
+                                         'text-danger': getHours(item.fechaRegistro) >= 18, 'text-muted': getHours(item.fechaRegistro) < 18
+                                        }">
+                                        <i class="fa fa-clock"></i>
+                                        {{item.fechaRegistro | date : 'shortTime'}}
                                     </span>
                                 </td>
                                 <td>

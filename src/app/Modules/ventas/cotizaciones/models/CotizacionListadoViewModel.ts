@@ -30,4 +30,6 @@ export interface CotizacionListadoViewModel {
     fechaPromesa: Date;
     saldocxc:number;
 
+    fechaRegistro: Date;
+
 }

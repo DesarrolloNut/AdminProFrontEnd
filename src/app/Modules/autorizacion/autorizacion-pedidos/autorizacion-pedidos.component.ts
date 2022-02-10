@@ -79,7 +79,6 @@ export class AutorizacionPedidosComponent implements OnInit {
   fechaDesde: Date;
   fechaHasta: Date;
 
-
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private authService: AuthenticationService,
@@ -92,6 +91,7 @@ export class AutorizacionPedidosComponent implements OnInit {
     this.configRangeDates();
     this.getCotizacionPromesaTipo()
     this.getEstadoAutorizacionUsuario()
+
   }
 
   configRangeDates() {
@@ -102,6 +102,16 @@ export class AutorizacionPedidosComponent implements OnInit {
     this.fechaDesde = desde;
     this.fechaHasta = date;
   }
+
+  getHours(fecha: Date): number {
+    console.log(fecha)
+    let date = new Date(fecha)
+    console.log(date)
+    console.log(date.getHours())
+
+    return date.getHours();
+  }
+
 
   getEstadoAutorizacionUsuario() {
     let parametro = {
