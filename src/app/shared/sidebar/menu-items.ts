@@ -131,6 +131,7 @@ export const ROUTES: RouteInfo[] = [
       },
     ],
   },
+
   {
     path: '/',
     title: 'Compras',
@@ -181,13 +182,64 @@ export const ROUTES: RouteInfo[] = [
     path: '/',
     title: 'Finanzas',
     label: '',
-    icon: 'mdi mdi-chart-bar',
+    icon: 'mdi mdi-cash-usd',
     class: 'has-arrow',
     labelClass: '',
     extralink: false,
-    submenu: [],
     permisos: ["finanzas"],
+    submenu: [
+      {
+        path: '/',
+        label: '',
+        labelClass: '',
+        title: 'Cuentas Por Cobrar',
+        icon: '',
+        class: 'has-arrow',
+        extralink: false,
+        permisos: ["finanzas_cuentas_por_cobrar"],
+        submenu: [
+          {
+            path: '/finanzas/cuentas-por-cobrar/cheques-devueltos',
+            label: '',
+            labelClass: '',
+            title: 'Cheques Devueltos',
+            icon: '',
+            class: '',
+            extralink: false,
+            permisos: ["finanzas_cuentas_por_cobrar_cheques_devueltos"],
+            submenu: [],
+          },
+        ],
+      },
+
+      // {
+      //   path: '/',
+      //   label: '',
+      //   labelClass: '',
+      //   title: 'Cuentas Por Pagar',
+      //   icon: '',
+      //   class: 'has-arrow',
+      //   extralink: false,
+      //   permisos: ["finanzas_cuentas_por_pagar"],
+      //   submenu: [
+      //     // {
+      //     //   path: '/finanzas/cuentas-por-cobrar/cheques-devueltos',
+      //     //   label: '',
+      //     //   labelClass: '',
+      //     //   title: 'Cheques Devueltos',
+      //     //   icon: '',
+      //     //   class: '',
+      //     //   extralink: false,
+      //     //   permisos: ["finanzas_cuentas_por_cobrar_cheques_devueltos"],
+      //     //   submenu: [],
+      //     // },
+      //   ],
+      // },
+
+    ],
   },
+
+
   {
     path: '/',
     title: 'Recursos Humanos',
@@ -199,6 +251,8 @@ export const ROUTES: RouteInfo[] = [
     submenu: [],
     permisos: ["recursos-humanos"],
   },
+
+
   {
     path: '',
     title: 'Inventario',
@@ -242,17 +296,17 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ['inventario_entregas'],
       },
-        {
-          path: '/inventario/despacho',
-          title: 'Despacho',
-          label: '',
-          icon: '',
-          class: '',
-          labelClass: '',
-          extralink: false,
-          submenu: [],
-          permisos: ['despacho'],
-        },
+      {
+        path: '/inventario/despacho',
+        title: 'Despacho',
+        label: '',
+        icon: '',
+        class: '',
+        labelClass: '',
+        extralink: false,
+        submenu: [],
+        permisos: ['despacho'],
+      },
       // {
       //   path: '/inventario/autorizaciondevoluciones',
       //   title: 'Autorizacion Devoluciones',
@@ -266,6 +320,7 @@ export const ROUTES: RouteInfo[] = [
       // },
     ],
   },
+
 
   {
     path: '/',
@@ -312,6 +367,8 @@ export const ROUTES: RouteInfo[] = [
       },
     ],
   },
+
+
   {
     path: '/',
     title: 'Servicios',

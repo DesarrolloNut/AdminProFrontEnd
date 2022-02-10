@@ -39,6 +39,8 @@ export const Approutes: Routes = [
 
       { path: 'compras', loadChildren: () => import('./Modules/compras/compras.module').then(m => m.ComprasModule) },
 
+      { path: 'finanzas', loadChildren: () => import('./Modules/finanzas/finanzas.module').then(m => m.FinanzasModule) },
+
       { path: 'produccion', loadChildren: () => import('./Modules/produccion/produccion.module').then(m => m.ProduccionModule) },
 
       { path: 'inventario', loadChildren: () => import('./Modules/inventario/inventario.module').then(m => m.InventarioModule) },
@@ -61,7 +63,7 @@ export const Approutes: Routes = [
     ],
   },
 
-  
+
   {
     path: 'consultas',
     component: BlankComponent,
