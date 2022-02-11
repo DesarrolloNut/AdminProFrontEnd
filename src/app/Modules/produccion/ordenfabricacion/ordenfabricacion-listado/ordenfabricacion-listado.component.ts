@@ -142,8 +142,8 @@ GetNameEstado(estadoId: number){
     this.IsPesajeProducida = !this.IsPesajeProducida;
   }
 
-  OnChangePagePesaje(articulosExtras, isTerminalReport) {
-    this.modalService.dismissAll();
+  OnChangePagePesaje(content, articulosExtras, isTerminalReport) {
+    //this.modalService.dismissAll();
     let data = <OrdenFabricacionVista> articulosExtras;
     if(isTerminalReport){
       data.articulo = this.articulo.codigoReferencia;
@@ -151,7 +151,11 @@ GetNameEstado(estadoId: number){
 
     this.ordenfabriService.SaveOrdenFabricacion(articulosExtras);
     this.ordenfabriService.SaveListArticulosDetalles(this.articulosExtras);
-    this.router.navigateByUrl("/produccion/ordenfabricacionpesaje");
+    this.modalService.open(content, {
+      windowClass: "myCustomModalClass",
+      backdrop: "static",
+    });
+    //this.router.navigateByUrl("/produccion/ordenfabricacionpesaje");
   }
 
   OnSubmitConsumido(model: OrdenFabricacionVista, content){
@@ -165,6 +169,11 @@ GetNameEstado(estadoId: number){
 
     if (model.lote == "" && model.gestionado == true) {
       this.toastService.warning("Digita el lote.");
+      return;
+    }
+
+    if (model.consumido < model.cantidadRequerida) {
+      this.ModalAutorizarArticulo = this.modalService.open(content, { size:'lg'});
       return;
     }
 
@@ -183,11 +192,7 @@ GetNameEstado(estadoId: number){
       return;
     }
 
-    if (model.consumido < model.cantidadRequerida) {
-      this.ModalAutorizarArticulo = this.modalService.open(content, { size:'lg'});
-      // this.toastService.warning("El valor consumido es menor a la cantidad requerida");
-      return;
-    }
+ 
 
 
     if (model.consumido > maximo) {

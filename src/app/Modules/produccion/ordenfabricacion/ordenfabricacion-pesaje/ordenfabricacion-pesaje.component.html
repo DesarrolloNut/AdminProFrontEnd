@@ -5,11 +5,11 @@
   </div>
 </div>
 
-<div class="row mb-2">
+<!-- <div class="row mb-2">
   <div class="col">
       <button class="btn btn-light" routerLink="/produccion/ordenfabricacion"><i class="fa fa-arrow-left"></i> Regresar</button>
   </div>
-</div>
+</div> -->
 
 
 <!--
@@ -45,19 +45,20 @@
 
 <div class="row" *ngIf="articulo">
   <div class="col">
-      <div class="card">
-          <div class="card-body">
-              <div class="row">
+      <div class="card m-0">
+          <div class="card-body m-0 p-0">
+              <div class="row justify-content-center align-items-center">
+
                   <div class="col-12 mb-1">
                       <div class="row border border-light p-2">
                           <div class="col">
-                              <h1> <i class="fa fa-shopping-bag"></i> {{articulo.codigoReferencia}} |
-                                  {{articulo.nombre}}</h1>
+                              <h2> <i class="fa fa-shopping-bag"></i> {{articulo.codigoReferencia}} |
+                                  {{articulo.nombre}}</h2>
                           </div>
                       </div>
                   </div>
 
-                  <div class="form-group col-md-6" *ngIf="articulo">
+                  <div class="form-group col" *ngIf="articulo">
                       <label for="inputEmail4">Almacén</label>
                       <ng-select bindLabel="nombre" bindValue="codigo" [(ngModel)]="almacenID"
                           [items]="almecenes" [clearable]="false" [loading]="loadingAlmacenes"
@@ -65,15 +66,7 @@
                       </ng-select>
                   </div>
 
-                  <!-- <div class="form-group col-md-6" *ngIf="articulo">
-                      <label for="inputEmail4">Almacén hasta</label>
-                      <ng-select bindLabel="nombre" bindValue="codigo" [(ngModel)]="almacenesHastaSeleccionado"
-                          [items]="almacenesHasta" [clearable]="false" [loading]="loadingAlmacenesDesde"
-                          notFoundText="No resultados">
-                      </ng-select>
-                  </div> -->
-
-                  <div class="col-md-6" *ngIf="!isTerminalReport && ordenfabricacionvista.gestionado">
+                  <div class="col" *ngIf="!isTerminalReport && ordenfabricacionvista.gestionado">
 
                     <label for="lote"> Lote</label>
                     <div class="input-group mb-3 w-50">
@@ -101,7 +94,7 @@
 
 
                   </div>
-                  <div class="col-md-6" *ngIf="isTerminalReport">
+                  <div class="col" *ngIf="isTerminalReport">
 
                     <label for="lote"> Batch</label>
                     <div class="input-group mb-3 w-50">
@@ -109,14 +102,6 @@
                     </div>
 
                   </div>
-
-                  <!-- <div class="form-group col-md-6" *ngIf="articulo ">
-                      <label>Fecha de vencimiento</label>
-                      <ejs-datepicker #default (focus)='onFocus($event)' [(ngModel)]="fechaVencimiento"
-                          [showClearButton]="false" [format]="'dd-MM-yyyy'" [min]='fechaActual'>
-                      </ejs-datepicker>
-                  </div> -->
-
               </div>
           </div>
       </div>
@@ -238,9 +223,9 @@
               <div class="row">
 
                   <div class="col text-right">
-                      <button class="btn btn-light m-1" routerLink="/produccion/ordenfabricacion" type="button">
+                      <!-- <button class="btn btn-light m-1" routerLink="/produccion/ordenfabricacion" type="button">
                           <i class="fas fa-times"></i> Cancelar
-                      </button>
+                      </button> -->
 
                       <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="button" (click)="onSubmit(modalAutorizaMaterial)">
                           <i class="fas fa-check"></i> Guardar
