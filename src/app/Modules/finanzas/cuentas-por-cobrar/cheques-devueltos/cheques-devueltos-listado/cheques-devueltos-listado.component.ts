@@ -39,7 +39,7 @@ export class ChequesDevueltosListadoComponent implements OnInit {
     let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
 
     this.httpService.GetAllWithPagination<ChequeDevueltoListadoViewModel>(DataApi.ChequeDevuelto, "GetChequeDevueltoListado", "ID", this.paginaNumeroActual,
-      this.paginaSize, true, parametros).subscribe(x => {
+      this.paginaSize, false, parametros).subscribe(x => {
 
         if (x.ok) {
           this.data = x.records;
