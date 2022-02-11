@@ -203,7 +203,26 @@
                         </div>
                         <!-- WIDGETS DATA INFO -->
 
-                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                        <div class="col-lg-2 col-md-4 col-6">
+                            <div class="card border-bottom border-info">
+                                <div class="card-body">
+                                    <div class="d-flex no-block align-items-center">
+                                        <div>
+                                            <h4 class="font-weight-bold">
+                                                <span class="font-weight-bold">
+                                                    {{chequesDevueltos.length }}
+                                                </span>
+                                            </h4>
+                                            <h6 class="text-info">Cheques Dev.</h6>
+                                        </div>
+                                        <div class="ml-auto"><span class="text-info display-6"><i
+                                                    class="ti-layout-cta-btn-right"></i></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-md-4 col-6">
                             <div class="card border-bottom border-info">
                                 <div class="card-body">
                                     <div class="d-flex no-block align-items-center">
@@ -223,7 +242,7 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                        <div class="col-lg-2 col-md-4 col-6">
                             <div class="card border-bottom border-info">
                                 <div class="card-body">
                                     <div class="d-flex no-block align-items-center">
@@ -250,7 +269,7 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-2 col-md-4 col-sm-6 col-xs-6">
+                        <div class="col-lg-2 col-md-4 col-6">
                             <div class="card border-bottom border-cyan">
                                 <div class="card-body">
                                     <div class="d-flex no-block align-items-center">
@@ -267,7 +286,7 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                        <div class="col-lg-3 col-md-4 col-6">
                             <div class="card border-bottom border-success">
                                 <div class="card-body">
                                     <div class="d-flex no-block align-items-center">
@@ -284,7 +303,7 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-2 col-md-4 col-sm-6 col-xs-6">
+                        <div class="col-lg-2 col-md-4 col-6">
                             <div class="card border-bottom border-orange">
                                 <div class="card-body">
                                     <div class="d-flex no-block align-items-center">
@@ -301,7 +320,7 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                        <div class="col-lg-3 col-md-4 col-6">
                             <div class="card border-bottom border-primary">
                                 <div class="card-body">
                                     <div class="d-flex no-block align-items-center">
@@ -322,7 +341,7 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-2 col-md-4 col-sm-6 col-xs-6">
+                        <div class="col-lg-2 col-md-4 col-6">
                             <div class="card border-bottom" [ngClass]=" {
                                         'border-success': porcentajeCalculado <= 35,
                                         'border-orange': porcentajeCalculado > 35 && porcentajeCalculado <= 65,

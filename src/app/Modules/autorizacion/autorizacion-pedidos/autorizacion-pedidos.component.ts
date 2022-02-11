@@ -14,6 +14,7 @@ import { CotizacionDetalleViewModel } from '../../ventas/cotizaciones/models/Cot
 import { Factura } from '../../ventas/facturas/models/Factura';
 import { AutorizacionHistoricoListadoViewModel } from '../models/AutorizacionHistoricoListadoViewModel';
 import { EstadoPedidoAutorizacionEnum } from '../models/EstadoPedidoAutorizacionEnum';
+import { ChequeDevueltoListadoViewModel } from '../../finanzas/cuentas-por-cobrar/cheques-devueltos/models/ChequeDevueltoListadoViewModel';
 
 enum btnClickedEnum {
   AUTORIZAR = 1,
@@ -78,6 +79,9 @@ export class AutorizacionPedidosComponent implements OnInit {
   //filtros
   fechaDesde: Date;
   fechaHasta: Date;
+
+  chequesDevueltos: ChequeDevueltoListadoViewModel[] = []
+  loadingChequesDevueltos: boolean;
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
@@ -246,6 +250,7 @@ export class AutorizacionPedidosComponent implements OnInit {
     this.getFacturasPendientesPago(item.clienteId);
     this.getCotizacionDetalle(item.id);
     this.getAutorizacionesHistorico();
+    this.getChequesDevueltosCliente();
 
     this.modalService.open(content, { windowClass: "myCustomModalClass" });
 
@@ -485,6 +490,33 @@ export class AutorizacionPedidosComponent implements OnInit {
 
       });
   }
+
+
+  getChequesDevueltosCliente() {
+
+    this.loadingChequesDevueltos = true;
+    this.httpService.DoPostAny<ChequeDevueltoListadoViewModel>(DataApi.ChequeDevuelto,
+      "GetChequesDevueltosByClienteID", this.cotizacionSeleccionada.clienteId).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+          this.chequesDevueltos = response.records;
+          console.log({ "cheques": this.chequesDevueltos })
+        }
+        this.loadingChequesDevueltos = false;
+
+      }, error => {
+        this.loadingChequesDevueltos = false;
+        this.toastService.error("No se pudo obtener los cheques devueltos del cliente.", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getChequesDevueltosCliente()
+        }, 1000);
+      });
+
+  }
+
 
 
   onChangeFechaDesdeFiltro(evento: any) {
