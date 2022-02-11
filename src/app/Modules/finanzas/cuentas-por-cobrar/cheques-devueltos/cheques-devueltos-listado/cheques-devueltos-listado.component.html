@@ -32,12 +32,13 @@
                         <thead>
                             <tr>
                                 <th></th>
+                                <th>Banco</th>
                                 <th>Cheque</th>
                                 <th>Monto</th>
                                 <th>Cliente</th>
                                 <th>Fecha</th>
                                 <th>Usuario</th>
-                                <!-- <th></th> -->
+                                <th></th>
 
                             </tr>
                         </thead>
@@ -45,6 +46,9 @@
 
                             <tr *ngFor="let item of data">
                                 <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
+                                <td>
+                                    <span> {{item.banco}}</span>
+                                </td>
                                 <td>
                                     <span> {{item.cheque}}</span>
                                 </td>
@@ -57,17 +61,17 @@
                                 <td>
                                     <span class="text-muted">
                                         <i class="fa fa-calendar-alt"></i>
-                                        {{item.fechaRegistro | date:'short'}}
+                                        {{item.fechaRegistro | date:'dd/MM/yyyy, h:mm a'}}
                                     </span>
                                 </td>
                                 <td>
                                     <span> {{item.usuario}}</span>
                                 </td>
-                                <!-- <td>
+                                <td>
                                     <button class="btn btn-sm btn-info" [routerLink]="[item.id]">
                                         <i class="fa fa-sm fa-edit"></i>
                                     </button>
-                                </td> -->
+                                </td>
                             </tr>
 
                         </tbody>

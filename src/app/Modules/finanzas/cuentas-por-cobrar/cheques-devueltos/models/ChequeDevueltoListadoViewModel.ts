@@ -1,4 +1,4 @@
-export interface ChequeDevueltoListadoViewModel   {
+export interface ChequeDevueltoListadoViewModel {
     id: number;
     cheque: string;
     fechaRegistro: string;
@@ -7,4 +7,5 @@ export interface ChequeDevueltoListadoViewModel   {
     cliente: string;
     usuarioRegistroId: number;
     usuario: string;
+    banco: string;
 }
