@@ -5,4 +5,6 @@ export interface ChequeDevuelto {
     monto: number;
     fechaRegistro: Date;
     usuarioRegistroId: number;
+    bancoID: number;
+    motivoID: number;
 }

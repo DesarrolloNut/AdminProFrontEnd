@@ -17,9 +17,6 @@ import { ChequeDevuelto } from '../models/ChequeDevuelto';
 })
 export class ChequesDevueltosFormularioComponent implements OnInit {
 
-  sucursales: ComboBox[] = [];
-  loadingSucursales = false;
-
   Cargando: boolean = false;
   Formulario: FormGroup;
   submitted = false;
@@ -28,6 +25,11 @@ export class ChequesDevueltosFormularioComponent implements OnInit {
   loadingClientes: boolean;
   clientes: ComboBox[];
   cliente: Cliente;
+
+  bancos: ComboBox[];
+  loadingBancos: boolean;
+  loadingMotivos: boolean;
+  motivos: ComboBox[];
 
   constructor(
     private toastService: ToastrService,
@@ -47,6 +49,8 @@ export class ChequesDevueltosFormularioComponent implements OnInit {
       this.actualizando = true;
     }
     this.getClientes()
+    this.getBancos()
+    this.getChequeDevueltoMotivos()
 
   }
 
@@ -59,7 +63,9 @@ export class ChequesDevueltosFormularioComponent implements OnInit {
       cheque: [null, Validators.required],
       monto: [null, Validators.required],
       fechaRegistro: [null],
-      usuarioRegistroId: [null, [Validators.required]],
+      usuarioRegistroId: [null, [Validators.required]], 
+      bancoID: [null, [Validators.required]],
+      motivoID: [null, [Validators.required]],
     });
   }
 
@@ -196,6 +202,55 @@ export class ChequesDevueltosFormularioComponent implements OnInit {
       this.getClienteByID(cliente.codigo)
     }
   }
+
+
+
+
+  getBancos() {
+    this.loadingBancos = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetBancos", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.bancos = response.records;
+        }
+        this.loadingBancos = false;
+      }, error => {
+        this.loadingBancos = false;
+        this.toastService.error("No se pudo obtener los bancos", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getBancos()
+        }, 1000);
+
+      });
+  }
+
+
+  getChequeDevueltoMotivos() {
+    this.loadingMotivos = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetChequeDevueltoMotivos", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.motivos = response.records;
+        }
+        this.loadingMotivos = false;
+      }, error => {
+        this.loadingMotivos = false;
+        this.toastService.error("No se pudo obtener los motivos", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getChequeDevueltoMotivos()
+        }, 1000);
+
+      });
+  }
+
 
 
 }
