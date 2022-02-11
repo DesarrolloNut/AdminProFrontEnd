@@ -1,0 +1,52 @@
+<div class="container" style="min-height: 650px;">
+  <div class="row" >
+    <div class="col-md-12 pb-2" >
+     <div class="input-group mt-5">
+       <div class="input-group-prepend">
+         <span class="input-group-text" id="basic-addon1">
+           <i class="fa fa-search" aria-hidden="true"></i> Buscar
+         </span>
+       </div>
+       <input type="text" class="form-control"
+        placeholder="ARTICULOS/PRODUCTOS"
+        aria-label="Productos"
+        aria-describedby="basic-addon1">
+
+      </div>
+     </div>
+
+     <perfect-scrollbar  class="scroll-container" fxFlex="auto" [config]="config" [scrollIndicators]="true" (psXReachEnd)="onScrollEvent($event)" (psYReachEnd)="onScrollEvent($event)" (psXReachStart)="onScrollEvent($event)" (psYReachStart)="onScrollEvent($event)">
+
+    <div class="col-md-12 mt-4 " style="max-height: 550px;">
+
+     <div class="container p-3">
+        <div class="row">
+          <div class="col-md-3" (click)="addProductVenta(p)" *ngFor="let p of articulos">
+              <div class="card product  " style="background-image: url({{p.urlImage}});"  [ngClass]="{'product_added_venta':p.count>0}" >
+                <h4 class="heading  text_name_product text_noselected ">{{p.nombre}}</h4>
+
+                  <div class="mt-1 text-center" >
+                    <!-- <span class="badge badge-info text_noselected">{{p.count}}</span> -->
+
+                      <div class="mt-2 text-center">
+                        <i *ngIf="!p.urlImage" class="fas fa-box-open icon_articulo"></i>
+                        <i *ngIf="p.urlImage" style="color:#ffffff00
+                        " class="fas fa-box-open icon_articulo"></i>
+
+                          <!-- <div class="progress">
+                              <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                          </div> -->
+                      </div>
+                  </div>
+                  <br>
+                  <div class="mt-5 text-center p-3"> <span class="text1 text_price_product text_noselected">RD{{p.precio | currency}}</span> </div>
+
+              </div>
+          </div>
+      </div>
+
+   </div>
+    </div>
+ </perfect-scrollbar>
+  </div>
+ </div>

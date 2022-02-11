@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -25,6 +25,15 @@ import { PedidoEmpleadoDetalleViewModel } from '../models/PedidoEmpleadoDetalleV
   styleUrls: ['./pedidos-empleado-formulario.component.scss']
 })
 export class PedidosEmpleadoFormularioComponent implements OnInit {
+
+
+  articulosAgregados: ArticuloListaPrecioViewModel[] = [] //tu modelo
+  @Output() articulosAgregadosToSendFactura=new EventEmitter();
+
+
+
+
+
 
   Cargando: boolean = false;
   btnGuardarCargando = false;
@@ -72,25 +81,27 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
     private route: ActivatedRoute,
     private modalService: NgbModal,
     private authService: AuthenticationService,
+    // private logger: NGXLogger,
   ) { }
 
   ngOnInit(): void {
+    // this.logger.log("catName : " + this.catName + '\n' + "cmsID : " + this.cmsID);
 
-    let id = Number(this.route.snapshot.paramMap.get('id'));
-    this.idPedidoEmpleadoByRouter=id;
-    if (id > 0) {
-      this.getCotizacion(id);
-      this.actualizando = true;
-    }else{
-      this.getClienteByUsuarioID(Number(this.authService.tokenDecoded.nameid));
-    }
+    // let id = Number(this.route.snapshot.paramMap.get('id'));
+    // this.idPedidoEmpleadoByRouter=id;
+    // if (id > 0) {
+    //   this.getCotizacion(id);
+    //   this.actualizando = true;
+    // }else{
+    //   this.getClienteByUsuarioID(Number(this.authService.tokenDecoded.nameid));
+    // }
 
-    this.getUsuarioByID(Number(this.authService.tokenDecoded.nameid));
-    this.getITBIS()
+    // this.getUsuarioByID(Number(this.authService.tokenDecoded.nameid));
+    // this.getITBIS()
 
-    this.getTipoCondicionPago()
-    this.getMonedaTipos()
-    this.getVendedores()
+    // this.getTipoCondicionPago()
+    // this.getMonedaTipos()
+    // this.getVendedores()
   }
 
   getCotizacion(id: number) {
@@ -178,7 +189,7 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
       this.toastService.warning("Debe asignarle un almacen a este empleado")
       return;
     }
- 
+
   }
 
   onSubmit() {
@@ -246,32 +257,6 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
       });
   }
 
-  getClientes(searchObj: any = null, clienteID: number = 0) {
-    let search = ""
-
-    if (searchObj)
-      search = searchObj.term;
-    this.loadingClientes = true;
-    let parametros: Parametro[] = [
-      { key: "CompaniaID", value: this.authService.tokenDecoded.primarygroupsid },
-      { key: "Search", value: search },
-      { key: "clienteID", value: clienteID },
-    ];
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetClientesComboBox", parametros).subscribe(response => {
-
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          this.clientes = response.records;
-        }
-
-        this.loadingClientes = false;
-      }, error => {
-        this.loadingClientes = false;
-        this.toastService.error("Error conexion al servidor");
-      });
-  }
 
   getClienteByUsuarioID(usuarioId: number) {
     this.loadingInfoCliente = true;
@@ -282,7 +267,7 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
         } else {
           //validar que existe
           if (response != null && response.records != null && response.records.length > 0) {
-           
+
             this.cliente = response.records[0];
             this.clienteExiste=true;
             this.cliente.apellidos = this.cliente.apellidos==null?"":this.cliente.apellidos;
@@ -343,15 +328,7 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
   }
 
 
-  onSelectArticulo(item: ArticuloListaPrecioViewModel, index: number) {
-    this.pedidoEmpleadoDetalles[index].precio = item.precioActual;
-    this.pedidoEmpleadoDetalles[index].costo = item.costo;
-    if (!this.pedidoEmpleadoDetalles.some(x => x.articuloId <= 0)) {
-      this.agregarDetalleVacio()
-    }
-    this.calcularTotales()
 
-  }
 
 
   getArticulosPrecioActual() {
@@ -374,13 +351,7 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
       });
   }
 
-  onDeleteitem(index: number) {
-    this.pedidoEmpleadoDetalles.splice(index, 1);
-    if (!this.pedidoEmpleadoDetalles.some(x => x.id <= 0)) {
-      this.agregarDetalleVacio()
-    }
-    this.calcularTotales()
-  }
+
 
   calcularTotales() {
     this.limpiarTotales()
@@ -547,11 +518,7 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
       });
   }
 
-  openModal(content, articuloID: number) {
-    this.articuloBalance = [];
-    this.getArticuloBalanceAlmacenes(articuloID);
-    this.modalService.open(content, { size: 'lg', });
-  }
+
 
 
   getArticuloBalanceAlmacenes(articuloID: number) {
@@ -576,6 +543,29 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
       });
   }
 
+
+
+  closeModal(){
+    this.router.navigateByUrl('ventas/pedidos-empleado');
+    this.modalService.dismissAll();
+  }
+
+
+
+
+
+  addArticuloFromListArticulos(data:ArticuloListaPrecioViewModel[]) {
+    this.articulosAgregados=data;
+    this.articulosAgregadosToSendFactura.emit(data);
+ }
+
 }
+
+
+
+
+
+
+
 
 

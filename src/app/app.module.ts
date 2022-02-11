@@ -1,6 +1,6 @@
 import * as $ from 'jquery';
 import { JwtModule } from '@auth0/angular-jwt';
-import { NgxPermissionsModule } from 'ngx-permissions'; 
+import { NgxPermissionsModule } from 'ngx-permissions';
 
 
 import { BrowserModule } from '@angular/platform-browser';
@@ -25,7 +25,7 @@ import { SpinnerComponent } from './shared/spinner.component';
 import { LoginComponent } from './Modules/login/login.component';
 import { AuthGuard } from './core/guards/auth.guard';
 
-import { PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
+import { PerfectScrollbarModule, PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { SharedModule } from './Modules/shared/shared.module';
 import { environment } from 'src/environments/environment';
@@ -51,11 +51,11 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     SidebarComponent,
     LoginComponent,
   ],
-  imports: [ 
+  imports: [
 
     JwtModule.forRoot({
       config: {
-        tokenGetter: tokenGetter, 
+        tokenGetter: tokenGetter,
         whitelistedDomains: [getHost()],
         blacklistedRoutes: [getHost() + '/' + 'api/Authentication']
       }
@@ -71,13 +71,13 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     NgbToastModule,
     CommonModule,
     BrowserModule,
-
+    PerfectScrollbarModule,
     BrowserAnimationsModule,
     SharedModule,
     HttpClientModule,
     RouterModule.forRoot(Approutes),
 
-  ], 
+  ],
   providers: [
     { provide: PERFECT_SCROLLBAR_CONFIG, useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG },
     { provide: 'BASE_URL', useFactory: getHost }, AuthGuard,
