@@ -18,7 +18,7 @@ export class PedidosEmpleadoProductosComponent implements OnInit {
   articulos =[
     {
     id: 1,
-    nombre: "100002 | Salami Super Especial Nut. 1/1 De 2.2 Lbs	 ",
+    nombre: "100002 | Salami Super Especial Nut. 1/1 De 2.2 Lbs",
     precio:400.00,
     urlImage:'http://nutriciosa.com/wp-content/uploads/2018/07/salami-nutriciosa.jpg',
 

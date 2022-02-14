@@ -1,13 +1,13 @@
-<div class="container" style="min-height: 650px;">
+<div class="container-fluid" style="min-height: 500px;">
   <div class="row" >
-    <div class="col-md-12 pb-2" >
-     <div class="input-group mt-5">
+    <div class="col-md-12 pb-1" >
+     <div class="input-group mt-1">
        <div class="input-group-prepend">
          <span class="input-group-text" id="basic-addon1">
            <i class="fa fa-search" aria-hidden="true"></i> Buscar
          </span>
        </div>
-       <input type="text" class="form-control"
+       <input style="height: 50px;" type="text" class="form-control"
         placeholder="ARTICULOS/PRODUCTOS"
         aria-label="Productos"
         aria-describedby="basic-addon1">
@@ -19,14 +19,14 @@
 
     <div class="col-md-12 mt-4 " style="max-height: 550px;">
 
-     <div class="container p-3">
+     <div class="container-fluid p-3">
         <div class="row">
-          <div class="col-md-3" (click)="addProductVenta(p)" *ngFor="let p of articulos">
+          <div class="col-xl-2  col-lg-3 col-md-4 col-sm-6 col-xs-12" (click)="addProductVenta(p)" *ngFor="let p of articulos">
               <div class="card product  " style="background-image: url({{p.urlImage}});"  [ngClass]="{'product_added_venta':p.count>0}" >
                 <h4 class="heading  text_name_product text_noselected ">{{p.nombre}}</h4>
 
                   <div class="mt-1 text-center" >
-                    <!-- <span class="badge badge-info text_noselected">{{p.count}}</span> -->
+                    <span class="badge badge-light text_noselected" style="font-size: 15px; color: green; font-weight: 600;">{{p.count}}</span>
 
                       <div class="mt-2 text-center">
                         <i *ngIf="!p.urlImage" class="fas fa-box-open icon_articulo"></i>

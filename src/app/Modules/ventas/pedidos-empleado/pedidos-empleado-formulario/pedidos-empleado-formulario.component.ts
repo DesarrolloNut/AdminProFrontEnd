@@ -1,3 +1,4 @@
+import { animate, style, transition, trigger } from '@angular/animations';
 import { AfterViewInit, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -22,7 +23,25 @@ import { PedidoEmpleadoDetalleViewModel } from '../models/PedidoEmpleadoDetalleV
 @Component({
   selector: 'app-pedidos-empleado-formulario',
   templateUrl: './pedidos-empleado-formulario.component.html',
-  styleUrls: ['./pedidos-empleado-formulario.component.scss']
+  styleUrls: ['./pedidos-empleado-formulario.component.scss'],
+  animations: [
+    trigger('onProductos', [
+      transition(':enter', [style({
+        opacity: 0,
+        transform: 'translateX(-100%)'
+      }),
+      animate(400)
+    ])
+    ]),
+    trigger('onCarrito', [
+      transition(':enter', [style({
+        opacity: 0,
+        transform: 'translateX(100%)'
+      }),
+      animate(400)
+    ])
+    ]),
+ ]
 })
 export class PedidosEmpleadoFormularioComponent implements OnInit {
 
@@ -74,6 +93,12 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
   clienteExiste=true;
   balanceEmpleado:number;
   idPedidoEmpleadoByRouter:number;
+
+
+
+
+
+  showSummaryCart=false;
   constructor(
     private toastService: ToastrService,
     private httpService: BackendService,
@@ -559,6 +584,11 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
     this.articulosAgregadosToSendFactura.emit(data);
  }
 
+
+
+ changeView(showSummaryCart){
+   this.showSummaryCart=showSummaryCart;
+ }
 }
 
 
