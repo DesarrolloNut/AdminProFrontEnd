@@ -320,7 +320,7 @@ export class OrdenfabricacionPesajeComponent implements OnInit, OnDestroy {
   SaveConsumido() {
 
  
-    this.ordenfabricacionvista.consumido = this.pesoNeto;
+    this.ordenfabricacionvista.consumido = this.pesoNetoOrden;
     this.ordenfabricacionvista.lote = this.lote.lote;
     this.ordenfabricacionvista.batch = this.batch;
     // console.log(this.ordenfabricacionvista);
