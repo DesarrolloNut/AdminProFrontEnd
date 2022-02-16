@@ -1,62 +1,147 @@
 
 
-  <div class="modal-header">
+  <div class="modal-header ">
 
-    <div class="row">
-      <h4 class="modal-title font-weight-bold" id="modal-basic-title" style="font-size: 25px;">Bienvenido, Jancer Crack, Realiza tu pedido</h4>
+    <div class="row w-75" *ngIf="!loadingInfoCliente">
 
-        <div class="row col-12">
-          <div class=" col-lg-4 col-md-6">
-            <div class="card overflow-hidden">
-              <div class="d-flex flex-row">
-                <div class="p-3 bg-light-success">
-                  <h3 class="text-success box mb-0">
-                    <i class="fa fa-money-bill-alt"></i>
-                  </h3>
+      <div class="col-12 ml-0">
+         <h4 class="modal-title font-weight-bold"   id="modal-basic-title" style="font-size: 25px;">Bienvenido, {{cliente.nombres | titlecase}}</h4>
+      </div>
+
+        <div class="col-12">
+          <div class="row">
+            <div class=" col-lg-4 col-md-6">
+              <div class="card overflow-hidden">
+                <div class="d-flex flex-row">
+                  <div class="p-3 bg-light-success">
+                    <h3 class="text-success box mb-0">
+                      <i class="fa fa-money-bill-alt"></i>
+                    </h3>
+                  </div>
+                  <div class="p-3">
+                    <h3 class="text-success mb-0">{{cliente.balance | currency}}</h3>
+                    <span class="font-weight-bold text-black-50">Balance</span>
+                  </div>
                 </div>
-                <div class="p-3">
-                  <h3 class="text-success mb-0">{{18090 | currency}}</h3>
-                  <span class="font-weight-bold text-black-50">Balance</span>
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+              <div class="card overflow-hidden">
+                <div class="d-flex flex-row">
+                  <div class="p-3 bg-light-warning">
+                    <h3 class="text-warning box mb-0">
+                      <i class="fa fa-money-bill-alt"></i>
+                    </h3>
+                  </div>
+                  <div class="p-3">
+                    <h3 class="text-warning mb-0">{{cliente.limiteCredito  | currency}}</h3>
+                    <span class="font-weight-bold text-black-50">Limite de credito</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="col-lg-4 col-md-6">
-            <div class="card overflow-hidden">
-              <div class="d-flex flex-row">
-                <div class="p-3 bg-light-warning">
-                  <h3 class="text-warning box mb-0">
-                    <i class="fa fa-money-bill-alt"></i>
-                  </h3>
-                </div>
-                <div class="p-3">
-                  <h3 class="text-warning mb-0">{{18090 | currency}}</h3>
-                  <span class="font-weight-bold text-black-50">Limite de credito</span>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
-
 
     </div>
 
-    <button type="button" class="btn btn-danger" aria-label="Close"   (click)=" closeModal()" >
-      <i class="fa fa-window-close"></i>
-      Cancelar Pedido
-    </button>
+
+    <!-- LOADING INFO CLIENTE -->
+    <div class="row w-75" *ngIf="loadingInfoCliente">
+
+      <div class="col-12 ml-0">
+        <ngx-skeleton-loader     [theme]="{    width: '400px' }" count="1" ></ngx-skeleton-loader>
+      </div>
+
+        <div class="col-12">
+          <div class="row">
+            <div class=" col-lg-4 col-md-6 d-inline-block">
+              <div class="section-wrapper d-inline-flex">
+                <div class="icon">
+                  <ngx-skeleton-loader [theme]="{ width: '80px', height: '80px' }">
+                  </ngx-skeleton-loader>
+                </div>
+                <div class="title ml-2">
+                  <div>
+                    <ngx-skeleton-loader
+                      [theme]="{
+                        width: '200px',
+                        'border-radius': '0',
+                        height: '15px',
+                        'margin-top': '15px'
+                      }"
+                    ></ngx-skeleton-loader>
+                  </div>
+                  <div>
+                    <ngx-skeleton-loader
+                      [theme]="{
+                        width: '170px',
+                        'border-radius': '0',
+                        'margin-top': '0px',
+                        height: '15px'
+                      }"
+                    ></ngx-skeleton-loader>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class=" col-lg-4 col-md-6 d-inline-block">
+              <div class="section-wrapper d-inline-flex">
+                <div class="icon">
+                  <ngx-skeleton-loader [theme]="{ width: '80px', height: '80px' }">
+                  </ngx-skeleton-loader>
+                </div>
+                <div class="title ml-2">
+                  <div>
+                    <ngx-skeleton-loader
+                      [theme]="{
+                        width: '200px',
+                        'border-radius': '0',
+                        height: '15px',
+                        'margin-top': '15px'
+                      }"
+                    ></ngx-skeleton-loader>
+                  </div>
+                  <div>
+                    <ngx-skeleton-loader
+                      [theme]="{
+                        width: '170px',
+                        'border-radius': '0',
+                        height: '15px'
+                      }"
+                    ></ngx-skeleton-loader>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+    </div>
 
 
 
-
+    <div class="row ">
+      <button type="button" class="btn btn-danger" aria-label="Close"   (click)=" closeModal()" >
+        <i class="fa fa-window-close"></i>
+        Cancelar Pedido
+      </button>
+    </div>
   </div>
   <div class="modal-body">
 
-    <div  class="row" >
+    <div  class="row"  *ngIf="!loadingInfoCliente">
       <div class="col-1"></div>
       <div class="col-10  productos_factura" @onProductos  *ngIf="!showSummaryCart">
-        <app-pedidos-empleado-productos     (articulosToAdd)="addArticuloFromListArticulos($event)">
+         <app-pedidos-empleado-productos
+          [listaPrecioId]="cliente.listaPrecioId"
+         (articulosToAdd)="addArticuloFromListArticulos($event)">
         </app-pedidos-empleado-productos>
       </div>
 
@@ -189,7 +274,7 @@
                 <button class="btn btn-secondary w-100  btn-outline btn-radius font-weight-bold"  >Cancelar</button>
               </div>
             </div>
-            <div class="card">
+            <!-- <div class="card">
               <div class="card-body">
                 <h5 class="card-title">For Any Support</h5>
                 <hr>
@@ -199,7 +284,7 @@
                 <small>Please contact with us if you have any questions. We are
                   avalible 24h.</small>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
 

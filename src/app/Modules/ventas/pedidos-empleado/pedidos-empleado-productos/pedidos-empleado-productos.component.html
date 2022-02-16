@@ -7,7 +7,9 @@
            <i class="fa fa-search" aria-hidden="true"></i> Buscar
          </span>
        </div>
-       <input style="height: 50px;" type="text" class="form-control"
+       <input style="height: 50px;" type="text"
+       [(ngModel)]="filter"
+        class="form-control"
         placeholder="ARTICULOS/PRODUCTOS"
         aria-label="Productos"
         aria-describedby="basic-addon1">
@@ -21,16 +23,18 @@
 
      <div class="container-fluid p-3">
         <div class="row">
-          <div class="col-xl-2  col-lg-3 col-md-4 col-sm-6 col-xs-12" (click)="addProductVenta(p)" *ngFor="let p of articulos">
-              <div class="card product  " style="background-image: url({{p.urlImage}});"  [ngClass]="{'product_added_venta':p.count>0}" >
-                <h4 class="heading  text_name_product text_noselected ">{{p.nombre}}</h4>
+          <div class="col-xl-2  col-lg-3 col-md-4 col-sm-6 col-xs-12 container_product" (click)="addProductVenta(p)" *ngFor="let p of articulos  | filter:filter">
+              <div class="card product  " [style.background-image]="getSantizeUrl(p.imagenUrl)"   [ngClass]="{'product_added_venta':p.count>0}" >
+
+                <div class="mt-5 "> </div>
 
                   <div class="mt-1 text-center" >
-                    <span class="badge badge-light text_noselected" style="font-size: 15px; color: green; font-weight: 600;">{{p.count}}</span>
+
+                    <!-- <span class="badge badge-light text_noselected" style="font-size: 15px; color: green; font-weight: 600;">{{p.count}}</span> -->
 
                       <div class="mt-2 text-center">
-                        <i *ngIf="!p.urlImage" class="fas fa-box-open icon_articulo"></i>
-                        <i *ngIf="p.urlImage" style="color:#ffffff00
+                        <i *ngIf="!p.imagenUrl" class="fas fa-box-open icon_articulo"></i>
+                        <i *ngIf="p.imagenUrl" style="color:#ffffff00
                         " class="fas fa-box-open icon_articulo"></i>
 
                           <!-- <div class="progress">
@@ -39,7 +43,8 @@
                       </div>
                   </div>
                   <br>
-                  <div class="mt-5 text-center p-3"> <span class="text1 text_price_product text_noselected">RD{{p.precio | currency}}</span> </div>
+                  <div class="mt-5 text-right  container_text_price_product"> <span class="text1 text_price_product text_noselected">{{p.precioActual | currency}}</span> </div>
+                  <h4 class="heading p-2 text_name_product text_noselected ">{{p.nombre}}</h4>
 
               </div>
           </div>

@@ -72,6 +72,7 @@
     "ngx-perfect-scrollbar": "^6.1.0",
     "ngx-permissions": "^7.0.3",
     "ngx-quill": "^7.0.2",
+    "ngx-skeleton-loader": "4.0.0",
     "ngx-toastr": "^8.10.2",
     "ngx-treeview": "^10.0.2",
     "ngx-webcam": "^0.3.0",

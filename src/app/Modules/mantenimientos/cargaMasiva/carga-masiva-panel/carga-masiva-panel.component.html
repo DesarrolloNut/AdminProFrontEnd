@@ -51,12 +51,12 @@
                             <div class="text">
                                 <span>Actualiza las rutas de clientes desde un archivo excel.</span>
                             </div>
-                
+
                             <input accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                                 class="d-none" (change)="onFileChange($event,modalUploadExcel,2)" #file2 multiple
                                 type="file" />
 
-                      
+
                             <a href="assets/files/excel/ActualizaClienteRutaTipoTemplate.xlsx" class="btn btn-sm btn-light">
                                 <i class="fa fa-download text-dark"></i> Descargar plantilla
                             </a>
@@ -83,7 +83,7 @@
                                 class="d-none" (change)="onFileChange($event,modalUploadExcel,3)" #file3  multiple
                                 type="file" />
 
-                   
+
                             <a href="assets/files/excel/ReestructuraClienteTemplate.xlsx" class="btn btn-sm btn-light">
                                 <i class="fa fa-download text-dark"></i> Descargar plantilla
                             </a>
@@ -102,11 +102,11 @@
                                                 <th>Registros</th>
                                                 <th>Fecha</th>
                                                 <th>Detalle</th>
-    
+
                                             </tr>
                                         </thead>
                                         <tbody [hidden]="Cargando">
-                
+
                                             <!-- <tr *ngFor="let cm of cargasMasivasReestructuracionCliente"> -->
                                            <tr *ngFor="let cm of cargasMasivasReestructuracionCliente">
                                                 <!-- <td>
@@ -132,7 +132,7 @@
                                                             <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
                                                             <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
                                                           </svg>
-    
+
                                                         <div class="ml-3">
                                                             <p class="mb-0" style="color: gray;    font-weight: 600;">
                                                                 <span> {{cm.fechaSubida | date:'h:mm:ss a' }}</span>
@@ -146,25 +146,25 @@
                                                         <i class="fa fa-list" aria-hidden="true"></i>
                                                     </button>
                                                 </td>
-                                      
+
                                             </tr>
-                
+
                                         </tbody>
                                     </table>
-                
+
                                 </div>
-                
-                
-                
+
+
+
                                 <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
-                
+
                                 <div class="row ">
                                     <div class="col-md-8 col-xs-12 ">
                                         <ngb-pagination [collectionSize]="paginaTotalRecords" [(page)]="paginaNumeroActual"
                                             [pageSize]="paginaSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="getCargasMasivasReestructuracionclientes()" >
                                         </ngb-pagination>
                                     </div>
-                
+
                                     <div class="col-md-4 text-right d-none d-md-block  ">
                                         <select class="form-control d-block" name="paginaSize" [(ngModel)]="paginaSize"
                                         (change)="getCargasMasivasReestructuracionclientes()" >
@@ -175,9 +175,9 @@
                                     </div>
                                 </div>
                             </div>
-              
+
                         </div>
-                     
+
                     </div>
                 </div>
 
@@ -299,15 +299,15 @@
         <div class="col-12 mb-1">
           <div class="row border border-light p-2">
             <div class="col">
-              <h3>  Id:{{cargasMasivaRCliente.id}} 
-                  | Registros : {{cargasMasivaRCliente.registros}} 
+              <h3>  Id:{{cargasMasivaRCliente.id}}
+                  | Registros : {{cargasMasivaRCliente.registros}}
                   | Fecha :  {{cargasMasivaRCliente.fechaSubida  | date:'MMM d, y, h:mm:ss a'}}</h3>
             </div>
           </div>
         </div>
-  
+
         <div class="col-12" [hidden]="loadingDetalleRcliente">
-  
+
           <div class="table-responsive">
             <table  border="1px" style=" border:1px solid gainsboro;"  width="100%"  cellspacing="4" cellpadding="4">
               <thead class= "customThead" >
@@ -329,9 +329,9 @@
                     <th class="customTh" scope="col">Actual</th>
                   </tr>
               </thead>
-  
+
               <tbody>
-  
+
                 <tr *ngFor="let d of detalleCargaMasivaReestructuracionCliente">
                   <th class="customTh" >{{d.codigoReferencia}}</th>
                   <td class="customTh" >{{d.nombres}}</td>
@@ -346,22 +346,22 @@
                   <td class="customTh">{{d.diaVisita }}</td>
 
                   <td class="customTh">
-                    <div class="circulo" 
+                    <div class="circulo"
                     [style.background-color]="d.reestructuraRutasEstadoId>0 ? '#F4D03F' :
                      (d.reestructuraRutasEstadoId==0 ? '#82E0AA' : '#82E0AA')" ></div>
                      <span class="text-dark" style="font-size: 16px;">
                         {{formatDescripcionByEstado(d.reestructuraRutasEstadoId)}}
                  </span>
                   </td>
-                
+
                 </tr>
-  
+
               </tbody>
             </table>
-  
+
           </div>
-  
-  
+
+
         </div>
         <div class="col-12">
           <app-loading-listado [hidden]="!loadingDetalleRcliente"></app-loading-listado>

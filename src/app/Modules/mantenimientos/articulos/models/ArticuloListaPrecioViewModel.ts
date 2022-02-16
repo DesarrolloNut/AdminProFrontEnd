@@ -5,6 +5,7 @@ export interface ArticuloListaPrecioViewModel {
     codigoReferencia: string;
     listaPrecioID: number;
     listaPrecio: string;
+
     precioSugerido: number;
     precioActual: number;
     precioAnterior: number;
@@ -18,4 +19,8 @@ export interface ArticuloListaPrecioViewModel {
     colorEstado: string;
 
     cargando: boolean;
+    imagenUrl: string;
+    unidadMedida: string;
+    peso:number;
+    count:number;
 }

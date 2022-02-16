@@ -110,7 +110,6 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // this.logger.log("catName : " + this.catName + '\n' + "cmsID : " + this.cmsID);
 
     // let id = Number(this.route.snapshot.paramMap.get('id'));
     // this.idPedidoEmpleadoByRouter=id;
@@ -121,7 +120,7 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
     //   this.getClienteByUsuarioID(Number(this.authService.tokenDecoded.nameid));
     // }
 
-    // this.getUsuarioByID(Number(this.authService.tokenDecoded.nameid));
+    this.getClienteByUsuarioID(Number(this.authService.tokenDecoded.nameid));
     // this.getITBIS()
 
     // this.getTipoCondicionPago()
@@ -129,50 +128,6 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
     // this.getVendedores()
   }
 
-  getCotizacion(id: number) {
-    this.Cargando = true;
-    this.httpService.DoPostAny<PedidoEmpleado>(DataApi.PedidosEmpleado,
-      "GetPedidosEmpleadoByID", id).subscribe(response => {
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          //validar que existe
-          if (response != null && response.records != null && response.records.length > 0) {
-            let record = response.records[0]
-            this.pedidoEmpleado = record;
-            this.getClienteByID(this.pedidoEmpleado.clienteId)
-            this.getPedidoEmpleadoDetalles(this.pedidoEmpleado.id)
-          } else {
-            this.toastService.warning("Pedido Empleado no encontrado");
-            this.router.navigateByUrl('/ventas/pedidos-empleado');
-          }
-        }
-        this.Cargando = false;
-
-      }, error => {
-        this.Cargando = false;
-        this.toastService.error("Error conexion al servidor");
-      });
-  }
-
-  getPedidoEmpleadoDetalles(pedidoEmpleadoID: number) {
-    this.loadingPedidoEmpleadoDetalle = true;
-    this.httpService.DoPostAny<PedidoEmpleadoDetalleViewModel>(DataApi.PedidosEmpleado,
-      "GetPedidosEmpleadoDetalles", pedidoEmpleadoID).subscribe(response => {
-
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          this.pedidoEmpleadoDetalles = response.records;
-          this.agregarDetalleVacio()
-        }
-        this.loadingPedidoEmpleadoDetalle = false;
-      }, error => {
-        this.loadingPedidoEmpleadoDetalle = false;
-        this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
-        this.router.navigateByUrl('/ventas/pedidos-empleado');
-      });
-  }
 
   getUsuarioByID(usuarioID: number) {
     //this.Cargando = true;
@@ -198,89 +153,6 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
       });
   }
 
-  agregarDetalleVacio() {
-    if(this.almacenes==null){
-      this.getAlmacenes();
-      return;
-    }
-    if(this.almacenes!= undefined && this.almacenes.length>0){
-      this.pedidoEmpleadoDetalles.push({
-        almacenId: this.almacenes[0].codigo, articuloId: 0, cantidad: undefined, costo: 0,
-        cotizacionId: 0, id: 0,
-        porcientoDescuento: undefined, precio: 0,
-        subtotal: 0, totalDescuento: 0, totalImpuesto: 0, totalNeto: 0,
-      })
-    }else{
-      this.toastService.warning("Debe asignarle un almacen a este empleado")
-      return;
-    }
-
-  }
-
-  onSubmit() {
-     if(( this.cliente.limiteCredito-this.pedidoEmpleado.totalNeto)<0 ){
-      this.toastService.warning("Este pedido esta excediendo el limite de credito");
-     return ;
-   }
-    if (!this.pedidoEmpleado.vendedorId || this.pedidoEmpleado.vendedorId < 1) {
-      this.toastService.warning("Selecciona un vendedor")
-      return;
-    }
-
-    if (this.pedidoEmpleado.monedaId < 1) {
-      this.toastService.warning("Selecciona una moneda")
-      return;
-    }
-
-    if (!this.pedidoEmpleadoDetalles.some(x => x.articuloId > 0)) {
-      this.toastService.warning("No puedes hacer una pedido  sin artículos")
-      return;
-    }
-
-    if (this.pedidoEmpleadoDetalles.filter(x => x.articuloId > 0)
-      .some(x => !x.cantidad || x.cantidad <= 0 || !x.precio || x.precio <= 0)) {
-      this.toastService.warning("Artículos con datos incompletos, revisa precios y cantidades.")
-      return;
-    }
-
-    if (this.pedidoEmpleadoDetalles.some(x => x.porcientoDescuento > this.usuario.descuentoVenta)) {
-      this.toastService.warning(`Solo puedes autorizar un descuento del ${this.usuario.descuentoVenta}%.`)
-      return;
-    }
-
-    this.guardar();
-  }
-
-
-  guardar() {
-    let metodo: string = this.actualizando ? "Update" : "Registrar";
-
-    this.pedidoEmpleado.sucursalId = Number(this.authService.tokenDecoded.groupsid)
-    this.pedidoEmpleado.usuarioId = Number(this.authService.tokenDecoded.nameid)
-
-    let parametro: any = {
-      "PedidoEmpleado": this.pedidoEmpleado,
-      "PedidoEmpleadoDetalles": this.pedidoEmpleadoDetalles.filter(x => x.articuloId > 0 && x.cantidad > 0 && x.precio > 0)
-    }
-
-    this.btnGuardarCargando = true;
-
-    this.httpService.DoPostAny<any>(DataApi.PedidosEmpleado,
-      metodo, parametro).subscribe(response => {
-
-        if (!response.ok) {
-          this.toastService.error(response.errores[0], "Error");
-        } else {
-          this.toastService.success("Realizado", "OK");
-          this.router.navigateByUrl('/ventas/pedidos-empleado');
-        }
-
-        this.btnGuardarCargando = false;
-      }, error => {
-        this.btnGuardarCargando = false;
-        this.toastService.error("Error conexion al servidor");
-      });
-  }
 
 
   getClienteByUsuarioID(usuarioId: number) {
@@ -299,8 +171,13 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
             this.pedidoEmpleado.clienteId=this.cliente.id;
             this.balanceEmpleado = this.cliente.balance;
             this.getArticulosPrecioActual()
-            this.agregarDetalleVacio();
+
+            setTimeout(() => {
             this.loadingInfoCliente = false;
+
+            }, 200);
+
+            console.log(this.cliente)
 
           } else {
             this.clienteExiste=false;
@@ -341,18 +218,6 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
       });
   }
-  onSelectCliente(cliente: ComboBox) {
-    this.cliente = null
-    if (cliente) {
-      this.getClienteByID(cliente.codigo)
-    }
-    this.pedidoEmpleadoDetalles = []
-    //this.agregarDetalleVacio()
-    this.limpiarTotales()
-
-  }
-
-
 
 
 
@@ -410,137 +275,6 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
     this.pedidoEmpleado.impuestoTotal = 0;
     this.pedidoEmpleado.totalNeto = 0;
     this.pedidoEmpleado.costoTotal = 0;
-  }
-
-  getITBIS() {
-    // this.loadingCondicionPagos = true;
-    this.httpService.DoPostAny<any>(DataApi.Configuracion,
-      "GetConfiguracionValor", Number(Configuraciones.IMPUESTO_PORCIENTO)).subscribe(response => {
-
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-
-          if (response.records.length == 0 || response.records[0] < 1) {
-            this.toastService.error("No hay impuesto configurado");
-          } else {
-            this.ITBIS = Number(response.records[0]);
-          }
-
-        }
-        // this.loadingCondicionPagos = false;
-      }, error => {
-        // this.loadingCondicionPagos = false;
-        this.toastService.error("No se pudo obtener las condiciones de pago", "Error conexion al servidor");
-
-        setTimeout(() => {
-          this.getITBIS();
-        }, 1000);
-
-      });
-  }
-
-  getTipoCondicionPago() {
-    this.loadingCondicionPagos = true;
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetTipoCondicionPago", null).subscribe(response => {
-
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          this.TipoCondicionPagos = response.records;
-        }
-        this.loadingCondicionPagos = false;
-      }, error => {
-        this.loadingCondicionPagos = false;
-        this.toastService.error("No se pudo obtener las condiciones de pago", "Error conexion al servidor");
-
-        setTimeout(() => {
-          this.getTipoCondicionPago();
-        }, 1000);
-
-      });
-  }
-
-  getVendedores() {
-    this.loadingVendedores = true;
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetVendedores", null).subscribe(response => {
-
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          this.vendedores = response.records;
-          this.pedidoEmpleado.vendedorId=response.records[0]?.codigo;
-        }
-        this.loadingVendedores = false;
-      }, error => {
-        this.loadingVendedores = false;
-        this.toastService.error("No se pudo obtener los vendedores", "Error conexion al servidor");
-
-        setTimeout(() => {
-          this.getVendedores();
-        }, 1000);
-
-      });
-  }
-
-
-  getMonedaTipos() {
-    this.loadingMonedaTipos = true;
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetMonedas", null).subscribe(response => {
-
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          this.monedaTipos = response.records;
-
-          if (this.monedaTipos && this.monedaTipos.length > 0) {
-            this.pedidoEmpleado.monedaId = this.monedaTipos[0].codigo
-          }
-
-        }
-        this.loadingMonedaTipos = false;
-      }, error => {
-        this.loadingMonedaTipos = false;
-        this.toastService.error("No se pudo obtener los tipos de monedas", "Error conexion al servidor");
-
-        setTimeout(() => {
-          this.getMonedaTipos();
-        }, 1000);
-
-      });
-  }
-
-  getAlmacenes() {
-    console.log('get almacenes')
-    let parametros: Parametro[] = [
-      { key: "usuarioID", value: this.authService.tokenDecoded.nameid },
-      { key: "ModuloKey", value: EstadosGeneralesKeyEnum.COTIZACION },
-    ]
-    this.loadingAlmacenes = true;
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetUsuarioAlmacenesModulo", parametros).subscribe(response => {
-
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          this.almacenes = response.records;
-          if(this.almacenes.length>0){
-             this.agregarDetalleVacio();
-          }
-        }
-        this.loadingAlmacenes = false;
-      }, error => {
-        this.loadingAlmacenes = false;
-        this.toastService.error("No se pudo obtener los almacenes", "Error conexion al servidor");
-
-        setTimeout(() => {
-          this.getAlmacenes()
-        }, 1000);
-
-      });
   }
 
 

@@ -19,7 +19,7 @@ import { CotizacionesSeguimientoComponent } from './cotizaciones/cotizaciones-se
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import {NumberPickerModule} from 'ng-number-picker';
 import { PedidosEmpleadoProductosComponent } from './pedidos-empleado/pedidos-empleado-productos/pedidos-empleado-productos.component';
-
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @NgModule({
   declarations:
@@ -44,7 +44,8 @@ import { PedidosEmpleadoProductosComponent } from './pedidos-empleado/pedidos-em
     AngularDualListBoxModule,
     VentasRoutingModule,
     NumberPickerModule,
-    PerfectScrollbarModule
+    PerfectScrollbarModule,
+    NgxSkeletonLoaderModule
   ]
 })
 export class VentasModule { }
