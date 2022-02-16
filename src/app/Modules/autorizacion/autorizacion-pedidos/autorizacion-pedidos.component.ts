@@ -323,6 +323,10 @@ export class AutorizacionPedidosComponent implements OnInit {
         "PromedioDiasVencimiento": this.promedioDias,
         "PlazoCliente": this.cotizacionSeleccionada.diasPlazo,
         "Porcentaje": this.porcentajeCalculado,
+        "FechaUltimoPago": this.cotizacionSeleccionada.fechaUltimoPago,
+        "ChequesDevueltos": this.chequesDevueltos.length,
+        "TotalPedido": this.totalNetoCalculado,
+        "PromedioCompras": this.cotizacionSeleccionada.promedioCompras,
       }
 
     }

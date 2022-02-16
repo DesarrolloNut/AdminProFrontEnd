@@ -83,6 +83,11 @@ export class CotizacionesSeguimientoComponent implements OnInit, OnDestroy {
     this.fechaHasta = lastDay;
   }
 
+  getHours(fecha: Date): number {
+    let date = new Date(fecha)
+    return date.getHours();
+  }
+
   getData(showLoading: boolean = true) {
 
     if (showLoading) {

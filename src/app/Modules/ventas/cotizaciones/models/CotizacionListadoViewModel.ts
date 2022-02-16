@@ -32,6 +32,6 @@ export interface CotizacionListadoViewModel {
 
     fechaRegistro?: Date;
     fechaUltimoPago?: Date;
-    // fechaRegistro: Date;
+    promedioCompras: number;
 
 }

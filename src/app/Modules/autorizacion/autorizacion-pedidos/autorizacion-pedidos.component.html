@@ -2,6 +2,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
+
                 <div class="row mb-2">
                     <div class="col-md-12 align-middle">
                         <!-- <h4 class="card-title">Pedidos por autorizar</h4> -->
@@ -137,8 +138,6 @@
 
                 </div>
 
-
-
                 <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
 
                 <div class="row ">
@@ -201,28 +200,165 @@
                                 {{cotizacionSeleccionada.vendedor}}</h5>
 
                         </div>
+
+
+
+
                         <!-- WIDGETS DATA INFO -->
 
-                        <div class="col-lg-3 col-md-4 col-6">
+                        <!-- limite -->
+                        <div class="col-lg-3 col-md-4 col-6 ">
                             <div class="card border-bottom border-info">
                                 <div class="card-body">
                                     <div class="d-flex no-block align-items-center">
                                         <div>
-                                            <h4 class="font-weight-bold">
-                                                <span class="font-weight-bold">
-                                                    {{chequesDevueltos.length }}
-                                                </span>
-                                            </h4>
-                                            <h6 class="text-info">Cheques Dev.</h6>
+                                            <h3 class="font-weight-bold">${{cotizacionSeleccionada.limiteCredito
+                                                |
+                                                number:'1.2-2' }}</h3>
+                                            <h6 class="text-info">Límite</h6>
                                         </div>
-                                        <div class="ml-auto"><span class="text-info display-6"><i
-                                                    class="ti-layout-cta-btn-right"></i></span></div>
+                                        <div class="ml-auto">
+                                            <span class="text-info display-6">
+                                                <i class="ti-wallet"></i>
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- pendiente pago -->
+                        <div class="col-lg-2 col-md-4 col-6">
+                            <div class="card border-bottom border-warning">
+                                <div class="card-body">
+                                    <div class="d-flex no-block align-items-center">
+                                        <div>
+                                            <h3 class="font-weight-bold"> ${{totalPendientePagar |
+                                                number:'1.2-2'
+                                                }}</h3>
+                                            <h6 class="text-warning">Pendiente pago</h6>
+                                        </div>
+                                        <div class="ml-auto"><span class="text-warning display-6"><i
+                                                    class="ti-money"></i></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- balance disponible -->
+                        <div class="col-lg-2 col-md-4 col-6">
+                            <div class="card border-bottom border-success">
+                                <div class="card-body">
+                                    <div class="d-flex no-block align-items-center">
+                                        <div>
+                                            <h3 class="font-weight-bold">${{
+                                                cotizacionSeleccionada.balanceCliente
+                                                | number:'1.2-2' }}</h3>
+                                            <h6 class="text-success">Balance disp.</h6>
+                                        </div>
+                                        <div class="ml-auto"><span class="text-success display-6"><i
+                                                    class="ti-file"></i></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- porcentaje -->
+                        <div class="col-lg-2 col-md-4 col-6">
+                            <div class="card border-bottom" [ngClass]=" {
+                    'border-success': porcentajeCalculado <= 35,
+                    'border-orange': porcentajeCalculado > 35 && porcentajeCalculado <= 65,
+                    'border-danger': porcentajeCalculado > 65 }">
+                                <div class="card-body">
+
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h3 class="font-weight-bold" [ngClass]=" {
+                                    'text-success': porcentajeCalculado >= 0 && porcentajeCalculado <= 50,
+                                    'text-orange': porcentajeCalculado > 50 && porcentajeCalculado <= 100,
+                                    'text-danger': porcentajeCalculado < 0 || porcentajeCalculado > 100  }">
+                                                {{ porcentajeCalculado | number : '1.0-0' }}%
+                                            </h3>
+                                            <h6 style="font-size: 10px;" [ngClass]=" {
+                                    'text-success': porcentajeCalculado >= 0 && porcentajeCalculado <= 50,
+                                    'text-orange': porcentajeCalculado > 50 && porcentajeCalculado <= 100,
+                                    'text-danger': porcentajeCalculado < 0 || porcentajeCalculado > 100 }">Porcentaje
+                                            </h6>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="progress">
+                                                <div role="progressbar" aria-valuenow="25" aria-valuemin="0"
+                                                    aria-valuemax="100" class="progress-bar" [ngClass]=" {
+                                            'bg-success': porcentajeCalculado >= 0 && porcentajeCalculado <= 50,
+                                            'bg-orange': porcentajeCalculado > 50 && porcentajeCalculado <= 100,
+                                            'bg-danger': porcentajeCalculado < 0 || porcentajeCalculado > 100 }"
+                                                    style="height: 6px;"
+                                                    [ngStyle]="{'width': porcentajeCalculado + '%'}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--pedido -->
                         <div class="col-lg-3 col-md-4 col-6">
+                            <div class="card border-bottom border-info">
+                                <div class="card-body">
+                                    <div class="d-flex no-block align-items-center">
+                                        <div>
+                                            <h3 class="font-weight-bold"> ${{totalNetoCalculado |
+                                                number:'1.2-2'
+                                                }}</h3>
+                                            <h6 class="text-info">Pedido</h6>
+                                        </div>
+                                        <div class="ml-auto"><span class="text-info display-6"><i
+                                                    class="ti-files"></i></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
+                        <!-- credito en tiempo -->
+                        <div class="col-lg-3 col-md-4 col-6">
+                            <div class="card border-bottom border-success">
+                                <div class="card-body">
+                                    <div class="d-flex no-block align-items-center">
+                                        <div>
+                                            <h3 class="font-weight-bold"> {{cotizacionSeleccionada.diasPlazo }}</h3>
+                                            <h6 class="text-success">Crédito en tiempo</h6>
+                                        </div>
+                                        <div class="ml-auto"><span class="text-success display-6"><i
+                                                    class="ti-bar-chart"></i></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- promedio dias -->
+                        <div class="col-lg-2 col-md-4 col-6">
+                            <div class="card border-bottom border-primary">
+                                <div class="card-body">
+                                    <div class="d-flex no-block align-items-center">
+                                        <div>
+                                            <h3 class="font-weight-bold"> {{promedioDias | number:'1.0-1' }}</h3>
+                                            <h6 class="text-primary">Promedio días</h6>
+                                        </div>
+                                        <div class="ml-auto"><span class="text-primary display-6"><i
+                                                    class="ti-pie-chart"></i></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ultimo pago -->
+                        <div class="col-lg-2 col-md-4 col-6">
                             <div class="card border-bottom border-info">
                                 <div class="card-body">
                                     <div class="d-flex no-block align-items-center">
@@ -242,141 +378,40 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-3 col-md-4 col-6">
-                            <div class="card border-bottom border-info">
+                        <!-- cheques devueltos -->
+                        <div class="col-lg-2 col-md-4 col-6">
+                            <div class="card border-bottom border-danger">
                                 <div class="card-body">
                                     <div class="d-flex no-block align-items-center">
                                         <div>
                                             <h4 class="font-weight-bold">
-                                                <span class="font-weight-bold"
-                                                    *ngIf="cotizacionSeleccionada.diasUltimaFechaFactura > 0">
-                                                    <!-- Hace
-                                                    {{cotizacionSeleccionada.diasUltimaFechaFactura}} días -->
-                                                    {{cotizacionSeleccionada.fechaUltimaFactura | date :
-                                                    'dd/MM/yyyy'}}
+                                                <span class="font-weight-bold">
+                                                    {{chequesDevueltos.length }}
                                                 </span>
-                                                <small class="font-weight-bold"
-                                                    *ngIf="cotizacionSeleccionada.diasUltimaFechaFactura  <= 0">
-                                                    No hay factura
-                                                </small>
                                             </h4>
-                                            <h6 class="text-info">Última factura </h6>
+                                            <h6 class="text-danger">Cheques Dev.</h6>
                                         </div>
-                                        <div class="ml-auto"><span class="text-info display-6"><i
-                                                    class="ti-calendar"></i></span></div>
+                                        <div class="ml-auto"><span class="text-danger display-6"><i
+                                                    class="fa fa-times"></i></span></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col-lg-3 col-md-4 col-6">
-                            <div class="card border-bottom border-cyan">
-                                <div class="card-body">
-                                    <div class="d-flex no-block align-items-center">
-                                        <div>
-                                            <h3 class="font-weight-bold">{{cotizacionSeleccionada.limiteCredito
-                                                |
-                                                number:'1.2-2' }}</h3>
-                                            <h6 class="text-cyan">Límite</h6>
-                                        </div>
-                                        <div class="ml-auto"><span class="text-cyan display-6"><i
-                                                    class="ti-money"></i></span></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-3 col-md-4 col-6">
-                            <div class="card border-bottom border-success">
-                                <div class="card-body">
-                                    <div class="d-flex no-block align-items-center">
-                                        <div>
-                                            <h3 class="font-weight-bold"> ${{totalPendientePagar |
-                                                number:'1.2-2'
-                                                }}</h3>
-                                            <h6 class="text-success">Pendiente pago</h6>
-                                        </div>
-                                        <div class="ml-auto"><span class="text-success display-6"><i
-                                                    class="ti-wallet"></i></span></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-3 col-md-4 col-6">
-                            <div class="card border-bottom border-orange">
-                                <div class="card-body">
-                                    <div class="d-flex no-block align-items-center">
-                                        <div>
-                                            <h3 class="font-weight-bold">{{
-                                                cotizacionSeleccionada.balanceCliente
-                                                | number:'1.2-2' }}</h3>
-                                            <h6 class="text-orange">Balance disp.</h6>
-                                        </div>
-                                        <div class="ml-auto"><span class="text-orange display-6"><i
-                                                    class="ti-file"></i></span></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
+                        <!-- promedio compra -->
                         <div class="col-lg-3 col-md-4 col-6">
                             <div class="card border-bottom border-primary">
                                 <div class="card-body">
                                     <div class="d-flex no-block align-items-center">
                                         <div>
-                                            <h4 class="font-weight-bold">{{ promedioDias | number:'1.0-1' }} |
-                                                <span style="font-size: 12px;"
-                                                    class="float-right badge badge-info">Plazo
-                                                    {{cotizacionSeleccionada.diasPlazo}}</span>
-                                            </h4>
-                                            <h6 class="text-primary">Prom. días venc.</h6>
-                                        </div>
-                                        <div class="ml-auto">
-                                            <span class="text-primary display-6"><i class="ti-bar-chart"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-3 col-md-4 col-6">
-                            <div class="card border-bottom" [ngClass]=" {
-                                        'border-success': porcentajeCalculado <= 35,
-                                        'border-orange': porcentajeCalculado > 35 && porcentajeCalculado <= 65,
-                                        'border-danger': porcentajeCalculado > 65 }">
-                                <div class="card-body">
-
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <h3 class="font-weight-bold"
-                                                [ngClass]=" {
-                                                        'text-success': porcentajeCalculado >= 0 && porcentajeCalculado <= 50,
-                                                        'text-orange': porcentajeCalculado > 50 && porcentajeCalculado <= 100,
-                                                        'text-danger': porcentajeCalculado < 0 || porcentajeCalculado > 100  }">
-                                                {{ porcentajeCalculado | number : '1.0-0' }}%
+                                            <h3 class="font-weight-bold">
+                                                ${{cotizacionSeleccionada.promedioCompras | number:'1.0-1' }}
                                             </h3>
-                                            <h6 style="font-size: 10px;"
-                                                [ngClass]=" {
-                                                        'text-success': porcentajeCalculado >= 0 && porcentajeCalculado <= 50,
-                                                        'text-orange': porcentajeCalculado > 50 && porcentajeCalculado <= 100,
-                                                        'text-danger': porcentajeCalculado < 0 || porcentajeCalculado > 100 }">Porcentaje</h6>
+                                            <h6 class="text-primary">Promedio compra</h6>
                                         </div>
-                                        <div class="col-12">
-                                            <div class="progress">
-                                                <div role="progressbar" aria-valuenow="25" aria-valuemin="0"
-                                                    aria-valuemax="100" class="progress-bar"
-                                                    [ngClass]=" {
-                                                                'bg-success': porcentajeCalculado >= 0 && porcentajeCalculado <= 50,
-                                                                'bg-orange': porcentajeCalculado > 50 && porcentajeCalculado <= 100,
-                                                                'bg-danger': porcentajeCalculado < 0 || porcentajeCalculado > 100 }" style="height: 6px;"
-                                                    [ngStyle]="{'width': porcentajeCalculado + '%'}">
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <div class="ml-auto"><span class="text-primary display-6"><i
+                                                    class="ti-shopping-cart"></i></span></div>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
@@ -390,10 +425,10 @@
                             <div class="row">
                                 <div class="col-12">
                                     <h4> Pedido
-                                        <span style="font-size: 15px;"
+                                        <!-- <span style="font-size: 15px;"
                                             class="badge font-weight-bold badge-light badge-pill">
                                             {{totalNetoCalculado | currency }}
-                                        </span>
+                                        </span> -->
                                     </h4>
                                 </div>
                                 <div class="col-12" [hidden]="loadingCotizacionDetalle">
@@ -595,7 +630,7 @@
 
                                                                 <div class="row" [hidden]="!item.showDetailsAuth">
 
-                                                                    <div class="col-md-4">
+                                                                    <!-- <div class="col-md-4">
                                                                         <div class="card border-bottom border-info">
                                                                             <div class="card-body p-1">
                                                                                 <div class=" align-items-center">
@@ -752,7 +787,198 @@
 
                                                                             </div>
                                                                         </div>
+                                                                    </div> -->
+
+
+
+                                                                    <div class="col">
+
+                                                                        <div class="d-flex align-items-center ">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <i
+                                                                                    class=" ti ti-wallet fa-1x text-info"></i>
+                                                                                <div class="pl-3">
+                                                                                    <h6 class="mb-0">Límite </h6>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="ml-auto">
+                                                                                <span
+                                                                                    class="badge bg-info">${{item.jsonInfo.DatosGenerales.Limite
+                                                                                    | number:'1.2-2' }}</span>
+                                                                            </div>
+                                                                        </div>
+
+
+                                                                        <div class="d-flex align-items-center py-1">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <i
+                                                                                    class=" ti ti-money fa-1x text-warning"></i>
+                                                                                <div class="pl-3">
+                                                                                    <h6 class="mb-0">Pendiente pago</h6>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="ml-auto"><span
+                                                                                    class="badge bg-warning">
+                                                                                    ${{item.jsonInfo.DatosGenerales.PendientePago
+                                                                                    | number:'1.2-2' }}</span>
+                                                                            </div>
+                                                                        </div>
+
+
+                                                                        <div class="d-flex align-items-center py-1">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <i
+                                                                                    class=" ti ti-file fa-1x text-success"></i>
+                                                                                <div class="pl-3">
+                                                                                    <h6 class="mb-0">Balance disponible
+                                                                                    </h6>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="ml-auto"><span
+                                                                                    class="badge bg-success"> {{
+                                                                                    item.jsonInfo.DatosGenerales.BalanceDisponible
+                                                                                    | number:'1.2-2' }}</span>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div class="d-flex align-items-center py-1">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <i class=" fa fa-percent fa-1x"
+                                                                                    [ngClass]=" {
+                                                                                    'text-success': item.jsonInfo.DatosGenerales.Porcentaje <= 35,
+                                                                                    'text-orange': item.jsonInfo.DatosGenerales.Porcentaje > 35 && item.jsonInfo.DatosGenerales.Porcentaje <= 65,
+                                                                                    'text-danger': item.jsonInfo.DatosGenerales.Porcentaje > 65 }"></i>
+                                                                                <div class="pl-3">
+                                                                                    <h6 class="mb-0">Porcentaje</h6>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="ml-auto"><span class="badge"
+                                                                                    [ngClass]=" {
+                                                                                        'bg-success': item.jsonInfo.DatosGenerales.Porcentaje >= 0 && item.jsonInfo.DatosGenerales.Porcentaje <= 50,
+                                                                                        'bg-orange': item.jsonInfo.DatosGenerales.Porcentaje > 50 && item.jsonInfo.DatosGenerales.Porcentaje <= 100,
+                                                                                        'bg-danger': item.jsonInfo.DatosGenerales.Porcentaje < 0 || item.jsonInfo.DatosGenerales.Porcentaje > 100 }">
+
+                                                                                    {{
+                                                                                    item.jsonInfo.DatosGenerales.Porcentaje
+                                                                                    |
+                                                                                    number : '1.0-0' }}%
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div class="d-flex align-items-center py-1">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <i
+                                                                                    class=" ti ti-files fa-1x text-info"></i>
+                                                                                <div class="pl-3">
+                                                                                    <h6 class="mb-0">Pedido</h6>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="ml-auto"><span
+                                                                                    class="badge bg-info">${{item.jsonInfo.DatosGenerales.TotalPedido
+                                                                                    | number:'1.2-2'}}</span>
+                                                                            </div>
+                                                                        </div>
+
                                                                     </div>
+
+
+                                                                    <div class="col">
+
+
+                                                                        <div class="d-flex align-items-center py-1">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <i
+                                                                                    class=" ti ti-bar-chart fa-1x text-success"></i>
+                                                                                <div class="pl-3">
+                                                                                    <h6 class="mb-0">Crédito en tiempo
+                                                                                    </h6>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="ml-auto">
+                                                                                <span class="badge bg-success">{{
+                                                                                    item.jsonInfo.DatosGenerales.PlazoCliente
+                                                                                    }}
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+
+
+                                                                        <div class="d-flex align-items-center py-1">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <i
+                                                                                    class=" ti ti-pie-chart fa-1x text-primary"></i>
+                                                                                <div class="pl-3">
+                                                                                    <h6 class="mb-0">Promedio en dias
+                                                                                    </h6>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="ml-auto"><span
+                                                                                    class="badge bg-primary">
+                                                                                    {{
+                                                                                    item.jsonInfo.DatosGenerales.PromedioDiasVencimiento
+                                                                                    |
+                                                                                    number:'1.0-1' }}
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+
+
+                                                                        <div class="d-flex align-items-center py-1">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <i
+                                                                                    class=" ti ti-calendar fa-1x text-dark"></i>
+                                                                                <div class="pl-3">
+                                                                                    <h6 class="mb-0">Último pago</h6>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="ml-auto"><span
+                                                                                    class="badge bg-dark">{{
+                                                                                    item.jsonInfo.DatosGenerales.FechaUltimoPago
+                                                                                    | date :
+                                                                                    'dd/MM/yyyy'}}</span>
+                                                                            </div>
+                                                                        </div>
+
+
+                                                                        <div class="d-flex align-items-center py-1">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <i
+                                                                                    class=" fa fa-times fa-1x text-danger"></i>
+                                                                                <div class="pl-3">
+                                                                                    <h6 class="mb-0">Cheques devueltos
+                                                                                    </h6>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="ml-auto">
+                                                                                <span class="badge bg-danger">{{
+                                                                                    item.jsonInfo.DatosGenerales.ChequesDevueltos
+                                                                                    }}
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+
+
+                                                                        <div class="d-flex align-items-center py-1">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <i
+                                                                                    class=" ti ti-shopping-cart fa-1x text-primary"></i>
+                                                                                <div class="pl-3">
+                                                                                    <h6 class="mb-0">Promedio compra
+                                                                                    </h6>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="ml-auto"><span
+                                                                                    class="badge bg-primary">
+                                                                                    ${{item.jsonInfo.DatosGenerales.PromedioCompras | number:'1.2-2'}}
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+
+
+
 
                                                                 </div>
                                                             </div>
