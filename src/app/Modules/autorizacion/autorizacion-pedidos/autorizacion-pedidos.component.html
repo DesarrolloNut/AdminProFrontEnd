@@ -507,6 +507,7 @@
                                                     <th>Total</th>
                                                     <th>Pagado</th>
                                                     <th>Pendiente</th>
+                                                    <th>Remanente</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -539,6 +540,10 @@
                                                     </td>
                                                     <td>
                                                         <span> ${{item.total - item.pagos | number:'1.2'}} </span>
+                                                    </td>
+                                                    <td>
+                                                        <span> {{ (item.total - item.pagos) / item.total | percent :
+                                                            '1.2'}} </span>
                                                     </td>
                                                 </tr>
 
@@ -970,7 +975,8 @@
                                                                             </div>
                                                                             <div class="ml-auto"><span
                                                                                     class="badge bg-primary">
-                                                                                    ${{item.jsonInfo.DatosGenerales.PromedioCompras | number:'1.2-2'}}
+                                                                                    ${{item.jsonInfo.DatosGenerales.PromedioCompras
+                                                                                    | number:'1.2-2'}}
                                                                                 </span>
                                                                             </div>
                                                                         </div>
