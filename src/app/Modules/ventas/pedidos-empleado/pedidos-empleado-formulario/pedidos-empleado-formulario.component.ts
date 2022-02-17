@@ -64,7 +64,7 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
   cliente: Cliente;
 
   loadingArticulosCombobox: boolean;
-  articulosCombobox: ArticuloListaPrecioViewModel[];
+  articulosData: ArticuloListaPrecioViewModel[];
   listaPrecio: ListaPrecio;
 
   loadingCondicionPagos: boolean;
@@ -229,7 +229,7 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
         } else {
           //validar que existe
           if (response != null && response.records != null && response.records.length > 0) {
-            this.articulosCombobox = response.records
+            this.articulosData = response.records
           } else {
             this.toastService.warning("La lista del cliente no tiene artículos");
           }

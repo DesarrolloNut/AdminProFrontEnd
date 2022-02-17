@@ -23,63 +23,11 @@ export class PedidosEmpleadoProductosComponent implements OnInit {
   @Output() articulosToAdd = new EventEmitter();
 
   loadingArticulos: boolean;
-  articulos: ArticuloListaPrecioViewModel[];
+  @Input() articulos: ArticuloListaPrecioViewModel[] = [];
+  artDetalleSeleccionado: ArticuloListaPrecioViewModel;
 
   filter: string;
-  articuloss =[
-    {
-    id: 1,
-    nombre: "100002 | Salami Super Especial Nut. 1/1 De 2.2 Lbs",
-    precio:400.00,
-    urlImage:'http://nutriciosa.com/wp-content/uploads/2018/07/salami-nutriciosa.jpg',
 
-    count:2
-  },
-  {
-    id: 2,
-    nombre: "Carnes",
-    urlImage:'http://nutriciosa.com/wp-content/uploads/2018/07/jamoneta-img.jpg',
-    precio:400.00,
-    count:0
-  },
-  {
-    id: 3,
-    nombre: "Camisa",
-    urlImage:'https://i.ibb.co/QQsJGXR/Captura.png',
-    precio:400.00,
-    count:0
-  },
-  {
-    id: 4,
-    nombre: "Laptop dell",
-    precio:20000.00,
-    count:0
-  },
-  {
-    id: 5,
-    nombre: "Jugo de Tamarindo",
-    precio:400.00,
-    count:2
-  },
-  {
-    id: 6,
-    nombre: "Carnes",
-    precio:400.00,
-    count:0
-  },
-  {
-    id: 7,
-    nombre: "Camisa",
-    precio:400.00,
-    count:0
-  },
-  {
-    id: 8,
-    nombre: "Laptop dell",
-    precio:20000.00,
-    count:0
-  },
-];
 
   constructor(
     private toastService: ToastrService,
@@ -111,7 +59,8 @@ export class PedidosEmpleadoProductosComponent implements OnInit {
     // this.getTipoCondicionPago()
     // this.getMonedaTipos()
     // this.getVendedores()
-    this.getArticulosPrecioActual();
+
+   // this.getArticulosPrecioActual();
   }
   public onScrollEvent(event: any): void {
     // console.log(event);
@@ -120,7 +69,7 @@ export class PedidosEmpleadoProductosComponent implements OnInit {
    addProductVenta(articulo:any){
     articulo.count++;
     articulo.totalCantidad_por_precio= articulo.count* articulo.precio;
-   this.onAddArticuloToVenta(this.articuloss.filter(x=>x.count>0));
+   this.onAddArticuloToVenta(this.articulos.filter(x=>x.count>0));
   }
 
 
@@ -128,32 +77,28 @@ export class PedidosEmpleadoProductosComponent implements OnInit {
     this.articulosToAdd.emit(as);
   }
 
-  getArticulosPrecioActual() {
-
-    this.httpService.DoPostAny<ArticuloListaPrecioViewModel>(DataApi.Articulo,
-      "GetArticulosPrecioActual", this.listaPrecioId).subscribe(response => {
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          //validar que existe
-          if (response != null && response.records != null && response.records.length > 0) {
-            this.articulos= response.records
-            console.log(  this.articulos)
-          } else {
-            this.toastService.warning("La lista del cliente no tiene artículos");
-          }
-        }
-
-      }, error => {
-        this.loadingArticulos = false;
-        this.toastService.error("Error conexion al servidor");
-      });
-  }
 
   public getSantizeUrl(url : string) {
   if(url!=null){
     return this.sanitizer.bypassSecurityTrustStyle('url(' +url + ')');
   }
+  }
+
+  openModalDetalle(content, item: ArticuloListaPrecioViewModel) {
+    if(item.count==undefined){item.count=1}
+    this.modalService.open(content, { size: 'lg' ,centered:true});
+    this.artDetalleSeleccionado = item;
+    console.log(this.artDetalleSeleccionado)
+  }
+  AddOrRemoveCantArticulo(a:ArticuloListaPrecioViewModel,restaOsuma:number){
+    if(restaOsuma>0){a.count++}
+    else{
+      if(a.count>1){a.count--}
+    }
+  }
+
+  addToCart(a:ArticuloListaPrecioViewModel){
+   a.cartAdded=true;
   }
 }
 
