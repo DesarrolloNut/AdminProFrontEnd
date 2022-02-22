@@ -24,7 +24,7 @@ export class CotizacionesListadoComponent implements OnInit {
   Cargando: boolean = false;
   CargandoBar: boolean = false;
   totalPaginas: number = 0;
-  paginaSize: number = 5;
+  paginaSize: number = 10;
   paginaTotalRecords: number = 0;
   data: CotizacionListadoViewModel[] = [] //tu modelo
 

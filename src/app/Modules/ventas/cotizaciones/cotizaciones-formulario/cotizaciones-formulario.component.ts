@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -9,7 +8,6 @@ import { BackendService } from 'src/app/core/http/service/backend.service';
 import { ArticuloBalanceViewModel } from 'src/app/Modules/mantenimientos/articulos/models/ArticuloBalanceViewModel';
 import { ArticuloListaPrecioViewModel } from 'src/app/Modules/mantenimientos/articulos/models/ArticuloListaPrecioViewModel';
 import { Cliente } from 'src/app/Modules/mantenimientos/clientes/models/Cliente';
-import { ListaPrecio } from 'src/app/Modules/mantenimientos/listaPrecios/models/ListaPrecio';
 import { Usuario } from 'src/app/Modules/servicios/recepcion/models/Usuario';
 import { Configuraciones } from 'src/app/shared/enums/Configuraciones';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
@@ -35,7 +33,6 @@ export class CotizacionesFormularioComponent implements OnInit {
 
   loadingArticulosCombobox: boolean;
   articulosCombobox: ArticuloListaPrecioViewModel[];
-  listaPrecio: ListaPrecio;
 
   loadingCondicionPagos: boolean;
   TipoCondicionPagos: ComboBox[];
@@ -59,6 +56,9 @@ export class CotizacionesFormularioComponent implements OnInit {
   articuloBalance: ArticuloBalanceViewModel[];
   totalCantidadExistencia: number;
   loadingCotizacionDetalle: boolean;
+  loadingListaPrecios: boolean;
+  listasPrecios: ComboBox[];
+  fechaEntrega: Date = new Date();
 
   constructor(
     private toastService: ToastrService,
@@ -84,6 +84,7 @@ export class CotizacionesFormularioComponent implements OnInit {
     this.getTipoCondicionPago()
     this.getMonedaTipos()
     this.getVendedores()
+    this.getListasPrecios()
   }
 
   getCotizacion(id: number) {
@@ -508,6 +509,33 @@ export class CotizacionesFormularioComponent implements OnInit {
         this.toastService.error("No se pudo obtener la existencia", "Error conexion al servidor");
       });
   }
+
+
+
+
+  getListasPrecios() {
+    this.loadingListaPrecios = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetListaPreciosComboBox", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.listasPrecios = response.records;
+
+        }
+        this.loadingListaPrecios = false;
+      }, error => {
+        this.loadingListaPrecios = false;
+        this.toastService.error("No se pudo obtener las listas de precios", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getListasPrecios();
+        }, 1000);
+
+      });
+  }
+
 
 }
 

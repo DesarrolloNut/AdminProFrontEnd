@@ -129,9 +129,10 @@
                     <div class="col-md-4 text-right d-none d-md-block  ">
                         <select class="form-control d-block" name="paginaSize" [(ngModel)]="paginaSize"
                             (change)="getData()">
-                            <option [ngValue]="5">5 registro por pagina</option>
                             <option [ngValue]="10">10 registro por pagina</option>
-                            <option [ngValue]="15">15 registro por pagina</option>
+                            <option [ngValue]="20">15 registro por pagina</option>
+                            <option [ngValue]="50">15 registro por pagina</option>
+                            <option [ngValue]="100">15 registro por pagina</option>
                         </select>
                     </div>
                 </div>
@@ -279,7 +280,8 @@
 
 <ng-template #modalDetalleCotizacion let-modal>
     <div class="modal-header">
-        <h4 class="modal-title">Detalle de cotización</h4>
+        <span class="badge badge-light text-info mt-1 mr-1">{{cotizacionSeleccionada.id}}</span>
+        <h4 class="modal-title"> Cotización #{{cotizacionSeleccionada.codigoReferencia}}</h4>
         <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -287,15 +289,16 @@
     <div class="modal-body">
         <div class="row">
 
-            <div class="col-12">
+            <div class="col-lg-6 col-md-6 col-12">
                 <h5 class="text-info"> <i class="fa fa-user"></i> Cliente: {{cotizacionSeleccionada.cliente}}</h5>
                 <h5> <i class="fa fa-id-card"></i> Documento: {{cotizacionSeleccionada.clienteDocumento}}</h5>
                 <h5> <i class="fa fa-calendar"></i> Fecha: {{cotizacionSeleccionada.fechaCreacion |
                     date:'dd/MM/yy'}}</h5>
-                <!-- <hr>
-                <h5> <i class="fa fa-user-circle"></i> Cotizador: {{cotizacionSeleccionada.cotizador}}</h5>
+            </div>
+            <div class="col-lg-6 col-md-6 col-12">
+                <h5> <i class="fa fa-user-circle"></i> Creada por: {{cotizacionSeleccionada.cotizador}}</h5>
                 <h5> <i class="fa fa-map-marker"></i> Sucursal: {{cotizacionSeleccionada.sucursal}}</h5>
-                <h5> <i class="fa fa-user-circle"></i>Vendedor: {{cotizacionSeleccionada.vendedor}}</h5> -->
+                <h5> <i class="fa fa-user-circle"></i>Vendedor: {{cotizacionSeleccionada.vendedor}}</h5>
             </div>
 
             <div class="col-12" [hidden]="loadingCotizacionDetalle">
@@ -319,9 +322,11 @@
                         <tbody>
 
                             <tr *ngFor="let item of cotizacionDetalles">
-                                <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
                                 <td>
-                                    <span> {{item.articulo}}</span>
+                                    <span class="badge badge-light text-info ">{{item.id}}</span>
+                                </td>
+                                <td>
+                                    <span>{{item.articuloCodRef}} | {{item.articulo}}</span>
                                 </td>
                                 <td>
                                     <span> {{item.cantidad}}</span>

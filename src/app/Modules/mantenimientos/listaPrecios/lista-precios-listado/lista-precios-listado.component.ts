@@ -90,7 +90,7 @@ export class ListaPreciosListadoComponent implements OnInit {
 
     this.getData()
     this.configDualList()
-    this.getArticulos()
+    this.getArticulosVenta()
     this.getEstadoAutorizacionDefault()
     this.getHoraActual()
 
@@ -193,10 +193,10 @@ export class ListaPreciosListadoComponent implements OnInit {
   //#region MODAL ASIGNACION ARTICULOS
 
 
-  getArticulos() {
+  getArticulosVenta() {
     this.loadingArticulos = true;
     this.httpService.DoPost<Articulo>(DataApi.Articulo,
-      "GetArticulos", null).subscribe(response => {
+      "GetArticulosDeVenta", null).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
@@ -213,7 +213,7 @@ export class ListaPreciosListadoComponent implements OnInit {
         this.toastService.error("No se pudo obtener todos los articulos", "Error conexion al servidor");
 
         setTimeout(() => {
-          this.getArticulos()
+          this.getArticulosVenta()
         }, 1000);
 
       });

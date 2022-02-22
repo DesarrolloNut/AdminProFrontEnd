@@ -11,7 +11,6 @@ export interface CotizacionDetalleViewModel {
     totalDescuento: number;
     totalImpuesto: number;
     totalNeto: number;
-    total: number;
     articulo: string;
     almacen: string;
     articuloCodRef: string;

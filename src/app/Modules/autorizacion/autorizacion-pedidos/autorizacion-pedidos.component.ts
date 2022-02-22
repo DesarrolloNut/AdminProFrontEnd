@@ -397,7 +397,7 @@ export class AutorizacionPedidosComponent implements OnInit {
 
   calcularTotalNeto() {
     this.totalNetoCalculado =
-      this.cotizacionDetalles.reduce((sum, c) => sum + c.total, 0);
+      this.cotizacionDetalles.reduce((sum, c) => sum + c.totalNeto, 0);
   }
 
 
@@ -411,11 +411,7 @@ export class AutorizacionPedidosComponent implements OnInit {
           console.error(response.errores[0])
         } else {
           this.facturasPendientesPago = response.records;
-
-          console.table(this.facturasPendientesPago)
-
           //this.totalPendientePagar = this.facturasPendientesPago.reduce((sum, current) => sum + (current.total - current.pagos), 0)
-
 
           this.promedioDias = this.facturasPendientesPago.filter(x => x.diasVencimiento > 0)
             .reduce((sum, current) => sum + (current.diasVencimiento), 0) / this.facturasPendientesPago.filter(x => x.diasVencimiento > 0).length;

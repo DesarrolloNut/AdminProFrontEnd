@@ -6,6 +6,7 @@ export class Cotizacion {
         this.codigoReferencia = "";
         this.clienteId = 0;
         this.fechaCreacion = new Date;
+        this.fechaEntrega = new Date;
         this.vendedorId = 0;
         this.plazoId = 0;
         this.costoTotal = 0;
@@ -27,6 +28,7 @@ export class Cotizacion {
     codigoReferencia: string;
     clienteId = 0;
     fechaCreacion: Date;
+    fechaEntrega: Date;
     vendedorId = 0;
     plazoId = 0;
     costoTotal = 0;
