@@ -7,7 +7,7 @@ export class ArticuloListaPrecioViewModel {
     this.codigoReferencia = ''
     this.costo = 0
     this.unidadMedida = ''
-    this.count=0
+    this.cant=0
 }
 
   id: number;
@@ -32,6 +32,6 @@ export class ArticuloListaPrecioViewModel {
     imagenUrl: string;
     unidadMedida: string;
     peso:number;
-    count:number;
+    cant:number;
     cartAdded:boolean;
 }

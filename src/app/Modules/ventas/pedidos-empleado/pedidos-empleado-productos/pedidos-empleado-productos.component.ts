@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterContentInit, AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -9,24 +9,27 @@ import { AuthenticationService } from 'src/app/core/authentication/service/authe
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { ArticuloListaPrecioViewModel } from 'src/app/Modules/mantenimientos/articulos/models/ArticuloListaPrecioViewModel';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
+import { CartService } from '../cart.service';
 
 @Component({
   selector: 'app-pedidos-empleado-productos',
   templateUrl: './pedidos-empleado-productos.component.html',
   styleUrls: ['./pedidos-empleado-productos.component.scss']
 })
-export class PedidosEmpleadoProductosComponent implements OnInit {
+export class PedidosEmpleadoProductosComponent implements OnInit,OnChanges {
   public config: PerfectScrollbarConfigInterface = {};
   @Input() listaPrecioId = 0;
 
 
-  @Output() articulosToAdd = new EventEmitter();
-
   loadingArticulos: boolean;
   @Input() articulos: ArticuloListaPrecioViewModel[] = [];
+  @Output() articulosInCart = new EventEmitter<ArticuloListaPrecioViewModel[]>();
+
   artDetalleSeleccionado: ArticuloListaPrecioViewModel;
 
   filter: string;
+
+  carrito: ArticuloListaPrecioViewModel[] = [];
 
 
   constructor(
@@ -34,11 +37,18 @@ export class PedidosEmpleadoProductosComponent implements OnInit {
     private httpService: BackendService,
     private router: Router,
     private route: ActivatedRoute,
+    public cartService: CartService,
     private modalService: NgbModal,
     private authService: AuthenticationService,
     private sanitizer: DomSanitizer
     // private logger: NGXLogger,
   ) { }
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes.articulos.currentValue!=undefined){
+      this.loadArtFromCarrito()
+    }
+
+  }
 
   ngOnInit(): void {
 
@@ -62,20 +72,30 @@ export class PedidosEmpleadoProductosComponent implements OnInit {
 
    // this.getArticulosPrecioActual();
   }
+
+
+  loadArtFromCarrito(){
+   this.cartService.loadCart();
+   this.carrito=this.cartService.getItems();
+
+   this.articulos.map(m=>m.cant=0);
+
+    if(this.carrito.length>0){
+      this.carrito.forEach(c=>{
+        this.articulos.filter(x=>x.codigoReferencia ==c.codigoReferencia).map(m=>m.cant=c.cant)
+       })
+        this.articulos.sort((a, b) =>  b.cant - a.cant );
+
+    }
+
+  }
   public onScrollEvent(event: any): void {
     // console.log(event);
    }
 
-   addProductVenta(articulo:any){
-    articulo.count++;
-    articulo.totalCantidad_por_precio= articulo.count* articulo.precio;
-   this.onAddArticuloToVenta(this.articulos.filter(x=>x.count>0));
-  }
 
 
-  onAddArticuloToVenta(as:any[]) {
-    this.articulosToAdd.emit(as);
-  }
+
 
 
   public getSantizeUrl(url : string) {
@@ -85,21 +105,28 @@ export class PedidosEmpleadoProductosComponent implements OnInit {
   }
 
   openModalDetalle(content, item: ArticuloListaPrecioViewModel) {
-    if(item.count==undefined){item.count=1}
+
     this.modalService.open(content, { size: 'lg' ,centered:true});
     this.artDetalleSeleccionado = item;
-    console.log(this.artDetalleSeleccionado)
   }
   AddOrRemoveCantArticulo(a:ArticuloListaPrecioViewModel,restaOsuma:number){
-    if(restaOsuma>0){a.count++}
+    if(restaOsuma>0){a.cant++}
     else{
-      if(a.count>1){a.count--}
+      if(a.cant>1){a.cant--}
     }
   }
 
-  addToCart(a:ArticuloListaPrecioViewModel){
-   a.cartAdded=true;
+
+
+  addToCart(a:ArticuloListaPrecioViewModel) {
+    if (!this.cartService.itemInCart(a)) {
+      a.cant = 1;
+      this.cartService.addToCart(a); //add items in cart
+      this.carrito = [...this.cartService.getItems()];
+    }
+     this.articulosInCart.emit(this.carrito)
   }
+
 }
 
 

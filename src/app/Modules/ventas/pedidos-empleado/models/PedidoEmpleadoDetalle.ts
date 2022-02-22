@@ -2,6 +2,10 @@ export interface PedidoEmpleadoDetalle {
     id: number;
     cotizacionId: number;
     articuloId: number;
+    codigoReferencia: string;
+    nombre: string;
+
+    imagenUrl:string;
     almacenId: number;
     cantidad: number;
     costo: number;

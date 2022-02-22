@@ -16,6 +16,7 @@ import { Configuraciones } from 'src/app/shared/enums/Configuraciones';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
+import { CartService } from '../cart.service';
 import { PedidoEmpleado } from '../models/PedidoEmpleado';
 import { PedidoEmpleadoDetalle } from '../models/PedidoEmpleadoDetalle';
 import { PedidoEmpleadoDetalleViewModel } from '../models/PedidoEmpleadoDetalleViewModel';
@@ -46,8 +47,7 @@ import { PedidoEmpleadoDetalleViewModel } from '../models/PedidoEmpleadoDetalleV
 export class PedidosEmpleadoFormularioComponent implements OnInit {
 
 
-  articulosAgregados: ArticuloListaPrecioViewModel[] = [] //tu modelo
-  @Output() articulosAgregadosToSendFactura=new EventEmitter();
+  articulosInCart: ArticuloListaPrecioViewModel[] = [] //tu modelo
 
 
 
@@ -104,6 +104,8 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
     private httpService: BackendService,
     private router: Router,
     private route: ActivatedRoute,
+    public cartService: CartService,
+
     private modalService: NgbModal,
     private authService: AuthenticationService,
     // private logger: NGXLogger,
@@ -121,7 +123,8 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
     // }
 
     this.getClienteByUsuarioID(Number(this.authService.tokenDecoded.nameid));
-    // this.getITBIS()
+    this.getArticulosInCart();
+   this.getITBIS()
 
     // this.getTipoCondicionPago()
     // this.getMonedaTipos()
@@ -176,9 +179,6 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
             this.loadingInfoCliente = false;
 
             }, 200);
-
-            console.log(this.cliente)
-
           } else {
             this.clienteExiste=false;
             this.loadingInfoCliente = false;
@@ -229,7 +229,8 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
         } else {
           //validar que existe
           if (response != null && response.records != null && response.records.length > 0) {
-            this.articulosData = response.records
+
+            this.articulosData = response.records;
           } else {
             this.toastService.warning("La lista del cliente no tiene artículos");
           }
@@ -278,6 +279,33 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
   }
 
 
+  getITBIS() {
+    // this.loadingCondicionPagos = true;
+    this.httpService.DoPostAny<any>(DataApi.Configuracion,
+      "GetConfiguracionValor", Number(Configuraciones.IMPUESTO_PORCIENTO)).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+
+          if (response.records.length == 0 || response.records[0] < 1) {
+            this.toastService.error("No hay impuesto configurado");
+          } else {
+            this.ITBIS = Number(response.records[0]);
+          }
+
+        }
+        // this.loadingCondicionPagos = false;
+      }, error => {
+        // this.loadingCondicionPagos = false;
+        this.toastService.error("No se pudo obtener las condiciones de pago", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getITBIS();
+        }, 1000);
+
+      });
+  }
 
 
   getArticuloBalanceAlmacenes(articuloID: number) {
@@ -313,16 +341,22 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
 
 
 
-  addArticuloFromListArticulos(data:ArticuloListaPrecioViewModel[]) {
-    this.articulosAgregados=data;
-    this.articulosAgregadosToSendFactura.emit(data);
- }
-
 
 
  changeView(showSummaryCart){
    this.showSummaryCart=showSummaryCart;
  }
+
+ refreshCart(){
+  this.articulosInCart=this.cartService.getItems();
+}
+
+
+getArticulosInCart(){
+  this.cartService.loadCart();
+  this.articulosInCart= this.cartService.getItems();
+}
+
 }
 
 

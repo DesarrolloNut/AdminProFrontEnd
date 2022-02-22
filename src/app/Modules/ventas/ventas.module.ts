@@ -20,6 +20,7 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import {NumberPickerModule} from 'ng-number-picker';
 import { PedidosEmpleadoProductosComponent } from './pedidos-empleado/pedidos-empleado-productos/pedidos-empleado-productos.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { PedidosEmpleadoCarritoComponent } from './pedidos-empleado/pedidos-empleado-carrito/pedidos-empleado-carrito.component';
 
 @NgModule({
   declarations:
@@ -32,6 +33,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
    PedidosEmpleadosListadoComponent,
    PedidosEmpleadoFormularioComponent,
    PedidosEmpleadoProductosComponent,
+   PedidosEmpleadoCarritoComponent,
     ReporteprontopagoComponent,
 
   AutorizacionCotizacionComponent,

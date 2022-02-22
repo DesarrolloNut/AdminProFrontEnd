@@ -23,9 +23,9 @@
 
      <div class="container-fluid p-3">
         <div class="row">
-          <div class="col-xl-2  col-lg-3 col-md-4 col-sm-6 col-xs-12 container_product"  (click)="openModalDetalle(DetalleArticulo,p)" *ngFor="let p of articulos  | filter:filter">
+          <div class="col-xl-2  col-lg-3 col-md-4 col-sm-6 col-xs-12 container_product"  (click)="openModalDetalle(DetalleArticulo,p)" *ngFor="let p of (articulos)  | filter:filter">
 
-            <div class="count_in_cart position-absolute" *ngIf="p.cartAdded"
+            <div class="count_in_cart position-absolute" *ngIf="p.cant>0"
              style="z-index: 50;    right: 0px;
             top: -10px;">
               <h4 class="heading text-white" style="    border-radius: 50%;
@@ -34,20 +34,20 @@
               padding-left: 11px;
               padding-right: 10px;
               font-weight: 600;">
-                {{p.count}}
+                {{p.cant}}
               </h4>
             </div>
 
-            <div class="card product  " [style.background-image]="getSantizeUrl(p.imagenUrl)"   [ngClass]="{'product_added_venta':p.cartAdded==true}" >
+            <div class="card product  " [style.background-image]="getSantizeUrl(p.imagenUrl)"   [ngClass]="{'product_added_venta':p.cant>0}" >
 
                 <div class="mt-5 "> </div>
 
                   <div class="mt-1 text-center" >
 
-                    <!-- <span class="badge badge-light text_noselected" style="font-size: 15px; color: green; font-weight: 600;">{{p.count}}</span> -->
+                    <!-- <span class="badge badge-light text_noselected" style="font-size: 15px; color: green; font-weight: 600;">{{p.cant}}</span> -->
 
                       <div class="mt-2 text-center">
-                        <i *ngIf="!p.imagenUrl" class="fas fa-box-open icon_articulo"></i>
+                        <i *ngIf="!p.imagenUrl" class="fa fa-file-image icon_articulo"></i>
                         <i *ngIf="p.imagenUrl" style="color:#ffffff00
                         " class="fas fa-box-open icon_articulo"></i>
 
@@ -79,7 +79,11 @@
         <div class="row">
           <div class="col-lg-6 col-md-3 col-sm-6">
             <div class="white-box text-center">
-              <img [src]="artDetalleSeleccionado.imagenUrl"  class="img-fluid" >
+              <img  *ngIf="artDetalleSeleccionado.imagenUrl" [src]="artDetalleSeleccionado.imagenUrl"  class="img-fluid" >
+              <i *ngIf="!artDetalleSeleccionado.imagenUrl" style="font-size: 120px;"
+                  class="fa fa-file-image icon_articulo mt-5">
+              </i>
+
             </div>
           </div>
           <div class="col-lg-6 col-md-9 col-sm-12 mt-0">
@@ -92,17 +96,17 @@
               sabor auténtico.
             </p>
             <span class="badge badge-pill badge-info">{{artDetalleSeleccionado.unidadMedida}}</span>
-            <div class="product_counter mt-3 " >
+            <!-- <div class="product_counter mt-3 " >
               <button type="button" (click)="AddOrRemoveCantArticulo(artDetalleSeleccionado,-1)" class="btn btn-sm btn-outline-secondary" >
                 <i class="fa fa-minus" aria-hidden="true"></i>
               </button>
-              <h3  class="mx-2" style="display:inline-block;">{{artDetalleSeleccionado.count}}</h3>
+              <h3  class="mx-2" style="display:inline-block;">{{artDetalleSeleccionado.cant}}</h3>
               <button type="button" (click)="AddOrRemoveCantArticulo(artDetalleSeleccionado,1)" class="btn btn-sm btn-outline-secondary">
                 <i class="fa fa-plus" aria-hidden="true"></i>
               </button>
             <span class="text-danger ml-2">Disponible 20</span>
 
-            </div>
+            </div> -->
             <h2 class="mt-4" style="    color: #44974f;">
                 {{artDetalleSeleccionado.precioActual | currency}}
             </h2>
