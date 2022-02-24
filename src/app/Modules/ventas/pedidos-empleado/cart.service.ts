@@ -47,9 +47,8 @@ export class CartService {
     localStorage.removeItem("cart_items")
   }
 
-  removeItem(item:ArticuloListaPrecioViewModel) {
-    const index = this.items.findIndex(o => o.codigoReferencia === item.codigoReferencia);
-
+  removeItem(id:number) {
+    const index = this.items.findIndex(o => o.id === id);
     if (index > -1) {
       this.items.splice(index, 1);
       this.saveCart();
@@ -57,11 +56,11 @@ export class CartService {
   }
 
   itemInCart(item:ArticuloListaPrecioViewModel): boolean {
-    return this.items.findIndex(o => o.codigoReferencia === item.codigoReferencia) > -1;
+    return this.items.findIndex(o => o.id === item.id) > -1;
   }
 
-  setItemInCart(item:ArticuloListaPrecioViewModel){
-    this.items.find(x=>x.codigoReferencia==item.codigoReferencia).cant=item.cant;
+  setItemInCart(id:number,cant:number){
+    this.items.find(x=>x.id==id).cant=cant;
     this.saveCart();
   }
 }

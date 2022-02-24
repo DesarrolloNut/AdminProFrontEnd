@@ -229,7 +229,15 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
         } else {
           //validar que existe
           if (response != null && response.records != null && response.records.length > 0) {
-
+            response.records.forEach(x=>{
+              if(x.unidadMedida=='LBS'){
+                x.precioActual= x.precioActual * x.peso;
+                console.log(x.nombre)
+                console.log(x.peso)
+                console.log('-----------------------')
+              }
+              // if(x.unidadMedida='LBS')
+            })
             this.articulosData = response.records;
           } else {
             this.toastService.warning("La lista del cliente no tiene artículos");

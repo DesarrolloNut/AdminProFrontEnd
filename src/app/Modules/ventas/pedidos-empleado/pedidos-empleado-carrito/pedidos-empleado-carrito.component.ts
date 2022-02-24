@@ -46,6 +46,7 @@ export class PedidosEmpleadoCarritoComponent implements OnInit {
   }
 
   fillPedidoEmpleadoDetalleModel(){
+
     this.carrito.forEach(x=>{
       this.pedidoEmpleadoDetalles.push(
         {
@@ -69,16 +70,14 @@ export class PedidosEmpleadoCarritoComponent implements OnInit {
    this.calcularTotales();
   }
 
-  removeArtFromCart(i:ArticuloListaPrecioViewModel){
-    // this.cartService.removeItem(i)
-    // this.carrito= this.carrito = [...this.cartService.getItems()];
-    // this.articulosInCart.emit( this.carrito)
-
-
-    const index = this.pedidoEmpleadoDetalles.findIndex(o => o.codigoReferencia === i.codigoReferencia);
+  removeArtFromCart(i:PedidoEmpleadoDetalle){
+    this.cartService.removeItem(i.articuloId)
+  //  this.carrito= this.carrito = [...this.cartService.getItems()];
+    const index = this.pedidoEmpleadoDetalles.findIndex(o => o.articuloId === i.articuloId);
 
     if (index > -1) {
-     console.log( this.pedidoEmpleadoDetalles.splice(index, 1));
+    this.pedidoEmpleadoDetalles.splice(index, 1)
+    this.articulosInCart.emit( this.carrito)
     }
     this.calcularTotales();
   }
@@ -86,8 +85,9 @@ export class PedidosEmpleadoCarritoComponent implements OnInit {
   this.cartService.clearCart([]);
   }
 
-changeCant(item:ArticuloListaPrecioViewModel){
-  // this.cartService.setItemInCart(item)
+changeCant(item:PedidoEmpleadoDetalle){
+
+  this.cartService.setItemInCart(item.articuloId,item.cantidad)
   this.calcularTotales();
 
 }

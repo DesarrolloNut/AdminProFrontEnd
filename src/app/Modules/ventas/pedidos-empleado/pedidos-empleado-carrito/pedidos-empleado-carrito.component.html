@@ -1,9 +1,9 @@
-<div class="row">
+<div class="row" style="    min-height: 650px;">
   <!-- Column -->
-  <div class="col-md-9 col-lg-9">
+  <div class="col-xl-8  col-lg-9  col-md-12  col-sm-12 col-xs-12">
     <div class="card">
       <div class="card-header bg-success">
-        <h5 class="mb-0 text-white">Tu Carrito ({{carrito.length}} articulos)</h5>
+        <h5 class="mb-0 text-white">Tu Carrito ({{pedidoEmpleadoDetalles.length}} articulos)</h5>
       </div>
       <div class="card-body">
         <div class="table-responsive">
@@ -20,7 +20,7 @@
                 <th style="text-align: center">Accion</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody >
               <tr *ngFor="let item of pedidoEmpleadoDetalles">
                 <td width="150" class="text-center"   *ngIf="item.imagenUrl">
                   <img [src]="item.imagenUrl"   width="80">
@@ -64,7 +64,7 @@
     </div>
   </div>
   <!-- Column -->
-  <div class="col-md-3 col-lg-3">
+  <div class="   col-xl-4  col-lg-3 col-md-12   col-sm-12 col-xs-12" >
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">Resumen del carrito</h5>

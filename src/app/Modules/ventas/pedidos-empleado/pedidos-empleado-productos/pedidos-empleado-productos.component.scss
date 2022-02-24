@@ -121,10 +121,13 @@
 	-ms-transition: all 0.5s ease;
 	transition: all 0.5s ease;
 }
-// .container_product:hover .container_text_price_product{
-// 	transform: translate(2px, -69px);
-// 	-webkit-transform: translate(2px, -69px);
-// 	-moz-transform: translate(2px, -69px);
-// 	-o-transform: translate(2px, -69px);
-// 	-ms-transform: translate(2px, -69px);
-// }
+.container_product:hover .container_text_price_product{
+	transform: translate(2px, -30px);
+	-webkit-transform: translate( 2px, -30px);
+	-moz-transform: translate(2px, -30px);
+	-o-transform: translate(2px, -30px);
+	-ms-transform: translate(2px, -30px);
+}
+.container_product:hover{
+  // background-color: #44974f;
+}
