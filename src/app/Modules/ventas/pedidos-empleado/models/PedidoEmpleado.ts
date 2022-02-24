@@ -31,6 +31,8 @@ export class PedidoEmpleado {
     subtotal = 0;
     descuentoTotal = 0;
     impuestoTotal = 0;
+    impuestoPorcentaje = 0;
+
     totalNeto = 0;
     monedaId = 0;
     tasa = 0;
@@ -44,7 +46,5 @@ export class PedidoEmpleado {
 
     estadoAutorizacionID = 0;
     estadoERPID = 0;
-
-
 
 }

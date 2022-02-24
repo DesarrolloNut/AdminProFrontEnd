@@ -16,29 +16,38 @@ import { AutorizacionCotizacionComponent } from './cotizaciones/autorizacion-cot
 import { PedidosEmpleadosListadoComponent } from './pedidos-empleado/pedidos-empleado-listado/pedidos-empleado-listado.component';
 import { PedidosEmpleadoFormularioComponent } from './pedidos-empleado/pedidos-empleado-formulario/pedidos-empleado-formulario.component';
 import { CotizacionesSeguimientoComponent } from './cotizaciones/cotizaciones-seguimiento/cotizaciones-seguimiento.component';
-
+import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
+import {NumberPickerModule} from 'ng-number-picker';
+import { PedidosEmpleadoProductosComponent } from './pedidos-empleado/pedidos-empleado-productos/pedidos-empleado-productos.component';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { PedidosEmpleadoCarritoComponent } from './pedidos-empleado/pedidos-empleado-carrito/pedidos-empleado-carrito.component';
 
 @NgModule({
-  declarations: 
+  declarations:
   [VentasComponent,
    OfertasConsultasFacturasComponent,
    NotacreditoListadoComponent,
-   NotacreditoFormularioComponent, 
+   NotacreditoFormularioComponent,
    CotizacionesListadoComponent,
-   CotizacionesFormularioComponent, 
+   CotizacionesFormularioComponent,
    PedidosEmpleadosListadoComponent,
    PedidosEmpleadoFormularioComponent,
+   PedidosEmpleadoProductosComponent,
+   PedidosEmpleadoCarritoComponent,
     ReporteprontopagoComponent,
 
   AutorizacionCotizacionComponent,
 
   CotizacionesSeguimientoComponent],
-  imports: [ 
+  imports: [
     CommonModule,
     SharedModule,
     NgbModule,
     AngularDualListBoxModule,
     VentasRoutingModule,
+    NumberPickerModule,
+    PerfectScrollbarModule,
+    NgxSkeletonLoaderModule
   ]
 })
 export class VentasModule { }

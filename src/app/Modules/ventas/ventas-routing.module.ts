@@ -11,6 +11,7 @@ import { VentasComponent } from './ventas.component';
 import { PedidosEmpleadoFormularioComponent } from './pedidos-empleado/pedidos-empleado-formulario/pedidos-empleado-formulario.component';
 import { PedidosEmpleadosListadoComponent } from './pedidos-empleado/pedidos-empleado-listado/pedidos-empleado-listado.component';
 import { CotizacionesSeguimientoComponent } from './cotizaciones/cotizaciones-seguimiento/cotizaciones-seguimiento.component';
+import { PedidosEmpleadoPedidoModalComponent } from './pedidos-empleado/pedidos-empleado-pedido-modal/pedidos-empleado-pedido-modal.component';
 
 
 const routes: Routes = [
@@ -95,10 +96,11 @@ const routes: Routes = [
             { title: 'Ventas' },
             { title: 'Pedidos Empleado' },
           ]
-        }
+        },
+
       },
       {
-        path: 'pedidos-empleado/:id', component: PedidosEmpleadoFormularioComponent, data: {
+        path: 'pedidos-empleado/:id', component: PedidosEmpleadoPedidoModalComponent, data: {
           title: 'Pedidos Empleado',
           urls: [
             { title: 'Ventas' },
