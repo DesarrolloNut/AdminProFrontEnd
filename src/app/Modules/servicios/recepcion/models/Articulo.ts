@@ -18,6 +18,15 @@ export class Articulo {
     chasis: string
     tipoArticuloID: number
     placa: string
+    unidadMedida: string
     costo: number
+    costoObjetivo: number;
     precio: number
+    articuloDeCompra: number
+    articuloDeVenta: number
+    articuloDeInventario: number;
+    articuloDeReproceso: number;
+    categoriaID: number
+    gestionado: number
 }
+

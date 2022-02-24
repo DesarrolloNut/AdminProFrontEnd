@@ -1,0 +1,1109 @@
+<div class="row" *ngxPermissionsOnly="['autorizacion_cotizaciones'] ; else PermissionDenied;">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+
+                <div class="row mb-2">
+                    <div class="col-md-12 align-middle">
+                        <!-- <h4 class="card-title">Pedidos por autorizar</h4> -->
+                        <label for="">Fechas</label>
+                    </div>
+
+                    <div class="col-lg-2 col-md-6 p-1 col-6">
+                        <ejs-datepicker [showClearButton]="false" (change)="onChangeFechaDesdeFiltro($event)"
+                            [(ngModel)]="fechaDesde" [format]="'dd-MM-yyyy'" [max]="fechaHasta">
+                        </ejs-datepicker>
+                    </div>
+
+                    <div class="col-lg-2 col-md-6 p-1 col-6">
+                        <ejs-datepicker [showClearButton]="false" (change)="onChangeFechaHastaFiltro($event)"
+                            [(ngModel)]="fechaHasta" [format]="'dd-MM-yyyy'" [min]="fechaDesde">
+                        </ejs-datepicker>
+                    </div>
+
+
+
+                    <div class="col-md-6 col-lg-5 p-1  ">
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <label for="search" class="input-group-text bg-white">
+                                    <span class="bg-white" style="border-right:none">
+                                        <i class="ti-search"></i>
+                                    </span>
+                                </label>
+                            </div>
+                            <input [(ngModel)]="Search" (keyup)="getData()" type="text"
+                                style="border-left:none !important;" class="form-control" placeholder="Buscar">
+                        </div>
+
+                    </div>
+
+                    <div class=" col-md-6 col-lg-3 p-1">
+                        <ng-select [items]="estadosAutorizacion" bindLabel="nombre" bindValue="codigo"
+                            [searchable]="false" (change)="getData()" [clearable]="false"
+                            [(ngModel)]="estadoAutorizacionComboModel">
+
+                            <ng-template ng-label-tmp let-item="item">
+                                <span>
+                                    <i class="fa fa-circle" [ngStyle]="{'color': item.grupo}"></i> {{item.nombre}}
+                                </span>
+                            </ng-template>
+                            <ng-template ng-option-tmp let-item="item" let-index="index">
+                                <span>
+                                    <i class="fa fa-circle" [ngStyle]="{'color': item.grupo}"></i> {{item.nombre}}
+                                </span>
+                            </ng-template>
+                        </ng-select>
+                    </div>
+
+
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 no-wrap v-middle">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Pedido</th>
+                                <th>Cliente</th>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Total Pedido</th>
+                            </tr>
+                        </thead>
+                        <tbody [hidden]="Cargando">
+
+                            <tr *ngFor="let item of data">
+                                <td>
+
+                                    <button class="btn btn-sm btn-light m-1" *ngIf="!item.cargando"
+                                        (click)="openModalAutorizar(modalConfirm,item)">
+                                        <i class="fa fa-sm fa-eye"></i>
+                                    </button>
+
+
+                                    <ng-template
+                                        [ngIf]="estadoAutorizacionAnterior && item.estadoAutorizacionId <= estadoAutorizacionAnterior.codigo">
+
+                                        <!-- boton cargando -->
+                                        <button *ngIf="item.cargando && isAutorizando" disabled
+                                            class="btn btn-success m-1" type="button">
+                                            <span class="spinner-border spinner-border-sm"></span>
+                                        </button>
+
+                                    </ng-template>
+
+
+                                    <ng-template
+                                        [ngIf]="item.estadoAutorizacionId == estadoAutorizacionUsuario && estadoAutorizacionAnterior">
+
+                                        <!-- boton cargando -->
+                                        <button *ngIf="item.cargando && !isAutorizando " disabled
+                                            class="btn btn-warning m-1" type="button">
+                                            <span class="spinner-border spinner-border-sm"></span>
+                                        </button>
+
+                                    </ng-template>
+
+                                </td>
+                                <td>
+                                    <span> {{ item.id }}</span>
+                                </td>
+                                <td>
+                                    <span>{{item.cliente }}</span>
+                                </td>
+                                <td>
+                                    <span class="text-muted">
+                                        <i class="fa fa-calendar-alt"></i>
+                                        {{item.fechaCreacion |date : 'dd/MM/yy'}}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span *ngIf="item.fechaRegistro" [ngClass]="{
+                                         'text-danger': getHours(item.fechaRegistro) >= 18, 'text-muted': getHours(item.fechaRegistro) < 18
+                                        }">
+                                        <i class="fa fa-clock"></i>
+                                        {{item.fechaRegistro | date : 'shortTime'}}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="font-weight-bold">RD$ {{item.totalNeto | number: '1.2'}}</span>
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+                <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+
+                <div class="row ">
+                    <div class="col-md-8 col-xs-12 ">
+                        <ngb-pagination [collectionSize]="paginaTotalRecords" [(page)]="paginaNumeroActual"
+                            [pageSize]="paginaSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="getData()">
+                        </ngb-pagination>
+                    </div>
+
+                    <div class="col-md-4 text-right d-none d-md-block  ">
+                        <select class="form-control d-block" name="paginaSize" [(ngModel)]="paginaSize"
+                            (change)="getData()">
+                            <option [ngValue]="5">5 registro por pagina</option>
+                            <option [ngValue]="10">10 registro por pagina</option>
+                            <option [ngValue]="15">15 registro por pagina</option>
+                            <option [ngValue]="50">50 registro por pagina</option>
+                            <option [ngValue]="100">100 registro por pagina</option>
+                            <option [ngValue]="150">150 registro por pagina</option>
+                        </select>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<ng-template #PermissionDenied>
+
+    <app-error-permission-denied></app-error-permission-denied>
+
+</ng-template>
+
+
+<ng-template #modalConfirm let-modal>
+    <div class="container-fluid">
+        <div class="row" *ngIf="!cargandoAutorizacion">
+            <div class="col">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modal-title">#{{cotizacionSeleccionada.id}}</h4>
+                    <button type="button" class="close" aria-describedby="modal-title"
+                        (click)="modal.dismiss('Cross click')">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+
+                    <div class="row">
+
+                        <div class=" col-12">
+                            <h5 class="text-info"> <i class="fa fa-user"></i> Cliente:
+                                {{cotizacionSeleccionada.cliente}}</h5>
+                            <h5> <i class="fa fa-id-card"></i> Documento:
+                                {{cotizacionSeleccionada.clienteDocumento}}</h5>
+                            <h5> <i class="fa fa-user"></i> Vendedor:
+                                {{cotizacionSeleccionada.vendedor}}</h5>
+
+                        </div>
+
+
+
+
+                        <!-- WIDGETS DATA INFO -->
+
+                        <!-- limite -->
+                        <div class="col-lg-3 col-md-4 col-6 ">
+                            <div class="card border-bottom border-info">
+                                <div class="card-body">
+                                    <div class="d-flex no-block align-items-center">
+                                        <div>
+                                            <h3 class="font-weight-bold">${{cotizacionSeleccionada.limiteCredito
+                                                |
+                                                number:'1.2-2' }}</h3>
+                                            <h6 class="text-info">Límite</h6>
+                                        </div>
+                                        <div class="ml-auto">
+                                            <span class="text-info display-6">
+                                                <i class="ti-wallet"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- pendiente pago -->
+                        <div class="col-lg-2 col-md-4 col-6">
+                            <div class="card border-bottom border-warning">
+                                <div class="card-body">
+                                    <div class="d-flex no-block align-items-center">
+                                        <div>
+                                            <h3 class="font-weight-bold"> ${{totalPendientePagar |
+                                                number:'1.2-2'
+                                                }}</h3>
+                                            <h6 class="text-warning">Pendiente pago</h6>
+                                        </div>
+                                        <div class="ml-auto"><span class="text-warning display-6"><i
+                                                    class="ti-money"></i></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- balance disponible -->
+                        <div class="col-lg-2 col-md-4 col-6">
+                            <div class="card border-bottom border-success">
+                                <div class="card-body">
+                                    <div class="d-flex no-block align-items-center">
+                                        <div>
+                                            <h3 class="font-weight-bold">${{
+                                                cotizacionSeleccionada.balanceCliente
+                                                | number:'1.2-2' }}</h3>
+                                            <h6 class="text-success">Balance disp.</h6>
+                                        </div>
+                                        <div class="ml-auto"><span class="text-success display-6"><i
+                                                    class="ti-file"></i></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- porcentaje -->
+                        <div class="col-lg-2 col-md-4 col-6">
+                            <div class="card border-bottom" [ngClass]=" {
+                    'border-success': porcentajeCalculado <= 35,
+                    'border-orange': porcentajeCalculado > 35 && porcentajeCalculado <= 65,
+                    'border-danger': porcentajeCalculado > 65 }">
+                                <div class="card-body">
+
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h3 class="font-weight-bold" [ngClass]=" {
+                                    'text-success': porcentajeCalculado >= 0 && porcentajeCalculado <= 50,
+                                    'text-orange': porcentajeCalculado > 50 && porcentajeCalculado <= 100,
+                                    'text-danger': porcentajeCalculado < 0 || porcentajeCalculado > 100  }">
+                                                {{ porcentajeCalculado | number : '1.0-0' }}%
+                                            </h3>
+                                            <h6 style="font-size: 10px;" [ngClass]=" {
+                                    'text-success': porcentajeCalculado >= 0 && porcentajeCalculado <= 50,
+                                    'text-orange': porcentajeCalculado > 50 && porcentajeCalculado <= 100,
+                                    'text-danger': porcentajeCalculado < 0 || porcentajeCalculado > 100 }">Porcentaje
+                                            </h6>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="progress">
+                                                <div role="progressbar" aria-valuenow="25" aria-valuemin="0"
+                                                    aria-valuemax="100" class="progress-bar" [ngClass]=" {
+                                            'bg-success': porcentajeCalculado >= 0 && porcentajeCalculado <= 50,
+                                            'bg-orange': porcentajeCalculado > 50 && porcentajeCalculado <= 100,
+                                            'bg-danger': porcentajeCalculado < 0 || porcentajeCalculado > 100 }"
+                                                    style="height: 6px;"
+                                                    [ngStyle]="{'width': porcentajeCalculado + '%'}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--pedido -->
+                        <div class="col-lg-3 col-md-4 col-6">
+                            <div class="card border-bottom border-info">
+                                <div class="card-body">
+                                    <div class="d-flex no-block align-items-center">
+                                        <div>
+                                            <h3 class="font-weight-bold"> ${{totalNetoCalculado |
+                                                number:'1.2-2'
+                                                }}</h3>
+                                            <h6 class="text-info">Pedido</h6>
+                                        </div>
+                                        <div class="ml-auto"><span class="text-info display-6"><i
+                                                    class="ti-files"></i></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
+                        <!-- credito en tiempo -->
+                        <div class="col-lg-3 col-md-4 col-6">
+                            <div class="card border-bottom border-success">
+                                <div class="card-body">
+                                    <div class="d-flex no-block align-items-center">
+                                        <div>
+                                            <h3 class="font-weight-bold"> {{cotizacionSeleccionada.diasPlazo }}</h3>
+                                            <h6 class="text-success">Crédito en tiempo</h6>
+                                        </div>
+                                        <div class="ml-auto"><span class="text-success display-6"><i
+                                                    class="ti-bar-chart"></i></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- promedio dias -->
+                        <div class="col-lg-2 col-md-4 col-6">
+                            <div class="card border-bottom border-primary">
+                                <div class="card-body">
+                                    <div class="d-flex no-block align-items-center">
+                                        <div>
+                                            <h3 class="font-weight-bold"> {{promedioDias | number:'1.0-1' }}</h3>
+                                            <h6 class="text-primary">Promedio días</h6>
+                                        </div>
+                                        <div class="ml-auto"><span class="text-primary display-6"><i
+                                                    class="ti-pie-chart"></i></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ultimo pago -->
+                        <div class="col-lg-2 col-md-4 col-6">
+                            <div class="card border-bottom border-info">
+                                <div class="card-body">
+                                    <div class="d-flex no-block align-items-center">
+                                        <div>
+                                            <h4 class="font-weight-bold">
+                                                <span class="font-weight-bold">
+                                                    {{cotizacionSeleccionada.fechaUltimoPago | date :
+                                                    'dd/MM/yyyy'}}
+                                                </span>
+                                            </h4>
+                                            <h6 class="text-info">Último pago </h6>
+                                        </div>
+                                        <div class="ml-auto"><span class="text-info display-6"><i
+                                                    class="ti-calendar"></i></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- cheques devueltos -->
+                        <div class="col-lg-2 col-md-4 col-6">
+                            <div class="card border-bottom border-danger">
+                                <div class="card-body">
+                                    <div class="d-flex no-block align-items-center">
+                                        <div>
+                                            <h4 class="font-weight-bold">
+                                                <span class="font-weight-bold">
+                                                    {{chequesDevueltos.length }}
+                                                </span>
+                                            </h4>
+                                            <h6 class="text-danger">Cheques Dev.</h6>
+                                        </div>
+                                        <div class="ml-auto"><span class="text-danger display-6"><i
+                                                    class="fa fa-times"></i></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- promedio compra -->
+                        <div class="col-lg-3 col-md-4 col-6">
+                            <div class="card border-bottom border-primary">
+                                <div class="card-body">
+                                    <div class="d-flex no-block align-items-center">
+                                        <div>
+                                            <h3 class="font-weight-bold">
+                                                ${{cotizacionSeleccionada.promedioCompras | number:'1.0-1' }}
+                                            </h3>
+                                            <h6 class="text-primary">Promedio compra</h6>
+                                        </div>
+                                        <div class="ml-auto"><span class="text-primary display-6"><i
+                                                    class="ti-shopping-cart"></i></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <hr>
+                        </div>
+
+                        <!-- TABLA DEL PEDIDO -->
+                        <div class="col-lg-6 col-md-12">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h4> Pedido
+                                        <!-- <span style="font-size: 15px;"
+                                            class="badge font-weight-bold badge-light badge-pill">
+                                            {{totalNetoCalculado | currency }}
+                                        </span> -->
+                                    </h4>
+                                </div>
+                                <div class="col-12" [hidden]="loadingCotizacionDetalle">
+
+                                    <div class="table-responsive" style="height: 250px;">
+                                        <table class="table table-sm table-hover mb-0 no-wrap v-middle">
+                                            <thead>
+                                                <tr>
+                                                    <!-- <th></th> -->
+                                                    <th>Artículo</th>
+                                                    <th>Cant</th>
+                                                    <th>Precio</th>
+                                                    <th>Desc</th>
+                                                    <!-- <th>Imp</th>  -->
+                                                    <th>Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let item of cotizacionDetalles">
+                                                    <!-- <td><span class="badge badge-light text-info ">{{item.id}}</span>
+                                                    </td> -->
+                                                    <td>
+                                                        <span>{{item.articuloCodRef}} {{item.articulo }} </span>
+                                                    </td>
+                                                    <td>
+                                                        <span> {{item.cantidad}}</span>
+                                                    </td>
+                                                    <td>
+                                                        <span> ${{item.precio | number:'1.2-2'}} </span>
+                                                    </td>
+                                                    <td>
+                                                        <span> ${{item.totalDescuento | number:'1.2-2'}} </span>
+                                                    </td>
+                                                    <!-- <td>
+                                                        <span> ${{item.totalImpuesto | number:'1.2-2'}} </span>
+                                                    </td> -->
+                                                    <td>
+                                                        <span class="font-weight-bold"> ${{ item.total|
+                                                            number:'1.2-2'}} </span>
+                                                    </td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="col-12">
+                                    <app-loading-listado [hidden]="!loadingCotizacionDetalle"></app-loading-listado>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TABLA FACTURAS PENDIENTES -->
+                        <div class="col-lg-6 col-md-12">
+
+                            <div class="row">
+
+                                <div class="col-12">
+                                    <h4> Facturas pendientes <span
+                                            class="badge badge-info badge-pill">{{facturasPendientesPago.length}}</span>
+                                    </h4>
+                                </div>
+                                <div class="col-12" [hidden]="loadingFacturasPendientesPago">
+
+                                    <div class="table-responsive" style="height: 250px;">
+                                        <table class="table table-sm table-hover mb-0 no-wrap v-middle">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Factura</th>
+                                                    <th>Fecha</th>
+                                                    <th>Vencimiento</th>
+                                                    <th>Total</th>
+                                                    <th>Pagado</th>
+                                                    <th>Pendiente</th>
+                                                    <th>Remanente</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let item of facturasPendientesPago">
+                                                    <td><span class="badge badge-light text-info ">{{item.id}}</span>
+                                                    </td>
+                                                    <td>
+                                                        <span> <b>#{{item.codigoDocNum}}</b></span>
+                                                    </td>
+                                                    <td>
+                                                        <span> {{item.fechaCreacion | date : 'dd/MM/yyyy'}}</span>
+                                                    </td>
+                                                    <td>
+                                                        <span> {{item.fechaVencimiento | date : 'dd/MM/yyyy'}}</span>
+                                                        <span class="badge " [ngClass]=" {
+                                                                'badge-danger': item.diasVencimiento > 0,
+                                                                'badge-light':item.diasVencimiento <= 0
+                                                            }
+                                                                ">
+                                                            <span *ngIf="item.diasVencimiento< 0">En </span>
+                                                            <span *ngIf="item.diasVencimiento> 0">Hace </span>
+                                                            {{_math.abs(item.diasVencimiento)}}
+                                                            días</span>
+                                                    </td>
+                                                    <td>
+                                                        <span> ${{item.total | number:'1.2'}} </span>
+                                                    </td>
+                                                    <td>
+                                                        <span> ${{item.pagos | number:'1.2'}}</span>
+                                                    </td>
+                                                    <td>
+                                                        <span> ${{item.total - item.pagos | number:'1.2'}} </span>
+                                                    </td>
+                                                    <td>
+                                                        <span> {{ (item.total - item.pagos) / item.total | percent :
+                                                            '1.2'}} </span>
+                                                    </td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="col-12">
+                                    <app-loading-listado [hidden]="!loadingFacturasPendientesPago">
+                                    </app-loading-listado>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-12 mt-2">
+                            <!-- <h4> Autorización</h4> -->
+                            <hr>
+                        </div>
+
+                        <!-- TIME LINE -->
+                        <div class="col-lg-6 col-md-12"
+                            *ngIf="autorizacionHistorico && autorizacionHistorico.length > 0">
+                            <div class="card">
+                                <h3 class="card-title">
+                                    Histórico autorizaciones
+                                </h3>
+
+                                <div class="card-body pt-0">
+                                    <div class="table-responsive" style="height: 300px;">
+                                        <ul class="timeline timeline-right">
+                                            <li class="timeline-item" *ngFor="let item of autorizacionHistorico">
+                                                <div class="timeline-badge">
+                                                    <i class="fa fa-circle"
+                                                        [ngStyle]="{'color': item.estadoAutorizacionColor}"></i>
+                                                </div>
+                                                <div class="timeline-panel">
+                                                    <div class="timeline-heading">
+                                                        <h4 class="timeline-title d-inline">{{item.usuario}}</h4>
+
+                                                        <span *ngIf="item.jsonInfo.Pedido.FechaPromesa" class=" badge
+                                                            badge-light float-right"><i class="fa fa-calendar"></i>
+                                                            Promesa pago:
+                                                            {{item.jsonInfo.Pedido.FechaPromesa |
+                                                            date : 'd MMM y'}}</span>
+
+                                                        <p>
+                                                            <small>
+                                                                <i class="fa fa-circle"
+                                                                    [ngStyle]="{'color': item.estadoAutorizacionColor}"></i>
+                                                                {{item.estadoAutorizacion + ' | '}}
+                                                            </small>
+                                                            <small class="text-muted">
+                                                                <i class="fa fa-clock"></i>
+                                                                {{item.fechaAutorizacion
+                                                                | date : 'd MMM y, h:mm:ss a' }}
+                                                            </small>
+                                                        </p>
+                                                    </div>
+                                                    <div class="timeline-body">
+
+
+                                                        <p *ngIf="item.comentario"> <i class="fa fa-comment"></i>
+                                                            {{item.comentario}}</p>
+
+                                                        <hr>
+
+                                                        <div class="row" *ngIf="item.jsonInfo.DatosGenerales">
+                                                            <div class="col-12">
+                                                                <div class="row">
+                                                                    <div class="col-12 text-right">
+                                                                        <button class="btn btn-link btn-sm"
+                                                                            (click)="item.showDetailsAuth = !item.showDetailsAuth">
+                                                                            Detalles <i class="fa fa-angle-down"
+                                                                                [ngClass]="{
+                                                                            'fa-angle-down': !item.showDetailsAuth,
+                                                                            'fa-angle-up': item.showDetailsAuth
+                                                                        }"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="row" [hidden]="!item.showDetailsAuth">
+
+                                                                    <!-- <div class="col-md-4">
+                                                                        <div class="card border-bottom border-info">
+                                                                            <div class="card-body p-1">
+                                                                                <div class=" align-items-center">
+                                                                                    <div>
+                                                                                        <h4
+                                                                                            class="font-weight-bold small">
+                                                                                            <span
+                                                                                                class="font-weight-bold">
+                                                                                                {{item.jsonInfo.DatosGenerales.UltimaFactura
+                                                                                                | date : 'dd/MM/yyyy'}}
+                                                                                            </span>
+                                                                                        </h4>
+                                                                                        <span
+                                                                                            class="text-info small">Última
+                                                                                            factura </span>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="col-md-4">
+                                                                        <div class="card border-bottom border-cyan">
+                                                                            <div class="card-body p-1">
+                                                                                <div class=" align-items-center">
+                                                                                    <div>
+                                                                                        <h3
+                                                                                            class="font-weight-bold small">
+                                                                                            {{item.jsonInfo.DatosGenerales.Limite
+                                                                                            | number:'1.2-2' }}</h3>
+                                                                                        <span
+                                                                                            class="text-cyan small">Límite
+                                                                                        </span>
+                                                                                    </div>
+
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="col-md-4">
+                                                                        <div class="card border-bottom border-success">
+                                                                            <div class="card-body p-1">
+                                                                                <div class=" align-items-center">
+                                                                                    <div>
+                                                                                        <h3
+                                                                                            class="font-weight-bold small">
+                                                                                            ${{item.jsonInfo.DatosGenerales.PendientePago
+                                                                                            | number:'1.2-2' }}
+
+                                                                                        </h3>
+                                                                                        <span
+                                                                                            class="text-success small">
+                                                                                            Pendiente pago</span>
+                                                                                    </div>
+
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="col-md-4">
+                                                                        <div class="card border-bottom border-orange">
+                                                                            <div class="card-body p-1">
+                                                                                <div class=" align-items-center">
+                                                                                    <div>
+                                                                                        <h3
+                                                                                            class="font-weight-bold small">
+                                                                                            {{
+                                                                                            item.jsonInfo.DatosGenerales.BalanceDisponible
+                                                                                            | number:'1.2-2' }}
+                                                                                        </h3>
+                                                                                        <span class="text-orange small">
+                                                                                            Balance disp.
+                                                                                        </span>
+                                                                                    </div>
+
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="col-md-4">
+                                                                        <div class="card border-bottom border-primary">
+                                                                            <div class="card-body p-1">
+                                                                                <div class="align-items-center">
+                                                                                    <div>
+                                                                                        <h4
+                                                                                            class="font-weight-bold small">
+                                                                                            {{
+                                                                                            item.jsonInfo.DatosGenerales.PromedioDiasVencimiento
+                                                                                            |
+                                                                                            number:'1.0-1' }} |
+                                                                                            <span
+                                                                                                style="font-size: 12px;"
+                                                                                                class="float-right badge badge-info">
+                                                                                                Plazo {{
+                                                                                                item.jsonInfo.DatosGenerales.PlazoCliente
+                                                                                                }}</span>
+                                                                                        </h4>
+                                                                                        <span
+                                                                                            class="text-primary small">Prom.
+                                                                                            días venc.</span>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="col-md-4">
+                                                                        <div class="card border-bottom"
+                                                                            [ngClass]=" {
+                                                                            'border-success':  item.jsonInfo.DatosGenerales.Porcentaje <= 35,
+                                                                            'border-orange':  item.jsonInfo.DatosGenerales.Porcentaje > 35 &&  item.jsonInfo.DatosGenerales.Porcentaje <= 65,
+                                                                            'border-danger':  item.jsonInfo.DatosGenerales.Porcentaje > 65 }">
+                                                                            <div class="card-body p-1">
+
+                                                                                <div class="row">
+                                                                                    <div class="col-12">
+                                                                                        <h3 class="font-weight-bold small"
+                                                                                            [ngClass]=" {
+                                                                                            'text-success':  item.jsonInfo.DatosGenerales.Porcentaje >= 0 &&  item.jsonInfo.DatosGenerales.Porcentaje <= 50,
+                                                                                            'text-orange':  item.jsonInfo.DatosGenerales.Porcentaje > 50 &&  item.jsonInfo.DatosGenerales.Porcentaje <= 100,
+                                                                                            'text-danger':  item.jsonInfo.DatosGenerales.Porcentaje < 0 ||  item.jsonInfo.DatosGenerales.Porcentaje > 100  }">
+                                                                                            {{
+                                                                                            item.jsonInfo.DatosGenerales.Porcentaje
+                                                                                            |
+                                                                                            number : '1.0-0' }}%
+                                                                                        </h3>
+                                                                                        <span class="small"
+                                                                                            [ngClass]=" {
+                                                                                            'text-success':  item.jsonInfo.DatosGenerales.Porcentaje >= 0 &&  item.jsonInfo.DatosGenerales.Porcentaje <= 50,
+                                                                                            'text-orange':  item.jsonInfo.DatosGenerales.Porcentaje > 50 &&  item.jsonInfo.DatosGenerales.Porcentaje <= 100,
+                                                                                            'text-danger':  item.jsonInfo.DatosGenerales.Porcentaje < 0 ||  item.jsonInfo.DatosGenerales.Porcentaje > 100 }">
+                                                                                            Porcentaje</span>
+                                                                                    </div>
+                                                                                    <div class="col-12">
+                                                                                        <div class="progress">
+                                                                                            <div role="progressbar"
+                                                                                                aria-valuenow="25"
+                                                                                                aria-valuemin="0"
+                                                                                                aria-valuemax="100"
+                                                                                                class="progress-bar"
+                                                                                                [ngClass]=" {
+                                                                                                    'bg-success':  item.jsonInfo.DatosGenerales.Porcentaje >= 0 &&  item.jsonInfo.DatosGenerales.Porcentaje <= 50,
+                                                                                                    'bg-orange':  item.jsonInfo.DatosGenerales.Porcentaje > 50 &&  item.jsonInfo.DatosGenerales.Porcentaje <= 100,
+                                                                                                    'bg-danger':  item.jsonInfo.DatosGenerales.Porcentaje < 0 ||  item.jsonInfo.DatosGenerales.Porcentaje > 100 }"
+                                                                                                style="height: 6px;"
+                                                                                                [ngStyle]="{'width':  item.jsonInfo.DatosGenerales.Porcentaje + '%'}">
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                            </div>
+                                                                        </div>
+                                                                    </div> -->
+
+
+
+                                                                    <div class="col">
+
+                                                                        <div class="d-flex align-items-center ">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <i
+                                                                                    class=" ti ti-wallet fa-1x text-info"></i>
+                                                                                <div class="pl-3">
+                                                                                    <h6 class="mb-0">Límite </h6>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="ml-auto">
+                                                                                <span
+                                                                                    class="badge bg-info">${{item.jsonInfo.DatosGenerales.Limite
+                                                                                    | number:'1.2-2' }}</span>
+                                                                            </div>
+                                                                        </div>
+
+
+                                                                        <div class="d-flex align-items-center py-1">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <i
+                                                                                    class=" ti ti-money fa-1x text-warning"></i>
+                                                                                <div class="pl-3">
+                                                                                    <h6 class="mb-0">Pendiente pago</h6>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="ml-auto"><span
+                                                                                    class="badge bg-warning">
+                                                                                    ${{item.jsonInfo.DatosGenerales.PendientePago
+                                                                                    | number:'1.2-2' }}</span>
+                                                                            </div>
+                                                                        </div>
+
+
+                                                                        <div class="d-flex align-items-center py-1">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <i
+                                                                                    class=" ti ti-file fa-1x text-success"></i>
+                                                                                <div class="pl-3">
+                                                                                    <h6 class="mb-0">Balance disponible
+                                                                                    </h6>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="ml-auto"><span
+                                                                                    class="badge bg-success"> {{
+                                                                                    item.jsonInfo.DatosGenerales.BalanceDisponible
+                                                                                    | number:'1.2-2' }}</span>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div class="d-flex align-items-center py-1">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <i class=" fa fa-percent fa-1x"
+                                                                                    [ngClass]=" {
+                                                                                    'text-success': item.jsonInfo.DatosGenerales.Porcentaje <= 35,
+                                                                                    'text-orange': item.jsonInfo.DatosGenerales.Porcentaje > 35 && item.jsonInfo.DatosGenerales.Porcentaje <= 65,
+                                                                                    'text-danger': item.jsonInfo.DatosGenerales.Porcentaje > 65 }"></i>
+                                                                                <div class="pl-3">
+                                                                                    <h6 class="mb-0">Porcentaje</h6>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="ml-auto"><span class="badge"
+                                                                                    [ngClass]=" {
+                                                                                        'bg-success': item.jsonInfo.DatosGenerales.Porcentaje >= 0 && item.jsonInfo.DatosGenerales.Porcentaje <= 50,
+                                                                                        'bg-orange': item.jsonInfo.DatosGenerales.Porcentaje > 50 && item.jsonInfo.DatosGenerales.Porcentaje <= 100,
+                                                                                        'bg-danger': item.jsonInfo.DatosGenerales.Porcentaje < 0 || item.jsonInfo.DatosGenerales.Porcentaje > 100 }">
+
+                                                                                    {{
+                                                                                    item.jsonInfo.DatosGenerales.Porcentaje
+                                                                                    |
+                                                                                    number : '1.0-0' }}%
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div class="d-flex align-items-center py-1">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <i
+                                                                                    class=" ti ti-files fa-1x text-info"></i>
+                                                                                <div class="pl-3">
+                                                                                    <h6 class="mb-0">Pedido</h6>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="ml-auto"><span
+                                                                                    class="badge bg-info">${{item.jsonInfo.DatosGenerales.TotalPedido
+                                                                                    | number:'1.2-2'}}</span>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+
+
+                                                                    <div class="col">
+
+
+                                                                        <div class="d-flex align-items-center py-1">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <i
+                                                                                    class=" ti ti-bar-chart fa-1x text-success"></i>
+                                                                                <div class="pl-3">
+                                                                                    <h6 class="mb-0">Crédito en tiempo
+                                                                                    </h6>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="ml-auto">
+                                                                                <span class="badge bg-success">{{
+                                                                                    item.jsonInfo.DatosGenerales.PlazoCliente
+                                                                                    }}
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+
+
+                                                                        <div class="d-flex align-items-center py-1">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <i
+                                                                                    class=" ti ti-pie-chart fa-1x text-primary"></i>
+                                                                                <div class="pl-3">
+                                                                                    <h6 class="mb-0">Promedio en dias
+                                                                                    </h6>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="ml-auto"><span
+                                                                                    class="badge bg-primary">
+                                                                                    {{
+                                                                                    item.jsonInfo.DatosGenerales.PromedioDiasVencimiento
+                                                                                    |
+                                                                                    number:'1.0-1' }}
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+
+
+                                                                        <div class="d-flex align-items-center py-1">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <i
+                                                                                    class=" ti ti-calendar fa-1x text-dark"></i>
+                                                                                <div class="pl-3">
+                                                                                    <h6 class="mb-0">Último pago</h6>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="ml-auto"><span
+                                                                                    class="badge bg-dark">{{
+                                                                                    item.jsonInfo.DatosGenerales.FechaUltimoPago
+                                                                                    | date :
+                                                                                    'dd/MM/yyyy'}}</span>
+                                                                            </div>
+                                                                        </div>
+
+
+                                                                        <div class="d-flex align-items-center py-1">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <i
+                                                                                    class=" fa fa-times fa-1x text-danger"></i>
+                                                                                <div class="pl-3">
+                                                                                    <h6 class="mb-0">Cheques devueltos
+                                                                                    </h6>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="ml-auto">
+                                                                                <span class="badge bg-danger">{{
+                                                                                    item.jsonInfo.DatosGenerales.ChequesDevueltos
+                                                                                    }}
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+
+
+                                                                        <div class="d-flex align-items-center py-1">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <i
+                                                                                    class=" ti ti-shopping-cart fa-1x text-primary"></i>
+                                                                                <div class="pl-3">
+                                                                                    <h6 class="mb-0">Promedio compra
+                                                                                    </h6>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="ml-auto"><span
+                                                                                    class="badge bg-primary">
+                                                                                    ${{item.jsonInfo.DatosGenerales.PromedioCompras
+                                                                                    | number:'1.2-2'}}
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+
+
+
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- tipo promesa -->
+                        <div class="col-lg-6 col-md-12">
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label for="example-email">Tipo</label>
+                                    <ng-select [(ngModel)]="cotizacionPromesaSelected" [items]="cotizacionPromesaTipos"
+                                        [clearable]="false" bindLabel="nombre" bindValue="codigo"
+                                        notFoundText="No resultados">
+                                    </ng-select>
+                                </div>
+                                <div class="form-group col-6" [hidden]="cotizacionPromesaSelected != 2">
+                                    <label>Fecha</label>
+                                    <ejs-datepicker [(ngModel)]="fechaPromesaModel" [showClearButton]="false"
+                                        [format]="'dd-MM-yyyy'"></ejs-datepicker>
+                                </div>
+
+                                <div class="form-group col-md-12">
+                                    <!-- <label for="exampleFormControlTextarea1">Escribe tu comen</label> -->
+                                    <textarea placeholder="Escribe tu comentario" class="form-control"
+                                        [(ngModel)]="comentario" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+
+                    <!-- MAYELIN -->
+                    <ng-template [ngIf]="estadoAutorizacionUsuario == estadoEnum.AUTORIZADO">
+
+                        <!-- RECHAZAR -->
+                        <button
+                            *ngIf="!cotizacionSeleccionada.cargando && estadoAutorizacionComboModel != estadoEnum.RECHAZADO"
+                            class="btn btn-sm btn-danger m-1" (click)="desautorizar()">
+                            <i class="fa fa-sm fa-times"></i> Rechazar
+                        </button>
+
+                        <!-- boton cargando -->
+                        <button *ngIf="cotizacionSeleccionada.cargando && !isAutorizando " disabled
+                            class="btn btn-warning m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span>
+                        </button>
+
+
+                        <!-- AUTORIZAR -->
+                        <button class="btn btn-sm btn-success m-1"
+                            *ngIf="!cotizacionSeleccionada.cargando && (estadoAutorizacionUsuario >= cotizacionSeleccionada.estadoAutorizacionId)"
+                            (click)="autorizar()">
+                            <i class="fa fa-sm fa-check"></i> Autorizar
+                        </button>
+
+                        <!-- boton cargando -->
+                        <button *ngIf="cotizacionSeleccionada.cargando && isAutorizando" disabled
+                            class="btn btn-success m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span>
+                        </button>
+
+                    </ng-template>
+
+                    <!-- FLORIAN -->
+                    <ng-template
+                        [ngIf]="estadoAutorizacionUsuario == estadoEnum.GESTIONAR && cotizacionSeleccionada.estadoAutorizacionId == estadoEnum.RECHAZADO">
+
+
+                        <!-- RECHAZAR -->
+                        <button
+                            *ngIf="!cotizacionSeleccionada.cargando && estadoAutorizacionComboModel != estadoEnum.RECHAZADO"
+                            class="btn btn-sm btn-danger m-1" (click)="desautorizar()">
+                            <i class="fa fa-sm fa-times"></i> Rechazar
+                        </button>
+
+                        <!-- boton cargando -->
+                        <button *ngIf="cotizacionSeleccionada.cargando && !isAutorizando " disabled
+                            class="btn btn-warning m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span>
+                        </button>
+
+
+                        <!-- AUTORIZAR -->
+                        <button class="btn btn-sm btn-success m-1"
+                            *ngIf="!cotizacionSeleccionada.cargando && (estadoAutorizacionUsuario >= cotizacionSeleccionada.estadoAutorizacionId)"
+                            (click)="autorizar()">
+                            <i class="fa fa-sm fa-check"></i> Autorizar
+                        </button>
+
+                        <!-- boton cargando -->
+                        <button *ngIf="cotizacionSeleccionada.cargando && isAutorizando" disabled
+                            class="btn btn-success m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span>
+                        </button>
+
+                    </ng-template>
+
+
+
+                </div>
+            </div>
+        </div>
+
+        <app-loading-listado [hidden]="!cargandoAutorizacion"></app-loading-listado>
+
+    </div>
+</ng-template>

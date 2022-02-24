@@ -53,9 +53,9 @@ export class ArticuloListadoComponent implements OnInit {
 
     let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
 
-    this.httpService.GetAllWithPagination<Articulo>(DataApi.Articulo, "GetArticuloListado", "anio", this.paginaNumeroActual,
+    this.httpService.GetAllWithPagination<Articulo>(DataApi.Articulo, "GetArticuloListado", "id", this.paginaNumeroActual,
       this.paginaSize, false, parametros).subscribe(x => {
-
+      console.log(x)
         if (x.ok) {
           this.data = x.records;
           this.asignarPagination(x);

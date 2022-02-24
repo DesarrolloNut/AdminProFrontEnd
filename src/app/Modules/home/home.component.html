@@ -11,11 +11,25 @@
 </div> -->
 
 
+
+<div class="row">
+  <div class="col">
+
+    <div class="card">
+      <div class="card-body text-center">
+
+        <img src="http://nutriciosa.com/wp-content/uploads/2018/08/nutriciosa-logo-web4.png" class="img-fluid"
+          alt="Responsive image">
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <!-- ============================================================== -->
 <!-- chart and stats -->
 <!-- ============================================================== -->
-<div class="row">
-  <!-- chart component -->
+<!-- <div class="row">
   <div class="col-lg-9 col-md-12">
     <div class="card">
       <div class="card-body">
@@ -41,7 +55,6 @@
       </div>
     </div>
   </div>
-  <!-- other chart component -->
   <div class="col-lg-3 col-md-12">
     <div class="card">
       <div class="card-body">
@@ -73,10 +86,10 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
 
-
+<!-- 
 <div class="row">
   <div class="col-lg-6">
     <div class="card">
@@ -168,39 +181,35 @@
   <div class="col-lg-6">
     <div class="card">
       <div class="card-body">
-          <h4 class="card-title"><span class="lstick"></span>Recent Comments</h4>
+        <h4 class="card-title"><span class="lstick"></span>Recent Comments</h4>
       </div>
-      <!-- ============================================================== -->
-      <!-- Comment widgets -->
-      <!-- ============================================================== -->
-      <div class="comment-widgets scrollable"  [perfectScrollbar]="config" style="height: 650px;">
-          <!-- Comment Row -->
-          <div class="d-flex flex-row comment-row" *ngFor="let recentcomment of recentcomments">
-              <div class="p-2"><span class="round"><img src="{{recentcomment.image}}" alt="user" width="50"></span></div>
-              <div class="comment-text w-100">
-                  <h5>{{recentcomment.name}}</h5>
-                  <p class="m-b-5">{{recentcomment.comment}}</p>
-                  <div class="comment-footer">
-                      <span class="text-muted float-md-right">{{recentcomment.date}}</span>
-                      <span class="badge {{recentcomment.labelcolor}}">{{recentcomment.status}}</span>
-                      <span class="action-icons">
-                          <a href="javascript:void(0)"><i class="ti-pencil-alt"></i></a>
-                          <a href="javascript:void(0)"><i class="ti-check"></i></a>
-                          <a href="javascript:void(0)"><i class="ti-heart"></i></a>    
-                      </span>
-                  </div>
-              </div>
+      <div class="comment-widgets scrollable" [perfectScrollbar]="config" style="height: 650px;">
+        <div class="d-flex flex-row comment-row" *ngFor="let recentcomment of recentcomments">
+          <div class="p-2"><span class="round"><img src="{{recentcomment.image}}" alt="user" width="50"></span></div>
+          <div class="comment-text w-100">
+            <h5>{{recentcomment.name}}</h5>
+            <p class="m-b-5">{{recentcomment.comment}}</p>
+            <div class="comment-footer">
+              <span class="text-muted float-md-right">{{recentcomment.date}}</span>
+              <span class="badge {{recentcomment.labelcolor}}">{{recentcomment.status}}</span>
+              <span class="action-icons">
+                <a href="javascript:void(0)"><i class="ti-pencil-alt"></i></a>
+                <a href="javascript:void(0)"><i class="ti-check"></i></a>
+                <a href="javascript:void(0)"><i class="ti-heart"></i></a>
+              </span>
+            </div>
           </div>
+        </div>
       </div>
+    </div>
   </div>
-  </div>
 
-</div>
-
+</div> -->
 
 
 
-<div class="row">
+
+<!-- <div class="row">
   <div class="col-lg-6 col-md-12">
     <div class="card">
       <div class="card-body">
@@ -295,15 +304,11 @@
       </div>
     </div>
   </div>
-  <!-- ============================================================== -->
-  <!-- Activity widget find scss into widget folder-->
-  <!-- ============================================================== -->
   <div class="col-lg-6 col-md-12">
     <div class="card">
       <div class="card-body">
         <div class="d-flex">
           <h4 class="card-title"><span class="lstick"></span>Activity</h4>
-          <!-- <span class="badge badge-success">9</span> -->
           <div class="btn-group ml-auto m-t-10">
             <a href="JavaScript:void(0)" class="icon-options-vertical link" data-toggle="dropdown" aria-haspopup="true"
               aria-expanded="false"></a>
@@ -319,7 +324,6 @@
       </div>
       <div class="activity-box">
         <div class="card-body">
-          <!-- Activity item-->
           <div class="activity-item">
             <div class="round m-r-20"><img src="../assets/images/users/2.jpg" alt="user" width="50"></div>
             <div class="m-t-10">
@@ -339,8 +343,6 @@
               </table>
             </div>
           </div>
-          <!-- Activity item-->
-          <!-- Activity item-->
           <div class="activity-item">
             <div class="round m-r-20"><img src="../assets/images/users/3.jpg" alt="user" width="50"></div>
             <div class="m-t-10">
@@ -359,8 +361,6 @@
               </span>
             </div>
           </div>
-          <!-- Activity item-->
-          <!-- Activity item-->
           <div class="activity-item">
             <div class="round m-r-20"><img src="../assets/images/users/4.jpg" alt="user" width="50"></div>
             <div class="m-t-10">
@@ -375,8 +375,6 @@
               </span>
             </div>
           </div>
-          <!-- Activity item-->
-          <!-- Activity item-->
           <div class="activity-item">
             <div class="round m-r-20"><img src="../assets/images/users/6.jpg" alt="user" width="50"></div>
             <div class="m-t-10">
@@ -387,9 +385,8 @@
                 remaining essentially unchanged.</p>
             </div>
           </div>
-          <!-- Activity item-->
         </div>
       </div>
     </div>
   </div>
-</div>
+</div> -->

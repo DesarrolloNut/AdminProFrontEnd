@@ -1,0 +1,580 @@
+<div class="row">
+    <div class="control-section">
+        <div id="control_wrapper">
+        </div>
+    </div>
+</div>
+
+<div class="row mb-2">
+    <div class="col">
+        <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 col-12">
+                        <h4 class="card-title">Formulario de ordenes de compras</h4>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-12 text-right">
+
+                    </div>
+                </div>
+
+                <div class="form-row m-t-40">
+
+                    <!-- Usuario que solicita -->
+                    <div class="col-12 mb-2" *ngIf="usuarioSolicita">
+                        <div class="row border border-light p-2">
+
+                            <div class="col-12">
+                                <h4 class="card-subtitle  ">
+                                    <span class="badge badge-info">Datos del solicitante</span>
+                                </h4>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label for="nombre"><i class="fa fa-hashtag"></i> Código</label>
+                                <input [(ngModel)]="usuarioSolicita.codigoReferencia" class="form-control"
+                                    [readonly]="'true'" type="text" [ngModelOptions]="{standalone: true}" name="nombre">
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label for="nombre"> <i class="fa fa-user"></i> Nombres</label>
+                                <input [(ngModel)]="usuarioSolicita.nombres +' '+ usuarioSolicita.apellidos"
+                                    class="form-control" [readonly]="'true'" type="text"
+                                    [ngModelOptions]="{standalone: true}" name="nombre">
+                            </div>
+
+                            <div class="form-group col-md-2">
+                                <label for="nombre"> <i class="fa fa-id-card"></i> Doc.</label>
+                                <input [(ngModel)]="usuarioSolicita.documento" class="form-control" [readonly]="'true'"
+                                    type="text" [ngModelOptions]="{standalone: true}" name="nombre">
+                            </div>
+
+                            <div class="form-group col-md-2">
+                                <label for="departamentoID"> <i class="fa fa-warehouse"></i> Dep. </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="departamentos"
+                                    [disabled]="true" [(ngModel)]="usuarioSolicita.departamentoID"
+                                    [ngModelOptions]="{standalone: true}" [loading]="loadingDepartamentos"
+                                    notFoundText="No resultados">
+                                </ng-select>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Destino compra -->
+                    <div class="col-12" *ngIf="ordenCompra">
+                        <div class="row border border-light p-2">
+                            <div class="col-12">
+                                <h4 class="card-subtitle">
+                                    <span class="badge badge-info">Destino de la compra</span>
+                                </h4>
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                <label for="sucursalID"> Sucursal </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="sucursales"
+                                    [loading]="loadingSucursales" [clearable]="false" notFoundText="No resultados"
+                                    [readonly]="true" [(ngModel)]="ordenCompra.sucursalID">
+                                </ng-select>
+
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                <label for="departamentoID"> Departamento </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="departamentos"
+                                    [loading]="loadingDepartamentos" [clearable]="false" notFoundText="No resultados"
+                                    [readonly]="true" [(ngModel)]="ordenCompra.departamentoID">
+                                </ng-select>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Proveedor -->
+                    <div class="col-12 mt-2" *ngIf="ordenCompra">
+                        <div class="row border border-light p-2">
+                            <div class="col-12">
+                                <h4 class="card-subtitle">
+                                    <span class="badge badge-info">Proveedor datos</span>
+                                </h4>
+                            </div>
+
+                            <div class="form-group col-md-8">
+                                <label for="proveedorID"> Proveedor </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="proveedores"
+                                    (change)="onChangeProveedor($event)" [(ngModel)]="ordenCompra.proveedorID"
+                                    [loading]="loadingProveedores" [clearable]="false" notFoundText="No resultados">
+                                </ng-select>
+                            </div>
+
+                            <div class="col-12" *ngIf="proveedor">
+
+                                <div class="row">
+
+                                    <div class="col-md-12">
+                                        <h5> <i class="fa fa-user"></i> {{proveedor.nombres}} {{proveedor.apellidos}}
+                                        </h5>
+                                        <h5> <i class="fa fa-id-card"></i> {{proveedor.documento}}</h5>
+                                        <h5> <i class="fa fa-envelope"></i> {{proveedor.email}}</h5>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="TipoCondicionPagos"
+                                            [disabled]="true" [(ngModel)]="proveedor.condicionPagoID"
+                                            [ngModelOptions]="{standalone: true}" [loading]="loadingCondicionPagos"
+                                            notFoundText="No resultados">
+                                        </ng-select>
+                                    </div>
+                                    <div class="form-group col-md-4" *ngIf="proveedor.condicionPagoID == 2">
+                                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="plazos"
+                                            [disabled]="true" [(ngModel)]="proveedor.plazoID"
+                                            [ngModelOptions]="{standalone: true}" [loading]="loadingPlazos"
+                                            notFoundText="No resultados">
+                                        </ng-select>
+                                    </div>
+
+
+                                </div>
+
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Otros datos -->
+                    <div class="col-12 mt-2" *ngIf="ordenCompra">
+                        <div class="row border border-light p-2">
+                            <div class="col-12">
+                                <h4 class="card-subtitle">
+                                    <span class="badge badge-info">Otros datos</span>
+                                </h4>
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                <label for="compradorID"> Comprador </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="compradores"
+                                    [loading]="loadingCompradores" [clearable]="false"
+                                    [(ngModel)]="ordenCompra.compradorID" notFoundText="No resultados">
+                                </ng-select>
+                                <!-- <div *ngIf="submitted && f.compradorID.errors" class="text-danger small">
+                                    <div *ngIf="f.compradorID.errors.required  ">El campo es obligatorio</div>
+                                </div> -->
+                            </div>
+
+                            <div class="form-group col-4">
+                                <label>Fecha de entrega</label>
+                                <ejs-datepicker [showClearButton]="false" [(ngModel)]="ordenCompra.fechaEntrega"
+                                    [format]="'dd-MM-yyyy'" [min]='fechaActual'>
+                                </ejs-datepicker>
+
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                <label for="tipoSolicitudID"> Tipo de solicitud </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="solicitudCompraTipos"
+                                    [loading]="loadingSolicitudCompraTipo" [clearable]="false" [readonly]="true"
+                                    [(ngModel)]="ordenCompra.tipoSolicitudID" notFoundText="No resultados">
+                                </ng-select>
+                            </div>
+
+                            <div class="form-group col-md-4" *ngIf="ordenCompra">
+                                <label for="tipoOrden"> Tipo de orden </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="tipoOrdenCombo"
+                                    [clearable]="false" [(ngModel)]="ordenCompra.tipoID" notFoundText="No resultados">
+                                </ng-select>
+                            </div>
+
+                            <ng-template [ngIf]="ordenCompra.tipoID == 2">
+
+                                <div class="form-group col-md-4">
+                                    <label>Abierta desde</label>
+                                    <ejs-datepicker [showClearButton]="false"
+                                        [(ngModel)]="ordenCompra.fechaAbiertaDesde" [format]="'dd-MM-yyyy'"
+                                        [min]='fechaActual'>
+                                    </ejs-datepicker>
+
+                                </div>
+
+                                <div class="form-group col-md-4">
+                                    <label>Abierta hasta</label>
+                                    <ejs-datepicker [showClearButton]="false"
+                                        [(ngModel)]="ordenCompra.fechaAbiertaHasta" [format]="'dd-MM-yyyy'"
+                                        [min]='fechaActual'>
+                                    </ejs-datepicker>
+
+                                </div>
+
+
+                            </ng-template>
+
+
+
+
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-12" *ngIf="ordenCompra && ordenCompra.tipoSolicitudID == 2">
+                        <label for="comentario"> Comentario solicitud de compras</label>
+
+                        <textarea readonly="true" [(ngModel)]="ordenCompra.comentarioSolicitudCompra"
+                            class="form-control" name="comentario" id="comentario" rows="3">
+                        </textarea>
+
+                    </div>
+
+                    <div class="form-group col-md-12" *ngIf="ordenCompra">
+                        <label for="comentario"> Comentario orden de compras</label>
+
+                        <textarea [(ngModel)]="ordenCompra.comentarioOrdenCompra" class="form-control" rows="3">
+                        </textarea>
+
+                    </div>
+
+
+                    <!-- Anexos y Cotizaciones -->
+                    <div class="col-12">
+
+                        <div class="row">
+
+                            <!-- Anexos -->
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <hr>
+                                        <h6 class="font-weight-bold">Anexos subidos
+                                            <span
+                                                class="badge badge-info badge-pill">{{anexosArchivosSubidas.length}}</span>
+                                        </h6>
+                                    </div>
+
+                                    <ng-container *ngIf="anexosArchivosSubidas.length>0; else elseTemplate">
+
+                                        <div class="col-12">
+                                            <table class="table table-hover table-sm mb-0 no-wrap v-middle">
+                                                <!-- <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th></th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead> -->
+                                                <tbody [hidden]="Cargando">
+                                                    <tr *ngFor="let item of anexosArchivosSubidas">
+
+                                                        <td> <i class="fa fa-file-pdf text-danger"></i></td>
+                                                        <td>
+                                                            <span class="small">
+                                                                {{item.nombre}}.{{item.extension}}</span>
+                                                        </td>
+                                                        <td>
+                                                            <a target="_blank" [href]="urlCarpetaArchivosAnexos + 'SolicitudCompra-Anexos/Solicitud' 
+                                          + ordenCompra.solicitudCompraID +'/' + item.nombre +'.'+ item.extension"
+                                                                class="btn btn-sm btn-light m-1"><i
+                                                                    class="fa fa-download"></i></a>
+
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                    </ng-container>
+                                    <ng-template #elseTemplate>
+                                        <div class="col-12 text-center">
+                                            <i class="fa fa-info-circle text-info fa-3x"></i>
+                                            <h3>No hay anexos</h3>
+                                        </div>
+                                    </ng-template>
+
+
+
+
+                                </div>
+                            </div>
+
+                            <!-- Cotizaciones -->
+                            <div class="col-md-6">
+
+                                <!-- Cotizaciones por subir -->
+                                <div class="row" *ngIf="filesFromInput.length > 0">
+                                    <div class="col-8">
+                                        <hr>
+                                        <h6 class="font-weight-bold">Cotizaciones por subir
+                                            <span class="badge badge-info badge-pill">{{filesFromInput.length}}</span>
+                                        </h6>
+                                    </div>
+                                    <div class="col-4 text-right">
+                                        <hr>
+                                        <input accept="application/pdf" class="d-none" (change)="setFiles(file.files)"
+                                            #file multiple type="file" />
+                                        <button (click)="file.click()" type="button" class="btn btn-light btn-sm"><i
+                                                class="fa fa-upload"></i>
+                                        </button>
+                                    </div>
+
+                                    <div class="col-md-12" *ngIf="filesFromInput.length > 0">
+                                        <table class="table table-hover table-sm mb-0 no-wrap v-middle">
+                                            <!-- <thead>
+                                                <tr>
+                                                    <th>Para subir</th>
+                                                    <th></th>
+                                                    <th></th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead> -->
+                                            <tbody [hidden]="Cargando">
+                                                <tr *ngFor="let item of filesFromInput; let i= index">
+                                                    <td [ngClass]="{'table-success': item.seleccionada}">
+                                                        <div class="custom-control custom-checkbox">
+                                                            <input (click)="onSelectCotizacion(item,i)"
+                                                                [(ngModel)]="item.seleccionada" type="checkbox"
+                                                                class="custom-control-input" [attr.id]="'option'+i"
+                                                                name="cotizacionCheck">
+                                                            <label class="custom-control-label"
+                                                                [attr.for]="'option'+i"></label>
+                                                        </div>
+                                                    </td>
+                                                    <td [ngClass]="{'table-success': item.seleccionada}">
+
+                                                        <i class="fa fa-file-pdf text-danger"></i>
+                                                    </td>
+                                                    <td [ngClass]="{'table-success': item.seleccionada}">
+
+                                                        <span class="small"
+                                                            [ngClass]="{'font-weight-bold': item.seleccionada}">
+                                                            {{item.name}} </span>
+                                                    </td>
+                                                    <td [ngClass]="{'table-success': item.seleccionada}">
+                                                        <button (click)="onDeleteCotizacionSeleccionada(i)"
+                                                            class="btn btn-sm btn-light"> <i
+                                                                class="fa fa-times"></i></button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+
+                                    <!-- <ng-template #elseTemplate2>
+
+                                        <div class="col-12 text-center">
+                                            <i class="fa fa-info-circle text-info fa-3x"></i>
+                                            <h3>No hay cotizaciones</h3>
+                                        </div>
+
+                                    </ng-template> -->
+
+
+
+                                </div>
+
+
+                                <!-- Cotizaciones subidas -->
+                                <div class="row">
+                                    <div class="col-8">
+                                        <hr>
+                                        <h6 class="font-weight-bold">Cotizaciones subidas
+                                            <span
+                                                class="badge badge-info badge-pill">{{cotizacionesArchivosSubidas.length}}</span>
+                                        </h6>
+                                    </div>
+                                    <div class="col-4 text-right" *ngIf="filesFromInput.length <= 0">
+                                        <hr>
+                                        <input accept="application/pdf" class="d-none" (change)="setFiles(file.files)"
+                                            #file multiple type="file" />
+                                        <button (click)="file.click()" type="button" class="btn btn-light btn-sm"><i
+                                                class="fa fa-upload"></i>
+                                        </button>
+                                    </div>
+
+                                    <div class="col-md-12" *ngIf="cotizacionesArchivosSubidas.length > 0">
+                                        <table class="table table-hover table-sm mb-0 no-wrap v-middle">
+                                            <!-- <thead>
+                                                <tr>
+                                                    <th>Subidas</th>
+                                                    <th></th>
+                                                    <th></th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead> -->
+                                            <tbody [hidden]="Cargando">
+                                                <tr *ngFor="let item of cotizacionesArchivosSubidas; let i= index">
+                                                    <td [ngClass]="{'table-success': item.escogida}">
+                                                        <div class="custom-control custom-checkbox">
+                                                            <input (click)="updateCotizacionEscogidaByID(item)"
+                                                                [(ngModel)]="item.escogida" type="checkbox"
+                                                                class="custom-control-input" [attr.id]="'options'+i"
+                                                                name="cotizacionSubCheck">
+                                                            <label class="custom-control-label"
+                                                                [attr.for]="'options'+i"></label>
+                                                        </div>
+                                                    </td>
+                                                    <td [ngClass]="{'table-success': item.escogida}">
+
+                                                        <i class="fa fa-file-pdf text-danger"></i>
+                                                    </td>
+                                                    <td [ngClass]="{'table-success': item.escogida}">
+
+                                                        <span class="small"
+                                                            [ngClass]="{'font-weight-bold': item.escogida}">
+                                                            {{item.nombre}} </span>
+                                                    </td>
+                                                    <td [ngClass]="{'table-success': item.escogida}">
+
+                                                        <a target="_blank"
+                                                            [href]="urlCarpetaArchivosCompartidos+ 'OrdenCompra-CotizacionesAnexos/OrdenCompra' + ordenCompra.id +'/' + item.nombre +'.'+ item.extension"
+                                                            class="btn btn-sm btn-light m-1"><i
+                                                                class="fa fa-download"></i></a>
+
+                                                        <button
+                                                            (click)="deleteOrdenCompraCotizacionArchivoByID(item.id)"
+                                                            class="btn btn-sm btn-light"> <i
+                                                                class="fa fa-times"></i></button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-12" *ngIf="ordenCompra">
+                        <div class="row">
+                            <div class="col-12">
+                                <hr>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="moneda"> Moneda </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="monedasTipos"
+                                    [loading]="loadingMonedasTipo" [clearable]="false"
+                                    [(ngModel)]="ordenCompra.monedaID" notFoundText="No resultados">
+                                </ng-select>
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                <label for="departamentoID"> Condición pago de la orden </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="TipoCondicionPagos"
+                                    [disabled]="true" [(ngModel)]="ordenCompra.proveedorCondicionPagoID"
+                                    [ngModelOptions]="{standalone: true}" [loading]="loadingCondicionPagos"
+                                    notFoundText="No resultados">
+                                </ng-select>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="col-12 table-responsive">
+
+                        <table class="table table-sm table-hover mb-0 no-wrap v-middle">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Artículo</th>
+                                    <th scope="col">Cant.</th>
+                                    <th scope="col">Cant Apr.</th>
+                                    <th scope="col">Unidad.</th>
+                                    <th scope="col">Costo</th>
+                                    <th scope="col">Desc.</th>
+                                    <th scope="col">SubTotal</th>
+                                    <th scope="col">Total Desc.</th>
+                                    <th scope="col">Total Neto.</th>
+                                    <!-- <th scope="col"></th> -->
+                                    <!-- <th scope="col">Fecha de aplicación</th> -->
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <!-- <tr *ngFor="let item of confirmed | filter: searchText; let i  = index"> -->
+                                <tr *ngFor="let item of ordenCompraDetalles let i=index">
+                                    <td>
+                                        <ng-select style="width: 500px;" [items]="articulosDeCompra" bindLabel="nombre"
+                                            [disabled]="true" [clearable]="false" bindValue="id"
+                                            [loading]="loadingArticulosDeCompra" [(ngModel)]="item.articuloID"
+                                            [ngModelOptions]="{standalone: true}" notFoundText="No resultados">
+                                        </ng-select>
+                                    </td>
+                                    <td>
+                                        <span>{{item.cantidad}}</span>
+                                    </td>
+                                    <td>
+                                        <input style="width: 70px;" type="text" class="form-control"
+                                            (keyup)="calcularTotal()" mask="separator" thousandSeparator=","
+                                            [(ngModel)]="item.cantidadAprobada" [ngModelOptions]="{standalone: true}">
+                                    </td>
+                                    <td>
+                                        <ng-select style="width: 70px;" [items]="unidadesMedida" bindLabel="nombre"
+                                            [clearable]="false" bindValue="codigo" [loading]="loadingUnidadesMedida"
+                                            [(ngModel)]="item.unidadMedidaID" [ngModelOptions]="{standalone: true}"
+                                            notFoundText="No resultados">
+                                        </ng-select>
+                                    </td>
+                                    <td>
+                                        <input style="width: 100px;" type="text" class="form-control" prefix="$ "
+                                            [(ngModel)]="item.costo" [ngModelOptions]="{standalone: true}"
+                                            (keyup)="calcularTotal()" mask="separator" thousandSeparator=",">
+                                    </td>
+                                    <td>
+                                        <input style="width: 60px;" type="number" class="form-control"
+                                            [(ngModel)]="item.descuentoPorciento" [ngModelOptions]="{standalone: true}"
+                                            (keyup)="calcularTotal()">
+                                    </td>
+                                    <td>
+                                        <span>${{ item.subTotal | number:'1.2-4'}}</span>
+                                    </td>
+                                    <td>
+                                        <span>${{ item.descuentoTotal | number:'1.2-4'}}</span>
+                                    </td>
+
+                                    <td>
+                                        <span>${{ item.totalNeto | number:'1.2-4'}}</span>
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                    <div class="form-group text-right col-md-12" *ngIf="ordenCompra">
+                        <hr>
+                        <h4>Subtotal: $ {{ordenCompra.subTotal | number:'1.2-2' }}</h4>
+                        <h4>Descuento: $ {{ordenCompra.descuentoTotal | number:'1.2-2' }}</h4>
+                        <h4>Impuesto: $ {{ordenCompra.totalImpuesto | number:'1.2-2' }}</h4>
+                        <h4 class="font-weight-bold">Total Neto: $ {{ordenCompra.totalNeto | number:'1.2-2' }}</h4>
+                    </div>
+
+                    <div class="form-group text-right col-md-12">
+                        <hr />
+
+                        <button class="btn btn-light m-1" routerLink="../" type="button">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+
+                        <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="button" (click)="onSubmit()">
+                            <i class="fas fa-check"></i> Guardar
+                        </button>
+
+                        <!-- boton cargando -->
+                        <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span> Guardando
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

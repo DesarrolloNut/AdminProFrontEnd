@@ -1,0 +1,167 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-md-6 align-middle">
+                        <h4 class="card-title">Histórico de autorizaciones</h4>
+                    </div>
+                    <div class="col-md-12 p-2">
+
+                        <!-- <div class="input-group">
+                            <div class="input-group-prepend">
+                                <label for="search" class="input-group-text bg-white">
+                                    <span class="bg-white" style="border-right:none">
+                                        <i class="ti-search"></i>
+                                    </span>
+                                </label>
+                            </div>
+                            <input [(ngModel)]="Search" (keyup)="getData()" type="text"
+                                style="border-left:none !important;" class="form-control" placeholder="Buscar">
+                        </div> -->
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 no-wrap v-middle">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Usuario</th>
+                                <th>Tipo Aut.</th>
+                                <th>Estado Autorizado</th>
+                                <th>Fecha Autorización</th>
+                                <th>Detalle</th>
+
+                            </tr>
+                        </thead>
+                        <tbody [hidden]="Cargando">
+
+                            <tr *ngFor="let item of data">
+                                <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
+
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fa fa-user fa-2x text-light"></i>
+                                        <div class="ml-3">
+                                            <p class="font-bold mb-0">
+                                                <span> {{item.usuario | titlecase }}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span> {{item.moduloKey}}</span>
+                                </td>
+                                <td>
+                                    <h5>
+                                        <span> <i class="fa fa-circle"
+                                                [ngStyle]="{'color': item.estadoAutorizacionColor}"></i>
+                                            {{item.estadoAutorizacion}}</span>
+                                    </h5>
+                                </td>
+                                <td>
+                                    <span class="text-muted"><i class="far fa-calendar"></i>
+                                        {{item.fechaAutorizacion | date:'dd/MM/yy, h:mm a'}}
+                                    </span>
+                                </td>
+                                <td>
+                                    <ng-template [ngIf]="item.moduloKey == ESTADOSGENERALES.LISTAPRECIO">
+
+                                        <span class="small font-weight-bold">Artículo: {{
+                                            item.jsonInfo.articulo }}</span>
+                                        <br>
+                                        <span class="small">
+                                            Precio:
+                                        </span> <span class="small font-weight-bold text-info"> {{
+                                            item.jsonInfo.precioAutorizado
+                                            | number
+                                            }}</span>
+                                        <span class="small"> | Lista Precio: {{
+                                            item.jsonInfo.listaPrecio }}</span>
+
+                                    </ng-template>
+
+
+                                    <ng-template [ngIf]="item.moduloKey == ESTADOSGENERALES.SOLICITUDCOMPRAS">
+                                        <span class="small  ">
+                                            Solicitud por:
+                                        </span>
+                                        <span class="small font-weight-bold text-info">
+                                            {{ item.usuario }}
+                                        </span>
+                                        <span class="small"> | Comprador: {{
+                                            item.jsonInfo.comprador }}</span>
+                                        <br>
+                                        <span class="small  ">
+                                            De:
+                                        </span>
+                                        <span class="small font-weight-bold">
+                                            {{ item.jsonInfo.departamentoSolicitante }} ( {{
+                                            item.jsonInfo.sucursalSolicitante }} )
+                                        </span>
+                                        <span class=" text-success  ">
+                                            <i class="fa fa-arrow-circle-right"></i>
+                                        </span>
+                                        <span class="small font-weight-bold">
+                                            {{ item.jsonInfo.departamentoDestino }} ( {{
+                                            item.jsonInfo.sucursalDestino }} )
+                                        </span>
+
+                                    </ng-template>
+
+
+                                    <ng-template [ngIf]="item.moduloKey == ESTADOSGENERALES.PEDIDO">
+
+                                        <span class="small font-weight-bold">
+                                            <b>#{{item.jsonInfo.Pedido.CodigoReferencia}}</b>
+                                            Cliente: {{ item.jsonInfo.Pedido.Cliente }}
+                                        </span>
+                                        <br>
+                                        <span class="small">
+                                            Total Neto:
+                                        </span> <span class="small font-weight-bold text-info"> RD$ {{
+                                            item.jsonInfo.Pedido.TotalNeto
+                                            | number : '1.2'
+                                            }}</span>
+
+                                        <!-- <span class="small"> | Lista Precio: {{
+                                            item.jsonInfo.listaPrecio }}</span> -->
+
+                                    </ng-template>
+
+
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+
+
+                <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+
+                <div class="row ">
+                    <div class="col-md-8 col-xs-12 ">
+                        <ngb-pagination [collectionSize]="paginaTotalRecords" [(page)]="paginaNumeroActual"
+                            [pageSize]="paginaSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="getData()">
+                        </ngb-pagination>
+                    </div>
+
+                    <div class="col-md-4 text-right d-none d-md-block  ">
+                        <select class="form-control d-block" name="paginaSize" [(ngModel)]="paginaSize"
+                            (change)="getData()">
+                            <option [ngValue]="5">5 registro por pagina</option>
+                            <option [ngValue]="10">10 registro por pagina</option>
+                            <option [ngValue]="15">15 registro por pagina</option>
+                        </select>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>

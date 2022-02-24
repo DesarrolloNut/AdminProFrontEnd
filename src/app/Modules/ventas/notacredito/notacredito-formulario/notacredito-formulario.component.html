@@ -1,0 +1,345 @@
+<div class="row">
+  <div class="control-section">
+    <div id="control_wrapper">
+    </div>
+  </div>
+</div>
+
+<div class="row mb-2">
+  <div class="col">
+    <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6 col-lg-6 col-12">
+            <h4 class="card-title">Formulario de Nota Credito</h4>
+          </div>
+          <div class="col-md-6 col-lg-6 col-12 text-right">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="form-group col-md-4">
+            <label for="example-email">Tipo Nota de Credito</label>
+            <ng-select [items]="tipoNotaCreditoCategorias" bindLabel="nombre" bindValue="codigo"
+              [loading]="loadingNotaCreditoCategorias" [clearable]="false" [(ngModel)]="TipoNotaCreditoId"
+              notFoundText="No resultados">
+            </ng-select>
+          </div>
+
+          <div class="form-group col-md-4" *ngIf="TipoNotaCreditoId == 'A'">
+            <label for="codigoFactura"> Codigo Factura</label>
+            <input type="text" name="codigoFactura" id="codigoFactura" class="form-control"
+              [(ngModel)]="CodigoClienteId">
+          </div>
+
+          <div class="form-group col-md-4 align-self-end" *ngIf="TipoNotaCreditoId == 'A'">
+            <button *ngIf="!btnBuscarCargando" class="btn btn-info" (click)="onChangeBuscarFactura()">
+              <i class="fas fa-search"></i> Buscar
+            </button>
+            <button *ngIf="btnBuscarCargando" disabled class="btn btn-info" type="button">
+              <span class="spinner-border spinner-border-sm"></span> Buscadando
+            </button>
+          </div>
+
+        </div>
+
+
+
+        <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
+        <form *ngIf="TipoNotaCreditoId == 'S'" class="form-row m-t-40" [formGroup]="FormularioServicio"
+          (ngSubmit)="onSubmit()">
+
+          <div class="form-group col-md-6">
+            <label for="codigoCliente"> Codigo Cliente</label>
+            <input formControlName="codigoCliente" type="text" name="codigoCliente" id="codigoCliente"
+              [ngClass]="{'is-invalid' : submitted && f.codigoCliente.errors,  'form-control':true  }">
+            <div class="invalid-feedback" *ngIf="submitted && f.codigoCliente.errors">
+              <div *ngIf="f.codigoCliente.errors.required">El campo es obligatorio</div>
+            </div>
+          </div>
+
+          <div class="form-group col-md-6">
+            <label for="descripcion"> Descripcion </label>
+            <input formControlName="descripcion" type="text" name="descripcion" id="descripcion" [readonly]="IsReadonly"
+              [ngClass]="{'is-invalid' : submitted && f.descripcion.errors,  'form-control':true  }">
+            <div class="invalid-feedback" *ngIf="submitted && f.descripcion.errors">
+              <div *ngIf="f.descripcion.errors.required">El campo es obligatorio</div>
+            </div>
+          </div>
+
+          <!-- <div class="form-group col-md-6">
+                  <label for="inputEmail4">Cuenta Mayor</label>
+                  <ng-select bindLabel="nombre" bindValue="codigo" [items]="TipoCliente"
+                      [loading]="loadingNotaCreditoCategorias" [clearable]="false"
+                      [ngClass]="{'form-control border-danger p-0' : submitted && f.codigoCuentaMayor.errors }"
+                      notFoundText="No resultados" formControlName="codigoCuentaMayor">
+                  </ng-select>
+                  <div *ngIf="submitted && f.codigoCuentaMayor.errors" class="text-danger small">
+                      <div *ngIf="f.codigoCuentaMayor.errors.required  ">El campo es obligatorio</div>
+                  </div>
+              </div> -->
+
+          <!-- <div class="form-group col-md-6">
+                    <label for="codigoCuentaMayor"> Codigo Cuenta Mayor</label>
+                    <input formControlName="codigoCuentaMayor" type="number" name="codigoCuentaMayor" id="codigoCuentaMayor"
+                        [ngClass]="{'is-invalid' : submitted && f.codigoCuentaMayor.errors,  'form-control':true  }">
+                    <div class="invalid-feedback" *ngIf="submitted && f.codigoCuentaMayor.errors">
+                        <div *ngIf="f.codigoCuentaMayor.errors.required">El campo es obligatorio</div>
+                    </div>
+                </div> -->
+
+          <div class="form-group col-md-6">
+            <label for="cantidad"> Cantidad</label>
+            <input formControlName="cantidad" type="number" name="cantidad" id="cantidad"
+              [ngClass]="{'is-invalid' : submitted && f.cantidad.errors,  'form-control':true  }">
+            <div class="invalid-feedback" *ngIf="submitted && f.cantidad.errors">
+              <div *ngIf="f.cantidad.errors.required">El campo es obligatorio</div>
+            </div>
+          </div>
+
+          <div class="form-group col-md-6">
+            <label for="codigoReferenciaDeudor"> Codigo Referencia</label>
+            <input formControlName="codigoReferenciaDeudor" type="text" name="codigoReferenciaDeudor"
+              id="codigoReferenciaDeudor"
+              [ngClass]="{'is-invalid' : submitted && f.codigoReferenciaDeudor.errors,  'form-control':true  }">
+            <div class="invalid-feedback" *ngIf="submitted && f.codigoReferenciaDeudor.errors">
+              <div *ngIf="f.codigoReferenciaDeudor.errors.required">El campo es obligatorio</div>
+            </div>
+          </div>
+
+          <div class="form-group col-md-6">
+            <label for="comentario"> Comentario </label>
+            <input formControlName="comentario" type="text" name="comentario" id="comentario"
+              [ngClass]="{'is-invalid' : submitted && f.comentario.errors,  'form-control':true  }">
+            <div class="invalid-feedback" *ngIf="submitted && f.comentario.errors">
+              <div *ngIf="f.comentario.errors.required">El campo es obligatorio</div>
+            </div>
+          </div>
+
+          <div class="form-group text-right col-md-12">
+            <hr />
+
+            <button class="btn btn-light m-1" routerLink="../" type="button">
+              <i class="fas fa-times"></i> Cancelar
+            </button>
+
+            <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+              <i class="fas fa-check"></i> Guardar
+            </button>
+
+            <!-- boton cargando -->
+            <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+              <span class="spinner-border spinner-border-sm"></span> Guardando
+            </button>
+          </div>
+
+        </form>
+
+
+        <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
+        <form *ngIf="TipoNotaCreditoId == 'A'" class="form-row m-t-40" [formGroup]="FormularioArticulo"
+          (ngSubmit)="onSubmit()">
+
+          <div class="col-12">
+            <div class="row border border-light p-2" *ngIf="cliente">
+                <div class="form-group col-md-6">
+                    <label for="nombre"><i class="fa fa-hashtag"></i> Código</label>
+                    <input [(ngModel)]="cliente.Codigo" class="form-control" [readonly]="'true'"
+                        type="text" [ngModelOptions]="{standalone: true}" name="nombre" id="nombre">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="nombre"> <i class="fa fa-user"></i> Nombre</label>
+                    <input [(ngModel)]="cliente.Nombre" class="form-control"
+                        [readonly]="'true'" type="text" [ngModelOptions]="{standalone: true}" name="nombre"
+                        id="nombre">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="nombre"> <i class="fa fa-id-card"></i> Documento</label>
+                    <input [(ngModel)]="cliente.Documento" class="form-control" [readonly]="'true'"
+                        type="text" [ngModelOptions]="{standalone: true}" name="nombre" id="nombre">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="nombre"> <i class="fa fa-map-marker"></i> Dirección</label>
+                    <input [(ngModel)]="cliente.Direccion" class="form-control" [readonly]="'true'"
+                        type="text" [ngModelOptions]="{standalone: true}" name="nombre" id="nombre">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="nombre"> <i class="fa fa-map-marker"></i> Teléfono</label>
+                    <input [(ngModel)]="cliente.Phone" class="form-control" [readonly]="'true'"
+                        type="text" [ngModelOptions]="{standalone: true}" name="nombre" id="nombre">
+                </div>
+            </div>
+        </div>
+
+          <div class="table-responsive">
+            <table class="table table-hover mb-0 no-wrap v-middle" formArrayName="articulos">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Articulo</th>
+                  <th>Cantidad</th>
+                  <th>Sin Movimiento Inventario</th>
+                  <!-- <th>Estado</th> -->
+                </tr>
+              </thead>
+              <tbody>
+
+                <tr *ngFor="let ticket of FormularioArticulo.controls.articulos.controls; let i = index"
+                  [formGroup]="ticket">
+                  <!-- <td><span class="badge badge-light text-info ">{{item.id}}</span></td> -->
+                  <td>
+                    <div class="col-md-6 py-4 px-4">
+                      <div class="form-check">
+                        <input formControlName="selecionado" type="checkbox" name="selecionado" id="selecionado2"
+                          (change)="checkValue($event, i)"
+                          [ngClass]="{'is-invalid' : submitted && ticket.controls.selecionado.errors,  'form-check-input':true  }">
+                        <label for="selecionado2" class="form-check-label"></label>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td>
+                    <p>{{ ticket.controls.nombreArticulo.value }}</p>
+                  </td>
+
+                  <td>
+                    <div class="form-group">
+                      <!-- <label>Cantidad</label> -->
+                      <input type="number" formControlName="cantidad" class="form-control"
+                        [ngClass]="{ 'is-invalid': submitted && ticket.controls.cantidad.errors }" />
+                      <div *ngIf="submitted && ticket.controls.cantidad.errors" class="invalid-feedback">
+                        <div *ngIf="ticket.controls.cantidad.errors.required">El campo es obligatorio</div>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td>
+                    <div class="form-group">
+                      <!-- <label for="example-email">Sin Movimiento Inventario</label> -->
+                      <ng-select [items]="sinMovimientoInventarioCategorias" bindLabel="nombre" bindValue="codigo"
+                        [loading]="loadingNotaCreditoCategorias" [clearable]="false" placeholder="selecionar"
+                        [ngClass]="{'form-control border-danger p-0' : submitted && ticket.controls.sinMovimientoInventario.errors }"
+                        notFoundText="No resultados" formControlName="sinMovimientoInventario">
+                      </ng-select>
+                      <div *ngIf="submitted && ticket.controls.sinMovimientoInventario.errors"
+                        class="text-danger small animated animated--fade-in">
+                        <div *ngIf="ticket.controls.sinMovimientoInventario.errors.required  ">El campo es obligatorio
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+
+                  <!--
+                              <td>
+                                  <input type="text" class="form-control" formControlName="nombreArticulo">
+                              </td>
+                              <td>
+                                  <input type="number" class="form-control" formControlName="cantidad">
+                              </td> -->
+
+                  <!-- <td>
+                                <button class="btn btn-sm btn-info" [routerLink]="[item.id]">
+                                    <i class="fa fa-sm fa-edit"></i>
+                                </button>
+                            </td> -->
+                </tr>
+
+              </tbody>
+            </table>
+
+          </div>
+          <hr>
+          <div class="form-group col-md-6">
+            <label for="codigoReferencia"> Codigo Referencia</label>
+            <input formControlName="codigoReferencia" type="text" name="codigoReferencia" id="codigoReferencia"
+              [ngClass]="{'is-invalid' : submitted && a.codigoReferencia.errors,  'form-control':true  }">
+            <div class="invalid-feedback" *ngIf="submitted && a.codigoReferencia.errors">
+              <div *ngIf="a.codigoReferencia.errors.required">El campo es obligatorio</div>
+            </div>
+          </div>
+          <div class="form-group col-md-12">
+            <label for="comentario"> Comentario</label>
+            <textarea formControlName="comentario" class="form-control" name="comentario" id="comentario"
+              rows="5"></textarea>
+            <div class="invalid-feedback" *ngIf="submitted && a.comentario.errors">
+              <div *ngIf="a.comentario.errors.required">El campo es obligatorio</div>
+            </div>
+          </div>
+
+          <!--
+                  <div class="form-group col-md-6">
+                      <label for="nombre"> Codigo Articulo</label>
+                      <input formControlName="nombre" type="text" name="nombre" id="nombre"
+                          [ngClass]="{'is-invalid' : submitted && f.nombre.errors,  'form-control':true  }">
+                      <div class="invalid-feedback" *ngIf="submitted && f.nombre.errors">
+                          <div *ngIf="f.nombre.errors.required">El campo es obligatorio</div>
+                      </div>
+                  </div>
+
+                  <div class="form-group col-md-6">
+                    <label for="nombre"> Cantidad</label>
+                    <input formControlName="nombre" type="text" name="nombre" id="nombre"
+                        [ngClass]="{'is-invalid' : submitted && f.nombre.errors,  'form-control':true  }">
+                    <div class="invalid-feedback" *ngIf="submitted && f.nombre.errors">
+                        <div *ngIf="f.nombre.errors.required">El campo es obligatorio</div>
+                    </div>
+                </div>
+
+                <div class="form-group col-md-12">
+                  <label for="example-email">Sin Movimiento Inventario</label>
+                  <ng-select [items]="sinMovimientoInventarioCategorias" bindLabel="nombre" bindValue="codigo"
+                      [loading]="loadingNotaCreditoCategorias" [clearable]="false"
+                      [ngClass]="{'form-control border-danger p-0' : submitted && f.categoriaID.errors }"
+                      notFoundText="No resultados" formControlName="categoriaID">
+                  </ng-select>
+                  <div *ngIf="submitted && f.categoriaID.errors"
+                      class="text-danger small animated animated--fade-in">
+                      <div *ngIf="f.categoriaID.errors.required  ">El campo es obligatorio</div>
+                  </div>
+              </div>
+
+              <div class="form-group col-md-6">
+                <label for="nombre"> Descripcion </label>
+                <input formControlName="nombre" type="text" name="nombre" id="nombre"
+                    [ngClass]="{'is-invalid' : submitted && f.nombre.errors,  'form-control':true  }">
+                <div class="invalid-feedback" *ngIf="submitted && f.nombre.errors">
+                    <div *ngIf="f.nombre.errors.required">El campo es obligatorio</div>
+                </div>
+            </div> -->
+
+
+
+
+
+
+
+
+          <div class="form-group text-right col-md-12">
+            <hr />
+
+            <button class="btn btn-light m-1" routerLink="../" type="button">
+              <i class="fas fa-times"></i> Cancelar
+            </button>
+
+            <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+              <i class="fas fa-check"></i> Guardar
+            </button>
+
+            <!-- boton cargando -->
+            <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+              <span class="spinner-border spinner-border-sm"></span> Guardando
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

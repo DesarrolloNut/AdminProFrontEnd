@@ -26,7 +26,7 @@
                 <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
                 <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
 
-                    <div class="form-group col-md-12">
+                    <div class="form-group col-md-6">
                         <label for="nombre"> Nombre</label>
                         <input formControlName="nombre" type="text" name="nombre" id="nombre"
                             [ngClass]="{'is-invalid' : submitted && f.nombre.errors,  'form-control':true  }">
@@ -54,10 +54,20 @@
                         </div>
                     </div>
 
+                    <div class="form-group col-md-6">
+                        <label for="impuesto"> Impuesto % </label>
+                        <input formControlName="impuesto" type="number" name="impuesto" id="impuesto"
+                            [ngClass]="{'is-invalid' : submitted && f.impuesto.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.impuesto.errors">
+                            <div *ngIf="f.impuesto.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
 
                     <div class="form-group col-md-6">
                         <label for="telefono"> Teléfono</label>
-                        <input formControlName="telefono" type="text" name="telefono" id="telefono" mask="(000) 000-0000"
+                        <input formControlName="telefono" type="text" name="telefono" id="telefono"
+                            mask="(000) 000-0000"
                             [ngClass]="{'is-invalid' : submitted && f.telefono.errors,  'form-control':true  }">
                         <div class="invalid-feedback" *ngIf="submitted && f.telefono.errors">
                             <div *ngIf="f.telefono.errors.required">El campo es obligatorio</div>

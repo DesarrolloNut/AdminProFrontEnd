@@ -1,0 +1,562 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row mb-2">
+          <div class="col-md-6 align-middle">
+            <h4 class="card-title">Listado de Orden Fabricación</h4>
+          </div>
+          <div class="col-md-12 text-right p-3">
+            <button [routerLink]="[0]" class="btn btn-info"> <i class="fa fa-plus"></i> Nueva
+            </button>
+          </div>
+          <div class="col-md-8">
+
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <label for="search" class="input-group-text bg-white">
+                  <span class="bg-white" style="border-right:none">
+                    <i class="ti-search"></i>
+                  </span>
+                </label>
+              </div>
+              <input [(ngModel)]="Search" (keyup)="getData()" type="text" style="border-left:none !important;"
+                class="form-control" placeholder="Buscar">
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <ng-select bindLabel="nombre" bindValue="codigo" [items]="estadosAutorizacion" [(ngModel)]="OrdenFilterEstadoId" (change)="getData()"
+            class ="form-control p-0" notFoundText="No resultados" >
+            </ng-select>
+          </div>
+
+
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover mb-0 no-wrap v-middle">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Articulo</th>
+                <th>Tipo</th>
+                <th>Estado</th>
+                <th>Estado ERP Externo</th>
+                <th>Almacen</th>
+                <!-- <th>Fecha Creación</th> -->
+                <th>Cantidad Planificada</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody [hidden]="Cargando">
+
+              <tr *ngFor="let item of data">
+                <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
+                <td>
+                  <span class="font-weight-bold"> {{item.articuloPadre }} | {{item.articulo}}</span>
+                  <small  class="d-block" > Fecha Creación: {{item.fechaCreacion | date:'medium'}}</small>
+                  <small class="text-info"> <i class=" fa fa-hashtag"></i> Codigo ERP Externo: <b>{{item.codigoReferencia }}</b>  </small>
+                </td>
+                <td>
+                  <span> {{item.tipo}}</span>
+                </td>
+                <td>
+                  <span class="badge text-white m-1 font-weight-bold" [ngClass]="{
+                    'badge-secondary text-black' : item.colorHEX == 'secondary',
+                  'badge-success' : item.colorHEX == 'success',
+                  'badge-warning ' : item.colorHEX == 'warning',
+                  'badge-danger ' : item.colorHEX == 'danger',
+                  'badge-info ' : item.colorHEX == 'info'
+
+                }" >{{item.nombre}} </span>
+                </td>
+
+                <td>
+                  <div class="circulo" [ngClass]="{
+                  'bg-success' : item.estadoERPExternoId == 6,
+                  'bg-warning ' : item.estadoERPExternoId > 0 && item.estadoERPExternoId < 6
+
+                }"></div>
+                  <span class="text-dark">
+                    {{item.estadoERPExternoId == 1 ? "Creado en SAP": ""}}
+                    {{item.estadoERPExternoId == 2 ? "Pendiente Liberar en SAP": ""}}
+                    {{item.estadoERPExternoId == 3 ? "Pendiente emision en SAP": ""}}
+                    {{item.estadoERPExternoId == 4 ? "Pendiente recibo en SAP": ""}}
+                    {{item.estadoERPExternoId == 5 ? "Pendiente Cerrada en SAP": ""}}
+                    {{item.estadoERPExternoId == 6 ? "Sincronizado en SAP": ""}}
+
+                  </span>
+              </td>
+                <!-- <td>
+                  <span class=" m-1"
+                  [ngClass]="{
+                    'text-black' : item.estadoERPExternoId == 0,
+                  'text-success' : item.estadoERPExternoId == 6,
+                  'text-warning ' : item.estadoERPExternoId > 0 && item.estadoERPExternoId < 6
+
+                }" >{{item.estadoERPExternoId > 0 && item.estadoERPExternoId < 6 ? "Pendiente": item.estadoERPExternoId == 6 ? "Sincronizado": "Ninguna Accion" }} </span>
+                </td> -->
+                <td>
+                  <span> {{item.almacen}}</span>
+                </td>
+
+                <td>
+                  <span> {{item.cantidadPlanificada | number:'1.2-2'}}</span>
+                </td>
+
+
+
+                <td>
+                  <button class="btn btn-sm btn-info m-1" [routerLink]="[item.id]">
+                    <i class="fa fa-sm fa-edit"></i>
+                  </button>
+
+                  <!-- <button class="btn btn-sm btn-dark m-1" (click)="openModalComfirm(modalConfirmacionEstado,item)" *ngIf="item.estadoId != ValidOrden.CERRADA">
+                    <i class="fa fa-sm fa-arrow-right"></i>
+                  </button> -->
+
+                  <button class="btn btn-sm btn-warning m-1" (click)="openModal(modalConsumo,item)" *ngIf="item.estadoId == ValidOrden.PENDIENTECONSUMO || item.estadoId == ValidOrden.PROCESANDOCONSUMO">
+                    <i class="fa fa-sm fa-list"></i>
+                  </button>
+
+                  <button class="btn btn-sm btn-success m-1" (click)="openModalProducida(modalProducida,item)" *ngIf="item.estadoId == ValidOrden.PENDIENTETERMINALREPORT || item.estadoId == ValidOrden.PROCESANDOTERMINALREPORT">
+                    <i class="fa fa-sm fa-calendar-check"></i>
+                  </button>
+
+
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+
+        </div>
+
+
+
+        <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+
+        <div class="row ">
+          <div class="col-md-8 col-xs-12 ">
+            <ngb-pagination [collectionSize]="paginaTotalRecords" [(page)]="paginaNumeroActual" [pageSize]="paginaSize"
+              [maxSize]="5" [boundaryLinks]="true" (pageChange)="getData()">
+            </ngb-pagination>
+          </div>
+
+          <div class="col-md-4 text-right d-none d-md-block  ">
+            <select class="form-control d-block" name="paginaSize" [(ngModel)]="paginaSize" (change)="getData()">
+              <option [ngValue]="5">5 registro por pagina</option>
+              <option [ngValue]="10">10 registro por pagina</option>
+              <option [ngValue]="15">15 registro por pagina</option>
+            </select>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<ng-template #modalConfirmacionEstado let-modal>
+  <div class="modal-header bg-dark">
+    <h4 class="modal-title text-white">Cambio de estado</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+
+
+      <div class="col-12 mb-1">
+        <div class="row border border-light p-2">
+          <div class="col">
+            <h3> <i class="fa fa-shopping-bag"></i> {{articulo.codigoReferencia}} |
+              {{articulo.nombre}}</h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="row justify-content-center align-items-center flex-column">
+          <div class="col text-center">
+            <p>Estado actual</p>
+            <h1>{{GetNameEstado(ofheader.estadoId)}}</h1>
+          </div>
+          <div class="col-12 text-center">
+            <i class="fa fa-arrow-down fa-3x"></i>
+          </div>
+          <div class="col text-center">
+            <p>Proximo Estado</p>
+            <h1>{{GetNameEstado(ofheader.estadoId+1)}}</h1>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
+
+
+    <button *ngIf="!loadingEnviando " class="btn btn-info m-1" type="button" (click)="updateOrdenFabricacionEstado(ofheader.id)">
+      <i class="fas fa-arrow-right"></i> Enviar
+  </button>
+
+  <button *ngIf="loadingEnviando" disabled class="btn btn-info m-1" type="button">
+      <span class="spinner-border spinner-border-sm"></span> Enviando
+  </button>
+  </div>
+</ng-template>
+
+<ng-template #modalConsumo let-modal>
+  <div class="modal-header bg-dark">
+    <h4 class="modal-title text-white">Consumo de Materiales</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-12 mb-1">
+        <div class="row border border-light p-2">
+          <div class="col">
+            <h3> <i class="fa fa-shopping-bag"></i> {{articulo.codigoReferencia}} |
+              {{articulo.nombre}}</h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12" [hidden]="loadingArticulosExtras">
+
+        <div class="table-responsive">
+          <table class="table table-sm ">
+            <thead >
+              <tr>
+                <th scope="col">Articulo</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Base</th>
+                <th scope="col">Requerida</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Consumido</th>
+                <th scope="col">Lote</th>
+                <th scope="col">Disponible</th>
+                <th scope="col">Costo Real</th>
+                <!-- <th scope="col">Unidad</th> -->
+                <th scope="col">Almacén</th>
+                <th></th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              <tr *ngFor="let articulext of articulosExtras">
+                <th style="font-size: 14px;">{{articulext.articulo}}</th>
+                <td style="font-size: 14px;">
+                 <span class="font-weight-bold">{{articulext.nombre}}</span>
+                 <div class="d-flex">
+                   <span class="badge badge-info text-white m-1 font-weight-bold">{{articulext.unidadMedida}}</span>
+                   <span class="badge badge-light m-1 font-weight-bold">{{articulext.metodoEmision == "M" ? "Manual" : "Automático"}}</span>
+
+                 </div>
+                </td>
+                <td>{{articulext.cantidadBase }}</td>
+                <td>{{articulext.cantidadRequerida }}</td>
+                <td>
+                  <div class="circulo" [ngClass]="{
+                  'bg-success' : articulext.estadoHijoId == ValidOrdenDetalle.CONSUMIDO,
+                  'bg-warning ' : articulext.estadoHijoId == ValidOrdenDetalle.PENDIENTEAUTORIZAR
+
+                }"></div>
+                  <span class="text-dark">
+                    {{articulext.estadoHijoId == ValidOrdenDetalle.PENDIENTEAUTORIZAR ? "Pendiente Autorizar": articulext.estadoHijoId == ValidOrdenDetalle.CONSUMIDO ? "Consumido": "" }}
+                  </span>
+              </td>
+
+                <td>
+                  <input type="number"   [readonly]="!articulext.isPesaje" [(ngModel)]="articulext.consumido" [ngClass]="{'form-control-plaintext': !articulext.isPesaje, 'form-control': articulext.isPesaje}">
+                </td>
+
+                <td>
+                  <input type="text" *ngIf="articulext.gestionado" [readonly]="!articulext.isPesaje" [(ngModel)]="articulext.lote" [ngClass]="{'form-control-plaintext': !articulext.isPesaje, 'form-control': articulext.isPesaje}">
+                </td>
+                <td>{{articulext.disponible}}</td>
+                <td>{{articulext.costoReal}}</td>
+                <!-- <td>{{articulext.unidadMedida}}</td> -->
+                <td>{{articulext.almacenCodigoReferencia}}</td>
+                <!-- <td>{{articulext.metodoEmision == "M" ? "Manual" : "Automático"}}</td> -->
+                <td>
+
+                  <div *ngxPermissionsOnly="['produccion_ordenfabricacion_consumomanual']" class="d-inline-block">
+                    <div *ngIf="MostrarBtnBalanza(articulext) && articulext.estadoHijoId != ValidOrdenDetalle.PENDIENTEAUTORIZAR" class="d-inline-block">
+
+
+                      <button class="btn btn-sm  btn-light m-1" *ngIf="!articulext.isPesaje" (click)="OnChangeIsPesaje(articulext)">
+                        <i class="fa fa-sm fa-edit"></i>
+                      </button>
+
+                      <button class="btn btn-sm btn-success m-1" *ngIf="articulext.isPesaje && !articulext.loadingSaveConsumido" (click)="getLote(modalAutorizaArticulo, articulext)">
+                        <i class="fa fa-sm fa-check"></i>
+                      </button>
+
+                      <button class="btn btn-sm btn-success m-1" *ngIf="articulext.loadingSaveConsumido">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span class="sr-only">Loading...</span>
+                      </button>
+
+                      <button class="btn btn-sm btn-danger m-1" *ngIf="articulext.isPesaje && !articulext.loadingSaveConsumido" (click)="OnChangeIsPesaje(articulext)">
+                        <i class="fa fa-sm fa-times"></i>
+                      </button>
+
+
+                    </div>
+                  </div>
+
+
+
+                  <div   *ngIf="!MostrarBtnBalanza(articulext) && articulext.estadoHijoId != ValidOrdenDetalle.PENDIENTEAUTORIZAR" class="d-inline-block">
+
+                    <button class="btn btn-sm  btn-light m-1" *ngIf="!articulext.isPesaje" (click)="OnChangeIsPesaje(articulext)">
+                      <i class="fa fa-sm fa-edit"></i>
+                    </button>
+
+                    <button class="btn btn-sm btn-success m-1" *ngIf="articulext.isPesaje && !articulext.loadingSaveConsumido" (click)="getLote(modalAutorizaArticulo, articulext)">
+                      <i class="fa fa-sm fa-check"></i>
+                    </button>
+
+                    <button class="btn btn-sm btn-success m-1" *ngIf="articulext.loadingSaveConsumido">
+                      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                      <span class="sr-only">Loading...</span>
+                    </button>
+
+                    <button class="btn btn-sm btn-danger m-1" *ngIf="articulext.isPesaje && !articulext.loadingSaveConsumido" (click)="OnChangeIsPesaje(articulext)">
+                      <i class="fa fa-sm fa-times"></i>
+                    </button>
+
+                  </div>
+
+                  <button class="btn btn-sm btn-info m-1"  *ngIf="!articulext.isPesaje && MostrarBtnBalanza(articulext) && articulext.estadoHijoId != ValidOrdenDetalle.PENDIENTEAUTORIZAR" (click)="OnChangePagePesaje(modalPesaje,articulext, false)">
+                    <i class="fa fa-sm fa-balance-scale"></i>
+                  </button>
+
+
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+
+        </div>
+
+
+      </div>
+
+      <!-- <div class="col-12 text-right">
+              <hr>
+              <h4>Subtotal: $ {{cotizacionSeleccionada.subTotal | number:'1.2-2' }}</h4>
+              <h4>Descuento: $ {{cotizacionSeleccionada.descuentoTotal | number:'1.2-2' }}</h4>
+              <h4>Impuesto: $ {{cotizacionSeleccionada.impuestoTotal | number:'1.2-2' }}</h4>
+              <h4 class="font-weight-bold">Total Neto: $ {{cotizacionSeleccionada.totalNeto | number:'1.2-2' }}</h4>
+          </div> -->
+
+      <div class="col-12">
+        <app-loading-listado [hidden]="!loadingArticulosExtras"></app-loading-listado>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
+  </div>
+</ng-template>
+
+
+<ng-template #modalProducida let-modal>
+  <div class="modal-header bg-dark">
+    <h4 class="modal-title text-white">Terminal Report</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <!-- <div class="col-12 mb-1">
+        <div class="row border border-light p-2">
+          <div class="col">
+            <h3> <i class="fa fa-shopping-bag"></i> {{articulo.codigoReferencia}} |
+              {{articulo.nombre}}</h3>
+          </div>
+        </div>
+      </div> -->
+
+      <div class="col-12" [hidden]="loadingArticulosExtras">
+
+        <div class="table-responsive">
+          <table class="table table-sm ">
+            <thead >
+              <tr>
+                <th scope="col">Articulo</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Cantidad Completada</th>
+                <th scope="col">Cantidad Batches</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Total</th>
+                <th></th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              <tr>
+                <th style="font-size: 14px;">{{articulo.codigoReferencia}}</th>
+                <th style="font-size: 14px;">{{articulo.nombre}}</th>
+                <td>
+                  <input type="number" [readonly]="!IsPesajeProducida" [(ngModel)]="ordenfabricacion.cantidadProducida" [ngClass]="{'form-control-plaintext': !IsPesajeProducida, 'form-control': IsPesajeProducida}">
+                </td>
+                <td>
+                  <input type="number" [readonly]="!IsPesajeProducida" [(ngModel)]="ordenfabricacion.batch" [ngClass]="{'form-control-plaintext': !IsPesajeProducida, 'form-control': IsPesajeProducida}">
+                </td>
+                <td>{{(ordenfabricacion.costoReal / ordenfabricacion.cantidad) | currency}}</td>
+                <td>{{((ordenfabricacion.costoReal / ordenfabricacion.cantidad) * ordenfabricacion.cantidadProducida) | currency }}</td>
+
+                <td>
+
+
+                  <button class="btn btn-sm btn-info m-1" *ngIf="MostrarBtnBalanza(articulo)" (click)="OnChangePagePesaje(ordenfabricacion, true)">
+                    <i class="fa fa-sm fa-balance-scale"></i>
+                  </button>
+
+                  <div *ngxPermissionsOnly="['produccion_ordenfabricacion_consumomanual']" class="d-inline-block">
+
+                      <button class="btn btn-sm  btn-light m-1" *ngIf="!IsPesajeProducida" (click)="OnChangeProducida()">
+                        <i class="fa fa-sm fa-edit"></i>
+                      </button>
+
+                  <button class="btn btn-sm btn-success m-1" *ngIf="IsPesajeProducida && !loadingSaveProducida" (click)="OnSubmitProducida()">
+                    <i class="fa fa-sm fa-check"></i>
+                  </button>
+
+                  <button class="btn btn-sm btn-success m-1" *ngIf="loadingSaveProducida">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    <span class="sr-only">Loading...</span>
+                  </button>
+
+                  <button class="btn btn-sm btn-danger m-1" *ngIf="!IsPesajeProducida && loadingSaveProducida" (click)="OnChangeProducida()">
+                    <i class="fa fa-sm fa-times"></i>
+                  </button>
+
+                  </div>
+
+
+
+
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+
+        </div>
+
+
+      </div>
+
+      <!-- <div class="col-12 text-right">
+              <hr>
+              <h4>Subtotal: $ {{cotizacionSeleccionada.subTotal | number:'1.2-2' }}</h4>
+              <h4>Descuento: $ {{cotizacionSeleccionada.descuentoTotal | number:'1.2-2' }}</h4>
+              <h4>Impuesto: $ {{cotizacionSeleccionada.impuestoTotal | number:'1.2-2' }}</h4>
+              <h4 class="font-weight-bold">Total Neto: $ {{cotizacionSeleccionada.totalNeto | number:'1.2-2' }}</h4>
+          </div> -->
+
+      <div class="col-12">
+        <app-loading-listado [hidden]="!loadingArticulosExtras"></app-loading-listado>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
+  </div>
+</ng-template>
+
+
+
+
+<ng-template #modalAutorizaArticulo let-modal>
+  <div class="modal-header bg-dark">
+    <h4 class="modal-title text-white">Articulo para autorizar</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')" >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+
+    <div class="row" *ngIf="cantidadArticuloDeCambio == 0 && searching">
+      <div class="col-12">
+        <h2>No hay articulo para autorizar.</h2>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12" [hidden]="searching">
+        <div class="table-responsive" style="overflow-y: auto; height: 500px">
+          <table class="table table-sm">
+            <thead class="sticky-top">
+              <tr>
+                <th scope="col">Articulo</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Cantidad Requerida</th>
+                <th scope="col">Consumido</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <th style="font-size: 14px">{{ selectMaterial.articulo }}</th>
+                <td style="font-size: 14px">{{ selectMaterial.nombre }}</td>
+                <td style="font-size: 14px">{{ selectMaterial.cantidadRequerida }}</td>
+                <td style="font-size: 14px">{{ selectMaterial.consumido }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <app-loading-listado [hidden]="!searching"></app-loading-listado>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')" > Cerrar</button>
+
+    <button type="button" *ngIf="!btnGuardarCargando" class="btn btn-success m-1" (click)="EnviarAutorizarModal()" ><i class="fa fa-sm fa-check"></i> Enviar Autorizar</button>
+    <button *ngIf="btnGuardarCargando" disabled class="btn btn-success m-1" type="button">
+      <span class="spinner-border spinner-border-sm"></span> Enviando
+  </button>
+  </div>
+</ng-template>
+
+
+
+<ng-template #modalPesaje let-modal>
+  <div class="modal-header bg-dark">
+    <h4 class="modal-title text-white">Pesaje</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')" >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+
+<app-ordenfabricacion-pesaje></app-ordenfabricacion-pesaje>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')" > Cerrar</button>
+  </div>
+</ng-template>
+
+
+

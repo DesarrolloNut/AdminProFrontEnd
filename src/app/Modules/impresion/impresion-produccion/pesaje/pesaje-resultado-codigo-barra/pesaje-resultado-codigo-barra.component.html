@@ -1,0 +1,61 @@
+<div style="width: 550px; margin-left: 20px;">
+
+    <div class="container-fluid">
+
+        <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+
+        <div class="row" *ngIf="articuloPesaje">
+            <div class="col-md-12">
+
+                <!-- <div class="row">
+                    <div class="col-md-12 text-center">
+                        <img src="assets/images/nutriciosa.png" style="width: 150px;" alt="Responsive image">
+                    </div>
+                </div> -->
+
+                <div class="row">
+
+                    <div class="col-md-12">
+                        <h3 class="font-weight-bold" style="font-size: 25px;">{{articuloPesaje.articulo}} </h3>
+                        <hr>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-5">
+                                <h4 class="d-inline" style="font-size: 20px"> <span class="font-weight-bold">
+                                        Neto: {{articuloPesaje.pesoNeto | number:'2.2-2'}} Lb </span>
+                                </h4>
+                            </div>
+                            <div class="col-5 ">
+                                <h4 class="d-inline" style="font-size: 20px;"> <span class="font-weight-bold">
+                                        Lote: {{articuloPesaje.lote}} </span>
+                                </h4>
+                            </div>
+                            <div class="col-12 ">
+                                <hr>
+                                <h4 class="d-inline" style="font-size: 20px;"> <span class="font-weight-bold">
+                                        Vence: {{articuloPesaje.fechaVencimiento | date:'dd/MM/yyyy'}}
+                                    </span>
+                                </h4>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
+                    <div class="col-md-12 text-center ">
+                        <ngx-barcode [bc-height]="50" [bc-value]="articuloPesaje.id.toString().padStart(10,'0')"
+                            [bc-display-value]="false">
+                        </ngx-barcode>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,261 @@
+<div class="row">
+    <div class="control-section">
+        <div id="control_wrapper">
+        </div>
+    </div>
+</div>
+
+<div class="row mb-2">
+    <div class="col">
+        <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 col-12">
+                        <h4 class="card-title">Formulario de solicitudes de compras</h4>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-12 text-right">
+                    </div>
+                </div>
+                <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
+                <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
+
+                    <!-- <div class="form-group col-md-6">
+                        <label for="codigoReferencia"> <i class="fa fa-hashtag"></i> Código de Referencia</label>
+                        <input formControlName="codigoReferencia" type="text" name="codigoReferencia"
+                            id="codigoReferencia"
+                            [ngClass]="{'is-invalid' : submitted && f.codigoReferencia.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.codigoReferencia.errors">
+                            <div *ngIf="f.codigoReferencia.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div> -->
+
+
+                    <div class="col-12 mb-2" *ngIf="usuario">
+                        <div class="row border border-light p-2">
+
+                            <div class="col-12">
+                                <h4 class="card-subtitle">
+                                    <span class="badge badge-info">Datos del solicitante</span>
+                                </h4>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label for="nombre"><i class="fa fa-hashtag"></i> Código</label>
+                                <input [(ngModel)]="usuario.codigoReferencia" class="form-control" [readonly]="'true'"
+                                    type="text" [ngModelOptions]="{standalone: true}" name="nombre" id="nombre">
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label for="nombre"> <i class="fa fa-user"></i> Nombres</label>
+                                <input [(ngModel)]="usuario.nombres +' '+ usuario.apellidos" class="form-control"
+                                    [readonly]="'true'" type="text" [ngModelOptions]="{standalone: true}" name="nombre"
+                                    id="nombre">
+                            </div>
+
+                            <div class="form-group col-md-2">
+                                <label for="nombre"> <i class="fa fa-id-card"></i> Doc.</label>
+                                <input [(ngModel)]="usuario.documento" class="form-control" [readonly]="'true'"
+                                    type="text" [ngModelOptions]="{standalone: true}" name="nombre" id="nombre">
+                            </div>
+
+                            <div class="form-group col-md-2">
+                                <label for="departamentoID"> <i class="fa fa-warehouse"></i> Dep. </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="departamentos"
+                                    [disabled]="true" [(ngModel)]="usuario.departamentoID"
+                                    [ngModelOptions]="{standalone: true}" [loading]="loadingDepartamentos"
+                                    notFoundText="No resultados">
+                                </ng-select>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="row border border-light p-2">
+                            <div class="col-12">
+                                <h4 class="card-subtitle">
+                                    <span class="badge badge-info">Destino de la compra</span>
+                                </h4>
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label for="sucursalID"> Sucursal </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="sucursales"
+                                    [loading]="loadingSucursales" [clearable]="false"
+                                    [ngClass]="{'form-control border-danger p-0' : submitted && f.sucursalID.errors }"
+                                    notFoundText="No resultados" formControlName="sucursalID">
+                                </ng-select>
+                                <div *ngIf="submitted && f.sucursalID.errors" class="text-danger small">
+                                    <div *ngIf="f.sucursalID.errors.required  ">El campo es obligatorio</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label for="departamentoID"> Departamento </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="departamentos"
+                                    [loading]="loadingDepartamentos" [clearable]="false"
+                                    [ngClass]="{'form-control border-danger p-0' : submitted && f.departamentoID.errors }"
+                                    notFoundText="No resultados" formControlName="departamentoID">
+                                </ng-select>
+                                <div *ngIf="submitted && f.departamentoID.errors" class="text-danger small">
+                                    <div *ngIf="f.departamentoID.errors.required  ">El campo es obligatorio</div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+
+                    <div class="col-12">
+                        <div class="row border border-light p-2">
+                            <div class="col-12">
+                                <h4 class="card-subtitle">
+                                    <span class="badge badge-info">Otros datos</span>
+                                </h4>
+                            </div>
+<!-- 
+                            <div class="form-group col-md-6">
+                                <label for="proveedorID"> Proveedor </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="proveedores"
+                                    [loading]="loadingProveedores" [clearable]="false"
+                                    [ngClass]="{'form-control border-danger p-0' : submitted && f.proveedorID.errors }"
+                                    notFoundText="No resultados" formControlName="proveedorID">
+                                </ng-select>
+                                <div *ngIf="submitted && f.proveedorID.errors" class="text-danger small">
+                                    <div *ngIf="f.proveedorID.errors.required  ">El campo es obligatorio</div>
+                                </div>
+                            </div> -->
+
+                            <div class="form-group col-md-6">
+                                <label for="compradorID"> Comprador </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="compradores"
+                                    [loading]="loadingCompradores" [clearable]="false"
+                                    [ngClass]="{'form-control border-danger p-0' : submitted && f.compradorID.errors }"
+                                    notFoundText="No resultados" formControlName="compradorID">
+                                </ng-select>
+                                <div *ngIf="submitted && f.compradorID.errors" class="text-danger small">
+                                    <div *ngIf="f.compradorID.errors.required  ">El campo es obligatorio</div>
+                                </div>
+                            </div>
+
+                            <!-- <div class="form-group col-6">
+                                <label>Fecha de entrega</label>
+                                <ejs-datepicker formControlName="fechaEntrega" [format]="'dd-MM-yyyy'"
+                                    [min]='fechaActual'>
+                                </ejs-datepicker>
+                                <div *ngIf="submitted && f.fechaEntrega.errors"
+                                    class="text-danger small animated animated--fade-in">
+                                    <div *ngIf="f.fechaEntrega.errors.required">El campo es obligatorio</div>
+                                    <div *ngIf="f.fechaEntrega.errors.min">La fecha no puede ser menor a la actual</div>
+                                </div>
+                            </div> -->
+
+
+                            <div class="form-group col-md-6">
+                                <label for="tipoSolicitudID"> Tipo </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="solicitudCompraTipos"
+                                    [loading]="loadingSolicitudCompraTipo" [clearable]="false"
+                                    [ngClass]="{'form-control border-danger p-0' : submitted && f.tipoSolicitudID.errors }"
+                                    notFoundText="No resultados" formControlName="tipoSolicitudID">
+                                </ng-select>
+                                <div *ngIf="submitted && f.tipoSolicitudID.errors" class="text-danger small">
+                                    <div *ngIf="f.tipoSolicitudID.errors.required  ">El campo es obligatorio</div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-12" *ngIf="f.tipoSolicitudID.value == 2">
+                        <label for="comentario"> Comentario</label>
+
+                        <textarea formControlName="comentario" class="form-control" name="comentario" id="comentario"
+                            rows="3"></textarea>
+                        <div class="invalid-feedback" *ngIf="submitted && f.comentario.errors">
+                            <div *ngIf="f.comentario.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+
+                        <table class="table table-hover mb-0 no-wrap v-middle">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Artículo</th>
+                                    <!-- <th scope="col">Costo</th> -->
+                                    <th scope="col">Cantidad</th>
+                                    <!-- <th scope="col">Total</th> -->
+                                    <!-- <th scope="col"></th> -->
+                                    <!-- <th scope="col">Fecha de aplicación</th> -->
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <!-- <tr *ngFor="let item of confirmed | filter: searchText; let i  = index"> -->
+                                <tr *ngFor="let item of solicitudCompraDetalles let i=index">
+                                    <td>
+                                        <ng-select style="width: 500px;" [items]="articulosDeCompra" bindLabel="nombre"
+                                            [clearable]="false" bindValue="id" [loading]="loadingArticulosDeCompra"
+                                            [(ngModel)]="item.articuloID" [ngModelOptions]="{standalone: true}"
+                                            (change)="onSelectArticulo($event,i)" notFoundText="No resultados">
+                                        </ng-select>
+                                    </td>
+                                    <!-- <td>
+                                        <input style="width: 200px;" type="text" class="form-control" prefix="$ "
+                                            [(ngModel)]="item.costo" [ngModelOptions]="{standalone: true}"
+                                            [readonly]="'true'" mask="separator" thousandSeparator=",">
+                                    </td> -->
+                                    <td>
+                                        <input style="width: 100px;" type="text" class="form-control"
+                                            [disabled]="!cantidadEditable" (keyup)="calcularTotal()" mask="separator"
+                                            thousandSeparator="," [(ngModel)]="item.cantidad"
+                                            [ngModelOptions]="{standalone: true}">
+                                    </td>
+                                    <!-- <td>
+                                        <span>${{ item.costo * item.cantidad | number:'1.2-5'}}</span>
+                                    </td> -->
+                                    <td>
+                                        <button (click)="onDeleteitem(i)" type="button" class="btn btn-outline-danger">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- <div class="form-group text-right col-md-12" *ngIf="total > 0">
+                        <h1>$ {{total | number:'1.2-5' }}</h1>
+                    </div> -->
+
+                    <div class="form-group text-right col-md-12">
+                        <hr />
+
+                        <button class="btn btn-light m-1" routerLink="../" type="button">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+
+                        <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+                            <i class="fas fa-check"></i> Guardar
+                        </button>
+
+                        <!-- boton cargando -->
+                        <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span> Guardando
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>  

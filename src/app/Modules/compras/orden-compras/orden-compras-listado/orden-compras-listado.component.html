@@ -1,0 +1,220 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row mb-2">
+          <div class="col-md-6 align-middle">
+            <h4 class="card-title">Listado de ordenes de compras</h4>
+          </div>
+          <!-- <div class="col-md-6 text-right">
+            <button [routerLink]="[0]" class="btn btn-info"> <i class="fa fa-plus"></i> Nueva
+              orden
+            </button>
+          </div> -->
+          <div class="col-md-12 p-2">
+
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <label for="search" class="input-group-text bg-white">
+                  <span class="bg-white" style="border-right:none">
+                    <i class="ti-search"></i>
+                  </span>
+                </label>
+              </div>
+              <input [(ngModel)]="Search" (keyup)="getData()" type="text" style="border-left:none !important;"
+                class="form-control" placeholder="Buscar">
+            </div>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover mb-0 no-wrap v-middle">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Estado</th>
+                <th>Solicitante</th>
+                <th>Destino</th>
+                <th></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody [hidden]="Cargando">
+
+              <tr *ngFor="let item of data">
+                <td>
+                  <span class="badge badge-light text-info ">{{item.id}}</span> |
+                  <small class="badge" [ngClass]="{'badge-danger': item.tipoID == 2}"> {{ item.tipo}}</small>
+                </td>
+                <td>
+                  <span class="small badge badge-light"> {{item.estado}}</span>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <i class="fa fa-user fa-3x text-light"></i>
+                    <div class="ml-3">
+                      <p class="mb-0"><span class="small font-weight-bold">{{item.solicitante | titlecase }} </span></p>
+                      <small class="text-info"> <i class="fa fa-warehouse"></i> {{item.departamentoSolicitante
+                        }}</small> |
+                      <small class="text-info"><i class="fa fa-map-marker"></i> {{item.sucursalSolicitante }}</small>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <small> <i class="fa fa-warehouse"></i> {{item.departamentoDestino
+                    }}</small> <br>
+                  <small><i class="fa fa-map-marker"></i> {{item.sucursalDestino }}</small>
+                </td>
+                <td>
+                  <small class="text-info font-weight-bold"> <i class="fa fa-clock "></i> Solicitud:
+                    {{item.fechaSolicitud|
+                    date:'M/d/yy, h:mm a'}}</small> <br>
+                  <small> <i class="fa fa-user text-muted"></i> Comprador: {{item.comprador}}</small>
+                  <!-- <br>
+                    <small> <i class="fa fa-user-circle text-muted"></i> Proveedor: {{item.proveedor}}</small> -->
+                </td>
+                <td>
+                  <!-- <button class="btn btn-sm btn-light" type="button" (click)="openModal(modalUploadCotizaciones,item)">
+                    <i class="fa fa-sm fa-upload"></i>
+                  </button> -->
+
+                  <button *ngIf="item.estadoID == 1" class="btn btn-sm btn-info" [routerLink]="[item.id]">
+                    <i class="fa fa-sm fa-edit"></i>
+                  </button>
+                </td>
+
+              </tr>
+
+            </tbody>
+          </table>
+
+        </div>
+
+
+
+        <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+
+        <div class="row ">
+          <div class="col-md-8 col-xs-12 ">
+            <ngb-pagination [collectionSize]="paginaTotalRecords" [(page)]="paginaNumeroActual" [pageSize]="paginaSize"
+              [maxSize]="5" [boundaryLinks]="true" (pageChange)="getData()">
+            </ngb-pagination>
+          </div>
+
+          <div class="col-md-4 text-right d-none d-md-block  ">
+            <select class="form-control d-block" name="paginaSize" [(ngModel)]="paginaSize" (change)="getData()">
+              <option [ngValue]="5">5 registro por pagina</option>
+              <option [ngValue]="10">10 registro por pagina</option>
+              <option [ngValue]="15">15 registro por pagina</option>
+            </select>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<ng-template #modalUploadCotizaciones let-modal>
+  <div class="container-fluid">
+    <div class="row" *ngIf="!cargandoAnexos">
+      <div class="col">
+        <div class="modal-header">
+          <h4 class="modal-title" id="modal-title">Subida de anexos</h4>
+          <button type="button" class="close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <div class="row">
+            <div class="col-12">
+              <div class="box-part text-center">
+                <!-- <i class="fa text-success  fa-dollar-sign fa-3x" aria-hidden="true"></i> -->
+                <input accept="application/pdf" class="d-none" (change)="setFiles(file.files)" #file multiple
+                  type="file" />
+
+                <button class="btn btn-info" (click)="file.click()"> <i class="fa fa-upload text-white"></i>
+                  Seleccionar
+                  archivos</button>
+
+              </div>
+              <hr>
+            </div>
+          </div>
+
+          <div class="row">
+
+            <div class="col-md-6 p-2 text-center border-light border rounded-sm"
+              *ngFor="let item of files; let i = index">
+
+              <div class="row">
+
+                <div class="col-12 text-right">
+                  <button class="btn btn-sm" (click)="onDeleteitem(i)"><i class="fa fa-times"></i></button>
+                </div>
+
+                <div class="col-12 text-center">
+                  <span>
+                    <i class="fa fa-file-pdf text-danger fa-3x"></i>
+                  </span>
+                  <h6 class="mt-2 text-info">{{item.name}}</h6>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="row">
+            <div class="col text-right">
+              <button type="button" class="btn btn-info" *ngIf="files.length > 0" (click)="subirArchivosAlServidor()">
+                <span>Subir {{files.length}} archivo</span> <span *ngIf="files.length > 1">s</span></button>
+            </div>
+          </div>
+
+
+          <div class="row" *ngIf="filesSubidos.length > 0">
+            <div class="col-12">
+              <hr>
+              <h6>Archivos subidos</h6>
+            </div>
+            <div class="col-md-6 p-2 text-center border-light border rounded-sm"
+              *ngFor="let item of filesSubidos; let i = index">
+
+              <div class="row">
+
+                <div class="col-12 text-right">
+
+                  <!-- <button (click)="downloadFile(item.id)" class="btn btn-sm btn-info"><i
+                        class="fa fa-download"></i></button> -->
+
+                  <!-- <button class="btn btn-sm" (click)="onDeleteitemSubido(item.id,i)"><i
+                        class="fa fa-times"></i></button> -->
+                </div>
+
+                <div class="col-12 text-center">
+                  <span>
+                    <i class="fa fa-file-pdf text-danger fa-3x"></i>
+                  </span>
+                  <h6 class="mt-2 text-info">{{item.nombre}}</h6>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <app-loading-listado [hidden]="!cargandoAnexos"></app-loading-listado>
+
+  </div>
+</ng-template>

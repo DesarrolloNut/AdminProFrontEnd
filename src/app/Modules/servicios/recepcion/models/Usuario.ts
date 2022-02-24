@@ -9,6 +9,7 @@ export class Usuario {
     email: string;
     imagen: string;
     rolID: number;
+    rol: string;
     dealerID: string;
     telefono: string;
     celular: string;
@@ -17,4 +18,10 @@ export class Usuario {
     telefonoExtension: string
     codigoReferencia: string
     idUsuarioSupervisor: number
+    rutaId: number
+    departamentoID: number
+    descuentoVenta: number
+    descuentoCompra: number
+    ipEquipo: string
+    puertoEquipo: string
 }

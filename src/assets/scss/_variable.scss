@@ -1,7 +1,7 @@
 /*******************************/
 // Custom Variables
 /*******************************/
-@import url('https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700');
+@import url("https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700");
 /*Theme Colors*/
 
 $themecolor: #398bf7;
@@ -11,7 +11,8 @@ $theme-light: #fff;
 $theme-dark: #212529;
 
 $skin1: #455a64;
-$skin2: #00acc1;
+// $skin2: #00acc1;
+$skin2: #007a31;
 $skin3: #f62d51;
 $skin4: #1976d2;
 $skin5: #242a33;
@@ -21,7 +22,7 @@ $skin6: #fff;
 
 $topbar: $theme-light;
 $topbar-height: 60px;
-$topbar-navlink-padding: 0px .75rem;
+$topbar-navlink-padding: 0px 0.75rem;
 $topbar-navlink-font-size: 15px;
 $topbar-navlink-height: 60px;
 $topbar-navbrand-padding: 0 10px 0 10px;
@@ -134,7 +135,7 @@ $colors: (
 	cyan: $cyan,
 	white: $white,
 	gray: $gray-600,
-	gray-dark: $gray-800
+	gray-dark: $gray-800,
 );
 
 $primary: $blue !default;
@@ -149,21 +150,20 @@ $muted: $gray-500 !default;
 $cyan: $cyan !default;
 $orange: $orange !default;
 
-
-// 
+//
 // Light Colors
-// 
+//
 $light-danger: #f9e7eb;
 $light-success: #e8fdeb;
 $light-warning: #fff8ec;
 $light-primary: #f1effd;
 $light-info: #cfecfe;
 $light-inverse: #f6f6f6;
-$light-megna: #e0f2f4; 
+$light-megna: #e0f2f4;
 
-// 
+//
 // Dark Colors
-// 
+//
 $danger-dark: #e6294b;
 $success-dark: #1eacbe;
 $warning-dark: #e9ab2e;
@@ -171,7 +171,7 @@ $primary-dark: #6352ce;
 $info-dark: #028ee1;
 $red-dark: #d61f1f;
 $inverse-dark: #232a37;
-$dark-transparent:rgba(0, 0, 0, 0.05);
+$dark-transparent: rgba(0, 0, 0, 0.05);
 
 $theme-colors: () !default;
 
@@ -216,8 +216,8 @@ $body-color: #67757c !default;
 $grid-gutter-width: 20px !default;
 // Typography
 // Font, line-height, and color for body text, headings, and more.
-$font-size-base:1rem;
-$font-weight-base:            300 !default;
+$font-size-base: 1rem;
+$font-weight-base: 300 !default;
 $font-family-sans-serif: "Montserrat", sans-serif !default;
 $font-weight-light: 300 !default;
 $font-weight-normal: 400 !default;
@@ -244,18 +244,18 @@ $dropdown-item-padding-x: 1rem !default;
 $dropdown-item-padding-y: 0.65rem !default;
 $dropdown-border-color: $gray-200;
 $dropdown-divider-bg: $gray-100;
-$dropdown-color:                    #212529 !default;
-$dropdown-link-color:               #67757c !default;
+$dropdown-color: #212529 !default;
+$dropdown-link-color: #67757c !default;
 // Buttons
 $btn-secondary-border: $gray-300;
 // Progress bars
 $progress-bg: $gray-100;
 // Tables
-$table-color:                 #212529 !default;
+$table-color: #212529 !default;
 $table-bg-accent: $gray-100;
 $table-bg-hover: $gray-100;
 $table-hover-bg: $gray-100 !default;
-$table-cell-padding: .75rem !default;
+$table-cell-padding: 0.75rem !default;
 $table-bg-level: -10 !default;
 $table-bg-level2: 1 !default;
 $table-bg-level3: -5 !default;
@@ -293,7 +293,7 @@ $grid-breakpoints: (
 	sm: 576px,
 	md: 768px,
 	lg: 992px,
-	xl: 1600px
+	xl: 1600px,
 ) !default;
 // Navbar
 $navbar-dark-color: rgba($white, 0.8) !default;
@@ -302,25 +302,23 @@ $navbar-dark-hover-color: rgba($white, 1) !default;
 $navbar-light-color: rgba($black, 0.3) !default;
 $navbar-light-hover-color: rgba($black, 0.8) !default;
 
-$badge-padding-y:                   3px !default;
-$badge-padding-x:                   10px !default;
-$badge-font-weight:                 400 !default;
-$badge-border-radius:               4px !default;
+$badge-padding-y: 3px !default;
+$badge-padding-x: 10px !default;
+$badge-font-weight: 400 !default;
+$badge-border-radius: 4px !default;
 
-
-
-// 
+//
 // Button Shadow & Hover
-// 
+//
 $enable-shadows: true !default;
-$btn-box-shadow:  0 1px 0 rgba($white, .15) !default;
+$btn-box-shadow: 0 1px 0 rgba($white, 0.15) !default;
 
 @each $color, $value in $theme-colors {
-  .btn-#{$color},
-  .btn-outline-#{$color} {
-   box-shadow: 0 2px 2px rgba($value, 0.05);
-   &:hover {
-       box-shadow: 0 8px 15px rgba($value, 0.3);
-   }
-  }
+	.btn-#{$color},
+	.btn-outline-#{$color} {
+		box-shadow: 0 2px 2px rgba($value, 0.05);
+		&:hover {
+			box-shadow: 0 8px 15px rgba($value, 0.3);
+		}
+	}
 }

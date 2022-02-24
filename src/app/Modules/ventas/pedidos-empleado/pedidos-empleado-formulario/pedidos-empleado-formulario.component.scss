@@ -1,0 +1,44 @@
+.input_balance{
+ background-color: #EAFAF1;
+ font-weight: 500;
+ font-size: 20px;
+ height: 50px;
+}
+
+.input_limite_credito{
+    background-color: #FEF5E7;
+    font-weight: 500;
+    font-size: 20px;
+    height: 50px;
+}
+
+.ng-select.customSelect_moneda {
+    height: 50px !important;
+}
+.ng-select.customSelect_moneda .ng-select-container  {
+    height: 50px !important;
+}
+
+.ng-select.customSelect_moneda ::ng-deep .ng-select-container  {
+    height: 50px !important;
+}
+
+:host {
+  min-height: 99.9vh;
+
+}
+::ng-deep .myCustomModalClass .modal-dialog {
+  max-width: 100%;
+  width: 100%;
+  height: 100%;
+
+}
+::ng-deep .myCustomModalClass .modal-dialog {
+  position: absolute;
+  top: -29px;
+}
+
+
+.btn-radius{
+border-radius: 5px;
+}

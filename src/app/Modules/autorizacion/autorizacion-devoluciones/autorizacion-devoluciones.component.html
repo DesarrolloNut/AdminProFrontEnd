@@ -1,0 +1,370 @@
+<div class="row" *ngxPermissionsOnly="['autorizacion_devoluciones'] ; else PermissionDenied;">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row mb-2">
+          <div class="col-md-6 align-middle">
+            <h4 class="card-title">Listado de devoluciones por autorizar</h4>
+          </div>
+          <!-- <div class="col-md-6 text-right">
+                        <button type="button" (click)="autorizarMasiva()" class="btn btn-info"> <i
+                                class="fa fa-check"></i> Autorizar todos
+                        </button>
+                    </div> -->
+          <div class="col-md-8 p-2">
+
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <label for="search" class="input-group-text bg-white">
+                  <span class="bg-white" style="border-right:none">
+                    <i class="ti-search"></i>
+                  </span>
+                </label>
+              </div>
+              <input [(ngModel)]="Search" (keyup)="getData()" type="text" style="border-left:none !important;"
+                class="form-control" placeholder="Buscar">
+            </div>
+          </div>
+
+          <div class=" p-2 col-md-4">
+            <ng-select [items]="estadosAutorizacion" bindLabel="nombre" bindValue="codigo" (change)="getData()"
+              [(ngModel)]="estadoAutorizacionComboModel" [clearable]="false" notFoundText="No resultados">
+            </ng-select>
+          </div>
+
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover mb-0 no-wrap v-middle">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Cliente </th>
+                <th>Fecha Creacion</th>
+                <th>Sucursal</th>
+                <th>Total</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody [hidden]="Cargando">
+
+              <tr *ngFor="let item of data">
+                <td>
+
+                  <button class="btn btn-sm btn-light m-1" *ngIf="!item.cargando" (click)="openModalDevolucionDetalle(modalDevolucionDetalle, item)">
+                    <i class="fa fa-sm fa-list"></i>
+                  </button>
+
+
+                  <ng-template
+                    [ngIf]="estadoAutorizacionAnterior && item.estadoId == estadoAutorizacionAnterior.codigo">
+
+                    <button class="btn btn-sm btn-success m-1" *ngIf="!item.cargando" (click)="autorizar(item)">
+                      <i class="fa fa-sm fa-check"></i>
+                    </button>
+
+                    <!-- boton cargando -->
+                    <button *ngIf="item.cargando && isAutorizando" disabled class="btn btn-success m-1" type="button">
+                      <span class="spinner-border spinner-border-sm"></span>
+                    </button>
+
+
+                  </ng-template>
+
+<!--
+                  <ng-template [ngIf]="item.estadoId == estadoAutorizacionUsuario">
+
+                    <button *ngIf="!item.cargando" class="btn btn-sm btn-warning m-1" (click)="desautorizar(item)">
+                      <i class="fa fa-sm fa-times"></i>
+                    </button>
+
+                    <button *ngIf="item.cargando && !isAutorizando " disabled class="btn btn-warning m-1" type="button">
+                      <span class="spinner-border spinner-border-sm"></span>
+                    </button>
+
+                  </ng-template>
+
+
+
+                  <ng-template ngxPermissionsOnly="mantenimientos_listas_precios_autorizacion_puede_reiniciar_precio">
+
+                    <button *ngIf="!item.cargando && item.estadoId != estadoIDAutorizacionDefault"
+                      class="btn btn-sm btn-light m-1" (click)="desautorizar(item)">
+                      <i class="fa fa-sm fa-redo-alt"></i>
+                    </button>
+
+                    <button *ngIf="item.cargando && !isAutorizando " disabled class="btn btn-light m-1" type="button">
+                      <span class="spinner-border spinner-border-sm"></span>
+                    </button>
+
+                  </ng-template> -->
+
+
+                </td>
+                <!-- <td><span class="badge badge-light text-info ">{{item.id}}</span></td> -->
+                <td>
+                  <h5 class="font-weight-bold"> {{item.cliente}} | {{item.clienteDocumento}}</h5>
+                  <span class="small"> Vendedor: {{item.vendedor}}</span>
+                  <!-- <span class="small d-block">Estado: <span class="badge badge-warning">{{item.estado}} </span></span> -->
+                </td>
+                <td>
+                  <span> {{item.fechaCreacion | date:'medium'}}</span>
+                </td>
+                <!-- <td>
+                                <span> {{item.estado}}</span>
+                            </td> -->
+                <td>
+                  <span> {{item.sucursal}}</span>
+                </td>
+
+                <!-- <td>
+                                    <span> {{ item.nombre | titlecase }}</span>
+                                </td>
+                                <td>
+                                    <span>RD$ {{item.precioAnterior}}</span>
+                                </td>
+                                <td>
+                                    <span class="font-weight-bold">RD$ {{item.precio}}</span>
+                                </td>
+                                <td>
+                                    <span> {{item.listaPrecio}}</span>
+                                </td>
+
+                                <td>
+                                    <div class="d-flex align-items-center">
+
+                                        <i class="fa fa-calendar fa-2x text-light"></i>
+
+                                        <div class="ml-3">
+                                            <p class="font-bold mb-0">
+                                                <span> {{item.fechaAplicacion | date:'dd/MM/yy' }}</span>
+                                            </p>
+
+
+                                            <span>
+                                                <small class="text-danger" *ngIf="item.diasRestantes < 0">
+                                                    {{item.diasRestantes }} días pasados.
+                                                </small>
+
+                                                <small class="text-info" *ngIf="item.diasRestantes > 0">
+                                                    {{item.diasRestantes }} días faltantes.
+                                                </small>
+
+
+                                                <small class="badge badge-success" *ngIf="item.diasRestantes == 0">
+                                                    Hoy
+                                                </small>
+                                            </span>
+
+                                        </div>
+                                    </div>
+                                </td>-->
+                <td>
+                  <span> {{item.total | currency}}</span>
+                </td>
+
+
+                <td>
+                  <h3>
+                    <span class="badge badge-light"> {{item.estado}}</span>
+                  </h3>
+                </td>
+
+
+              </tr>
+
+            </tbody>
+          </table>
+
+        </div>
+
+
+
+        <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+
+        <div class="row ">
+          <div class="col-md-8 col-xs-12 ">
+            <ngb-pagination [collectionSize]="paginaTotalRecords" [(page)]="paginaNumeroActual" [pageSize]="paginaSize"
+              [maxSize]="5" [boundaryLinks]="true" (pageChange)="getData()">
+            </ngb-pagination>
+          </div>
+
+          <div class="col-md-4 text-right d-none d-md-block  ">
+            <select class="form-control d-block" name="paginaSize" [(ngModel)]="paginaSize" (change)="getData()">
+              <option [ngValue]="5">5 registro por pagina</option>
+              <option [ngValue]="10">10 registro por pagina</option>
+              <option [ngValue]="15">15 registro por pagina</option>
+              <option [ngValue]="50">50 registro por pagina</option>
+              <option [ngValue]="100">100 registro por pagina</option>
+              <option [ngValue]="150">150 registro por pagina</option>
+            </select>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<ng-template #PermissionDenied>
+
+  <app-error-permission-denied></app-error-permission-denied>
+
+</ng-template>
+
+
+<ng-template #modalConfirm let-modal>
+  <div class="container-fluid">
+    <div class="row" *ngIf="!cargandoAutorizacion">
+      <div class="col">
+        <div class="modal-header">
+          <h4 class="modal-title" id="modal-title">Confirmación</h4>
+          <button type="button" class="close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body text-center">
+          <i class="fa fa-question fa-3x text-info"></i>
+          <p class="mt-2"><strong>¿Estás seguro?</strong></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" (click)="modal.close('Close click')">Cancel</button>
+          <button type="button" class="btn btn-info" (click)="onBtnModalOk()">Ok</button>
+        </div>
+      </div>
+    </div>
+
+    <app-loading-listado [hidden]="!cargandoAutorizacion"></app-loading-listado>
+
+  </div>
+</ng-template>
+
+<ng-template #modalDevolucionDetalle let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Devolucion Detalle</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-12">
+        <h3 class="text-info"> <i class="fa fa-user"></i> Cliente: {{devolucionSelected.cliente}}</h3>
+        <h5> <i class="fa fa-id-card"></i> Documento: {{devolucionSelected.clienteDocumento}}</h5>
+        <h5> <i class="fa fa-calendar"></i> Fecha: {{devolucionSelected.fechaCreacion | date:'medium'}}</h5>
+        <h5> <i class="fa fa-map-marker"></i> Sucursal: {{devolucionSelected.sucursal}}</h5>
+        <h5> <i class="fa fa-user-circle"></i>Vendedor: {{devolucionSelected.vendedor}}</h5>
+      </div>
+      <div class="col-12 py-3" [hidden]="CargandoDetalle">
+        <div class="table-responsive">
+          <table class="table table-sm table-hover mb-0 no-wrap v-middle">
+            <thead>
+              <tr>
+                <th>Articulo </th>
+                <th>Cantidad</th>
+                <th>Cantidad Confimada</th>
+                <th>Precio</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody [hidden]="CargandoDetalle">
+
+              <tr *ngFor="let item of dataDetalle">
+
+                <td>
+                  <h5> {{item.articulo}}</h5>
+                  <span class="small">Almacen: {{item.almacen}}</span>
+                </td>
+
+                <td>
+                  <span> {{item.cantidad | currency}}</span>
+                </td>
+                <td>
+                  <span> {{item.cantidadConfirmado | currency}}</span>
+                </td>
+                <td>
+                  <span> {{item.precio | currency}}</span>
+                </td>
+                <td>
+                  <span> {{item.total | currency}}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col-12 text-right">
+        <hr>
+        <h4>Subtotal: $ {{devolucionSelected.subtotal | number:'1.2-2' }}</h4>
+        <h4>Descuento: $ {{devolucionSelected.descuento | number:'1.2-2' }}</h4>
+        <h4>Impuesto: $ {{devolucionSelected.impuesto | number:'1.2-2' }}</h4>
+        <h4 class="font-weight-bold">Total Neto: $ {{devolucionSelected.total | number:'1.2-2' }}</h4>
+      </div>
+      <div class="col-12">
+        <app-loading-listado [hidden]="!CargandoDetalle"></app-loading-listado>
+      </div>
+    </div>
+
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
+    <!-- <button type="button" *ngIf="!btnGuardarCargando" class="btn btn-info m-1" (click)="SaveDevolucionDetalleVista()" >Guardar</button>
+      <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+        <span class="spinner-border spinner-border-sm"></span> Guardando
+    </button> -->
+  </div>
+</ng-template>
+
+
+
+<!--
+<ng-template #modalComments let-modal>
+    <div class="container-fluid">
+        <div class="row" *ngIf="!cargandoAutorizacion">
+            <div class="col">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modal-title">Caja de comentarios</h4>
+                    <button type="button" class="close" aria-describedby="modal-title"
+                        (click)="modal.dismiss('Cross click')">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" *ngIf="!cargandoModal">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <textarea placeholder="Escribe tu comentario" class="form-control"
+                                    [(ngModel)]="comentario" id="exampleFormControlTextarea1" rows="3"></textarea>
+                            </div>
+                            <button type="submit" (click)="guardarComentario()" class="btn btn-info">Comentar</button>
+                        </div>
+                        <div class="col-md-12" style="height: 350px;">
+                            <hr>
+                            <div class="row border-top p-2" *ngFor="let c of comentarios">
+                                <div class="col-2">
+                                    <i class="fa fa-user-circle fa-3x"></i>
+                                </div>
+                                <div class="col-10">
+                                    <h5>{{c.usuario | titlecase }}</h5>
+                                    <p>{{c.comentario}}</p>
+                                    <div>
+                                        <span class="text-muted float-md-right">{{c.fecha | date : 'medium' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <app-loading-listado [hidden]="!cargandoModal"></app-loading-listado>
+                </div>
+            </div>
+        </div>
+
+        <app-loading-listado [hidden]="!cargandoAutorizacion"></app-loading-listado>
+
+    </div>
+</ng-template> -->

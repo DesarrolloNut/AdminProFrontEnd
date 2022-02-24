@@ -1,4 +1,64 @@
+
 export enum DataApi {
+
+
+    ListaPrecio = 32,
+    Ruta = 33,
+
+    NivelAutorizacion = 35,
+    EstadoGenerales = 36,
+
+    NivelAutorizacionModulo = 34,
+    Promocion = 37,
+
+    SAPConnection = 38,
+    Rol = 39,
+    Permisos = 40,
+    NotaCredito = 41,
+    ReconciliacionInterna = 42,
+    Moneda = 43,
+    Departamento = 44,
+    SolicitudCompra = 45,
+    Proveedor = 46,
+    ActividadEconomica = 47,
+    ReporteProntoPago = 48,
+    ArticuloPesaje = 49,
+    UsuarioAlmacenEnrroll = 50,
+    Cotizacion = 51,
+    EnrrollVendedorEntregaSupervisor = 52,
+    Configuracion = 53,
+    Devolucion = 54,
+    DevolucionDetalle = 55,
+    TomaInventarioRuta = 56,
+    Upload = 57,
+    ArticuloCategoria = 58,
+    OrdenCompra = 59,
+    AutorizacionHistorico = 60,
+    OrdenFabricacion = 61,
+    OrdenFabricacionDetalle = 62,
+    Plazo = 63,
+    ClienteFrecuenciaVisitaRuta = 64,
+    ClienteContacto = 65,
+    ClienteFinanza = 66,
+
+
+    UploadClienteAnexos = 70,
+    ClienteComercial = 71,
+    ClienteNegocio = 72,
+    ReporteInventarioActivo = 73,
+    Factura = 74,
+    ReporteCanasto = 75,
+    PedidosEmpleado = 76,
+    Despacho = 77,
+    ComprobanteFiscal = 78,
+    SAPCotizacion = 79,
+    ChequeDevuelto = 80,
+
+
+
+
+
+
     Usuario = 1,
     Authentication = 2,
     ComboBox = 3,
@@ -34,6 +94,69 @@ export enum DataApi {
 
 
 export const dataApiRootMap: { [api: string]: string } = {
+
+
+    "32": "api/ListaPrecio",
+    "33": "api/Ruta",
+    "35": "api/NivelAutorizacion",
+    "36": "api/EstadosGenerales",
+    "37": "api/Promocion",
+    "34": "api/NivelAutorizacionModulo",
+    "38": "api/SAPConnection",
+    "39": "api/Rol",
+    "40": "api/Permisos",
+    "41": "api/SAPNotaCredito",
+    "42": "api/SAPReconciliacionInterna",
+    "43": "api/Moneda",
+    "44": "api/Departamento",
+    "45": "api/SolicitudCompra",
+    "46": "api/Proveedor",
+    "47": "api/ActividadEconomica",
+    "48": "api/ReporteProntoPago",
+    "49": "api/ArticuloPesaje",
+    "50": "api/UsuarioAlmacenEnrroll",
+    "51": "api/Cotizacion",
+    "52": "api/EnrrollVendedorEntregaSupervisor",
+    "53": "api/Configuracion",
+    "54": "api/Devolucion",
+    "55": "api/DevolucionDetalle",
+    "56": "api/TomaInventarioRuta",
+    "57": "api/Upload",
+    "58": "api/ArticuloCategoria",
+    "59": "api/OrdenCompra",
+    "60": "api/AutorizacionHistorico",
+    "61": "api/OrdenFabricacion",
+    "62": "api/OrdenFabricacionDetalle",
+    "63": "api/Plazo",
+    "64": "api/ClienteFrecuenciaVisitaRuta",
+    "65": "api/ClienteContacto",
+    "66": "api/ClienteFinanza",
+
+
+    "70": "api/UploadClienteAnexos",
+    "71": "api/ClienteComercial",
+    "72": "api/ClienteNegocio",
+    "73": "api/ReporteInventarioActivo",
+    "74": "api/Factura",
+    "75": "api/ReporteCanasto",
+    "76": "api/PedidosEmpleado",
+    "77": "api/Despacho",
+    "78": "api/ComprobanteFiscal",
+    "79": "api/SAPCotizacion",
+    "80": "api/ChequeDevuelto",
+
+
+
+
+
+
+
+
+
+
+
+
+
     "1": "api/Usuario",
     "2": "api/Authentication",
     "3": "api/ComboBox",

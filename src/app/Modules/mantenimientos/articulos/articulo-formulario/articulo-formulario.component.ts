@@ -27,6 +27,10 @@ export class ArticuloFormularioComponent implements OnInit {
   loadingModelos: boolean;
   loadingMarcas: boolean;
   marcas: ComboBox[];
+  loadingArticuloTipos: boolean;
+  articuloTipos: ComboBox[];
+  articuloCategorias: ComboBox[];
+  loadingArticuloCategorias: boolean;
 
 
 
@@ -48,6 +52,8 @@ export class ArticuloFormularioComponent implements OnInit {
 
     this.getCompanias()
     this.getMarcas()
+    this.getTipoArticulos()
+    this.getArticuloCategorias()
     this.CreateForm();
   }
 
@@ -60,14 +66,14 @@ export class ArticuloFormularioComponent implements OnInit {
       descripcion: [null,],
       companiaID: [null, Validators.required],
       codigoReferencia: [null, Validators.required],
-      marcaID: [null, Validators.required],
-      modeloID: [null, Validators.required],
-      anio: [null, [Validators.required]],
-      chasis: [null, [Validators.required]],
-      placa: [null, [Validators.required]],
+      marcaID: [0,],
+      modeloID: [0,],
+      anio: [0],
+      chasis: ['',],
+      placa: ['',],
       tipoVehiculoID: [0,],
       vehiculoVersionID: [0,],
-      tipoArticuloID: [0,],
+      tipoArticuloID: [1, Validators.required],
       fleteID: [0,],
       monedaID: ["",],
       paisID: [0,],
@@ -76,6 +82,13 @@ export class ArticuloFormularioComponent implements OnInit {
       colorID: [0,],
       costo: [0,],
       precio: [0,],
+      unidadMedida:[''],
+      articuloDeReproceso:[0, ],
+      costoObjetivo:[0, Validators.required],
+      articuloDeCompra: [false,],
+      articuloDeVenta: [false,],
+      articuloDeInventario: [false,],
+      categoriaID: [0,],
     });
   }
 
@@ -213,6 +226,49 @@ export class ArticuloFormularioComponent implements OnInit {
       });
   }
 
+  getTipoArticulos() {
+    this.loadingArticuloTipos = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetTipoArticulo", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.articuloTipos = response.records;
+        }
+        this.loadingArticuloTipos = false;
+      }, error => {
+        this.loadingArticuloTipos = false;
+        this.toastService.error("No se pudo obtener las articulos tipos", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getTipoArticulos()
+        }, 1000);
+
+      });
+  }
+
+  getArticuloCategorias() {
+    this.loadingArticuloCategorias = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetArticuloCategoriasComboBox", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.articuloCategorias = response.records;
+        }
+        this.loadingArticuloCategorias = false;
+      }, error => {
+        this.loadingArticuloCategorias = false;
+        this.toastService.error("No se pudo obtener las articulos categorias", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getArticuloCategorias()
+        }, 1000);
+
+      });
+  }
 
 
 }

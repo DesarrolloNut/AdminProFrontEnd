@@ -1,0 +1,1337 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-md-9 align-middle ">
+                        <h4 class="card-title">Listado de pedidos para despachar </h4>
+                    </div>
+                    <div class="col-md-3 text-right">
+                        <!-- <button  [disabled]="loadingValidaExistPedidoSinFacturar || !clienteExiste" (click)="validExistPedidoSinFacturar()"
+                         class="btn btn-info"> <i class="fa fa-plus"></i> Nuevo  pedido
+                        </button> -->
+                        <app-loading-realtime [hidden]="!CargandoRealtime"></app-loading-realtime>
+                    </div>
+                    <div class="col-md-3 pt-2">
+                      <label for="">Busqueda</label>
+                        <div class="input-group">
+
+                            <div class="input-group-prepend">
+                                <label for="search" class="input-group-text bg-white">
+                                    <span class="bg-white" style="border-right:none">
+                                        <i class="ti-search"></i>
+                                    </span>
+                                </label>
+                            </div>
+                            <input [(ngModel)]="Search" (keyup)="getDataByCondicional()" type="text"
+                                style="border-left:none !important;" class="form-control" placeholder="Buscar">
+                        </div>
+                    </div>
+                    <div class="form-group col-md-3 pt-2">
+                        <label for="">Sucursal</label>
+                        <ng-select
+                        [searchable]="false"
+                          bindLabel="nombre" bindValue="codigo" [items]="sucursales"
+                          [loading]="loadingSucursales"
+                          [clearable]=false
+                          [(ngModel)]="sucursalId"
+                          (change)="getDataByCondicional()"
+                          notFoundText="No resultados" >
+                      </ng-select>
+                      </div>
+
+                      <div class="form-group col-md-3 pt-2">
+                        <label for="">Fecha</label>
+                        <ejs-datepicker
+                          [allowEdit]="false"
+                          [showClearButton]="false" (change)="onChangeFechaDesdeFiltro($event)"
+                           [(ngModel)]="fecha" [format]="'dd-MM-yyyy'">
+                        </ejs-datepicker>
+                    </div>
+
+                    <div class="form-group col-md-3 pt-2">
+                      <label for="">Canal</label>
+                        <ng-select
+                        [items]="canales"
+                        [searchable]="false"
+                        bindLabel="nombre" bindValue="codigo"
+                        [loading]="loadingCanales"
+                        (change)="getDataByCondicional()"
+                        placeholder="Seleccionar canal" [clearable]="false"
+                        notFoundText="No resultados" [(ngModel)]="canalId" >
+                        </ng-select>
+                    </div>
+
+                    <!-- <div class="col-md-12 mt-1 mb-1 ">
+                      <div class="row">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-3">
+                          <div class="d-flex no-block align-items-center">
+                            <div><span class="text-success display-7"><i class="ti-pie-chart"></i></span></div>
+                            <div class="ml-3 text-right">
+                                <h4 class="font-weight-bold">{{3000526 | currency}} </h4>
+                                <h5 class="text-success">Total Pedido</h5>
+                            </div>
+                          </div>
+                       </div>
+
+                       <div class="col-md-3">
+                        <div class="d-flex no-block align-items-center">
+                          <div><span class="text-warning display-7"><i class="ti-pie-chart"></i></span></div>
+                          <div class="ml-3 text-right">
+                              <h4 class="font-weight-bold">{{3000526 | currency}} </h4>
+                              <h5 class="text-warning">Total Despacho</h5>
+                          </div>
+                        </div>
+                     </div>
+
+                     <div class="col-md-3">
+                      <div class="d-flex no-block align-items-center">
+                        <div><span class="text-success display-7"><i class="ti-pie-chart"></i></span></div>
+                        <div class="ml-3 text-success">
+                            <h4 class="font-weight-bold">{{3000526 | currency}} </h4>
+                            <h5 class="text-success">Total ERP</h5>
+                        </div>
+                      </div>
+
+
+                   </div>
+                      </div>
+                    </div> -->
+
+
+                </div>
+
+                <div class="table-responsive">
+                  <ng-container [ngTemplateOutlet]="canalId==1 ? tableDataPreventa : canalId ==2 ? tableData : tableData"></ng-container>
+                </div>
+
+
+                <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+
+                <div class="row " >
+                    <div class="col-md-8 col-xs-12 ">
+                        <ngb-pagination [collectionSize]="paginaTotalRecords" [(page)]="paginaNumeroActual"
+                            [pageSize]="paginaSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="getDataByCondicional(true,false)">
+                        </ngb-pagination>
+                    </div>
+
+                    <div class="col-md-4 text-right d-none d-md-block  ">
+                        <select class="form-control d-block" name="paginaSize" [(ngModel)]="paginaSize"
+                            (change)="getDataByCondicional(true,false)">
+                            <option [ngValue]="5">5 registro por pagina</option>
+                            <option [ngValue]="10">10 registro por pagina</option>
+                            <option [ngValue]="15">15 registro por pagina</option>
+                        </select>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<ng-template #modalDetalleCotizacion let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Detalle de Pedido</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+        <div class=" col-md-6 row left_detalle">
+            <div class="col-md-12 m-2">
+                <h5 class="text-info"> <i class="fa fa-user"></i> Cliente: {{pedidoEmpleadoSeleccionado.cliente}}</h5>
+                <!-- <h5> <i class="fa fa-id-card"></i> Documento: {{pedidoEmpleadoSeleccionado.clienteDocumento}}</h5> -->
+                <h5> <i class="fa fa-calendar"></i> Fecha: {{pedidoEmpleadoSeleccionado.fechaCreacion |
+                    date:'dd/MM/yy'}}</h5><br>
+                <!-- <hr>
+                <h5> <i class="fa fa-map-marker"></i> Sucursal: {{pedidoEmpleadoSeleccionado.sucursal}}</h5>
+                <h5> <i class="fa fa-user-circle"></i> Vendedor: {{pedidoEmpleadoSeleccionado.vendedor}}</h5>
+               <h5>
+                <i class="fa  fa-adjust"></i>
+                   Estado:
+                <span *ngIf="pedidoEmpleadoSeleccionado.estadoID==2" class="badge badge-warning">Pedido</span>
+                <span *ngIf="pedidoEmpleadoSeleccionado.estadoID==3" class="badge badge-success">Facturado</span>
+                <span *ngIf="pedidoEmpleadoSeleccionado.estadoID==4" class="badge badge-danger">Cancelado</span>
+               </h5> -->
+            </div>
+
+            <div class="col-md-12" [hidden]="loadingCotizacionDetalle">
+
+                <div class=" w-100">
+                    <table class="table table-sm  mb-0 no-wrap v-middle">
+                        <thead style="background-color:white;color: black;">
+                            <tr>
+                                <th>Artículo</th>
+                                <th>Pedido</th>
+                                <th>Despacho</th>
+                                <th style="text-align: center;">¿Listo?</th>
+
+
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr (click)="onSelectArticulo(item)"
+                            [ngClass]="(item.selected)?'tr_detalle_articulo_selected':'tr_detalle_articulo_no_selected'"
+                              *ngFor="let item of despachoDetalles" class="tr_detalle">
+
+                                <td class="tdcss">
+                                    <span> {{item.codigoReferencia}} |  {{item.articulo}}</span>
+                                </td>
+                                <td class="tdcss">
+                                    <span> {{item.cantidad}}</span>
+                                </td>
+                                <td class="tdcss">
+                                    <span> {{item.cantidad}}</span>
+                                </td>
+
+                                <td class="tdcss" style="vertical-align: initial;    text-align: center; ">
+                                    <input style="display:none" class="form-check-input input_check " id="{{item.id}}" type="checkbox" [(ngModel)]="item.selected" >
+
+
+                                    <span   class="badge font-bold badge-pill badge-{{item.estadoColor}}">{{item.estado | uppercase}}</span>
+
+
+                                      <!-- <svg *ngIf="item.selected" style="color: #EC7063;" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-pin-angle-fill" viewBox="0 0 16 16">
+                                        <path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z"/>
+                                      </svg> -->
+                                      <svg *ngIf="item.selected"
+                                      style="    position: absolute;
+                                      top: -20px;
+                                      right: -68px;
+                                      z-index: 10000000;
+                                      color: antiquewhite;"
+                                      xmlns="http://www.w3.org/2000/svg" width="95" height="95" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
+                                        <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
+                                      </svg>
+                                </td>
+                            </tr>
+                          <br >
+                          <br>
+                          <br>
+                          <br>
+                          <br>
+                          <br>
+                          <br>
+                          <br>
+                          <br>
+                        <br>
+                          <br>
+                          <br>
+                          <br>
+                          <br>
+                          <br>
+                        </tbody>
+                    </table>
+
+                </div>
+
+
+            </div>
+        </div>
+
+        <div class=" col-md-6 row right_detalle" *ngIf="this.despachoPedidoArticuloDetalleSelected">
+            <!-- <ng-container
+            *ngIf="this.despachoPedidoArticuloDetalleSelected.unidadMedida  =='UNIDAD';
+                     then pickingArticuloUnidad
+                     else  pickingArticuloLibra" >
+            </ng-container> -->
+            <ng-container
+            [ngTemplateOutlet]="this.despachoPedidoArticuloDetalleSelected.unidadMedida === 'UNIDAD' ? pickingArticuloUnidad
+            : this.despachoPedidoArticuloDetalleSelected.unidadMedida === 'CANASTO' ? pickingArticuloCanasto : pickingArticuloLibra" >
+            </ng-container>
+
+
+        </div>
+
+            <!-- <div class="col-12 text-right">
+                <hr>
+                <h4>Subtotal: $ {{pedidoEmpleadoSeleccionado.subTotal | number:'1.2-2' }}</h4>
+                <h4>Descuento: $ {{pedidoEmpleadoSeleccionado.descuentoTotal | number:'1.2-2' }}</h4>
+                <h4>Impuesto: $ {{pedidoEmpleadoSeleccionado.impuestoTotal | number:'1.2-2' }}</h4>
+                <h4 class="font-weight-bold">Total Neto: $ {{pedidoEmpleadoSeleccionado.totalNeto | number:'1.2-2' }}</h4>
+            </div> -->
+
+            <div class="col-12">
+                <app-loading-listado [hidden]="!loadingCotizacionDetalle"></app-loading-listado>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light m-1" (click)="modalDespachoDetalleClose()">Cerrar</button>
+    </div>
+</ng-template>
+
+
+
+
+
+<ng-template  #tableData>
+  <table class="table table-hover mb-0 no-wrap v-middle">
+    <thead>
+        <tr>
+            <th></th>
+            <th>No. Despacho</th>
+            <th>Cliente</th>
+            <!-- <th>SubTotal</th>
+            <th>Desc.</th>
+            <th>Imp.</th>
+            <th>Total Neto</th> -->
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Vendedor</th>
+            <!-- <th>Estado</th> -->
+        </tr>
+    </thead>
+    <tbody [hidden]="Cargando">
+
+        <tr    *ngFor="let item of data; let i = index">
+            <td>
+                    <button class="btn  font-bold btn-sm btn-danger m-1" *ngIf="item.estadoID == 2 && !item.loadingCancelPedido"
+                    (click)="openModalCancelarPedido(modalConfirmCancelarPedido,item)">
+                      <i class="fa fa-sm fa-times"></i>
+                  </button>
+                  <button class="btn btn-sm btn-danger m-1" *ngIf="item.loadingCancelPedido" >
+                  <i class="spinner-border spinner-border-sm"></i>
+                </button>
+                <button class="btn btn-sm  font-bold btn-success m-1"
+                    (click)="openModal(modalDetalleCotizacion,item)">
+                    <i class="fa fa-sm  fa-list "></i> Despachar
+                </button>
+
+                <button class="btn btn-sm  font-bold btn-success m-1"
+                    (click)="openModal(modalDetalleCotizacion,item)">
+                    <i class="fa fa-paper-plane" aria-hidden="true"></i>Manual
+               </button>
+                <!-- <button class="btn btn-sm btn-info m-1" [disabled]="item.loadingCancelPedido"  *ngIf="item.estadoID == 2" [routerLink]="[item.id]">
+                    <i class="fa fa-sm fa-edit"></i>
+                </button> -->
+
+
+
+            </td>
+            <td><span class="badge badge-light text-info font-bold"  >{{item.id}}</span></td>
+            <td>
+                <div class="d-flex align-items-center">
+                    <!-- <i class="fa fa-user-circle fa-3x text-light"></i> -->
+                    <div class="ml-3">
+                        <p class="font-bold mb-0">{{item.cliente | titlecase }}</p>
+                        <small class="text-info"> <i class="fa fa-id-card"></i>
+                            {{item.clienteDocumento | uppercase }}</small>
+                    </div>
+                </div>
+            </td>
+            <!-- <td>
+                <span> ${{item.subTotal | number:'1.2-2'}}</span>
+            </td>
+            <td>
+                <span> ${{item.descuentoTotal | number:'1.2-2'}}</span>
+            </td>
+            <td>
+                <span> ${{item.impuestoTotal | number:'1.2-2'}}</span>
+            </td>
+            <td>
+                <span class="font-weight-bold"> ${{item.totalNeto | number:'1.2-2'}}</span>
+            </td> -->
+            <td>
+                <span class="text-muted"><i class="far fa-calendar"></i>
+                    {{item.fechaCreacion | date:'dd/MM/yy' }}
+                </span>
+            </td>
+
+            <td>
+                <span *ngIf="item.estadoID==2" class="badge badge-warning">Pedido</span>
+                <span *ngIf="item.estadoID==3" class="badge badge-success">Facturado</span>
+                <span *ngIf="item.estadoID==4" class="badge badge-danger">Cancelado</span>
+
+            </td>
+            <td>
+
+                <div class="d-flex align-items-center">
+                    <!-- <i class="fa fa-user-circle fa-3x text-light"></i> -->
+                    <div class="ml-3">
+                        <p class="mb-0">{{item.vendedor | titlecase }}</p>
+                        <small class="text-info"> <i class="fa fa-map-marker"></i>
+                            Sucursal: {{item.sucursal | uppercase }}</small>
+                    </div>
+                </div>
+            </td>
+            <!-- <td>
+                <ng-select style="width: 120px;" [items]="estados" bindLabel="nombre"
+                    [clearable]="false" bindValue="codigo" [loading]="loadingEstados"
+                    [(ngModel)]="item.estadoID" [ngModelOptions]="{standalone: true}"
+                    (change)="onChangeEstado(item,i)" notFoundText="No resultados">
+                </ng-select>
+            </td> -->
+
+        </tr>
+
+    </tbody>
+
+</table>
+</ng-template>
+
+
+
+
+
+
+
+<ng-template #modalDetalleDespachoPreventa let-modal>
+  <div class="modal-header">
+
+      <h3 class="modal-title">DETALLE DESPACHO</h3>
+
+      <button type="button" class="btn btn-light m-1" (click)="modalDespachoDetalleClose()">Cerrar</button>
+
+  </div>
+  <div class="modal-body">
+     <div class="row">
+      <div class=" col-md-6 row left_detalle">
+          <div class="col-md-12 m-2">
+              <h4 class="text-info"> <i class="fa fa-user"></i> DISTRIBUIDOR: {{despachoPreventaSeleccionado.distribuidor | uppercase}}</h4>
+              <h4> <i class="fa fa-calendar"></i> FECHA: {{despachoPreventaSeleccionado.fechaEntrega | date:'dd/MM/yy'}}</h4>
+
+          </div>
+
+
+          <div class="col-md-12" [hidden]="loadingCotizacionDetalle">
+              <div class=" w-100"  style="min-height: 380px;"  >
+                  <table class="table table_DetalleDespacho table-sm  mb-0 no-wrap v-middle" >
+                      <thead style="background-color:white;color: black;">
+                          <tr>
+                              <th>Artículo</th>
+                              <th>Pedido</th>
+                              <th>Despacho</th>
+                              <th style="text-align: center;">¿Listo?</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+
+                          <tr (click)="onSelectArticuloInDetallePreventa(item)"
+                          [ngClass]="(item.selected)?'tr_detalle_articulo_selected':'tr_detalle_articulo_no_selected'"
+                            *ngFor="let item of paginateDataDetalleDespacho" class="tr_detalle">
+
+                              <td class="tdcss_DetalleDespacho column_a">
+                                  <span> {{item.codigoArticulo}} |  {{item.articulo}}</span>
+                              </td>
+                              <td class="tdcss_DetalleDespacho">
+                                  <span> {{item.pedido}}</span>
+                              </td>
+                              <td class="tdcss_DetalleDespacho">
+                                  <span> {{item.despacho}}</span>
+                              </td>
+
+                              <td class="tdcss_DetalleDespacho" style="vertical-align: initial;    text-align: center; ">
+                                  <input style="display:none" class="form-check-input input_check "  type="checkbox" [(ngModel)]="item.selected" >
+
+
+                                  <span *ngIf="item.estadoId==1 && item.unidadMedida!='CANASTO'" class="badge badge-danger">NO</span>
+                                  <span *ngIf="item.estadoId==2 && item.unidadMedida!='CANASTO'" class="badge badge-warning">INCOM</span>
+                                  <span *ngIf="item.estadoId==3 && item.unidadMedida!='CANASTO'" class="badge badge-success">SI</span>
+
+                                    <svg *ngIf="item.selected"
+                                    style="    position: absolute;
+                                    top: -20px;
+                                    right: -68px;
+                                    z-index: 10000000;
+                                    color: antiquewhite;"
+                                    xmlns="http://www.w3.org/2000/svg" width="95" height="95" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
+                                      <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
+                                    </svg>
+                              </td>
+                          </tr>
+
+                      </tbody>
+                  </table>
+                  <div class="col-12  ">
+                    <app-loading-listado [hidden]="!loadingDespachoPreventaDetalle"></app-loading-listado>
+                </div>
+
+              </div>
+
+              <div class="row">
+
+                  <div class="col-md-7 col-xs-12">
+                    <ngb-pagination   [collectionSize]="collectionSizeDetalleDespacho"
+                    [(page)]="pageDetalleDespacho"  [maxSize]="4"  [pageSize]="pageSizeDetalleDespacho" (pageChange)="formatDespachoPreventaDetalles();">
+                    </ngb-pagination>
+                  </div>
+
+                  <div class="col-md-5 col-xs-12 text-right">
+                    <button *ngIf="despachoPreventaSeleccionado.noEditable==0 && btnGuardarCanastoDespachoCargando==false && loadingDespachoPreventaDetalle==false"
+                    style=" color:#4183D7;   "
+                   class="btn btn-outline-light font-bold" (click)="agregarCanastoPreventa()" type="button" >
+                   <i class="fa fa-plus mr-1" aria-hidden="true"></i>Canasto
+                  </button>
+
+                  <button *ngIf="despachoPreventaSeleccionado.noEditable==0 && btnGuardarCanastoDespachoCargando"
+                  [disabled]="true"  style=" color:#4183D7;   "
+                  class="btn btn-outline-light font-bold" (click)="agregarCanastoPreventa()" type="button" >
+                   Agregando...
+                 </button>
+                  </div>
+
+              </div>
+
+          </div>
+
+      </div>
+
+      <div class=" col-md-6 row right_detalle" *ngIf="this.despachoPreventaArticuloDetalleSelected && !loadingDespachoPreventaDetalle">
+
+          <ng-container
+          [ngTemplateOutlet]="this.despachoPreventaArticuloDetalleSelected.unidadMedida=='UNIDAD'
+          ? pickingArticuloUnidad : this.despachoPreventaArticuloDetalleSelected.unidadMedida =='CANASTO' ?  pickingArticuloCanasto : pickingArticuloLibra">
+          </ng-container>
+
+      </div>
+
+      <div class=" col-md-6 row right_detalle" *ngIf="loadingDespachoPreventaDetalle">
+        <div class="col-12  ">
+          <app-loading-listado [hidden]="!loadingDespachoPreventaDetalle"></app-loading-listado>
+      </div>
+
+    </div>
+
+      </div>
+
+
+    </div>
+  <div class="modal-footer">
+
+    <button type="button"  *ngIf="!btnFinalizarDespachoCargando && despachoPreventaSeleccionado.noEditable==0 && !loadingDespachoPreventaDetalle" class="btn mr-auto ml-auto btn-info btn-md"  (click)="openModalConfirmFinalizaDespacho(modalConfirm)" >
+      FINALIZAR DESPACHO
+    </button>
+
+    <button type="button" disabled=true *ngIf="btnFinalizarDespachoCargando && despachoPreventaSeleccionado.noEditable==0" class="btn mr-auto ml-auto btn-info btn-md">
+      FINALIZANDO DESPACHO...
+    </button>
+
+
+    <div *ngIf="despachoPreventaSeleccionado.noEditable==1 " class="mr-auto ml-auto">
+      <h3  *ngIf="despachoInUseVM.estado==2"
+      class="text-danger font-bold mr-auto ml-auto">{{despachoInUseVM.mensaje}} por  {{despachoInUseVM.usuario}}</h3>
+
+      <h3 *ngIf="despachoInUseVM.estado==4"
+      class="text-success font-bold mr-auto ml-auto">{{despachoInUseVM.mensaje}}</h3>
+    </div>
+
+
+  </div>
+</ng-template>
+
+
+<ng-template  #tableDataPreventa>
+  <table class="table table-hover mb-0 no-wrap v-middle">
+    <thead>
+        <tr>
+            <th>Acciones</th>
+            <th>Fecha</th>
+            <th>Distribuidor</th>
+            <th>Estado </th>
+            <th>Pedido </th>
+            <th>Despacho</th>
+            <th>ERP </th>
+            <!-- <th>Zonas Vendedores</th> -->
+        </tr>
+    </thead>
+    <tfoot>
+      <tr style="background-color: #f8f8f8; font-size: 17px;" *ngIf="dataPreventa.length>0 && !Cargando">
+        <th class="text-center"> <span class="font-bold">TOTAL GENERAL</span></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th><span style="color: #4cc25b;" class=" font-bold">{{dataPreventaTotales?.totalPedido | currency}}</span> </th>
+         <th><span style="color: #4cc25b;" class="font-bold">{{dataPreventaTotales?.totalDespacho | currency}}</span> </th>
+        <th><span style="color: #4cc25b;" class="font-bold"></span> </th>
+      </tr>
+   </tfoot>
+
+    <tbody [hidden]="Cargando" style="    height: 230px;
+    min-height: 200px;">
+
+        <tr    *ngFor="let item of dataPreventa; let i = index">
+
+            <td>
+
+
+                <div class="acciones-btn" *ngIf="validaDiferenciaMinimaDespacho(item)">
+                      <!-- -->
+
+                      <div  *ngxPermissionsOnly="['dispositivo_despacho']" style="display:inline-block">
+                          <button *ngIf="item.noEditable==0" [disabled]="btnCargandoPrint"   class="btn btn font-bold btn-success m-1"
+                            (click)="validaDespachoEnUsoBeforeOpenModal(modalDetalleDespachoPreventa,item)">
+                            <i class="fa fa-sm  fa-list "></i> Despachar
+                        </button>
+                      </div>
+
+                      <div  *ngxPermissionsOnly="['manual_despacho']" style="display:inline-block">
+                        <button *ngIf="item.noEditable==0" [disabled]="btnCargandoPrint"   class="btn btn font-bold btn-info m-1"
+                        (click)="openModalConfirmFinalizaDespacho(modalConfirmManual,1,item)" >
+                          <i class="fa  fa-hand-paper mr-1" aria-hidden="true"></i> D. Manual
+                      </button>
+                      </div>
+
+
+                      <button *ngIf="item.noEditable==1" [disabled]="btnCargandoPrint"  class="btn border  font-bold btn-outline-info m-1"
+                      (click)="openModal(modalDetalleDespachoPreventa,item,false)">
+                      <i class="fa fa-eye" aria-hidden="true"></i>    Despacho
+                    </button>
+
+                    <button [disabled]="btnCargandoPrint" class="btn  font-bold btn-secondary m-1"
+                    (click)="exportDespachoPreventaDetalle(item,1)">
+                    <i class="fa fa-print" aria-hidden="true"></i>
+                    </button>
+
+                    <button [disabled]="btnCargandoPrint" class="btn  font-bold btn-secondary te m-1"
+                    (click)="exportDespachoPreventaDetalle(item,2)">
+                    <i class="fa fa-file-excel" aria-hidden="true"></i>
+                  </button>
+                </div>
+
+              <div class="acciones-mensaje" *ngIf="!validaDiferenciaMinimaDespacho(item)">
+                   <span class=" font-bold text-info">Sincronizando</span>
+               </div>
+
+
+            </td>
+
+              <td>
+                <span class="text-dark font-bold"><i class="far fa-calendar"></i>
+                    {{item.fechaEntrega | date:'MMM d, y' }}
+                </span>
+            </td>
+
+            <td>
+                <div class="d-flex align-items-center">
+                    <div class="ml-3">
+                        <p class="font-bold mb-0">{{item.distribuidor | titlecase   }} <span class="text-info">{{item.ruta }}</span> </p>
+                    </div>
+                </div>
+            </td>
+
+            <td >
+                <span *ngIf="item.estadoDespacho==1  && item.noEditable==0" class="badge badge-warning">PENDIENTE</span>
+                <span *ngIf="item.estadoDespacho==2  && item.noEditable==0" class="badge badge-info">EN PROCESO</span>
+                <span *ngIf="item.estadoDespacho==3 && item.noEditable==0" class="badge badge-warning">PENDIENTE FINALIZAR</span>
+
+                <span *ngIf="item.noEditable==1" class="badge badge-success">FINALIZADO </span>
+
+                <div *ngIf="item.noEditable==1 && item.estadoERP==1" class="circulo"  style="background-color: #ffc107;"></div>
+                <!-- <div *ngIf="item.noEditable==1 && item.estadoERP==0" class="circulo"  style="background-color: #06d79c;"></div> -->
+
+                <!-- <span *ngIf="item.noEditable==1" >|</span> -->
+            </td>
+
+             <td>
+              <p class="font-bold mb-0">{{item.totalMontoPedido | currency}}</p>
+             </td>
+             <td>
+              <p class="font-bold mb-0">  {{item.totalMontoDespacho | currency}}</p>
+           </td>
+              <td>
+                <p class="font-bold mb-0">  {{item.totalMontoPedidoERP | currency}}</p>
+             </td>
+<!--
+            <td>
+              <div class="alert alert alert-dark text-left" role="alert">
+
+                {{item.rutasVendedoresDistribuidor}}
+
+              </div>
+
+
+          </td> -->
+            <!-- <td>
+                <ng-select style="width: 120px;" [items]="estados" bindLabel="nombre"
+                    [clearable]="false" bindValue="codigo" [loading]="loadingEstados"
+                    [(ngModel)]="item.estadoID" [ngModelOptions]="{standalone: true}"
+                    (change)="onChangeEstado(item,i)" notFoundText="No resultados">
+                </ng-select>
+            </td> -->
+
+        </tr>
+        <div class="over_despacho" *ngIf="!despachoPuedeHorario || loadingRangosFechaDespacho || despachoOn==0">
+          <div class="row justify-content-center  text-center align-items-center " style="font-size: 20px;     height: 100%;">
+            <h3 *ngIf="!loadingRangosFechaDespacho  && despachoOn==1" class="font-weight-bold h3_over_despacho" >
+              <i class="fa fa-clock" style="font-size: 30px;" aria-hidden="true"></i>
+              {{dia | uppercase}}
+
+               <br>
+              El horario a despachar es entre {{fDesde | date:'shortTime'}} - {{fHasta | date:'shortTime'}}
+            </h3>
+
+
+            <h3 *ngIf="!loadingRangosFechaDespacho && despachoOn==0" class="font-weight-bold h3_over_despacho" >
+              <i class="fa fa-clock" style="font-size: 30px;" aria-hidden="true"></i>
+               <br>
+               No se puede despachar en este momento
+            </h3>
+
+            <h3 *ngIf="loadingRangosFechaDespacho" class="font-weight-bold h3_over_despacho">
+                <i class="spinner-border spinner-border-sm"></i>
+
+                <br>
+                 Cargando...
+            </h3>
+
+          </div>
+        </div>
+    </tbody>
+
+</table>
+
+</ng-template>
+
+
+
+
+
+
+
+<!-- MOVER A OTRO COMPONENTE -->
+
+<!-- MOVER A OTRO COMPONENTE -->
+
+<!-- MOVER A OTRO COMPONENTE -->
+
+<!-- MOVER A OTRO COMPONENTE -->
+
+<!-- MOVER A OTRO COMPONENTE -->
+
+<!-- MOVER A OTRO COMPONENTE -->
+
+<!-- MOVER A OTRO COMPONENTE -->
+
+<!-- MOVER A OTRO COMPONENTE -->
+
+<!-- MOVER A OTRO COMPONENTE -->
+<!-- MOVER A OTRO COMPONENTE -->
+
+<ng-template #pickingArticuloLibra>
+
+
+        <div class="card" style=" margin-left: 10px;">
+            <div class="card-body">
+                <div class="row" >
+
+
+          <!-- INFORMACION ARTICULO -->
+                    <div class="col-md-12">
+                        <div class="row  p-1">
+                            <div class="col-md-12">
+                                <h3 class="font-bold"> <i class="fa fa-shopping-bag"></i>
+                                    {{despachoPreventaArticuloDetalleSelected.codigoArticulo}} |
+                                   {{despachoPreventaArticuloDetalleSelected.articulo}}	</h3>
+                            </div>
+
+
+          <!-- INPUTS LOTE -->
+                    <div class="form-group col-md-6" >
+                        <label for="inputEmail4">Almacén Origen </label>
+                        <ng-select bindLabel="nombre" bindValue="codigo"
+                            [(ngModel)]="despachoPreventaArticuloDetalleSelected.almacenOrigenId"
+                            [items]="almacenes" [clearable]="false" [loading]="loadingAlmacenes"
+                            notFoundText="No resultados" [readonly]="true">
+                        </ng-select>
+                    </div>
+                    <div class="form-group col-md-6" >
+                      <label for="inputEmail4">Almacén Destino </label>
+                      <ng-select bindLabel="nombre" bindValue="codigo"
+                          [(ngModel)]="despachoPreventaArticuloDetalleSelected.almacenDestinoId"
+                          [items]="almacenes" [clearable]="false" [readonly]="true" [loading]="loadingAlmacenes"
+                          notFoundText="No resultados" >
+                      </ng-select>
+                  </div>
+
+
+                    <div class="form-group col-md-6"
+                    *ngIf="despachoPreventaArticuloDetalleSelected.lote!=null
+                            &&
+                            despachoPreventaArticuloDetalleSelected.lote!=undefined
+                              &&  despachoPreventaArticuloDetalleSelected.lote!=''" >
+                      <label>Lote</label>
+                      <div class="input-group">
+
+                        <input [disabled]="true"
+                        (input)="onLoteInput()"
+                        [(ngModel)]="despachoPreventaArticuloDetalleSelected.lote"
+                        type="text" id="inputSearch"
+                        class="form-control input_Lote" placeholder="Lote">
+                    </div>
+                  </div>
+
+
+                  <div class="form-group col-md-6" *ngIf="despachoPreventaArticuloDetalleSelected.lote==null
+                  || despachoPreventaArticuloDetalleSelected.lote==undefined ||  despachoPreventaArticuloDetalleSelected.lote==''" >
+                    <label for="inputEmail4">Lote</label>
+                    <ng-select (change)="onLoteInput()" style="  font-size: 30px;" class="customSelect_lote" bindLabel="lote" [items]="lotesDisponibles"
+                        [ngModelOptions]="{standalone: true}"
+                        [searchable]="false"
+                        [(ngModel)]="lote"
+                        [loading]="loadingLote" [clearable]="false" notFoundText="No se encontraron lotes">
+                        <ng-template ng-label-tmp let-item="item">
+                          <span>
+                             {{item.lote}}
+                          </span>
+                      </ng-template>
+                      <ng-template ng-option-tmp let-item="item" let-index="index">
+                          <h4>
+                            <span class="font-weight-bold">Lote:</span> {{item.lote}}
+                          </h4>
+                          <h6>
+                           <span  class="font-weight-bold">Disponible: </span> {{item.disponible}}
+                          </h6>
+                          <h6>
+                            <span  class="font-weight-bold">Vencimiento: </span>  {{item.fechExpira | date: 'mediumDate'}}
+                          </h6>
+                        </ng-template>
+                    </ng-select>
+                </div>
+
+
+                    <!-- CANTIDAD PEDIDO | CANTIDAD DESPACHO -->
+                    <div class="form-group col-md-3" *ngIf="!despachoInUseVM.hasPermisoValidador  || despachoPreventaSeleccionado.finalizado==0" >
+                      <label> Pedido</label>
+                      <input
+                        [(ngModel)]="despachoPreventaArticuloDetalleSelected.pedido"
+                        [readonly]="true"
+                        step="0.01"
+                        [min]="0"
+                        type="number" id="inputSearch"
+                      class="form-control input_CantidadPedido" placeholder="Cantidad pedido">
+                  </div>
+
+                  <div class="form-group col-md-3"  >
+                      <label> Despacho</label>
+                      <input
+                        [(ngModel)]="despachoPreventaArticuloDetalleSelected.despacho"
+                        type="number" id="inputSearch"
+                        step="0.01"
+                        pattern="^[a-zA-Z0-9\.]*$"
+                        [min]="0"
+                        [readonly]="lote.disponible==undefined || lote.disponible<=0 "
+                      class="form-control input_CantidadDespacho" placeholder="0">
+                  </div>
+
+
+                <div class="form-group col-md-3"  *ngIf="despachoInUseVM.hasPermisoValidador  && despachoPreventaSeleccionado.finalizado==1" >
+                  <label> Validado</label>
+                  <input
+                    [(ngModel)]="despachoPreventaArticuloDetalleSelected.validado"
+                    type="number" id="inputSearch"
+                    step="0.01"
+                    pattern="^[a-zA-Z0-9\.]*$"
+                    [min]="0"
+                  class="form-control input_CantidadDespacho" placeholder="0">
+                </div>
+
+                 <div class="col-md-12" >
+                   <div class="alert alert-light text-center" role="alert">
+                      <!-- <h6 class="font-weight-bold text-success"  style=" font-size: 20px;" *ngIf="lote.disponible > 0 && !loadingLote ">
+                        <i class="fa fa-check-circle"></i>  LOTE SELECCIONADO | CANT. DISPONIBLE ({{lote.disponible}})
+                    </h6>
+                      <h6 class="font-weight-bold text-warning"   style=" font-size: 20px;" *ngIf="lote.disponible <= 0 && lote.lote != '' &&  !loadingLote ">
+                        <i class="fa fa-info-circle"></i> LOTE ENCONTRADO | CANT. NO DISPONIBLE ({{lote.disponible}})
+                      </h6>  -->
+                      <h6 class="font-weight-bold text-info"
+                          style=" font-size: 20px;">
+                        <i class="fa fa-info-circle"></i> Pedido {{despachoPreventaArticuloDetalleSelected.pedido}} {{despachoPreventaArticuloDetalleSelected.unidadMedida}} = {{(despachoPreventaArticuloDetalleSelected.pedido / despachoPreventaArticuloDetalleSelected.peso) | number : '1.1-2'}} Piezas
+                      </h6>
+                      <!-- <h6 class="font-weight-bold text-secondary"  *ngIf=" loadingLote"
+                      style=" font-size: 20px;">
+                    <i class="fa fa-info-circle"></i> BUSCANDO LOTES...
+                  </h6> -->
+
+                    </div>
+                 </div>
+
+
+                </div>
+              </div>
+
+           <!-- LISTADO DE ARTICULOS EXTRAS -->
+                    <!-- <div class="col-md-12">
+                        <table class="table table-hover mb-0 no-wrap v-middle">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col"></th>
+                                                    <th scope="col">Peso</th>
+                                                    <th scope="col">Cantidad</th>
+                                                    <th scope="col">Total Peso</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+
+                                                <tr class="" *ngFor="let item of articulosExtras; let i=index">
+                                                    <td>
+                                                        <h4>
+                                                            <span class="font-bold"> {{item.nombre}}</span>
+                                                        </h4>
+                                                    </td>
+                                                    <td>
+                                                        <ng-select style="width: 150px;" [clearable]="false" [items]="item.pesos"
+                                                            bindLabel="nombre" [searchable]="false" (change)="calcularTotales()"
+                                                            [(ngModel)]="item.pesoSeleccionado" notFoundText="No resultados">
+                                                        </ng-select>
+                                                    </td>
+                                                    <td>
+                                                        <ng-select style="width: 80px;" [clearable]="false" [items]="cantidades"
+                                                            [(ngModel)]="item.cantidadSeleccionada" [searchable]="false"
+                                                            (change)="calcularTotales()" notFoundText="No resultados">
+                                                        </ng-select>
+                                                    </td>
+                                                    <td>
+                                                        <h2>
+                                                            <span *ngIf="item.cantidadSeleccionada && item.pesoSeleccionado">
+                                                                {{item.cantidadSeleccionada * item.pesoSeleccionado.valor |
+                                                                number:'1.2-5'}}
+                                                                {{item.pesoSeleccionado.abreviatura}}</span>
+                                                        </h2>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                        </table>
+                    </div> -->
+
+
+
+          <!-- TOTALES DEL PESO -->
+                    <!-- <div class=" col-md-12 row">
+                      <div class="col-12">
+                        <br>
+                      </div>
+
+                        <div class="col-md-4">
+                        <div class="card  ">
+                            <div class="card-body  pb-0">
+                                <div class="d-flex no-block align-items-center">
+                                    <div><span class="text-danger display-5"><i class="ti-pie-chart"></i></span></div>
+                                    <div class="ml-auto text-right">
+                                        <h2 class="font-weight-bold"> {{pesoBalanzaLBNumber | number}} LB</h2>
+                                        <h4 class="text-danger mb-1">Peso Balanza</h4>
+                                        <span *ngIf="pesoBalanzaUltimaFecha" class="small "><i class="fa fa-clock"></i>
+                                            {{pesoBalanzaUltimaFecha | date:'hh:mm:ss a'}}
+                                        </span>
+                                        <span *ngIf="pesoBalanza" class="small">
+                                            | {{pesoBalanza }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card ">
+                            <div class="card-body">
+                                <div class="d-flex no-block align-items-center">
+                                    <div><span class="text-info display-5"><i class="ti-pie-chart"></i></span></div>
+                                    <div class="ml-auto text-right">
+                                        <h2 class="font-weight-bold">{{pesoCanastos | number}} Lb</h2>
+                                        <h4 class="text-info">Peso Canastos</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card ">
+                            <div class="card-body">
+                                <div class="d-flex no-block align-items-center">
+                                    <div><span class="text-success display-5"><i class="ti-pie-chart"></i></span></div>
+                                    <div class="ml-auto text-right">
+                                        <h2 class="font-weight-bold">{{pesoNeto | number}} Lb</h2>
+                                        <h4 class="text-success">Peso Neto</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    <div class=" col-md-12  row " style="position: absolute; bottom: 0px;">
+                        <div class="col-md-12"><hr></div>
+                       <div class="col-md-1"></div>
+                        <div class="col-md-5 text-left">
+                            <button (click)="onBackItem()"  style="width: 100%;  color:#4183D7;     font-size: 18px;   height: 50px;"
+                             *ngIf="!btnGuardarCargando"
+                             class="btn btn-outline-light font-bold  m-1" type="button" >
+                                <i class="fa fa-arrow-left"  aria-hidden="true"></i>    Anterior
+                            </button>
+                        </div>
+
+                        <div class="col-md-5 text-right">
+                            <button
+                               style="width: 100%;  height: 50px;     font-size: 18px;"
+                               *ngIf="!btnGuardarCargando" class="btn btn-success font-bold  m-1"
+                                type="button" (click)="onNextItemSubmit()">
+                                Guardar  y Siguiente
+                               <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div> -->
+                    <div class=" col-md-12  row "  *ngIf="despachoPreventaSeleccionado.noEditable==0 || despachoInUseVM.hasPermisoValidador" style="position: absolute; bottom: 0px;">
+                      <div class="col-md-12"><hr></div>
+                     <div class="col-md-1"></div>
+                      <div class="col-md-5 text-left">
+                          <button (click)="onBackItemPreventa()"  style="width: 100%;  color:#4183D7;     font-size: 18px;   height: 65px;"
+                           *ngIf="!btnGuardarCargando"
+                           class="btn btn-outline-light font-bold  m-1" type="button" >
+                              <i class="fa fa-arrow-left"  aria-hidden="true"></i>    Anterior
+                          </button>
+                      </div>
+
+                      <div class="col-md-5 text-right">
+                          <button *ngIf="btnGuardarDespachoCargando==false"
+                             style="width: 100%;  height: 65px;     font-size: 18px;"
+                             class="btn btn-success font-bold  m-1"
+                              type="button"  (click)="onNextItemPreventaSubmit()">
+                              Guardar y Siguiente
+                             <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                          </button>
+<!--
+                          <button
+                          style="width: 100%;  height: 65px;     font-size: 18px;"
+                          *ngIf="despachoPreventaSeleccionado.estadoId!=1   && btnGuardarDespachoCargando==false" class="btn btn-success font-bold  m-1"
+                           type="button"  (click)="onNextItemPreventaSubmit()">
+                           Siguiente
+                          <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                       </button> -->
+                          <button
+                          *ngIf="btnGuardarDespachoCargando"
+                          disabled
+                          style="width: 100%;  height: 65px;     font-size: 18px;"
+                          class="btn btn-success font-bold  m-1"
+                           type="button" >
+                           Guardando...
+                       </button>
+
+
+                      </div>
+                  </div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+</ng-template>
+
+<ng-template #pickingArticuloUnidad>
+    <div class="card" style=" margin-left: 10px;">
+        <div class="card-body">
+            <div class="row" >
+
+
+      <!-- INFORMACION ARTICULO -->
+                <div class="col-md-12">
+                    <div class="row  p-1">
+                        <div class="col-md-12">
+                            <h3 class="font-bold"> <i class="fa fa-shopping-bag"></i>
+                                {{despachoPreventaArticuloDetalleSelected.codigoArticulo}} |
+                               {{despachoPreventaArticuloDetalleSelected.articulo}}	</h3>
+                        </div>
+                              <!-- INPUTS LOTE -->
+                              <div class="form-group col-md-6" >
+                                <label for="inputEmail4">Almacén Origen </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo"
+                                    [(ngModel)]="despachoPreventaArticuloDetalleSelected.almacenOrigenId"
+                                    [items]="almacenes" [clearable]="false" [loading]="loadingAlmacenes"
+                                    notFoundText="No resultados" [readonly]="true">
+                                </ng-select>
+                            </div>
+                            <div class="form-group col-md-6" >
+                              <label for="inputEmail4">Almacén Destino </label>
+                              <ng-select bindLabel="nombre" bindValue="codigo"
+                                  [(ngModel)]="despachoPreventaArticuloDetalleSelected.almacenDestinoId"
+                                  [items]="almacenes" [clearable]="false" [readonly]="true" [loading]="loadingAlmacenes"
+                                  notFoundText="No resultados" >
+                              </ng-select>
+                          </div>
+                          <div class="form-group col-md-6"
+                          *ngIf="despachoPreventaArticuloDetalleSelected.lote!=null
+                                  &&
+                                  despachoPreventaArticuloDetalleSelected.lote!=undefined
+                                    &&  despachoPreventaArticuloDetalleSelected.lote!=''" >
+                            <label>Lote</label>
+                            <div class="input-group">
+
+                              <input [disabled]="true"
+                              (input)="onLoteInput()"
+                              [(ngModel)]="despachoPreventaArticuloDetalleSelected.lote"
+                              type="text" id="inputSearch"
+                              class="form-control input_Lote" placeholder="Lote">
+                          </div>
+                        </div>
+
+
+                        <div class="form-group col-md-6" *ngIf="despachoPreventaArticuloDetalleSelected.lote==null
+                        || despachoPreventaArticuloDetalleSelected.lote==undefined ||  despachoPreventaArticuloDetalleSelected.lote==''" >
+                          <label for="inputEmail4">Lote</label>
+                          <ng-select (change)="onLoteInput()" style="  font-size: 30px;" class="customSelect_lote" bindLabel="lote" [items]="lotesDisponibles"
+                              [ngModelOptions]="{standalone: true}"
+                              [searchable]="false"
+                              [(ngModel)]="lote"
+                              [loading]="loadingLote" [clearable]="false" notFoundText="No se encontraron lotes">
+                              <ng-template ng-label-tmp let-item="item">
+                                <span>
+                                   {{item.lote}}
+                                </span>
+                            </ng-template>
+                            <ng-template ng-option-tmp let-item="item" let-index="index">
+                                <h3>
+                                  <span class="font-weight-bold">Lote:</span> {{item.lote}}
+                                </h3>
+                                <h4>
+                                 <span  class="font-weight-bold">Disponible: </span> {{item.disponible}}
+                                </h4>
+                                <h5>
+                                  <span  class="font-weight-bold">Vencimiento: </span>  {{item.fechExpira | date: 'mediumDate'}}
+                                </h5>
+                              </ng-template>
+                          </ng-select>
+                      </div>
+                          <!-- CANTIDAD PEDIDO | CANTIDAD DESPACHO -->
+                          <div class="form-group col-md-3"  *ngIf="!despachoInUseVM.hasPermisoValidador  || despachoPreventaSeleccionado.finalizado==0">
+                            <label> Pedido</label>
+                            <input [(ngModel)]="despachoPreventaArticuloDetalleSelected.pedido"
+                              [readonly]="true"  type="number" id="inputSearch"
+                            class="form-control input_CantidadPedido" placeholder="Cantidad pedido">
+                        </div>
+
+                        <div class="form-group col-md-3">
+                            <label> Despacho</label>
+                            <input
+                            [readonly]="lote.disponible==undefined || lote.disponible<=0 "
+                            [(ngModel)]="despachoPreventaArticuloDetalleSelected.despacho"
+                              type="number" id="inputSearch"
+                            class="form-control input_CantidadDespacho" placeholder="0">
+                        </div>
+
+                         <div class="form-group col-md-3" *ngIf="despachoInUseVM.hasPermisoValidador">
+                          <label> Validado</label>
+                          <input
+                            [(ngModel)]="despachoPreventaArticuloDetalleSelected.validado"
+                            type="number" id="inputSearch"
+                            [min]="0"
+                          class="form-control input_CantidadDespacho" placeholder="0">
+                        </div>
+
+                       <div class="col-md-12"  *ngIf="despachoPreventaSeleccionado.noEditable==0" >
+                          <div class="alert alert-light text-center" role="alert">
+                            <h6 class="font-weight-bold text-success"  style=" font-size: 20px;" *ngIf="lote.cantidad > 0 && !loadingLote ">
+                              <i class="fa fa-check-circle"></i>  LOTE SELECCIONADO Y DISPONIBLE ({{lote.cantidad}})
+                          </h6>
+                            <h6 class="font-weight-bold text-warning"   style=" font-size: 20px;" *ngIf="lote.cantidad <= 0 && lote.lote != '' &&  !loadingLote ">
+                              <i class="fa fa-info-circle"></i> LOTE ENCONTRADO Y NO DISPONIBLE ({{lote.cantidad}})
+                            </h6>
+                            <h6 class="font-weight-bold text-info"  *ngIf="lote.lote==undefined && !loadingLote
+                            && (despachoPreventaArticuloDetalleSelected.lote==undefined ||  despachoPreventaArticuloDetalleSelected.lote=='')"
+                            style=" font-size: 20px;">
+                          <i class="fa fa-info-circle"></i> SELECIONE UN LOTE PARA ENCONTRAR INVENTARIO
+                        </h6>
+                        <h6 class="font-weight-bold text-secondary"  *ngIf=" loadingLote"
+                        style=" font-size: 20px;">
+                      <i class="fa fa-info-circle"></i> BUSCANDO LOTES...
+                    </h6>
+                          </div>
+                       </div>
+
+
+                    </div>
+                </div>
+
+
+
+                <div class=" col-md-12  row " *ngIf="despachoPreventaSeleccionado.noEditable==0 || despachoInUseVM.hasPermisoValidador" style="position: absolute; bottom: 0px;">
+                    <div class="col-md-12"><hr></div>
+                   <div class="col-md-1"></div>
+                    <div class="col-md-5 text-left">
+                        <button (click)="onBackItemPreventa()"  style="width: 100%;  color:#4183D7;     font-size: 18px;   height: 65px;"
+                         *ngIf="!btnGuardarCargando"
+                         class="btn btn-outline-light font-bold  m-1" type="button" >
+                            <i class="fa fa-arrow-left"  aria-hidden="true"></i>    Anterior
+                        </button>
+                    </div>
+
+                    <div class="col-md-5 text-right">
+                      <button
+                      style="width: 100%;  height: 65px;     font-size: 18px;"
+                      *ngIf="!btnGuardarDespachoCargando" class="btn btn-success font-bold  m-1"
+                       type="button"  (click)="onNextItemPreventaSubmit()">
+                       Guardar  y Siguiente
+                      <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                   </button>
+
+                   <button
+                   *ngIf="btnGuardarDespachoCargando"
+                   disabled
+                   style="width: 100%;  height: 65px;     font-size: 18px;"
+                   class="btn btn-success font-bold  m-1"
+                    type="button" >
+                    Guardando...
+                </button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #pickingArticuloCanasto>
+  <div class="card" style=" margin-left: 10px;">
+      <div class="card-body">
+          <div class="row" >
+
+
+    <!-- INFORMACION ARTICULO -->
+              <div class="col-md-12">
+                  <div class="row  p-1">
+                      <div class="col-md-12">
+                          <h3 class="font-bold"> <i class="fa fa-shopping-bag"></i>
+                              {{despachoPreventaArticuloDetalleSelected.codigoArticulo}} |
+                             {{despachoPreventaArticuloDetalleSelected.articulo}}	</h3>
+                      </div>
+                            <!-- INPUTS LOTE -->
+                            <div class="form-group col-md-6" >
+                              <label for="inputEmail4">Almacén Origen </label>
+                              <ng-select bindLabel="nombre" bindValue="codigo"
+                                  [(ngModel)]="despachoPreventaArticuloDetalleSelected.almacenOrigenId"
+                                  [items]="almacenes" [clearable]="false" [loading]="loadingAlmacenes"
+                                  notFoundText="No resultados" [readonly]="true">
+                              </ng-select>
+                          </div>
+                          <div class="form-group col-md-6" >
+                            <label for="inputEmail4">Almacén Destino </label>
+                            <ng-select bindLabel="nombre" bindValue="codigo"
+                                [(ngModel)]="despachoPreventaArticuloDetalleSelected.almacenDestinoId"
+                                [items]="almacenes" [clearable]="false" [readonly]="true" [loading]="loadingAlmacenes"
+                                notFoundText="No resultados" >
+                            </ng-select>
+                        </div>
+
+
+
+                        <!-- CANTIDAD PEDIDO | CANTIDAD DESPACHO -->
+                        <!-- <div class="form-group col-md-3" >
+                          <label> Pedido</label>
+                          <input [(ngModel)]="despachoPreventaArticuloDetalleSelected.pedido"
+                            [readonly]="true"  type="number" id="inputSearch"
+                          class="form-control input_CantidadPedido" placeholder="Cantidad pedido">
+                      </div> -->
+
+                      <div class="form-group col-md-6" >
+                          <label> Cantidad</label>
+                          <input
+                          [readonly]="despachoPreventaSeleccionado.noEditable==1"
+                          [(ngModel)]="despachoPreventaArticuloDetalleSelected.despacho"
+                            type="number" id="inputSearch"
+                          class="form-control input_CantidadDespacho" placeholder="0">
+                      </div>
+
+                  </div>
+              </div>
+
+
+
+              <div class=" col-md-12  row " *ngIf="despachoPreventaSeleccionado.noEditable==0" style="position: absolute; bottom: 0px;">
+                  <div class="col-md-12"><hr></div>
+                 <div class="col-md-1"></div>
+                  <div class="col-md-5 text-left">
+                      <button (click)="onBackItemPreventa()"  style="width: 100%;  color:#4183D7;     font-size: 18px;   height: 65px;"
+                       *ngIf="!btnGuardarCargando"
+                       class="btn btn-outline-light font-bold  m-1" type="button" >
+                          <i class="fa fa-arrow-left"  aria-hidden="true"></i>    Anterior
+                      </button>
+                  </div>
+
+                  <div class="col-md-5 text-right">
+                    <button
+                    style="width: 100%;  height: 65px;     font-size: 18px;"
+                    *ngIf="!btnGuardarDespachoCargando" class="btn btn-success font-bold  m-1"
+                     type="button"  (click)="onNextItemPreventaSubmit()">
+                     Guardar  y Siguiente
+                    <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                 </button>
+
+                 <button
+                 *ngIf="btnGuardarDespachoCargando"
+                 disabled
+                 style="width: 100%;  height: 65px;     font-size: 18px;"
+                 class="btn btn-success font-bold  m-1"
+                  type="button" >
+                  Guardando...
+              </button>
+
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</ng-template>
+
+<ng-template #modalConfirm let-modal>
+  <div class="container-fluid">
+    <div class="row"  >
+      <div class="col">
+        <div class="modal-header">
+          <h4 class="modal-title" id="modal-title">Confirmación</h4>
+          <button type="button" class="close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body text-center">
+          <i class="fa fa-question fa-3x text-info"></i>
+          <p class="mt-2"><strong>¿Estás seguro/a de finalizar este despacho?</strong></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="modal.close('Close click')">Cancel</button>
+          <button type="button" class="btn btn-danger" (click)="finalizaDespacho(3)">Si</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+
+<ng-template #modalConfirmManual let-modal>
+  <div class="container-fluid">
+    <div class="row"  >
+      <div class="col">
+        <div class="modal-header">
+          <h4 class="modal-title" id="modal-title">Confirmación</h4>
+          <button type="button" class="close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body text-center">
+          <i class="fa fa-question fa-3x text-info"></i>
+          <p class="mt-2"><strong>¿Estás seguro/a de efectuar manualmente este despacho?</strong></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="modal.close('Close click')">Cancel</button>
+          <button type="button" class="btn btn-danger" (click)="finalizaDespacho(2)">Si</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

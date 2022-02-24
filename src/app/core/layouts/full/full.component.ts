@@ -24,7 +24,7 @@ export class FullComponent implements OnInit {
     public showSettings = false;
     public showMobileMenu = false;
     public expandLogo = false;
-
+ 
     options = {
         theme: 'light', // two possible values: light, dark
         dir: 'ltr', // two possible values: ltr, rtl
@@ -33,7 +33,7 @@ export class FullComponent implements OnInit {
         sidebarpos: 'fixed', // two possible values: fixed, absolute
         headerpos: 'fixed', // two possible values: fixed, absolute
         boxed: 'full', // two possible values: full, boxed
-        navbarbg: 'skin4', // six possible values: skin(1/2/3/4/5/6)
+        navbarbg: 'skin6', // six possible values: skin(1/2/3/4/5/6)
         sidebarbg: 'skin5', // six possible values: skin(1/2/3/4/5/6)
         logobg: 'skin5' // six possible values: skin(1/2/3/4/5/6)
     };

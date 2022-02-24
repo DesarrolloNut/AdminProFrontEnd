@@ -1,0 +1,388 @@
+<div class="row" *ngxPermissionsOnly="['autorizacion_lista_precios'] ; else PermissionDenied;">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+
+                    <div class="col-md-6 align-middle">
+                        <h4 class="card-title">Listado de artículos por autorizar</h4>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <!-- 
+                        <button type="button"
+                            [disabled]="!data || data.length == 0 || estadoAutorizacionComboModel != estadoAutorizacionUsuario || estadoAutorizacionComboModel == 3"
+                            (click)="autorizarMasiva()" class="btn btn-info"> <i class="fa fa-check"></i> Autorizar
+                            todos
+                        </button> -->
+
+                        <button *ngIf="!loadingReporteExcel" type="button" (click)="exportarReporteExcel()"
+                            class="btn btn-success ml-2"> <i class="fa fa-file-excel"></i>
+                        </button>
+
+                        <!-- boton cargando -->
+                        <button *ngIf="loadingReporteExcel" disabled class="btn btn-success ml-2" type="button">
+                            <span class="spinner-border spinner-border-sm"></span>
+                        </button>
+
+                    </div>
+
+
+                    <div class=" p-2 col-md-4">
+                        <!-- <label> Lista de precio</label> -->
+                        <ng-select [items]="ListaPrecio" bindLabel="nombre" bindValue="codigo" (change)="getData()"
+                            [(ngModel)]="listaPrecioSeleccionada" [clearable]="false" notFoundText="No resultados">
+                        </ng-select>
+                    </div>
+                    <div class=" p-2 col-md-3">
+
+                        <ng-select [items]="estadosAutorizacion" bindLabel="nombre" bindValue="codigo"
+                            [searchable]="false" (change)="getData()" [clearable]="false"
+                            [(ngModel)]="estadoAutorizacionComboModel">
+
+                            <ng-template ng-label-tmp let-item="item">
+                                <span>
+                                    <i class="fa fa-circle" [ngStyle]="{'color': item.grupo}"></i> {{item.nombre}}
+                                </span>
+                            </ng-template>
+                            <ng-template ng-option-tmp let-item="item" let-index="index">
+                                <span>
+                                    <i class="fa fa-circle" [ngStyle]="{'color': item.grupo}"></i> {{item.nombre}}
+                                </span>
+                            </ng-template>
+                        </ng-select>
+
+
+                    </div>
+
+                    <div class="col-md-5 p-2">
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <label for="search" class="input-group-text bg-white">
+                                    <span class="bg-white" style="border-right:none">
+                                        <i class="ti-search"></i>
+                                    </span>
+                                </label>
+                            </div>
+                            <input [(ngModel)]="Search" (keyup)="getData()" type="text"
+                                style="border-left:none !important;" class="form-control" placeholder="Buscar">
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 no-wrap v-middle">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Artículo</th>
+                                <th>
+                                    <span>Precio Actual</span>
+                                </th>
+                                <th [hidden]="estadoAutorizacionComboModel == 3">
+                                    <span>Precio Sugerido</span>
+                                </th>
+                                <th>Precio ERP</th>
+                                <th>
+                                    <span>Precio Anterior</span>
+                                </th>
+                                <th>Lista</th>
+                                <th>Aplicación</th>
+                                <th>Estado</th>
+                                <th>Usuario</th>
+                            </tr>
+                        </thead>
+                        <tbody [hidden]="Cargando">
+
+                            <tr *ngFor="let item of data">
+                                <td>
+
+                                    <button class="btn btn-sm btn-light m-1" *ngIf="!item.cargando"
+                                        (click)="openModalComments(modalComments,item)">
+                                        <i class="fa fa-sm fa-comment-dots"></i>
+                                    </button>
+
+
+                                    <button class="btn btn-sm btn-light m-1" *ngIf="!item.cargando"
+                                        (click)="openModalGraphics(modalPriceGraphics,0,item)">
+                                        <i class="fa fa-sm fa-chart-line text"></i>
+                                    </button>
+
+
+                                    <ng-template
+                                        [ngIf]="estadoAutorizacionAnterior && item.estadoID <= estadoAutorizacionAnterior.codigo">
+
+                                        <button class="btn btn-sm btn-success m-1" *ngIf="!item.cargando"
+                                            (click)="autorizar(item)">
+                                            <i class="fa fa-sm fa-check"></i>
+                                        </button>
+
+                                        <!-- boton cargando -->
+                                        <button *ngIf="item.cargando && isAutorizando" disabled
+                                            class="btn btn-success m-1" type="button">
+                                            <span class="spinner-border spinner-border-sm"></span>
+                                        </button>
+
+
+                                    </ng-template>
+
+
+                                    <ng-template [ngIf]="item.estadoID == estadoAutorizacionUsuario">
+
+                                        <button *ngIf="!item.cargando" class="btn btn-sm btn-warning m-1"
+                                            (click)="desautorizar(item)">
+                                            <i class="fa fa-sm fa-times"></i>
+                                        </button>
+
+                                        <!-- boton cargando -->
+                                        <button *ngIf="item.cargando && !isAutorizando " disabled
+                                            class="btn btn-warning m-1" type="button">
+                                            <span class="spinner-border spinner-border-sm"></span>
+                                        </button>
+
+                                    </ng-template>
+
+
+                                    <ng-template
+                                        ngxPermissionsOnly="mantenimientos_listas_precios_autorizacion_puede_reiniciar_precio">
+
+                                        <button *ngIf="!item.cargando && item.estadoID != estadoIDAutorizacionDefault"
+                                            class="btn btn-sm btn-light m-1" (click)="desautorizar(item)">
+                                            <i class="fa fa-sm fa-redo-alt"></i>
+                                        </button>
+
+                                        <!-- boton cargando -->
+                                        <button *ngIf="item.cargando && !isAutorizando " disabled
+                                            class="btn btn-light m-1" type="button">
+                                            <span class="spinner-border spinner-border-sm"></span>
+                                        </button>
+
+                                    </ng-template>
+
+
+                                </td>
+                                <!-- <td><span class="badge badge-light text-info ">{{item.id}}</span></td> -->
+                                <td>
+                                    <span> {{ item.nombre | slice: 0:25 | titlecase }}...</span>
+                                </td>
+                                <td>
+                                    <span class="font-weight-bold">RD$ {{item.precioActual}}</span>
+                                </td>
+
+                                <td [hidden]="estadoAutorizacionComboModel == 3">
+                                    <span class="text-info font-weight-bold">RD$ {{item.precioSugerido}} </span>
+                                </td>
+                                <td>
+                                    <span [ngClass]="{'text-danger': item.precioActual != item.precioConfirmado}">
+                                        <i *ngIf="item.precioActual != item.precioConfirmado"
+                                            class="fa fa-exclamation-triangle text-danger"></i> RD$
+                                        {{item.precioConfirmado}}</span>
+                                </td>
+                                <td>
+                                    <span>RD$ {{item.precioAnterior}}</span>
+                                </td>
+                                <td>
+                                    <span> {{item.listaPrecio}}</span>
+                                </td>
+
+                                <td>
+                                    <div class="d-flex align-items-center">
+
+                                        <i class="fa fa-calendar fa-2x text-light"></i>
+
+                                        <div class="ml-3">
+                                            <p class="font-bold mb-0">
+                                                <span> {{item.fechaAplicacion | date:'dd/MM/yy' }}</span>
+                                            </p>
+
+
+                                            <span *ngIf="item.estadoID < 3 && item.estadoID > 0 ">
+                                                <small class="text-danger" *ngIf="item.diasRestantes < 0">
+                                                    {{item.diasRestantes }} días pasados.
+                                                </small>
+
+                                                <small class="text-info" *ngIf="item.diasRestantes > 0">
+                                                    {{item.diasRestantes }} días faltantes.
+                                                </small>
+
+
+                                                <small class="badge badge-success" *ngIf="item.diasRestantes == 0">
+                                                    Hoy
+                                                </small>
+                                            </span>
+
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <h5>
+                                        <span> <i class="fa fa-circle" [ngStyle]="{'color': item.colorEstado}"></i>
+                                            {{item.estado}}</span>
+                                    </h5>
+                                </td>
+                                <td>
+                                    <span> {{item.usuarioAutorizacion}}</span>
+                                </td>
+
+
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+
+
+                <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+
+                <div class="row ">
+                    <div class="col-md-8 col-xs-12 ">
+                        <ngb-pagination [collectionSize]="paginaTotalRecords" [(page)]="paginaNumeroActual"
+                            [pageSize]="paginaSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="getData()">
+                        </ngb-pagination>
+                    </div>
+
+                    <div class="col-md-4 text-right d-none d-md-block  ">
+                        <select class="form-control d-block" name="paginaSize" [(ngModel)]="paginaSize"
+                            (change)="getData()">
+                            <option [ngValue]="5">5 registro por pagina</option>
+                            <option [ngValue]="10">10 registro por pagina</option>
+                            <option [ngValue]="15">15 registro por pagina</option>
+                            <option [ngValue]="50">50 registro por pagina</option>
+                            <option [ngValue]="100">100 registro por pagina</option>
+                            <option [ngValue]="150">150 registro por pagina</option>
+                        </select>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<ng-template #PermissionDenied>
+
+    <app-error-permission-denied></app-error-permission-denied>
+
+</ng-template>
+
+
+<ng-template #modalConfirm let-modal>
+    <div class="container-fluid">
+        <div class="row" *ngIf="!cargandoAutorizacion">
+            <div class="col">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modal-title">Confirmación</h4>
+                    <button type="button" class="close" aria-describedby="modal-title"
+                        (click)="modal.dismiss('Cross click')">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <i class="fa fa-question fa-3x text-info"></i>
+                    <p class="mt-2"><strong>¿Estás seguro?</strong></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary"
+                        (click)="modal.close('Close click')">Cancel</button>
+                    <button type="button" class="btn btn-info" (click)="onBtnModalOk()">Ok</button>
+                </div>
+            </div>
+        </div>
+
+        <app-loading-listado [hidden]="!cargandoAutorizacion"></app-loading-listado>
+
+    </div>
+</ng-template>
+
+
+
+
+<ng-template #modalComments let-modal>
+    <div class="container-fluid">
+        <div class="row" *ngIf="!cargandoAutorizacion">
+            <div class="col">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modal-title">Caja de comentarios</h4>
+                    <button type="button" class="close" aria-describedby="modal-title"
+                        (click)="modal.dismiss('Cross click')">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" *ngIf="!cargandoModal">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <!-- <label for="exampleFormControlTextarea1">Escribe tu comen</label> -->
+                                <textarea placeholder="Escribe tu comentario" class="form-control"
+                                    [(ngModel)]="comentario" id="exampleFormControlTextarea1" rows="3"></textarea>
+                            </div>
+                            <button type="submit" (click)="guardarComentario()" class="btn btn-info">Comentar</button>
+                        </div>
+                        <div class="col-md-12" style="height: 350px;">
+                            <hr>
+                            <div class="row border-top p-2" *ngFor="let c of comentarios">
+                                <div class="col-2">
+                                    <i class="fa fa-user-circle fa-3x"></i>
+                                </div>
+                                <div class="col-10">
+                                    <h5>{{c.usuario | titlecase }}</h5>
+                                    <p>{{c.comentario}}</p>
+                                    <div>
+                                        <span class="text-muted float-md-right">{{c.fecha | date : 'medium' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <app-loading-listado [hidden]="!cargandoModal"></app-loading-listado>
+                </div>
+            </div>
+        </div>
+
+        <app-loading-listado [hidden]="!cargandoAutorizacion"></app-loading-listado>
+
+    </div>
+</ng-template>
+
+
+<ng-template #modalPriceGraphics let-modal>
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-title">Historial de precios</h5>
+                    <button type="button" class="close" aria-describedby="modal-title"
+                        (click)="modal.dismiss('Cross click')">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" *ngIf="!cargandoModal">
+                        <div class="col-md-12">
+                            <div>
+                                <canvas baseChart [datasets]="lineChartData" [labels]="lineChartLabels"
+                                    [options]="lineChartOptions" [legend]="lineChartLegend" [chartType]="lineChartType"
+                                    [plugins]="lineChartPlugins">
+                                </canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <app-loading-listado [hidden]="!cargandoModal"></app-loading-listado>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</ng-template>

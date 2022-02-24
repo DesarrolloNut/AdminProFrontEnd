@@ -1,0 +1,103 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+
+
+
+        <div class="row">
+
+          <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12"
+            *ngxPermissionsOnly="['configuraciones_sap_panel_sincronizacion_puede_sincronizar_lista_precios']">
+            <div class="box-part text-center border rounded border-primary">
+              <i class="fa text-primary  fa-list fa-3x my-3" aria-hidden="true"></i>
+              <div class="title">
+                <h4>Listas de precios</h4>
+              </div>
+              <div class="text">
+                <span>Actualiza la maestra de lista de precios.</span>
+              </div>
+              <button type="button" class="btn btn-primary" (click)="sincronizarListasPrecios()"
+                *ngIf="!loadingSincronizacionListaPrecios">
+                Sincronizar
+              </button>
+              <button *ngIf="loadingSincronizacionListaPrecios" disabled class="btn btn-primary" type="button">
+                <span class="spinner-border spinner-border-sm"></span> Sincronizando
+              </button>
+
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12"
+            *ngxPermissionsOnly="['configuraciones_sap_panel_sincronizacion_puede_sincronizar_precios_articulos']">
+            <div class="box-part text-center border rounded border-success">
+              <i class="fa text-success fa-dollar-sign fa-3x my-3" aria-hidden="true"></i>
+              <div class="title">
+                <h4>Precios Artículos</h4>
+              </div>
+              <div class="text">
+                <span>Actualiza los precios en SAP.</span>
+              </div>
+              <button type="button" class="btn btn-success" (click)="sincronizarPrecioArticulos()"
+                *ngIf="!loadingSincronizacionPrecioArticulos">
+                Sincronizar
+              </button>
+              <button *ngIf="loadingSincronizacionPrecioArticulos" disabled class="btn btn-success" type="button">
+                <span class="spinner-border spinner-border-sm"></span> Sincronizando
+              </button>
+            </div>
+          </div>
+
+
+
+
+          <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12"
+            *ngxPermissionsOnly="['configuraciones_sap_panel_sincronizacion_puede_sincronizar_notas_de_credito']">
+            <div class="box-part text-center border rounded border-warning">
+              <i class="text-warning fas fa-sticky-note fa-3x my-3" aria-hidden="true"></i>
+              <div class="title">
+                <h4>Notas de Credito - Pronto Pago</h4>
+              </div>
+              <div class="text">
+                <span>Crea las notas de credito relacionadas a pronto pago.</span>
+              </div>
+              <button type="button" class="btn btn-warning" (click)="procesarNotaCreditoProntoPago()"
+                *ngIf="!loadingProcesarNotaCreditoProntoPago">
+                Procesar
+              </button>
+              <button *ngIf="loadingProcesarNotaCreditoProntoPago" disabled class="btn btn-warning" type="button">
+                <span class="spinner-border spinner-border-sm"></span> Procesando
+              </button>
+            </div>
+          </div>
+
+
+          <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12"
+            *ngxPermissionsOnly="['configuraciones_sap_panel_sincronizacion_puede_sincronizar_reconciliacion_pronto_pago']">
+            <div class="box-part text-center border rounded border-info">
+              <i class="text-info fas fa-random fa-3x my-3" aria-hidden="true"></i>
+              <div class="title">
+                <h4>Reconciliacion - Pronto Pago</h4>
+              </div>
+              <div class="text">
+                <span>Reconcilia las notas de credito relacionadas a pronto pago.</span>
+              </div>
+              <button type="button" class="btn btn-info" (click)="procesarReconciliacionProntoPago()"
+                *ngIf="!loadingProcesarReconciliaProntoPago">
+                Procesar
+              </button>
+              <button *ngIf="loadingProcesarReconciliaProntoPago" disabled class="btn btn-info" type="button">
+                <span class="spinner-border spinner-border-sm"></span> Procesando
+              </button>
+            </div>
+          </div>
+
+
+
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

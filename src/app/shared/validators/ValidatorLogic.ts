@@ -1,7 +1,23 @@
+import { AbstractControl, ValidationErrors, ValidatorFn } from "@angular/forms";
+import { BackendService } from "src/app/core/http/service/backend.service";
+import { Cliente } from "src/app/Modules/mantenimientos/clientes/models/Cliente";
+import { ParametrosCita } from "src/app/Modules/turno/models/ParametrosCita";
+import { DataApi } from "../enums/DataApi.enum";
+
 export class ValidatorLogic {
+    static httpService: BackendService;
 
-
+    public static  regexValidator(regex: RegExp, error: ValidationErrors): ValidatorFn {
+        return (control: AbstractControl): {[key: string]: any} => {
+          if (!control.value) {
+            return null;
+          }
+          const valid = regex.test(control.value);
+          return valid ? null : error;
+        };
+      }
     public static ValidaCedulaFormacion(ced): boolean {
+      
         var c = ced.replace(/-/g, '');
         var cedula = c.substr(0, c.length - 1);
         var verificador = c.substr(c.length - 1, 1);
@@ -30,4 +46,26 @@ export class ValidatorLogic {
         return cedulaValida;
     }
 
+    public static    async ValidaExisteCedulaORNC(ced_rnc): Promise<boolean> {
+
+        let parametros = new ParametrosCita();
+        parametros.clienteDocumento = ced_rnc;
+
+        let k =     await this.httpService.DoPostAnyAsync<Cliente>(DataApi.Cliente,
+            "GetClienteOPadronDatos", parametros).then(async response => {
+                console.log(response)
+                console.log('FROM VALID')
+
+              if (response.ok) {
+                if (response != null&& response.valores != null && response.valores.length > 0) {
+                 return  response.valores[0];
+                } 
+              } 
+              return  true;
+            }, error => {
+                return  true;
+            });
+        console.log(k);
+        return k;
+    }
 }

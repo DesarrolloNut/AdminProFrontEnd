@@ -1,9 +1,12 @@
 import { NgModule } from '@angular/core';
+
+import { AngularDualListBoxModule } from 'angular-dual-listbox';
+
+
 import { CommonModule } from '@angular/common';
 import { MantenimientosRoutingModule } from './mantenimientos-routing.module';
 import { MantenimientosComponent } from './mantenimientos.component';
 import { ComiteComponent } from './comite/comite.component';
-import { FormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
 import { UsuarioListadoComponent } from './usuarios/usuario-listado/usuario-listado.component';
 import { UsuarioFormularioComponent } from './usuarios/usuario-formulario/usuario-formulario.component';
@@ -45,14 +48,128 @@ import { RecallListadoComponent } from './recall/recall-listado/recall-listado.c
 import { RecallFormularioComponent } from './recall/recall-formulario/recall-formulario.component';
 import { OfertasListadoComponent } from './ofertas/ofertas-listado/ofertas-listado.component';
 import { OfertasFormularioComponent } from './ofertas/ofertas-formulario/ofertas-formulario.component';
+import { ListaPreciosListadoComponent } from './listaPrecios/lista-precios-listado/lista-precios-listado.component';
+import { ListaPreciosFormularioComponent } from './listaPrecios/lista-precios-formulario/lista-precios-formulario.component';
+import { RutasListadoComponent } from './rutas/rutas-listado/rutas-listado.component';
+import { RutasFormularioComponent } from './rutas/rutas-formulario/rutas-formulario.component';
+import { NgbdtabsBasicComponent } from 'src/app/component/tabs/tabs.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
+import { NivelAutorizacionListadoComponent } from './nivelautorizacion/nivel-autorizacion-listado/nivel-autorizacion-listado.component';
+import { NivelAutorizacionFormularioComponent } from './nivelautorizacion/nivel-autorizacion-formulario/nivel-autorizacion-formulario.component';
+import { EstadosGeneralesListadoComponent } from './estadosgenerales/estados-generales-listado/estados-generales-listado.component';
+import { EstadosGeneralesFormularioComponent } from './estadosgenerales/estados-generales-formulario/estados-generales-formulario.component';
+import { NivelAutorizacionModuloFormularioComponent } from './NivelAutorizacionModulo/nivel-autorizacion-modulo-formulario/nivel-autorizacion-modulo-formulario.component';
+import { NivelAutorizacionModuloListadoComponent } from './NivelAutorizacionModulo/nivel-autorizacion-modulo-listado/nivel-autorizacion-modulo-listado.component';
+import { RolesListadoComponent } from './roles/roles-listado/roles-listado.component';
+import { RolesFormularioComponent } from './roles/roles-formulario/roles-formulario.component';
+import { SapconnectionListadoComponent } from './sapconnection/sapconnection-listado/sapconnection-listado.component';
+import { SapconnectionFormularioComponent } from './sapconnection/sapconnection-formulario/sapconnection-formulario.component';
+import { PromocionesListadoComponent } from './promociones/promociones-listado/promociones-listado.component';
+import { PromocionesFormularioComponent } from './promociones/promociones-formulario/promociones-formulario.component';
+import { PermisosListadoComponent } from './permisos/permisos-listado/permisos-listado.component';
+import { PermisosFormularioComponent } from './permisos/permisos-formulario/permisos-formulario.component';
+import { PerfilFormularioComponent } from './perfil-formulario/perfil-formulario.component';
+
+import { TreeviewModule } from 'ngx-treeview';
+import { CargaMasivaPanelComponent } from './cargaMasiva/carga-masiva-panel/carga-masiva-panel.component';
+import { MonedasListadoComponent } from './monedas/monedas-listado/monedas-listado.component';
+import { MonedasFormularioComponent } from './monedas/monedas-formulario/monedas-formulario.component';
+import { DepartamentosFormularioComponent } from './departamentos/departamentos-formulario/departamentos-formulario.component';
+import { DepartamentosListadoComponent } from './departamentos/departamentos-listado/departamentos-listado.component';
+import { ProveedoresListadoComponent } from './proveedores/proveedores-listado/proveedores-listado.component';
+import { ProveedoresFormularioComponent } from './proveedores/proveedores-formulario/proveedores-formulario.component';
+import { ActividadesEconomicasListadoComponent } from './actividadesEconomicas/actividades-economicas-listado/actividades-economicas-listado.component';
+import { ActividadesEconomicasFormularioComponent } from './actividadesEconomicas/actividades-economicas-formulario/actividades-economicas-formulario.component';
+
+import { EnrrollvendedorentregasupervisorListadoComponent } from './enrrollvendedorentregasupervisor/enrrollvendedorentregasupervisor-listado/enrrollvendedorentregasupervisor-listado.component';
+import { EnrrollvendedorentregasupervisorFormularioComponent } from './enrrollvendedorentregasupervisor/enrrollvendedorentregasupervisor-formulario/enrrollvendedorentregasupervisor-formulario.component';
+
+import { UsuarioAlmacenEnrrollListadoComponent } from './usuarioAlmacenEnrroll/usuario-almacen-enrroll-listado/usuario-almacen-enrroll-listado.component';
+import { UsuarioAlmacenEnrrollFormularioComponent } from './usuarioAlmacenEnrroll/usuario-almacen-enrroll-formulario/usuario-almacen-enrroll-formulario.component';
+import { TomainventarioRutaListadoComponent } from './tomainventarioruta/tomainventarioruta-listado/tomainventarioruta-listado.component';
+import { ArticulosCategoriasListadoComponent } from './articulosCategorias/articulos-categorias-listado/articulos-categorias-listado.component';
+import { ArticulosCategoriasFormularioComponent } from './articulosCategorias/articulos-categorias-formulario/articulos-categorias-formulario.component';
+
+
+import { ClienteVisitasComponent } from './clientes/cliente-visitas/cliente-visitas.component';
+import { ClienteFinanzasComponent } from './clientes/cliente-finanzas/cliente-finanzas.component';
+import { ClienteContactosComponent } from './clientes/cliente-contactos/cliente-contactos.component';
+import { ClienteDatosGeneralesComponent } from './clientes/cliente-datos-generales/cliente-datos-generales.component';
+import { AgmCoreModule } from '@agm/core';
+import { ClienteMapComponent } from './clientes/cliente-map/cliente-map.component';
+
+import { PlazosListadoComponent } from './plazos/plazos-listado/plazos-listado.component';
+import { PlazosFormularioComponent } from './plazos/plazos-formulario/plazos-formulario.component';
+import { ClienteComercialComponent } from './clientes/cliente-comercial/cliente-comercial.component';
+import { ClienteNegocioComponent } from './clientes/cliente-negocio/cliente-negocio.component';
+import { ComprobanteFiscalListadoComponent } from './comprobanteFiscal/comprobante-fiscal-listado/comprobante-fiscal-listado.component';
+import { ComprobanteFiscalFormularioComponent } from './comprobanteFiscal/comprobante-fiscal-formulario/comprobante-fiscal-formulario.component';
+
 
 
 @NgModule({
-  declarations: [MantenimientosComponent, ComiteComponent, UsuarioListadoComponent, UsuarioFormularioComponent, ClientesListadoComponent, ClientesFormularioComponent, MarcasListadoComponent,  MarcasFormularioComponent, ModelosListadoComponent, ModelosFormularioComponent, DealersListadoComponent, DealersFormularioComponent, AlmacenesListadoComponent, AlmacenesFormularioComponent, VehiculoTiposListadoComponent, VehiculoTiposFormularioComponent, CombustiblesListadoComponent, CombustiblesFormularioComponent, VehiculoCondicionesListadoComponent, VehiculoCondicionesFormularioComponent, TagsListadoComponent, TagsFormularioComponent, ReceptoresPosicionesListadoComponent, ReceptoresPosicionesFormularioComponent, CompaniasListadoComponent, CompaniasFormularioComponent, SucursalesListadoComponent, SucursalesFormularioComponent, CitaCategoriaListadoComponent, CitaCategoriaFormularioComponent, SintomasListadoComponent, SintomasFormularioComponent, AccesoriosListadoComponent, AccesoriosFormularioComponent, SintomasCategoriasListadoComponent, SintomasCategoriasFormularioComponent, ArticuloListadoComponent, ArticuloFormularioComponent, RecallListadoComponent, RecallFormularioComponent, OfertasListadoComponent, OfertasFormularioComponent],
+  declarations: [
+    NgbdtabsBasicComponent,
+    MantenimientosComponent, ComiteComponent,
+    UsuarioListadoComponent, UsuarioFormularioComponent, ClientesListadoComponent,
+    ClientesFormularioComponent, ClienteComercialComponent, ClienteNegocioComponent, ClienteVisitasComponent, ClienteFinanzasComponent,
+    ClienteContactosComponent, ClienteDatosGeneralesComponent, ClienteMapComponent, MarcasListadoComponent, MarcasFormularioComponent,
+    ModelosListadoComponent, ModelosFormularioComponent, DealersListadoComponent, DealersFormularioComponent,
+    AlmacenesListadoComponent, AlmacenesFormularioComponent, VehiculoTiposListadoComponent, VehiculoTiposFormularioComponent,
+    CombustiblesListadoComponent, CombustiblesFormularioComponent, VehiculoCondicionesListadoComponent, VehiculoCondicionesFormularioComponent,
+    TagsListadoComponent, TagsFormularioComponent, ReceptoresPosicionesListadoComponent, ReceptoresPosicionesFormularioComponent,
+    CompaniasListadoComponent, CompaniasFormularioComponent, SucursalesListadoComponent, SucursalesFormularioComponent, CitaCategoriaListadoComponent,
+    CitaCategoriaFormularioComponent, SintomasListadoComponent, SintomasFormularioComponent, AccesoriosListadoComponent,
+    AccesoriosFormularioComponent, SintomasCategoriasListadoComponent, SintomasCategoriasFormularioComponent, ArticuloListadoComponent,
+    ArticuloFormularioComponent, RecallListadoComponent, RecallFormularioComponent, OfertasListadoComponent, OfertasFormularioComponent,
+    ListaPreciosListadoComponent, ListaPreciosFormularioComponent, RutasListadoComponent, RutasFormularioComponent,
+    NivelAutorizacionListadoComponent, NivelAutorizacionFormularioComponent, EstadosGeneralesListadoComponent, EstadosGeneralesFormularioComponent,
+    NivelAutorizacionModuloFormularioComponent, NivelAutorizacionModuloListadoComponent, RolesListadoComponent, RolesFormularioComponent,
+
+    SapconnectionListadoComponent,
+    SapconnectionFormularioComponent,
+    PromocionesListadoComponent,
+    PromocionesFormularioComponent,
+    PermisosListadoComponent,
+    PermisosFormularioComponent,
+    PerfilFormularioComponent,
+    CargaMasivaPanelComponent,
+    MonedasListadoComponent,
+    MonedasFormularioComponent,
+    DepartamentosFormularioComponent,
+    DepartamentosListadoComponent,
+    ProveedoresListadoComponent,
+    ProveedoresFormularioComponent,
+    ActividadesEconomicasListadoComponent,
+    ActividadesEconomicasFormularioComponent,
+    EnrrollvendedorentregasupervisorListadoComponent,
+    EnrrollvendedorentregasupervisorFormularioComponent,
+    UsuarioAlmacenEnrrollListadoComponent,
+    UsuarioAlmacenEnrrollFormularioComponent,
+    TomainventarioRutaListadoComponent,
+    ArticulosCategoriasFormularioComponent,
+    ArticulosCategoriasListadoComponent,
+    PlazosListadoComponent,
+    PlazosFormularioComponent,
+    ComprobanteFiscalListadoComponent,
+    ComprobanteFiscalFormularioComponent
+
+
+  ],
+
   imports: [
     CommonModule,
+    AngularDualListBoxModule,
     MantenimientosRoutingModule,
-    SharedModule
+    SharedModule,
+    AgmCoreModule.forRoot({ //mapas
+      //  apiKey: 'AIzaSyBaddDDv0d9zuun9qiWj3VkLEzpJot9UQ4',
+      libraries: ["places"],
+      apiKey: 'AIzaSyAwEdWMJcAO6XvfXi97HVqBNeRixGd1QBU'
+    }),
+    NgbModule, //ng bootstrap
+    TreeviewModule.forRoot()
   ]
 })
 export class MantenimientosModule { }

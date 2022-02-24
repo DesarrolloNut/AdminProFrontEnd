@@ -1,0 +1,192 @@
+
+
+  <div class="modal-header ">
+
+    <div class="row w-75" *ngIf="!loadingInfoCliente">
+
+      <div class="col-12 ml-0">
+         <h4 class="modal-title font-weight-bold"   id="modal-basic-title" style="font-size: 25px;">Bienvenido, {{cliente.nombres | titlecase}}</h4>
+      </div>
+
+        <div class="col-12">
+          <div class="row">
+            <div class=" col-lg-4 col-md-6">
+              <div class="card overflow-hidden">
+                <div class="d-flex flex-row">
+                  <div class="p-3 bg-light-success">
+                    <h3 class="text-success box mb-0">
+                      <i class="fa fa-money-bill-alt"></i>
+                    </h3>
+                  </div>
+                  <div class="p-3">
+                    <h3 class="text-success mb-0">{{cliente.balance | currency}}</h3>
+                    <span class="font-weight-bold text-black-50">Balance</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+              <div class="card overflow-hidden">
+                <div class="d-flex flex-row">
+                  <div class="p-3 bg-light-warning">
+                    <h3 class="text-warning box mb-0">
+                      <i class="fa fa-money-bill-alt"></i>
+                    </h3>
+                  </div>
+                  <div class="p-3">
+                    <h3 class="text-warning mb-0">{{cliente.limiteCredito  | currency}}</h3>
+                    <span class="font-weight-bold text-black-50">Limite de credito</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- LOADING INFO CLIENTE -->
+    <div class="row w-75" *ngIf="loadingInfoCliente">
+
+      <div class="col-12 ml-0">
+        <ngx-skeleton-loader     [theme]="{    width: '400px' }" count="1" ></ngx-skeleton-loader>
+      </div>
+
+        <div class="col-12">
+          <div class="row">
+            <div class=" col-lg-4 col-md-6 d-inline-block">
+              <div class="section-wrapper d-inline-flex">
+                <div class="icon">
+                  <ngx-skeleton-loader [theme]="{ width: '80px', height: '80px' }">
+                  </ngx-skeleton-loader>
+                </div>
+                <div class="title ml-2">
+                  <div>
+                    <ngx-skeleton-loader
+                      [theme]="{
+                        width: '200px',
+                        'border-radius': '0',
+                        height: '15px',
+                        'margin-top': '15px'
+                      }"
+                    ></ngx-skeleton-loader>
+                  </div>
+                  <div>
+                    <ngx-skeleton-loader
+                      [theme]="{
+                        width: '170px',
+                        'border-radius': '0',
+                        'margin-top': '0px',
+                        height: '15px'
+                      }"
+                    ></ngx-skeleton-loader>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class=" col-lg-4 col-md-6 d-inline-block">
+              <div class="section-wrapper d-inline-flex">
+                <div class="icon">
+                  <ngx-skeleton-loader [theme]="{ width: '80px', height: '80px' }">
+                  </ngx-skeleton-loader>
+                </div>
+                <div class="title ml-2">
+                  <div>
+                    <ngx-skeleton-loader
+                      [theme]="{
+                        width: '200px',
+                        'border-radius': '0',
+                        height: '15px',
+                        'margin-top': '15px'
+                      }"
+                    ></ngx-skeleton-loader>
+                  </div>
+                  <div>
+                    <ngx-skeleton-loader
+                      [theme]="{
+                        width: '170px',
+                        'border-radius': '0',
+                        height: '15px'
+                      }"
+                    ></ngx-skeleton-loader>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="row ">
+      <button type="button" class="btn btn-danger" aria-label="Close"   (click)=" closeModal()" >
+        <i class="fa fa-window-close"></i>
+        Cancelar Pedido
+      </button>
+    </div>
+  </div>
+  <div class="modal-body">
+
+    <div  class="row"  *ngIf="!loadingInfoCliente">
+      <div class="col-1"></div>
+      <div class="col-10  productos_factura" @onProductos  *ngIf="!showSummaryCart">
+         <app-pedidos-empleado-productos
+          [articulos]="articulosData"
+          (articulosInCart)="refreshCart()">
+        </app-pedidos-empleado-productos>
+      </div>
+
+      <div class="col-10" @onCarrito *ngIf="showSummaryCart" >
+         <app-pedidos-empleado-carrito
+         (articulosInCart)="refreshCart()">
+         </app-pedidos-empleado-carrito>
+      </div>
+
+    </div>
+
+
+
+  </div>
+  <div class="modal-footer  d-flex justify-content-center" style=" position: fixed; border: none;
+  bottom: 0;
+  width: 100%;">
+
+
+    <!-- CUANDO ESTE SELECCIONANDO EN EL CARRITO -->
+
+    <button type="button" *ngIf="!showSummaryCart" class="btn btn-success  mb-3 font-weight-bold p-2 pr-2 pl-2" style=" border-radius: 10px;"
+        (click)="changeView(true)">
+      <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+      IR AL CARRITO
+      <span class="badge rounded-pill bg-light text-dark ml-1 font-weight-bold ">{{articulosInCart.length}}</span>    </button>
+
+    <!-- CUANDO ESTE SELECCIONANDO EN EL CARRITO -->
+
+      <button *ngIf="showSummaryCart"
+      style=" border-radius: 10px;"
+       class="btn   btn-light  mb-3 font-weight-bold p-2 pr-2 pl-2"
+        (click)="changeView(false)" >
+        <svg xmlns="http://www.w3.org/2000/svg"  width="24" height="24" viewBox="0 0 24 24"
+        fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round"
+         class="feather feather-arrow-left fill-white feather-sm">
+         <line x1="19" y1="12" x2="5" y2="12"></line>
+         <polyline points="12 19 5 12 12 5"></polyline></svg>
+          SEGUIR COMPRANDO
+      </button>
+
+  </div>
+
+
+
+
+

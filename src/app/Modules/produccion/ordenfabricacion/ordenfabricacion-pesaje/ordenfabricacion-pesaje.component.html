@@ -1,0 +1,311 @@
+<div class="row">
+  <div class="control-section">
+      <div id="control_wrapper">
+      </div>
+  </div>
+</div>
+
+<!-- <div class="row mb-2">
+  <div class="col">
+      <button class="btn btn-light" routerLink="/produccion/ordenfabricacion"><i class="fa fa-arrow-left"></i> Regresar</button>
+  </div>
+</div> -->
+
+
+<!--
+<div class="row">
+  <div class="col">
+      <div class="card">
+          <div class="card-body">
+              <div class="row">
+                  <div class="col-md-4 p-2">
+                      <div class="input-group">
+                          <input [(ngModel)]="search" (keyup)="onSearchChange()" type="text" id="inputSearch"
+                              style="border-left:none !important;" class="form-control" placeholder="Buscar artículo">
+
+                          <div class="input-group-prepend">
+                              <label for="search" class="input-group-text bg-white" style="cursor: pointer;"
+                                  (click)="onClearSearch()">
+                                  <span class=" bg-white" style="border-right:none">
+                                      <i class="fa fa-times-circle"></i>
+                                  </span>
+                              </label>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="col-md-4 text-center p-2">
+                      <h6 *ngIf="searching"> <span><i class="fa fa-spinner fa-spin"></i> Buscando</span> </h6>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div> -->
+
+<div class="row" *ngIf="articulo">
+  <div class="col">
+      <div class="card m-0">
+          <div class="card-body m-0 p-0">
+              <div class="row justify-content-center align-items-center">
+
+                  <div class="col-12 mb-1">
+                      <div class="row border border-light p-2">
+                          <div class="col">
+                              <h2> <i class="fa fa-shopping-bag"></i> {{articulo.codigoReferencia}} |
+                                  {{articulo.nombre}}</h2>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="form-group col" *ngIf="articulo">
+                      <label for="inputEmail4">Almacén</label>
+                      <ng-select bindLabel="nombre" bindValue="codigo" [(ngModel)]="almacenID"
+                          [items]="almecenes" [clearable]="false" [loading]="loadingAlmacenes"
+                          notFoundText="No resultados" [readonly]="true">
+                      </ng-select>
+                  </div>
+
+                  <div class="col" *ngIf="!isTerminalReport && ordenfabricacionvista.gestionado">
+
+                    <label for="lote"> Lote</label>
+                    <div class="input-group mb-3 w-50">
+                      <input  [(ngModel)]="loteSearch" class="form-control" type="text" name="lote" id="lote">
+                      <div class="input-group-append">
+                        <button class="btn btn-info" *ngIf="!loadingLote" (click)="getLote()">
+                          <i class="fa fa-sm fa-search"></i> Buscar Lote
+                        </button>
+
+                        <button class="btn btn-info" *ngIf="loadingLote">
+                          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                          <span class="sr-only">Buscando ...</span>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="mt-2">
+                      <h6 class="font-weight-bold text-success" *ngIf="lote.cantidad > 0 && !loadingLote ">
+                          <i class="fa fa-check-circle"></i> Lote encontrado y Disponible ({{lote.cantidad}})
+                      </h6>
+                      <h6 class="font-weight-bold text-warning" *ngIf="lote.cantidad <= 0 && lote.lote != '' &&  !loadingLote ">
+                          <i class="fa fa-info-circle"></i> Lote encontrado y No disponible ({{lote.cantidad}})
+                      </h6>
+                  </div>
+
+
+
+                  </div>
+                  <div class="col" *ngIf="isTerminalReport">
+
+                    <label for="lote"> Batch</label>
+                    <div class="input-group mb-3 w-50">
+                      <input  [(ngModel)]="batch" class="form-control" type="number" name="lote" id="lote">
+                    </div>
+
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="articulo">
+  <div class="col">
+      <div class="card">
+          <div class="card-body">
+              <div class="row">
+                  <div class="col-12">
+
+                      <table class="table table-hover mb-0 no-wrap v-middle">
+                          <thead>
+                              <tr>
+                                  <th scope="col"></th>
+                                  <th scope="col">Peso</th>
+                                  <th scope="col">Cantidad</th>
+                                  <th scope="col">Total Peso</th>
+                              </tr>
+                          </thead>
+
+                          <tbody>
+
+                              <!-- <tr *ngFor="let item of confirmed | filter: searchText; let i  = index"> -->
+                              <tr *ngFor="let item of articulosExtras; let i=index">
+                                  <td>
+                                      <h2>
+                                          <span> {{item.nombre}}</span>
+                                      </h2>
+                                  </td>
+                                  <td>
+                                      <ng-select style="width: 200px;" [clearable]="false" [items]="item.pesos"
+                                          bindLabel="nombre" [searchable]="false" (change)="calcularTotales()"
+                                          [(ngModel)]="item.pesoSeleccionado" notFoundText="No resultados">
+                                      </ng-select>
+                                  </td>
+                                  <td>
+                                      <ng-select style="width: 150px;" [clearable]="false" [items]="cantidades"
+                                          [(ngModel)]="item.cantidadSeleccionada" [searchable]="false"
+                                          (change)="calcularTotales()" notFoundText="No resultados">
+                                      </ng-select>
+                                  </td>
+                                  <td>
+                                      <h2>
+                                          <span *ngIf="item.cantidadSeleccionada && item.pesoSeleccionado">
+                                              {{item.cantidadSeleccionada * item.pesoSeleccionado.valor |
+                                              number:'1.2-5'}}
+                                              {{item.pesoSeleccionado.abreviatura}}</span>
+                                      </h2>
+                                  </td>
+                              </tr>
+                          </tbody>
+                      </table>
+
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="articulo">
+
+  <div class="col-md-4">
+      <div class="card border-right border-danger">
+          <div class="card-body  pb-0">
+              <div class="d-flex no-block align-items-center">
+                  <div><span class="text-danger display-6"><i class="ti-pie-chart"></i></span></div>
+                  <div class="ml-auto text-right">
+                      <h1 class="font-weight-bold"> {{pesoBalanzaLBNumber | number}} LB</h1>
+                      <h2 class="text-danger mb-1">Peso Balanza</h2>
+                      <span *ngIf="pesoBalanzaUltimaFecha" class="small "><i class="fa fa-clock"></i>
+                          {{pesoBalanzaUltimaFecha | date:'hh:mm:ss a'}}
+                      </span>
+                      <span *ngIf="pesoBalanza" class="small">
+                          | {{pesoBalanza }}
+                      </span>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <div class="col-md-4">
+      <div class="card border-right border-info">
+          <div class="card-body">
+              <div class="d-flex no-block align-items-center">
+                  <div><span class="text-info display-6"><i class="ti-pie-chart"></i></span></div>
+                  <div class="ml-auto text-right">
+                      <h1 class="font-weight-bold">{{pesoCanastos | number}} Lb</h1>
+                      <h2 class="text-info">Peso Canastos</h2>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <div class="col-md-4">
+      <div class="card border-right border-success">
+          <div class="card-body">
+              <div class="d-flex no-block align-items-center">
+                  <div><span class="text-success display-6"><i class="ti-pie-chart"></i></span></div>
+                  <div class="ml-auto text-right">
+                      <h1 class="font-weight-bold">{{pesoNeto | number}} Lb</h1>
+                      <h2 class="text-success">Peso Neto</h2>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="articulo">
+  <div class="col-12">
+      <div class="card">
+          <div class="card-body">
+              <div class="row">
+
+                  <div class="col text-right">
+                      <!-- <button class="btn btn-light m-1" routerLink="/produccion/ordenfabricacion" type="button">
+                          <i class="fas fa-times"></i> Cancelar
+                      </button> -->
+
+                      <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="button" (click)="onSubmit(modalAutorizaMaterial)">
+                          <i class="fas fa-check"></i> Guardar
+                      </button>
+
+                      <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                          <span class="spinner-border spinner-border-sm"></span> Guardando
+                      </button>
+                  </div>
+              </div>
+
+          </div>
+      </div>
+  </div>
+</div>
+
+<ng-template #modalAutorizaMaterial let-modal>
+  <div class="modal-header bg-dark">
+    <h4 class="modal-title text-white">Articulo para autorizar</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')" >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+
+    <!-- <div class="row" *ngIf="cantidadArticuloDeCambio == 0 && searching">
+      <div class="col-12">
+        <h2>No hay articulo para autorizar.</h2>
+      </div>
+    </div> -->
+
+    <div class="row">
+      <div class="col-12" [hidden]="searching">
+        <div class="table-responsive" style="overflow-y: auto; height: 500px">
+          <table class="table table-sm">
+            <thead class="sticky-top">
+              <tr>
+                <th scope="col">Articulo</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Cantidad Requerida</th>
+                <th scope="col">Peso Neto</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <th style="font-size: 14px">{{ ordenfabricacionvista.articulo }}</th>
+                <td style="font-size: 14px">{{ ordenfabricacionvista.nombre }}</td>
+                <td style="font-size: 14px">{{ ordenfabricacionvista.cantidadRequerida | number:'1.4-4' }}</td>
+                <td style="font-size: 14px">{{ pesoNetoOrden | number:'1.4-4' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <app-loading-listado [hidden]="!searching"></app-loading-listado>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')" > Cerrar</button>
+
+    <button type="button" *ngIf="!btnGuardarCargando" class="btn btn-success m-1" (click)="EnviarAutorizarModal()" ><i class="fa fa-sm fa-check"></i> Enviar Autorizar</button>
+    <button *ngIf="btnGuardarCargando" disabled class="btn btn-success m-1" type="button">
+      <span class="spinner-border spinner-border-sm"></span> Enviando
+  </button>
+  </div>
+</ng-template>
+
+
+
+
+
+
+
+
+
+
+
+
+

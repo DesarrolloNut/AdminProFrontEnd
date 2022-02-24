@@ -7,6 +7,7 @@ import { DataApi } from '../../../shared/enums/DataApi.enum';
 import { Permiso } from '../model/Permiso';
 import { UsuarioForLogin } from '../../../Modules/login/model/UsuarioForLogin.model';
 import { map } from 'rxjs/operators';
+import { TokenModel } from '../model/TokenModel';
 
 
 
@@ -17,7 +18,7 @@ export class AuthenticationService {
 
 
     helper = new JwtHelperService();
-    tokenDecoded: any;
+    tokenDecoded: TokenModel;
 
     constructor(public httpService: BackendService,
         public permissionsService: NgxPermissionsService,
@@ -76,12 +77,15 @@ export class AuthenticationService {
                 } else {
                     //this.toastService.Danger("Error interno! Mensaje: " + res.errores[0]);
                     console.error(res.errores);
-                    this.logout();
+                    // this.logout();
+                    this.setPermissions();
                 }
 
             }, error => {
                 console.error(error);
-                this.logout();
+                this.setPermissions();
+
+                // this.logout();
             });
     }
 

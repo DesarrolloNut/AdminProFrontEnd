@@ -141,7 +141,7 @@
                   <label for="inputEmail4">Categoría</label>
                   <ng-select [items]="sintomaCategorias" bindLabel="nombre" bindValue="codigo" [clearable]="false"
                     (change)="onSintomaCategoriasChange($event, i)" [(ngModel)]="sintomasCita[i].categoriaID"
-                    [ngModelOptions]="{standalone: true}" [loading]="loadingCategoriasSintomas"
+                    [ngModelOptions]="{standalone: true}" [loading]="loadingSintomaCategorias"
                     notFoundText="No resultados">
                   </ng-select>
                 </div>

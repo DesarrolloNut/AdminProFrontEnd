@@ -25,8 +25,7 @@ import { SpinnerComponent } from './shared/spinner.component';
 import { LoginComponent } from './Modules/login/login.component';
 import { AuthGuard } from './core/guards/auth.guard';
 
-import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
-import { PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
+import { PerfectScrollbarModule, PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { SharedModule } from './Modules/shared/shared.module';
 import { environment } from 'src/environments/environment';
@@ -35,66 +34,64 @@ import { ToastrModule } from 'ngx-toastr';
 import { SpeechSynthesisModule } from '@kamiazya/ngx-speech-synthesis';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
-    suppressScrollX: true,
-    wheelSpeed: 2,
-    wheelPropagation: true,
-    minScrollbarLength: 20
+  suppressScrollX: true,
+  wheelSpeed: 2,
+  wheelPropagation: true,
+  minScrollbarLength: 20
 };
 
 @NgModule({
-    declarations: [
-        AppComponent,
-        SpinnerComponent, 
-        FullComponent,
-        BlankComponent,
-        NavigationComponent,
-        BreadcrumbComponent,
-        SidebarComponent,
-        LoginComponent,
-    ],
-    imports: [
-        JwtModule.forRoot({
-            config: {
-                tokenGetter: tokenGetter,
-                whitelistedDomains: [getHost()],
-                blacklistedRoutes: [getHost() + '/' + 'api/Authentication']
-            }
-        }),
-        SpeechSynthesisModule.forRoot({
-            lang: 'es-DO',
-            volume: 1.0,
-            pitch: 1.0,
-            rate: 1.0,
-        }),
-        NgbModule, ToastrModule.forRoot(),
-        NgxPermissionsModule.forRoot(),
-        NgbToastModule,
-        CommonModule,
-        BrowserModule,
-        BrowserAnimationsModule,
-        SharedModule,
-        HttpClientModule,
-        RouterModule.forRoot(Approutes),
+  declarations: [
+    AppComponent,
+    SpinnerComponent,
+    FullComponent,
+    BlankComponent,
+    NavigationComponent,
+    BreadcrumbComponent,
+    SidebarComponent,
+    LoginComponent,
+  ],
+  imports: [
 
-    ],
-    providers: [
-        { provide: PERFECT_SCROLLBAR_CONFIG, useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG },
-        { provide: 'BASE_URL', useFactory: getBaseUrl }, AuthGuard,
-        {provide: LocationStrategy, useClass: HashLocationStrategy}
-    ],
-    bootstrap: [AppComponent]
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+        whitelistedDomains: [getHost()],
+        blacklistedRoutes: [getHost() + '/' + 'api/Authentication']
+      }
+    }),
+    SpeechSynthesisModule.forRoot({
+      lang: 'es-DO',
+      volume: 1.0,
+      pitch: 1.0,
+      rate: 1.0,
+    }),
+    NgbModule, ToastrModule.forRoot(),
+    NgxPermissionsModule.forRoot(),
+    NgbToastModule,
+    CommonModule,
+    BrowserModule,
+    PerfectScrollbarModule,
+    BrowserAnimationsModule,
+    SharedModule,
+    HttpClientModule,
+    RouterModule.forRoot(Approutes),
+
+  ],
+  providers: [
+    { provide: PERFECT_SCROLLBAR_CONFIG, useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG },
+    { provide: 'BASE_URL', useFactory: getHost },
+     AuthGuard,
+    { provide: LocationStrategy, useClass: HashLocationStrategy }
+  ],
+  bootstrap: [AppComponent]
 })
 export class AppModule { }
 
-export function getBaseUrl() {
-    return environment.apiUrl;
-}
-
-
 export function getHost() {
-    return environment.apiUrl;
+  return environment.apiUrl;
 }
 
 export function tokenGetter() {
-    return localStorage.getItem("token");
+  return localStorage.getItem("token");
 }

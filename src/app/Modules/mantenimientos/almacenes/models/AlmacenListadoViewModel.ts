@@ -4,13 +4,14 @@ export class AlmacenListadoViewModel {
         this.nombre = ""
         this.descripcion = ""
         this.estadoID = 0
-        this.companiaID = 0
-        this.compania = ""
+        this.sucursalID = 0
+        this.sucursal = ""
     }
     id: number;
     nombre: string;
+    codigoReferencia: string;
     descripcion: string
     estadoID: number
-    companiaID: number
-    compania: string
+    sucursalID: number
+    sucursal: string
 }

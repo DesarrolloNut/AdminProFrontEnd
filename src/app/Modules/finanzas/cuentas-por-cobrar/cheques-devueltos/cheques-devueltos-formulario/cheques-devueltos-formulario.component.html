@@ -1,0 +1,112 @@
+<div class="row">
+    <div class="control-section">
+        <div id="control_wrapper">
+        </div>
+    </div>
+</div>
+
+<div class="row mb-2">
+    <div class="col">
+        <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 col-12">
+                        <h4 class="card-title">Formulario de cheques devueltos</h4>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-12 text-right">
+                    </div>
+                </div>
+                <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
+                <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
+
+
+                    <div class="form-group col-md-12">
+                        <label for="inputEmail4">Cliente</label>
+                        <ng-select formControlName="clienteId" bindLabel="nombre" bindValue="codigo" [items]="clientes"
+                            [loading]="loadingClientes" [clearable]="false" (search)="getClientes($event)"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.clienteId.errors }"
+                            (change)="onSelectCliente($event)" notFoundText="No resultados">
+                        </ng-select>
+                        <div *ngIf="submitted && f.clienteId.errors"
+                            class="text-danger small animated animated--fade-in">
+                            <div *ngIf="f.clienteId.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
+                    <!-- <hr> -->
+
+                    <div class="form-group col-md-4">
+                        <label for="example-email">Banco</label>
+                        <ng-select [items]="bancos" bindLabel="nombre" bindValue="codigo" [loading]="loadingBancos"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.bancoID.errors }"
+                            [clearable]="false" notFoundText="No resultados" formControlName="bancoID">
+                        </ng-select>
+                        <div *ngIf="submitted && f.bancoID.errors" class="text-danger small animated animated--fade-in">
+                            <div *ngIf="f.bancoID.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group col-md-4">
+                        <label for="cheque"> Cheque</label>
+                        <input formControlName="cheque" type="text" name="cheque" id="cheque"
+                            [ngClass]="{'is-invalid' : submitted && f.cheque.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.cheque.errors">
+                            <div *ngIf="f.cheque.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group col-md-4">
+                        <label for="monto"> Monto</label>
+                        <input formControlName="monto" type="text" name="monto" id="monto" prefix="$ " mask="separator"
+                            thousandSeparator=","
+                            [ngClass]="{'is-invalid' : submitted && f.monto.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.monto.errors">
+                            <div *ngIf="f.monto.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-12">
+                        <label for="example-email">Motivo</label>
+                        <ng-select [items]="motivos" bindLabel="nombre" bindValue="codigo" [loading]="loadingMotivos"
+                            [clearable]="false"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.motivoID.errors }"
+                            notFoundText="No resultados" formControlName="motivoID">
+                        </ng-select>
+                        <div *ngIf="submitted && f.motivoID.errors"
+                            class="text-danger small animated animated--fade-in">
+                            <div *ngIf="f.motivoID.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="form-group text-right col-md-12">
+                        <hr />
+
+                        <button class="btn btn-light m-1" routerLink="../" type="button">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+
+                        <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+                            <i class="fas fa-check"></i> Guardar
+                        </button>
+
+                        <!-- boton cargando -->
+                        <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span> Guardando
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

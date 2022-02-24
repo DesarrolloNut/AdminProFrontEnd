@@ -1,0 +1,401 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-md-6 align-middle">
+                        <h4 class="card-title">Listado de cotizaciones</h4>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <button [routerLink]="[0]" class="btn btn-info"> <i class="fa fa-plus"></i> Nueva
+                            cotización
+                        </button>
+                    </div>
+                    <div class="col-md-12 p-2">
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <label for="search" class="input-group-text bg-white">
+                                    <span class="bg-white" style="border-right:none">
+                                        <i class="ti-search"></i>
+                                    </span>
+                                </label>
+                            </div>
+                            <input [(ngModel)]="Search" (keyup)="getData()" type="text"
+                                style="border-left:none !important;" class="form-control" placeholder="Buscar">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 no-wrap v-middle">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th>#</th>
+                                <th>Cliente</th>
+                                <th>Vendedor</th>
+                                <th>SubTotal</th>
+                                <th>Desc.</th>
+                                <th>Imp.</th>
+                                <th>Total Neto</th>
+                                <th>Fecha</th>
+                                <!-- <th>Cotizador</th> -->
+                                <!-- <th>Estado</th> -->
+                            </tr>
+                        </thead>
+                        <tbody [hidden]="Cargando">
+
+                            <tr *ngFor="let item of data; let i = index">
+                                <td>
+
+
+                                    <!-- <div class="btn-group mr-3">
+                                        <button type="button" class="btn btn-outline-info"> <i class="fa fa"></i> </button>
+                                        <div class="btn-group" ngbDropdown role="group"
+                                            aria-label="Button group with nested dropdown">
+                                            <button class="btn btn-info" ngbDropdownToggle></button>
+                                            <div class="dropdown-menu" ngbDropdownMenu>
+                                                <button ngbDropdownItem> <i class="fa fa-check-circle"
+                                                        aria-hidden="true"></i> Nivel autorización</button>
+                                                <button ngbDropdownItem><i class="fa fa-map-marker"></i> Asignación
+                                                    sucursales</button>
+                                                <button ngbDropdownItem> <i class="fa fa-user" aria-hidden="true"></i>
+                                                    Asignación cliente tipo</button>
+
+                                                <div class="dropdown-divider"></div>
+
+                                                <button ngbDropdownItem><i class="fa fa-key"></i> Actualizar
+                                                    contraseña</button>
+                                            </div>
+                                        </div>
+                                    </div> -->
+
+
+
+                                    <button class="btn btn-sm btn-light"
+                                        (click)="openModal(modalDetalleCotizacion,item)">
+                                        <i class="fa fa-sm fa-eye"></i>
+                                    </button>
+
+                                    <button class="btn btn-sm btn-info m-1" [routerLink]="[item.id]">
+                                        <i class="fa fa-sm fa-edit"></i>
+                                    </button>
+
+                                    <button class="btn btn-sm btn-light">
+                                        <i class="fa fa-sm fa-sitemap"></i>
+                                    </button>
+
+                                </td>
+                                <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
+                                <td>#{{item.codigoReferencia}}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <!-- <i class="fa fa-user-circle fa-3x text-light"></i> -->
+                                        <div class="ml-3">
+                                            <p class="font-bold mb-0">#{{item.clienteCodigoReferencia}} | {{item.cliente
+                                                |
+                                                titlecase }}
+                                            </p>
+                                            <!-- <small class="text-info"> <i class="fa fa-id-card"></i>
+                                                {{item.clienteDocumento | uppercase }}</small> -->
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{item.vendedor}}</td>
+                                <td>
+                                    <span> ${{item.subTotal | number:'1.2-2'}}</span>
+                                </td>
+                                <td>
+                                    <span> ${{item.descuentoTotal | number:'1.2-2'}}</span>
+                                </td>
+                                <td>
+                                    <span> ${{item.impuestoTotal | number:'1.2-2'}}</span>
+                                </td>
+                                <td>
+                                    <span class="font-weight-bold"> ${{item.totalNeto | number:'1.2-2'}}</span>
+                                </td>
+                                <td>
+                                    <span class="text-muted"><i class="far fa-calendar"></i>
+                                        {{item.fechaCreacion | date:'dd/MM/yy' }}
+                                    </span>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+
+
+                <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+
+                <div class="row ">
+                    <div class="col-md-8 col-xs-12 ">
+                        <ngb-pagination [collectionSize]="paginaTotalRecords" [(page)]="paginaNumeroActual"
+                            [pageSize]="paginaSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="getData()">
+                        </ngb-pagination>
+                    </div>
+
+                    <div class="col-md-4 text-right d-none d-md-block  ">
+                        <select class="form-control d-block" name="paginaSize" [(ngModel)]="paginaSize"
+                            (change)="getData()">
+                            <option [ngValue]="5">5 registro por pagina</option>
+                            <option [ngValue]="10">10 registro por pagina</option>
+                            <option [ngValue]="20">20 registro por pagina</option>
+                            <option [ngValue]="50">50 registro por pagina</option>
+                            <option [ngValue]="100">100 registro por pagina</option>
+                        </select>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<!--
+<ng-template #modalAutorizarCotizacion let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Autorizar cotización</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+
+
+
+            <div class="col-12">
+                <app-loading-listado [hidden]="!loadingCotizacionDetalle"></app-loading-listado>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
+        <button type="button" class="btn btn-success m-1">  <i class="fa fa-sm fa-shield-alt"></i> Enviar a autorizar</button>
+    </div>
+</ng-template> -->
+
+
+
+<ng-template #modalAutorizarCotizacion let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Detalle de cotización</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+
+            <div class="col-12">
+                <h5 class="text-info"> <i class="fa fa-user"></i> Cliente: {{cotizacionSeleccionada.cliente}}</h5>
+                <h5> <i class="fa fa-id-card"></i> Documento: {{cotizacionSeleccionada.clienteDocumento}}</h5>
+                <h5> <i class="fa fa-calendar"></i> Fecha: {{cotizacionSeleccionada.fechaCreacion |
+                    date:'dd/MM/yy'}}</h5>
+                <!-- <hr>
+                <h5> <i class="fa fa-user-circle"></i> Cotizador: {{cotizacionSeleccionada.cotizador}}</h5>
+                <h5> <i class="fa fa-map-marker"></i> Sucursal: {{cotizacionSeleccionada.sucursal}}</h5>
+                <h5> <i class="fa fa-user-circle"></i>Vendedor: {{cotizacionSeleccionada.vendedor}}</h5> -->
+            </div>
+
+            <div class="col-12" [hidden]="loadingCotizacionDetalle">
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover mb-0 no-wrap v-middle">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Artículo</th>
+                                <th>Cantidad</th>
+                                <th>Precio</th>
+                                <th>% Desc</th>
+                                <th>SubTotal</th>
+                                <th>Desc</th>
+                                <th>Impuesto</th>
+                                <th>Total Neto</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr *ngFor="let item of cotizacionDetalles">
+                                <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
+                                <td>
+                                    <span> {{item.articulo}}</span>
+                                </td>
+                                <td>
+                                    <span> {{item.cantidad}}</span>
+                                </td>
+                                <td>
+                                    <span> ${{item.precio | number:'1.2-2'}} </span>
+                                </td>
+                                <td>
+                                    <span> %{{item.porcientoDescuento | number:'1.2-2'}}</span>
+                                </td>
+                                <td>
+                                    <span> ${{item.subtotal | number:'1.2-2'}} </span>
+                                </td>
+                                <td>
+                                    <span> ${{item.totalDescuento | number:'1.2-2'}} </span>
+                                </td>
+                                <td>
+                                    <span> ${{item.totalImpuesto | number:'1.2-2'}} </span>
+                                </td>
+                                <td>
+                                    <span class="font-weight-bold"> ${{item.totalNeto | number:'1.2-2'}} </span>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+
+            </div>
+
+            <div class="col-12 text-right">
+                <hr>
+                <h4>Subtotal: $ {{cotizacionSeleccionada.subTotal | number:'1.2-2' }}</h4>
+                <h4>Descuento: $ {{cotizacionSeleccionada.descuentoTotal | number:'1.2-2' }}</h4>
+                <h4>Impuesto: $ {{cotizacionSeleccionada.impuestoTotal | number:'1.2-2' }}</h4>
+                <h4 class="font-weight-bold">Total Neto: $ {{cotizacionSeleccionada.totalNeto | number:'1.2-2' }}</h4>
+            </div>
+
+            <div class="col-12">
+                <app-loading-listado [hidden]="!loadingCotizacionDetalle"></app-loading-listado>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
+        <button type="button" class="btn btn-success m-1" *ngIf="!loadingEstadoAutorizacionCotizacion"
+            (click)="CambiarEstadoAutorizacionCotizacion(cotizacionSeleccionada.id)">
+            <i class="fa fa-sm fa-check"></i> Enviar a autorizar</button>
+        <!-- boton cargando -->
+        <button *ngIf="loadingEstadoAutorizacionCotizacion" disabled class="btn btn-success m-1" type="button">
+            <span class="spinner-border spinner-border-sm"></span> Enviando
+        </button>
+    </div>
+</ng-template>
+
+
+
+<ng-template #modalDetalleCotizacion let-modal>
+    <div class="modal-header">
+        <span class="badge badge-light text-info mt-1 mr-1">{{cotizacionSeleccionada.id}}</span>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+
+            <div class="col-lg-6 col-md-6 col-12">
+                <h5 class="font-weight-bold"> #{{cotizacionSeleccionada.codigoReferencia}}</h5>
+                <h5 class="text-info"> <i class="fa fa-user"></i>
+                    Cliente: {{cotizacionSeleccionada.clienteCodigoReferencia}} | {{cotizacionSeleccionada.cliente}}
+                </h5>
+                <h5> <i class="fa fa-id-card"></i> Documento: {{cotizacionSeleccionada.clienteDocumento}}</h5>
+                <h5> <i class="fa fa-dollar-sign"></i> Pago: {{cotizacionSeleccionada.clienteCodicionPago}}</h5>
+
+            </div>
+            <div class="col-lg-6 col-md-6 col-12">
+                <h5>
+                    <i class="fa fa-calendar"></i>
+                    Fecha: {{cotizacionSeleccionada.fechaCreacion | date:'dd/MM/yy'}}
+                </h5>
+                <h5> <i class="fa fa-user-circle"></i> Usuario: {{cotizacionSeleccionada.cotizador}}</h5>
+                <h5> <i class="fa fa-map-marker"></i> Sucursal: {{cotizacionSeleccionada.sucursal}}</h5>
+                <h5> <i class="fa fa-user"></i> Vendedor: {{cotizacionSeleccionada.vendedor}}</h5>
+            </div>
+
+            <div class="col-12" [hidden]="loadingCotizacionDetalle">
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover mb-0 no-wrap v-middle">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Artículo</th>
+                                <th>Cant</th>
+                                <th>Precio</th>
+                                <th>% Desc</th>
+                                <th>SubTotal</th>
+                                <th>Desc</th>
+                                <th>Imp</th>
+                                <th>Total Neto</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr *ngFor="let item of cotizacionDetalles">
+                                <td>
+                                    <span class="badge badge-light text-info ">{{item.id}}</span>
+                                </td>
+                                <td>
+                                    <span>{{item.articuloCodRef}} | {{item.articulo}}</span>
+                                </td>
+                                <td>
+                                    <span> {{item.cantidad}}</span>
+                                </td>
+                                <td>
+                                    <span> ${{item.precio | number:'1.2-2'}} </span>
+                                </td>
+                                <td>
+                                    <span> {{item.porcientoDescuento | number:'1.2-2'}}%</span>
+                                </td>
+                                <td>
+                                    <span> ${{item.subtotal | number:'1.2-2'}} </span>
+                                </td>
+                                <td>
+                                    <span> ${{item.totalDescuento | number:'1.2-2'}} </span>
+                                </td>
+                                <td>
+                                    <span> ${{item.totalImpuesto | number:'1.2-2'}} </span>
+                                </td>
+                                <td>
+                                    <span class="font-weight-bold"> ${{item.totalNeto | number:'1.2-2'}} </span>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+
+            </div>
+
+            <div class="col-12">
+                <app-loading-listado [hidden]="!loadingCotizacionDetalle"></app-loading-listado>
+            </div>
+
+
+            <div class="col-12 text-right">
+                <hr>
+                <h4>Subtotal: $ {{cotizacionSeleccionada.subTotal | number:'1.2-2' }}</h4>
+                <h4>Descuento: $ {{cotizacionSeleccionada.descuentoTotal | number:'1.2-2' }}</h4>
+                <h4>Impuesto: $ {{cotizacionSeleccionada.impuestoTotal | number:'1.2-2' }}</h4>
+                <h4 class="font-weight-bold">Total Neto: $ {{cotizacionSeleccionada.totalNeto | number:'1.2-2' }}</h4>
+            </div>
+
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
+    </div>
+</ng-template>

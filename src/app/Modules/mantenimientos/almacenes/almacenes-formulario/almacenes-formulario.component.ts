@@ -14,9 +14,9 @@ import { ComboBox } from 'src/app/shared/model/ComboBox';
 })
 export class AlmacenesFormularioComponent implements OnInit {
 
-  companias: ComboBox[] = [];
+  sucursales: ComboBox[] = [];
 
-  loadingCompanias = false;
+  loadingSucursales = false;
 
   Cargando: boolean = false;
   Formulario: FormGroup;
@@ -32,15 +32,15 @@ export class AlmacenesFormularioComponent implements OnInit {
     private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
-    
+
     let id = Number(this.route.snapshot.paramMap.get('id'));
 
     if (id > 0) {
       this.getItem(id);
       this.actualizando = true;
     }
-    
-    this.getCompanias()
+
+    this.getSucursales()
     this.CreateForm();
   }
 
@@ -50,11 +50,13 @@ export class AlmacenesFormularioComponent implements OnInit {
     this.Formulario = this.formBuilder.group({
       id: [0],
       nombre: [null, [Validators.required]],
-      companiaID: [null, Validators.required],
+      codigoReferencia: [null, Validators.required],
+      sucursalID: [null, Validators.required],
       descripcion: [null,],
       estadoID: [0,],
     });
   }
+
 
   get f() { return this.Formulario.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
 
@@ -115,24 +117,24 @@ export class AlmacenesFormularioComponent implements OnInit {
   }
 
 
-  
-  getCompanias() {
-    this.loadingCompanias = true;
+
+  getSucursales() {
+    this.loadingSucursales = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetCompanias", null).subscribe(response => {
+      "GetSucursales", null).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          this.companias = response.records;
+          this.sucursales = response.records;
         }
-        this.loadingCompanias = false;
+        this.loadingSucursales = false;
       }, error => {
-        this.loadingCompanias = false;
+        this.loadingSucursales = false;
         this.toastService.error("No se pudo obtener las compañias", "Error conexion al servidor");
 
         setTimeout(() => {
-          this.getCompanias()
+          this.getSucursales()
         }, 1000);
 
       });

@@ -1,3 +1,13 @@
+import { ActividadesEconomicasFormularioComponent } from './actividadesEconomicas/actividades-economicas-formulario/actividades-economicas-formulario.component';
+import { ActividadesEconomicasListadoComponent } from './actividadesEconomicas/actividades-economicas-listado/actividades-economicas-listado.component';
+import { ProveedoresFormularioComponent } from './proveedores/proveedores-formulario/proveedores-formulario.component';
+import { ProveedoresListadoComponent } from './proveedores/proveedores-listado/proveedores-listado.component';
+import { DepartamentosFormularioComponent } from './departamentos/departamentos-formulario/departamentos-formulario.component';
+import { PermisosFormularioComponent } from './permisos/permisos-formulario/permisos-formulario.component';
+import { PermisosListadoComponent } from './permisos/permisos-listado/permisos-listado.component';
+import { RolesFormularioComponent } from './roles/roles-formulario/roles-formulario.component';
+import { RolesListadoComponent } from './roles/roles-listado/roles-listado.component';
+
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
@@ -44,16 +54,327 @@ import { RecallListadoComponent } from './recall/recall-listado/recall-listado.c
 import { OfertasFormularioComponent } from './ofertas/ofertas-formulario/ofertas-formulario.component';
 import { OfertasListadoComponent } from './ofertas/ofertas-listado/ofertas-listado.component';
 
+import { RutasFormularioComponent } from './rutas/rutas-formulario/rutas-formulario.component';
+import { RutasListadoComponent } from './rutas/rutas-listado/rutas-listado.component';
+import { NivelAutorizacionFormularioComponent } from './nivelautorizacion/nivel-autorizacion-formulario/nivel-autorizacion-formulario.component';
+import { NivelAutorizacionListadoComponent } from './nivelautorizacion/nivel-autorizacion-listado/nivel-autorizacion-listado.component';
+import { SapconnectionListadoComponent } from './sapconnection/sapconnection-listado/sapconnection-listado.component';
+import { EstadosGeneralesFormularioComponent } from './estadosgenerales/estados-generales-formulario/estados-generales-formulario.component';
+import { EstadosGeneralesListadoComponent } from './estadosgenerales/estados-generales-listado/estados-generales-listado.component';
+import { ListaPreciosFormularioComponent } from './listaPrecios/lista-precios-formulario/lista-precios-formulario.component';
+import { ListaPreciosListadoComponent } from './listaPrecios/lista-precios-listado/lista-precios-listado.component';
+import { NivelAutorizacionModuloFormularioComponent } from './NivelAutorizacionModulo/nivel-autorizacion-modulo-formulario/nivel-autorizacion-modulo-formulario.component';
+import { NivelAutorizacionModuloListadoComponent } from './NivelAutorizacionModulo/nivel-autorizacion-modulo-listado/nivel-autorizacion-modulo-listado.component';
+import { SapconnectionFormularioComponent } from './sapconnection/sapconnection-formulario/sapconnection-formulario.component';
+import { PromocionesListadoComponent } from './promociones/promociones-listado/promociones-listado.component';
+import { PromocionesFormularioComponent } from './promociones/promociones-formulario/promociones-formulario.component';
+import { PerfilFormularioComponent } from './perfil-formulario/perfil-formulario.component';
+import { CargaMasivaPanelComponent } from './cargaMasiva/carga-masiva-panel/carga-masiva-panel.component';
+import { MonedasListadoComponent } from './monedas/monedas-listado/monedas-listado.component';
+import { MonedasFormularioComponent } from './monedas/monedas-formulario/monedas-formulario.component';
+import { DepartamentosListadoComponent } from './departamentos/departamentos-listado/departamentos-listado.component';
+import { EnrrollvendedorentregasupervisorListadoComponent } from './enrrollvendedorentregasupervisor/enrrollvendedorentregasupervisor-listado/enrrollvendedorentregasupervisor-listado.component';
+import { EnrrollvendedorentregasupervisorFormularioComponent } from './enrrollvendedorentregasupervisor/enrrollvendedorentregasupervisor-formulario/enrrollvendedorentregasupervisor-formulario.component';
+import { UsuarioAlmacenEnrrollListadoComponent } from './usuarioAlmacenEnrroll/usuario-almacen-enrroll-listado/usuario-almacen-enrroll-listado.component';
+import { UsuarioAlmacenEnrrollFormularioComponent } from './usuarioAlmacenEnrroll/usuario-almacen-enrroll-formulario/usuario-almacen-enrroll-formulario.component';
+import { TomainventarioRutaListadoComponent } from './tomainventarioruta/tomainventarioruta-listado/tomainventarioruta-listado.component';
+import { ArticulosCategoriasListadoComponent } from './articulosCategorias/articulos-categorias-listado/articulos-categorias-listado.component';
+import { ArticulosCategoriasFormularioComponent } from './articulosCategorias/articulos-categorias-formulario/articulos-categorias-formulario.component';
+import { PlazosListadoComponent } from './plazos/plazos-listado/plazos-listado.component';
+import { PlazosFormularioComponent } from './plazos/plazos-formulario/plazos-formulario.component';
+import { ComprobanteFiscalListadoComponent } from './comprobanteFiscal/comprobante-fiscal-listado/comprobante-fiscal-listado.component';
+import { ComprobanteFiscalFormularioComponent } from './comprobanteFiscal/comprobante-fiscal-formulario/comprobante-fiscal-formulario.component';
+
+
+
+
 const routes: Routes = [
   {
     path: '', component: MantenimientosComponent,
     children: [
 
+      {
+        path: 'comprobante-fiscal', component: ComprobanteFiscalListadoComponent, data: {
+          title: 'Comprobantes fiscales',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Comprobantes fiscales' },
+          ]
+        }
+      },
+
+      {
+        path: 'comprobante-fiscal/:id', component: ComprobanteFiscalFormularioComponent, data: {
+          title: 'Comprobantes fiscales',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Comprobantes fiscales' },
+          ]
+        }
+      },
+
+      // listas de precios
+      {
+        path: 'listaprecios', component: ListaPreciosListadoComponent, data: {
+          title: 'Listas de precios',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Listas de precios' },
+          ]
+        }
+      },
+
+      // listas de precios formulario
+      {
+        path: 'listaprecios/:id', component: ListaPreciosFormularioComponent, data: {
+          title: 'Listas de precios formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Listas de precios' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+      // ruta
+      {
+        path: 'ruta', component: RutasListadoComponent, data: {
+          title: 'Rutas',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Rutas' }
+          ]
+        }
+      },
+
+      {
+        path: 'ruta/:id', component: RutasFormularioComponent, data: {
+          title: 'Ruta Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Rutas' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+      // NivelAutorizacion
+      {
+        path: 'nivelautorizacion', component: NivelAutorizacionListadoComponent, data: {
+          title: 'Nivel autorizacion',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Nivel autorizacion' }
+          ]
+        }
+      },
+
+      {
+        path: 'nivelautorizacion/:id', component: NivelAutorizacionFormularioComponent, data: {
+          title: 'Nivel autorizacion Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Nivel autorizacion' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+      // ESTADOS GENERALES
+      {
+        path: 'estadosgenerales', component: EstadosGeneralesListadoComponent, data: {
+          title: 'Estados Generales',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Estados Generales' }
+          ]
+        }
+      },
+
+      {
+        path: 'estadosgenerales/:id', component: EstadosGeneralesFormularioComponent, data: {
+          title: 'Estados Generales Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Estados Generales' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+
+      // NivelAutorizacionModulo
+      {
+        path: 'nivelautorizacionmodulo', component: NivelAutorizacionModuloListadoComponent, data: {
+          title: 'Nivel Autorizacion Módulo',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Nivel Autorizacion Módulo' }
+          ]
+        }
+      },
+
+      {
+        path: 'nivelautorizacionmodulo/:id', component: NivelAutorizacionModuloFormularioComponent, data: {
+          title: 'Nivel Autorizacion Módulo Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Nivel Autorizacion Módulo' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+
+      // EnrrollVendedorEntregaSupervisor
+      {
+        path: 'enrrollvendedorentregasupervisor', component: EnrrollvendedorentregasupervisorListadoComponent, data: {
+          title: 'Enrrollvendedorentregasupervisor',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Enrrollvendedorentregasupervisor' }
+          ]
+        }
+      },
+
+      {
+        path: 'enrrollvendedorentregasupervisor/:id', component: EnrrollvendedorentregasupervisorFormularioComponent, data: {
+          title: 'Enrrollvendedorentregasupervisor Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Enrrollvendedorentregasupervisor' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+      // SAPCONNECTION
+      {
+        path: 'sapconnection', component: SapconnectionListadoComponent, data: {
+          title: 'Conexiones',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Conexiones' }
+          ]
+        }
+      },
+
+      {
+        path: 'sapconnection/:id', component: SapconnectionFormularioComponent, data: {
+          title: 'Conexiones Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Conexiones' },
+          ]
+        }
+      },
+
+      // promocion
+      {
+        path: 'promocion', component: PromocionesListadoComponent, data: {
+          title: 'Promociones',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Promociones' },
+          ]
+        }
+      },
+
+
+      {
+        path: 'promocion/:id', component: PromocionesFormularioComponent, data: {
+          title: 'Promociones Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Promociones' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+      // Roles
+      {
+        path: 'roles', component: RolesListadoComponent, data: {
+          title: 'Roles',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Roles' },
+          ]
+        }
+      },
+
+
+      {
+        path: 'roles/:id', component: RolesFormularioComponent, data: {
+          title: 'Roles Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Roles' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+      // Permisos
+      {
+        path: 'permisos', component: PermisosListadoComponent, data: {
+          title: 'Permisos',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Permisos' },
+          ]
+        }
+      },
+
+
+      {
+        path: 'permisos/:id', component: PermisosFormularioComponent, data: {
+          title: 'Permisos Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Permisos' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+      {
+        path: 'cargamasiva', component: CargaMasivaPanelComponent, data: {
+          title: 'Carga Masiva',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Carga Masiva' },
+          ]
+        }
+      },
+
+
+
+
+
+      // Permisos
+      {
+        path: 'tomainventarioruta', component: TomainventarioRutaListadoComponent, data: {
+          title: 'Toma Inventario Ruta',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Toma Inventario Ruta' },
+          ]
+        }
+      },
+
+
+
+
+
+
+      // ***************************************
+
 
       // comite
       {
         path: 'comite', component: ComiteComponent, data: {
-          title: 'Viacloud | Comites',
+          title: 'Comites',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Comites' }
@@ -65,7 +386,7 @@ const routes: Routes = [
       // usuario
       {
         path: 'usuario', component: UsuarioListadoComponent, data: {
-          title: 'Viacloud | Usuarios',
+          title: 'Usuarios',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Usuarios' }
@@ -75,10 +396,32 @@ const routes: Routes = [
 
       {
         path: 'usuario/:id', component: UsuarioFormularioComponent, data: {
-          title: 'Viacloud | Usuario Formulario',
+          title: 'Usuario Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Usuarios' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+      // usuario
+      {
+        path: 'usuario-almacen-enrroll', component: UsuarioAlmacenEnrrollListadoComponent, data: {
+          title: 'Usuario Almacen Enrroll',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Usuario Almacen Enrroll' }
+          ]
+        }
+      },
+
+      {
+        path: 'usuario-almacen-enrroll/:id', component: UsuarioAlmacenEnrrollFormularioComponent, data: {
+          title: 'Usuario Almacen Enrroll Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Usuario Almacen Enrroll' },
             { title: 'Formulario' }
           ]
         }
@@ -88,7 +431,7 @@ const routes: Routes = [
       // cliente
       {
         path: 'cliente', component: ClientesListadoComponent, data: {
-          title: 'Viacloud | Clientes',
+          title: 'Clientes',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Clientes' }
@@ -98,7 +441,7 @@ const routes: Routes = [
 
       {
         path: 'cliente/:id', component: ClientesFormularioComponent, data: {
-          title: 'Viacloud | Clientes Formulario',
+          title: 'Clientes Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Clientes' },
@@ -112,7 +455,7 @@ const routes: Routes = [
       // marcas
       {
         path: 'marca', component: MarcasListadoComponent, data: {
-          title: 'Viacloud | Marcas',
+          title: 'Marcas',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Marcas' }
@@ -122,7 +465,7 @@ const routes: Routes = [
 
       {
         path: 'marca/:id', component: MarcasFormularioComponent, data: {
-          title: 'Viacloud | Marcas Formulario',
+          title: 'Marcas Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Marcas' },
@@ -136,7 +479,7 @@ const routes: Routes = [
       // modelo
       {
         path: 'modelo', component: ModelosListadoComponent, data: {
-          title: 'Viacloud | Modelos',
+          title: 'Modelos',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Modelos' }
@@ -146,7 +489,7 @@ const routes: Routes = [
 
       {
         path: 'modelo/:id', component: ModelosFormularioComponent, data: {
-          title: 'Viacloud | Modelos Formulario',
+          title: 'Modelos Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Modelos', },
@@ -158,7 +501,7 @@ const routes: Routes = [
       // dealers
       {
         path: 'dealer', component: DealersListadoComponent, data: {
-          title: 'Viacloud | Dealers',
+          title: 'Dealers',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Dealers' }
@@ -168,7 +511,7 @@ const routes: Routes = [
 
       {
         path: 'dealer/:id', component: DealersFormularioComponent, data: {
-          title: 'Viacloud | Dealers Formulario',
+          title: 'Dealers Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Dealers' },
@@ -180,7 +523,7 @@ const routes: Routes = [
       // almacenes
       {
         path: 'almacen', component: AlmacenesListadoComponent, data: {
-          title: 'Viacloud | Almacenes',
+          title: 'Almacenes',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Almacenes' }
@@ -190,7 +533,7 @@ const routes: Routes = [
 
       {
         path: 'almacen/:id', component: AlmacenesFormularioComponent, data: {
-          title: 'Viacloud | Almacenes Formulario',
+          title: 'Almacenes Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Almacenes' },
@@ -201,7 +544,7 @@ const routes: Routes = [
       // VehiculoTipo
       {
         path: 'vehiculotipo', component: VehiculoTiposListadoComponent, data: {
-          title: 'Viacloud | Vehículo Tipos',
+          title: 'Vehículo Tipos',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Vehículo Tipos' }
@@ -211,7 +554,7 @@ const routes: Routes = [
 
       {
         path: 'vehiculotipo/:id', component: VehiculoTiposFormularioComponent, data: {
-          title: 'Viacloud | Vehículo Tipos Formulario',
+          title: 'Vehículo Tipos Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Vehículo Tipos' },
@@ -224,7 +567,7 @@ const routes: Routes = [
       // combustible
       {
         path: 'combustible', component: CombustiblesListadoComponent, data: {
-          title: 'Viacloud | Combustibles',
+          title: 'Combustibles',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Combustibles' }
@@ -234,7 +577,7 @@ const routes: Routes = [
 
       {
         path: 'combustible/:id', component: CombustiblesFormularioComponent, data: {
-          title: 'Viacloud | Combustibles Formulario',
+          title: 'Combustibles Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Combustibles' },
@@ -247,7 +590,7 @@ const routes: Routes = [
       // vehiculo condiciones
       {
         path: 'vehiculocondicion', component: VehiculoCondicionesListadoComponent, data: {
-          title: 'Viacloud | Vehículo Condiciones',
+          title: 'Vehículo Condiciones',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Vehículo Condiciones' }
@@ -257,7 +600,7 @@ const routes: Routes = [
 
       {
         path: 'vehiculocondicion/:id', component: VehiculoCondicionesFormularioComponent, data: {
-          title: 'Viacloud | Vehículo Condiciones Formulario',
+          title: 'Vehículo Condiciones Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Vehículo Condiciones' },
@@ -270,7 +613,7 @@ const routes: Routes = [
       // tag
       {
         path: 'tag', component: TagsListadoComponent, data: {
-          title: 'Viacloud | Tags',
+          title: 'Tags',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Tags' }
@@ -280,7 +623,7 @@ const routes: Routes = [
 
       {
         path: 'tag/:id', component: TagsFormularioComponent, data: {
-          title: 'Viacloud | Tags Formulario',
+          title: 'Tags Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Tags' },
@@ -292,7 +635,7 @@ const routes: Routes = [
       // Receptores posiciones
       {
         path: 'receptor-posicion', component: ReceptoresPosicionesListadoComponent, data: {
-          title: 'Viacloud | Receptores Posiciones',
+          title: 'Receptores Posiciones',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Receptores Posiciones' }
@@ -302,7 +645,7 @@ const routes: Routes = [
 
       {
         path: 'receptor-posicion/:id', component: ReceptoresPosicionesFormularioComponent, data: {
-          title: 'Viacloud | Receptores Posiciones Formulario',
+          title: 'Receptores Posiciones Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Receptores Posiciones' },
@@ -325,7 +668,7 @@ const routes: Routes = [
 
       {
         path: 'compania/:id', component: CompaniasFormularioComponent, data: {
-          title: 'Viacloud | Compañías Formulario',
+          title: 'Compañías Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Compañías' },
@@ -338,7 +681,7 @@ const routes: Routes = [
       // sucursal
       {
         path: 'sucursal', component: SucursalesListadoComponent, data: {
-          title: 'Viacloud | Sucursales',
+          title: 'Sucursales',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Sucursales' }
@@ -348,7 +691,7 @@ const routes: Routes = [
 
       {
         path: 'sucursal/:id', component: SucursalesFormularioComponent, data: {
-          title: 'Viacloud | Sucursales Formulario',
+          title: 'Sucursales Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Sucursales' },
@@ -360,7 +703,7 @@ const routes: Routes = [
       //cita categoria
       {
         path: 'cita-categoria', component: CitaCategoriaListadoComponent, data: {
-          title: 'Viacloud | Cita Categorias',
+          title: 'Cita Categorias',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Cita Categorias' }
@@ -370,7 +713,7 @@ const routes: Routes = [
 
       {
         path: 'cita-categoria/:id', component: CitaCategoriaFormularioComponent, data: {
-          title: 'Viacloud | Cita Categorias Formulario',
+          title: 'Cita Categorias Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Cita Categorias' },
@@ -383,7 +726,7 @@ const routes: Routes = [
       // sintoma
       {
         path: 'sintoma', component: SintomasListadoComponent, data: {
-          title: 'Viacloud | Síntomas',
+          title: 'Síntomas',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Síntomas' }
@@ -393,7 +736,7 @@ const routes: Routes = [
 
       {
         path: 'sintoma/:id', component: SintomasFormularioComponent, data: {
-          title: 'Viacloud | Síntomas Formulario',
+          title: 'Síntomas Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Síntomas' },
@@ -405,7 +748,7 @@ const routes: Routes = [
       // sintoma categorias
       {
         path: 'sintoma-categoria', component: SintomasCategoriasListadoComponent, data: {
-          title: 'Viacloud | Síntoma Categorias',
+          title: 'Síntoma Categorias',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Síntoma Categorias' }
@@ -415,7 +758,7 @@ const routes: Routes = [
 
       {
         path: 'sintoma-categoria/:id', component: SintomasCategoriasFormularioComponent, data: {
-          title: 'Viacloud | Síntoma Categorias Formulario',
+          title: 'Síntoma Categorias Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Síntoma Categorias' },
@@ -427,7 +770,7 @@ const routes: Routes = [
       // accesorio
       {
         path: 'accesorio', component: AccesoriosListadoComponent, data: {
-          title: 'Viacloud | Accesorios',
+          title: 'Accesorios',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Accesorios' }
@@ -437,7 +780,7 @@ const routes: Routes = [
 
       {
         path: 'accesorio/:id', component: AccesoriosFormularioComponent, data: {
-          title: 'Viacloud | Accesorios Formulario',
+          title: 'Accesorios Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Accesorios' },
@@ -449,7 +792,7 @@ const routes: Routes = [
       // articulo
       {
         path: 'articulo', component: ArticuloListadoComponent, data: {
-          title: 'Viacloud | Artículos',
+          title: 'Artículos',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Artículos' }
@@ -459,7 +802,7 @@ const routes: Routes = [
 
       {
         path: 'articulo/:id', component: ArticuloFormularioComponent, data: {
-          title: 'Viacloud | Artículos Formulario',
+          title: 'Artículos Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Artículos' },
@@ -471,7 +814,7 @@ const routes: Routes = [
       // recall
       {
         path: 'recall', component: RecallListadoComponent, data: {
-          title: 'Viacloud | Recall',
+          title: 'Recall',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Recall' }
@@ -481,7 +824,7 @@ const routes: Routes = [
 
       {
         path: 'recall/:id', component: RecallFormularioComponent, data: {
-          title: 'Viacloud | Recall Formulario',
+          title: 'Recall Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Recall' },
@@ -493,7 +836,7 @@ const routes: Routes = [
       // ofertas
       {
         path: 'oferta', component: OfertasListadoComponent, data: {
-          title: 'Viacloud | Oferta',
+          title: 'Oferta',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Oferta' }
@@ -503,7 +846,7 @@ const routes: Routes = [
 
       {
         path: 'oferta/:id', component: OfertasFormularioComponent, data: {
-          title: 'Viacloud | Oferta Formulario',
+          title: 'Oferta Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Oferta' },
@@ -512,6 +855,145 @@ const routes: Routes = [
         }
       },
 
+      {
+        path: 'perfil', component: PerfilFormularioComponent, data: {
+          title: 'Perfil',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Perfil' }
+          ]
+        }
+      },
+
+
+      // Moneda
+      {
+        path: 'moneda', component: MonedasListadoComponent, data: {
+          title: 'Moneda',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Moneda' }
+          ]
+        }
+      },
+
+      {
+        path: 'moneda/:id', component: MonedasFormularioComponent, data: {
+          title: 'Moneda Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Moneda' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+      // departamento
+      {
+        path: 'departamento', component: DepartamentosListadoComponent, data: {
+          title: 'Departamento',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Departamento' }
+          ]
+        }
+      },
+
+      {
+        path: 'departamento/:id', component: DepartamentosFormularioComponent, data: {
+          title: 'Departamento Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Departamento' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+      // proveedor
+      {
+        path: 'proveedor', component: ProveedoresListadoComponent, data: {
+          title: 'Proveedor',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Proveedor' }
+          ]
+        }
+      },
+
+      {
+        path: 'proveedor/:id', component: ProveedoresFormularioComponent, data: {
+          title: 'Proveedor Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Proveedor' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+      // actividadEconomica
+      {
+        path: 'actividadEconomica', component: ActividadesEconomicasListadoComponent, data: {
+          title: 'Proveedor',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Proveedor' }
+          ]
+        }
+      },
+
+      {
+        path: 'actividadEconomica/:id', component: ActividadesEconomicasFormularioComponent, data: {
+          title: 'Actividad Económica Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Actividad Económica' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+      // articulocategorias
+      {
+        path: 'articulo-categoria', component: ArticulosCategoriasListadoComponent, data: {
+          title: 'Articulo Categorias',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Articulo Categorias' }
+          ]
+        }
+      },
+
+      {
+        path: 'articulo-categoria/:id', component: ArticulosCategoriasFormularioComponent, data: {
+          title: 'Articulo Categorias Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Articulo Categorias' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+      // plazos
+      {
+        path: 'plazo', component: PlazosListadoComponent, data: {
+          title: 'Plazo',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Plazo' }
+          ]
+        }
+      },
+
+      {
+        path: 'plazo/:id', component: PlazosFormularioComponent, data: {
+          title: 'Plazo Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Plazo' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
     ]
 
   }];

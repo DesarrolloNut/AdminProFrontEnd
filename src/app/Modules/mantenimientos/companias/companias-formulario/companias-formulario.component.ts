@@ -51,6 +51,7 @@ export class CompaniasFormularioComponent implements OnInit {
       telefono: [null, [Validators.required]],
       email: [null, [Validators.email,Validators.required]],
       tipoCompaniaID: [0,],
+      impuesto: [0,],
     });
   }
 

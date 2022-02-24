@@ -37,7 +37,7 @@ getData() {
 
   let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
 
-  this.httpService.GetAllWithPagination<Sintoma>(DataApi.Sintoma, "GetSintomaListado", "ID", this.paginaNumeroActual,
+  this.httpService.GetAllWithPagination<Sintoma>(DataApi.Sintoma, "GetRutaListado", "ID", this.paginaNumeroActual,
     this.paginaSize, true, parametros).subscribe(x => {
 
       if (x.ok) {

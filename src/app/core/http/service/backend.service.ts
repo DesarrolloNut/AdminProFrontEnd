@@ -5,6 +5,7 @@ import { ResponseContenido } from '../model/ResponseContenido';
 import { Observable } from 'rxjs';
 import { Paginacion } from '../model/Paginacion';
 import { DataApi, dataApiRootMap } from '../../../shared/enums/DataApi.enum';
+import { retry } from 'rxjs/operators';
 
 
 @Injectable({
@@ -29,24 +30,33 @@ export class BackendService {
         request.pagina.paginaSize = PaginaSize;
         request.pagina.ordenAsc = OrderASC;
         request.pagina.ordenColumna = Columna;
-        return this.http.post<ResponseContenido<T>>(this.baseUrl + dataApiRootMap[api] + "/" + Method, request);
+        return this.http.post<ResponseContenido<T>>(this.baseUrl + dataApiRootMap[api] + "/" + Method, request).pipe(retry(3));
     }
 
     public DoPost<T>(api: DataApi, Method: string, parametros: any): Observable<ResponseContenido<T>> {
         let request = new RequestContenido<T>();
         request.parametros = parametros;
-        return this.http.post<ResponseContenido<T>>(this.baseUrl + dataApiRootMap[api] + "/" + Method, request);
+        return this.http.post<ResponseContenido<T>>(this.baseUrl + dataApiRootMap[api] + "/" + Method, request).pipe(retry(3));
     }
 
-    public DoPostAny<T>(api: DataApi, Method: string, request: any): Observable<ResponseContenido<T>> {
-        return this.http.post<ResponseContenido<T>>(this.baseUrl + dataApiRootMap[api] + "/" + Method, request);
-        //return this.http.post<ResponseContenido<T>>(this.baseUrl + this.dataApiRootMap[api] + "/" + Method, request, httpOptions);
+    public DoPostAny<T>(api: DataApi, Method: string, request: any, reportProgress = false): Observable<ResponseContenido<T>> {
+        return this.http.post<ResponseContenido<T>>(this.baseUrl + dataApiRootMap[api] + "/" + Method, request).pipe(retry(3));
     }
+    public async DoPostAnyAsync<T>(api: DataApi, Method: string, request: any, reportProgress = false) {
+        return  await this.http.post<ResponseContenido<T>>(this.baseUrl + dataApiRootMap[api] + "/" + Method, request).toPromise();
+    }
+ 
+    // public DoPostUpload<T>(api: DataApi, Method: string, files: File[]) {
+    //     const formData = new FormData();
+    //     files.forEach(f => { formData.append('file', f, f.name); })
+
+    //     return this.http.post(this.baseUrl + dataApiRootMap[api] + "/" + Method, formData, { reportProgress: true, observe: 'events' });
+    // }
 
     // public DoPostSmartWebService(Method: string, request: any): Observable<any> {
     //     const proxyurl = "https://cors-anywhere.herokuapp.com/";
     //     const url = "http://lacortina.ddns.net/wscontacto/InsertaServicioscitas.asmx"; // site that doesn’t send Access-Control-*
-      
+
     //     const headers = {
     //         method: "POST",
     //         headers: {
@@ -72,4 +82,4 @@ export class BackendService {
     }
 
 
-} 
+}

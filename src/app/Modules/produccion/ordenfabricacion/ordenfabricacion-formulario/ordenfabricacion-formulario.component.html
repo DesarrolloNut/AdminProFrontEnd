@@ -1,0 +1,471 @@
+<div class="row">
+  <div class="control-section">
+    <div id="control_wrapper"></div>
+  </div>
+</div>
+
+<div class="row mb-2">
+  <div class="col">
+    <button class="btn btn-light" routerLink="../">
+      <i class="fa fa-arrow-left"></i> Regresar
+    </button>
+  </div>
+</div>
+
+<div class="row" *ngIf="IsNewData">
+  <div class="col">
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-4 p-2">
+            <div class="input-group">
+              <!-- <div class="input-group-prepend">
+                                  <label for="search" class="input-group-text bg-white">
+                                      <span class="bg-white" style="border-right:none">
+                                          <i class="ti-search"></i>
+                                      </span>
+                                  </label>
+                              </div> -->
+              <input
+                [(ngModel)]="search"
+                (keyup)="onSearchChange()"
+                type="text"
+                id="inputSearch"
+                style="border-left: none !important"
+                class="form-control"
+                placeholder="Buscar artículo"
+              />
+
+              <div class="input-group-prepend">
+                <label
+                  for="search"
+                  class="input-group-text bg-white"
+                  style="cursor: pointer"
+                  (click)="onClearSearch()"
+                >
+                  <span class="bg-white" style="border-right: none">
+                    <i class="fa fa-times-circle"></i>
+                  </span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 text-center p-2" *ngIf="searching">
+            <h3>
+              <span><i class="fa fa-spinner fa-spin"></i> Buscando</span>
+            </h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="articulo">
+  <div class="col">
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-12 mb-1">
+            <div class="row border border-light p-2">
+              <div class="col">
+                <h3>
+                  <i class="fa fa-shopping-bag"></i>
+                  {{ articulo.codigoReferencia }} | {{ articulo.nombre }}
+                </h3>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group col-md-6">
+            <label for="tipoId"> Tipo</label>
+            <ng-select
+              bindLabel="nombre"
+              bindValue="codigo"
+              [items]="Tipos"
+              [(ngModel)]="ofheader.tipoId"
+              (change)="onChangeTipo()"
+              [disabled]="ofheader.estadoId >= ValidOrden.PENDIENTECONSUMO"
+              class="form-control p-0"
+              notFoundText="No resultados"
+              [clearable]="false"
+            >
+            </ng-select>
+          </div>
+
+          <div class="form-group col-md-6">
+            <label for="estadoId"> Estado</label>
+            <ng-select
+              bindLabel="nombre"
+              bindValue="codigo"
+              [items]="estadosAutorizacion"
+              [(ngModel)]="ofheader.estadoId"
+              [disabled]="true"
+              class="form-control p-0"
+              notFoundText="No resultados"
+              [clearable]="false"
+            >
+            </ng-select>
+          </div>
+
+          <div class="form-group col-md-6">
+            <label for="cantidadPlanificada"> Cantidad Planificada</label>
+            <input
+              type="number"
+              name="cantidadPlanificada"
+              id="cantidadPlanificada"
+              class="form-control"
+              (keyup)="OnlyInterger()"
+              [(ngModel)]="ofheader.cantidadPlanificada"
+              [disabled]="ofheader.estadoId >= ValidOrden.PENDIENTECONSUMO"
+            />
+          </div>
+
+          <div class="col-md-6">
+            <label for="almacenId">Almacenes</label>
+            <ng-select
+              bindLabel="nombre"
+              bindValue="codigo"
+              [items]="almecenes"
+              [disabled]="true"
+              [(ngModel)]="ofheader.almacenId"
+              class="form-control p-0"
+              notFoundText="No resultados"
+              [clearable]="false"
+            >
+            </ng-select>
+          </div>
+
+          <div class="col-md-6">
+            <label> <i class="fa fa-calendar"></i> Fecha de Inicio</label>
+            <ejs-datepicker
+              [(ngModel)]="ofheader.fechaInicio"
+              [format]="'dd-MM-yyyy'"
+              [disabled]="true"
+            ></ejs-datepicker>
+          </div>
+
+          <div class="col-md-6">
+            <label> <i class="fa fa-calendar"></i> Fecha de Cierre</label>
+            <ejs-datepicker
+              [(ngModel)]="ofheader.fechaCierre"
+              [format]="'dd-MM-yyyy'"
+              [disabled]="true"
+            ></ejs-datepicker>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ngb-tabset *ngIf="articulo">
+  <ngb-tab>
+    <ng-template ngbTabTitle><b>Componentes</b></ng-template>
+    <ng-template ngbTabContent>
+      <div class="row">
+        <div class="col">
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-12 table-responsive">
+                  <table class="table table-hover table-sm">
+                    <thead>
+                      <tr>
+                        <th scope="col"></th>
+                        <th scope="col">Articulo</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Base</th>
+                        <th scope="col">Requerida</th>
+                        <th scope="col">Consumido</th>
+                        <th scope="col">Disponible</th>
+                        <th scope="col">Unidad</th>
+                        <th scope="col">Almacen</th>
+                        <th scope="col">Método</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      <tr *ngFor="let articulext of articulosExtras">
+                        <td>
+                          <button class="btn btn-sm btn-info m-1" *ngIf="ofheader.tipoId == ValidTipoOrden.ESPECIAL && !articulext.isRPC && ofheader.estadoId == ValidOrden.PLANIFICADA"
+                          (click)="openModalArticuloCambio(modalArticuloCambio,articulext)">
+                            <i class="fa fa-sm fa-exchange-alt"></i>
+                          </button>
+                          <button class="btn btn-sm btn-danger m-1" *ngIf="ofheader.tipoId == ValidTipoOrden.ESPECIAL && articulext.isRPC && ofheader.estadoId == ValidOrden.PLANIFICADA" (click)="onDeleteItem(articulext)">
+                            <i class="fa fa-sm fa-times"></i>
+                          </button>
+                        </td>
+                        <th style="font-size: 14px">
+                          {{ articulext.articulo }}
+                        </th>
+                        <td style="font-size: 14px">{{ articulext.nombre }}</td>
+
+                        <!-- <td>
+                                      <input type="text"
+                                      [readonly]="!articulext.isRPC"
+                                      [(ngModel)]="articulext.cantidadBase"
+                                      [ngClass]="{'form-control-plaintext': !articulext.isRPC, 'form-control': articulext.isRPC}">
+                                    </td> -->
+
+                        <td>{{ articulext.cantidadBase | number: "1.4-4" }}</td>
+                        <td>
+                          {{
+                            articulext.cantidadBase *
+                              ofheader.cantidadPlanificada | number: "1.4-4"
+                          }}
+                        </td>
+                        <td>{{ articulext.consumido }}</td>
+                        <td>{{ articulext.disponible }}</td>
+                        <td>{{ articulext.unidadMedida }}</td>
+                        <td>{{ articulext.almacenCodigoReferencia }}</td>
+                        <td>
+                          {{
+                            articulext.metodoEmision == "M"
+                              ? "Manual"
+                              : "Automático"
+                          }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div
+                  class="col-md-12 text-right"  *ngIf="MostrarBtnReproceso && ofheader.estadoId == ValidOrden.PLANIFICADA && ofheader.tipoId == ValidTipoOrden.ESPECIAL">
+                  <button class="btn btn-sm btn-info m-1"   (click)="openModal(modalArticulo)">
+                    <i class="fa fa-sm fa-plus"></i> Agregar articulo de
+                    reproceso
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </ngb-tab>
+
+  <ngb-tab>
+    <ng-template ngbTabTitle><b>Resumen</b></ng-template>
+    <ng-template ngbTabContent>
+      <div class="row" *ngIf="articulo">
+        <div class="col-6">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title font-weight-bold">Costos</h3>
+              <!-- <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> -->
+              <h6>Costo de componente de artículo real:</h6>
+              <h2>{{ ordenfabricacion.costoReal | currency }}</h2>
+              <!-- <h2>$25,550.49</h2> -->
+              <h6>Costo de componente de recurso real:</h6>
+              <h2>$0.00 RDP</h2>
+              <h6>Costo adicional real:</h6>
+              <h2>$0.00 RDP</h2>
+              <h6>Costo de producto real:</h6>
+              <h2>
+                {{ (ordenfabricacion.costoReal / ordenfabricacion.cantidad) *  ordenfabricacion.cantidadProducida | currency  }}
+              </h2>
+              <h6>Coste real de subproductos:</h6>
+              <h2>$0.00</h2>
+              <h6>Desviación total:</h6>
+              <h2>
+                {{ (ordenfabricacion.costoReal / ordenfabricacion.cantidad) * ordenfabricacion.cantidadProducida - ordenfabricacion.costoReal | currency }}
+              </h2>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title font-weight-bold">Cantidades</h3>
+              <!-- <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> -->
+              <h6>Cantidad planificada:</h6>
+              <h2>{{ ordenfabricacion.cantidad | number: "1.2-2" }}</h2>
+              <h6>Cantidad completada:</h6>
+              <h2>
+                {{ ordenfabricacion.cantidadProducida | number: "1.2-2" }}
+              </h2>
+              <h6>Cantidad rechazada</h6>
+              <h2>0.00</h2>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title font-weight-bold">Fechas</h3>
+              <!-- <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> -->
+              <h6>Fecha de finalización:</h6>
+              <h2>26/04/2018</h2>
+              <h6>Fecha de cierre real:</h6>
+              <h2>26/04/2018</h2>
+              <h6>Vencido</h6>
+              <h2>--/--/--</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </ngb-tab>
+</ngb-tabset>
+
+<div class="row" *ngIf="articulo && ofheader.estadoId < ValidOrden.PENDIENTECONSUMO"
+>
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col text-right">
+            <button class="btn btn-light m-1" routerLink="../" type="button">
+              <i class="fas fa-times"></i> Cancelar
+            </button>
+
+            <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="button" (click)="onSubmit()" >
+              <i class="fas fa-check"></i> Guardar
+            </button>
+
+            <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+              <span class="spinner-border spinner-border-sm"></span> Guardando
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #modalArticulo let-modal>
+  <div class="modal-header bg-dark">
+    <h4 class="modal-title text-white">Articulos para Reproceso</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')" >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-12" [hidden]="searching">
+        <div class="table-responsive" style="overflow-y: auto; height: 500px">
+          <table class="table table-sm">
+            <thead class="sticky-top">
+              <tr>
+                <th scope="col"></th>
+                <th scope="col">Articulo</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Almacen</th>
+                <th scope="col">Balance</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let art of articulosDeReproceso; let i = index">
+                <th style="font-size: 14px">
+                  <div class="custom-control custom-checkbox">
+                    <input type="checkbox" id="customCheckbox-{{ i }}" name="customCheck-{{ i }}" class="custom-control-input"  [(ngModel)]="art.isSelect"/>
+                    <label class="custom-control-label" for="customCheckbox-{{ i }}"></label>
+                  </div>
+                </th>
+                <th style="font-size: 14px">{{ art.codigoReferencia }}</th>
+                <td style="font-size: 14px">{{ art.nombre }}</td>
+                <td>
+                  <ng-select
+                    bindLabel="nombre"
+                    bindValue="codigo"
+                    [items]="almecenes"
+                    [(ngModel)]="art.almacenId"
+                    class="form-control p-0"
+                    notFoundText="No resultados"
+                    [clearable]="false"
+                    [readonly]="true">
+                  </ng-select>
+                </td>
+                <td>{{ art.balance | number: "1.4-4" }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <app-loading-listado [hidden]="!searching"></app-loading-listado>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')" > Cerrar</button>
+
+    <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="button" (click)="onSubmitReproceso()">
+      <i class="fas fa-check"></i> Agregar
+    </button>
+
+    <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button" >
+      <span class="spinner-border spinner-border-sm"></span> Agregando
+    </button>
+  </div>
+</ng-template>
+
+
+<ng-template #modalArticuloCambio let-modal>
+  <div class="modal-header bg-dark">
+    <h4 class="modal-title text-white">Articulos para Cambio</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')" >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+
+    <div class="row" *ngIf="cantidadArticuloDeCambio == 0 && searching">
+      <div class="col-12">
+        <h2>No hay articulos de cambio para este articulo.</h2>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12" [hidden]="searching">
+        <div class="table-responsive" style="overflow-y: auto; height: 500px">
+          <table class="table table-sm">
+            <thead class="sticky-top">
+              <tr>
+                <th scope="col"></th>
+                <th scope="col">Articulo</th>
+                <th scope="col">Nombre</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let art of articulosDeCambios; let i = index">
+                <th>
+                  <div class="custom-control custom-radio">
+                    <input type="radio" id="customRadio-{{ i }}" name="customRadio" class="custom-control-input"  [(ngModel)]="articulosDeCambiosSelect" [value]="art">
+                    <label class="custom-control-label" for="customRadio-{{ i }}"></label>
+                  </div>
+
+                </th>
+                <th style="font-size: 14px">{{ art.codigoReferencia }}</th>
+                <td style="font-size: 14px">{{ art.nombre }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <app-loading-listado [hidden]="!searching"></app-loading-listado>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')" > Cerrar</button>
+
+    <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="button" (click)="onSaveArticuloDeCambio()">
+      <i class="fas fa-check"></i> Agregar
+    </button>
+
+    <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button" >
+      <span class="spinner-border spinner-border-sm"></span> Agregando
+    </button>
+  </div>
+</ng-template>

@@ -10,7 +10,9 @@
         <div class="logo">
           <!--<span class="db"><img src="assets/images/logo-icon.png" alt="logo" /></span>-->
           <!-- <span class="db"><img src="https://www.exentia.com.mx/wp-content/uploads/2018/04/cloud.png" style="width:140px" alt="logo" /></span> -->
-          <h5 class="font-medium m-b-20">Ingresa a <b class="text-success">Nutriciosa Admin</b></h5>
+          <h5 class="font-medium m-b-20">Ingresa con tus credenciales
+            <!-- <b class="text-success">Nutriciosa Admin</b> -->
+          </h5>
         </div>
         <div *ngIf="error" class="alert alert-danger"> <i class="fa fa-info-circle"></i> {{ error }}</div>
         <!-- Form -->
@@ -49,7 +51,8 @@
               </div>
               <div class="form-group text-center">
                 <div class="col-xs-12 p-b-20">
-                  <button class="btn btn-block btn-lg btn-success" type="submit" [disabled]="loading || loginForm.invalid">
+                  <button class="btn btn-block btn-lg btn-success" type="submit"
+                    [disabled]="loading || loginForm.invalid">
                     Ingresar <i *ngIf="loading && submitted" class="fa fa-spin fa-spinner"></i>
                   </button>
                 </div>
@@ -108,3 +111,69 @@
     </div>
   </div>
 </div>
+
+
+<ng-template #modalChangePw let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title font-weight-bold" id="modal-basic-title">Actualizar contraseña</h4>
+    <!-- <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">&times;</span>
+      </button> -->
+  </div>
+  <div class="modal-body">
+
+    <div class="row">
+      <div class="col text-center">
+        <img src="assets/images/alert/undraw_secure_login_pdn4.svg" width="200px" alt="">
+        <h6 class="text-info mt-4">Debes de actualizar tu contraseña en este momento, para brindarte una mayor seguridad.
+        </h6>
+        <hr>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col">
+
+        <form [formGroup]="FormularioChangePassword" (ngSubmit)="onSubmitChangePassword()">
+          <!-- <div class="form-group col-md-10">
+              <label for="password"> <i class="fa fa-key"></i> Contraseña actual</label>
+              <input formControlName="passwordActual" type="password" name="passwordActual"
+                  autocomplete="off"
+                  [ngClass]="{'is-invalid' : submittedPassword && fC.passwordActual.errors,  'form-control':true  }">
+              <div class="invalid-feedback" *ngIf="submittedPassword && fC.passwordActual.errors">
+                  <div *ngIf="fC.passwordActual.errors.required">El campo es obligatorio</div>
+              </div>
+          </div> -->
+          <div class="form-group col-md-12">
+            <label for="password"> <i class="fa fa-key"></i> Nueva contraseña</label>
+            <input formControlName="password" type="password" name="password"
+              [ngClass]="{'is-invalid' : submittedPassword && fC.password.errors,  'form-control':true  }">
+            <div class="invalid-feedback" *ngIf="submittedPassword && fC.password.errors">
+              <div *ngIf="fC.password.errors.required">El campo es obligatorio</div>
+              <div *ngIf="fC.password.errors.minlength">Mínimo 8 dígitos</div>
+            </div>
+          </div>
+          <div class="form-group col-md-12">
+            <label for="password"> <i class="fa fa-key"></i>Confirma contraseña</label>
+            <input formControlName="passwordConfirm" type="password" name="passwordConfirm"
+              [ngClass]="{'is-invalid' : submittedPassword && fC.passwordConfirm.errors,  'form-control':true  }">
+            <div class="invalid-feedback" *ngIf="submittedPassword && fC.passwordConfirm.errors">
+              <div *ngIf="fC.passwordConfirm.errors.required  ">Confirma tu contraseña</div>
+              <div *ngIf="fC.passwordConfirm.errors.mustMatch  ">Las contraseña deben ser iguales</div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+
+  </div>
+  <div class="modal-footer">
+    <!-- <button type="button" class="btn btn-secondary" (click)="modal.close('Save click')">Cancelar</button> -->
+    <button class="btn w-100  text-white" type="submit" style="background-color: rgb(0, 191, 166);"
+      (click)="onSubmitChangePassword()" [disabled]="loadingButtonCambiar">
+      Actualizar
+      <i *ngIf="loadingButtonCambiar && submittedPassword" class="fa fa-spin fa-spinner"></i>
+    </button>
+  </div>
+</ng-template>

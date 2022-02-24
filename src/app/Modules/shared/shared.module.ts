@@ -1,3 +1,4 @@
+import { LoadingRealTimeComponent } from './../../shared/loading-realtime/loading-realtime.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 //import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 //import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -12,11 +13,13 @@ import { NgxPermissionsModule } from 'ngx-permissions';
 import { NgxMaskModule, IConfig } from 'ngx-mask'
 import { FilterPipe } from 'src/app/shared/pipes/filter.pipe';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
+import { ErrorPermissionDeniedComponent } from 'src/app/shared/error-permission-denied/error-permission-denied.component';
+import { FilterFuncPipe } from 'src/app/shared/pipes/filterFunc.pipe';
 
 export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
 
 @NgModule({
-    declarations: [LoadingListadoComponent, ErrorConnectionInternetComponent, FilterPipe],
+    declarations: [LoadingListadoComponent, LoadingRealTimeComponent, ErrorConnectionInternetComponent, ErrorPermissionDeniedComponent , FilterPipe, FilterFuncPipe],
     imports: [
         NgxPermissionsModule.forChild(),
         NgSelectModule,
@@ -36,8 +39,11 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
         DatePickerModule,
         NgbPaginationModule,
         LoadingListadoComponent,
+        LoadingRealTimeComponent,
         ErrorConnectionInternetComponent,
+        ErrorPermissionDeniedComponent,
         FilterPipe,
+        FilterFuncPipe,
         PerfectScrollbarModule
     ]
 

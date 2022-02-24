@@ -1,0 +1,106 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-3 col-lg-3 col-12">
+            <h4 class="card-title font-weight-bold">Visitas Clientes</h4>
+          </div>
+          <div class="col-md-9 col-lg-9 col-12 text-right">
+            <p class="badge badge-pill badge-danger"
+               style="font-size: 15px;"
+             *ngIf="!isnotNecesaryFieldsComplete">
+              Debe selecionar al menos una ruta de venta</p>
+          </div>
+        </div>
+
+        <app-loading-listado [hidden]="!cargando"></app-loading-listado>
+
+        <div class="form_Visitas" [hidden]="cargando" [style.opacity]="cargando ? '0' : '1'"
+          [style.visibility]="cargando ? 'hidden' : 'visible'">
+
+          <form class="form-row m-t-40" [formGroup]="FormVisitas" (ngSubmit)="onSubmit()">
+
+            <div class="form-group col-md-6">
+              <label for="example-email">Tipo de Ruta</label>
+              <ng-select [items]="tiposRuta" bindLabel="nombre" bindValue="codigo" (change)="onChangeTipoRuta($event)"
+                placeholder="Seleccionar tipo ruta" [loading]="cargandoTiposRuta" [clearable]="false"
+                [ngClass]="{'form-control border-danger p-0' : submitted && f.frecuenciaVisitaId.errors }"
+                notFoundText="No resultados" formControlName="tipoRutaId">
+              </ng-select>
+              <div *ngIf="submitted && f.tipoRutaId.errors" class="text-danger small animated animated--fade-in">
+                <div *ngIf="f.tipoRutaId.errors.required  ">El campo es
+                  obligatorio</div>
+              </div>
+            </div>
+
+            <div class="form-group col-md-6">
+              <label for="example-email"> Ruta</label>
+              <ng-select [items]="rutas" bindLabel="nombre" bindValue="codigo" placeholder="Seleccionar  ruta"
+                [loading]="cargadoRutas" [clearable]="false"
+                [ngClass]="{'form-control border-danger p-0' : submitted && f.rutaId.errors }"
+                notFoundText="No resultados" formControlName="rutaId">
+              </ng-select>
+              <div *ngIf="submitted && f.rutaId.errors" class="text-danger small animated animated--fade-in">
+                <div *ngIf="f.rutaId.errors.required  ">El campo es
+                  obligatorio</div>
+              </div>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="example-email">Tipo de Visita</label>
+              <ng-select [items]="frecuenciaVisitas" bindLabel="nombre" bindValue="codigo"
+                placeholder="Seleccionar tipo" [loading]="cargandoFVisitasCombo" [clearable]="false"
+                [ngClass]="{'form-control border-danger p-0' : submitted && f.frecuenciaVisitaId.errors }"
+                notFoundText="No resultados" formControlName="frecuenciaVisitaId">
+              </ng-select>
+              <div *ngIf="submitted && f.frecuenciaVisitaId.errors"
+                class="text-danger small animated animated--fade-in">
+                <div *ngIf="f.frecuenciaVisitaId.errors.required  ">El campo es
+                  obligatorio</div>
+              </div>
+            </div>
+
+
+            <div class="form-group col-md-12">
+              <label>Dia de Semana</label>
+              <br>
+              <span class="text_seleccione">Marque los dias de visita</span>
+              <br>
+              <div class="btn-group btn-group-toggle col-md-12 custom-btns">
+                <label ngbButtonLabel class=" btn-outline-dark" *ngFor="let dia of diaSemana; let i = index">
+                  <input ngbButton type="checkbox" [(ngModel)]="dia.select" [ngModelOptions]="{standalone: true}">
+                  <span style="font-weight: 500;">{{diasSigla[dia.dia]}}</span>
+                  <br>
+                  {{ dia.nombre }}
+                </label>
+              </div>
+            </div>
+
+
+
+            <div class="form-group text-right col-md-12">
+              <hr />
+
+              <button class="btn btn-light m-1" routerLink="../" type="button">
+                <i class="fas fa-times"></i> Cancelar
+              </button>
+
+              <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+                <i class="fas fa-check"></i> Guardar
+              </button>
+       
+
+              <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                <span class="spinner-border spinner-border-sm"></span> Guardando
+              </button>
+            </div>
+
+          </form>
+        </div>
+
+
+      </div>
+
+    </div>
+  </div>
+</div>

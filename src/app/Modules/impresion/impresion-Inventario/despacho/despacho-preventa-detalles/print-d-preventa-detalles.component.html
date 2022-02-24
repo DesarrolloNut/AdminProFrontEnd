@@ -1,0 +1,90 @@
+<div style="width: 100%;">
+
+    <div class="container-fluid">
+
+   <div class="row m-4"   *ngIf="despachoPreventaDetalles">
+
+        <div class="col-md-12   text-center">
+              <h4 class="font-weight-bold"> Industria la Nutriciosa </h4>
+
+
+          </div>
+          <div class="col-md-12 mt-5 mb-2">
+            <h4 class=""> <span class="font-weight-bold">Distribuidor:</span>  {{despachoPreventaSeleccionado.distribuidor }}</h4>
+            <h4 class=""> <span class="font-weight-bold"> Despachador: </span> {{this.authService.tokenDecoded.given_name }}</h4>
+            <h4 class=""> <span class="font-weight-bold"> Almacen Desde: </span> {{despachoPreventaSeleccionado.almacen_Origen }}</h4>
+            <h4 class=""> <span class="font-weight-bold"> Almacen Hasta: </span> {{despachoPreventaSeleccionado.almacen_Destino}}</h4>
+            <h4 class=""> <span class="font-weight-bold"> Fecha: </span> {{despachoPreventaSeleccionado.fechaEntrega | date:'dd/MM/yy'}}</h4>
+
+
+
+
+        </div>
+          <table class="table table-sm  m-2 ">
+            <thead>
+              <tr>
+                <th scope="col">Codigo</th>
+                <th scope="col">Descripcion</th>
+                <th scope="col">Unidad de medida</th>
+                <!-- <th scope="col">Lote</th> -->
+                <!-- <th scope="col">Piezas</th> -->
+                <th scope="col">Cantidad</th>
+                <th scope="col"> </th>
+                <th scope="col"> </th>
+                <th scope="col">Despachado</th>
+                <th scope="col"> </th>
+                <!-- <th scope="col">Real</th> -->
+              </tr>
+            </thead>
+            <tbody>
+              <tr  *ngFor="let item of despachoPreventaDetalles" >
+
+                  <td>
+                      <span> {{item.codigoArticulo}}</span>
+                  </td>
+
+                  <td>
+                      <span> {{item.articulo}}</span>
+                  </td>
+
+                  <td>
+                    <span> {{item.unidadMedida}}</span>
+                  </td>
+
+                  <!-- <td>
+                  <span> {{item.lote}}</span>
+                  </td> -->
+<!--
+                <td>
+                  <span>   {{(item.pedido / item.peso) | number : '1.1-2'}}</span>
+              </td> -->
+                  <td>
+                    <span>{{item.pedido}} </span>
+                  </td>
+                  <td>
+                    <span></span>
+                  </td>
+                  <td>
+                    <span></span>
+                  </td>
+                 <td>
+                  <span> {{item.despacho}}</span>
+                </td>
+
+              <td>
+                <span></span>
+            </td>
+                <!-- <td>
+                  <span></span>
+              </td> -->
+
+              </tr>
+
+            </tbody>
+          </table>
+
+
+          </div>
+    </div>
+
+</div>

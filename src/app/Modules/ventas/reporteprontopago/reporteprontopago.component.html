@@ -1,0 +1,226 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-md-6 align-middle">
+                        <h4 class="card-title">Reporte Pronto Pago</h4>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <button (click)="exportarReporteExcel()" *ngIf="data.length > 0 && !btnExportarCargando "
+                            type="button" class="btn btn-success">
+                            <i class="fa fa-file-excel"></i>
+                            Exportar
+                        </button>
+
+                        <!-- boton cargando -->
+                        <button *ngIf="btnExportarCargando" disabled class="btn btn-success" type="button">
+                            <span class="spinner-border spinner-border-sm"></span> Exportando
+                        </button>
+
+                    </div>
+                    <div class="col-md-12 p-2">
+                        <div class="row">
+
+                            <div class="form-group col-md-6">
+                                <label> <i class="fa fa-calendar"></i> Fecha desde</label>
+                                <ejs-datepicker [(ngModel)]="desde" (change)="getData()" [format]="'yyyy-MM-dd'">
+                                </ejs-datepicker>
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label> <i class="fa fa-calendar"></i> Fecha hasta</label>
+                                <ejs-datepicker [(ngModel)]="hasta" (change)="getData()" [format]="'yyyy-MM-dd'">
+                                </ejs-datepicker>
+                            </div>
+
+
+                        </div>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <label for="search" class="input-group-text bg-white">
+                                    <span class="bg-white" style="border-right:none">
+                                        <i class="ti-search"></i>
+                                    </span>
+                                </label>
+                            </div>
+                            <input [(ngModel)]="Search" (keyup)="getData()" type="text"
+                                style="border-left:none !important;" class="form-control" placeholder="Buscar">
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 no-wrap v-middle">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Factura</th>
+                                <th>Estados</th>
+                                <th>Importe</th>
+                                <th>Pendiente</th>
+                                <th>Ultimo Pago</th>
+                                <th>Monto Pago</th>
+                                <th>Fechas</th>
+                                <!-- <th>Estado</th> -->
+                            </tr>
+                        </thead>
+                        <tbody [hidden]="Cargando">
+
+                            <tr *ngFor="let item of data">
+                                <!-- <td><span class="badge badge-light text-info ">{{item.id}}</span></td> -->
+                                <td>
+                                    <span class="small"> {{item.cliente}} | {{item.cardCode}}</span>
+                                </td>
+                                <td>
+                                    <span class="small"> {{item.docNum}} | NCF : {{item.ncfafectado}}</span>
+                                </td>
+                                <td>
+                                    <ng-template [ngIf]="item.procesada" [ngIfElse]="NoProcesada">
+                                        <small class="badge badge-success">
+                                            <i class="fa fa-check"></i> Procesada
+                                        </small>
+                                    </ng-template>
+
+                                    <ng-template #NoProcesada>
+                                        <small class="badge badge-danger">
+                                            <i class="fa fa-times"></i> Sin procesar
+                                        </small>
+                                    </ng-template>
+                                    |
+                                    <ng-template [ngIf]="item.reconciliada" [ngIfElse]="NoReconciliada">
+                                        <small class="badge badge-success">
+                                            <i class="fa fa-check"></i> Reconciliada
+                                        </small>
+                                    </ng-template>
+
+                                    <ng-template #NoReconciliada>
+                                        <small class="badge badge-danger">
+                                            <i class="fa fa-times"></i> Sin reconciliar
+                                        </small>
+                                    </ng-template>
+                                </td>
+
+                                <!-- <td>
+                                    <div class="d-flex align-items-center">
+
+                                        <i class="fa fa-user fa-2x text-light"></i>
+
+                                        <div _ngcontent-kgy-c224="" class="ml-3">
+                                            <p class="font-bold mb-0">
+                                                <span> {{item.cliente | titlecase }}</span>
+                                            </p>
+                                            <small class="text-info">
+                                                <i class="fa fa-id-card"></i> {{item.cardCode }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </td> -->
+                                <!-- <td>
+                                    <div class="d-flex align-items-center">
+
+                                        <i class="fa fa-file-alt fa-2x text-light"></i>
+
+                                        <div _ngcontent-kgy-c224="" class="ml-3">
+                                            <p class="font-bold mb-0">
+                                                <span> {{item.docNum }}</span>
+                                                <span *ngIf="item.ncfafectado"> (NCF: {{item.ncfafectado }})</span>
+                                            </p>
+                                            <small class="text-info">
+                                                Fecha: <i class="fa fa-calendar"></i> {{item.fechaFactura | date:
+                                                'yyyy-MM-dd'}} |
+                                            </small>
+                                            <small class="text-danger">
+                                                Vence: <i class="fa fa-calendar"></i> {{item.fechaVenceFactura | date:
+                                                'yyyy-MM-dd'}}
+                                            </small>
+                                            <br>
+
+                                            <ng-template [ngIf]="item.procesada" [ngIfElse]="NoProcesada">
+                                                <small class="badge badge-success">
+                                                    <i class="fa fa-check"></i> Procesada
+                                                </small>
+                                            </ng-template>
+
+                                            <ng-template #NoProcesada>
+                                                <small class="badge badge-danger">
+                                                    <i class="fa fa-times"></i> Sin procesar
+                                                </small>
+                                            </ng-template>
+                                            |
+                                            <ng-template [ngIf]="item.reconciliada" [ngIfElse]="NoReconciliada">
+                                                <small class="badge badge-success">
+                                                    <i class="fa fa-check"></i> Reconciliada
+                                                </small>
+                                            </ng-template>
+
+                                            <ng-template #NoReconciliada>
+                                                <small class="badge badge-danger">
+                                                    <i class="fa fa-times"></i> Sin reconciliar
+                                                </small>
+                                            </ng-template>
+                                        </div>
+                                    </div>
+                                </td> -->
+                                <td>
+                                    <span> {{item.importe}}</span>
+                                </td>
+                                <td>
+                                    <span> {{item.pendiente}}</span>
+                                </td>
+
+                                <td>
+                                    <span> {{item.ultimoPago | date: 'yyyy-MM-dd'}}</span>
+                                </td>
+                                <td>
+                                    <span> {{item.montoPago}}</span>
+                                </td>
+                                <td>
+                                    <span class="small">
+                                        Fecha: <i class="fa fa-calendar"></i> {{item.fechaFactura | date:
+                                        'yyyy-MM-dd'}} |
+                                        Vence: <i class="fa fa-calendar"></i> {{item.fechaVenceFactura
+                                        | date:
+                                        'yyyy-MM-dd'}}</span>
+                                </td>
+
+                                <td>
+                                    <button   class="btn btn-sm btn-info"
+                                        type="button" (click)="enviarEmailCliente(item)">
+                                        <i class="fa fa-sm fa-envelope"></i>
+                                    </button>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+
+
+                <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+
+                <div class="row ">
+                    <div class="col-md-8 col-xs-12 ">
+                        <ngb-pagination [collectionSize]="paginaTotalRecords" [(page)]="paginaNumeroActual"
+                            [pageSize]="paginaSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="getData()">
+                        </ngb-pagination>
+                    </div>
+
+                    <div class="col-md-4 text-right d-none d-md-block  ">
+                        <select class="form-control d-block" name="paginaSize" [(ngModel)]="paginaSize"
+                            (change)="getData()">
+                            <option [ngValue]="5">5 registro por pagina</option>
+                            <option [ngValue]="10">10 registro por pagina</option>
+                            <option [ngValue]="15">15 registro por pagina</option>
+                        </select>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>

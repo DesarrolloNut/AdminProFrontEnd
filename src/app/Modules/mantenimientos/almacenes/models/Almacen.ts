@@ -8,6 +8,7 @@ export class Almacen {
     }
     id: number;
     nombre: string;
+    codigoRefencia: string;
     descripcion: string
     estadoID: number
     companiaID: number

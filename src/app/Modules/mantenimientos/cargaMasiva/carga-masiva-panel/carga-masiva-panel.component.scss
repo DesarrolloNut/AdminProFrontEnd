@@ -1,0 +1,47 @@
+span {
+    font-size: 15px;
+  }
+  
+  a {
+    text-decoration: none;
+    color: #0062cc;
+    border-bottom: 2px solid #0062cc;
+  }
+  
+  .box {
+    padding: 60px 0px;
+  }
+  
+  .box-part {
+    background: #FFF;
+    border-radius: 0;
+    padding: 20px 5px;
+    margin: 30px 0px;
+  }
+  
+  .text {
+    margin: 20px 0px;
+  }
+  
+  .fa {
+    color: #4183D7;
+  }
+  ::ng-deep .myCustomModalClass .modal-dialog {
+    max-width: 90%;
+    width: 90%;
+  }
+  .circulo {
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    border-radius: 50%;
+  }
+  
+
+  .customThead{
+    background: white !important;
+    color: #676767 !important;
+  }
+  .customTh{
+    padding: 10px;
+  }

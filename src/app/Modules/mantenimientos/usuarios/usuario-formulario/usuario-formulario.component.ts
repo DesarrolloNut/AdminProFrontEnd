@@ -11,6 +11,8 @@ import { cedulaestructura } from 'src/app/shared/validators/cedula-estructura.va
 import { ParametrosCita } from 'src/app/Modules/turno/models/ParametrosCita';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { Cliente } from '../../clientes/models/Cliente';
+import { DualListComponent } from 'angular-dual-listbox';
+import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-usuario-formulario',
@@ -20,8 +22,15 @@ import { Cliente } from '../../clientes/models/Cliente';
 export class UsuarioFormularioComponent implements OnInit {
 
 
+  loadingButtonCambiar = false;
+  FormularioChangePassword: FormGroup;
+  submittedPassword = false;
+  closeResult: string;
+
 
   sucursales: ComboBox[] = [];
+  loadingSucursales = false;
+
   roles: ComboBox[] = [];
   documentos: ComboBox[];
 
@@ -31,34 +40,114 @@ export class UsuarioFormularioComponent implements OnInit {
   btnGuardarCargando = false;
   actualizandoUsuario = false;
 
-  loadingSucursales = false;
   loadingRoles = false;
   loadingDocumentos = false;
   buscandoDocumento: boolean;
   supervisores: ComboBox[];
   loadingUsuarios: boolean;
 
+
+  // Dual List options
+  tab = 1;
+  keepSorted = true;
+  key: string;
+  display: string;
+  filter = true;
+  source: Array<any>;
+  confirmed: Array<any> = [];
+  userAdd = '';
+  disabled = false;
+
+  sourceLeft = true;
+  // format: any = DualListComponent.DEFAULT_FORMAT;
+  format = {
+    add: 'Agregar', remove: 'Remover', all: 'Seleccionar Todos', none: 'Deseleccionar',
+    direction: DualListComponent.LTR, draggable: true, locale: 'da'
+  };
+
+  loadingNiveles: boolean;
+  usuarioID: number;
+  loadingNivelesSeleccionados: boolean;
+  guardandoNivelesAsignados: boolean;
+  searchText: string;
+  loadingRutas: boolean;
+  MostrarRutas: boolean;
+  rutas: ComboBox[];
+  departamentos: ComboBox[];
+  loadingDepartamentos: boolean;
+
+
+
+  //VARIABLES | CONFIGURACIONES
+  loadingSucursalByUsuario =false;
+  guardandoSucursalesAsignadas: boolean;
+
+  loadingClienteTipo          =false;
+  guardandoClienteTiposAsignados: boolean;
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
     private httpService: BackendService,
     private router: Router,
+    private modalService: NgbModal,
+    private auth: AuthenticationService,
     private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
-    let usuarioID = Number(this.route.snapshot.paramMap.get('id'));
+    this.usuarioID = Number(this.route.snapshot.paramMap.get('id'));
 
-    if (usuarioID > 0) {
-      this.getUsuarioByID(usuarioID);
+    if (this.usuarioID > 0) {
+      this.getUsuarioByID(this.usuarioID);
       this.actualizandoUsuario = true;
+      this.CreateFormChangePassword();
     }
 
     this.getDocumentosTipo();
     this.getUsuariosSupervisores();
     this.getRoles();
     this.getSucursales();
+    this.getDepartamentos();
 
     this.CreateForm();
+
+    this.configDualList();
+  }
+
+  private CreateFormChangePassword() {
+
+    this.FormularioChangePassword = this.formBuilder.group({
+      password: [null, [Validators.required]],
+      passwordConfirm: [null, [Validators.required]],
+      userName: [this.auth.tokenDecoded.unique_name]
+    }, {
+      validator: this.MustMatch('password', 'passwordConfirm')
+    });
+
+  }
+
+  MustMatch(controlName: string, matchingControlName: string) {
+    return (formGroup: FormGroup) => {
+      const control = formGroup.controls[controlName];
+      const matchingControl = formGroup.controls[matchingControlName];
+
+      if (matchingControl.errors && !matchingControl.errors.mustMatch) {
+        // return if another validator has already found an error on the matchingControl
+        return;
+      }
+
+      // set error on matchingControl if validation fails
+      if (control.value !== matchingControl.value) {
+        matchingControl.setErrors({ mustMatch: true });
+      } else {
+        matchingControl.setErrors(null);
+      }
+    };
+  }
+
+  configDualList() {
+    this.key = 'codigo';
+    this.display = 'nombre';
+    this.keepSorted = true;
   }
 
   private CreateForm() {
@@ -83,7 +172,13 @@ export class UsuarioFormularioComponent implements OnInit {
       sucursalID: [null, [Validators.required]],
       telefonoExtension: [null, [Validators.required]],
       codigoReferencia: [null, [Validators.required]],
-      idUsuarioSupervisor: [null, [Validators.required]],
+      idUsuarioSupervisor: [0,],
+      rutaId: [0, [Validators.required]],
+      departamentoID: [null, [Validators.required]],
+      descuentoVenta: [0,],
+      descuentoCompra: [0,],
+      ipEquipo: [null,],
+      puertoEquipo: [null,],
     },
       {
         validator: cedulaestructura('documento', 'documentoTipoID')
@@ -91,7 +186,59 @@ export class UsuarioFormularioComponent implements OnInit {
   }
 
   get f() { return this.Formulario.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
+  get fC() { return this.FormularioChangePassword.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
 
+  onSubmitChangePassword() {
+    this.submittedPassword = true;
+    this.fC.userName.setValue(this.auth.tokenDecoded.unique_name);
+    console.log(this.FormularioChangePassword.controls);
+    if (this.FormularioChangePassword.invalid) {
+      return;
+    }
+    console.log('ready');
+    this.changePassword();
+  }
+
+  changePassword() {
+
+    let param = { "UsuarioId": this.usuarioID, "PasswordNueva": this.fC.passwordConfirm.value, };
+
+    this.loadingButtonCambiar = true;
+    this.httpService.DoPostAny<any>(DataApi.Usuario,
+      'ResetPassword', param).subscribe(response => {
+        this.loadingButtonCambiar = false;
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+        } else {
+          this.modalService.dismissAll();
+          this.FormularioChangePassword.reset();
+
+          this.submittedPassword = false;
+          this.toastService.success("Realizado", "OK");
+
+        }
+      }, error => {
+        this.loadingButtonCambiar = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
+  open1(content1) {
+    this.modalService.open(content1, { ariaLabelledBy: 'modal-basic-title' }).result.then((result) => {
+      this.closeResult = `Closed with: ${result}`;
+    }, (reason) => {
+      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
+  }
+  private getDismissReason(reason: any): string {
+    if (reason === ModalDismissReasons.ESC) {
+      return 'by pressing ESC';
+    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+      return 'by clicking on a backdrop';
+    } else {
+      return `with: ${reason}`;
+    }
+  }
 
   getUsuarioByID(usuarioID: number) {
     this.Cargando = true;
@@ -103,11 +250,12 @@ export class UsuarioFormularioComponent implements OnInit {
           //validar que existe
           if (response != null && response.records != null && response.records.length > 0) {
 
-            let usuario = response.records[0]
+            let usuario = response.records[0];
             delete usuario.passwordHash;
             delete usuario.passwordSalt;
 
             this.Formulario.setValue(usuario);
+            this.getRutasbyRol(usuario.rolID);
           } else {
             this.toastService.warning("Usuario no encontrado");
             this.router.navigateByUrl('/mantenimientos/usuario');
@@ -181,7 +329,7 @@ export class UsuarioFormularioComponent implements OnInit {
         this.toastService.error("No se pudo obtener los supervisores", "Error conexion al servidor");
 
         setTimeout(() => {
-          this.getUsuariosSupervisores()
+          this.getUsuariosSupervisores();
         }, 1000);
 
       });
@@ -204,7 +352,7 @@ export class UsuarioFormularioComponent implements OnInit {
         this.toastService.error("No se pudo obtener los documentos", "Error conexion al servidor");
 
         setTimeout(() => {
-          this.getDocumentosTipo()
+          this.getDocumentosTipo();
         }, 1000);
 
       });
@@ -222,11 +370,30 @@ export class UsuarioFormularioComponent implements OnInit {
         }
         this.loadingRoles = false;
       }, error => {
-        this.getRoles();
         this.loadingRoles = false;
         this.toastService.error("No se pudo obtener los roles", "Error conexion al servidor");
         setTimeout(() => {
           this.getRoles();
+        }, 1000);
+      });
+  }
+
+  getDepartamentos() {
+    this.loadingDepartamentos = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetDepartamentos", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.departamentos = response.records;
+        }
+        this.loadingDepartamentos = false;
+      }, error => {
+        this.loadingDepartamentos = false;
+        this.toastService.error("No se pudo obtener los departamentos", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getDepartamentos();
         }, 1000);
       });
   }
@@ -237,7 +404,7 @@ export class UsuarioFormularioComponent implements OnInit {
     let parametros: Parametro[] = [
       {
         key: "CompaniaID",
-        // value: this.authService.tokenDecoded.primarygroupsid 
+        // value: this.authService.tokenDecoded.primarygroupsid
         value: 0
       }
     ];
@@ -293,7 +460,7 @@ export class UsuarioFormularioComponent implements OnInit {
 
             this.f.nombres.setValue(cliente.nombres);
             this.f.apellidos.setValue(cliente.apellidos);
-            this.f.celular.setValue(cliente.celular);
+            // this.f.celular.setValue(cliente.celular);
 
           } else {
             this.toastService.warning("Datos no encontrados");
@@ -315,8 +482,307 @@ export class UsuarioFormularioComponent implements OnInit {
   }
 
 
-  openModalCambiaContrasena() {
+
+  getRutasbyRol(RolId: number = 0) {
+    this.loadingRutas = true;
+    this.MostrarRutas = false;
+    let parametros: Parametro[] = [{ key: "RolId", value: RolId == 0 ? RolId : this.f.rolID.value }];
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetRutasByRolComboBox", parametros).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+          this.MostrarRutas = false;
+        } else {
+          this.rutas = response.records;
+          if (response.records.length > 0) {
+            this.MostrarRutas = true;
+
+          }
+          // console.table(this.confirmed)
+        }
+
+        this.loadingRutas = false;
+      }, error => {
+        this.loadingRutas = false;
+        this.MostrarRutas = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
+  VerificarRutaEnUso(ruta) {
+
+    let RutaID: number = Number(ruta.codigo);
+
+    this.httpService.DoPostAny<any>(DataApi.Ruta,
+      "GetDisponiblesRutas", RutaID).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          //validar que existe
+          if (!response.ok) {
+            this.toastService.error(response.errores[0]);
+            console.error(response.errores[0]);
+
+          } else {
+            if (response.records.length > 0) {
+              let usuario = response.records[0];
+              this.f.rutaId.setValue(null);
+              this.toastService.error("Lo sentimos, esta ruta esta en uso. Por el usuario: " + usuario.userName + " y la ruta: " + usuario.rutaId);
+            }
+          }
+        }
+
+      }, error => {
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
+
+
+
+
+
+  //CONFIGURACIONES
+  //CONFIGURACIONES | NIVEL AUTORIZACION
+  openModalNivelAutorizacion(content) {
+    this.getNivelesAutorizacion();
+    this.getNivelesAutorizacionPorUsuario();
+    this.modalService.open(content, { size: 'lg', backdrop: "static", });
+  }
+
+  getNivelesAutorizacion() {
+    this.loadingNiveles = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetNivelAutorizacionComboBox", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+          this.source = response.records;
+          console.table(this.source);
+        }
+
+        this.loadingNiveles = false;
+      }, error => {
+        this.loadingNiveles = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
+
+  getNivelesAutorizacionPorUsuario() {
+    this.loadingNiveles = true;
+    let parametros: Parametro[] = [{ key: "usuarioID", value: this.usuarioID }];
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetNivelAutorizacionPorUsuarioComboBox", parametros).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+          this.confirmed = response.records;
+          console.table(this.confirmed);
+        }
+
+        this.loadingNiveles = false;
+      }, error => {
+        this.loadingNiveles = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
+  guardarNivelesAutorizacionSeleccionados() {
+
+    // if (this.confirmed.length < 1) {
+    //   this.toastService.warning("Selecciona uno o más");
+    //   return;
+    // }
+
+    let param = this.confirmed.map(x => { return { "UsuarioID": this.usuarioID, "NivelAutorizacionID": x.codigo }; });
+    console.table(param);
+    this.guardandoNivelesAsignados = true;
+    this.httpService.DoPostAny<any>(DataApi.NivelAutorizacionModulo,
+      "RegistrarNivelAutorizacionAUsario", param).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+          this.modalService.dismissAll();
+          this.toastService.success("Realizado", "OK");
+        }
+        this.guardandoNivelesAsignados = false;
+      }, error => {
+        this.guardandoNivelesAsignados = false;
+        this.toastService.error("No se pudo guardar", "Error conexion al servidor");
+        console.error(error);
+      });
 
   }
 
+
+
+
+
+ //CONFIGURACIONES | ASIGNACION SUCURSALES
+
+
+  openModalAsignacionSucursales(content) {
+    this.source=this.sucursales;
+    this.getSucursalByUsuarioId();
+    this.modalService.open(content, { size: 'lg', backdrop: "static", });
+  }
+  getSucursalByUsuarioId() {
+
+    let parametros: Parametro[] = [
+      { key: "UsuarioId", value: this.usuarioID },
+    ]
+
+    this.loadingSucursalByUsuario = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetSucursalesByUsuarioId", parametros).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+           this.confirmed=response.records;
+
+
+        }
+        this.loadingSucursalByUsuario = false;
+      }, error => {
+        this.loadingSucursalByUsuario = false;
+        this.toastService.error("No se pudo obtener las sucursales", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getSucursalByUsuarioId()
+        }, 1000);
+
+      });
+  }
+  guardarAsignacionSucursalesSeleccionadas() {
+
+    // if (this.confirmed.length < 1) {
+    //   this.toastService.warning("Selecciona uno o más");
+    //   return;
+    // }
+
+    let param = this.confirmed.map(x => { return { "UsuarioID": this.usuarioID, "SucursalID": x.codigo }; });
+    console.table(param);
+    this.guardandoSucursalesAsignadas = true;
+    this.httpService.DoPostAny<any>(DataApi.Usuario,
+      "AsignaSucursalesAUsuario", param).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+          this.modalService.dismissAll();
+          this.toastService.success("Realizado", "OK");
+        }
+        this.guardandoSucursalesAsignadas = false;
+      }, error => {
+        this.guardandoSucursalesAsignadas = false;
+        this.toastService.error("No se pudo guardar", "Error conexion al servidor");
+        console.error(error);
+      });
+
+  }
+
+
+
+
+
+ //CONFIGURACIONES | ASIGNACION CLIENTE TIPO
+ getClienteTipos() {
+
+  this.loadingClienteTipo = true;
+
+
+
+  this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+    "GetTipoClienteComboBox",null).subscribe(response => {
+
+      if (!response.ok) {
+        this.toastService.error(response.errores[0]);
+      } else {
+        this.source = response.records;
+      }
+      this.loadingClienteTipo = false;
+    }, error => {
+      console.log(error)
+      this.loadingClienteTipo = false;
+      this.toastService.error("No se pudo obtener los tipos de cliente", "Error conexion al servidor");
+
+      setTimeout(() => {
+        this.getClienteTipos();
+      }, 1000);
+
+    });
 }
+  getClienteTiposByUsuario() {
+
+    this.loadingClienteTipo = true;
+
+
+    let parametros: Parametro[] = [{ key: "usuario", value: this.usuarioID}]
+
+    this.httpService.DoPostAny<ComboBox>(DataApi.ComboBox,
+      "GetTipoClienteComboBoxByUsuario",parametros[0]).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.confirmed = response.records;
+        }
+        this.loadingClienteTipo = false;
+      }, error => {
+        this.loadingClienteTipo = false;
+        this.toastService.error("No se pudo obtener los tipos de cliente", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getClienteTiposByUsuario();
+        }, 1000);
+
+      });
+  }
+
+
+  guardarAsignacionClienteTiposSeleccionados() {
+    let param = this.confirmed.map(x => { return { "UsuarioID": this.usuarioID, "ClienteTipoID": x.codigo }; });
+    this.guardandoClienteTiposAsignados = true;
+    this.httpService.DoPostAny<any>(DataApi.Usuario,
+      "AsignaClienteTiposAUsuario", param).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+          console.error(response.errores[0]);
+        } else {
+          this.modalService.dismissAll();
+          this.toastService.success("Realizado", "OK");
+        }
+        this.guardandoClienteTiposAsignados = false;
+      }, error => {
+        this.guardandoClienteTiposAsignados = false;
+        this.toastService.error("No se pudo guardar", "Error conexion al servidor");
+        console.error(error);
+      });
+
+  }
+
+  openModalAsignacionClienteTipo(content) {
+    this.getClienteTipos();
+    this.getClienteTiposByUsuario();
+    this.modalService.open(content, { size: 'lg', backdrop: "static", });
+  }
+
+}
+
+
+
+
+
+
