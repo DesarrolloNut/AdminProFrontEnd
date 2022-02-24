@@ -1,10 +1,21 @@
 
-export interface ArticuloListaPrecioViewModel {
-    id: number;
+export class ArticuloListaPrecioViewModel {
+
+  constructor() {
+    this.id = 0
+    this.nombre = ''
+    this.codigoReferencia = ''
+    this.costo = 0
+    this.unidadMedida = ''
+    this.cant=0
+}
+
+  id: number;
     nombre: string;
     codigoReferencia: string;
     listaPrecioID: number;
     listaPrecio: string;
+
     precioSugerido: number;
     precioActual: number;
     precioAnterior: number;
@@ -18,4 +29,9 @@ export interface ArticuloListaPrecioViewModel {
     colorEstado: string;
 
     cargando: boolean;
+    imagenUrl: string;
+    unidadMedida: string;
+    peso:number;
+    cant:number;
+    cartAdded:boolean;
 }
