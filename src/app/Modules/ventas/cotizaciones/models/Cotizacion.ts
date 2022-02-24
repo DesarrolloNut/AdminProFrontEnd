@@ -5,8 +5,8 @@ export class Cotizacion {
         this.condicionPagoId = 0;
         this.codigoReferencia = "";
         this.clienteId = 0;
-        this.fechaCreacion = new Date;
-        this.fechaEntrega = new Date;
+        this.fechaCreacion = new Date();
+        this.fechaEntrega = new Date();
         this.vendedorId = 0;
         this.plazoId = 0;
         this.costoTotal = 0;

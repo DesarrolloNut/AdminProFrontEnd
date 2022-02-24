@@ -7,8 +7,10 @@ export interface CotizacionListadoViewModel {
     fechaCreacion: string;
 
     cliente: string;
+    clienteCodigoReferencia: string;
     clienteId: number;
     clienteDocumento: string;
+    clienteCodicionPago: string;
     limiteCredito: number;
     balanceCliente: number;
     diasPlazo: number;

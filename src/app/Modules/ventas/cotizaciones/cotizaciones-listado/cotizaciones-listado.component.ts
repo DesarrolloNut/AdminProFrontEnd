@@ -90,14 +90,14 @@ export class CotizacionesListadoComponent implements OnInit {
     this.cotizacionDetalles = [];
     this.getCotizacionDetalle(cotizacion.id);
     this.cotizacionSeleccionada = cotizacion;
-    this.modalService.open(content, { size: 'lg', });
+    this.modalService.open(content, { size: 'xl', });
   }
 
   openModalAutorizar(content, cotizacion: CotizacionListadoViewModel) {
     this.cotizacionDetalles = [];
     this.getCotizacionDetalle(cotizacion.id);
     this.cotizacionSeleccionada = cotizacion;
-    this.modalService.open(content, { size: 'lg', });
+    this.modalService.open(content, { size: 'xl', });
   }
 
   getCotizacionDetalle(cotizacionID: number) {

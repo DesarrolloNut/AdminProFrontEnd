@@ -98,6 +98,7 @@ export class CotizacionesFormularioComponent implements OnInit {
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0]
             this.cotizacion = record;
+            console.log(this.cotizacion)
             this.getClienteByID(this.cotizacion.clienteId)
             this.getCotizacionDetalles(this.cotizacion.id)
           } else {
@@ -201,7 +202,9 @@ export class CotizacionesFormularioComponent implements OnInit {
 
     this.cotizacion.sucursalId = Number(this.authService.tokenDecoded.groupsid)
     this.cotizacion.usuarioId = Number(this.authService.tokenDecoded.nameid)
-
+    this.cotizacion.condicionPagoId = this.cliente.condicionPagoId;
+    this.cotizacion.listaPrecioID = this.cliente.listaPrecioId;
+    
     let parametro: any = {
       "Cotizacion": this.cotizacion,
       "CotizacionDetalles": this.cotizacionDetalles.filter(x => x.articuloId > 0 && x.cantidad > 0 && x.precio > 0)
