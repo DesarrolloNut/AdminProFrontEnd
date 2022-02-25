@@ -41,6 +41,7 @@
                                 <th>Imp.</th>
                                 <th>Total Neto</th>
                                 <th>Fecha</th>
+                                <th>EstadoERP</th>
                                 <!-- <th>Cotizador</th> -->
                                 <!-- <th>Estado</th> -->
                             </tr>
@@ -49,30 +50,6 @@
 
                             <tr *ngFor="let item of data; let i = index">
                                 <td>
-
-
-                                    <!-- <div class="btn-group mr-3">
-                                        <button type="button" class="btn btn-outline-info"> <i class="fa fa"></i> </button>
-                                        <div class="btn-group" ngbDropdown role="group"
-                                            aria-label="Button group with nested dropdown">
-                                            <button class="btn btn-info" ngbDropdownToggle></button>
-                                            <div class="dropdown-menu" ngbDropdownMenu>
-                                                <button ngbDropdownItem> <i class="fa fa-check-circle"
-                                                        aria-hidden="true"></i> Nivel autorización</button>
-                                                <button ngbDropdownItem><i class="fa fa-map-marker"></i> Asignación
-                                                    sucursales</button>
-                                                <button ngbDropdownItem> <i class="fa fa-user" aria-hidden="true"></i>
-                                                    Asignación cliente tipo</button>
-
-                                                <div class="dropdown-divider"></div>
-
-                                                <button ngbDropdownItem><i class="fa fa-key"></i> Actualizar
-                                                    contraseña</button>
-                                            </div>
-                                        </div>
-                                    </div> -->
-
-
 
                                     <button class="btn btn-sm btn-light"
                                         (click)="openModal(modalDetalleCotizacion,item)">
@@ -83,7 +60,8 @@
                                         <i class="fa fa-sm fa-edit"></i>
                                     </button>
 
-                                    <button class="btn btn-sm btn-light">
+                                    <button class="btn btn-sm btn-light"
+                                        (click)="openModalMapaRelacion(modalMapaRelacion)">
                                         <i class="fa fa-sm fa-sitemap"></i>
                                     </button>
 
@@ -120,6 +98,9 @@
                                     <span class="text-muted"><i class="far fa-calendar"></i>
                                         {{item.fechaCreacion | date:'dd/MM/yy' }}
                                     </span>
+                                </td>
+                                <td>
+                                    <span> {{item.estadoERP }}</span>
                                 </td>
                             </tr>
 
@@ -159,139 +140,6 @@
 
 
 
-
-
-
-<!--
-<ng-template #modalAutorizarCotizacion let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title">Autorizar cotización</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body">
-        <div class="row">
-
-
-
-            <div class="col-12">
-                <app-loading-listado [hidden]="!loadingCotizacionDetalle"></app-loading-listado>
-            </div>
-        </div>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
-        <button type="button" class="btn btn-success m-1">  <i class="fa fa-sm fa-shield-alt"></i> Enviar a autorizar</button>
-    </div>
-</ng-template> -->
-
-
-
-<ng-template #modalAutorizarCotizacion let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title">Detalle de cotización</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body">
-        <div class="row">
-
-            <div class="col-12">
-                <h5 class="text-info"> <i class="fa fa-user"></i> Cliente: {{cotizacionSeleccionada.cliente}}</h5>
-                <h5> <i class="fa fa-id-card"></i> Documento: {{cotizacionSeleccionada.clienteDocumento}}</h5>
-                <h5> <i class="fa fa-calendar"></i> Fecha: {{cotizacionSeleccionada.fechaCreacion |
-                    date:'dd/MM/yy'}}</h5>
-                <!-- <hr>
-                <h5> <i class="fa fa-user-circle"></i> Cotizador: {{cotizacionSeleccionada.cotizador}}</h5>
-                <h5> <i class="fa fa-map-marker"></i> Sucursal: {{cotizacionSeleccionada.sucursal}}</h5>
-                <h5> <i class="fa fa-user-circle"></i>Vendedor: {{cotizacionSeleccionada.vendedor}}</h5> -->
-            </div>
-
-            <div class="col-12" [hidden]="loadingCotizacionDetalle">
-
-                <div class="table-responsive">
-                    <table class="table table-sm table-hover mb-0 no-wrap v-middle">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>Artículo</th>
-                                <th>Cantidad</th>
-                                <th>Precio</th>
-                                <th>% Desc</th>
-                                <th>SubTotal</th>
-                                <th>Desc</th>
-                                <th>Impuesto</th>
-                                <th>Total Neto</th>
-
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                            <tr *ngFor="let item of cotizacionDetalles">
-                                <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
-                                <td>
-                                    <span> {{item.articulo}}</span>
-                                </td>
-                                <td>
-                                    <span> {{item.cantidad}}</span>
-                                </td>
-                                <td>
-                                    <span> ${{item.precio | number:'1.2-2'}} </span>
-                                </td>
-                                <td>
-                                    <span> %{{item.porcientoDescuento | number:'1.2-2'}}</span>
-                                </td>
-                                <td>
-                                    <span> ${{item.subtotal | number:'1.2-2'}} </span>
-                                </td>
-                                <td>
-                                    <span> ${{item.totalDescuento | number:'1.2-2'}} </span>
-                                </td>
-                                <td>
-                                    <span> ${{item.totalImpuesto | number:'1.2-2'}} </span>
-                                </td>
-                                <td>
-                                    <span class="font-weight-bold"> ${{item.totalNeto | number:'1.2-2'}} </span>
-                                </td>
-                            </tr>
-
-                        </tbody>
-                    </table>
-
-                </div>
-
-
-            </div>
-
-            <div class="col-12 text-right">
-                <hr>
-                <h4>Subtotal: $ {{cotizacionSeleccionada.subTotal | number:'1.2-2' }}</h4>
-                <h4>Descuento: $ {{cotizacionSeleccionada.descuentoTotal | number:'1.2-2' }}</h4>
-                <h4>Impuesto: $ {{cotizacionSeleccionada.impuestoTotal | number:'1.2-2' }}</h4>
-                <h4 class="font-weight-bold">Total Neto: $ {{cotizacionSeleccionada.totalNeto | number:'1.2-2' }}</h4>
-            </div>
-
-            <div class="col-12">
-                <app-loading-listado [hidden]="!loadingCotizacionDetalle"></app-loading-listado>
-            </div>
-        </div>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
-        <button type="button" class="btn btn-success m-1" *ngIf="!loadingEstadoAutorizacionCotizacion"
-            (click)="CambiarEstadoAutorizacionCotizacion(cotizacionSeleccionada.id)">
-            <i class="fa fa-sm fa-check"></i> Enviar a autorizar</button>
-        <!-- boton cargando -->
-        <button *ngIf="loadingEstadoAutorizacionCotizacion" disabled class="btn btn-success m-1" type="button">
-            <span class="spinner-border spinner-border-sm"></span> Enviando
-        </button>
-    </div>
-</ng-template>
-
-
-
 <ng-template #modalDetalleCotizacion let-modal>
     <div class="modal-header">
         <span class="badge badge-light text-info mt-1 mr-1">{{cotizacionSeleccionada.id}}</span>
@@ -308,13 +156,18 @@
                     Cliente: {{cotizacionSeleccionada.clienteCodigoReferencia}} | {{cotizacionSeleccionada.cliente}}
                 </h5>
                 <h5> <i class="fa fa-id-card"></i> Documento: {{cotizacionSeleccionada.clienteDocumento}}</h5>
-                <h5> <i class="fa fa-dollar-sign"></i> Pago: {{cotizacionSeleccionada.clienteCodicionPago}}</h5>
+                <h5> <i class="fa fa-dollar-sign"></i>
+                    <span> Pago: {{cotizacionSeleccionada.clienteCodicionPago}}</span>
+                    <span> | </span>
+                    <span> Plazo: {{cotizacionSeleccionada.diasPlazo}} </span>
+                </h5>
 
             </div>
             <div class="col-lg-6 col-md-6 col-12">
                 <h5>
                     <i class="fa fa-calendar"></i>
-                    Fecha: {{cotizacionSeleccionada.fechaCreacion | date:'dd/MM/yy'}}
+                    Fecha: {{cotizacionSeleccionada.fechaCreacion | date:'dd/MM/yy'}} | Entrega:
+                    {{cotizacionSeleccionada.fechaEntrega | date:'dd/MM/yy'}}
                 </h5>
                 <h5> <i class="fa fa-user-circle"></i> Usuario: {{cotizacionSeleccionada.cotizador}}</h5>
                 <h5> <i class="fa fa-map-marker"></i> Sucursal: {{cotizacionSeleccionada.sucursal}}</h5>
@@ -327,7 +180,7 @@
                     <table class="table table-sm table-hover mb-0 no-wrap v-middle">
                         <thead>
                             <tr>
-                                <th></th>
+                                <!-- <th></th> -->
                                 <th>Artículo</th>
                                 <th>Cant</th>
                                 <th>Precio</th>
@@ -342,9 +195,9 @@
                         <tbody>
 
                             <tr *ngFor="let item of cotizacionDetalles">
-                                <td>
+                                <!-- <td>
                                     <span class="badge badge-light text-info ">{{item.id}}</span>
-                                </td>
+                                </td> -->
                                 <td>
                                     <span>{{item.articuloCodRef}} | {{item.articulo}}</span>
                                 </td>
@@ -392,6 +245,115 @@
                 <h4 class="font-weight-bold">Total Neto: $ {{cotizacionSeleccionada.totalNeto | number:'1.2-2' }}</h4>
             </div>
 
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
+    </div>
+</ng-template>
+
+
+<ng-template #modalMapaRelacion let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Mapa de relación</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+
+            <div class="col-12">
+
+                <div class="card">
+                    <div class="card-body">
+                        <ul class="timeline position-relative list-unstyled">
+
+
+                            <li class="timeline-item position-relative mb-4">
+                                <div
+                                    class="timeline-badge text-center text-white overflow-hidden rounded-circle bg-danger">
+                                    <span class="fs-2">2018</span>
+                                </div>
+                                <div class="timeline-panel position-relative border rounded p-4">
+                                    <div class="timeline-heading">
+                                        <h4 class="timeline-title mt-0 fw-normal">Genelia</h4>
+                                        <p><small class="text-muted"><i class="fa fa-clock-o"></i> 11 hours ago via
+                                                Twitter</small></p>
+                                    </div>
+                                    <div class="timeline-body">
+                                        <p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                                            Repellendus numquam facilis enim eaque, tenetur nam id qui vel velit
+                                            similique nihil iure molestias aliquam, voluptatem totam quaerat, magni
+                                            commodi quisquam.</p>
+                                    </div>
+                                </div>
+                            </li>
+
+
+                            <li class="timeline-inverted timeline-item position-relative mb-4">
+
+                                <div
+                                    class="timeline-badge text-center text-white overflow-hidden rounded-circle bg-success">
+                                    <i class="fa fa-file"></i>
+                                </div>
+                                <div class="timeline-panel position-relative border rounded p-4">
+                                    <div class="timeline-heading">
+                                        <h4 class="timeline-title mt-0 fw-normal">Lorem ipsum dolor</h4>
+                                    </div>
+                                    <div class="timeline-body">
+                                        <p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                                            Voluptates est quaerat asperiores sapiente, eligendi, nihil. Itaque quos,
+                                            alias sapiente rerum quas odit! Aperiam officiis quidem delectus libero,
+                                            omnis ut debitis!</p>
+                                    </div>
+                                </div>
+                            </li>
+
+
+                            <li class="timeline-item position-relative mb-4">
+                                <div
+                                    class="timeline-badge text-center text-white overflow-hidden rounded-circle bg-info">
+                                    <i class="fa fa-save"></i>
+                                </div>
+                                <div class="timeline-panel position-relative border rounded p-4">
+                                    <div class="timeline-heading">
+                                        <h4 class="timeline-title mt-0 fw-normal">Lorem ipsum dolor</h4>
+                                    </div>
+                                    <div class="timeline-body">
+                                        <p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis
+                                            minus modi quam ipsum alias at est molestiae excepturi delectus nesciunt,
+                                            quibusdam debitis amet, beatae consequuntur impedit nulla qui! Laborum,
+                                            atque.</p>
+                                        <hr>
+                                        <div class="btn-group"><button type="button" data-toggle="dropdown"
+                                                class="btn btn-primary btn-sm dropdown-toggle"><i
+                                                    class="fa fa-cog"></i><span class="caret"></span></button>
+                                            <div class="dropdown-menu"><a href="javascript:void(0)"
+                                                    class="dropdown-item">Action</a><a href="javascript:void(0)"
+                                                    class="dropdown-item">Another action</a><a href="javascript:void(0)"
+                                                    class="dropdown-item">Something else here</a>
+                                                <div class="dropdown-divider"></div><a href="javascript:void(0)"
+                                                    class="dropdown-item">Separated link</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+
+
+                        </ul>
+                    </div>
+                </div>
+
+
+            </div>
+
+
+            <div class="col-12">
+                <app-loading-listado [hidden]="!loadingCotizacionDetalle"></app-loading-listado>
+            </div>
 
         </div>
     </div>
