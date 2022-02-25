@@ -2,7 +2,7 @@ import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@
 import { FormBuilder, } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
@@ -25,7 +25,7 @@ export class PedidosEmpleadoCarritoComponent implements OnInit {
 
   pedidoEmpleado: PedidoEmpleado = new PedidoEmpleado();
   pedidoEmpleadoDetalles: PedidoEmpleadoDetalle[] = [];
-
+  confirmPedidoModal: NgbModalRef;
 
   constructor(
     private toastService: ToastrService,
@@ -130,13 +130,18 @@ limpiarTotales() {
   this.pedidoEmpleado.costoTotal = 0;
 }
 
+
+crearPedido(){
+
+   console.log('pedido creado')
+}
+openConfirmPedidoModal(content) {
+  this.confirmPedidoModal= this.modalService.open(content,{centered:true});
 }
 
-
-
-
-
-
-
+closeConfirmPedidoModal(){
+  this.confirmPedidoModal.close();
+}
+}
 
 

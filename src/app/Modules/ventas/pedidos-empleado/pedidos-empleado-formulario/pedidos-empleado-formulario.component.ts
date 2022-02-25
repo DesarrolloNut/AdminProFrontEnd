@@ -223,18 +223,16 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
 
   getArticulosPrecioActual() {
     this.httpService.DoPostAny<ArticuloListaPrecioViewModel>(DataApi.Articulo,
-      "GetArticulosPrecioActual", this.cliente.listaPrecioId).subscribe(response => {
+      "GetArticulosPrecioActualV2", this.cliente.listaPrecioId).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
           //validar que existe
           if (response != null && response.records != null && response.records.length > 0) {
+            console.log(response.records)
             response.records.forEach(x=>{
               if(x.unidadMedida=='LBS'){
                 x.precioActual= x.precioActual * x.peso;
-                console.log(x.nombre)
-                console.log(x.peso)
-                console.log('-----------------------')
               }
               // if(x.unidadMedida='LBS')
             })

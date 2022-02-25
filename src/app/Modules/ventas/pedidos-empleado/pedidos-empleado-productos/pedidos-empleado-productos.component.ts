@@ -15,91 +15,8 @@ import { CartService } from '../cart.service';
 @Component({
   selector: 'app-pedidos-empleado-productos',
   templateUrl: './pedidos-empleado-productos.component.html',
-  styleUrls: ['./pedidos-empleado-productos.component.scss'],
-  animations: [
-    trigger('animateCart', [
-      state(
-        'ready',
-        style({
-          transform: 'rotate(0)',
-          marginLeft: 0,
-        })
-      ),
-      state(
-        'active',
-        style({
-          transform: 'rotate(-20deg)',
-          marginLeft: '140px',
-          display: 'none',
-        })
-      ),
-      transition('ready => active', animate('600ms 100ms ease-in')),
-      transition('active => ready', animate('100ms ease-in')),
-    ]),
-    trigger('animateText', [
-      state(
-        'ready_text',
-        style({
-          opacity: 1,
-        })
-      ),
-      state(
-        'active_text',
-        style({
-          opacity: 0,
-        })
-      ),
-      transition('ready_text => active_text', animate('100ms linear')),
-      transition('active_text => ready_text', animate('100ms 100ms linear')),
-    ]),
-    trigger('hideText', [
-      state(
-        'ready_text',
-        style({
-          display: 'inline',
-        })
-      ),
-      state(
-        'active_text',
-        style({
-          display: 'none',
-        })
-      ),
-      transition('ready_text => active_text', animate('0ms 700ms linear')),
-      transition('active_text => ready_text', animate('0ms linear')),
-    ]),
-    trigger('animateCheck', [
-      state(
-        'ready_check',
-        style({
-          opacity: 0,
-        })
-      ),
-      state(
-        'active_check',
-        style({
-          opacity: 1,
-        })
-      ),
-      transition('ready_check => active_check', animate('100ms 750ms linear')),
-      transition('ready_check => active_check', animate('100ms linear')),
-    ]),
-    trigger('hideCheck', [
-      state(
-        'ready_check',
-        style({
-          display: 'none',
-        })
-      ),
-      state(
-        'active_check',
-        style({
-          display: 'inline',
-        })
-      ),
-      transition('ready_check => active_check', animate('100ms 720ms linear')),
-    ]),
-  ],
+  styleUrls: ['./pedidos-empleado-productos.component.scss']
+
 })
 export class PedidosEmpleadoProductosComponent implements OnInit,OnChanges {
   public config: PerfectScrollbarConfigInterface = {};
@@ -204,12 +121,15 @@ export class PedidosEmpleadoProductosComponent implements OnInit,OnChanges {
 
 
   addToCart(a:ArticuloListaPrecioViewModel) {
+
     if (!this.cartService.itemInCart(a)) {
       a.cant = 1;
       this.cartService.addToCart(a); //add items in cart
       this.carrito = [...this.cartService.getItems()];
     }
      this.articulosInCart.emit(this.carrito)
+
+    this.toastService.success("Añadido al carrito")
   }
 
 }
