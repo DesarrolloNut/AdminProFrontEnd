@@ -86,11 +86,19 @@ export class CotizacionesListadoComponent implements OnInit {
   }
 
 
+  openModalMapaRelacion(modal: any): void {
+
+    this.modalService.open(modal, { size: 'xl', centered: true })
+
+
+  }
+
+
   openModal(content, cotizacion: CotizacionListadoViewModel) {
     this.cotizacionDetalles = [];
     this.getCotizacionDetalle(cotizacion.id);
     this.cotizacionSeleccionada = cotizacion;
-    this.modalService.open(content, { size: 'xl', });
+    this.modalService.open(content, { windowClass: "myCustomModalClass", });
   }
 
   openModalAutorizar(content, cotizacion: CotizacionListadoViewModel) {

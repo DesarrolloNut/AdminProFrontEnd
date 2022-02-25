@@ -20,6 +20,7 @@ export class Cotizacion {
         this.usuarioId = 0;
         this.listaPrecioID = 0;
         this.estadoAutorizacionID = 0;
+        this.clientePlazo = 0;
     }
 
     id = 0;
@@ -44,5 +45,6 @@ export class Cotizacion {
     estadoAutorizacionID = 0;
     estadoERPID = 0;
     estadoDespachoID = 0;
+    clientePlazo = 0;
 
 }
