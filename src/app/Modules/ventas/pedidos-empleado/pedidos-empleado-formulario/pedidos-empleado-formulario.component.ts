@@ -1,3 +1,4 @@
+import { PedidoEmpleadoRequest } from './../models/PedidoEmpleadoDetalle';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { AfterViewInit, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, } from '@angular/forms';
@@ -95,10 +96,11 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
   idPedidoEmpleadoByRouter:number;
 
 
+  btnCrearCargando = true;
 
 
 
-  showSummaryCart=false;
+  showView='products';
   constructor(
     private toastService: ToastrService,
     private httpService: BackendService,
@@ -122,13 +124,19 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
     //   this.getClienteByUsuarioID(Number(this.authService.tokenDecoded.nameid));
     // }
 
-    this.getClienteByUsuarioID(Number(this.authService.tokenDecoded.nameid));
-    this.getArticulosInCart();
-   this.getITBIS()
+
+     this.getAllPedidoEmpleado();
 
     // this.getTipoCondicionPago()
     // this.getMonedaTipos()
     // this.getVendedores()
+  }
+
+
+  getAllPedidoEmpleado(){
+    this.loadingInfoCliente = true;
+    this.getITBIS()
+    this.getArticulosInCart();
   }
 
 
@@ -159,6 +167,7 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
 
 
   getClienteByUsuarioID(usuarioId: number) {
+
     this.loadingInfoCliente = true;
     this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
       "GetClienteByUsuarioID", usuarioId).subscribe(response => {
@@ -232,7 +241,7 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
             console.log(response.records)
             response.records.forEach(x=>{
               if(x.unidadMedida=='LBS'){
-                x.precioActual= x.precioActual * x.peso;
+                 x.precioActual= x.precioActual * x.peso;
               }
               // if(x.unidadMedida='LBS')
             })
@@ -298,8 +307,9 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
             this.toastService.error("No hay impuesto configurado");
           } else {
             this.ITBIS = Number(response.records[0]);
-          }
 
+          }
+          this.getClienteByUsuarioID(Number(this.authService.tokenDecoded.nameid));
         }
         // this.loadingCondicionPagos = false;
       }, error => {
@@ -345,12 +355,55 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
 
 
 
+  beforeCrearPedido(pedido:PedidoEmpleadoRequest){
+   this.crearPedido(pedido.pedido,pedido.pedidoDetalles)
+  }
+
+  crearPedido(pedido:PedidoEmpleado,pedidoDetalle:PedidoEmpleadoDetalle[]){
+    this.btnCrearCargando = true;
+    this.changeView('creandoPedido')
+
+   this.pedidoEmpleado=pedido;
+   this.pedidoEmpleadoDetalles=pedidoDetalle;
+
+    let metodo: string = this.actualizando ? "Update" : "Registrar";
+
+    this.pedidoEmpleado.sucursalId = Number(this.authService.tokenDecoded.groupsid)
+    this.pedidoEmpleado.usuarioId = Number(this.authService.tokenDecoded.nameid)
+
+    let parametro: any = {
+      "PedidoEmpleado": this.pedidoEmpleado,
+      "PedidoEmpleadoDetalles": this.pedidoEmpleadoDetalles.filter(x => x.articuloId > 0 && x.cantidad > 0 && x.precio > 0)
+    }
 
 
+    this.httpService.DoPostAny<any>(DataApi.PedidosEmpleado,
+      metodo, parametro).subscribe(response => {
 
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+          this.changeView('cart')
 
- changeView(showSummaryCart){
-   this.showSummaryCart=showSummaryCart;
+        } else {
+          this.toastService.success("Realizado", "OK");
+          this.cartService.clearCart();
+          this.articulosInCart=[];
+        //  this.modalService.dismissAll();
+        // this.router.navigateByUrl('/ventas/pedidos-empleado');
+
+        }
+        setTimeout(() => {
+        this.btnCrearCargando = false;
+        }, 1500);
+      }, error => {
+        this.btnCrearCargando = false;
+        this.toastService.error("Error conexion al servidor");
+        this.changeView('cart')
+      });
+  }
+
+ changeView(keyView){
+   this.showView=keyView;
  }
 
  refreshCart(){
