@@ -8,7 +8,6 @@ export class CartService {
   constructor() {}
 
   items:ArticuloListaPrecioViewModel[] = [];
-
   addToCart(addedItem) {
     this.items.push(addedItem);
     // console.log(addedItem);
