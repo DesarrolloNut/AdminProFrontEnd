@@ -124,6 +124,7 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
     //   this.getClienteByUsuarioID(Number(this.authService.tokenDecoded.nameid));
     // }
 
+    //   this.getClienteByUsuarioID(Number(this.authService.tokenDecoded.nameid));
 
      this.getAllPedidoEmpleado();
 
@@ -191,7 +192,8 @@ export class PedidosEmpleadoFormularioComponent implements OnInit {
           } else {
             this.clienteExiste=false;
             this.loadingInfoCliente = false;
-
+            this.router.navigateByUrl('ventas/pedidos-empleado');
+            this.modalService.dismissAll();
             this.toastService.warning("Cliente no encontrado");
           }
         }

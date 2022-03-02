@@ -1,4 +1,4 @@
-<div class="row" style="    min-height: 650px;">
+<div class="row " style="    min-height: 650px;" *ngIf="pedidoEmpleadoDetalles.length>0">
   <!-- Column -->
   <div class="col-xl-8  col-lg-9  col-md-12  col-sm-12 col-xs-12">
     <div class="card">
@@ -142,6 +142,45 @@
     </div> -->
   </div>
 </div>
+
+<div class="row " style="    min-height: 650px;" *ngIf="pedidoEmpleadoDetalles.length<=0">
+  <!-- Column -->
+  <div class="col-xl-12  col-lg-12  col-md-12  col-sm-12 col-xs-12">
+    <div class="card">
+      <div class="card-header bg-white">
+        <h4 class="mb-0 text-black-50 font-weight-bold"> CARRITO </h4>
+      </div>
+      <div class="card-body">
+         <div class=" text-center">
+           <div class="icono_cart_empty mt-2" >
+             <svg xmlns="http://www.w3.org/2000/svg" style="color:#d3d3d3;"
+                width="75" height="75" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round"
+                class="feather feather-shopping-cart fill-white feather-sm">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+           </div>
+
+           <div class="texto_cart_empty mt-3   w-100" style="text-align: -webkit-center; text-align: -moz-center;">
+              <h3 class="font-weight-bold" >TU CARRITO ESTÁ AHORA MISMO VACÍO</h3>
+                <p class="w-75 text-black-50 font-weight-bold" >¿Aún no te has decidido?. Tenemos productos que te encantarán,
+                  revisa nuestro <span class="text-success">catalogo </span>  yendo a la  <span class="text-success"> página de la tienda</span> para comprobarlo.
+                </p>
+
+
+           </div>
+         </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+
 
 <ng-template #contentConfirmPedido let-modal>
   <div class="modal-header border-0">

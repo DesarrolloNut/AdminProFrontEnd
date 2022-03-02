@@ -57,8 +57,8 @@ export class PedidosEmpleadosListadoComponent implements OnInit {
 
   ngOnInit(): void {
     // this.getEstados()
-    // this.getClienteByUsuarioID(Number(this.authService.tokenDecoded.nameid))
-  this.getData();
+   this.getClienteByUsuarioID(Number(this.authService.tokenDecoded.nameid))
+  /// this.getData();
   }
   getData() {
     this.Cargando = true;

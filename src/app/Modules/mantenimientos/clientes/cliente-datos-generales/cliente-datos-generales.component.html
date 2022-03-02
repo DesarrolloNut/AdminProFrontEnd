@@ -26,6 +26,7 @@
                 <li class=" col-md-5 payment-method paypal">
                   <input
                   [value]="0"
+                  [attr.disabled]="actualizando"
                   formControlName="isClientPrincipal"
                   (click)="onClickRadioPrincipalOSucursal(0)"
                        type="radio" id="paypal">
@@ -34,6 +35,7 @@
                 <li class=" col-md-5 payment-method pagseguro">
                    <input  type="radio"  id="pagseguro"
                    [value]="1"
+                   [attr.disabled]="actualizando"
                    (click)="onClickRadioPrincipalOSucursal(1)"
                    formControlName="isClientPrincipal" >
                   <label for="pagseguro">SUCURSAL</label>
@@ -59,7 +61,7 @@
 
             <div class="form-group col-md-6">
               <label for="inputEmail4">Tipo Cliente</label>
-              <ng-select bindLabel="nombre" bindValue="codigo" [items]="TipoCliente"
+              <ng-select [readonly]="actualizando" bindLabel="nombre" bindValue="codigo" [items]="TipoCliente"
                 [loading]="loadingTipoCliente"   (change)="onSelectClienteTipo($event)" [clearable]="false"
                 [ngClass]="{'form-control border-danger p-0' : submitted && f.clienteTipoID.errors }"
                 notFoundText="No resultados" formControlName="clienteTipoID">
@@ -88,7 +90,7 @@
         <div class="form-group col-md-6" *ngIf="f.isClientPrincipal.value==0 || f.isClientPrincipal.value==null">
           <label for="inputEmail4"> Tipo de Documento</label>
           <ng-select
-            [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null || loadingDocumentos"
+            [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null || loadingDocumentos || actualizando"
             bindLabel="nombre"   bindValue="codigo" (change)="onTipoDocumentoChange($event)" [items]="documentos"
             [loading]="loadingDocumentos" [clearable]="false"
             [ngClass]="{'form-control border-danger p-0' : submitted && f.documentoTipoID.errors }"
@@ -106,7 +108,7 @@
             Documento</label>
           <div class="input-group">
             <input (keyup)="onDocumentoKeyUp()"
-              [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null"
+              [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null || actualizando"
                formControlName="documento" type="text" name="documento"
               cleareable="false" id="documento"
               [ngClass]="{'is-invalid' :f.documento.value && f.documento.errors,  'form-control':true  }">
@@ -130,7 +132,7 @@
         <div class="form-group col-md-6" *ngIf="f.documentoTipoID.value==1" >
           <label for="nombres"><i class=""></i> Nombres</label>
           <input
-            [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null"
+            [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null || actualizando"
             formControlName="nombres" (input)="f.nombres.setValue(f.nombres.value.toUpperCase())" type="text" name="nombres" id="nombres"
             [ngClass]="{'is-invalid' : submitted && f.nombres.errors,  'form-control':true  }">
           <div class="invalid-feedback" *ngIf="submitted && f.nombres.errors">
@@ -142,7 +144,7 @@
         <div class="form-group col-md-6"  *ngIf="f.documentoTipoID.value==1">
           <label for="apellidos">Apellidos</label>
           <input
-          [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null"
+          [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null || actualizando"
            formControlName="apellidos" (input)="f.apellidos.setValue(f.apellidos.value.toUpperCase())" type="text" name="apellidos" id="apellidos"
             [ngClass]="{'is-invalid' : submitted && f.apellidos.errors,  'form-control':true  }">
           <div class="invalid-feedback" *ngIf="submitted && f.apellidos.errors">
@@ -153,7 +155,7 @@
         <div class="form-group col-md-12"   >
           <label for="clienteNombre"><i class=""></i>Cliente</label>
           <input
-           [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null"
+           [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null || actualizando"
            formControlName="clienteNombre" (input)="f.clienteNombre.setValue(f.clienteNombre.value.toUpperCase())" type="text" name="clienteNombre" id="clienteNombre"
             [ngClass]="{'is-invalid' : submitted && f.clienteNombre.errors,  'form-control':true  }">
           <div class="invalid-feedback" *ngIf="submitted && f.clienteNombre.errors">

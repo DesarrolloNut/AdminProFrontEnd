@@ -845,7 +845,7 @@ onSelectClienteTipo(tipo: ComboBox) {
 onClickRadioPrincipalOSucursal(value:number){
     //SOLO SE EJECUTA
    // SI EL CLIENTE TIPO ES DIFERENTE DE  EMPLEADO(12) O EMPLEADOS RELACIONADOS(15)
-   if(this.f.clienteTipoID.value==12 || this.f.clienteTipoID.value==15 ){ return;}
+   if(this.f.clienteTipoID.value==12 || this.f.clienteTipoID.value==15 || this.actualizando ){ return;}
     this.f.isClientPrincipal.setValue(value)
     if(value==1){
       this.f.clientePadreId.setValidators([Validators.required]);

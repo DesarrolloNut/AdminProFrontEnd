@@ -2,7 +2,7 @@
 
   <div class="modal-header ">
 
-    <div class="row w-75" *ngIf="!loadingInfoCliente">
+    <div class="row w-75" *ngIf="!loadingInfoCliente && clienteExiste">
 
       <div class="col-12 ml-0">
          <h4 class="modal-title font-weight-bold"   id="modal-basic-title" style="font-size: 25px;">Bienvenido, {{cliente.nombres | titlecase}}</h4>
@@ -187,7 +187,7 @@
 
       <button *ngIf="showView=='cart'"
       style=" border-radius: 10px;"
-       class="btn   btn-light  mb-3 font-weight-bold p-2 pr-2 pl-2"
+       class="btn   btn-outline-success btn_volverTienda  mb-3 font-weight-bold p-2 pr-2 pl-2"
         (click)="changeView('products')" >
         <svg xmlns="http://www.w3.org/2000/svg"  width="24" height="24" viewBox="0 0 24 24"
         fill="none" stroke="currentColor" stroke-width="2"
@@ -195,7 +195,7 @@
          class="feather feather-arrow-left fill-white feather-sm">
          <line x1="19" y1="12" x2="5" y2="12"></line>
          <polyline points="12 19 5 12 12 5"></polyline></svg>
-          SEGUIR COMPRANDO
+          Volver a la tienda
       </button>
 
       <button *ngIf="showView=='creandoPedido' && !btnCrearCargando"
