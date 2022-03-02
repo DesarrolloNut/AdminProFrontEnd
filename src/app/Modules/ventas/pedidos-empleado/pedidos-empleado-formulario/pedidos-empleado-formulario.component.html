@@ -138,19 +138,33 @@
 
     <div  class="row"  *ngIf="!loadingInfoCliente">
       <div class="col-1"></div>
-      <div class="col-10  productos_factura" @onProductos  *ngIf="!showSummaryCart">
+      <div class="col-10  productos_factura" @onProductos   *ngIf="showView=='products'" >
          <app-pedidos-empleado-productos
           [articulos]="articulosData"
           (articulosInCart)="refreshCart()">
         </app-pedidos-empleado-productos>
       </div>
 
-      <div class="col-10" @onCarrito *ngIf="showSummaryCart" >
+      <div class="col-10" @onCarrito *ngIf="showView=='cart'" >
          <app-pedidos-empleado-carrito
+         [ITBIS]="ITBIS"
+         [clienteInfo]="cliente"
+         (pedidoSendToCreate)="beforeCrearPedido($event)"
          (articulosInCart)="refreshCart()">
          </app-pedidos-empleado-carrito>
       </div>
 
+     <div class="col-10 " style="    min-height: 650px;" @onCarrito *ngIf="showView=='creandoPedido'" >
+           <!-- Column -->
+          <div class="text-center mt-5" *ngIf="btnCrearCargando">
+            <i class="fa fa-shopping-cart" aria-hidden="true" style="font-size: 100px;"></i><br>
+             <app-loading-realtime></app-loading-realtime> <h3 class="font-weight-bold">Creando pedido, un momento.</h3>
+          </div>
+          <div class="text-center mt-5" *ngIf="!btnCrearCargando">
+            <i class="fa fa-check-circle text-success" aria-hidden="true" style="font-size: 100px;"></i><br>
+            <h3 class="font-weight-bold mt-1">Pedido creado correctamente.</h3>
+          </div>
+     </div>
     </div>
 
 
@@ -163,18 +177,18 @@
 
     <!-- CUANDO ESTE SELECCIONANDO EN EL CARRITO -->
 
-    <button type="button" *ngIf="!showSummaryCart" class="btn btn-success  mb-3 font-weight-bold p-2 pr-2 pl-2" style=" border-radius: 10px;"
-        (click)="changeView(true)">
+    <button type="button" *ngIf="showView=='products'" class="btn btn-success  mb-3 font-weight-bold p-2 pr-2 pl-2" style=" border-radius: 10px;"
+        (click)="changeView('cart')">
       <i class="fa fa-shopping-cart" aria-hidden="true"></i>
       IR AL CARRITO
       <span class="badge rounded-pill bg-light text-dark ml-1 font-weight-bold ">{{articulosInCart.length}}</span>    </button>
 
     <!-- CUANDO ESTE SELECCIONANDO EN EL CARRITO -->
 
-      <button *ngIf="showSummaryCart"
+      <button *ngIf="showView=='cart'"
       style=" border-radius: 10px;"
        class="btn   btn-light  mb-3 font-weight-bold p-2 pr-2 pl-2"
-        (click)="changeView(false)" >
+        (click)="changeView('products')" >
         <svg xmlns="http://www.w3.org/2000/svg"  width="24" height="24" viewBox="0 0 24 24"
         fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round"
@@ -182,6 +196,13 @@
          <line x1="19" y1="12" x2="5" y2="12"></line>
          <polyline points="12 19 5 12 12 5"></polyline></svg>
           SEGUIR COMPRANDO
+      </button>
+
+      <button *ngIf="showView=='creandoPedido' && !btnCrearCargando"
+      style=" border-radius: 10px;"
+       class="btn   btn-outline-dark  mb-3 font-weight-bold p-2 pr-2 pl-2"
+        (click)="changeView('cart')" >
+           Ver estado pedido
       </button>
 
   </div>

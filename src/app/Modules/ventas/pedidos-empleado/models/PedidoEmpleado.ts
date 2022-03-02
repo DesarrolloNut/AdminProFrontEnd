@@ -21,10 +21,14 @@ export class PedidoEmpleado {
 
     id = 0;
     sucursalId = 0;
+    pedidoTipo = 0;
+
     condicionPagoId = 0;
     codigoReferencia: string;
     clienteId = 0;
     fechaCreacion: Date;
+    fechaEntrega: Date;
+
     vendedorId = 0;
     plazoId = 0;
     costoTotal = 0;

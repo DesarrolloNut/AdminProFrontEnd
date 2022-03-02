@@ -107,6 +107,7 @@ export class PedidosEmpleadoProductosComponent implements OnInit,OnChanges {
   }
 
   openModalDetalle(content, item: ArticuloListaPrecioViewModel) {
+    console.log(item)
 
     this.modalService.open(content, { size: 'lg' ,centered:true});
     this.artDetalleSeleccionado = item;

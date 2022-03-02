@@ -1,3 +1,4 @@
+import { Cliente } from './../../../mantenimientos/clientes/models/Cliente';
 import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -11,7 +12,7 @@ import { ArticuloListaPrecioViewModel } from 'src/app/Modules/mantenimientos/art
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { CartService } from '../cart.service';
 import { PedidoEmpleado } from '../models/PedidoEmpleado';
-import { PedidoEmpleadoDetalle } from '../models/PedidoEmpleadoDetalle';
+import { PedidoEmpleadoDetalle, PedidoEmpleadoRequest } from '../models/PedidoEmpleadoDetalle';
 
 @Component({
   selector: 'app-pedidos-empleado-carrito',
@@ -22,15 +23,22 @@ export class PedidosEmpleadoCarritoComponent implements OnInit {
   public config: PerfectScrollbarConfigInterface = {};
   carrito: ArticuloListaPrecioViewModel[] = [];
   @Output() articulosInCart = new EventEmitter<ArticuloListaPrecioViewModel[]>();
+  @Output() pedidoSendToCreate = new EventEmitter<PedidoEmpleadoRequest>();
 
+  @Input() clienteInfo = new Cliente()
+  @Input() ITBIS: number = 0;
   pedidoEmpleado: PedidoEmpleado = new PedidoEmpleado();
   pedidoEmpleadoDetalles: PedidoEmpleadoDetalle[] = [];
   confirmPedidoModal: NgbModalRef;
 
+
+  btnCrearCargando = false;
+  actualizando = false;
+
   constructor(
     private toastService: ToastrService,
     private httpService: BackendService,
-    private route: ActivatedRoute,
+    private router: Router,
     public cartService: CartService,
     private modalService: NgbModal,
     private authService: AuthenticationService,
@@ -38,10 +46,13 @@ export class PedidosEmpleadoCarritoComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
     this.cartService.loadCart();
     this.carrito = [...this.cartService.getItems()];
-
+   console.log(this.clienteInfo)
+    this.fillPedidoEmpleado();
     this.fillPedidoEmpleadoDetalleModel();
+
 
   }
 
@@ -58,6 +69,8 @@ export class PedidosEmpleadoCarritoComponent implements OnInit {
          imagenUrl:x.imagenUrl,
          almacenId:0,
          cantidad:x.cant,
+         peso:x.peso,
+         unidadMedida:x.unidadMedida,
          costo:x.costo,
          precio:x.precioActual,
          subtotal:0,
@@ -68,6 +81,15 @@ export class PedidosEmpleadoCarritoComponent implements OnInit {
        })
    });
    this.calcularTotales();
+  }
+  fillPedidoEmpleado(){
+   this.pedidoEmpleado.clienteId = this.clienteInfo.id;
+   this.pedidoEmpleado.listaPrecioID= this.clienteInfo.listaPrecioId;
+   this.pedidoEmpleado.condicionPagoId= this.clienteInfo.condicionPagoId;
+   this.pedidoEmpleado.tasa =this.ITBIS;
+   this.pedidoEmpleado.pedidoTipo=1;
+   this.pedidoEmpleado.fechaEntrega= new Date();
+   this.pedidoEmpleado.plazoId=this.clienteInfo.plazoId;
   }
 
   removeArtFromCart(i:PedidoEmpleadoDetalle){
@@ -98,9 +120,15 @@ calcularTotales() {
   this.limpiarTotales()
 
   this.pedidoEmpleadoDetalles.forEach(x => {
+
+    x.cantidadCalculada= x.cantidad;
+    if(x.unidadMedida=='LBS'){
+      x.cantidadCalculada= x.cantidad * x.peso;
+    }
+
     x.subtotal = x.cantidad && x.articuloId ? (x.precio * x.cantidad) : 0;
     x.totalDescuento = x.porcientoDescuento ? (x.subtotal * x.porcientoDescuento / 100) : 0;
-    x.totalImpuesto = (x.subtotal - x.totalDescuento) * (18 / 100);
+    x.totalImpuesto = (x.subtotal - x.totalDescuento) * (this.ITBIS / 100);
     x.totalNeto = x.subtotal - x.totalDescuento + x.totalImpuesto;
 
     this.pedidoEmpleado.descuentoTotal += x.totalDescuento;
@@ -108,7 +136,7 @@ calcularTotales() {
     this.pedidoEmpleado.costoTotal += x.cantidad && x.costo ? (x.costo * x.cantidad) : 0;
   })
   this.pedidoEmpleado.totalNeto = this.pedidoEmpleado.subtotal - this.pedidoEmpleado.descuentoTotal;
-  this.pedidoEmpleado.impuestoTotal = this.pedidoEmpleado.totalNeto * (18 / 100);
+  this.pedidoEmpleado.impuestoTotal = this.pedidoEmpleado.totalNeto * (this.ITBIS / 100);
   this.pedidoEmpleado.totalNeto += this.pedidoEmpleado.impuestoTotal;
 
   //RECUERDA AGREGAR EL ITBIS DESDE LA BASE DE DATOS
@@ -130,10 +158,70 @@ limpiarTotales() {
   this.pedidoEmpleado.costoTotal = 0;
 }
 
+onSubmit() {
+  this.closeConfirmPedidoModal();
+  this.pedidoSendToCreate.emit({pedido:this.pedidoEmpleado,pedidoDetalles:this.pedidoEmpleadoDetalles})
+
+  if(( this.clienteInfo.limiteCredito-this.pedidoEmpleado.totalNeto)<0 ){
+   this.toastService.warning("Este pedido esta excediendo el limite de credito");
+  return ;
+}
+ if (!this.pedidoEmpleado.vendedorId || this.pedidoEmpleado.vendedorId < 1) {
+   this.toastService.warning("Selecciona un vendedor")
+   return;
+ }
+
+ if (this.pedidoEmpleado.monedaId < 1) {
+   this.toastService.warning("Selecciona una moneda")
+   return;
+ }
+
+ if (!this.pedidoEmpleadoDetalles.some(x => x.articuloId > 0)) {
+   this.toastService.warning("No puedes hacer una pedido  sin artículos")
+   return;
+ }
+
+ if (this.pedidoEmpleadoDetalles.filter(x => x.articuloId > 0)
+   .some(x => !x.cantidad || x.cantidad <= 0 || !x.precio || x.precio <= 0)) {
+   this.toastService.warning("Artículos con datos incompletos, revisa precios y cantidades.")
+   return;
+ }
+
+
+ //this.crearPedido();
+}
+
+
 
 crearPedido(){
+  let metodo: string = this.actualizando ? "Update" : "Registrar";
 
-   console.log('pedido creado')
+  this.pedidoEmpleado.sucursalId = Number(this.authService.tokenDecoded.groupsid)
+  this.pedidoEmpleado.usuarioId = Number(this.authService.tokenDecoded.nameid)
+
+  let parametro: any = {
+    "PedidoEmpleado": this.pedidoEmpleado,
+    "PedidoEmpleadoDetalles": this.pedidoEmpleadoDetalles.filter(x => x.articuloId > 0 && x.cantidad > 0 && x.precio > 0)
+  }
+
+
+  this.httpService.DoPostAny<any>(DataApi.PedidosEmpleado,
+    metodo, parametro).subscribe(response => {
+
+      if (!response.ok) {
+        this.toastService.error(response.errores[0], "Error");
+      } else {
+        this.toastService.success("Realizado", "OK");
+      //  this.modalService.dismissAll();
+      // this.router.navigateByUrl('/ventas/pedidos-empleado');
+        this.closeConfirmPedidoModal();
+
+      }
+      this.btnCrearCargando = false;
+    }, error => {
+      this.btnCrearCargando = false;
+      this.toastService.error("Error conexion al servidor");
+    });
 }
 openConfirmPedidoModal(content) {
   this.confirmPedidoModal= this.modalService.open(content,{centered:true});
