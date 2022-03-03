@@ -44,6 +44,7 @@ export class Cliente {
         this.isClientPrincipal=0
         this.salario=0
         this.updateMobile=0
+
     }
 
 
@@ -254,4 +255,69 @@ export class TabsValida {
     }
     keyName: string;
     ok: boolean;
+}
+export class ClientePedidoEmpleadoVM {
+
+  constructor() {
+      this.id = 0
+      this.clienteTipoID = 0
+      this.documentoTipoID = 0
+      this.estadoID = 0
+      this.sucursalId = 0
+      this.nombres = ""
+      this.apellidos = ""
+      this.clienteNombre = ""
+      this.documento = ""
+      this.email = ""
+      this.fechaRegistrado = ""
+      this.codigoReferencia = ""
+      this.limiteCredito = 0
+      this.balance=0
+      this.condicionPagoId = 0
+      this.condicionPago = ""
+      this.plazoId=0
+      this.plazo =""
+      this.rutaId = 0
+      this.listaPrecioId = 0
+      this.sexo = ""
+      this.tipoComprobante=0
+      this.sucursalId=0
+
+      this.clientePadreId=0
+      this.salario=0
+
+  }
+
+
+
+  id: number;
+  clienteTipoID: number;
+  documentoTipoID: number;
+  nombres: string;
+  apellidos: string;
+  clienteNombre: string;
+  documento: string;
+  email: string;
+  // fechaNacimiento: string;
+  fechaRegistrado: string;
+  estadoID: number;
+  // sucursalID: number;
+  codigoReferencia: string;
+  limiteCredito: number;
+  balance:number;
+  condicionPagoId: number;
+  condicionPago :string;
+  plazoId:number
+  plazo :string;
+  rutaId: number;
+  listaPrecioId: number;
+  sexo: string;
+  tipoComprobante: number;
+  sucursalId: number;
+  clientePadreId: number;
+  salario: number;
+  usuarioId: number;
+
+
+  // contactos: Array<ClienteContactos>
 }

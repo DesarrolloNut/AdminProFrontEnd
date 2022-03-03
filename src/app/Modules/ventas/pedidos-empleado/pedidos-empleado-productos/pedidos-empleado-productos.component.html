@@ -96,14 +96,37 @@
               sabor auténtico.
             </p>
             <span class="badge badge-pill badge-info">{{artDetalleSeleccionado.unidadMedida}}</span>
-            <div class="product_counter mt-3 " >
-              <button type="button" (click)="AddOrRemoveCantArticulo(artDetalleSeleccionado,-1)" class="btn btn-sm btn-outline-secondary" >
-                <i class="fa fa-minus" aria-hidden="true"></i>
-              </button>
-              <h3  class="mx-2" style="display:inline-block;">{{artDetalleSeleccionado.cant}}</h3>
-              <button type="button" (click)="AddOrRemoveCantArticulo(artDetalleSeleccionado,1)" class="btn btn-sm btn-outline-secondary">
-                <i class="fa fa-plus" aria-hidden="true"></i>
-              </button>
+            <div class="product_counter mt-3  "  style="width: 40%;">
+              <ng-number-picker
+              [(value)]="artDetalleSeleccionado.cant"
+              [min]="'1'"
+              [max]="'300'"
+              [step]="'1'"
+              [pickStartAfter]="'500'"
+              [pickTimer]="'100'"
+              [buttonsOrientation]="'h'"
+              [size]="'sm'"
+              [showDownButton]="true"
+              [showUpButton]="true"
+              [inputReadOnly]="false"
+              [mouseWheel]="true"
+              [arrowKeys]="true"
+              [customClass]="{
+                container: '',
+                up: '',
+                down: '',
+                prefix: '',
+                postfix: ''
+              }"
+              (minReached)="onMinReached($event)"
+              (maxReached)="onMaxReached($event)"
+              (pickStarted)="onPickStarted($event)"
+              (pickStoped)="onPickStoped($event)"
+              (pickUpStarted)="onPickUpStarted($event)"
+              (pickDownStarted)="onPickDownStarted($event)"
+              (pickUpStoped)="onPickUpStoped($event)"
+              (pickDownStoped)="onPickDownStoped($event)"
+            ></ng-number-picker>
             <!-- <span class="text-danger ml-2">Disponible 20</span> -->
 
             </div>
