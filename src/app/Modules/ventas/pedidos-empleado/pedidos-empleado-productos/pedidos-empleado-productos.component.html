@@ -2,18 +2,19 @@
   <div class="row" >
     <div class="col-md-12 pb-1" >
      <div class="input-group mt-1">
-       <div class="input-group-prepend">
-         <span class="input-group-text" id="basic-addon1">
-           <i class="fa fa-search" aria-hidden="true"></i> Buscar
-         </span>
-       </div>
+
        <input style="height: 50px;" type="text"
+       id="search-bar"
        [(ngModel)]="filter"
-        class="form-control"
-        placeholder="ARTICULOS/PRODUCTOS"
+        class="form-control border-right-0"
+        placeholder="¿Con que puedo ayudarte hoy?"
         aria-label="Productos"
         aria-describedby="basic-addon1">
-
+        <div class="input-group-prepend">
+          <span class="input-group-text bg-white border-left-0" style="font-size: 25px;" id="basic-addon1">
+            <i class="fa fa-search" aria-hidden="true"></i>
+          </span>
+        </div>
       </div>
      </div>
 
@@ -25,7 +26,7 @@
         <div class="row">
           <div class="col-xl-2  col-lg-3 col-md-4 col-sm-6 col-xs-12 container_product"  (click)="openModalDetalle(DetalleArticulo,p)" *ngFor="let p of (articulos)  | filter:filter">
 
-            <div class="count_in_cart position-absolute" *ngIf="p.cant>0"
+            <div class="count_in_cart position-absolute" *ngIf="p.cant>0 && p.cartAdded"
              style="z-index: 50;    right: 0px;
             top: -10px;">
               <h4 class="heading text-white" style="    border-radius: 50%;
@@ -38,7 +39,7 @@
               </h4>
             </div>
 
-            <div class="card product  " [style.background-image]="getSantizeUrl(p.imagenUrl)"   [ngClass]="{'product_added_venta':p.cant>0}" >
+            <div class="card product  " [style.background-image]="getSantizeUrl(p.imagenUrl)"   [ngClass]="{'product_added_venta':p.cant>0 && p.cartAdded}" >
 
                 <div class="mt-5 "> </div>
 
@@ -118,14 +119,6 @@
                 prefix: '',
                 postfix: ''
               }"
-              (minReached)="onMinReached($event)"
-              (maxReached)="onMaxReached($event)"
-              (pickStarted)="onPickStarted($event)"
-              (pickStoped)="onPickStoped($event)"
-              (pickUpStarted)="onPickUpStarted($event)"
-              (pickDownStarted)="onPickDownStarted($event)"
-              (pickUpStoped)="onPickUpStoped($event)"
-              (pickDownStoped)="onPickDownStoped($event)"
             ></ng-number-picker>
             <!-- <span class="text-danger ml-2">Disponible 20</span> -->
 

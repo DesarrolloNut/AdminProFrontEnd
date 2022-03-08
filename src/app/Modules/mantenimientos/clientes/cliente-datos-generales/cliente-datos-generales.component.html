@@ -19,7 +19,7 @@
 
           <form  class="form-row m-t-10 "  (keydown.enter)="$event.preventDefault()" [formGroup]="FormGenerales" (ngSubmit)="onSubmit()">
 
-            <ul class="payment-methods col-md-12 row">
+            <!-- <ul class="payment-methods col-md-12 row">
               <div class="col-md-3"></div>
 
               <fieldset  class="col-md-6 row" [disabled]="f.clienteTipoID.value==12|| f.clienteTipoID.value==15">
@@ -43,7 +43,7 @@
               </fieldset>
 
                 <div class="col-md-3"></div>
-            </ul>
+            </ul> -->
 
           <div class="col-12"><br> </div>
 
@@ -107,7 +107,7 @@
           <label for="documento"> <i class="fa fa-id-card"></i>
             Documento</label>
           <div class="input-group">
-            <input (keyup)="onDocumentoKeyUp()"
+            <input (keyup)="onDocumentoKeyUp($event)"
               [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null || actualizando"
                formControlName="documento" type="text" name="documento"
               cleareable="false" id="documento"

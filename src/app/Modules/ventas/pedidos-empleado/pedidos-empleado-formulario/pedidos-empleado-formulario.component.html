@@ -4,14 +4,30 @@
 
     <div class="row" *ngIf="!loadingInfoCliente && clienteExiste">
 
-      <div class="col-12 ml-0">
+      <div class="col-12 ml-0 mb-1">
          <h4 class="modal-title font-weight-bold"   id="modal-basic-title" style="font-size: 25px;">Bienvenido, {{cliente.nombres | titlecase}}</h4>
       </div>
 
-        <div class="col-12">
+        <div class="col-12 mb-1">
           <div class="row">
-            <div class="col-lg-3 col-md-4">
-              <div class="card overflow-hidden">
+            <div class="col-lg-3 col-md-4 mt-2 ">
+              <div class="card overflow-hidden shadow-sm p-1 mb-0">
+                <div class="d-flex flex-row  p-1">
+                  <div>
+                    <span class="font-weight-bold text-black-50">Condición de pago</span>
+                    <span class="badge badge-info">{{cliente.condicionPago}}</span>
+                  </div>
+                  <div>
+                    <span class="font-weight-bold text-black-50">Plazo</span>
+                    <span class="badge badge-info">{{cliente.plazo}}</span>
+                  </div>
+
+
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-4 mt-2">
+              <div class="card overflow-hidden mb-0">
                 <div class="d-flex flex-row">
                   <div class="p-1 bg-light-warning">
                     <h3 class="text-warning box mb-0">
@@ -25,23 +41,8 @@
                 </div>
               </div>
             </div>
-            <div class="col-lg-3 col-md-4">
-              <div class="card overflow-hidden">
-                <div class="d-flex flex-row">
-                  <div class="p-1 bg-light-warning">
-                    <h3 class="text-warning box mb-0">
-                      <i class="fa fa-money-bill-alt"></i>
-                    </h3>
-                  </div>
-                  <div class="p-1">
-                    <h3 class="text-warning mb-0">{{cliente.limiteCredito  | currency}}</h3>
-                    <span class="font-weight-bold text-black-50">Limite de credito</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class=" col-lg-3 col-md-4">
-              <div class="card overflow-hidden">
+            <div class=" col-lg-3 col-md-4  mt-2">
+              <div class="card overflow-hidden mb-0">
                 <div class="d-flex flex-row">
                   <div class="p-1 bg-light-success">
                     <h3 class="text-success box mb-0">
@@ -56,8 +57,8 @@
               </div>
             </div>
 
-            <div class=" col-lg-3 col-md-4">
-              <div class="card overflow-hidden">
+            <div class=" col-lg-3 col-md-4  mt-2">
+              <div class="card overflow-hidden mb-0">
                 <div class="d-flex flex-row">
                   <div class="p-1 bg-light-success">
                     <h3 class="text-success box mb-0">
