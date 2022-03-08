@@ -22,7 +22,7 @@ export class PedidosEmpleadoPedidoModalComponent implements OnDestroy{
     // private logger: NGXLogger
   ) {
     route.params.pipe(takeUntil(this.destroy)).subscribe(params => {
-       console.log(params)
+      //  console.log(params)
       // When router navigates on this component is takes the params and opens up the top-shelf-   detail modal
       // this.currentDialog = this.modalService.open(PedidosEmpleadoFormularioComponent, { windowClass: "myCustomModalClass", backdrop: "static" });
         this.currentDialog = this.modalService.open(PedidosEmpleadoFormularioComponent,

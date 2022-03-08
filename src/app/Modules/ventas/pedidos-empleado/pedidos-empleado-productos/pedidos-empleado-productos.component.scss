@@ -58,7 +58,7 @@
 
 .product {
   cursor: pointer;
-  border: 3px solid gainsboro;
+  border: 3px solid rgb(236, 236, 236);
 
 }
 .product_added_venta{
@@ -68,7 +68,7 @@
 
 .icon_articulo{
   font-size: 50px;
-  color: gainsboro;
+  color: rgb(236, 236, 236);
 }
 .text_noselected{
   -webkit-touch-callout: none;
@@ -130,4 +130,31 @@
 }
 .container_product:hover{
   // background-color: #44974f;
+}
+
+
+input#search-bar:focus::-webkit-input-placeholder {
+  transition: opacity 0.45s ease;
+  opacity: 0;
+}
+input#search-bar:focus::-moz-placeholder {
+  transition: opacity 0.45s ease;
+  opacity: 0;
+}
+input#search-bar:focus:-ms-placeholder {
+  transition: opacity 0.45s ease;
+  opacity: 0;
+}
+input#search-bar{
+ font-size: 20px;
+}
+::ng-deep .detalle_articulo{
+  animation-name: example;
+  animation-duration: 0.3s;
+}
+
+@keyframes example {
+  0%   {transform: scale(0.5)}
+  75%  {transform: scale(1.1)}
+  100% {transform: scale(1)}
 }

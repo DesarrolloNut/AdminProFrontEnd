@@ -44,11 +44,12 @@
                                 <!-- <th>SubTotal</th> -->
                                 <!-- <th>Desc.</th> -->
                                 <!-- <th>Imp.</th> -->
-                                <th>Total Neto</th>
                                 <th>Estado</th>
 
                                 <th>Fecha</th>
                                 <th>Vendedor</th>
+                                <th>Total Pedido </th>
+
                                 <!-- <th>Estado</th> -->
                             </tr>
                         </thead>
@@ -75,27 +76,8 @@
 
                                 </td>
                                 <td><span class="badge badge-light text-info font-bold"  >{{item.id}}</span></td>
-                                <!-- <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="ml-3">
-                                            <p class="font-bold mb-0">{{item.cliente | titlecase }}</p>
-                                            <small class="text-info"> <i class="fa fa-id-card"></i>
-                                                {{item.clienteDocumento | uppercase }}</small>
-                                        </div>
-                                    </div>
-                                </td> -->
-                                <!-- <td>
-                                    <span> ${{item.subTotal | number:'1.2-2'}}</span>
-                                </td> -->
-                                <!-- <td>
-                                    <span> ${{item.descuentoTotal | number:'1.2-2'}}</span>
-                                </td> -->
-                                <!-- <td>
-                                    <span> ${{item.impuestoTotal | number:'1.2-2'}}</span>
-                                </td> -->
-                                <td>
-                                    <span class="font-weight-bold"> ${{item.totalNeto | number:'1.2-2'}}</span>
-                                </td>
+
+
 
                                 <td>
                                   <span  class="badge badge-warning">{{item.estadoDespacho}}</span>
@@ -103,9 +85,10 @@
                               </td>
 
                                 <td>
-                                    <span class="text-muted"><i class="far fa-calendar"></i>
-                                        {{item.fechaCreacion | date:'dd/MM/yy' }}
-                                    </span>
+                                  <span class="text-muted">
+                                    <i class="fa fa-calendar-alt"></i>
+                                    {{item.fechaCreacion |date : 'dd/MM/yy'}}
+                                </span>
                                 </td>
 
                                 <td>
@@ -119,6 +102,9 @@
                                         </div>
                                     </div>
                                 </td>
+                                <td>
+                                  <span class="font-weight-bold">RD$ {{item.totalNeto | number: '1.2'}}</span>
+                              </td>
                                 <!-- <td>
                                     <ng-select style="width: 120px;" [items]="estados" bindLabel="nombre"
                                         [clearable]="false" bindValue="codigo" [loading]="loadingEstados"

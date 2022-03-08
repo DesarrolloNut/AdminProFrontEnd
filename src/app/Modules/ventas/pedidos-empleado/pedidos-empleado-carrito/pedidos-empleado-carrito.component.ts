@@ -1,4 +1,4 @@
-import { Cliente } from './../../../mantenimientos/clientes/models/Cliente';
+import { Cliente, ClientePedidoEmpleadoVM } from './../../../mantenimientos/clientes/models/Cliente';
 import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -25,7 +25,7 @@ export class PedidosEmpleadoCarritoComponent implements OnInit {
   @Output() articulosInCart = new EventEmitter<ArticuloListaPrecioViewModel[]>();
   @Output() pedidoSendToCreate = new EventEmitter<PedidoEmpleadoRequest>();
 
-  @Input() clienteInfo = new Cliente()
+  @Input() clienteInfo = new ClientePedidoEmpleadoVM()
   @Input() ITBIS: number = 0;
   pedidoEmpleado: PedidoEmpleado = new PedidoEmpleado();
   pedidoEmpleadoDetalles: PedidoEmpleadoDetalle[] = [];
@@ -84,12 +84,14 @@ export class PedidosEmpleadoCarritoComponent implements OnInit {
   }
   fillPedidoEmpleado(){
    this.pedidoEmpleado.clienteId = this.clienteInfo.id;
+   this.pedidoEmpleado.rutaId= this.clienteInfo.rutaId;
    this.pedidoEmpleado.listaPrecioID= this.clienteInfo.listaPrecioId;
    this.pedidoEmpleado.condicionPagoId= this.clienteInfo.condicionPagoId;
    this.pedidoEmpleado.tasa =this.ITBIS;
    this.pedidoEmpleado.pedidoTipo=1;
    this.pedidoEmpleado.fechaEntrega= new Date();
    this.pedidoEmpleado.plazoId=this.clienteInfo.plazoId;
+   this.pedidoEmpleado.monedaId=1;
   }
 
   removeArtFromCart(i:PedidoEmpleadoDetalle){
@@ -159,15 +161,13 @@ limpiarTotales() {
 }
 
 onSubmit() {
-  this.closeConfirmPedidoModal();
-  this.pedidoSendToCreate.emit({pedido:this.pedidoEmpleado,pedidoDetalles:this.pedidoEmpleadoDetalles})
 
   if(( this.clienteInfo.limiteCredito-this.pedidoEmpleado.totalNeto)<0 ){
    this.toastService.warning("Este pedido esta excediendo el limite de credito");
   return ;
 }
- if (!this.pedidoEmpleado.vendedorId || this.pedidoEmpleado.vendedorId < 1) {
-   this.toastService.warning("Selecciona un vendedor")
+ if (!this.pedidoEmpleado.rutaId || this.pedidoEmpleado.rutaId < 1) {
+   this.toastService.warning("Usted no cuenta con una ruta de venta")
    return;
  }
 
@@ -187,41 +187,15 @@ onSubmit() {
    return;
  }
 
-
- //this.crearPedido();
+ this.crearPedido();
 }
 
 
 
 crearPedido(){
-  let metodo: string = this.actualizando ? "Update" : "Registrar";
+  this.closeConfirmPedidoModal();
+  this.pedidoSendToCreate.emit({pedido:this.pedidoEmpleado,pedidoDetalles:this.pedidoEmpleadoDetalles})
 
-  this.pedidoEmpleado.sucursalId = Number(this.authService.tokenDecoded.groupsid)
-  this.pedidoEmpleado.usuarioId = Number(this.authService.tokenDecoded.nameid)
-
-  let parametro: any = {
-    "PedidoEmpleado": this.pedidoEmpleado,
-    "PedidoEmpleadoDetalles": this.pedidoEmpleadoDetalles.filter(x => x.articuloId > 0 && x.cantidad > 0 && x.precio > 0)
-  }
-
-
-  this.httpService.DoPostAny<any>(DataApi.PedidosEmpleado,
-    metodo, parametro).subscribe(response => {
-
-      if (!response.ok) {
-        this.toastService.error(response.errores[0], "Error");
-      } else {
-        this.toastService.success("Realizado", "OK");
-      //  this.modalService.dismissAll();
-      // this.router.navigateByUrl('/ventas/pedidos-empleado');
-        this.closeConfirmPedidoModal();
-
-      }
-      this.btnCrearCargando = false;
-    }, error => {
-      this.btnCrearCargando = false;
-      this.toastService.error("Error conexion al servidor");
-    });
 }
 openConfirmPedidoModal(content) {
   this.confirmPedidoModal= this.modalService.open(content,{centered:true});

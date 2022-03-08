@@ -174,18 +174,6 @@ export class ClienteDatosGeneralesComponent implements OnInit,AfterViewInit {
     if (this.FormGenerales.invalid)
       return;
 
-
-   if(this.f.clientePadreId.value>0 || confirmSucursal){
-
-    this.identificaSucursalOPrincipal()
-      if(this.clientePadreSearched.clienteTipoID!=this.f.clienteTipoID.value){
-        this.toastService.error("Debes seleccionar el mismo tipo de cliente que tiene la principal");
-        return;
-
-      }
-   }
-
-
     if(this.f.clienteTipoID.value==15 || this.f.clienteTipoID.value==12){
       this.f.isClientPrincipal.setValue(0);
     }
@@ -292,10 +280,6 @@ export class ClienteDatosGeneralesComponent implements OnInit,AfterViewInit {
           this.toastService.error(response.errores[0], "Error");
           this.btnGuardarCargando = false;
         } else {
-            if(response.valores[0].tienePadre){
-              this.openModal(this.contentConfirmSucursalModal);
-              return;
-            }
             this.scrollToTop();
             this.toastService.success("Realizado", "OK");
           if(!this.actualizando){
@@ -657,33 +641,23 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
            this.clientePadreSearched = response.records[0];
 
            //SI ESTE CLIENTE ES UN EMPLEADO NO SE PUEDE CREAR OTRO CLIENTE CON ESTE MISMO NO. DOCUMENTO
-           if(this.clientePadreSearched.clienteTipoID==12 || this.clientePadreSearched.clienteTipoID==15 )
-              {
 
-                if(this.f.id.value!=this.clientePadreSearched.id){
-                  this.toastService.error('Ya existe un cliente de tipo empleado con este numero de documento');
+
+             if(this.f.id.value!=this.clientePadreSearched.id){
+                  this.toastService.error('Ya existe un cliente con este numero de documento');
+
+                }else{
+                  this.f.nombres.setValue(this.clientePadreSearched.nombres);
+                  this.f.apellidos.setValue(this.clientePadreSearched.apellidos!=null?this.clientePadreSearched.apellidos:"");
+                  this.f.clienteNombre.setValue(this.clientePadreSearched.nombres +' ' +    this.f.apellidos.value )
+                  this.f.fechaNacimiento.setValue(this.clientePadreSearched.fechaNacimiento);
+                  this.f.sexo.setValue(this.clientePadreSearched.sexo);
+
                 }
-                this.buscandoDocumento = false;
-                return;
-              }
 
+              this.buscandoDocumento = false;
+              return;
 
-              this.f.nombres.setValue(this.clientePadreSearched.nombres);
-              this.f.apellidos.setValue(this.clientePadreSearched.apellidos!=null?this.clientePadreSearched.apellidos:"");
-              this.f.clienteNombre.setValue(this.clientePadreSearched.nombres +' ' +    this.f.apellidos.value )
-              this.f.fechaNacimiento.setValue(this.clientePadreSearched.fechaNacimiento);
-              this.f.sexo.setValue(this.clientePadreSearched.sexo);
-
-
-            if(this.clientePadreSearched.clienteTipoID>0 &&  this.clientePadreSearched.clienteTipoID !=null)
-            {
-              this.f.clientePadreTipoId.setValue(this.clientePadreSearched.clienteTipoID)
-            }
-
-          if(this.f.clienteTipoID.value!=15 || this.f.clienteTipoID.value!=12){
-
-            this.identificaSucursalOPrincipal();
-          }
 
         } else {
           if(this.f.documentoTipoID.value==2){
@@ -695,6 +669,7 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
           this.toastService.warning("Datos no encontrados");
          // this.f.nombres.setValue(null);
           // this.f.celular.setValue(null);
+          this.buscandoDocumento = false;
         }
       } else {
         this.toastService.error(response.errores[0]);
@@ -706,7 +681,6 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
     });
 
 }
-
 
 identificaSucursalOPrincipal(){
 
@@ -860,7 +834,7 @@ onClickRadioPrincipalOSucursal(value:number){
 }
 
 //METODOS LOGIC
-onDocumentoKeyUp() {
+onDocumentoKeyUp(event) {
 
   if (this.f.documento.valid) {
     this.buscarClienteByRncOCedula(this.f.documento.value,this.f.documentoTipoID.value);

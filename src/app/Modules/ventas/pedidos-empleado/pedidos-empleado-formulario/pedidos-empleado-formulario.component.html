@@ -1,24 +1,55 @@
 
 
-  <div class="modal-header ">
+  <div class="modal-header " style="    box-shadow: 0 1px 3px rgb(225 225 225 / 12%), 0 1px 2px rgb(211 211 211 / 24%);">
 
-    <div class="row w-75" *ngIf="!loadingInfoCliente && clienteExiste">
+    <div class="row" *ngIf="!loadingInfoCliente && clienteExiste">
 
-      <div class="col-12 ml-0">
+      <div class="col-12 ml-0 mb-1">
          <h4 class="modal-title font-weight-bold"   id="modal-basic-title" style="font-size: 25px;">Bienvenido, {{cliente.nombres | titlecase}}</h4>
       </div>
 
-        <div class="col-12">
+        <div class="col-12 mb-1">
           <div class="row">
-            <div class=" col-lg-4 col-md-6">
-              <div class="card overflow-hidden">
+            <div class="col-lg-3 col-md-4 mt-2 ">
+              <div class="card overflow-hidden shadow-sm p-1 mb-0">
+                <div class="d-flex flex-row  p-1">
+                  <div>
+                    <span class="font-weight-bold text-black-50">Condición de pago</span>
+                    <span class="badge badge-info">{{cliente.condicionPago}}</span>
+                  </div>
+                  <div>
+                    <span class="font-weight-bold text-black-50">Plazo</span>
+                    <span class="badge badge-info">{{cliente.plazo}}</span>
+                  </div>
+
+
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-4 mt-2">
+              <div class="card overflow-hidden mb-0">
                 <div class="d-flex flex-row">
-                  <div class="p-3 bg-light-success">
+                  <div class="p-1 bg-light-warning">
+                    <h3 class="text-warning box mb-0">
+                      <i class="fa fa-money-bill-alt"></i>
+                    </h3>
+                  </div>
+                  <div class="p-1">
+                    <h3 class="text-warning mb-0">{{cliente.limiteCredito  | currency}}</h3>
+                    <span class="font-weight-bold text-black-50">Limite de credito</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class=" col-lg-3 col-md-4  mt-2">
+              <div class="card overflow-hidden mb-0">
+                <div class="d-flex flex-row">
+                  <div class="p-1 bg-light-success">
                     <h3 class="text-success box mb-0">
                       <i class="fa fa-money-bill-alt"></i>
                     </h3>
                   </div>
-                  <div class="p-3">
+                  <div class="p-1">
                     <h3 class="text-success mb-0">{{cliente.balance | currency}}</h3>
                     <span class="font-weight-bold text-black-50">Balance</span>
                   </div>
@@ -26,21 +57,22 @@
               </div>
             </div>
 
-            <div class="col-lg-4 col-md-6">
-              <div class="card overflow-hidden">
+            <div class=" col-lg-3 col-md-4  mt-2">
+              <div class="card overflow-hidden mb-0">
                 <div class="d-flex flex-row">
-                  <div class="p-3 bg-light-warning">
-                    <h3 class="text-warning box mb-0">
+                  <div class="p-1 bg-light-success">
+                    <h3 class="text-success box mb-0">
                       <i class="fa fa-money-bill-alt"></i>
                     </h3>
                   </div>
-                  <div class="p-3">
-                    <h3 class="text-warning mb-0">{{cliente.limiteCredito  | currency}}</h3>
-                    <span class="font-weight-bold text-black-50">Limite de credito</span>
+                  <div class="p-1">
+                    <h3 class="text-success mb-0">{{cliente.balance | currency}}</h3>
+                    <span class="font-weight-bold text-black-50">TOTAL PEDIDO</span>
                   </div>
                 </div>
               </div>
             </div>
+
           </div>
 
         </div>
@@ -49,7 +81,7 @@
 
 
     <!-- LOADING INFO CLIENTE -->
-    <div class="row w-75" *ngIf="loadingInfoCliente">
+    <div class="row w-75" *ngIf="loadingInfoCliente" >
 
       <div class="col-12 ml-0">
         <ngx-skeleton-loader     [theme]="{    width: '400px' }" count="1" ></ngx-skeleton-loader>
@@ -57,10 +89,10 @@
 
         <div class="col-12">
           <div class="row">
-            <div class=" col-lg-4 col-md-6 d-inline-block">
+            <div class=" col-lg-3 col-md-4 d-inline-block">
               <div class="section-wrapper d-inline-flex">
                 <div class="icon">
-                  <ngx-skeleton-loader [theme]="{ width: '80px', height: '80px' }">
+                  <ngx-skeleton-loader [theme]="{ width: '55px', height: '55px' }">
                   </ngx-skeleton-loader>
                 </div>
                 <div class="title ml-2">
@@ -70,7 +102,7 @@
                         width: '200px',
                         'border-radius': '0',
                         height: '15px',
-                        'margin-top': '15px'
+                        'margin-top': '6px'
                       }"
                     ></ngx-skeleton-loader>
                   </div>
@@ -79,7 +111,7 @@
                       [theme]="{
                         width: '170px',
                         'border-radius': '0',
-                        'margin-top': '0px',
+                        'margin-top': '-5px',
                         height: '15px'
                       }"
                     ></ngx-skeleton-loader>
@@ -88,10 +120,10 @@
               </div>
 
             </div>
-            <div class=" col-lg-4 col-md-6 d-inline-block">
+            <div class=" col-lg-3 col-md-4 d-inline-block">
               <div class="section-wrapper d-inline-flex">
                 <div class="icon">
-                  <ngx-skeleton-loader [theme]="{ width: '80px', height: '80px' }">
+                  <ngx-skeleton-loader [theme]="{ width: '55px', height: '55px' }">
                   </ngx-skeleton-loader>
                 </div>
                 <div class="title ml-2">
@@ -101,7 +133,7 @@
                         width: '200px',
                         'border-radius': '0',
                         height: '15px',
-                        'margin-top': '15px'
+                        'margin-top': '6px'
                       }"
                     ></ngx-skeleton-loader>
                   </div>
@@ -110,6 +142,7 @@
                       [theme]="{
                         width: '170px',
                         'border-radius': '0',
+                        'margin-top': '-5px',
                         height: '15px'
                       }"
                     ></ngx-skeleton-loader>
@@ -118,7 +151,68 @@
               </div>
 
             </div>
+            <div class=" col-lg-3 col-md-4 d-inline-block">
+              <div class="section-wrapper d-inline-flex">
+                <div class="icon">
+                  <ngx-skeleton-loader [theme]="{ width: '55px', height: '55px' }">
+                  </ngx-skeleton-loader>
+                </div>
+                <div class="title ml-2">
+                  <div>
+                    <ngx-skeleton-loader
+                      [theme]="{
+                        width: '200px',
+                        'border-radius': '0',
+                        height: '15px',
+                        'margin-top': '6px'
+                      }"
+                    ></ngx-skeleton-loader>
+                  </div>
+                  <div>
+                    <ngx-skeleton-loader
+                    [theme]="{
+                      width: '170px',
+                      'border-radius': '0',
+                      'margin-top': '-5px',
+                      height: '15px'
+                    }"
+                    ></ngx-skeleton-loader>
+                  </div>
+                </div>
+              </div>
 
+            </div>
+            <div class=" col-lg-3 col-md-4 d-inline-block">
+              <div class="section-wrapper d-inline-flex">
+                <div class="icon">
+                  <ngx-skeleton-loader [theme]="{ width: '55px', height: '55px' }">
+                  </ngx-skeleton-loader>
+                </div>
+                <div class="title ml-2">
+                  <div>
+                    <ngx-skeleton-loader
+                      [theme]="{
+                        width: '200px',
+                        'border-radius': '0',
+                        height: '15px',
+                        'margin-top': '6px'
+                      }"
+                    ></ngx-skeleton-loader>
+                  </div>
+                  <div>
+                    <ngx-skeleton-loader
+                    [theme]="{
+                      width: '170px',
+                      'border-radius': '0',
+                      'margin-top': '-5px',
+                      height: '15px'
+                    }"
+                    ></ngx-skeleton-loader>
+                  </div>
+                </div>
+              </div>
+
+            </div>
           </div>
 
         </div>
@@ -128,11 +222,12 @@
 
 
     <div class="row ">
-      <button type="button" class="btn btn-danger" aria-label="Close"   (click)=" closeModal()" >
+      <button type="button" style="    z-index: 10;" class="btn btn-danger" aria-label="Close"   (click)=" closeModal()" >
         <i class="fa fa-window-close"></i>
-        Cancelar Pedido
+         Cerrar
       </button>
     </div>
+
   </div>
   <div class="modal-body">
 

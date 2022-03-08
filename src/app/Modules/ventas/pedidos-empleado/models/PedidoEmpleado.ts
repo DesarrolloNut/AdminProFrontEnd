@@ -6,7 +6,7 @@ export class PedidoEmpleado {
         this.codigoReferencia = "";
         this.clienteId = 0;
         this.fechaCreacion = new Date;
-        this.vendedorId = 0;
+        this.rutaId = 0;
         this.plazoId = 0;
         this.costoTotal = 0;
         this.subtotal = 0;
@@ -29,7 +29,7 @@ export class PedidoEmpleado {
     fechaCreacion: Date;
     fechaEntrega: Date;
 
-    vendedorId = 0;
+    rutaId = 0;
     plazoId = 0;
     costoTotal = 0;
     subtotal = 0;

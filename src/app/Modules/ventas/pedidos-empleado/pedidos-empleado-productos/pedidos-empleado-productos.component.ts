@@ -109,7 +109,7 @@ export class PedidosEmpleadoProductosComponent implements OnInit,OnChanges {
   openModalDetalle(content, item: ArticuloListaPrecioViewModel) {
     console.log(item)
 
-    this.modalService.open(content, { size: 'lg' ,centered:true});
+    this.modalService.open(content, { size: 'lg' ,centered:true,windowClass: "detalle_articulo",});
     this.artDetalleSeleccionado = item;
   }
   AddOrRemoveCantArticulo(a:ArticuloListaPrecioViewModel,restaOsuma:number){
