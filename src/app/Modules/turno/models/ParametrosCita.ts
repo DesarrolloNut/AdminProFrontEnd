@@ -7,9 +7,11 @@ export class ParametrosCita {
         this.servicioID = 0;
         this.clienteDocumento = "";
         this.documentoTipoID=0;
+        this.clienteID=0
     }
 
     citaID: number
+    clienteID?: number
     sucursalID: number
     servicioID: number
     clienteDocumento: string

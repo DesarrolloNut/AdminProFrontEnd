@@ -321,3 +321,19 @@ export class ClientePedidoEmpleadoVM {
 
   // contactos: Array<ClienteContactos>
 }
+export class ValidaExisteClienteViewModel{
+  id: number;
+  clienteTipoID: number;
+  clienteTipo: string;
+  nombres: string;
+  clienteNombre: string;
+  apellidos: string;
+  documento: string;
+  email: string;
+  telefono: string;
+  documentoTipoID: number;
+  fechaNacimiento: string;
+  sexo: string;
+  estadoID: number;
+  existeEnWebAdmin:number;
+}

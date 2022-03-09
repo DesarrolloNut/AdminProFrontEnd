@@ -15,7 +15,7 @@ import { ParametrosCita } from 'src/app/Modules/turno/models/ParametrosCita';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { cedulaestructura, validaExistCedulaORNC } from 'src/app/shared/validators/cedula-estructura.validator';
-import { Cliente, ClienteTabsValida, Coordenadas } from '../models/Cliente';
+import { Cliente, ClienteTabsValida, Coordenadas, ValidaExisteClienteViewModel } from '../models/Cliente';
 
 const fadeInOut = trigger('fadeInOut', [
   transition(':enter', [
@@ -87,7 +87,7 @@ export class ClienteDatosGeneralesComponent implements OnInit,AfterViewInit {
 
   latitud:number;
   longitud:number;
-  clientePadreSearched = new Cliente();
+  clientePadreSearched = new ValidaExisteClienteViewModel();
   coordenadas: EventEmitter<Coordenadas> = new EventEmitter<Coordenadas>();
   searchLocalidadEvent:EventEmitter<string> = new EventEmitter<string>();
   searchLocalidad:string;
@@ -623,23 +623,27 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
   if(documento=="" || documento==null || documentoTipoID==0 || documentoTipoID==null){
     return;
   }
+
   this.buscandoDocumento = true;
 
   let parametros = new ParametrosCita();
   parametros.clienteDocumento = documento;
   parametros.documentoTipoID = documentoTipoID;
+  parametros.clienteID = this.f.id.value;
 
-  this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
+
+  this.httpService.DoPostAny<ValidaExisteClienteViewModel>(DataApi.Cliente,
     "GetClienteByCedulaOrRnc", parametros).subscribe(response => {
-
+       console.log(response)
       if (response.ok) {
-        if (response != null && response.ok && response.records != null && response.records.length > 0) {
-           this.clientePadreSearched = response.records[0];
+        if (response != null && response.ok && response.valores != null && response.valores.length > 0) {
+           this.clientePadreSearched = response.valores[0];
 
            //SI ESTE CLIENTE ES UN EMPLEADO NO SE PUEDE CREAR OTRO CLIENTE CON ESTE MISMO NO. DOCUMENTO
+               console.log(this.f.id.value)
+               console.log(this.clientePadreSearched.id)
 
-
-             if(this.f.id.value!=this.clientePadreSearched.id){
+             if(this.clientePadreSearched.existeEnWebAdmin){
                   this.toastService.error('Ya existe un cliente con este numero de documento');
 
                 }else{
