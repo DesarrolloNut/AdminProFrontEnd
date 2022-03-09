@@ -92,6 +92,7 @@ export class ClienteDatosGeneralesComponent implements OnInit,AfterViewInit {
   searchLocalidadEvent:EventEmitter<string> = new EventEmitter<string>();
   searchLocalidad:string;
 
+  puedeModificarDocAndInfo=true;
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
@@ -107,12 +108,13 @@ export class ClienteDatosGeneralesComponent implements OnInit,AfterViewInit {
     config.keyboard = false;
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     //CREACION DE FORMULARIO
     this.createForm();
 
     if (this.clientId > 0) {
-
+      this.puedeModificarDocAndInfo= await this.permissionsService.hasPermission('mantenimientos_cliente_editar_doc_and_info')
+      console.log(this.puedeModificarDocAndInfo)
       this.getClienteByID(this.clientId);
       this.actualizando = true;
     }
@@ -165,19 +167,13 @@ export class ClienteDatosGeneralesComponent implements OnInit,AfterViewInit {
             this.toastService.error("Error conexion al servidor");
         });
 }
-  onSubmit(confirmSucursal=false) {
-    this.btnGuardarCargando=false;
-
-    this.modalService.dismissAll()
-
-
-    if (this.FormGenerales.invalid)
-      return;
-
-    if(this.f.clienteTipoID.value==15 || this.f.clienteTipoID.value==12){
-      this.f.isClientPrincipal.setValue(0);
-    }
+  onSubmit() {
     this.submitted = true;
+
+    if (this.FormGenerales.invalid){
+      return;
+    }
+   this.f.isClientPrincipal.setValue(0);
     this.guardarCliente();
   }
   onSubmitWithoutAction() {
