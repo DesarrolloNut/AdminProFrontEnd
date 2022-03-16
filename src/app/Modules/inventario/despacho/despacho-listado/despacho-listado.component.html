@@ -103,7 +103,7 @@
                 </div>
 
                 <div class="table-responsive">
-                  <ng-container [ngTemplateOutlet]="canalId==1 ? tableDataPreventa : canalId ==2 ? tableData : tableData"></ng-container>
+                  <ng-container [ngTemplateOutlet]="canalId==1 ? tableDataPreventa : canalId ==2 ? tableDataPreventa : tableDataPreventa"></ng-container>
                 </div>
 
 
@@ -142,248 +142,8 @@
 
 
 
-<ng-template #modalDetalleCotizacion let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title">Detalle de Pedido</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body">
-        <div class="row">
-        <div class=" col-md-6 row left_detalle">
-            <div class="col-md-12 m-2">
-                <h5 class="text-info"> <i class="fa fa-user"></i> Cliente: {{pedidoEmpleadoSeleccionado.cliente}}</h5>
-                <!-- <h5> <i class="fa fa-id-card"></i> Documento: {{pedidoEmpleadoSeleccionado.clienteDocumento}}</h5> -->
-                <h5> <i class="fa fa-calendar"></i> Fecha: {{pedidoEmpleadoSeleccionado.fechaCreacion |
-                    date:'dd/MM/yy'}}</h5><br>
-                <!-- <hr>
-                <h5> <i class="fa fa-map-marker"></i> Sucursal: {{pedidoEmpleadoSeleccionado.sucursal}}</h5>
-                <h5> <i class="fa fa-user-circle"></i> Vendedor: {{pedidoEmpleadoSeleccionado.vendedor}}</h5>
-               <h5>
-                <i class="fa  fa-adjust"></i>
-                   Estado:
-                <span *ngIf="pedidoEmpleadoSeleccionado.estadoID==2" class="badge badge-warning">Pedido</span>
-                <span *ngIf="pedidoEmpleadoSeleccionado.estadoID==3" class="badge badge-success">Facturado</span>
-                <span *ngIf="pedidoEmpleadoSeleccionado.estadoID==4" class="badge badge-danger">Cancelado</span>
-               </h5> -->
-            </div>
-
-            <div class="col-md-12" [hidden]="loadingCotizacionDetalle">
-
-                <div class=" w-100">
-                    <table class="table table-sm  mb-0 no-wrap v-middle">
-                        <thead style="background-color:white;color: black;">
-                            <tr>
-                                <th>Artículo</th>
-                                <th>Pedido</th>
-                                <th>Despacho</th>
-                                <th style="text-align: center;">¿Listo?</th>
 
 
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                            <tr (click)="onSelectArticulo(item)"
-                            [ngClass]="(item.selected)?'tr_detalle_articulo_selected':'tr_detalle_articulo_no_selected'"
-                              *ngFor="let item of despachoDetalles" class="tr_detalle">
-
-                                <td class="tdcss">
-                                    <span> {{item.codigoReferencia}} |  {{item.articulo}}</span>
-                                </td>
-                                <td class="tdcss">
-                                    <span> {{item.cantidad}}</span>
-                                </td>
-                                <td class="tdcss">
-                                    <span> {{item.cantidad}}</span>
-                                </td>
-
-                                <td class="tdcss" style="vertical-align: initial;    text-align: center; ">
-                                    <input style="display:none" class="form-check-input input_check " id="{{item.id}}" type="checkbox" [(ngModel)]="item.selected" >
-
-
-                                    <span   class="badge font-bold badge-pill badge-{{item.estadoColor}}">{{item.estado | uppercase}}</span>
-
-
-                                      <!-- <svg *ngIf="item.selected" style="color: #EC7063;" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-pin-angle-fill" viewBox="0 0 16 16">
-                                        <path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z"/>
-                                      </svg> -->
-                                      <svg *ngIf="item.selected"
-                                      style="    position: absolute;
-                                      top: -20px;
-                                      right: -68px;
-                                      z-index: 10000000;
-                                      color: antiquewhite;"
-                                      xmlns="http://www.w3.org/2000/svg" width="95" height="95" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
-                                        <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
-                                      </svg>
-                                </td>
-                            </tr>
-                          <br >
-                          <br>
-                          <br>
-                          <br>
-                          <br>
-                          <br>
-                          <br>
-                          <br>
-                          <br>
-                        <br>
-                          <br>
-                          <br>
-                          <br>
-                          <br>
-                          <br>
-                        </tbody>
-                    </table>
-
-                </div>
-
-
-            </div>
-        </div>
-
-        <div class=" col-md-6 row right_detalle" *ngIf="this.despachoPedidoArticuloDetalleSelected">
-            <!-- <ng-container
-            *ngIf="this.despachoPedidoArticuloDetalleSelected.unidadMedida  =='UNIDAD';
-                     then pickingArticuloUnidad
-                     else  pickingArticuloLibra" >
-            </ng-container> -->
-            <ng-container
-            [ngTemplateOutlet]="this.despachoPedidoArticuloDetalleSelected.unidadMedida === 'UNIDAD' ? pickingArticuloUnidad
-            : this.despachoPedidoArticuloDetalleSelected.unidadMedida === 'CANASTO' ? pickingArticuloCanasto : pickingArticuloLibra" >
-            </ng-container>
-
-
-        </div>
-
-            <!-- <div class="col-12 text-right">
-                <hr>
-                <h4>Subtotal: $ {{pedidoEmpleadoSeleccionado.subTotal | number:'1.2-2' }}</h4>
-                <h4>Descuento: $ {{pedidoEmpleadoSeleccionado.descuentoTotal | number:'1.2-2' }}</h4>
-                <h4>Impuesto: $ {{pedidoEmpleadoSeleccionado.impuestoTotal | number:'1.2-2' }}</h4>
-                <h4 class="font-weight-bold">Total Neto: $ {{pedidoEmpleadoSeleccionado.totalNeto | number:'1.2-2' }}</h4>
-            </div> -->
-
-            <div class="col-12">
-                <app-loading-listado [hidden]="!loadingCotizacionDetalle"></app-loading-listado>
-            </div>
-        </div>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-light m-1" (click)="modalDespachoDetalleClose()">Cerrar</button>
-    </div>
-</ng-template>
-
-
-
-
-
-<ng-template  #tableData>
-  <table class="table table-hover mb-0 no-wrap v-middle">
-    <thead>
-        <tr>
-            <th></th>
-            <th>No. Despacho</th>
-            <th>Cliente</th>
-            <!-- <th>SubTotal</th>
-            <th>Desc.</th>
-            <th>Imp.</th>
-            <th>Total Neto</th> -->
-            <th>Fecha</th>
-            <th>Estado</th>
-            <th>Vendedor</th>
-            <!-- <th>Estado</th> -->
-        </tr>
-    </thead>
-    <tbody [hidden]="Cargando">
-
-        <tr    *ngFor="let item of data; let i = index">
-            <td>
-                    <button class="btn  font-bold btn-sm btn-danger m-1" *ngIf="item.estadoID == 2 && !item.loadingCancelPedido"
-                    (click)="openModalCancelarPedido(modalConfirmCancelarPedido,item)">
-                      <i class="fa fa-sm fa-times"></i>
-                  </button>
-                  <button class="btn btn-sm btn-danger m-1" *ngIf="item.loadingCancelPedido" >
-                  <i class="spinner-border spinner-border-sm"></i>
-                </button>
-                <button class="btn btn-sm  font-bold btn-success m-1"
-                    (click)="openModal(modalDetalleCotizacion,item)">
-                    <i class="fa fa-sm  fa-list "></i> Despachar
-                </button>
-
-                <button class="btn btn-sm  font-bold btn-success m-1"
-                    (click)="openModal(modalDetalleCotizacion,item)">
-                    <i class="fa fa-paper-plane" aria-hidden="true"></i>Manual
-               </button>
-                <!-- <button class="btn btn-sm btn-info m-1" [disabled]="item.loadingCancelPedido"  *ngIf="item.estadoID == 2" [routerLink]="[item.id]">
-                    <i class="fa fa-sm fa-edit"></i>
-                </button> -->
-
-
-
-            </td>
-            <td><span class="badge badge-light text-info font-bold"  >{{item.id}}</span></td>
-            <td>
-                <div class="d-flex align-items-center">
-                    <!-- <i class="fa fa-user-circle fa-3x text-light"></i> -->
-                    <div class="ml-3">
-                        <p class="font-bold mb-0">{{item.cliente | titlecase }}</p>
-                        <small class="text-info"> <i class="fa fa-id-card"></i>
-                            {{item.clienteDocumento | uppercase }}</small>
-                    </div>
-                </div>
-            </td>
-            <!-- <td>
-                <span> ${{item.subTotal | number:'1.2-2'}}</span>
-            </td>
-            <td>
-                <span> ${{item.descuentoTotal | number:'1.2-2'}}</span>
-            </td>
-            <td>
-                <span> ${{item.impuestoTotal | number:'1.2-2'}}</span>
-            </td>
-            <td>
-                <span class="font-weight-bold"> ${{item.totalNeto | number:'1.2-2'}}</span>
-            </td> -->
-            <td>
-                <span class="text-muted"><i class="far fa-calendar"></i>
-                    {{item.fechaCreacion | date:'dd/MM/yy' }}
-                </span>
-            </td>
-
-            <td>
-                <span *ngIf="item.estadoID==2" class="badge badge-warning">Pedido</span>
-                <span *ngIf="item.estadoID==3" class="badge badge-success">Facturado</span>
-                <span *ngIf="item.estadoID==4" class="badge badge-danger">Cancelado</span>
-
-            </td>
-            <td>
-
-                <div class="d-flex align-items-center">
-                    <!-- <i class="fa fa-user-circle fa-3x text-light"></i> -->
-                    <div class="ml-3">
-                        <p class="mb-0">{{item.vendedor | titlecase }}</p>
-                        <small class="text-info"> <i class="fa fa-map-marker"></i>
-                            Sucursal: {{item.sucursal | uppercase }}</small>
-                    </div>
-                </div>
-            </td>
-            <!-- <td>
-                <ng-select style="width: 120px;" [items]="estados" bindLabel="nombre"
-                    [clearable]="false" bindValue="codigo" [loading]="loadingEstados"
-                    [(ngModel)]="item.estadoID" [ngModelOptions]="{standalone: true}"
-                    (change)="onChangeEstado(item,i)" notFoundText="No resultados">
-                </ng-select>
-            </td> -->
-
-        </tr>
-
-    </tbody>
-
-</table>
-</ng-template>
 
 
 
@@ -392,24 +152,29 @@
 
 
 <ng-template #modalDetalleDespachoPreventa let-modal>
-  <div class="modal-header">
+  <div class="modal-header p-0">
+    <button type="button " class="btn btn-light m-1" (click)="modalDespachoDetalleClose()">
+         <h5 class="font-bold mt-1">
+          <i class="fa fa-bars" aria-hidden="true"></i> Articulos
+         </h5>
+  </button>
 
-      <h3 class="modal-title">DETALLE DESPACHO</h3>
+    <h4 class="font-bold mt-3 ml-3">
+     <i class="fa fa-truck"></i> ALM. ORIGEN: {{despachoPreventaSeleccionado.almacen_Origen }}	</h4>
+     <h4 class="font-bold mt-3 ml-3">
+     <i class="fa fa-truck"></i> ALM. DESTINO: {{despachoPreventaSeleccionado.almacen_Destino}}	</h4>
 
-      <button type="button" class="btn btn-light m-1" (click)="modalDespachoDetalleClose()">Cerrar</button>
+     <button type="button" class="btn btn-light m-1" (click)="modalDespachoDetalleClose()">
+       <h5 class="font-bold mt-1">
+          <i class="fa fa-bars" aria-hidden="true"></i> Cerrar
+         </h5>
+      </button>
 
   </div>
   <div class="modal-body">
      <div class="row">
       <div class=" col-md-6 row left_detalle">
-          <div class="col-md-12 m-2">
-              <h4 class="text-info"> <i class="fa fa-user"></i> DISTRIBUIDOR: {{despachoPreventaSeleccionado.distribuidor | uppercase}}</h4>
-              <h4> <i class="fa fa-calendar"></i> FECHA: {{despachoPreventaSeleccionado.fechaEntrega | date:'dd/MM/yy'}}</h4>
-
-          </div>
-
-
-          <div class="col-md-12" [hidden]="loadingCotizacionDetalle">
+          <div class="col-md-12">
               <div class=" w-100"  style="min-height: 380px;"  >
                   <table class="table table_DetalleDespacho table-sm  mb-0 no-wrap v-middle" >
                       <thead style="background-color:white;color: black;">
@@ -444,15 +209,6 @@
                                   <span *ngIf="item.estadoId==2 && item.unidadMedida!='CANASTO'" class="badge badge-warning">INCOM</span>
                                   <span *ngIf="item.estadoId==3 && item.unidadMedida!='CANASTO'" class="badge badge-success">SI</span>
 
-                                    <svg *ngIf="item.selected"
-                                    style="    position: absolute;
-                                    top: -20px;
-                                    right: -68px;
-                                    z-index: 10000000;
-                                    color: antiquewhite;"
-                                    xmlns="http://www.w3.org/2000/svg" width="95" height="95" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
-                                      <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
-                                    </svg>
                               </td>
                           </tr>
 
@@ -492,7 +248,7 @@
 
       </div>
 
-      <div class=" col-md-6 row right_detalle" *ngIf="this.despachoPreventaArticuloDetalleSelected && !loadingDespachoPreventaDetalle">
+      <div class=" col-md-6 row right_detalle " *ngIf="this.despachoPreventaArticuloDetalleSelected && !loadingDespachoPreventaDetalle">
 
           <ng-container
           [ngTemplateOutlet]="this.despachoPreventaArticuloDetalleSelected.unidadMedida=='UNIDAD'
@@ -536,6 +292,15 @@
 </ng-template>
 
 
+
+
+
+
+
+
+
+
+
 <ng-template  #tableDataPreventa>
   <table class="table table-hover mb-0 no-wrap v-middle">
     <thead>
@@ -547,7 +312,6 @@
             <th>Pedido </th>
             <th>Despacho</th>
             <th>ERP </th>
-            <!-- <th>Zonas Vendedores</th> -->
         </tr>
     </thead>
     <tfoot>
@@ -633,9 +397,6 @@
                 <span *ngIf="item.noEditable==1" class="badge badge-success">FINALIZADO </span>
 
                 <div *ngIf="item.noEditable==1 && item.estadoERP==1" class="circulo"  style="background-color: #ffc107;"></div>
-                <!-- <div *ngIf="item.noEditable==1 && item.estadoERP==0" class="circulo"  style="background-color: #06d79c;"></div> -->
-
-                <!-- <span *ngIf="item.noEditable==1" >|</span> -->
             </td>
 
              <td>
@@ -647,23 +408,6 @@
               <td>
                 <p class="font-bold mb-0">  {{item.totalMontoPedidoERP | currency}}</p>
              </td>
-<!--
-            <td>
-              <div class="alert alert alert-dark text-left" role="alert">
-
-                {{item.rutasVendedoresDistribuidor}}
-
-              </div>
-
-
-          </td> -->
-            <!-- <td>
-                <ng-select style="width: 120px;" [items]="estados" bindLabel="nombre"
-                    [clearable]="false" bindValue="codigo" [loading]="loadingEstados"
-                    [(ngModel)]="item.estadoID" [ngModelOptions]="{standalone: true}"
-                    (change)="onChangeEstado(item,i)" notFoundText="No resultados">
-                </ng-select>
-            </td> -->
 
         </tr>
         <div class="over_despacho" *ngIf="!despachoPuedeHorario || loadingRangosFechaDespacho || despachoOn==0">
@@ -702,8 +446,6 @@
 
 
 
-
-
 <!-- MOVER A OTRO COMPONENTE -->
 
 <!-- MOVER A OTRO COMPONENTE -->
@@ -727,7 +469,7 @@
 
 
         <div class="card" style=" margin-left: 10px;">
-            <div class="card-body">
+            <div class="card-body" style="min-height: 480px;">
                 <div class="row" >
 
 
@@ -739,25 +481,6 @@
                                     {{despachoPreventaArticuloDetalleSelected.codigoArticulo}} |
                                    {{despachoPreventaArticuloDetalleSelected.articulo}}	</h3>
                             </div>
-
-
-          <!-- INPUTS LOTE -->
-                    <div class="form-group col-md-6" >
-                        <label for="inputEmail4">Almacén Origen </label>
-                        <ng-select bindLabel="nombre" bindValue="codigo"
-                            [(ngModel)]="despachoPreventaArticuloDetalleSelected.almacenOrigenId"
-                            [items]="almacenes" [clearable]="false" [loading]="loadingAlmacenes"
-                            notFoundText="No resultados" [readonly]="true">
-                        </ng-select>
-                    </div>
-                    <div class="form-group col-md-6" >
-                      <label for="inputEmail4">Almacén Destino </label>
-                      <ng-select bindLabel="nombre" bindValue="codigo"
-                          [(ngModel)]="despachoPreventaArticuloDetalleSelected.almacenDestinoId"
-                          [items]="almacenes" [clearable]="false" [readonly]="true" [loading]="loadingAlmacenes"
-                          notFoundText="No resultados" >
-                      </ng-select>
-                  </div>
 
 
                     <div class="form-group col-md-6"
@@ -825,6 +548,7 @@
                         step="0.01"
                         pattern="^[a-zA-Z0-9\.]*$"
                         [min]="0"
+                        (focus)="focusInputDespacho()"
                         [readonly]="lote.disponible==undefined || lote.disponible<=0 "
                       class="form-control input_CantidadDespacho" placeholder="0">
                   </div>
@@ -837,6 +561,7 @@
                     type="number" id="inputSearch"
                     step="0.01"
                     pattern="^[a-zA-Z0-9\.]*$"
+                    (focus)="focusInputValidado()"
                     [min]="0"
                   class="form-control input_CantidadDespacho" placeholder="0">
                 </div>
@@ -1122,6 +847,8 @@
                             <input
                             [readonly]="lote.disponible==undefined || lote.disponible<=0 "
                             [(ngModel)]="despachoPreventaArticuloDetalleSelected.despacho"
+                            (focus)="focusInputDespacho()"
+
                               type="number" id="inputSearch"
                             class="form-control input_CantidadDespacho" placeholder="0">
                         </div>
@@ -1132,6 +859,8 @@
                             [(ngModel)]="despachoPreventaArticuloDetalleSelected.validado"
                             type="number" id="inputSearch"
                             [min]="0"
+                            (focus)="focusInputValidado()"
+
                           class="form-control input_CantidadDespacho" placeholder="0">
                         </div>
 

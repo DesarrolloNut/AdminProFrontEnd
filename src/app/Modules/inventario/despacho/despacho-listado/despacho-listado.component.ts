@@ -99,7 +99,7 @@ export class DespachoListadoComponent implements OnInit {
     //PAGINACION MODAL DETALLE DESPACHO
     paginateDataDetalleDespacho: DespachoPreventaDetalleViewModel[] = [];
     pageDetalleDespacho = 1;
-    pageSizeDetalleDespacho= 6;
+    pageSizeDetalleDespacho= 1;
     collectionSizeDetalleDespacho = 0;
 
 
@@ -1354,6 +1354,17 @@ validaDiferenciaMinimaDespacho(item: DespachoListadoPreventaVM){
     }else{return false}
 }
 
+
+focusInputDespacho(){
+  if(this.despachoPreventaArticuloDetalleSelected.despacho==0){
+    this.despachoPreventaArticuloDetalleSelected.despacho=undefined;
+  }
+}
+focusInputValidado(){
+  if(this.despachoPreventaArticuloDetalleSelected.validado==0){
+    this.despachoPreventaArticuloDetalleSelected.validado=undefined;
+  }
+}
 ngOnDestroy(): void {
   window.clearInterval(this.intervalRefreshData)
 
