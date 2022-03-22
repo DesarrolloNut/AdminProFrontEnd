@@ -1,3 +1,5 @@
+import { ArticuloPesosExtrasViewModel } from "src/app/Modules/produccion/pesaje/models/ArticuloPesosExtrasViewModel";
+
 export class DespachoPedidoDetalleViewModel {
     id: number;
     cotizacionId: number;
@@ -63,7 +65,9 @@ export class DespachoPreventaDetalleViewModel   {
   lote: string;
   noTieneLote:boolean;
   selected:boolean;
-  page:number;
+  articulosExtraPesajeString?:string;
+
+  articulosExtraPesaje?:ArticuloPesosExtrasViewModel[];
 }
 export class DespachoPreventaDetalleExcelVM   {
   FechaEntrega?: string;
@@ -90,6 +94,8 @@ export class DespachoPreventaRequestModel {
   pedido: number;
   despacho: number;
   validado: number;
+  articulosPesajeExtra?:ArticuloPesosExtrasViewModel[];
+
 }
 
 export class SAPLoteDespachoPedido   {

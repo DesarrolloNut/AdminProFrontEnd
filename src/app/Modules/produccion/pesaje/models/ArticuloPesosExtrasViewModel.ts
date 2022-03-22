@@ -6,7 +6,7 @@ export class ArticuloPesosExtrasViewModel {
     codigoReferencia: string
     nombre: string
     pesos: any[]
-
+    abreviatura?:string;
     pesoSeleccionado: any
     cantidadSeleccionada: number
 }

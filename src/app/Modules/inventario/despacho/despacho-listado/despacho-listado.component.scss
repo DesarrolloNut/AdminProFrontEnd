@@ -28,7 +28,7 @@
 
 .table_DetalleDespachoPreventa {width: 100%;}
 
-.column_a {width: 70%;}
+.column_a {width:70%;}
 
 
 
@@ -39,17 +39,17 @@
   }
 
   .left_detalle{
-    background-color: #FCFCFC;
-    border-right: 1px solid gainsboro;
     margin-top: -16px;
     margin-bottom: -16px;
-    margin-left: -6px;
+    padding-left: 3rem !important;
+    padding-right: 3rem !important;
   }
 
   .right_detalle{
     margin-top: -16px;
     margin-bottom: -16px;
-    margin-left: 15px;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
   }
   .input_check{
     width: 21px;
@@ -75,17 +75,17 @@
 .input_CantidadPedido{
   font-weight: 500;
   font-size: 25px;
-  height: 70px;
+  height: 55px;
 }
 .input_CantidadDespacho{
   font-weight: 500;
   font-size: 25px;
-  height: 70px;
+  height: 55px;
 }
 .input_Lote{
   font-weight: 500;
   font-size: 25px;
-  height: 70px;
+  height: 55px;
 }
 
 
@@ -99,14 +99,14 @@
 
 
 .ng-select.customSelect_lote {
-  height: 70px !important;
+  height: 55px !important;
 }
 .ng-select.customSelect_lote .ng-select-container  {
-  height: 70px !important;
+  height: 55px !important;
 }
 
 .ng-select.customSelect_lote ::ng-deep .ng-select-container  {
-  height: 70px !important;
+  height: 55px !important;
 }
 .over_despacho{
   position: absolute;
@@ -137,3 +137,15 @@
   left: 3px;
 }
 
+
+
+
+.btn_finaliza_despacho{
+height: 50px;
+font-size: 18px;
+}
+
+.table_articulosExtras td, .table_articulosExtras th {
+
+  padding: 0px !important;
+}
