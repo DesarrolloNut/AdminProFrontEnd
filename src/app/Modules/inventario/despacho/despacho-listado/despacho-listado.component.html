@@ -545,7 +545,7 @@
               <label>Lote</label>
               <div class="input-group">
 
-                <input [disabled]="true" (input)="onLoteInput()"
+                <input [disabled]="true"
                   [(ngModel)]="despachoPreventaArticuloDetalleSelected.lote" type="text" id="inputSearch"
                   class="form-control input_Lote" placeholder="Lote">
               </div>
@@ -556,7 +556,7 @@
               *ngIf="despachoPreventaArticuloDetalleSelected.lote==null
                   || despachoPreventaArticuloDetalleSelected.lote==undefined ||  despachoPreventaArticuloDetalleSelected.lote==''">
               <label for="inputEmail4">Lote</label>
-              <ng-select (change)="onLoteInput()" style="  font-size: 30px;" class="customSelect_lote" bindLabel="lote"
+              <ng-select   style="  font-size: 30px;" class="customSelect_lote" bindLabel="lote"
                 [items]="lotesDisponibles" [ngModelOptions]="{standalone: true}" [searchable]="false" [(ngModel)]="lote"
                 [loading]="loadingLote" [clearable]="false" notFoundText="No se encontraron lotes">
                 <ng-template ng-label-tmp let-item="item">
@@ -681,7 +681,7 @@
                 <div class="d-flex no-block align-items-center">
                   <div><span class="text-danger display-5"><i class="ti-pie-chart"></i></span></div>
                   <div class="ml-auto text-right">
-                    <h2 class="font-weight-bold"> {{pesoBalanzaLBNumber | number}} LB</h2>
+                    <h2 class="font-weight-bold"> {{pesoBalanzaLBNumber | number:'1.2-2'}} LB</h2>
                     <h4 class="text-danger mb-1">Peso Balanza</h4>
                     <span *ngIf="pesoBalanzaUltimaFecha" class="small "><i class="fa fa-clock"></i>
                       {{pesoBalanzaUltimaFecha | date:'hh:mm:ss a'}}
@@ -701,7 +701,7 @@
                 <div class="d-flex no-block align-items-center">
                   <div><span class="text-info display-5"><i class="ti-pie-chart"></i></span></div>
                   <div class="ml-auto text-right">
-                    <h2 class="font-weight-bold">{{pesoCanastos | number}} Lb</h2>
+                    <h2 class="font-weight-bold">{{pesoCanastos | number:'1.2-2'}} Lb</h2>
                     <h4 class="text-info">Peso Canastos</h4>
                   </div>
                 </div>
@@ -715,7 +715,7 @@
                 <div class="d-flex no-block align-items-center">
                   <div><span class="text-success display-5"><i class="ti-pie-chart"></i></span></div>
                   <div class="ml-auto text-right">
-                    <h2 class="font-weight-bold">{{pesoNeto | number}} Lb</h2>
+                    <h2 class="font-weight-bold">{{pesoNeto | number:'1.2-2' }} Lb</h2>
                     <h4 class="text-success">Peso Neto</h4>
                   </div>
                 </div>
@@ -776,7 +776,7 @@
               <label>Lote</label>
               <div class="input-group">
 
-                <input [disabled]="true" (input)="onLoteInput()"
+                <input [disabled]="true"
                   [(ngModel)]="despachoPreventaArticuloDetalleSelected.lote" type="text" id="inputSearch"
                   class="form-control input_Lote" placeholder="Lote">
               </div>
@@ -787,7 +787,7 @@
               *ngIf="despachoPreventaArticuloDetalleSelected.lote==null
                         || despachoPreventaArticuloDetalleSelected.lote==undefined ||  despachoPreventaArticuloDetalleSelected.lote==''">
               <label for="inputEmail4">Lote</label>
-              <ng-select (change)="onLoteInput()" style="  font-size: 30px;" class="customSelect_lote" bindLabel="lote"
+              <ng-select  style="  font-size: 30px;" class="customSelect_lote" bindLabel="lote"
                 [items]="lotesDisponibles" [ngModelOptions]="{standalone: true}" [searchable]="false" [(ngModel)]="lote"
                 [loading]="loadingLote" [clearable]="false" notFoundText="No se encontraron lotes">
                 <ng-template ng-label-tmp let-item="item">
