@@ -95,7 +95,7 @@ export class BalanzaPesajeSignalrService {
 
 
 
-  //para refrescar el listado de pesajes 
+  //para refrescar el listado de pesajes
   //cuando en el formulario se registra un nuevo peso
   //para ese almacen
   public refrescarListadoPesajes(almacenID: number) {

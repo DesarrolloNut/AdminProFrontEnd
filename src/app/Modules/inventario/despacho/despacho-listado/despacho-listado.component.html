@@ -429,8 +429,8 @@
         *ngIf="this.despachoPreventaArticuloDetalleSelected && !loadingDespachoPreventaDetalle && !viewAllArticulos">
 
         <ng-container
-          [ngTemplateOutlet]="this.despachoPreventaArticuloDetalleSelected.unidadMedida=='UNIDAD'
-          ? pickingArticuloUnidad : this.despachoPreventaArticuloDetalleSelected.unidadMedida =='CANASTO' ?  pickingArticuloCanasto : pickingArticuloLibra">
+          [ngTemplateOutlet]="this.despachoPreventaArticuloDetalleSelected.unidadMedida=='LBS'
+          ?   pickingArticuloLibra: this.despachoPreventaArticuloDetalleSelected.unidadMedida =='CANASTO' ?  pickingArticuloCanasto : pickingArticuloUnidad">
         </ng-container>
 
       </div>
@@ -472,15 +472,15 @@
     </div>
 
 
-    <div class="col-md-12 row" *ngIf="viewAllArticulos" >
+    <div class="col-md-12 row" *ngIf="viewAllArticulos && despachoPreventaSeleccionado.noEditable==0" >
       <button type="button"
-      *ngIf="!btnFinalizarDespachoCargando && despachoPreventaSeleccionado.noEditable==0 && !loadingDespachoPreventaDetalle"
+      *ngIf="!btnFinalizarDespachoCargando && !loadingDespachoPreventaDetalle"
       class="btn mr-auto ml-auto btn-info btn-md btn_finaliza_despacho" (click)="openModalConfirmFinalizaDespacho(modalConfirm)">
       FINALIZAR DESPACHO
     </button>
 
     <button type="button" disabled=true
-      *ngIf="btnFinalizarDespachoCargando && despachoPreventaSeleccionado.noEditable==0"
+      *ngIf="btnFinalizarDespachoCargando"
       class="btn mr-auto ml-auto btn-info btn-md btn_finaliza_despacho">
       FINALIZANDO DESPACHO...
     </button>
@@ -538,10 +538,7 @@
             </div>
 
 
-            <div class="form-group col-md-6" *ngIf="despachoPreventaArticuloDetalleSelected.lote!=null
-                            &&
-                            despachoPreventaArticuloDetalleSelected.lote!=undefined
-                              &&  despachoPreventaArticuloDetalleSelected.lote!=''">
+            <div class="form-group col-md-6" *ngIf="despachoPreventaArticuloDetalleSelected.estadoId!=1 || this.despachoPreventaSeleccionado.finalizado==1">
               <label>Lote</label>
               <div class="input-group">
 
@@ -553,8 +550,7 @@
 
 
             <div class="form-group col-md-6"
-              *ngIf="despachoPreventaArticuloDetalleSelected.lote==null
-                  || despachoPreventaArticuloDetalleSelected.lote==undefined ||  despachoPreventaArticuloDetalleSelected.lote==''">
+            *ngIf="despachoPreventaArticuloDetalleSelected.estadoId==1 && this.despachoPreventaSeleccionado.finalizado==0">
               <label for="inputEmail4">Lote</label>
               <ng-select   style="  font-size: 30px;" class="customSelect_lote" bindLabel="lote"
                 [items]="lotesDisponibles" [ngModelOptions]="{standalone: true}" [searchable]="false" [(ngModel)]="lote"
@@ -640,13 +636,13 @@
                         <span class="font-bold"> {{item.nombre}} | {{item.pesoSeleccionado}} {{item.abreviatura}} </span>
                       </h5>
                     </td>
-                    <td *ngIf="despachoPreventaArticuloDetalleSelected.estadoId!=1">
+                    <td *ngIf="despachoPreventaArticuloDetalleSelected.estadoId!=1 || despachoPreventaSeleccionado.finalizado==1">
                       <ng-select style="width: 80px;" [clearable]="false" [readonly]="true" [items]="cantidades"
                         [(ngModel)]="item.cantidadSeleccionada" [searchable]="false" (change)="calcularTotales()"
                         notFoundText="No resultados">
                       </ng-select>
                     </td>
-                    <td *ngIf="despachoPreventaArticuloDetalleSelected.estadoId==1">
+                    <td *ngIf="despachoPreventaArticuloDetalleSelected.estadoId==1 && despachoPreventaSeleccionado.finalizado==0">
                       <ng-select style="width: 80px;" [clearable]="false"  [items]="cantidades"
                         [(ngModel)]="item.cantidadSeleccionada" [searchable]="false" (change)="calcularTotales()"
                         notFoundText="No resultados">
@@ -769,10 +765,7 @@
                 {{despachoPreventaArticuloDetalleSelected.articulo}} </h3>
             </div>
 
-            <div class="form-group col-md-6" *ngIf="despachoPreventaArticuloDetalleSelected.lote!=null
-                                  &&
-                                  despachoPreventaArticuloDetalleSelected.lote!=undefined
-                                    &&  despachoPreventaArticuloDetalleSelected.lote!=''">
+            <div class="form-group col-md-6" *ngIf="despachoPreventaArticuloDetalleSelected.estadoId!=1 || this.despachoPreventaSeleccionado.finalizado==1 ">
               <label>Lote</label>
               <div class="input-group">
 
@@ -784,8 +777,7 @@
 
 
             <div class="form-group col-md-6"
-              *ngIf="despachoPreventaArticuloDetalleSelected.lote==null
-                        || despachoPreventaArticuloDetalleSelected.lote==undefined ||  despachoPreventaArticuloDetalleSelected.lote==''">
+              *ngIf="despachoPreventaArticuloDetalleSelected.estadoId==1 && this.despachoPreventaSeleccionado.finalizado==0">
               <label for="inputEmail4">Lote</label>
               <ng-select  style="  font-size: 30px;" class="customSelect_lote" bindLabel="lote"
                 [items]="lotesDisponibles" [ngModelOptions]="{standalone: true}" [searchable]="false" [(ngModel)]="lote"

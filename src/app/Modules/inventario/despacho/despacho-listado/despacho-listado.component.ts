@@ -23,6 +23,7 @@ import * as XLSX from 'xlsx';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { BalanzaPesoGrupoSignalREnum } from 'src/app/shared/enums/BalanzaPesoGrupoSignalREnum';
 import { BalanzaPesajeSignalrService } from 'src/app/Services/balanza-pesaje-signalr.service';
+import { Usuario } from 'src/app/Modules/servicios/recepcion/models/Usuario';
 
 @Component({
   selector: 'app-despacho-listado',
@@ -148,6 +149,7 @@ export class DespachoListadoComponent implements OnInit {
     loadingPeso: boolean = false;
     readonly PESO_BALANZA_DEFAULT_VALUE: string = "0.00 KG";
     readonly KILOGRAMO_A_LIBRA: number = 2.20462;
+    usuario: Usuario;
 
 
       //PESAJE
@@ -166,25 +168,66 @@ export class DespachoListadoComponent implements OnInit {
     this.getDiferenciaMinima()
     this.getCanales();
     this.getSucursalByUsuarioId();
+    this.getUsuarioLogueado();
     this.getAlmacenes();
     this.getArticulosDePesosExtras();
   }
 
 
+  startPingingBalanza() {
 
+  this.intervalRefreshBalanza=    setTimeout(() => {
+
+      if (!this.loadingPeso && this.usuario) {
+        this.loadingPeso = true;
+        this.signalRService.getPesajeFromBalanza(Number(this.usuario.puertoEquipo),
+          this.usuario.ipEquipo)
+      }
+    }, 2000);
+  }
+
+
+  getUsuarioLogueado() {
+    let usuarioID: number = Number(this.authService.tokenDecoded.nameid)
+
+    this.httpService.DoPostAny<Usuario>(DataApi.Usuario,
+      "GetUsuarioByID", usuarioID).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          //validar que existe
+          if (response != null && response.records != null && response.records.length > 0) {
+
+            let usuario = response.records[0];
+            this.usuario = usuario;
+
+          } else {
+            this.toastService.warning("Usuario no encontrado");
+          }
+        }
+
+      }, error => {
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
   subscribirPesoBalanzaCambios() {
-
     this.signalRService.startConnection(BalanzaPesoGrupoSignalREnum.Pantalla_Pesaje);
 
     this.signalRService.pesoBalanza.subscribe((peso: string) => {
+
       this.loadingPeso = false;
 
-      this.pesoBalanza = peso;
-      this.pesoBalanzaUltimaFecha = new Date();
 
-      this.formatStringFromBalanza();
-      this.getKilogramosNumberFromPesoBalanza();
-      this.calcularTotales();
+      if(this.despachoPreventaArticuloDetalleSelected.estadoId==1
+        && this.despachoPreventaArticuloDetalleSelected.unidadMedida=='LBS'
+        && this.despachoPreventaSeleccionado.finalizado==0) {
+          this.pesoBalanza = peso;
+          this.pesoBalanzaUltimaFecha = new Date();
+
+          this.formatStringFromBalanza();
+          this.getKilogramosNumberFromPesoBalanza();
+          this.calcularTotales();
+      }
 
     })
 
@@ -230,8 +273,7 @@ getAllData(){
   this.dataPreventaTotales= [];
  this.loadingRangosFechaDespacho=true;
  let p= new DespachoRangoHoraRequestModel();
- this.fecha.setDate(this.fecha.getDate()-1)
- p.fecha = this.fecha;
+     p.fecha = this.fecha;
 
   this.httpService.DoPostAny<string>(DataApi.Despacho,
     "GetDespachoRangoValor", p).subscribe(response => {
@@ -367,15 +409,16 @@ getSucursalByUsuarioId() {
   openModal(content, despacho: any,onlyView:boolean) {
 
 
-    this.empezarAmbientePrueba();
-    //this.subscribirPesoBalanzaCambios()
+   // this.empezarAmbientePrueba();
+  //  this.subscribirPesoBalanzaCambios()
+    //this.startPingingBalanza()
+
 
     switch (this.canalId) {
       case 1:
           this.despachoPreventaDetalles = [];
           this.despachoPreventaSeleccionado = despacho;
           this.getDespachoPreventaDetalleFromAPi(despacho.fechaEntrega,despacho.rutaId);
-          console.log(onlyView)
           if(!onlyView){
             this.registraDespachoPreventaInUse();
           }
@@ -526,7 +569,6 @@ getSucursalByUsuarioId() {
           if (response != null && response.valores != null && response.valores.length > 0) {
             let record = response.valores[0]
             this.despachoPedidoArticuloDetalleSelected = record;
-            console.log( this.despachoPedidoArticuloDetalleSelected )
           } else {
             this.toastService.warning("Articulo no encontrado");
           }
@@ -579,7 +621,6 @@ getSucursalByUsuarioId() {
               this.loadingLote = false;
               return;
             }
-            console.log(this.lotesDisponibles);
 
              this.lotesDisponibles=response.valores[0];
           }
@@ -602,16 +643,17 @@ getSucursalByUsuarioId() {
 
   this.intervalRefreshBalanza=  setInterval(() => {
 
-      if(this.despachoPreventaArticuloDetalleSelected.estadoId!=1
-        || this.despachoPreventaArticuloDetalleSelected.unidadMedida!='LBS') {
-           return;
-          }
+    if(this.despachoPreventaArticuloDetalleSelected.estadoId==1
+      && this.despachoPreventaArticuloDetalleSelected.unidadMedida=='LBS'
+      && this.despachoPreventaSeleccionado.finalizado==0) {
       this.pesoBalanza = this.getRandomInt(1, 100) + 'KGZ';
       this.pesoBalanzaUltimaFecha = new Date();
 
       this.formatStringFromBalanza();
       this.getKilogramosNumberFromPesoBalanza();
       this.calcularTotales();
+    }
+
     }, 8000);
 
   }
@@ -642,7 +684,7 @@ getSucursalByUsuarioId() {
 
   getKilogramosNumberFromPesoBalanza() {
 
-    this.pesoBalanzaLBNumber = 0
+    //this.pesoBalanzaLBNumber = 0
 
     if (this.pesoBalanza) {
 
@@ -650,6 +692,7 @@ getSucursalByUsuarioId() {
       if (indexKg > 0) {
 
         let kilogramos = this.pesoBalanza.substring(0, indexKg)
+        console.log(kilogramos);
         this.pesoBalanzaLBNumber = Number(kilogramos) * this.KILOGRAMO_A_LIBRA;
       }
 
@@ -941,7 +984,9 @@ getSucursalByUsuarioId() {
     }, 200);
 
     this.despachoPreventaArticuloDetalleSelected=item;
-
+    console.log( this.despachoPreventaArticuloDetalleSelected)
+    //Muestra los articulos extras agregados de los despachos registrados
+    this.showArticulosExtraEnDespachoRegistrado();
 
     if(this.despachoPreventaArticuloDetalleSelected.estadoId==1 ){
         if(this.despachoPreventaArticuloDetalleSelected.unidadMedida!='CANASTO'){
@@ -950,8 +995,7 @@ getSucursalByUsuarioId() {
         return;
       }
 
-      //Muestra los articulos extras agregados de los despachos registrados
-      this.showArticulosExtraEnDespachoRegistrado();
+
  }
 
 
@@ -972,9 +1016,15 @@ getSucursalByUsuarioId() {
         this.toastService.warning("Debe digitar un lote existente");
         return;
       }
+
       if(this.lote.disponible<=0){
         this.toastService.warning("El lote especificado no tiene cantidad disponible");
         return;
+      }
+      if(this.despachoPreventaArticuloDetalleSelected.despacho<0){
+        this.toastService.warning("El monto neto no puede ser negativo");
+        return;
+
       }
       if(this.lote.disponible<this.despachoPreventaArticuloDetalleSelected.despacho){
         this.toastService.warning("La cantidad a despachar excede la cantidad disponible del lote especificado.");
@@ -992,6 +1042,21 @@ getSucursalByUsuarioId() {
   if(this.btnGuardarCanastoDespachoCargando){return;}
 
 
+
+  //Mapea los articulos extras selecionados
+   let artExtrasSeleccionados:ArticuloPesosExtrasViewModel[]= [];
+   this.articulosExtras.filter(x=>x.cantidadSeleccionada>0).forEach(x=>{
+    artExtrasSeleccionados.push({
+      articuloID:x.articuloID,
+      codigoReferencia:x.codigoReferencia,
+      nombre:x.nombre,
+      pesos:x.pesos,
+      abreviatura:x.abreviatura,
+      pesoSeleccionado:x.pesoSeleccionado,
+      cantidadSeleccionada:x.cantidadSeleccionada
+    });
+  })
+  console.log(artExtrasSeleccionados)
 
 
 
@@ -1013,7 +1078,7 @@ getSucursalByUsuarioId() {
   p.precio= this.despachoPreventaArticuloDetalleSelected.precio;
   p.validado=  this.despachoPreventaArticuloDetalleSelected.validado;
 
-  p.articulosPesajeExtra= this.articulosExtras.filter(x=>x.cantidadSeleccionada>0)
+  p.articulosPesajeExtra= artExtrasSeleccionados;
 
 
   this.httpService.DoPostAny<DespachoPreventaDetalleViewModel>(DataApi.Despacho,
@@ -1028,7 +1093,7 @@ getSucursalByUsuarioId() {
          }
 
           let estadoId= this.getEstadoByInfoItem(this.despachoPreventaArticuloDetalleSelected);
-          this.despachoPreventaArticuloDetalleSelected.articulosExtraPesaje=this.articulosExtras;
+          this.despachoPreventaArticuloDetalleSelected.articulosExtraPesaje=artExtrasSeleccionados;
 
           this.despachoPreventaDetalles.filter(
             d=>d.codigoArticulo ==this.despachoPreventaArticuloDetalleSelected.codigoArticulo
@@ -1045,6 +1110,8 @@ getSucursalByUsuarioId() {
               this.formatDespachoPreventaDetalles();
 
               this.getLote()
+              this.showArticulosExtraEnDespachoRegistrado();
+
              this.toastService.success("Realizado", "OK");
         }
       }
@@ -1052,7 +1119,6 @@ getSucursalByUsuarioId() {
 
     }, error => {
     this.btnGuardarDespachoCargando = false;
-  console.log(error)
       this.toastService.error("Error conexion al servidor");
     });
 
@@ -1060,7 +1126,6 @@ getSucursalByUsuarioId() {
 }
 
 getEstadoByInfoItem(item:DespachoPreventaDetalleViewModel):number{
-console.log(item.lote)
 
   if(item.despacho>=item.pedido){
     //ESTADO DESPACHADO
@@ -1126,7 +1191,6 @@ registraDespachoPreventaInUse(){
 
                 this.despachoInUseVM =response.valores[0];
                 if(!this.despachoInUseVM.hasPermisoValidador){
-                  console.log( this.despachoInUseVM )
 
                       if(this.despachoPreventaSeleccionado.finalizado==1){
 
@@ -1179,8 +1243,6 @@ finalizaDespacho(estado:number){
       } else {
         if(response.valores?.length>0){
 
-          console.log(response.valores)
-          console.log(response.valores[0])
               if(response.valores[0]>0){
                 this.despachoPreventaSeleccionado.finalizado=1;
                 this.despachoPreventaSeleccionado.noEditable=1;
@@ -1222,9 +1284,13 @@ showArticulosExtraEnDespachoRegistrado(){
 
   let a_extras=this.despachoPreventaArticuloDetalleSelected.articulosExtraPesaje;
 
-  if(a_extras==null){return;}
-  if(a_extras.length<=0){return;}
-
+  if(a_extras==null || a_extras.length<=0){
+    this.articulosExtras.map(x=>x.cantidadSeleccionada=0);
+    this.pesoBalanzaLBNumber=0;
+    this.pesoNeto=0;
+    this.calcularTotales();
+    return;
+  }
   this.despachoPreventaArticuloDetalleSelected.articulosExtraPesaje.forEach(x=>{
     this.articulosExtras.filter(  a=>a.articuloID==x.articuloID && a.pesoSeleccionado ==x.pesoSeleccionado)
                          .map(m=>m.cantidadSeleccionada=x.cantidadSeleccionada)
@@ -1235,8 +1301,6 @@ showArticulosExtraEnDespachoRegistrado(){
 
 modalDespachoDetalleClose(){
   window.clearInterval(this.intervalRefreshBalanza)
-
-
   this.despachoPreventaSeleccionado= new DespachoListadoPreventaVM();
   this.limpiarDataPreventa()
   this.getDataByCondicional();

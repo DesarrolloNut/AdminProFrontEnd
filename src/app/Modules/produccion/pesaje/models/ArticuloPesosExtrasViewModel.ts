@@ -1,6 +1,5 @@
 export class ArticuloPesosExtrasViewModel {
     constructor() {
-
     }
     articuloID: number
     codigoReferencia: string
