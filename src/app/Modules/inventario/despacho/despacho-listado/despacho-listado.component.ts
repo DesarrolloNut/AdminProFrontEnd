@@ -1,7 +1,7 @@
 import { DepachoHorasVM, DespachoListadoPreventaVMTotales } from './../models/DespachoPedidoListadoViewModel';
 import { ComboBoxLote } from './../../../../shared/model/ComboBox';
-import { DespachoInUseVM, DespachoPreventaDetalleExcelVM, DespachoPreventaRequestModel, DespachoRangoHoraRequestModel, SAPLoteDespachoPedido } from './../models/DespachoPedidoDetalleViewModel';
-import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { DespachoInUseVM, DespachoPreventaDetalleExportVM, DespachoPreventaRequestModel, DespachoRangoHoraRequestModel, SAPLoteDespachoPedido } from './../models/DespachoPedidoDetalleViewModel';
+import { Component, ElementRef, HostListener, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
@@ -24,6 +24,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { BalanzaPesoGrupoSignalREnum } from 'src/app/shared/enums/BalanzaPesoGrupoSignalREnum';
 import { BalanzaPesajeSignalrService } from 'src/app/Services/balanza-pesaje-signalr.service';
 import { Usuario } from 'src/app/Modules/servicios/recepcion/models/Usuario';
+import { PrintExportFile, TypeReport } from 'src/app/Services/PrintExportFile.service';
 
 @Component({
   selector: 'app-despacho-listado',
@@ -152,6 +153,8 @@ export class DespachoListadoComponent implements OnInit {
     usuario: Usuario;
 
 
+    puedeFinalizarDespacho=false;
+
       //PESAJE
 
   constructor(private toastService: ToastrService,
@@ -161,6 +164,9 @@ export class DespachoListadoComponent implements OnInit {
     private signalRService: BalanzaPesajeSignalrService,
     public permissionsService: NgxPermissionsService,
     private authService: AuthenticationService,
+    private ngzone: NgZone,
+    private printService :PrintExportFile ,
+
   ) { }
 
 
@@ -175,8 +181,7 @@ export class DespachoListadoComponent implements OnInit {
 
 
   startPingingBalanza() {
-
-  this.intervalRefreshBalanza=    setTimeout(() => {
+setTimeout(() => {
 
       if (!this.loadingPeso && this.usuario) {
         this.loadingPeso = true;
@@ -221,12 +226,14 @@ export class DespachoListadoComponent implements OnInit {
       if(this.despachoPreventaArticuloDetalleSelected.estadoId==1
         && this.despachoPreventaArticuloDetalleSelected.unidadMedida=='LBS'
         && this.despachoPreventaSeleccionado.finalizado==0) {
-          this.pesoBalanza = peso;
-          this.pesoBalanzaUltimaFecha = new Date();
+          this.ngzone.run(() => {
+            this.pesoBalanza = peso;
+            this.pesoBalanzaUltimaFecha = new Date();
+            this.formatStringFromBalanza();
+            this.getKilogramosNumberFromPesoBalanza();
+            this.calcularTotales();
+        });
 
-          this.formatStringFromBalanza();
-          this.getKilogramosNumberFromPesoBalanza();
-          this.calcularTotales();
       }
 
     })
@@ -410,8 +417,8 @@ getSucursalByUsuarioId() {
 
 
    // this.empezarAmbientePrueba();
-  //  this.subscribirPesoBalanzaCambios()
-    //this.startPingingBalanza()
+    this.subscribirPesoBalanzaCambios()
+    this.startPingingBalanza()
 
 
     switch (this.canalId) {
@@ -692,7 +699,6 @@ getSucursalByUsuarioId() {
       if (indexKg > 0) {
 
         let kilogramos = this.pesoBalanza.substring(0, indexKg)
-        console.log(kilogramos);
         this.pesoBalanzaLBNumber = Number(kilogramos) * this.KILOGRAMO_A_LIBRA;
       }
 
@@ -868,7 +874,7 @@ getSucursalByUsuarioId() {
 
     if(this.despachoPreventaDetalles.length>0){
 
-      this.despachoPreventaDetalles.sort((a, b) => a.estadoId - b.estadoId || a.ubicacion - b.ubicacion);
+       this.despachoPreventaDetalles.sort((a, b) => a.estadoId - b.estadoId);
 
 
       this.despachoPreventaDetalles.filter(x=>x.codigoArticulo=='600124').map(x=>x.unidadMedida='CANASTO')
@@ -876,6 +882,7 @@ getSucursalByUsuarioId() {
 
       this.despachoPreventaDetalles[0].selected=true;
       this.despachoPreventaArticuloDetalleSelected=this.despachoPreventaDetalles[0];
+      if (!this.existeArticuloPendienteDespachar()) {return;}
 
        this.getLote();
 
@@ -909,6 +916,8 @@ getSucursalByUsuarioId() {
 
           this.despachoPreventaDetalles = response.valores[0];
           if(tipo==1){
+
+
              this.despachoPreventaDetalleToPrinter(this.despachoPreventaDetalles)
           }else if(tipo==2){
             this.despachoPreventaDetalleToExcel(this.despachoPreventaDetalles)
@@ -922,29 +931,62 @@ getSucursalByUsuarioId() {
       });
   }
   despachoPreventaDetalleToPrinter(data:DespachoPreventaDetalleViewModel[]) {
-    data.sort((a, b) =>  a.codigoArticulo.localeCompare(b.codigoArticulo) );
+  //  data.sort((a, b) =>  a.codigoArticulo.localeCompare(b.codigoArticulo) );
 
-    this.router.navigate(['/impresion/inventario/print-d-preventa-detalles'],
-    { queryParams:
+    // this.router.navigate(['/impresion/inventario/print-d-preventa-detalles'],
+    // { queryParams:
 
-      {
-        despachopreventa: JSON.stringify(this.despachoPreventaSeleccionado),
-        despachopreventadetalles: JSON.stringify(this.despachoPreventaDetalles),
-      },
-      });
+    //   {
+    //     despachopreventa: JSON.stringify(this.despachoPreventaSeleccionado),
+    //     despachopreventadetalles: JSON.stringify(this.despachoPreventaDetalles),
+    //   },
+    //   });
+    let dataFormated:DespachoPreventaDetalleExportVM[] = [];
+    data.forEach(x=>{
+      let piezas =0;
+       if(x.unidadMedida=="LBS" ){
+          piezas = Math.round(((x.pedido)/x.peso));
+       }else if(x.unidadMedida=="UNIDAD"){
+         if(x.pedido>=x.peso){
+          piezas = Math.trunc(((x.pedido)/x.peso));
+          piezas = parseFloat(piezas + "."+(x.pedido%x.peso))
+         }else{
+          piezas=0;
+         }
+
+       }
+
+       dataFormated.push({
+         Distribuidor:this.despachoPreventaSeleccionado.distribuidor,
+         Ruta:this.despachoPreventaSeleccionado.ruta,
+         CodigoArticulo:x.codigoArticulo,
+         Descripcion:x.articulo,
+         Almacen_Desde:x.almacen_Origen,
+         Almacen_Hasta:x.almacen_Destino,
+         Unidad:x.unidadMedida,
+         Piezas: piezas,
+         Despacho:(x.despacho>0? x.despacho : undefined),
+         Pedido:x.pedido,
+       })
+    });
+     this.printService.ExportFile(dataFormated,
+                                 "Industrias La Nutriciosa, SRL",
+                                  "Hoja de despacho",
+                                  "Transacción entre almacenes",
+                                TypeReport.PDF,"RPT006")
   }
   despachoPreventaDetalleToExcel(data:DespachoPreventaDetalleViewModel[]) {
     data.sort((a, b) =>  a.codigoArticulo.localeCompare(b.codigoArticulo) );
 
-         let dataFormated:DespachoPreventaDetalleExcelVM[] = [];
+         let dataFormated:DespachoPreventaDetalleExportVM[] = [];
          data.forEach(x=>{
             dataFormated.push({
-
               CodigoArticulo:x.codigoArticulo,
               Descripcion:x.articulo,
               Almacen_Desde:x.almacen_Origen,
               Almacen_Hasta:x.almacen_Destino,
               Pedido:x.pedido,
+              Despacho:x.despacho
             })
          });
 
@@ -1000,14 +1042,21 @@ getSucursalByUsuarioId() {
 
 
 
+ existeArticuloPendienteDespachar():boolean{
+  if( this.despachoPreventaDetalles.filter(x=>x.estadoId==1).length<=0){
+    this.viewAllArticulos=true;
+    this.puedeFinalizarDespacho=true;
+    return false;
+ }
+ this.viewAllArticulos=false;
+ this.puedeFinalizarDespacho=false;
+ return true;
 
+ }
  onNextItemPreventaSubmit(){
 
   //VALIDA EXISTE ALGUN ARTICULO PENDIENTE POR DESPACHAR
- if( this.despachoPreventaDetalles.filter(x=>x.estadoId==1).length<=0){
-    this.viewAllArticulos=true;
-    return;
- }
+  if (!this.existeArticuloPendienteDespachar()) {return;}
 
    if( this.despachoPreventaSeleccionado.finalizado==0 && !this.despachoInUseVM.hasPermisoValidador)
    {
@@ -1017,19 +1066,19 @@ getSucursalByUsuarioId() {
         return;
       }
 
-      if(this.lote.disponible<=0){
-        this.toastService.warning("El lote especificado no tiene cantidad disponible");
-        return;
-      }
+      // if(this.lote.disponible<=0){
+      //   this.toastService.warning("El lote especificado no tiene cantidad disponible");
+      //   return;
+      // }
       if(this.despachoPreventaArticuloDetalleSelected.despacho<0){
-        this.toastService.warning("El monto neto no puede ser negativo");
+        this.toastService.warning(" El monto neto no puede ser negativo");
         return;
 
       }
-      if(this.lote.disponible<this.despachoPreventaArticuloDetalleSelected.despacho){
-        this.toastService.warning("La cantidad a despachar excede la cantidad disponible del lote especificado.");
-        return;
-      }
+      // if(this.lote.disponible<this.despachoPreventaArticuloDetalleSelected.despacho){
+      //   this.toastService.warning("La cantidad a despachar excede la cantidad disponible del lote especificado.");
+      //   return;
+      // }
     }
     if(this.despachoPreventaArticuloDetalleSelected.estadoId==3 || this.despachoPreventaArticuloDetalleSelected.estadoId==2){
       return;
@@ -1095,6 +1144,8 @@ getSucursalByUsuarioId() {
           let estadoId= this.getEstadoByInfoItem(this.despachoPreventaArticuloDetalleSelected);
           this.despachoPreventaArticuloDetalleSelected.articulosExtraPesaje=artExtrasSeleccionados;
 
+          if (!this.existeArticuloPendienteDespachar()) {return;}
+
           this.despachoPreventaDetalles.filter(
             d=>d.codigoArticulo ==this.despachoPreventaArticuloDetalleSelected.codigoArticulo
              && d.almacenOrigenId==this.despachoPreventaArticuloDetalleSelected.almacenOrigenId
@@ -1107,6 +1158,7 @@ getSucursalByUsuarioId() {
               this.despachoPreventaArticuloDetalleSelected=item;
 
             }
+
               this.formatDespachoPreventaDetalles();
 
               this.getLote()
@@ -1250,9 +1302,13 @@ finalizaDespacho(estado:number){
                 console.log(  this.despachoPreventaSeleccionado)
               }
               this.despachoInUseVM.estado=4
+
               this.despachoInUseVM.mensaje="DESPACHO FINALIZADO"
               this.getDataByCondicional()
              this.toastService.success("Realizado", "OK");
+             setTimeout(() => {
+              this.modalDespachoDetalleClose();
+              }, 1500);
         }
       }
       this.btnFinalizarDespachoCargando = false;
@@ -1335,14 +1391,28 @@ focusInputValidado(){
     this.despachoPreventaArticuloDetalleSelected.validado=undefined;
   }
 }
+focusInputCantidadCanasto(item:ArticuloPesosExtrasViewModel){
+  if(item.cantidadSeleccionada==0){
+    item.cantidadSeleccionada=undefined;
+  }
+}
 ngOnDestroy(): void {
   window.clearInterval(this.intervalRefreshData)
+  this.ngzone.run(() => {
+    this.signalRService.disconnectBalanza(Number(this.usuario.puertoEquipo),
+    this.usuario.ipEquipo)
+});
 
 }
 
 
  changeViewDetalleDespacho(viewAllArticulos:boolean){
+   if (this.existeArticuloPendienteDespachar()) {
+      this.toastService.warning("No puedes ver el listado de articulos, aún tienes articulos pendientes por despachar.")
+     return;
+   }
    this.viewAllArticulos=viewAllArticulos;
+
  }
 
 }

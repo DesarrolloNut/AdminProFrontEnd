@@ -69,14 +69,18 @@ export class DespachoPreventaDetalleViewModel   {
 
   articulosExtraPesaje?:ArticuloPesosExtrasViewModel[];
 }
-export class DespachoPreventaDetalleExcelVM   {
+export class DespachoPreventaDetalleExportVM   {
   FechaEntrega?: string;
+  Distribuidor?:string;
+  Ruta?:number;
   CodigoArticulo: string;
   Descripcion: string;
   Almacen_Desde: string;
   Almacen_Hasta: string;
   Unidad?: string;
   Peso?: number;
+  Piezas?: number;
+  PiezasRestantes?: number;
   Pedido: number;
   Despacho?: number;
   Lote?: string;

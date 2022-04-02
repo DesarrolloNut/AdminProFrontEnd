@@ -7,10 +7,9 @@
             <h4 class="card-title">Listado de pedidos para despachar </h4>
           </div>
           <div class="col-md-3 text-right">
-            <!-- <button  [disabled]="loadingValidaExistPedidoSinFacturar || !clienteExiste" (click)="validExistPedidoSinFacturar()"
-                         class="btn btn-info"> <i class="fa fa-plus"></i> Nuevo  pedido
+            <!-- <button   (click)="disconnectBalanza()"
+                         class="btn btn-info"> <i class=""></i> Desconectar Balanza
                         </button> -->
-            <app-loading-realtime [hidden]="!CargandoRealtime"></app-loading-realtime>
           </div>
           <div class="col-md-3 pt-2">
             <label for="">Busqueda</label>
@@ -302,7 +301,7 @@
 <ng-template #modalDetalleDespachoPreventa let-modal>
   <div class="modal-header p-0">
     <button type="button " class="btn btn-light m-1" @onArticulos *ngIf="!viewAllArticulos"
-      (click)="viewAllArticulos=!viewAllArticulos">
+      (click)="changeViewDetalleDespacho(!viewAllArticulos)">
       <h5 class="font-bold mt-1">
         <i class="fa fa-bars" aria-hidden="true"></i> Ver articulos
       </h5>
@@ -311,7 +310,7 @@
     <button type="button " class="btn btn-light m-1" *ngIf="viewAllArticulos"
       (click)="viewAllArticulos=!viewAllArticulos">
       <h5 class="font-bold mt-1">
-        Ir a despachar <i class="fa fa-arrow-right" aria-hidden="true"></i>
+        Ir a despachar  <i class="fa fa-arrow-right" aria-hidden="true"></i>
 
       </h5>
     </button>
@@ -475,6 +474,7 @@
     <div class="col-md-12 row" *ngIf="viewAllArticulos && despachoPreventaSeleccionado.noEditable==0" >
       <button type="button"
       *ngIf="!btnFinalizarDespachoCargando && !loadingDespachoPreventaDetalle"
+      [disabled]="!puedeFinalizarDespacho"
       class="btn mr-auto ml-auto btn-info btn-md btn_finaliza_despacho" (click)="openModalConfirmFinalizaDespacho(modalConfirm)">
       FINALIZAR DESPACHO
     </button>
@@ -578,18 +578,20 @@
             <!-- CANTIDAD PEDIDO | CANTIDAD DESPACHO -->
             <div class="form-group col-md-3"
               *ngIf="!despachoInUseVM.hasPermisoValidador  || despachoPreventaSeleccionado.finalizado==0">
-              <label> Pedido</label>
+              <label class="font-weight-bold"> Pedido</label>
               <input [(ngModel)]="despachoPreventaArticuloDetalleSelected.pedido" [readonly]="true" step="0.01"
                 [min]="0" type="number" id="inputSearch" class="form-control input_CantidadPedido"
                 placeholder="Cantidad pedido">
             </div>
 
             <div class="form-group col-md-3">
-              <label> Despacho</label>
+              <label class="font-weight-bold"> Despacho</label>
               <input [(ngModel)]="despachoPreventaArticuloDetalleSelected.despacho" type="number" id="inputSearch"
-                step="0.01" pattern="^[a-zA-Z0-9\.]*$" [min]="0" (focus)="focusInputDespacho()"
-                [readonly]="lote.disponible==undefined || lote.disponible<=0 "
-                class="form-control input_CantidadDespacho" placeholder="0">
+                step="0.01" pattern="^[a-zA-Z0-9\.]*$" [min]="0"  (focus)="focusInputDespacho()"
+                [readonly]="lote.disponible==undefined"
+                [ngClass]="{'parpadea_focus': despachoPreventaArticuloDetalleSelected.estadoId==1}"
+
+                class="form-control input_CantidadDespacho " placeholder="0">
             </div>
 
 
@@ -643,10 +645,18 @@
                       </ng-select>
                     </td>
                     <td *ngIf="despachoPreventaArticuloDetalleSelected.estadoId==1 && despachoPreventaSeleccionado.finalizado==0">
-                      <ng-select style="width: 80px;" [clearable]="false"  [items]="cantidades"
+                      <!-- <ng-select style="width: 80px;" [clearable]="false"  [items]="cantidades"
                         [(ngModel)]="item.cantidadSeleccionada" [searchable]="false" (change)="calcularTotales()"
                         notFoundText="No resultados">
-                      </ng-select>
+                      </ng-select> -->
+                      <input id="typeahead-format"
+                      type="number" style="width: 80px;height: 35px; font-weight: 500 ;     margin-top: 1px;
+                      margin-bottom: 1px;"   class="form-control"
+                      [min]="0"
+                      (focus)="focusInputCantidadCanasto(item)"
+                      oninput="this.value = !!this.value && Math.abs(this.value) >= 0 ? Math.abs(this.value) : null"
+                      [(ngModel)]="item.cantidadSeleccionada"
+                      />
                     </td>
                     <td>
                       <h3>
@@ -679,7 +689,7 @@
                   <div class="ml-auto text-right">
                     <h2 class="font-weight-bold"> {{pesoBalanzaLBNumber | number:'1.2-2'}} LB</h2>
                     <h4 class="text-danger mb-1">Peso Balanza</h4>
-                    <span *ngIf="pesoBalanzaUltimaFecha" class="small "><i class="fa fa-clock"></i>
+                    <span *ngIf="pesoBalanzaUltimaFecha" class="small ">
                       {{pesoBalanzaUltimaFecha | date:'hh:mm:ss a'}}
                     </span>
                     <span *ngIf="pesoBalanza" class="small">
@@ -803,16 +813,18 @@
             <!-- CANTIDAD PEDIDO | CANTIDAD DESPACHO -->
             <div class="form-group col-md-3"
               *ngIf="!despachoInUseVM.hasPermisoValidador  || despachoPreventaSeleccionado.finalizado==0">
-              <label> Pedido</label>
+              <label class="font-weight-bold"> Pedido</label>
               <input [(ngModel)]="despachoPreventaArticuloDetalleSelected.pedido" [readonly]="true" type="number"
                 id="inputSearch" class="form-control input_CantidadPedido" placeholder="Cantidad pedido">
             </div>
 
             <div class="form-group col-md-3">
-              <label> Despacho</label>
-              <input [readonly]="lote.disponible==undefined || lote.disponible<=0 "
+              <label class="font-weight-bold"> Despacho</label>
+              <input
                 [(ngModel)]="despachoPreventaArticuloDetalleSelected.despacho" (focus)="focusInputDespacho()"
-                type="number" id="inputSearch" class="form-control input_CantidadDespacho" placeholder="0">
+                [readonly]="lote.disponible==undefined"
+                [ngClass]="{'parpadea_focus': despachoPreventaArticuloDetalleSelected.estadoId==1}"
+                type="number" id="inputSearch" class="form-control input_CantidadDespacho parpadea_focus" placeholder="0">
             </div>
 
             <div class="form-group col-md-3" *ngIf="despachoInUseVM.hasPermisoValidador">
