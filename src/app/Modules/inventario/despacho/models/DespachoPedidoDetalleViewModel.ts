@@ -72,6 +72,8 @@ export class DespachoPreventaDetalleViewModel   {
 export class DespachoPreventaDetalleExportVM   {
   FechaEntrega?: string;
   Distribuidor?:string;
+  Despachador?:string;
+
   Ruta?:number;
   CodigoArticulo: string;
   Descripcion: string;

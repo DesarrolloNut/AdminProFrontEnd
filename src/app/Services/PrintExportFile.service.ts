@@ -491,6 +491,7 @@ export class PrintExportFile {
           [
             {
               stack: [
+                  { text: ""+this.DATA[0].Despachador,fontSize: 13,style: 'fontCenterTableBody',},
                   { text: "______________________",fontSize: 13,style: 'fontCenterTableBody',},
                   { text: "Despachador",fontSize: 13,style: 'fontCenterTableBody',},
                ]
@@ -517,6 +518,8 @@ export class PrintExportFile {
     };
 
     pdfMake.createPdf(documentDefinition).print();
+    //pdfMake.createPdf(documentDefinition).open({}, window);
+
   }
 
   private ExportAsPDFHorizontal(ReportName: string, Header: string, TemplateCallBack: (collection, NumberFormat: (numero: number, formatNumber: FormatNumber, visibleCero: boolean) => string, TotalColletion: (colletion) => any) => Array<any>) {
@@ -581,7 +584,7 @@ export class PrintExportFile {
 
   }
 
-  private BuildReportTemplate(CompanyName:string, ReportName: string, Header: string, ReportType: TypeReport, TemplatePDF: (collection, NumberFormat: (numero: number, formatNumber: FormatNumber, visibleCero: boolean) => string, TotalColletion: (colletion) => any) => Array<any>, TemplateExcel: (collection, worksheet, FontStyles, NumberFormat: (numero: number, formatNumber: FormatNumber, visibleCero: boolean) => string, TotalColletion: (colletion) => any) => void) {
+  private   BuildReportTemplate(CompanyName:string, ReportName: string, Header: string, ReportType: TypeReport, TemplatePDF: (collection, NumberFormat: (numero: number, formatNumber: FormatNumber, visibleCero: boolean) => string, TotalColletion: (colletion) => any) => Array<any>, TemplateExcel: (collection, worksheet, FontStyles, NumberFormat: (numero: number, formatNumber: FormatNumber, visibleCero: boolean) => string, TotalColletion: (colletion) => any) => void) {
 
     switch (ReportType) {
 

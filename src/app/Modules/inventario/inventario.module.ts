@@ -10,19 +10,25 @@ import { EntregasListadoComponent } from './entregas/entregas-listado/entregas-l
 import { EntregasFormularioComponent } from './entregas/entregas-formulario/entregas-formulario.component';
 import { DespachoFormularioComponent } from './despacho/despacho-formulario/despacho-formulario.component';
 import { DespachoListadoComponent } from './despacho/despacho-listado/despacho-listado.component';
+import { NgxBarcodeModule } from 'ngx-barcode';
+import { DespachoAsignacionFormularioComponent } from './despacho-asignacion/despacho-asignacion-formulario/despacho-asignacion-formulario.component';
+import { DespachoAsignacionListadoComponent } from './despacho-asignacion/despacho-asignacion-listado/despacho-asignacion-listado.component';
 
 
 @NgModule({
   declarations: [InventarioComponent, DevolucionesListadoComponent,
-     RecepcionActivoListadoComponent, 
+     RecepcionActivoListadoComponent,
      EntregasListadoComponent,
      EntregasFormularioComponent,
      DespachoListadoComponent,
-     DespachoFormularioComponent
+     DespachoFormularioComponent,
+     DespachoAsignacionFormularioComponent,
+     DespachoAsignacionListadoComponent
     ],
   imports: [
     CommonModule,
     SharedModule,
+    NgxBarcodeModule,
     InventarioRoutingModule
   ]
 })

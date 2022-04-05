@@ -335,6 +335,8 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
 
 
   getArticuloByCodigoReferencia(codigoRefencia: string) {
+    console.log('s')
+
     this.searching = true;
     this.httpService.DoPostAny<Articulo>(DataApi.Articulo,
       "GetArticuloByCodigoReferencia", { codigoRefencia }).subscribe(response => {

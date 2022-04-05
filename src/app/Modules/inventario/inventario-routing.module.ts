@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { DespachoAsignacionFormularioComponent } from './despacho-asignacion/despacho-asignacion-formulario/despacho-asignacion-formulario.component';
 import { DespachoListadoComponent } from './despacho/despacho-listado/despacho-listado.component';
 import { DevolucionesListadoComponent } from './devoluciones/devoluciones-listado/devoluciones-listado.component';
 import { EntregasListadoComponent } from './entregas/entregas-listado/entregas-listado.component';
@@ -43,6 +44,15 @@ const routes: Routes = [  {
         urls: [
           { title: 'Inventario' },
           { title: 'Despacho' },
+        ]
+      }
+    },
+    {
+      path: 'despacho-asignacion', component: DespachoAsignacionFormularioComponent, data: {
+        title: 'Despacho Asignacion',
+        urls: [
+          { title: 'Inventario' },
+          { title: 'Despacho Asignación' },
         ]
       }
     },

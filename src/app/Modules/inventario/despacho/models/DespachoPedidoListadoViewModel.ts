@@ -40,6 +40,8 @@ export class DespachoListadoPreventaVM  {
   estadoDespacho: number;
   rutasVendedoresDistribuidor:string;
   totales:DespachoListadoPreventaVMTotales = new DespachoListadoPreventaVMTotales();
+
+  despachador?:string;
 }
 export class DespachoListadoPreventaVMTotales {
   fechaEntrega: string;
