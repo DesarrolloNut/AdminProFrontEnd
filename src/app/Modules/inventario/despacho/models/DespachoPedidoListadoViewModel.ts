@@ -27,6 +27,7 @@ export class DespachoListadoPreventaVM  {
   ruta: number;
   rutaId: number;
   finalizado: number;
+  sync:boolean;
   estadoERP: number;
   noEditable: number;
   inUse: boolean;
@@ -41,6 +42,7 @@ export class DespachoListadoPreventaVM  {
   rutasVendedoresDistribuidor:string;
   totales:DespachoListadoPreventaVMTotales = new DespachoListadoPreventaVMTotales();
 
+  sucursalID:number;
   despachador?:string;
 }
 export class DespachoListadoPreventaVMTotales {

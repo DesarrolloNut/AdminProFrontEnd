@@ -175,10 +175,11 @@ export class DespachoAsignacionFormularioComponent implements OnInit, OnDestroy 
             if (this.usuario.rol!='PICKEADOR') {
               this.toastService.warning("Usted no es un despachador.");
               this.usuario= new Usuario();
+              this.searching=false;
               return;
              }
 
-             this.hijo.getRamdonItemAndAsign(this.usuario)
+             this.hijo.getRamdonDespachoAndAsign(this.usuario)
 
          //   this.modalService.open(this.myModal)
 

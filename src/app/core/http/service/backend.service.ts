@@ -45,7 +45,12 @@ export class BackendService {
     public async DoPostAnyAsync<T>(api: DataApi, Method: string, request: any, reportProgress = false) {
         return  await this.http.post<ResponseContenido<T>>(this.baseUrl + dataApiRootMap[api] + "/" + Method, request).toPromise();
     }
- 
+
+    public async DoPostAsync<T>(api: DataApi, Method: string, parametros: any){
+      let request = new RequestContenido<T>();
+      request.parametros = parametros;
+      return  await this.http.post<ResponseContenido<T>>(this.baseUrl + dataApiRootMap[api] + "/" + Method, request).toPromise();
+  }
     // public DoPostUpload<T>(api: DataApi, Method: string, files: File[]) {
     //     const formData = new FormData();
     //     files.forEach(f => { formData.append('file', f, f.name); })

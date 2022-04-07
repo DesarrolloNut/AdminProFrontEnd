@@ -440,7 +440,9 @@ export class PrintExportFile {
 
     var Data = TemplateCallBack(this.DATA, this.NumberFormat, this.SumEqualProperty);
 
-
+     if(this.DATA[0].Despachador==undefined || this.DATA[0].Despachador==''){
+       this.DATA[0].Despachador='                                   ';
+     }
 
     const documentDefinition = {
       pageMargins: [40,35,40, 100],
@@ -489,10 +491,11 @@ export class PrintExportFile {
           margin: [50,30,50,10],
           columns:
           [
+
+
             {
               stack: [
-                  { text: ""+this.DATA[0].Despachador,fontSize: 13,style: 'fontCenterTableBody',},
-                  { text: "______________________",fontSize: 13,style: 'fontCenterTableBody',},
+                  { text: this.DATA[0].Despachador,fontSize: 13,style: 'fontCenterTableBody',decoration:'underline' },
                   { text: "Despachador",fontSize: 13,style: 'fontCenterTableBody',},
                ]
             },
@@ -502,16 +505,22 @@ export class PrintExportFile {
                   { text: "Validador",fontSize: 13,style: 'fontCenterTableBody',},
                ]
             },
+            {
+              stack: [
+                { text: this.DATA[0].Distribuidor+"("+this.DATA[0].Ruta+")",fontSize: 13,style: 'fontCenterTableBody', decoration:'underline' },
+                { text: "Distribuidor",fontSize: 13,style: 'fontCenterTableBody',},
+             ]
+            },
           ]
         },
-        {
-          margin: [50,30,50,10],
+        // {
+        //   margin: [50,30,50,10],
 
-          stack: [
-            { text: "________________________________",fontSize: 13,style: 'fontCenterTableBody',},
-            { text: "Dist. "+this.DATA[0].Distribuidor+"("+this.DATA[0].Ruta+")",fontSize: 13,style: 'fontCenterTableBody',},
-         ]
-        },
+        //   stack: [
+        //     { text: this.DATA[0].Distribuidor+"("+this.DATA[0].Ruta+")",fontSize: 13,style: 'fontCenterTableBody', decoration:'underline' },
+        //     { text: "Distribuidor",fontSize: 13,style: 'fontCenterTableBody',},
+        //  ]
+        // },
       ],
       styles: this.FontStylesPDF
 

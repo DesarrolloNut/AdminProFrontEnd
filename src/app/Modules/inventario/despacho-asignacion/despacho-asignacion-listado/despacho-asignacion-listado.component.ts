@@ -13,7 +13,7 @@ import { BalanzaPesoGrupoSignalREnum } from 'src/app/shared/enums/BalanzaPesoGru
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
-import { DespachoPreventaDetalleExportVM, DespachoPreventaDetalleViewModel } from '../../despacho/models/DespachoPedidoDetalleViewModel';
+import { DespachoInUseVM, DespachoPreventaDetalleExportVM, DespachoPreventaDetalleViewModel, DespachoPreventaRequestModel } from '../../despacho/models/DespachoPedidoDetalleViewModel';
 import { DespachoListadoPreventaVM } from '../../despacho/models/DespachoPedidoListadoViewModel';
 import * as XLSX from 'xlsx';
 
@@ -32,6 +32,10 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
   paginaNumeroActual = 1;
   Cargando: boolean = false;
   CargandoModal: boolean = false;
+
+  btnAsignaDespachoCargando
+
+
   totalPaginas: number = 0;
   paginaSize: number = 10;
   paginaTotalRecords: number = 0;
@@ -57,6 +61,8 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
   btnCargandoPrint: boolean;
 
 
+  sucursales:ComboBox[]=[];
+
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private authService: AuthenticationService,
@@ -72,10 +78,15 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
-    this.getDiferenciaMinima()
-    this.getDataPreventa();
+    this.getAllData();
   }
 
+ async getAllData(){
+   await this.getSucursales();
+   await this.getDiferenciaMinima()
+   this.getDataPreventa();
+
+  }
   getDataPreventa() {
 
     this.Cargando = true;
@@ -153,7 +164,7 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
 
 
 
-  exportDespachoPreventaDetalle(despacho:any,tipo:number) {
+  exportDespachoPreventaDetalle(despacho:any) {
 
     //TIPO 1 = PRINT
     //TIPO 2 = EXPORTAR EXCEL
@@ -173,13 +184,7 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
           this.btnCargandoPrint=false;
 
         } else {
-          if(tipo==1){
-
-
              this.despachoPreventaDetalleToPrinter(response.valores[0])
-          }else if(tipo==2){
-            this.despachoPreventaDetalleToExcel(response.valores[0])
-          }
         }
         this.btnCargandoPrint=false;
       }, error => {
@@ -189,16 +194,7 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
       });
   }
   despachoPreventaDetalleToPrinter(data:DespachoPreventaDetalleViewModel[]) {
-  //  data.sort((a, b) =>  a.codigoArticulo.localeCompare(b.codigoArticulo) );
 
-    // this.router.navigate(['/impresion/inventario/print-d-preventa-detalles'],
-    // { queryParams:
-
-    //   {
-    //     despachopreventa: JSON.stringify(this.despachoPreventaSeleccionado),
-    //     despachopreventadetalles: JSON.stringify(this.despachoPreventaDetalles),
-    //   },
-    //   });
     let dataFormated:DespachoPreventaDetalleExportVM[] = [];
     data.forEach(x=>{
       let piezas =0;
@@ -234,38 +230,7 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
                                   "Transacción entre almacenes",
                                 TypeReport.PDF,"RPT006")
   }
-  despachoPreventaDetalleToExcel(data:DespachoPreventaDetalleViewModel[]) {
-    data.sort((a, b) =>  a.codigoArticulo.localeCompare(b.codigoArticulo) );
 
-         let dataFormated:DespachoPreventaDetalleExportVM[] = [];
-         data.forEach(x=>{
-            dataFormated.push({
-              CodigoArticulo:x.codigoArticulo,
-              Descripcion:x.articulo,
-              Almacen_Desde:x.almacen_Origen,
-              Almacen_Hasta:x.almacen_Destino,
-              Pedido:x.pedido,
-              Despacho:x.despacho
-            })
-         });
-
-          const ws2: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataFormated);
-
-          /* generate workbook and add the worksheet */
-          const wb: XLSX.WorkBook = XLSX.utils.book_new();
-
-
-
-
-
-
-        //Add Row and formatting
-
-          XLSX.utils.book_append_sheet(wb, ws2, 'Despacho'+"-("+this.despachoPreventaSeleccionado.almacen_Destino+")");
-           let nombreDistribuidor=this.despachoPreventaSeleccionado.distribuidor.split(" ").join("");
-          /* save to file */
-          XLSX.writeFile(wb, ""+nombreDistribuidor+"("+this.despachoPreventaSeleccionado.almacen_Destino+")-"+"Despacho.xlsx");
-  }
 
 
   onChangeFechaDesdeFiltro(evento: any) {
@@ -276,6 +241,22 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
      this.getDataPreventa()
   }
 
+  async getDiferenciaMinima(){
+    await this.httpService.DoPostAnyAsync<string>(DataApi.Despacho,
+       "GetDiferenciaMinimaDespacho", null).then(response => {
+
+         if (!response.ok) {
+           this.toastService.error(response.errores[0]);
+         } else {
+             this.Diferencia_Minima_Despacho=parseFloat(response.valores[0])
+         }
+       }, error => {
+         console.error(error)
+         this.toastService.error("ha ocurrido un error", "Error conexion al servidor");
+       });
+   }
+
+
   validaDiferenciaMinimaDespacho(item: DespachoListadoPreventaVM){
 
     let diff= item.totalMontoPedidoERP-item.totalMontoPedido;
@@ -285,25 +266,147 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
       return true;
     }else{return false}
 }
-getDiferenciaMinima(){
-  this.httpService.DoPostAny<string>(DataApi.Despacho,
-    "GetDiferenciaMinimaDespacho", null).subscribe(response => {
 
-      if (!response.ok) {
-        this.toastService.error(response.errores[0]);
-      } else {
-           this.Diferencia_Minima_Despacho=parseFloat(response.valores[0])
+
+
+  getRamdonDespachoAndAsign(user:Usuario){
+    //Valida existe despachos sin asignacion y no esten sincronizando
+    let data_filtered= this.dataPreventa.filter(x=>x.despachador==null && x.sync==false);
+
+      if (data_filtered.length>0) {
+
+        //Obtiene el despacho ramdon
+        var item =data_filtered[Math.floor(Math.random()*data_filtered.length)];
+
+        //Valida si el despacho ramdon cumple con la diferencia minima de monto
+        if(!this.validaDiferenciaMinimaDespacho(item)){
+          item.sync=true;
+          this.getRamdonDespachoAndAsign(user);
+          return;
+        }
+        this.despachoPreventaSeleccionado =item;
+        this.registraDespachoPreventaInUse(user,item);
+        //Imprimiendo despacho
+      //  this.exportDespachoPreventaDetalle(item,1)
+
+      }else{
+
+        this.toastService.warning("No hay despachos disponibles para asignar")
+        return;
       }
-    }, error => {
-      console.error(error)
-      this.toastService.error("ha ocurrido un error", "Error conexion al servidor");
-    });
+
+
+  }
+
+  registraDespachoPreventaInUse(user:Usuario,despacho){
+
+    this.btnAsignaDespachoCargando=true;
+
+    let p= new DespachoPreventaRequestModel();
+    p.ruta = this.despachoPreventaSeleccionado.rutaId;
+    p.fechaEntrega = this.despachoPreventaSeleccionado.fechaEntrega;
+    p.usuarioId =  Number(user.id)
+    p.estadoId = 1;
+
+    this.httpService.DoPostAny<DespachoInUseVM>(DataApi.Despacho,
+      'RegistraDespachoPreventaInUse', p).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+          this.btnAsignaDespachoCargando = false;
+        } else {
+          if(response.valores?.length>0){
+           let m:DespachoInUseVM = response.valores[0];
+           if(m.estado!=2 )  {
+             this.despachoPreventaSeleccionado.despachador=user.nombres+" "+ user.apellidos;
+          // this.finalizaDespacho(2);
+             this.exportDespachoPreventaDetalle(this.despachoPreventaSeleccionado)
+             this.toastService.success(m.mensaje)
+           }else{
+            this.toastService.error(m.mensaje)
+
+           }
+
+          }
+        }
+        this.btnAsignaDespachoCargando = false;
+
+      }, error => {
+       this.btnAsignaDespachoCargando = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+
+
+  }
+
+  finalizaDespacho(estado:number){
+
+    //ESTADO 2 INDICA QUE EL DESPACHO SE PICKEARA DE MANERA MANUAL
+    //ESTADO 3 INDICA QUE EL DESPACHO SE PICKEO MEDIANTE LA PLATAFORMA WEB
+
+     this.despachoPreventaSeleccionado.noEditable=1;
+     let p= new DespachoPreventaRequestModel();
+     p.ruta = this.despachoPreventaSeleccionado.rutaId;
+     p.fechaEntrega = this.despachoPreventaSeleccionado.fechaEntrega;
+     p.estadoId=estado;
+
+     this.httpService.DoPostAny<DespachoPreventaDetalleViewModel>(DataApi.Despacho,
+       'finalizaDespachoPreventa', p).subscribe(response => {
+         if (!response.ok) {
+           this.toastService.error(response.errores[0], "Error");
+           this.despachoPreventaSeleccionado.noEditable=0;
+         } else {
+           if(response.valores?.length>0){
+
+                 if(response.valores[0]>0){
+                   this.despachoPreventaSeleccionado.finalizado=1;
+                   this.despachoPreventaSeleccionado.noEditable=1;
+                   this.despachoPreventaSeleccionado.estadoDespacho=4;
+                   console.log(  this.despachoPreventaSeleccionado)
+                 }
+           }
+         }
+
+       }, error => {
+         this.despachoPreventaSeleccionado.noEditable=0;
+         this.toastService.error("Error conexion al servidor");
+       });
+
+
+   }
+
+
+
+  async getSucursales() {
+    let parametros: Parametro[] = [
+        { key: "CompaniaID", value: 0 }
+    ];
+   await this.httpService.DoPostAsync<ComboBox>(DataApi.ComboBox,
+        "GetSucursales", null).then(response => {
+
+            if (!response.ok) {
+                this.toastService.error(response.errores[0]);
+                // let thes = this;
+                // this.timeOut = setTimeout(() => {
+                //     thes.getSucursales();
+                // }, 1000);
+            } else {
+                this.sucursales = response.records;
+            }
+
+        }, error => {
+            // let thes = this;
+            // this.timeOut = setTimeout(() => {
+            //     thes.getSucursales();
+            // }, 1000);
+
+            this.toastService.error("No se pudo obtener las sucursales.", "Error conexion al servidor");
+        });
 }
 
-getRamdonItemAndAsign(user:Usuario){
-  let data_filtered= this.dataPreventa.filter(x=>x.despachador==null);
-  var item =data_filtered[Math.floor(Math.random()*data_filtered.length)];
-  item.despachador=user.nombres;
-  this.exportDespachoPreventaDetalle(item,1)
+getNameOfSucursal(sucursalId:number):string{
+  return this.sucursales.find(x=>x.codigo==sucursalId).nombre;
 }
+
+
+
 }

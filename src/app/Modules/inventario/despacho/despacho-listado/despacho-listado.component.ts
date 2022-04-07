@@ -1223,7 +1223,7 @@ onBackItemPreventa(){
 
 
 
-registraDespachoPreventaInUse(){
+  registraDespachoPreventaInUse(){
 
 
   this.btnFinalizarDespachoCargando=true;
@@ -1232,6 +1232,7 @@ registraDespachoPreventaInUse(){
   p.ruta = this.despachoPreventaSeleccionado.rutaId;
   p.fechaEntrega = this.despachoPreventaSeleccionado.fechaEntrega;
   p.usuarioId =  Number(this.authService.tokenDecoded.nameid)
+  p.estadoId = 2;
 
   this.httpService.DoPostAny<DespachoInUseVM>(DataApi.Despacho,
     'RegistraDespachoPreventaInUse', p).subscribe(response => {

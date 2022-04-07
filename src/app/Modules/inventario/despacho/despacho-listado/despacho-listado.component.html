@@ -490,7 +490,7 @@
 
     <div *ngIf="despachoPreventaSeleccionado.noEditable==1 " class="mr-auto ml-auto">
       <h3 *ngIf="despachoInUseVM.estado==2" class="text-danger font-bold mr-auto ml-auto">{{despachoInUseVM.mensaje}}
-        por {{despachoInUseVM.usuario}}</h3>
+        - {{despachoInUseVM.usuario}}</h3>
 
       <h3 *ngIf="despachoInUseVM.estado==4" class="text-success font-bold mr-auto ml-auto">{{despachoInUseVM.mensaje}}
       </h3>
