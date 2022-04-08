@@ -44,6 +44,17 @@ export class DespachoListadoPreventaVM  {
 
   sucursalID:number;
   despachador?:string;
+  validador?:string;
+
+  fechaInicioDespachador:string;
+  fechaFinDespachador:string;
+  fechainicioValidador:string;
+  fechaFinalizacionValidador:string;
+  // Tiempo_Picking:string;
+  // Tiempo_Validacion:string;
+  // Tiempo_Total:string;
+
+
 }
 export class DespachoListadoPreventaVMTotales {
   fechaEntrega: string;

@@ -18,9 +18,11 @@
                   <thead>
                     <tr>
                       <th scope="col">Acciones</th>
-                      <th scope="col">Fecha</th>
                       <th scope="col">Distribuidor</th>
-                      <th scope="col">Asignado A -></th>
+                      <th scope="col">Pickeador -></th>
+                      <th scope="col">Validador -></th>
+                      <th scope="col">Tiempo Picking</th>
+                      <th scope="col">Tiempo Validacion</th>
                       <th scope="col">Sucursal</th>
                     </tr>
                   </thead>
@@ -35,23 +37,11 @@
                             (click)="exportDespachoPreventaDetalle(item,1)">
                             <i class="fa fa-print" aria-hidden="true"></i>
                           </button>
-<!--
-                          <button [disabled]="btnCargandoPrint" class="btn  font-bold btn-secondary te m-1"
-                            (click)="exportDespachoPreventaDetalle(item,2)">
-                            <i class="fa fa-file-excel" aria-hidden="true"></i>
-                          </button> -->
                         </div>
 
                         <div class="acciones-mensaje" *ngIf="!validaDiferenciaMinimaDespacho(item)">
                           <span class=" font-bold text-info">Sync...</span>
                         </div>
-                      </td>
-
-
-                      <td>
-                        <span class="text-dark font-bold"><i class="far fa-calendar"></i>
-                        {{item.fechaEntrega | date:'MMM d, y' }}
-                       </span>
                       </td>
 
                       <td>
@@ -68,6 +58,23 @@
 
                       </td>
                       <td>
+                        <span *ngIf="item.validador==null" class="badge badge-secondary font-weight-bold">No Asignado</span>
+                        <span *ngIf="item.validador!=null" class="badge badge-info font-weight-bold">{{item.validador}}</span>
+
+                     </td>
+                      <td>
+                        <span class="text-dark font-bold"><i class="far fa-clock"></i>
+                        {{ getLapsoTime(item.fechaInicioDespachador,item.fechaFinDespachador,item.despachador)}}
+                       </span>
+                      </td>
+
+                      <td>
+                        <span class="text-dark font-bold"><i class="far fa-clock"></i>
+                          {{ getLapsoTime(item.fechainicioValidador,item.fechaFinalizacionValidador,item.despachador)}}
+                         </span>
+                      </td>
+
+                      <td>
                         <span class="font-weight-bold" ><i class="fa fa-map-marker  text-secondary mr-1"></i>{{getNameOfSucursal(item.sucursalID)}}</span>
                        </td>
                     </tr>
@@ -78,3 +85,15 @@
       </div>
   </div>
 </div>
+<ng-template #modalLoadingDespacho let-modal>
+  <div class="container-fluid ">
+    <div class="row">
+      <div class="col">
+        <div class="modal-body text-center" >
+          <i class="fa fa-spinner fa-spin fa-2x text-info"></i>
+          <p class="mt-2"><strong>{{loadingStatusMessaje}}</strong></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

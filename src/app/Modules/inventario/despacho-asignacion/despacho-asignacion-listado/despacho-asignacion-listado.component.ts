@@ -31,9 +31,10 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
   // Search: string = "";
   paginaNumeroActual = 1;
   Cargando: boolean = false;
-  CargandoModal: boolean = false;
 
-  btnAsignaDespachoCargando
+  btnAsignaDespachoCargando=false;
+  loadingStatusMessaje='Asignando despacho random...';
+
 
 
   totalPaginas: number = 0;
@@ -51,7 +52,7 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
   enterPressed: boolean;
 
 
-  @ViewChild('modalDetalle') modalElement: ElementRef;
+  @ViewChild('modalLoadingDespacho') myModal:ElementRef;
   btnGuardarCargando: boolean;
 
   fechaFiltro: Date = new Date();
@@ -62,6 +63,8 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
 
 
   sucursales:ComboBox[]=[];
+
+
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
@@ -85,8 +88,8 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
    await this.getSucursales();
    await this.getDiferenciaMinima()
    this.getDataPreventa();
-
   }
+
   getDataPreventa() {
 
     this.Cargando = true;
@@ -103,6 +106,7 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
        if (x.ok) {
 
          this.dataPreventa = x.valores[0];
+         console.log(this.dataPreventa)
          this.dataPreventaEmit.emit(this.dataPreventa);
          this.asignarPagination(x);
        } else {
@@ -118,22 +122,6 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
      });
 
  }
-
-
-
-  asignarPagination(x: ResponseContenido<any>) {
-
-    if (x.pagina != null) {
-      this.totalPaginas = x.pagina.totalPaginas == null ? 0 : x.pagina.totalPaginas;
-      this.paginaTotalRecords = x.pagina.totalRecords == null ? 0 : x.pagina.totalRecords;
-      this.paginaSize = x.pagina.paginaSize == null ? 0 : x.pagina.paginaSize;
-    } else {
-      this.totalPaginas = 0;
-      this.paginaTotalRecords = 0;
-      this.paginaSize = 0;
-    }
-
-  }
 
 
 
@@ -163,142 +151,45 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
   // }
 
 
-
-  exportDespachoPreventaDetalle(despacho:any) {
-
-    //TIPO 1 = PRINT
-    //TIPO 2 = EXPORTAR EXCEL
-    this.btnCargandoPrint=true;
-    this.despachoPreventaSeleccionado = despacho;
-
-    let parametros={
-     "Fecha":despacho.fechaEntrega
-    ,"RutaId": despacho.rutaId
-   }
-
-
-    this.httpService.DoPostAny<DespachoPreventaDetalleViewModel>(DataApi.Despacho,
-      "GetDespachoPreventaDetalles", parametros).subscribe(response => {
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-          this.btnCargandoPrint=false;
-
-        } else {
-             this.despachoPreventaDetalleToPrinter(response.valores[0])
-        }
-        this.btnCargandoPrint=false;
-      }, error => {
-        console.log(error)
-        this.btnCargandoPrint=false;
-        this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
-      });
-  }
-  despachoPreventaDetalleToPrinter(data:DespachoPreventaDetalleViewModel[]) {
-
-    let dataFormated:DespachoPreventaDetalleExportVM[] = [];
-    data.forEach(x=>{
-      let piezas =0;
-       if(x.unidadMedida=="LBS" ){
-          piezas = Math.round(((x.pedido)/x.peso));
-       }else if(x.unidadMedida=="UNIDAD"){
-         if(x.pedido>=x.peso){
-          piezas = Math.trunc(((x.pedido)/x.peso));
-          piezas = parseFloat(piezas + "."+(x.pedido%x.peso))
-         }else{
-          piezas=0;
-         }
-
-       }
-
-       dataFormated.push({
-         Despachador:this.despachoPreventaSeleccionado.despachador,
-         Distribuidor:this.despachoPreventaSeleccionado.distribuidor,
-         Ruta:this.despachoPreventaSeleccionado.ruta,
-         CodigoArticulo:x.codigoArticulo,
-         Descripcion:x.articulo,
-         Almacen_Desde:x.almacen_Origen,
-         Almacen_Hasta:x.almacen_Destino,
-         Unidad:x.unidadMedida,
-         Piezas: piezas,
-         Despacho:(x.despacho>0? x.despacho : undefined),
-         Pedido:x.pedido,
-       })
-    });
-     this.printService.ExportFile(dataFormated,
-                                 "Industrias La Nutriciosa, SRL",
-                                  "Hoja de despacho",
-                                  "Transacción entre almacenes",
-                                TypeReport.PDF,"RPT006")
-  }
-
-
-
-  onChangeFechaDesdeFiltro(evento: any) {
-    // if(++this.primeraVez==1){return;}
-
-
-     this.fecha = new Date(evento.value)
-     this.getDataPreventa()
-  }
-
-  async getDiferenciaMinima(){
-    await this.httpService.DoPostAnyAsync<string>(DataApi.Despacho,
-       "GetDiferenciaMinimaDespacho", null).then(response => {
-
-         if (!response.ok) {
-           this.toastService.error(response.errores[0]);
-         } else {
-             this.Diferencia_Minima_Despacho=parseFloat(response.valores[0])
-         }
-       }, error => {
-         console.error(error)
-         this.toastService.error("ha ocurrido un error", "Error conexion al servidor");
-       });
-   }
-
-
-  validaDiferenciaMinimaDespacho(item: DespachoListadoPreventaVM){
-
-    let diff= item.totalMontoPedidoERP-item.totalMontoPedido;
-    if(item.totalMontoPedido==0){return false}
-    if(item.totalMontoPedidoERP< Math.trunc( item.totalMontoPedido)){return false}
-    if(diff<=this.Diferencia_Minima_Despacho){
-      return true;
-    }else{return false}
-}
-
-
-
   getRamdonDespachoAndAsign(user:Usuario){
-    //Valida existe despachos sin asignacion y no esten sincronizando
-    let data_filtered= this.dataPreventa.filter(x=>x.despachador==null && x.sync==false);
+    this.btnAsignaDespachoCargando=true;
+    this.loadingStatusMessaje='Asignando despacho random...';
 
-      if (data_filtered.length>0) {
+    this.modalService.open(this.myModal,{backdrop:true,centered:true,windowClass:'modalLoadingDespacho'})
 
-        //Obtiene el despacho ramdon
-        var item =data_filtered[Math.floor(Math.random()*data_filtered.length)];
+      //Valida existe despachos sin asignacion y no esten sincronizando
+      let data_filtered= this.dataPreventa.filter(x=>x.despachador==null && x.sync==false);
 
-        //Valida si el despacho ramdon cumple con la diferencia minima de monto
-        if(!this.validaDiferenciaMinimaDespacho(item)){
-          item.sync=true;
-          this.getRamdonDespachoAndAsign(user);
+        if (data_filtered.length>0) {
+
+          //Obtiene el despacho ramdon
+          var item =data_filtered[Math.floor(Math.random()*data_filtered.length)];
+
+          //Valida si el despacho ramdon cumple con la diferencia minima de monto
+          if(!this.validaDiferenciaMinimaDespacho(item)){
+            item.sync=true;
+            this.getRamdonDespachoAndAsign(user);
+            return;
+          }
+          this.despachoPreventaSeleccionado =item;
+          this.registraDespachoPreventaInUse(user,item);
+          //Imprimiendo despacho
+        //  this.exportDespachoPreventaDetalle(item,1)
+
+        }else{
+
+          this.toastService.warning("No hay despachos disponibles para asignar")
+          this.modalService.dismissAll();
+
           return;
         }
-        this.despachoPreventaSeleccionado =item;
-        this.registraDespachoPreventaInUse(user,item);
-        //Imprimiendo despacho
-      //  this.exportDespachoPreventaDetalle(item,1)
-
-      }else{
-
-        this.toastService.warning("No hay despachos disponibles para asignar")
-        return;
-      }
 
 
-  }
+    }
 
-  registraDespachoPreventaInUse(user:Usuario,despacho){
+
+
+  async registraDespachoPreventaInUse(user:Usuario,despacho){
 
     this.btnAsignaDespachoCargando=true;
 
@@ -308,28 +199,39 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
     p.usuarioId =  Number(user.id)
     p.estadoId = 1;
 
-    this.httpService.DoPostAny<DespachoInUseVM>(DataApi.Despacho,
-      'RegistraDespachoPreventaInUse', p).subscribe(response => {
+   await this.httpService.DoPostAnyAsync<DespachoInUseVM>(DataApi.Despacho,
+      'RegistraDespachoPreventaInUse', p).then(async response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
           this.btnAsignaDespachoCargando = false;
+          this.closeModal()
+
         } else {
           if(response.valores?.length>0){
            let m:DespachoInUseVM = response.valores[0];
            if(m.estado!=2 )  {
              this.despachoPreventaSeleccionado.despachador=user.nombres+" "+ user.apellidos;
-          // this.finalizaDespacho(2);
-             this.exportDespachoPreventaDetalle(this.despachoPreventaSeleccionado)
+
+             this.loadingStatusMessaje='Enviando despacho para SAP...'
+            // await this.finalizaDespacho(2);
+
+             this.getDataPreventa();
              this.toastService.success(m.mensaje)
+             this.loadingStatusMessaje='Imprimiendo despacho...'
+             this.closeModal()
+
+             setTimeout(() => {
+             this.exportDespachoPreventaDetalle(this.despachoPreventaSeleccionado)
+             }, 500);
+
            }else{
             this.toastService.error(m.mensaje)
+            this.closeModal()
 
            }
 
           }
         }
-        this.btnAsignaDespachoCargando = false;
-
       }, error => {
        this.btnAsignaDespachoCargando = false;
         this.toastService.error("Error conexion al servidor");
@@ -338,7 +240,7 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
 
   }
 
-  finalizaDespacho(estado:number){
+  async finalizaDespacho(estado:number){
 
     //ESTADO 2 INDICA QUE EL DESPACHO SE PICKEARA DE MANERA MANUAL
     //ESTADO 3 INDICA QUE EL DESPACHO SE PICKEO MEDIANTE LA PLATAFORMA WEB
@@ -349,8 +251,8 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
      p.fechaEntrega = this.despachoPreventaSeleccionado.fechaEntrega;
      p.estadoId=estado;
 
-     this.httpService.DoPostAny<DespachoPreventaDetalleViewModel>(DataApi.Despacho,
-       'finalizaDespachoPreventa', p).subscribe(response => {
+    await this.httpService.DoPostAnyAsync<DespachoPreventaDetalleViewModel>(DataApi.Despacho,
+       'finalizaDespachoPreventa', p).then(response => {
          if (!response.ok) {
            this.toastService.error(response.errores[0], "Error");
            this.despachoPreventaSeleccionado.noEditable=0;
@@ -361,7 +263,6 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
                    this.despachoPreventaSeleccionado.finalizado=1;
                    this.despachoPreventaSeleccionado.noEditable=1;
                    this.despachoPreventaSeleccionado.estadoDespacho=4;
-                   console.log(  this.despachoPreventaSeleccionado)
                  }
            }
          }
@@ -403,10 +304,165 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
         });
 }
 
+exportDespachoPreventaDetalle(despacho:any) {
+
+  //TIPO 1 = PRINT
+  //TIPO 2 = EXPORTAR EXCEL
+  this.btnCargandoPrint=true;
+  this.despachoPreventaSeleccionado = despacho;
+
+  let parametros={
+   "Fecha":despacho.fechaEntrega
+  ,"RutaId": despacho.rutaId
+ }
+
+
+  this.httpService.DoPostAny<DespachoPreventaDetalleViewModel>(DataApi.Despacho,
+    "GetDespachoPreventaDetalles", parametros).subscribe(response => {
+      if (!response.ok) {
+        this.toastService.error(response.errores[0]);
+        this.btnCargandoPrint=false;
+
+      } else {
+           this.despachoPreventaDetalleToPrinter(response.valores[0])
+      }
+      this.btnCargandoPrint=false;
+    }, error => {
+      console.log(error)
+      this.btnCargandoPrint=false;
+      this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
+    });
+}
+despachoPreventaDetalleToPrinter(data:DespachoPreventaDetalleViewModel[]) {
+
+  let dataFormated:DespachoPreventaDetalleExportVM[] = [];
+  data.forEach(x=>{
+    let piezas =0;
+     if(x.unidadMedida=="LBS" ){
+        piezas = Math.round(((x.pedido)/x.peso));
+     }else if(x.unidadMedida=="UNIDAD"){
+       if(x.pedido>=x.peso){
+        piezas = Math.trunc(((x.pedido)/x.peso));
+        piezas = parseFloat(piezas + "."+(x.pedido%x.peso))
+       }else{
+        piezas=0;
+       }
+
+     }
+
+     dataFormated.push({
+       Despachador:this.despachoPreventaSeleccionado.despachador,
+       Distribuidor:this.despachoPreventaSeleccionado.distribuidor,
+       Ruta:this.despachoPreventaSeleccionado.ruta,
+       CodigoArticulo:x.codigoArticulo,
+       Descripcion:x.articulo,
+       Almacen_Desde:x.almacen_Origen,
+       Almacen_Hasta:x.almacen_Destino,
+       Unidad:x.unidadMedida,
+       Piezas: piezas,
+       Despacho:(x.despacho>0? x.despacho : undefined),
+       Pedido:x.pedido,
+     })
+  });
+   this.printService.ExportFile(dataFormated,
+                               "Industrias La Nutriciosa, SRL",
+                                "Hoja de despacho",
+                                "Transacción entre almacenes",
+                              TypeReport.PDF,"RPT006")
+}
+
+
+
+onChangeFechaDesdeFiltro(evento: any) {
+  // if(++this.primeraVez==1){return;}
+
+
+   this.fecha = new Date(evento.value)
+   this.getDataPreventa()
+}
+
+async getDiferenciaMinima(){
+  await this.httpService.DoPostAnyAsync<string>(DataApi.Despacho,
+     "GetDiferenciaMinimaDespacho", null).then(response => {
+
+       if (!response.ok) {
+         this.toastService.error(response.errores[0]);
+       } else {
+           this.Diferencia_Minima_Despacho=parseFloat(response.valores[0])
+       }
+     }, error => {
+       console.error(error)
+       this.toastService.error("ha ocurrido un error", "Error conexion al servidor");
+     });
+ }
+
+
+validaDiferenciaMinimaDespacho(item: DespachoListadoPreventaVM){
+
+  let diff= item.totalMontoPedidoERP-item.totalMontoPedido;
+  if(item.totalMontoPedido==0){return false}
+  if(item.totalMontoPedidoERP< Math.trunc( item.totalMontoPedido)){return false}
+  if(diff<=this.Diferencia_Minima_Despacho){
+    return true;
+  }else{return false}
+}
+
+
+asignarPagination(x: ResponseContenido<any>) {
+
+  if (x.pagina != null) {
+    this.totalPaginas = x.pagina.totalPaginas == null ? 0 : x.pagina.totalPaginas;
+    this.paginaTotalRecords = x.pagina.totalRecords == null ? 0 : x.pagina.totalRecords;
+    this.paginaSize = x.pagina.paginaSize == null ? 0 : x.pagina.paginaSize;
+  } else {
+    this.totalPaginas = 0;
+    this.paginaTotalRecords = 0;
+    this.paginaSize = 0;
+  }
+
+}
+
+
+
+
+
 getNameOfSucursal(sucursalId:number):string{
   return this.sucursales.find(x=>x.codigo==sucursalId).nombre;
 }
 
+getLapsoTime(dateini: string,datefin:string,s){
+ let  dateTwo = new Date().getTime();
 
+let dateOne = new Date(dateini).getTime() ;
+
+if (datefin !=undefined && datefin !=null && datefin!='0001-01-01T00:00:00') {
+   dateTwo = new Date(datefin).getTime();
+}
+
+ var hourDiff = dateTwo - dateOne; //in ms
+ var secDiff = hourDiff / 1000; //in s
+ var minDiff = hourDiff / 60 / 1000; //in minutes
+ var hDiff = hourDiff / 3600 / 1000; //in hours
+
+ let horas  =  Math.floor(hDiff) ;
+ let minutos = (minDiff - 60 * horas);
+
+ let str=  horas+ ":" + Math.trunc(minutos)+" Minutos";
+
+ if (horas<=0) {
+  str = Math.trunc(minutos)+" Minutos";
+ }
+
+if ( dateini=='0001-01-01T00:00:00') {
+   str=  0 + ":" +0+" Minutos";
+}
+ return str;
+}
+
+closeModal(){
+  setTimeout(() => {
+   this.modalService.dismissAll();
+  }, 500);
+}
 
 }
