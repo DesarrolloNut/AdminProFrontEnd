@@ -248,24 +248,24 @@ export class DespachoAsignacionFormularioComponent implements OnInit, OnDestroy 
 
   }
 
-  ngAfterViewInit() {
-    setTimeout(() => {
-      var elem = this.renderer.selectRootElement('#inputSearch');
-      // this.renderer.listen(elem, "focus", () => { console.log('focus') });
-      // this.renderer.listen(elem, "blur", () => { console.log('blur') });
-      elem.focus();
+  // ngAfterViewInit() {
+  //   setTimeout(() => {
+  //     var elem = this.renderer.selectRootElement('#inputSearch');
+  //     // this.renderer.listen(elem, "focus", () => { console.log('focus') });
+  //     // this.renderer.listen(elem, "blur", () => { console.log('blur') });
+  //     elem.focus();
 
-    }, 1000);
-    setInterval(() => {
-      var elem = this.renderer.selectRootElement('#inputSearch');
-      // this.renderer.listen(elem, "focus", () => { console.log('focus') });
-      // this.renderer.listen(elem, "blur", () => { console.log('blur') });
-      elem.focus();
+  //   }, 1000);
+  //   setInterval(() => {
+  //     var elem = this.renderer.selectRootElement('#inputSearch');
+  //     // this.renderer.listen(elem, "focus", () => { console.log('focus') });
+  //     // this.renderer.listen(elem, "blur", () => { console.log('blur') });
+  //     elem.focus();
 
-    }, 2000);
-    this.focusInputSearch()
+  //   }, 2000);
+  //   this.focusInputSearch()
 
-  }
+  // }
 
   focusInputSearch() {
     this.renderer.selectRootElement('#inputSearch').focus();

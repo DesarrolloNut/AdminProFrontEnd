@@ -13,8 +13,8 @@ import { BalanzaPesoGrupoSignalREnum } from 'src/app/shared/enums/BalanzaPesoGru
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
-import { DespachoInUseVM, DespachoPreventaDetalleExportVM, DespachoPreventaDetalleViewModel, DespachoPreventaRequestModel } from '../../despacho/models/DespachoPedidoDetalleViewModel';
-import { DespachoListadoPreventaVM } from '../../despacho/models/DespachoPedidoListadoViewModel';
+import { DespachoInUseVM, DespachoPreventaDetalleExportVM, DespachoPreventaDetalleViewModel, DespachoPreventaRequestModel, DespachoRangoHoraRequestModel } from '../../despacho/models/DespachoPedidoDetalleViewModel';
+import { DepachoHorasVM, DespachoListadoPreventaVM } from '../../despacho/models/DespachoPedidoListadoViewModel';
 import * as XLSX from 'xlsx';
 
 @Component({
@@ -31,7 +31,7 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
   // Search: string = "";
   paginaNumeroActual = 1;
   Cargando: boolean = false;
-
+  CargandoRealtime =false;
   btnAsignaDespachoCargando=false;
   loadingStatusMessaje='Asignando despacho random...';
 
@@ -66,6 +66,15 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
 
 
 
+  //PUEDE VER PANTALLA
+  intervalRefreshData: NodeJS.Timeout
+   fDesde = new Date();
+   fHasta = new Date();
+   dia : string;
+   despachoPuedeHorario = true;
+   loadingRangosFechaDespacho =false;
+   despachoOn = 1
+
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private authService: AuthenticationService,
@@ -74,9 +83,7 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
   ) { }
   ngOnDestroy(): void {
-    //throw new Error('Method not implemented.');
-
-
+    window.clearInterval(this.intervalRefreshData);
   }
 
 
@@ -87,12 +94,27 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
  async getAllData(){
    await this.getSucursales();
    await this.getDiferenciaMinima()
-   this.getDataPreventa();
+   this.validaHorarioAndGetData();
   }
+validaHorarioAndGetData(showLoading=false){
+ // this.getDataPreventa(false)
+ window.clearInterval(this.intervalRefreshData);
+ this.validaHorarioDespacho()
 
-  getDataPreventa() {
+}
 
-    this.Cargando = true;
+  getDataPreventa(showLoading:boolean) {
+
+    if(this.Cargando){
+      return;
+    }
+    if(showLoading){
+     this.Cargando = true;
+
+    }else{
+     this.CargandoRealtime =true;
+    }
+
 
    let parametros: Parametro[] = [
      { key: "Search", value: '' },
@@ -114,17 +136,69 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
          console.error(x.errores[0]);
        }
 
-     this.Cargando = false;
+       if(showLoading){
+        this.Cargando = false;
+       }
+       this.CargandoRealtime =false;
      }, error => {
        console.error(error);
        this.toastService.error("Error conexion al servidor");
-         this.Cargando = false;
+       if(showLoading){
+        this.Cargando = false;
+       }
+       this.CargandoRealtime =false;
+
      });
 
  }
 
 
 
+ validaHorarioDespacho() {
+  this.dataPreventa =  [];
+   this.loadingRangosFechaDespacho=true;
+    let p= new DespachoRangoHoraRequestModel();
+     p.fecha = this.fecha;
+
+  this.httpService.DoPostAny<string>(DataApi.Despacho,
+    "GetDespachoRangoValor", p).subscribe(response => {
+
+      if (!response.ok) {
+        this.toastService.error(response.errores[0]);
+      } else {
+          let h:DepachoHorasVM =  response.valores[0]
+          this.despachoPuedeHorario=h.puedeDespachar;
+          this.dia=h.diaNombre;
+
+          this.fDesde.setHours(h.horaDesde.hours);
+          this.fDesde.setMinutes(h.horaDesde.minutes);
+          this.fHasta.setHours(h.horaHasta.hours);
+          this.fHasta.setMinutes(h.horaHasta.minutes);
+
+        if (this.despachoPuedeHorario) {
+          setTimeout(() => {
+            this.loadingRangosFechaDespacho=false;
+            this.getDataPreventa(true)
+
+            }, 200);
+
+          this.intervalRefreshData = setInterval(() => {
+            this.getDataPreventa(false)
+          }, 5000)
+        }else{
+          setTimeout(() => {
+
+          }, 60000);
+        }
+      }
+      this.loadingRangosFechaDespacho=false;
+
+    }, error => {
+      this.loadingRangosFechaDespacho=false;
+      console.error(error)
+      this.toastService.error("ha ocurrido un error", "Error conexion al servidor");
+    });
+}
 
 
   // setFocus() {
@@ -215,7 +289,7 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
              this.loadingStatusMessaje='Enviando despacho para SAP...'
             // await this.finalizaDespacho(2);
 
-             this.getDataPreventa();
+             this.getDataPreventa(true);
              this.toastService.success(m.mensaje)
              this.loadingStatusMessaje='Imprimiendo despacho...'
              this.closeModal()
@@ -378,7 +452,7 @@ onChangeFechaDesdeFiltro(evento: any) {
 
 
    this.fecha = new Date(evento.value)
-   this.getDataPreventa()
+   this.validaHorarioAndGetData()
 }
 
 async getDiferenciaMinima(){

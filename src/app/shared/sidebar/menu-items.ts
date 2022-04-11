@@ -316,7 +316,7 @@ export const ROUTES: RouteInfo[] = [
         labelClass: '',
         extralink: false,
         submenu: [],
-        permisos: ['despacho'],
+        permisos: ['asignacion_despacho'],
         // permisos: ['despacho_asignacion'],
       },
       // {

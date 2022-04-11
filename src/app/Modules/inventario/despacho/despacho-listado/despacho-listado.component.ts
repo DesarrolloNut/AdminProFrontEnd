@@ -249,8 +249,7 @@ getAllData(){
 
   this.intervalRefreshData = setInterval(() => {
     this.getDataByCondicional(false,false)
-  }, 13000)
-
+  }, 40000)
 
 }
 
@@ -1409,8 +1408,8 @@ ngOnDestroy(): void {
 
  changeViewDetalleDespacho(viewAllArticulos:boolean){
    if (this.existeArticuloPendienteDespachar()) {
-      this.toastService.warning("No puedes ver el listado de articulos, aún tienes articulos pendientes por despachar.")
-     return;
+      //this.toastService.warning("No puedes ver el listado de articulos, aún tienes articulos pendientes por despachar.")
+    // return;
    }
    this.viewAllArticulos=viewAllArticulos;
 

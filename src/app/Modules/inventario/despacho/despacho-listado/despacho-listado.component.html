@@ -474,7 +474,6 @@
     <div class="col-md-12 row" *ngIf="viewAllArticulos && despachoPreventaSeleccionado.noEditable==0" >
       <button type="button"
       *ngIf="!btnFinalizarDespachoCargando && !loadingDespachoPreventaDetalle"
-      [disabled]="!puedeFinalizarDespacho"
       class="btn mr-auto ml-auto btn-info btn-md btn_finaliza_despacho" (click)="openModalConfirmFinalizaDespacho(modalConfirm)">
       FINALIZAR DESPACHO
     </button>
