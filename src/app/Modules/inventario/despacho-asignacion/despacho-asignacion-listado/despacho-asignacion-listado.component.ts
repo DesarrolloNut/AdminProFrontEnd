@@ -14,7 +14,7 @@ import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { DespachoInUseVM, DespachoPreventaDetalleExportVM, DespachoPreventaDetalleViewModel, DespachoPreventaRequestModel, DespachoRangoHoraRequestModel } from '../../despacho/models/DespachoPedidoDetalleViewModel';
-import { DepachoHorasVM, DespachoListadoPreventaVM } from '../../despacho/models/DespachoPedidoListadoViewModel';
+import { DepachoHorasVM, DespachoListadoPreventaAsignacionVM } from '../../despacho/models/DespachoPedidoListadoViewModel';
 import * as XLSX from 'xlsx';
 
 @Component({
@@ -26,7 +26,7 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
 
 
   // COPIAR AL CREAR UN LISTADO NUEVO
-  @Output() dataPreventaEmit = new EventEmitter<DespachoListadoPreventaVM[]>();
+  @Output() dataPreventaEmit = new EventEmitter<DespachoListadoPreventaAsignacionVM[]>();
 
   // Search: string = "";
   paginaNumeroActual = 1;
@@ -40,8 +40,8 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
   totalPaginas: number = 0;
   paginaSize: number = 10;
   paginaTotalRecords: number = 0;
-  dataPreventa: DespachoListadoPreventaVM[] = [] //tu modelo
-  despachoPreventaSeleccionado: DespachoListadoPreventaVM;
+  dataPreventa: DespachoListadoPreventaAsignacionVM[] = [] //tu modelo
+  despachoPreventaSeleccionado: DespachoListadoPreventaAsignacionVM;
 
   fecha= new Date()
 
@@ -122,13 +122,14 @@ validaHorarioAndGetData(showLoading=false){
      { key: "SucursalId", value: 0 },
      { key: "Fecha", value: this.fecha },
     ]
-   this.httpService.GetAllWithPagination<DespachoListadoPreventaVM>(DataApi.Despacho,
+   this.httpService.GetAllWithPagination<DespachoListadoPreventaAsignacionVM>(DataApi.Despacho,
       "GetDespachoPreventaListadoForAsignacion", "FechaEntrega", this.paginaNumeroActual,
      this.paginaSize,true, parametros).subscribe(x => {
        if (x.ok) {
 
          this.dataPreventa = x.valores[0];
-         console.log(this.dataPreventa)
+         this.dataPreventa.forEach(x=>this.getEstadoAsignacion(x));
+
          this.dataPreventaEmit.emit(this.dataPreventa);
          this.asignarPagination(x);
        } else {
@@ -287,7 +288,9 @@ validaHorarioAndGetData(showLoading=false){
              this.despachoPreventaSeleccionado.despachador=user.nombres+" "+ user.apellidos;
 
              this.loadingStatusMessaje='Enviando despacho para SAP...'
-            // await this.finalizaDespacho(2);
+            if(!this.despachoPreventaSeleccionado.despachoDispositivo){
+              await this.finalizaDespacho(2);
+            }
 
              this.getDataPreventa(true);
              this.toastService.success(m.mensaje)
@@ -471,8 +474,7 @@ async getDiferenciaMinima(){
  }
 
 
-validaDiferenciaMinimaDespacho(item: DespachoListadoPreventaVM){
-
+validaDiferenciaMinimaDespacho(item: DespachoListadoPreventaAsignacionVM){
   let diff= item.totalMontoPedidoERP-item.totalMontoPedido;
   if(item.totalMontoPedido==0){return false}
   if(item.totalMontoPedidoERP< Math.trunc( item.totalMontoPedido)){return false}
@@ -507,12 +509,14 @@ getNameOfSucursal(sucursalId:number):string{
 getLapsoTime(dateini: string,datefin:string,s){
  let  dateTwo = new Date().getTime();
 
-let dateOne = new Date(dateini).getTime() ;
+let dateOne = new Date().getTime() ;
 
 if (datefin !=undefined && datefin !=null && datefin!='0001-01-01T00:00:00') {
    dateTwo = new Date(datefin).getTime();
 }
-
+if (dateini !=undefined && dateini !=null && dateini!='0001-01-01T00:00:00') {
+  dateOne = new Date(dateini).getTime();
+}
  var hourDiff = dateTwo - dateOne; //in ms
  var secDiff = hourDiff / 1000; //in s
  var minDiff = hourDiff / 60 / 1000; //in minutes
@@ -532,6 +536,38 @@ if ( dateini=='0001-01-01T00:00:00') {
 }
  return str;
 }
+
+getEstadoAsignacion(item:DespachoListadoPreventaAsignacionVM){
+
+
+  if(item.fechaInicioDespachador ==null){
+     item.estadoAsignacion=1
+     item.estadoAsignacionMsg='Pendiente'
+     return;
+  }else if(item.fechaInicioDespachador !=null && item.fechaFinDespachador==null){
+    item.estadoAsignacion=2
+    item.estadoAsignacionMsg='Pickiando'
+    return;
+  }else  if(item.fechainicioValidador ==null ){
+    item.estadoAsignacion=1
+    item.estadoAsignacionMsg='Pendiente validar'
+    return;
+  }else if(item.fechainicioValidador !=null  && item.fechaFinalizacionValidador==null){
+    item.estadoAsignacion=2
+    item.estadoAsignacionMsg='Validando'
+    return;
+  }else{
+    item.estadoAsignacion=3
+    item.estadoAsignacionMsg='Finalizado'
+  }
+  if(item.fechaInicioDespachador !=null && item.fechaFinDespachador!=null && item.despachoDispositivo==false){
+    item.estadoAsignacion=3
+    item.estadoAsignacionMsg='Finalizado'
+    return;
+  }
+
+}
+
 
 closeModal(){
   setTimeout(() => {

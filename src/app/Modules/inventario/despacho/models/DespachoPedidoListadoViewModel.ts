@@ -45,17 +45,60 @@ export class DespachoListadoPreventaVM  {
   sucursalID:number;
   despachador?:string;
   validador?:string;
+  // despachoDispositivo:boolean;
+  // fechaInicioDespachador:string;
+  // fechaFinDespachador:string;
+  // fechainicioValidador:string;
+  // fechaFinalizacionValidador:string;
+  // // Tiempo_Picking:string;
+  // // Tiempo_Validacion:string;
+  // // Tiempo_Total:string;
 
+
+}
+
+
+
+export class DespachoListadoPreventaAsignacionVM  {
+  fechaEntrega: string;
+  canalId: number;
+  distribuidorId: number;
+  distribuidor: string;
+  ruta: number;
+  rutaId: number;
+  finalizado: number;
+  sync:boolean;
+  estadoERP: number;
+  noEditable: number;
+  inUse: boolean;
+  pedido: number;
+  despacho: number;
+  almacen_Origen: number;
+  almacen_Destino: number;
+  estadoDespacho: number;
+
+  totalMontoPedido: number;
+  totalMontoPedidoERP: number;
+  totalMontoDespacho: number;
+  sucursalID:number;
+  despachador?:string;
+  validador?:string;
+  despachoDispositivo:boolean;
   fechaInicioDespachador:string;
   fechaFinDespachador:string;
   fechainicioValidador:string;
   fechaFinalizacionValidador:string;
+
   // Tiempo_Picking:string;
   // Tiempo_Validacion:string;
   // Tiempo_Total:string;
 
 
+  estadoAsignacion:number;
+  estadoAsignacionMsg:string;
+
 }
+
 export class DespachoListadoPreventaVMTotales {
   fechaEntrega: string;
   sucursalId: number;

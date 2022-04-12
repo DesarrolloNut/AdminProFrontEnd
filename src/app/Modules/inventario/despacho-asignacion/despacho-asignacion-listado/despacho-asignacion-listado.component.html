@@ -122,6 +122,7 @@
     <thead>
       <tr>
         <th scope="col">Distribuidor</th>
+        <th scope="col">Estado</th>
         <th scope="col">Pickeador -></th>
         <th scope="col">Validador -></th>
         <th scope="col">Tiempo Picking</th>
@@ -139,6 +140,13 @@
             </div>
           </div>
         </td>
+        <td>
+          <span *ngIf="item.estadoAsignacion==1" class="badge badge-warning font-weight-bold">{{item.estadoAsignacionMsg}}</span>
+          <span *ngIf="item.estadoAsignacion==2" class="badge badge-info font-weight-bold">{{item.estadoAsignacionMsg}}</span>
+          <span *ngIf="item.estadoAsignacion==3" class="badge badge-success font-weight-bold">{{item.estadoAsignacionMsg}}</span>
+
+
+       </td>
         <td>
            <span *ngIf="item.despachador==null" class="badge badge-secondary font-weight-bold">No Asignado</span>
            <span *ngIf="item.despachador!=null" class="badge badge-info font-weight-bold">{{item.despachador}}</span>
