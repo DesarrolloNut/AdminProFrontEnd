@@ -88,7 +88,7 @@ export class DespachoListadoPreventaAsignacionVM  {
   fechaFinDespachador:string;
   fechainicioValidador:string;
   fechaFinalizacionValidador:string;
-
+  prioridadOrden:number;
   // Tiempo_Picking:string;
   // Tiempo_Validacion:string;
   // Tiempo_Total:string;

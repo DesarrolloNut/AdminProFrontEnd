@@ -130,6 +130,7 @@ validaHorarioAndGetData(showLoading=false){
          this.dataPreventa = x.valores[0];
          this.dataPreventa.forEach(x=>this.getEstadoAsignacion(x));
 
+         console.log(this.dataPreventa)
          this.dataPreventaEmit.emit(this.dataPreventa);
          this.asignarPagination(x);
        } else {
@@ -233,7 +234,9 @@ validaHorarioAndGetData(showLoading=false){
     this.modalService.open(this.myModal,{backdrop:true,centered:true,windowClass:'modalLoadingDespacho'})
 
       //Valida existe despachos sin asignacion y no esten sincronizando
-      let data_filtered= this.dataPreventa.filter(x=>x.despachador==null && x.sync==false);
+      let data= this.dataPreventa.filter(x=>x.despachador==null && x.sync==false);
+
+       let data_filtered=  this.getDataByPrioridadOrden(data);
 
         if (data_filtered.length>0) {
 
@@ -247,24 +250,43 @@ validaHorarioAndGetData(showLoading=false){
             return;
           }
           this.despachoPreventaSeleccionado =item;
-          this.registraDespachoPreventaInUse(user,item);
+          this.registraDespachoPreventaInUse(user);
           //Imprimiendo despacho
         //  this.exportDespachoPreventaDetalle(item,1)
 
         }else{
 
+
+
           this.toastService.warning("No hay despachos disponibles para asignar")
           this.modalService.dismissAll();
+
+          let items= this.dataPreventa.filter(x=>x.despachador==user.nombres+" "+ user.apellidos && x.estadoAsignacion==2)
+          if(items.length>0){
+            this.despachoPreventaSeleccionado= items[0]
+            this.registraDespachoPreventaInUse(user,3)
+          }
 
           return;
         }
 
 
     }
+  getDataByPrioridadOrden(data_filtered: DespachoListadoPreventaAsignacionVM[]):DespachoListadoPreventaAsignacionVM[] {
+    console.log(data_filtered)
+    if(data_filtered.filter(x=>x.prioridadOrden==1).length>0){return data_filtered.filter(x=>x.prioridadOrden==1)}
+    if(data_filtered.filter(x=>x.prioridadOrden==2).length>0){return data_filtered.filter(x=>x.prioridadOrden==2)}
+    if(data_filtered.filter(x=>x.prioridadOrden==3).length>0){return data_filtered.filter(x=>x.prioridadOrden==3)}
+    if(data_filtered.filter(x=>x.prioridadOrden==4).length>0){return data_filtered.filter(x=>x.prioridadOrden==4)}
+    if(data_filtered.filter(x=>x.prioridadOrden==5).length>0){return data_filtered.filter(x=>x.prioridadOrden==5)}
+    if(data_filtered.filter(x=>x.prioridadOrden==6).length>0){return data_filtered.filter(x=>x.prioridadOrden==6)}
+    if(data_filtered.filter(x=>x.prioridadOrden==7).length>0){return data_filtered.filter(x=>x.prioridadOrden==7)}
+    return  [];
+  }
 
 
 
-  async registraDespachoPreventaInUse(user:Usuario,despacho){
+  async registraDespachoPreventaInUse(user:Usuario,estadoId=1){
 
     this.btnAsignaDespachoCargando=true;
 
@@ -272,7 +294,7 @@ validaHorarioAndGetData(showLoading=false){
     p.ruta = this.despachoPreventaSeleccionado.rutaId;
     p.fechaEntrega = this.despachoPreventaSeleccionado.fechaEntrega;
     p.usuarioId =  Number(user.id)
-    p.estadoId = 1;
+    p.estadoId = estadoId;
 
    await this.httpService.DoPostAnyAsync<DespachoInUseVM>(DataApi.Despacho,
       'RegistraDespachoPreventaInUse', p).then(async response => {
@@ -297,9 +319,12 @@ validaHorarioAndGetData(showLoading=false){
              this.loadingStatusMessaje='Imprimiendo despacho...'
              this.closeModal()
 
-             setTimeout(() => {
-             this.exportDespachoPreventaDetalle(this.despachoPreventaSeleccionado)
-             }, 500);
+            if(estadoId!=3){
+              setTimeout(() => {
+                this.exportDespachoPreventaDetalle(this.despachoPreventaSeleccionado)
+                }, 500);
+            }
+
 
            }else{
             this.toastService.error(m.mensaje)
@@ -525,14 +550,14 @@ if (dateini !=undefined && dateini !=null && dateini!='0001-01-01T00:00:00') {
  let horas  =  Math.floor(hDiff) ;
  let minutos = (minDiff - 60 * horas);
 
- let str=  horas+ ":" + Math.trunc(minutos)+" Minutos";
+ let str=  horas+ " hr " + Math.trunc(minutos)+" min";
 
  if (horas<=0) {
-  str = Math.trunc(minutos)+" Minutos";
+  str = Math.trunc(minutos)+" min";
  }
 
 if ( dateini=='0001-01-01T00:00:00') {
-   str=  0 + ":" +0+" Minutos";
+   str=  0 + " hr " +0+" min";
 }
  return str;
 }
@@ -543,15 +568,12 @@ getEstadoAsignacion(item:DespachoListadoPreventaAsignacionVM){
   if(item.fechaInicioDespachador ==null){
      item.estadoAsignacion=1
      item.estadoAsignacionMsg='Pendiente'
-     return;
   }else if(item.fechaInicioDespachador !=null && item.fechaFinDespachador==null){
     item.estadoAsignacion=2
     item.estadoAsignacionMsg='Pickiando'
-    return;
   }else  if(item.fechainicioValidador ==null ){
     item.estadoAsignacion=1
     item.estadoAsignacionMsg='Pendiente validar'
-    return;
   }else if(item.fechainicioValidador !=null  && item.fechaFinalizacionValidador==null){
     item.estadoAsignacion=2
     item.estadoAsignacionMsg='Validando'
@@ -562,8 +584,7 @@ getEstadoAsignacion(item:DespachoListadoPreventaAsignacionVM){
   }
   if(item.fechaInicioDespachador !=null && item.fechaFinDespachador!=null && item.despachoDispositivo==false){
     item.estadoAsignacion=3
-    item.estadoAsignacionMsg='Finalizado'
-    return;
+    item.estadoAsignacionMsg='P. Finalizado'
   }
 
 }

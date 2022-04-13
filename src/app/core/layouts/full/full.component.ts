@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 declare var $: any;
 
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
+import { AuthenticationService } from '../../authentication/service/authentication.service';
 
 @Component({
     selector: 'app-full-layout',
@@ -12,7 +13,10 @@ import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 export class FullComponent implements OnInit {
     public config: PerfectScrollbarConfigInterface = {};
 
-    constructor(public router: Router) { }
+    constructor(
+        public router: Router,
+       private authService: AuthenticationService,
+      ) { }
 
     tabStatus = 'justified';
 
@@ -24,7 +28,7 @@ export class FullComponent implements OnInit {
     public showSettings = false;
     public showMobileMenu = false;
     public expandLogo = false;
- 
+
     options = {
         theme: 'light', // two possible values: light, dark
         dir: 'ltr', // two possible values: ltr, rtl
@@ -46,6 +50,7 @@ export class FullComponent implements OnInit {
         // if (this.router.url === '/') {
         //     this.router.navigate(['/dashboard/classic']);
         // }
+        this.changeOptionsByRole()
         this.defaultSidebar = this.options.sidebartype;
         this.handleSidebar();
     }
@@ -55,6 +60,13 @@ export class FullComponent implements OnInit {
         this.handleSidebar();
     }
 
+    changeOptionsByRole(){
+      if(this.authService.tokenDecoded.role=='PantallaAsignadorDespacho'){
+        this.options.sidebartype='overlay';
+        this.options.logobg='skin6'
+      }
+
+    }
     handleSidebar() {
         this.innerWidth = window.innerWidth;
         switch (this.defaultSidebar) {
