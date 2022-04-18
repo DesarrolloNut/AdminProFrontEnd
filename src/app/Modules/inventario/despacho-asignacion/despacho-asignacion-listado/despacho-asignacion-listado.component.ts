@@ -41,6 +41,7 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
   paginaSize: number = 10;
   paginaTotalRecords: number = 0;
   dataPreventa: DespachoListadoPreventaAsignacionVM[] = [] //tu modelo
+  dataPreventaF:DespachoListadoPreventaAsignacionVM[] = [] //tu modelo
   despachoPreventaSeleccionado: DespachoListadoPreventaAsignacionVM;
 
   fecha= new Date()
@@ -128,9 +129,10 @@ validaHorarioAndGetData(showLoading=false){
        if (x.ok) {
 
          this.dataPreventa = x.valores[0];
-         this.dataPreventa.forEach(x=>this.getEstadoAsignacion(x));
 
-         console.log(this.dataPreventa)
+         this.formatDataPreventa(this.dataPreventa)
+
+
          this.dataPreventaEmit.emit(this.dataPreventa);
          this.asignarPagination(x);
        } else {
@@ -153,6 +155,25 @@ validaHorarioAndGetData(showLoading=false){
      });
 
  }
+  formatDataPreventa(dataPreventa: DespachoListadoPreventaAsignacionVM[]) {
+    this.dataPreventaF=[];
+    this.dataPreventa.forEach(x=>{
+      this.getEstadoAsignacion(x)
+
+
+     if(x.despachoDispositivo){
+      if((x.fechaInicioDespachador!=null) &&
+         (x.fechaFinDespachador==null || x.fechainicioValidador==null || x.fechaFinalizacionValidador==null)){
+           this.dataPreventaF.push(x);
+         }
+       }else{
+          if((x.fechaInicioDespachador!=null) && (x.fechaFinDespachador==null)){
+            this.dataPreventaF.push(x);
+          }
+       }
+    })
+
+  }
 
 
 
@@ -584,7 +605,7 @@ getEstadoAsignacion(item:DespachoListadoPreventaAsignacionVM){
   }
   if(item.fechaInicioDespachador !=null && item.fechaFinDespachador!=null && item.despachoDispositivo==false){
     item.estadoAsignacion=3
-    item.estadoAsignacionMsg='P. Finalizado'
+    item.estadoAsignacionMsg='Finalizado'
   }
 
 }
