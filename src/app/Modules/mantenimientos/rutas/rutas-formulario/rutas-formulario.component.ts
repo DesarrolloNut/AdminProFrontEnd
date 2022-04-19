@@ -1,3 +1,4 @@
+import { AuthenticationService } from './../../../../core/authentication/service/authentication.service';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -27,11 +28,14 @@ export class RutasFormularioComponent implements OnInit {
   RutaTipo: any[];
   Supervisores: any[];
   Entregador: any[];
+  loadingCanales: boolean;
+  canales: ComboBox[];
 
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
     private httpService: BackendService,
+    private auth:AuthenticationService,
     private router: Router,
     private formBuilder: FormBuilder) { }
 
@@ -44,6 +48,7 @@ export class RutasFormularioComponent implements OnInit {
     }
     this.getRutaTipo();
     this.getSupervisores();
+    this.getCanales()
     this.getEntregador();
     this.CreateForm();
   }
@@ -54,11 +59,11 @@ export class RutasFormularioComponent implements OnInit {
     this.Formulario = this.formBuilder.group({
       id: [0],
       nombre: [null, [Validators.required]],
-      tipoRutaId: [0,],
-      supervisorId: [0, [Validators.required]],
-      usuarioId: [0, [Validators.required]],
+      tipoRutaId: [0,[Validators.required]],
+      canalId: [0, [Validators.required]],
       codigoReferencia: [null, [Validators.required]],
       estado: [false, [Validators.required]],
+      companiaID: [Number(this.auth.tokenDecoded.primarygroupsid)],
     });
   }
 
@@ -116,11 +121,33 @@ export class RutasFormularioComponent implements OnInit {
 
         this.btnGuardarCargando = false;
       }, error => {
+        console.log(error)
         this.btnGuardarCargando = false;
         this.toastService.error("Error conexion al servidor");
       });
   }
 
+  getCanales() {
+    this.loadingCanales = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetCanales", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.canales = response.records;
+        }
+        this.loadingCanales = false;
+      }, error => {
+        this.loadingCanales = false;
+        this.toastService.error("No se pudo obtener los canales", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getCanales()
+        }, 1000);
+
+      });
+  }
 
   getRutaTipo() {
     this.loadingRutatipo = true;

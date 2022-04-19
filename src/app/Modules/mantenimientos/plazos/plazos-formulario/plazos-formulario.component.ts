@@ -1,3 +1,4 @@
+import { AuthenticationService } from './../../../../core/authentication/service/authentication.service';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -26,6 +27,7 @@ export class PlazosFormularioComponent implements OnInit {
     private toastService: ToastrService,
     private route: ActivatedRoute,
     private httpService: BackendService,
+    private auth:AuthenticationService,
     private router: Router,
     private formBuilder: FormBuilder) { }
 
@@ -47,6 +49,8 @@ export class PlazosFormularioComponent implements OnInit {
     this.Formulario = this.formBuilder.group({
       id: [0],
       cantidadDias: [null, [Validators.required]],
+      codigoReferencia:[null],
+      companiaID:[Number(this.auth.tokenDecoded.primarygroupsid)],
     });
   }
 
@@ -104,6 +108,7 @@ export class PlazosFormularioComponent implements OnInit {
 
         this.btnGuardarCargando = false;
       }, error => {
+        console.log(error)
         this.btnGuardarCargando = false;
         this.toastService.error("Error conexion al servidor");
       });

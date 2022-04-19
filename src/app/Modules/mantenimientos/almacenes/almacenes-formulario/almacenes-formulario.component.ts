@@ -1,3 +1,4 @@
+import { AuthenticationService } from './../../../../core/authentication/service/authentication.service';
 import { Component, OnInit } from '@angular/core';
 import { Almacen } from '../models/Almacen';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
@@ -28,6 +29,7 @@ export class AlmacenesFormularioComponent implements OnInit {
     private toastService: ToastrService,
     private route: ActivatedRoute,
     private httpService: BackendService,
+    private auth:AuthenticationService,
     private router: Router,
     private formBuilder: FormBuilder) { }
 
@@ -53,7 +55,8 @@ export class AlmacenesFormularioComponent implements OnInit {
       codigoReferencia: [null, Validators.required],
       sucursalID: [null, Validators.required],
       descripcion: [null,],
-      estadoID: [0,],
+      estado: [0,],
+      companiaID:[Number(this.auth.tokenDecoded.primarygroupsid)]
     });
   }
 

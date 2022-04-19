@@ -164,21 +164,22 @@ export class UsuarioFormularioComponent implements OnInit {
       imagen: [null,],
       rolID: [null, [Validators.required]],
       rol: [null,],
-      dealerID: [0,],
       telefono: [null, [Validators.required]],
       celular: [null, [Validators.required]],
-      estadoID: [0,],
-      companiaID: [0,],
-      sucursalID: [null, [Validators.required]],
+      // estadoID: [0,],
+      companiaId: [0,],
+      sucursalId: [null, [Validators.required]],
       telefonoExtension: [null, [Validators.required]],
       codigoReferencia: [null, [Validators.required]],
       idUsuarioSupervisor: [0,],
       rutaId: [0, [Validators.required]],
-      departamentoID: [null, [Validators.required]],
+      departamentoId: [null, [Validators.required]],
+      descuentoPermitido: [0,],
       descuentoVenta: [0,],
       descuentoCompra: [0,],
       ipEquipo: [null,],
       puertoEquipo: [null,],
+      macAddressEquipo: [null,],
     },
       {
         validator: cedulaestructura('documento', 'documentoTipoID')
@@ -191,11 +192,10 @@ export class UsuarioFormularioComponent implements OnInit {
   onSubmitChangePassword() {
     this.submittedPassword = true;
     this.fC.userName.setValue(this.auth.tokenDecoded.unique_name);
-    console.log(this.FormularioChangePassword.controls);
+
     if (this.FormularioChangePassword.invalid) {
       return;
     }
-    console.log('ready');
     this.changePassword();
   }
 
@@ -253,6 +253,8 @@ export class UsuarioFormularioComponent implements OnInit {
             let usuario = response.records[0];
             delete usuario.passwordHash;
             delete usuario.passwordSalt;
+            delete usuario.hasDefaultPw;
+            delete usuario.plataformaId;
 
             this.Formulario.setValue(usuario);
             this.getRutasbyRol(usuario.rolID);
@@ -274,6 +276,7 @@ export class UsuarioFormularioComponent implements OnInit {
     if (this.Formulario.invalid) {
       return;
     }
+
     this.guardarUsuario();
   }
 
@@ -282,6 +285,7 @@ export class UsuarioFormularioComponent implements OnInit {
 
     let metodo: string = this.actualizandoUsuario ? "Update" : "Registrar";
     this.btnGuardarCargando = true;
+    this.f.companiaId.setValue(parseInt(this.auth.tokenDecoded.primarygroupsid) );
 
     this.httpService.DoPostAny<Usuario>(DataApi.Usuario,
       metodo, this.Formulario.value).subscribe(response => {
@@ -295,6 +299,7 @@ export class UsuarioFormularioComponent implements OnInit {
 
         this.btnGuardarCargando = false;
       }, error => {
+        console.log(error)
         this.btnGuardarCargando = false;
         this.toastService.error("Error conexion al servidor");
       });
@@ -486,7 +491,7 @@ export class UsuarioFormularioComponent implements OnInit {
   getRutasbyRol(RolId: number = 0) {
     this.loadingRutas = true;
     this.MostrarRutas = false;
-    let parametros: Parametro[] = [{ key: "RolId", value: RolId == 0 ? RolId : this.f.rolID.value }];
+    let parametros: Parametro[] = [{ key: "RolId", value: (RolId == 0 ? this.f.rolID.value :  RolId )}];
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
       "GetRutasByRolComboBox", parametros).subscribe(response => {
 
@@ -562,7 +567,6 @@ export class UsuarioFormularioComponent implements OnInit {
           console.error(response.errores[0]);
         } else {
           this.source = response.records;
-          console.table(this.source);
         }
 
         this.loadingNiveles = false;
@@ -584,7 +588,6 @@ export class UsuarioFormularioComponent implements OnInit {
           console.error(response.errores[0]);
         } else {
           this.confirmed = response.records;
-          console.table(this.confirmed);
         }
 
         this.loadingNiveles = false;
@@ -670,8 +673,16 @@ export class UsuarioFormularioComponent implements OnInit {
     //   return;
     // }
 
-    let param = this.confirmed.map(x => { return { "UsuarioID": this.usuarioID, "SucursalID": x.codigo }; });
-    console.table(param);
+
+    let param = this.confirmed.map(x => { return { "UsuarioID": this.usuarioID,"CompaniaID":
+    Number(this.auth.tokenDecoded.primarygroupsid), "SucursalID": x.codigo }; });
+
+    if(this.confirmed.length<=0)
+    {
+      param.push({ "UsuarioID": this.usuarioID,"CompaniaID":
+      Number(this.auth.tokenDecoded.primarygroupsid), "SucursalID": 0 })
+    }
+
     this.guardandoSucursalesAsignadas = true;
     this.httpService.DoPostAny<any>(DataApi.Usuario,
       "AsignaSucursalesAUsuario", param).subscribe(response => {
@@ -752,7 +763,18 @@ export class UsuarioFormularioComponent implements OnInit {
 
 
   guardarAsignacionClienteTiposSeleccionados() {
-    let param = this.confirmed.map(x => { return { "UsuarioID": this.usuarioID, "ClienteTipoID": x.codigo }; });
+
+
+    let param = this.confirmed.map(x => { return { "UsuarioID": this.usuarioID,"CompaniaID":
+    Number(this.auth.tokenDecoded.primarygroupsid), "ClienteTipoID": x.codigo }; });
+
+    if(this.confirmed.length<=0)
+    {
+      param.push({ "UsuarioID": this.usuarioID,"CompaniaID":
+      Number(this.auth.tokenDecoded.primarygroupsid), "ClienteTipoID": 0 })
+    }
+
+
     this.guardandoClienteTiposAsignados = true;
     this.httpService.DoPostAny<any>(DataApi.Usuario,
       "AsignaClienteTiposAUsuario", param).subscribe(response => {

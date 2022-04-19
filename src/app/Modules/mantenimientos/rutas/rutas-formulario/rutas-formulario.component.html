@@ -35,6 +35,15 @@
                   </div>
               </div>
 
+              <div class="form-group col-md-6">
+                <label for="codigoreferencia"># Código de Referencia</label>
+                <input formControlName="codigoReferencia" type="text" name="codigoReferencia" id="codigoreferencia"
+                    [ngClass]="{'is-invalid' : submitted && f.codigoReferencia.errors,  'form-control':true  }">
+                <div class="invalid-feedback" *ngIf="submitted && f.codigoReferencia.errors">
+                    <div *ngIf="f.codigoReferencia.errors.required">El campo es obligatorio</div>
+                </div>
+            </div>
+
                   <div class="form-group col-md-6">
                       <label for="example-email">Tipo Ruta</label>
                       <ng-select [items]="RutaTipo" bindLabel="nombre" bindValue="codigo" placeholder="Seleccionar tipo"
@@ -50,7 +59,7 @@
 
 
                   <div class="form-group col-md-6">
-                    <label for="example-email">Supervisor</label>
+                    <label for="example-email">Territorio</label>
                     <ng-select [items]="Supervisores" bindLabel="nombre" bindValue="codigo" placeholder="Seleccionar Supervisor"
                         [loading]="loadingRutatipo" [clearable]="false"
                         [ngClass]="{'form-control border-danger p-0' : submitted && f.supervisorId.errors }"
@@ -58,11 +67,23 @@
                     </ng-select>
                     <div *ngIf="submitted && f.supervisorId.errors"
                         class="text-danger small animated animated--fade-in">
-                        <div *ngIf="f.supervisorId.errors.required  ">El campo es obligatorio</div>
+                        <div *ngIf="f.supervisorId.errors.required">El campo es obligatorio</div>
                     </div>
                 </div>
 
-                  <div class="form-group col-md-6">
+                <div class="form-group col-md-6">
+                  <label for="example-email">Canal</label>
+                  <ng-select [items]="canales" bindLabel="nombre" bindValue="codigo" placeholder="Seleccionar canal"
+                      [loading]="loadingCanales" [clearable]="false"
+                      [ngClass]="{'form-control border-danger p-0' : submitted && f.canalId.errors }"
+                      notFoundText="No resultados" formControlName="canalId">
+                  </ng-select>
+                  <div *ngIf="submitted && f.canalId.errors"
+                      class="text-danger small animated animated--fade-in">
+                      <div *ngIf="f.canalId.errors.required  ">El campo es obligatorio</div>
+                  </div>
+              </div>
+                  <!-- <div class="form-group col-md-6">
                     <label for="example-email">Entregador</label>
                     <ng-select [items]="Entregador" bindLabel="nombre" bindValue="codigo" placeholder="Seleccionar Supervisor"
                         [loading]="loadingRutatipo" [clearable]="false"
@@ -73,16 +94,8 @@
                         class="text-danger small animated animated--fade-in">
                         <div *ngIf="f.usuarioId.errors.required  ">El campo es obligatorio</div>
                     </div>
-                </div>
+                </div> -->
 
-                <div class="form-group col-md-6">
-                  <label for="codigoreferencia"># Código de Referencia</label>
-                  <input formControlName="codigoReferencia" type="text" name="codigoReferencia" id="codigoreferencia"
-                      [ngClass]="{'is-invalid' : submitted && f.codigoReferencia.errors,  'form-control':true  }">
-                  <div class="invalid-feedback" *ngIf="submitted && f.codigoReferencia.errors">
-                      <div *ngIf="f.codigoReferencia.errors.required">El campo es obligatorio</div>
-                  </div>
-              </div>
 <!--
               <div class="col-md-6 py-4 px-4">
                 <div class="form-group">

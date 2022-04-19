@@ -35,9 +35,9 @@
                               <th>Nombre</th>
                               <th>Tipo Ruta</th>
                               <th>Entregador</th>
-                              <th>Supervisor</th>
+                              <!-- <th>Supervisor</th> -->
                               <th>Estado</th>
-                              <!-- <th>Estado</th> -->
+                              <th></th>
                           </tr>
                       </thead>
                       <tbody [hidden]="Cargando">
@@ -53,9 +53,9 @@
                               <td>
                                   <span> {{item.encargado |  slice:0:60}} ...</span>
                               </td>
-                              <td>
+                              <!-- <td>
                                   <span> {{item.supervisor |  slice:0:60}} ...</span>
-                              </td>
+                              </td> -->
                               <td>
                                   <span> {{item.estado ? 'Activo' : 'Inactivo' |  slice:0:60}} ...</span>
                               </td>

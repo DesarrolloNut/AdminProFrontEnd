@@ -77,6 +77,7 @@ export class ClienteVisitasComponent implements OnInit {
     this.FormVisitas = this.formBuilder.group({
       clienteId: [this.clientId, [Validators.required]],
       usuarioId: [Number(this.auth.tokenDecoded.nameid)],
+      companiaId:[Number(this.auth.tokenDecoded.primarygroupsid)],
       rutaId:[0,[Validators.required]],
       tipoRutaId: [1, [Validators.required]],
       frecuenciaVisitaId:[0,[Validators.required]],
