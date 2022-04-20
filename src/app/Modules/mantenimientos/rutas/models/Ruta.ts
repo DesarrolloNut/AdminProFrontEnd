@@ -9,8 +9,8 @@ export class Ruta {
   id: number;
   nombre: string;
   tipoRuta: number;
-  encargado: string;
-  supervisor: string;
+  territorio: string;
+  canal: string;
   estado: boolean;
   codigoReferencia: string;
 

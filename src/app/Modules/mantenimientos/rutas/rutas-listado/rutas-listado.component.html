@@ -34,8 +34,8 @@
                               <th></th>
                               <th>Nombre</th>
                               <th>Tipo Ruta</th>
-                              <th>Entregador</th>
-                              <!-- <th>Supervisor</th> -->
+                              <th>Territorio</th>
+                              <th>Canal</th>
                               <th>Estado</th>
                               <th></th>
                           </tr>
@@ -48,16 +48,16 @@
                                   <span> {{item.nombre}}</span>
                               </td>
                               <td>
-                                  <span> {{item.tipoRuta |  slice:0:60}} ...</span>
+                                  <span> {{item.tipoRuta}}</span>
                               </td>
                               <td>
-                                  <span> {{item.encargado |  slice:0:60}} ...</span>
+                                  <span> {{item.territorio }} </span>
                               </td>
-                              <!-- <td>
-                                  <span> {{item.supervisor |  slice:0:60}} ...</span>
-                              </td> -->
                               <td>
-                                  <span> {{item.estado ? 'Activo' : 'Inactivo' |  slice:0:60}} ...</span>
+                                  <span> {{item.canal}}</span>
+                              </td>
+                              <td>
+                                  <span> {{item.estado ? 'Activo' : 'Inactivo'}}</span>
                               </td>
                               <td>
                                   <button class="btn btn-sm btn-info" [routerLink]="[item.id]">

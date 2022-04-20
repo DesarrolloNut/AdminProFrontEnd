@@ -501,6 +501,8 @@ export class UsuarioFormularioComponent implements OnInit {
           this.MostrarRutas = false;
         } else {
           this.rutas = response.records;
+
+          console.log( this.rutas)
           if (response.records.length > 0) {
             this.MostrarRutas = true;
 

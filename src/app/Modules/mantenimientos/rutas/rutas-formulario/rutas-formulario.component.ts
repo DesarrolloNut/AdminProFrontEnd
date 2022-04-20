@@ -30,6 +30,8 @@ export class RutasFormularioComponent implements OnInit {
   Entregador: any[];
   loadingCanales: boolean;
   canales: ComboBox[];
+  territorios: ComboBox[];
+  loadingTerritorios: boolean;
 
   constructor(
     private toastService: ToastrService,
@@ -49,6 +51,7 @@ export class RutasFormularioComponent implements OnInit {
     this.getRutaTipo();
     this.getSupervisores();
     this.getCanales()
+    this.getTerritorios();
     this.getEntregador();
     this.CreateForm();
   }
@@ -59,10 +62,12 @@ export class RutasFormularioComponent implements OnInit {
     this.Formulario = this.formBuilder.group({
       id: [0],
       nombre: [null, [Validators.required]],
-      tipoRutaId: [0,[Validators.required]],
-      canalId: [0, [Validators.required]],
+      tipoRutaId: [null,[Validators.required]],
+      canalId: [null, [Validators.required]],
+      territorioId:[null,[Validators.required]],
       codigoReferencia: [null, [Validators.required]],
-      estado: [false, [Validators.required]],
+      estado: [true, [Validators.required]],
+      despachoDispositivo: [false, [Validators.required]],
       companiaID: [Number(this.auth.tokenDecoded.primarygroupsid)],
     });
   }
@@ -144,10 +149,33 @@ export class RutasFormularioComponent implements OnInit {
 
         setTimeout(() => {
           this.getCanales()
-        }, 1000);
+        }, 2000);
 
       });
   }
+
+  getTerritorios() {
+    this.loadingTerritorios = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetTerritorios", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.territorios = response.records;
+        }
+        this.loadingTerritorios = false;
+      }, error => {
+        this.loadingTerritorios = false;
+        this.toastService.error("No se pudo obtener los territorios", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getTerritorios()
+        }, 2000);
+
+      });
+  }
+
 
   getRutaTipo() {
     this.loadingRutatipo = true;
@@ -166,7 +194,7 @@ export class RutasFormularioComponent implements OnInit {
 
         setTimeout(() => {
           this.getRutaTipo()
-        }, 1000);
+        }, 2000);
 
       });
   }

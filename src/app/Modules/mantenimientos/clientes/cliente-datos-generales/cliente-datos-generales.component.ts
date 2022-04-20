@@ -232,8 +232,7 @@ export class ClienteDatosGeneralesComponent implements OnInit,AfterViewInit {
       longitud: [null, [Validators.required,this.regexValidator(new RegExp('^-?([1-8]?[1-9]|[1-9]0)\\.{1}\\d{1,6}'), {'valid': ''})]],
       latitud:[null, [Validators.required, this.regexValidator(new RegExp('^-?([1-8]?[1-9]|[1-9]0)\\.{1}\\d{1,6}'), {'valid': ''})]],
       sucursalId:[0, [Validators.required]],
-      companiaId:[0],
-
+      companiaId:[Number(this.auth.tokenDecoded.primarygroupsid)],
       salario:[0, [Validators.required]],
       estadoERPID: [0],
       clientePadreId: [0],
