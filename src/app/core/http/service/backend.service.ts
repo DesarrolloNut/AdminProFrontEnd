@@ -27,14 +27,13 @@ export class BackendService {
     constructor(
       _http: HttpClient, @Inject('BASE_URL')
       _baseUrl: string) {
-        this.setDecodeToken();
         this.http = _http;
         this.baseUrl = _baseUrl;
     }
 
     public GetAllWithPagination<T>(api: DataApi, Method: string, Columna: string, PaginaNo: number = 1, PaginaSize: number = 10, OrderASC: boolean = true, parametros: any[] = []): Observable<ResponseContenido<T>> {
+        this.setDecodeToken();
         let request = new RequestContenido<T>();
-
         parametros= this.addParametersExtra(parametros)
         request.parametros = parametros;
         request.pagina = new Paginacion();
@@ -112,6 +111,7 @@ export class BackendService {
 
 
    private setDecodeToken(): void {
+      if (this.tokenDecoded) return;
       let token = localStorage.getItem("keyVC");
       this.tokenDecoded = this.helper.decodeToken(token);
   }

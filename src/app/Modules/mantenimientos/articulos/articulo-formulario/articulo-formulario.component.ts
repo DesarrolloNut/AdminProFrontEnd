@@ -1,3 +1,4 @@
+import { AuthenticationService } from './../../../../core/authentication/service/authentication.service';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -39,6 +40,7 @@ export class ArticuloFormularioComponent implements OnInit {
     private route: ActivatedRoute,
     private httpService: BackendService,
     private router: Router,
+    private auth:AuthenticationService,
     private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
@@ -64,31 +66,33 @@ export class ArticuloFormularioComponent implements OnInit {
       id: [0],
       nombre: [null, [Validators.required]],
       descripcion: [null,],
-      companiaID: [null, Validators.required],
-      codigoReferencia: [null, Validators.required],
-      marcaID: [0,],
-      modeloID: [0,],
-      anio: [0],
-      chasis: ['',],
-      placa: ['',],
-      tipoVehiculoID: [0,],
-      vehiculoVersionID: [0,],
-      tipoArticuloID: [1, Validators.required],
-      fleteID: [0,],
-      monedaID: ["",],
-      paisID: [0,],
-      estadoID: [0,],
-      pcvID: [0,],
-      colorID: [0,],
-      costo: [0,],
+      codigoReferencia: [null],
+      marcaID: [null,[Validators.required]],
+      tipoArticuloID: [null, Validators.required],
+      estado: [false,],
+      categoriaID: [null, Validators.required],
+      familiaID: [null, Validators.required],
+      impuestoId: [null, Validators.required],
       precio: [0,],
-      unidadMedida:[''],
-      articuloDeReproceso:[0, ],
-      costoObjetivo:[0, Validators.required],
+      costo: [0,],
+      costoObjetivo: [0],
       articuloDeCompra: [false,],
       articuloDeVenta: [false,],
       articuloDeInventario: [false,],
-      categoriaID: [0,],
+      articuloActivoFijo: [false,],
+      unidadMedida:[null, Validators.required],
+      codigoBarra:[''],
+
+      articuloDeReproceso:[false, ],
+
+      peso:[null,[Validators.required]],
+      ubicacion:[null,[Validators.required]],
+
+      imagenUrl:[''],
+
+      gestionado:[false, ],
+
+      companiaID: [Number(this.auth.tokenDecoded.primarygroupsid)],
     });
   }
 

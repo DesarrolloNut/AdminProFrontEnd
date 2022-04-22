@@ -21,13 +21,11 @@
             <h4 class="card-title">Formulario de artículos</h4>
           </div>
           <div class="col-md-6 col-lg-6 col-12 text-right">
+          <h2>hola</h2>
           </div>
         </div>
         <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
         <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
-
-
-
 
 
           <div class="form-group col-md-6">
@@ -40,6 +38,15 @@
           </div>
 
           <div class="form-group col-md-6">
+            <label for="codigoBarra"> <i class="fa fa-hashtag"></i> Código de barra</label>
+            <input formControlName="codigoBarra" type="text" name="codigoBarra" id="codigoBarra"
+              [ngClass]="{'is-invalid' : submitted && f.codigoBarra.errors,  'form-control':true  }">
+            <div class="invalid-feedback" *ngIf="submitted && f.codigoBarra.errors">
+              <div *ngIf="f.codigoBarra.errors.required">El campo es obligatorio</div>
+            </div>
+          </div>
+
+          <div class="form-group col-md-12">
             <label for="nombre"> Nombre</label>
             <input formControlName="nombre" type="text" name="nombre" id="nombre"
               [ngClass]="{'is-invalid' : submitted && f.nombre.errors,  'form-control':true  }">
@@ -49,14 +56,78 @@
           </div>
 
           <div class="form-group col-md-4">
-            <label for="anio"> Año</label>
-            <input formControlName="anio" type="number" name="anio" id="anio"
-              [ngClass]="{'is-invalid' : submitted && f.anio.errors,  'form-control':true  }">
-            <div class="invalid-feedback" *ngIf="submitted && f.anio.errors">
-              <div *ngIf="f.anio.errors.required">El campo es obligatorio</div>
+            <label for="inputEmail4"> Tipo</label>
+            <ng-select bindLabel="nombre" bindValue="codigo" [items]="articuloTipos" [loading]="loadingArticuloTipos"
+              [clearable]="false" [ngClass]="{'form-control border-danger p-0' : submitted && f.tipoArticuloID.errors }"
+              notFoundText="No resultados" formControlName="tipoArticuloID">
+            </ng-select>
+            <div *ngIf="submitted && f.tipoArticuloID.errors" class="text-danger small">
+              <div *ngIf="f.tipoArticuloID.errors.required  ">El campo es obligatorio</div>
             </div>
           </div>
 
+          <div class="form-group col-md-4">
+            <label for="example-email">Categoría</label>
+            <ng-select [items]="articuloCategorias" bindLabel="nombre" bindValue="codigo"
+              [loading]="loadingArticuloCategorias" [clearable]="false"
+              [ngClass]="{'form-control border-danger p-0' : submitted && f.categoriaID.errors }"
+              notFoundText="No resultados" formControlName="categoriaID">
+            </ng-select>
+            <div *ngIf="submitted && f.categoriaID.errors" class="text-danger small animated animated--fade-in">
+              <div *ngIf="f.categoriaID.errors.required  ">El campo es obligatorio</div>
+            </div>
+          </div>
+
+          <div class="form-group col-md-4">
+            <label for="inputEmail4"> Familia</label>
+              <ng-select bindLabel="nombre" bindValue="codigo" (change)="onSelectMarca($event.codigo)"
+                         [items]="marcas" [loading]="loadingMarcas" [clearable]="false"
+                         [ngClass]="{'form-control border-danger p-0' : submitted && f.familiaID.errors }"
+                         notFoundText="No resultados" formControlName="familiaID">
+                       </ng-select>
+                       <div *ngIf="submitted && f.familiaID.errors" class="text-danger small">
+                           <div *ngIf="f.familiaID.errors.required  ">El campo es obligatorio</div>
+             </div>
+        </div>
+
+         <div class="form-group col-md-4">
+             <label for="inputEmail4"> Marca</label>
+               <ng-select bindLabel="nombre" bindValue="codigo" (change)="onSelectMarca($event.codigo)"
+                          [items]="marcas" [loading]="loadingMarcas" [clearable]="false"
+                          [ngClass]="{'form-control border-danger p-0' : submitted && f.marcaID.errors }"
+                          notFoundText="No resultados" formControlName="marcaID">
+                        </ng-select>
+                        <div *ngIf="submitted && f.marcaID.errors" class="text-danger small">
+                            <div *ngIf="f.marcaID.errors.required  ">El campo es obligatorio</div>
+                       </div>
+         </div>
+         <div class="form-group col-md-4">
+          <label for="inputEmail4"> Unidad de Medida</label>
+            <ng-select bindLabel="nombre" bindValue="codigo" (change)="onSelectMarca($event.codigo)"
+                       [items]="marcas" [loading]="loadingMarcas" [clearable]="false"
+                       [ngClass]="{'form-control border-danger p-0' : submitted && f.familiaID.errors }"
+                       notFoundText="No resultados" formControlName="familiaID">
+                     </ng-select>
+                     <div *ngIf="submitted && f.familiaID.errors" class="text-danger small">
+             <div *ngIf="f.familiaID.errors.required  ">El campo es obligatorio</div>
+           </div>
+      </div>
+      <div class="form-group col-md-4">
+        <label for="ubicacion"> Ubicacion</label>
+        <input formControlName="ubicacion" type="number" name="ubicacion" id="ubicacion"
+          [ngClass]="{'is-invalid' : submitted && f.ubicacion.errors,  'form-control':true  }">
+        <div class="invalid-feedback" *ngIf="submitted && f.ubicacion.errors">
+          <div *ngIf="f.ubicacion.errors.required">El campo es obligatorio</div>
+        </div>
+      </div>
+      <div class="form-group col-md-4">
+        <label for="peso">Peso</label>
+        <input formControlName="peso" type="number" name="peso" id="peso"
+          [ngClass]="{'is-invalid' : submitted && f.peso.errors,  'form-control':true  }">
+        <div class="invalid-feedback" *ngIf="submitted && f.peso.errors">
+          <div *ngIf="f.peso.errors.required">El campo es obligatorio</div>
+        </div>
+      </div>
           <div class="form-group col-md-4">
             <label for="costo"> Costo</label>
             <input formControlName="costo" type="number" name="costo" id="costo"
@@ -75,101 +146,44 @@
             </div>
           </div>
 
+
+
           <div class="form-group col-md-4">
-            <label for="example-email">Compañia</label>
-            <ng-select [items]="companias" bindLabel="nombre" bindValue="codigo" [loading]="loadingCompanias"
-              [clearable]="false" [ngClass]="{'form-control border-danger p-0' : submitted && f.companiaID.errors }"
-              notFoundText="No resultados" formControlName="companiaID">
-            </ng-select>
-            <div *ngIf="submitted && f.companiaID.errors" class="text-danger small animated animated--fade-in">
-              <div *ngIf="f.companiaID.errors.required  ">El campo es obligatorio</div>
-            </div>
+            <label for="inputEmail4"> Impuesto</label>
+              <ng-select bindLabel="nombre" bindValue="codigo" (change)="onSelectMarca($event.codigo)"
+                         [items]="marcas" [loading]="loadingMarcas" [clearable]="false"
+                         [ngClass]="{'form-control border-danger p-0' : submitted && f.familiaID.errors }"
+                         notFoundText="No resultados" formControlName="familiaID">
+                       </ng-select>
+                       <div *ngIf="submitted && f.familiaID.errors" class="text-danger small">
+               <div *ngIf="f.familiaID.errors.required  ">El campo es obligatorio</div>
+             </div>
+        </div>
+
+
+        <div class="form-check col-md-2">
+          <label for="estado" class="d-block">Estado</label>
+          <div class="form-group" style="margin-left: 20px;">
+            <input
+            formControlName="estado" type="checkbox" name="estado" id="estado"
+            [ngClass]="{'is-invalid' : submitted && f.estado.errors,  'form-check-input':true  }">
+          <label for="estado">Activo</label>
           </div>
-
-          <div class="form-group col-md-6">
-            <label for="inputEmail4"> Tipo</label>
-            <ng-select bindLabel="nombre" bindValue="codigo" [items]="articuloTipos" [loading]="loadingArticuloTipos"
-              [clearable]="false" [ngClass]="{'form-control border-danger p-0' : submitted && f.tipoArticuloID.errors }"
-              notFoundText="No resultados" formControlName="tipoArticuloID">
-            </ng-select>
-            <div *ngIf="submitted && f.tipoArticuloID.errors" class="text-danger small">
-              <div *ngIf="f.tipoArticuloID.errors.required  ">El campo es obligatorio</div>
-            </div>
+          <div class="invalid-feedback" *ngIf="submitted && f.estado.errors">
           </div>
+        </div>
 
-          <div class="form-group col-md-6">
-            <label for="example-email">Categoría</label>
-            <ng-select [items]="articuloCategorias" bindLabel="nombre" bindValue="codigo"
-              [loading]="loadingArticuloCategorias" [clearable]="false"
-              [ngClass]="{'form-control border-danger p-0' : submitted && f.categoriaID.errors }"
-              notFoundText="No resultados" formControlName="categoriaID">
-            </ng-select>
-            <div *ngIf="submitted && f.categoriaID.errors" class="text-danger small animated animated--fade-in">
-              <div *ngIf="f.categoriaID.errors.required  ">El campo es obligatorio</div>
-            </div>
+        <div class="form-check col-md-2">
+          <label for="gestionado" class="d-block">Gestionado</label>
+          <div class="form-group" style="margin-left: 20px;">
+            <input
+            formControlName="gestionado" type="checkbox" name="gestionado" id="gestionado"
+            [ngClass]="{'is-invalid' : submitted && f.gestionado.errors,  'form-check-input':true  }">
+          <label for="gestionado">Activo</label>
           </div>
-
-          <!--
-
-                    <div class="form-group col-md-6">
-                        <label for="inputEmail4"> Marca</label>
-                        <ng-select bindLabel="nombre" bindValue="codigo" (change)="onSelectMarca($event.codigo)"
-                            [items]="marcas" [loading]="loadingMarcas" [clearable]="false"
-                            [ngClass]="{'form-control border-danger p-0' : submitted && f.marcaID.errors }"
-                            notFoundText="No resultados" formControlName="marcaID">
-                        </ng-select>
-                        <div *ngIf="submitted && f.marcaID.errors" class="text-danger small">
-                            <div *ngIf="f.marcaID.errors.required  ">El campo es obligatorio</div>
-                        </div>
-                    </div>
-
-
-                    <div class="form-group col-md-6">
-                        <label for="inputEmail4"> Modelo</label>
-                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="modelos" [loading]="loadingModelos"
-                            [clearable]="false"
-                            [ngClass]="{'form-control border-danger p-0' : submitted && f.modeloID.errors }"
-                            notFoundText="No resultados" formControlName="modeloID">
-                        </ng-select>
-                        <div *ngIf="submitted && f.modeloID.errors" class="text-danger small">
-                            <div *ngIf="f.modeloID.errors.required  ">El campo es obligatorio</div>
-                        </div>
-                    </div>
-
-
-                    <div class="form-group col-md-6">
-                        <label for="chasis"> <i class="fa fa-hashtag"></i> Chasis</label>
-                        <input formControlName="chasis" type="text" name="chasis" id="chasis"
-                            [ngClass]="{'is-invalid' : submitted && f.chasis.errors,  'form-control':true  }">
-                        <div class="invalid-feedback" *ngIf="submitted && f.chasis.errors">
-                            <div *ngIf="f.chasis.errors.required">El campo es obligatorio</div>
-                        </div>
-                    </div> -->
-
-          <!-- <div class="form-group col-md-6">
-                        <label for="placa"> <i class="fa fa-hashtag"></i> Placa</label>
-                        <input formControlName="placa" type="text" name="placa" id="placa"
-                            [ngClass]="{'is-invalid' : submitted && f.placa.errors,  'form-control':true  }">
-                        <div class="invalid-feedback" *ngIf="submitted && f.placa.errors">
-                            <div *ngIf="f.placa.errors.required">El campo es obligatorio</div>
-                        </div>
-                    </div> -->
-
-          <!-- <div class="form-group col-md-6">
-                        <label for="precio"> Precio</label>
-                        <input formControlName="precio" type="number" name="precio" id="precio"
-                            [ngClass]="{'is-invalid' : submitted && f.precio.errors,  'form-control':true  }">
-                        <div class="invalid-feedback" *ngIf="submitted && f.precio.errors">
-                            <div *ngIf="f.precio.errors.required">El campo es obligatorio</div>
-                        </div>
-                    </div>
--->
-
-
-
-
-
-
+          <div class="invalid-feedback" *ngIf="submitted && f.estado.errors">
+          </div>
+        </div>
 
           <div class="form-group col-md-12">
             <label for="descripcion"> Descripción</label>
@@ -184,36 +198,62 @@
 
           <div class="col-12 mt-2">
             <div class="row border border-light p-2 bg bg-light">
-              <div class="col-md-4">
+              <div class="col-12">
+                <h4 class="font-weight-bold ">Artículo de =></h4>
+              </div>
+
+              <div class="col-sm-6 col-md-3 col-lg-2">
 
                 <div class="form-check">
                   <input formControlName="articuloDeCompra" class="form-check-input" type="checkbox"
                     id="articuloDeCompra">
-                  <label class="form-check-label" for="articuloDeCompra">
-                    Artículo de compra
+                  <label class="form-check-label font-weight-bold" for="articuloDeCompra">
+                    Compra
                   </label>
                 </div>
 
               </div>
 
-              <div class="col-md-4">
+              <div class="col-sm-6 col-md-3 col-lg-2">
 
                 <div class="form-check">
                   <input formControlName="articuloDeVenta" class="form-check-input" type="checkbox"
                     id="articuloDeVenta">
-                  <label class="form-check-label" for="articuloDeVenta">
-                    Artículo de venta
+                  <label class="form-check-label font-weight-bold" for="articuloDeVenta">
+                     Venta
                   </label>
                 </div>
               </div>
 
-              <div class="col-md-4">
+              <div class="col-sm-6 col-md-3  col-lg-2">
 
                 <div class="form-check">
                   <input formControlName="articuloDeInventario" class="form-check-input" type="checkbox"
                     id="articuloDeInventario">
-                  <label class="form-check-label" for="articuloDeInventario">
-                    Artículo de inventario
+                  <label class="form-check-label font-weight-bold" for="articuloDeInventario">
+                     Inventario
+                  </label>
+                </div>
+
+              </div>
+              <div class="col-sm-6 col-md-3  col-lg-2">
+
+                <div class="form-check">
+                  <input formControlName="articuloActivoFijo" class="form-check-input" type="checkbox"
+                    id="articuloActivoFijo">
+                  <label class="form-check-label font-weight-bold" for="articuloActivoFijo">
+                   Activo fijo
+                  </label>
+                </div>
+
+              </div>
+              <div class="col-sm-6 col-md-3  col-lg-2">
+
+                <div class="form-check">
+                  <input formControlName="articuloDeReproceso" class="form-check-input" type="checkbox"
+                    id="articuloDeReproceso">
+                  <label class="form-check-label font-weight-bold" for="articuloDeReproceso">
+                   Reproceso
                   </label>
                 </div>
 
