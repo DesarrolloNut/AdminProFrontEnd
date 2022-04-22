@@ -1,3 +1,4 @@
+import { AuthenticationService } from './../../../../core/authentication/service/authentication.service';
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DualListComponent } from 'angular-dual-listbox';
@@ -34,7 +35,7 @@ export class RolesListadoComponent implements OnInit {
   loadingPermisos: boolean;
   permisos: Array<Permisos>;
 
-  // Dual List options 
+  // Dual List options
   tab = 1;
   keepSorted = true;
   key: string;
@@ -56,6 +57,7 @@ export class RolesListadoComponent implements OnInit {
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private modalService: NgbModal,
+    private auth:AuthenticationService,
     public permissionsService: NgxPermissionsService,
   ) { }
 
@@ -174,7 +176,7 @@ export class RolesListadoComponent implements OnInit {
 
   guardarPermisosSeleccionados() {
 
-    let param = { "RolID": this.RolID, "Permisos": this.confirmed.map(x => x.id) }
+    let param = { "RolID": this.RolID,"CompaniaID":parseInt(this.auth.tokenDecoded.primarygroupsid) , "Permisos": this.confirmed.map(x => x.id) }
     this.guardandoPermisos = true;
     this.httpService.DoPostAny<Permisos>(DataApi.Rol,
       "InsertRolPermisoEnrroll", param).subscribe(response => {

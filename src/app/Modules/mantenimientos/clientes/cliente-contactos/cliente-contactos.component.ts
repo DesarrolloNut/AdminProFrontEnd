@@ -79,6 +79,7 @@ export class ClienteContactosComponent implements OnInit {
     this.FormContactos = this.formBuilder.group({
       clienteId: [this.clientId, [Validators.required]],
       usuarioId: [Number(this.auth.tokenDecoded.nameid)],
+      companiaId: [Number(this.auth.tokenDecoded.primarygroupsid)],
       contactos: new FormArray([])
     }
      );

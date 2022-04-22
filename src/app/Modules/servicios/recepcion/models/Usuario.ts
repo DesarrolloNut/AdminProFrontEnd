@@ -13,8 +13,7 @@ export class Usuario {
     dealerID: string;
     telefono: string;
     celular: string;
-    EstadoID: number;
-    sucursalID: number;
+
     telefonoExtension: string
     codigoReferencia: string
     idUsuarioSupervisor: number
@@ -24,4 +23,5 @@ export class Usuario {
     descuentoCompra: number
     ipEquipo: string
     puertoEquipo: string
+    companiaId: number;
 }

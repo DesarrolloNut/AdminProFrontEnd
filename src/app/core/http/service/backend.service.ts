@@ -1,3 +1,4 @@
+import { AuthenticationService } from './../../authentication/service/authentication.service';
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { RequestContenido } from '../model/RequestContenido';
@@ -6,6 +7,8 @@ import { Observable } from 'rxjs';
 import { Paginacion } from '../model/Paginacion';
 import { DataApi, dataApiRootMap } from '../../../shared/enums/DataApi.enum';
 import { retry } from 'rxjs/operators';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { TokenModel } from '../../authentication/model/TokenModel';
 
 
 @Injectable({
@@ -17,13 +20,22 @@ export class BackendService {
     http: HttpClient;
     baseUrl: string;
 
-    constructor(_http: HttpClient, @Inject('BASE_URL') _baseUrl: string) {
+    helper = new JwtHelperService();
+    tokenDecoded: TokenModel;
+
+
+    constructor(
+      _http: HttpClient, @Inject('BASE_URL')
+      _baseUrl: string) {
+        this.setDecodeToken();
         this.http = _http;
         this.baseUrl = _baseUrl;
     }
 
-    public GetAllWithPagination<T>(api: DataApi, Method: string, Columna: string, PaginaNo: number = 1, PaginaSize: number = 10, OrderASC: boolean = true, parametros: any = {}): Observable<ResponseContenido<T>> {
+    public GetAllWithPagination<T>(api: DataApi, Method: string, Columna: string, PaginaNo: number = 1, PaginaSize: number = 10, OrderASC: boolean = true, parametros: any[] = []): Observable<ResponseContenido<T>> {
         let request = new RequestContenido<T>();
+
+        parametros= this.addParametersExtra(parametros)
         request.parametros = parametros;
         request.pagina = new Paginacion();
         request.pagina.paginaNo = PaginaNo;
@@ -86,5 +98,22 @@ export class BackendService {
         return this.http.post(proxyurl + url + "/" + metodo, JSON.stringify(request), headers);
     }
 
+    addParametersExtra(parametros:any[]=[]){
+      try {
+        if(parametros.filter(x=>x.key=="CompaniaId").length<=0){
+           parametros.push( { key: "CompaniaId", value: this.tokenDecoded.primarygroupsid })
+        }
+        return parametros;
+      } catch (error) {
+        console.log(error)
+        return parametros;
+      }
+    }
+
+
+   private setDecodeToken(): void {
+      let token = localStorage.getItem("keyVC");
+      this.tokenDecoded = this.helper.decodeToken(token);
+  }
 
 }

@@ -35,9 +35,18 @@
                   </div>
               </div>
 
+              <div class="form-group col-md-6">
+                <label for="codigoreferencia"># Código de Referencia</label>
+                <input formControlName="codigoReferencia" type="number" name="codigoReferencia" id="codigoreferencia"
+                    [ngClass]="{'is-invalid' : submitted && f.codigoReferencia.errors,  'form-control':true  }">
+                <div class="invalid-feedback" *ngIf="submitted && f.codigoReferencia.errors">
+                    <div *ngIf="f.codigoReferencia.errors.required">El campo es obligatorio</div>
+                </div>
+            </div>
+
                   <div class="form-group col-md-6">
                       <label for="example-email">Tipo Ruta</label>
-                      <ng-select [items]="RutaTipo" bindLabel="nombre" bindValue="codigo" placeholder="Seleccionar tipo"
+                      <ng-select [items]="RutaTipo" bindLabel="nombre" bindValue="codigo" placeholder="Seleccionar tipo ruta"
                           [loading]="loadingRutatipo" [clearable]="false"
                           [ngClass]="{'form-control border-danger p-0' : submitted && f.tipoRutaId.errors }"
                           notFoundText="No resultados" formControlName="tipoRutaId">
@@ -48,21 +57,61 @@
                       </div>
                   </div>
 
-
                   <div class="form-group col-md-6">
-                    <label for="example-email">Supervisor</label>
-                    <ng-select [items]="Supervisores" bindLabel="nombre" bindValue="codigo" placeholder="Seleccionar Supervisor"
-                        [loading]="loadingRutatipo" [clearable]="false"
-                        [ngClass]="{'form-control border-danger p-0' : submitted && f.supervisorId.errors }"
-                        notFoundText="No resultados" formControlName="supervisorId">
+                    <label for="example-email">Canal</label>
+                    <ng-select [items]="canales" bindLabel="nombre" bindValue="codigo" placeholder="Seleccionar canal"
+                        [loading]="loadingCanales" [clearable]="false"
+                        [ngClass]="{'form-control border-danger p-0' : submitted && f.canalId.errors }"
+                        notFoundText="No resultados" formControlName="canalId">
                     </ng-select>
-                    <div *ngIf="submitted && f.supervisorId.errors"
+                    <div *ngIf="submitted && f.canalId.errors"
                         class="text-danger small animated animated--fade-in">
-                        <div *ngIf="f.supervisorId.errors.required  ">El campo es obligatorio</div>
+                        <div *ngIf="f.canalId.errors.required  ">El campo es obligatorio</div>
                     </div>
                 </div>
 
                   <div class="form-group col-md-6">
+                    <label for="example-email">Territorio</label>
+                    <ng-select [items]="territorios" bindLabel="nombre" bindValue="codigo" placeholder="Seleccionar territorio"
+                        [loading]="loadingTerritorios" [clearable]="false"
+                        [ngClass]="{'form-control border-danger p-0' : submitted && f.territorioId.errors }"
+                        notFoundText="No resultados" formControlName="territorioId">
+                    </ng-select>
+                    <div *ngIf="submitted && f.territorioId.errors"
+                        class="text-danger small animated animated--fade-in">
+                        <div *ngIf="f.territorioId.errors.required">El campo es obligatorio</div>
+                    </div>
+                </div>
+
+
+
+              <div class="form-check col-md-3">
+                <label for="estado" class="d-block">Estado</label>
+                <div class="form-group" style="margin-left: 20px;">
+                  <input
+
+                  formControlName="estado" type="checkbox" name="estado" id="estado"
+                  [ngClass]="{'is-invalid' : submitted && f.estado.errors,  'form-check-input':true  }">
+                <label for="estado">Activo</label>
+                </div>
+                <div class="invalid-feedback" *ngIf="submitted && f.estado.errors">
+                </div>
+              </div>
+
+              <div class="form-check col-md-3">
+                <label for="despachoDispositivo" class="d-block">¿Despacho dispositivo?</label>
+                <div class="form-group" style="margin-left: 20px;">
+                  <input
+
+                  formControlName="despachoDispositivo" type="checkbox" name="despachoDispositivo" id="despachoDispositivo"
+                  [ngClass]="{'is-invalid' : submitted && f.despachoDispositivo.errors,  'form-check-input':true  }">
+                <label for="despachoDispositivo">Activo</label>
+                </div>
+                <div class="invalid-feedback" *ngIf="submitted && f.despachoDispositivo.errors">
+                </div>
+              </div>
+
+                  <!-- <div class="form-group col-md-6">
                     <label for="example-email">Entregador</label>
                     <ng-select [items]="Entregador" bindLabel="nombre" bindValue="codigo" placeholder="Seleccionar Supervisor"
                         [loading]="loadingRutatipo" [clearable]="false"
@@ -73,16 +122,8 @@
                         class="text-danger small animated animated--fade-in">
                         <div *ngIf="f.usuarioId.errors.required  ">El campo es obligatorio</div>
                     </div>
-                </div>
+                </div> -->
 
-                <div class="form-group col-md-6">
-                  <label for="codigoreferencia"># Código de Referencia</label>
-                  <input formControlName="codigoReferencia" type="text" name="codigoReferencia" id="codigoreferencia"
-                      [ngClass]="{'is-invalid' : submitted && f.codigoReferencia.errors,  'form-control':true  }">
-                  <div class="invalid-feedback" *ngIf="submitted && f.codigoReferencia.errors">
-                      <div *ngIf="f.codigoReferencia.errors.required">El campo es obligatorio</div>
-                  </div>
-              </div>
 <!--
               <div class="col-md-6 py-4 px-4">
                 <div class="form-group">

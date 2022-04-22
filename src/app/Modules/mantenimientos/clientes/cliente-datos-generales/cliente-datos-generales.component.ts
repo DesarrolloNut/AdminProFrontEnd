@@ -232,6 +232,7 @@ export class ClienteDatosGeneralesComponent implements OnInit,AfterViewInit {
       longitud: [null, [Validators.required,this.regexValidator(new RegExp('^-?([1-8]?[1-9]|[1-9]0)\\.{1}\\d{1,6}'), {'valid': ''})]],
       latitud:[null, [Validators.required, this.regexValidator(new RegExp('^-?([1-8]?[1-9]|[1-9]0)\\.{1}\\d{1,6}'), {'valid': ''})]],
       sucursalId:[0, [Validators.required]],
+      companiaId:[Number(this.auth.tokenDecoded.primarygroupsid)],
       salario:[0, [Validators.required]],
       estadoERPID: [0],
       clientePadreId: [0],
@@ -332,8 +333,10 @@ export class ClienteDatosGeneralesComponent implements OnInit,AfterViewInit {
         } else {
           //validar que existe
           if (response.records.length > 0) {
-            let cliente = response.records[0];
-            console.log( response.records[0])
+            let cliente:any = response.records[0];
+
+
+
 
             //Transforma DATA
             cliente.documentoTipoID = cliente.documentoTipoID<=0 ? null : cliente.documentoTipoID

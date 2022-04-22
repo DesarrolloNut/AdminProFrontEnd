@@ -32,6 +32,7 @@ import { environment } from 'src/environments/environment';
 import { ToastrModule } from 'ngx-toastr';
 
 import { SpeechSynthesisModule } from '@kamiazya/ngx-speech-synthesis';
+import { AuthenticationService } from './core/authentication/service/authentication.service';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,

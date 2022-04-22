@@ -6,6 +6,7 @@ import { Parametro } from 'src/app/core/http/model/Parametro';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { UsuarioListadoViewModel } from '../models/usuarioListadoViewModel';
+import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 
 @Component({
   selector: 'app-usuario-listado',
@@ -23,11 +24,11 @@ export class UsuarioListadoComponent implements OnInit {
   totalPaginas: number = 0;
   paginaSize: number = 5;
   paginaTotalRecords: number = 0;
-  arrayLoading = new Array(this.paginaSize);
   usuarios: UsuarioListadoViewModel[] = [] //tu modelo
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
+    private auth:AuthenticationService,
     public permissionsService: NgxPermissionsService,
   ) { }
 
@@ -40,8 +41,7 @@ export class UsuarioListadoComponent implements OnInit {
   getUsuarios() {
 
     this.Cargando = true;
-
-    let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
+    let parametros: Parametro[] = [{ key: "Search", value: this.Search },]
 
     this.httpService.GetAllWithPagination<UsuarioListadoViewModel>(DataApi.Usuario, "GetUsuarios", "ID", this.paginaNumeroActual,
       this.paginaSize,true, parametros).subscribe(x => {
@@ -53,13 +53,11 @@ export class UsuarioListadoComponent implements OnInit {
           this.toastService.error(x.errores[0]);
           console.error(x.errores[0]);
         }
-        this.arrayLoading = new Array(0);
         this.Cargando = false;
       }, error => {
         console.error(error);
         this.toastService.error("Error conexion al servidor");
         this.Cargando = false;
-        this.arrayLoading = new Array(0);
       });
 
   }

@@ -212,27 +212,27 @@
                     </div>
 
                     <div class="form-group col-md-4">
-                        <label for="sucursalID"> <i class="fa fa-map-marker"></i> Sucursal </label>
+                        <label for="sucursalId"> <i class="fa fa-map-marker"></i> Sucursal </label>
                         <ng-select bindLabel="nombre" bindValue="codigo" [items]="sucursales"
                             [loading]="loadingSucursales"
-                            [ngClass]="{'form-control border-danger p-0' : submitted && f.sucursalID.errors }"
-                            notFoundText="No resultados" formControlName="sucursalID">
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.sucursalId.errors }"
+                            notFoundText="No resultados" formControlName="sucursalId">
                         </ng-select>
-                        <div *ngIf="submitted && f.sucursalID.errors" class="text-danger small">
-                            <div *ngIf="f.sucursalID.errors.required  ">El campo es obligatorio</div>
+                        <div *ngIf="submitted && f.sucursalId.errors" class="text-danger small">
+                            <div *ngIf="f.sucursalId.errors.required  ">El campo es obligatorio</div>
                         </div>
                     </div>
 
 
                     <div class="form-group col-md-4">
-                        <label for="departamentoID"> <i class="fa fa-map-marker"></i> Departamento </label>
+                        <label for="departamentoId"> <i class="fa fa-map-marker"></i> Departamento </label>
                         <ng-select bindLabel="nombre" bindValue="codigo" [items]="departamentos"
                             [loading]="loadingDepartamentos"
-                            [ngClass]="{'form-control border-danger p-0' : submitted && f.departamentoID.errors }"
-                            notFoundText="No resultados" formControlName="departamentoID">
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.departamentoId.errors }"
+                            notFoundText="No resultados" formControlName="departamentoId">
                         </ng-select>
-                        <div *ngIf="submitted && f.departamentoID.errors" class="text-danger small">
-                            <div *ngIf="f.departamentoID.errors.required  ">El campo es obligatorio</div>
+                        <div *ngIf="submitted && f.departamentoId.errors" class="text-danger small">
+                            <div *ngIf="f.departamentoId.errors.required  ">El campo es obligatorio</div>
                         </div>
                     </div>
 
