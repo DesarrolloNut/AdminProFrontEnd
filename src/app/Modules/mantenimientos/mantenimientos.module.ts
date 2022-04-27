@@ -106,6 +106,7 @@ import { ClienteNegocioComponent } from './clientes/cliente-negocio/cliente-nego
 import { ComprobanteFiscalListadoComponent } from './comprobanteFiscal/comprobante-fiscal-listado/comprobante-fiscal-listado.component';
 import { ComprobanteFiscalFormularioComponent } from './comprobanteFiscal/comprobante-fiscal-formulario/comprobante-fiscal-formulario.component';
 
+import { ImageCropperModule } from 'ngx-image-cropper';
 
 
 @NgModule({
@@ -163,13 +164,15 @@ import { ComprobanteFiscalFormularioComponent } from './comprobanteFiscal/compro
     AngularDualListBoxModule,
     MantenimientosRoutingModule,
     SharedModule,
+    ImageCropperModule,
     AgmCoreModule.forRoot({ //mapas
       //  apiKey: 'AIzaSyBaddDDv0d9zuun9qiWj3VkLEzpJot9UQ4',
       libraries: ["places"],
       apiKey: 'AIzaSyAwEdWMJcAO6XvfXi97HVqBNeRixGd1QBU'
     }),
     NgbModule, //ng bootstrap
-    TreeviewModule.forRoot()
+    TreeviewModule.forRoot(),
+
   ]
 })
 export class MantenimientosModule { }

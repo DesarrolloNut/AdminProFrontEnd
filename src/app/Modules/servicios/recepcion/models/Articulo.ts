@@ -1,32 +1,30 @@
-export class Articulo {
-    id: number
-    nombre: string
-    descripcion: string
-    companiaID: number
-    codigoReferencia: string
-    marcaID: number
-    modeloID: number
-    pcvID: number
-    colorID: number
-    anio: number
-    tipoVehiculoID: number
-    paisID: number
-    vehiculoVersionID: number
-    fleteID: number
-    monedaID: string
-    estadoID: number
-    chasis: string
-    tipoArticuloID: number
-    placa: string
-    unidadMedida: string
-    costo: number
-    costoObjetivo: number;
-    precio: number
-    articuloDeCompra: number
-    articuloDeVenta: number
-    articuloDeInventario: number;
-    articuloDeReproceso: number;
-    categoriaID: number
-    gestionado: number
-}
 
+
+export class Articulo {
+  id: number;
+  nombre: string;
+  descripcion: string;
+  codigoReferencia: string;
+  marcaID: number;
+  tipoArticuloID: number;
+  estado: boolean;
+  categoriaID: number;
+  familiaID: number;
+  impuestoId: number;
+  precio: number;
+  costo: number;
+  costoObjetivo: number;
+  articuloDeCompra: boolean;
+  articuloDeVenta: boolean;
+  articuloDeInventario: boolean;
+  articuloActivoFijo: boolean;
+  unidadMedida: string;
+  unidadMedidaId: number;
+  codigoBarra: string;
+  articuloDeReproceso: boolean;
+  peso: number;
+  ubicacion: number;
+  imagenUrl: string;
+  gestionado: boolean;
+  companiaID: number;
+}
