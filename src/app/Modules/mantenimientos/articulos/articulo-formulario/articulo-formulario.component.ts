@@ -1,5 +1,5 @@
 import { AuthenticationService } from './../../../../core/authentication/service/authentication.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -8,11 +8,14 @@ import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Articulo } from 'src/app/Modules/servicios/recepcion/models/Articulo';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ImageCroppedEvent, ImageTransform } from 'ngx-image-cropper';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-articulo-formulario',
   templateUrl: './articulo-formulario.component.html',
-  styles: []
+  styleUrls: ['./articulo-formulario.component.scss']
 })
 export class ArticuloFormularioComponent implements OnInit {
   Cargando: boolean = false;
@@ -32,6 +35,25 @@ export class ArticuloFormularioComponent implements OnInit {
   articuloTipos: ComboBox[];
   articuloCategorias: ComboBox[];
   loadingArticuloCategorias: boolean;
+  loadingArticuloFamilias: boolean;
+  articuloFamilias: ComboBox[];
+  unidadesMedida: ComboBox[];
+  loadingUnidadesMedida: boolean;
+  loadingImpuestos: boolean;
+  impuestos: ComboBox[];
+
+
+
+
+
+  @ViewChild("imageUpload") private contentRef: TemplateRef<Object>;
+
+  imageChangedEvent: any = '';
+  croppedImage: any = '';
+  stepNumber=1;
+  btnGuardarFotoCargando: boolean;
+  transform: ImageTransform = {};
+  scale = 1;
 
 
 
@@ -40,7 +62,9 @@ export class ArticuloFormularioComponent implements OnInit {
     private route: ActivatedRoute,
     private httpService: BackendService,
     private router: Router,
+    private modalService: NgbModal,
     private auth:AuthenticationService,
+    private sanitizer: DomSanitizer,
     private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
@@ -52,10 +76,12 @@ export class ArticuloFormularioComponent implements OnInit {
       this.actualizando = true;
     }
 
-    this.getCompanias()
     this.getMarcas()
     this.getTipoArticulos()
+    this.getArticuloFamilias()
     this.getArticuloCategorias()
+    this.getUnidadMedidas()
+    this.getImpuestos();
     this.CreateForm();
   }
 
@@ -79,13 +105,15 @@ export class ArticuloFormularioComponent implements OnInit {
       articuloDeCompra: [false,],
       articuloDeVenta: [false,],
       articuloDeInventario: [false,],
+      articuloDeReproceso:[false, ],
       articuloActivoFijo: [false,],
-      unidadMedida:[null, Validators.required],
+
+      unidadMedida:[''],
+      unidadMedidaId:[null, Validators.required],
+
       codigoBarra:[''],
 
-      articuloDeReproceso:[false, ],
-
-      peso:[null,[Validators.required]],
+      peso:[0,[Validators.required]],
       ubicacion:[null,[Validators.required]],
 
       imagenUrl:[''],
@@ -109,8 +137,6 @@ export class ArticuloFormularioComponent implements OnInit {
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0]
             this.Formulario.setValue(record);
-            let marcaID = Number(this.f.marcaID.value);
-            this.getModelosByMarcaID(marcaID)
           } else {
             this.toastService.warning("Articulo no encontrado");
             this.router.navigateByUrl('/mantenimientos/articulo');
@@ -150,6 +176,7 @@ export class ArticuloFormularioComponent implements OnInit {
 
         this.btnGuardarCargando = false;
       }, error => {
+        console.log(error)
         this.btnGuardarCargando = false;
         this.toastService.error("Error conexion al servidor");
       });
@@ -157,27 +184,7 @@ export class ArticuloFormularioComponent implements OnInit {
 
 
 
-  getCompanias() {
-    this.loadingCompanias = true;
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetCompanias", null).subscribe(response => {
 
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          this.companias = response.records;
-        }
-        this.loadingCompanias = false;
-      }, error => {
-        this.loadingCompanias = false;
-        this.toastService.error("No se pudo obtener las compañias", "Error conexion al servidor");
-
-        setTimeout(() => {
-          this.getCompanias()
-        }, 1000);
-
-      });
-  }
 
   getMarcas() {
     this.loadingMarcas = true;
@@ -252,6 +259,34 @@ export class ArticuloFormularioComponent implements OnInit {
       });
   }
 
+  getArticuloFamilias() {
+
+    let parametros: Parametro[] = [
+      { key: "CompaniaId", value: this.auth.tokenDecoded.primarygroupsid },
+    ]
+
+    this.loadingArticuloFamilias = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetArticuloFamilias", parametros).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.articuloFamilias = response.records;
+        }
+        this.loadingArticuloFamilias = false;
+      }, error => {
+        this.loadingArticuloFamilias = false;
+        this.toastService.error("No se pudo obtener las articulo familias", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getArticuloFamilias()
+        }, 2000);
+
+      });
+  }
+
+
   getArticuloCategorias() {
     this.loadingArticuloCategorias = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
@@ -269,10 +304,169 @@ export class ArticuloFormularioComponent implements OnInit {
 
         setTimeout(() => {
           this.getArticuloCategorias()
-        }, 1000);
+        }, 2000);
 
       });
   }
 
 
+
+  getUnidadMedidas() {
+
+
+    this.loadingUnidadesMedida = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetUnidadesMedida", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.unidadesMedida = response.records;
+        }
+        this.loadingUnidadesMedida = false;
+      }, error => {
+        this.loadingUnidadesMedida  = false;
+        this.toastService.error("No se pudo obtener las unidades de medida", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getUnidadMedidas()
+        }, 2000);
+
+      });
+  }
+
+
+
+  getImpuestos() {
+
+    let parametros: Parametro[] = [
+      { key: "CompaniaId", value: this.auth.tokenDecoded.primarygroupsid },
+    ]
+
+    this.loadingImpuestos = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetImpuestos", parametros).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.impuestos = response.records;
+        }
+        this.loadingImpuestos = false;
+      }, error => {
+        this.loadingImpuestos = false;
+        this.toastService.error("No se pudo obtener los impuestos", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getImpuestos()
+        }, 2000);
+
+      });
+  }
+
+
+//ALL IMAGE COMPONENT PENDING MOVE
+  openModal(content) {
+    this.modalService.open(content, {size:'lg'});
+  }
+
+  fileChangeEvent(event: any): void {
+    this.imageChangedEvent = event;
+    if( this.imageChangedEvent){
+      this.stepNumber=2;
+    }
+  }
+  imageCropped(event: ImageCroppedEvent) {
+      this.croppedImage = event.base64;
+
+  }
+  imageLoaded() {
+      // show cropper
+  }
+  cropperReady() {
+      // cropper ready
+  }
+  loadImageFailed() {
+      // show message
+  }
+
+  re_uploadImage(inputFile){
+    inputFile.value=''
+    this.imageChangedEvent=null;
+    this.stepNumber=1
+  }
+
+  nextToSavePrevImage(){
+    this.stepNumber=3;
+  }
+
+
+
+ async savePrevImage(inputFile)  {
+  this.btnGuardarFotoCargando = true;
+
+    const formData = new FormData();
+    formData.append("articuloId", this.f.id.value + '');
+
+
+
+    await this.dataUrlToFile(this.croppedImage,'imagen.png').then(file=>{
+      formData.append("files", file);
+      })
+
+
+    this.httpService.DoPostAny<any>(DataApi.Upload,
+      "UploadArticuloAnexos", formData).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+        } else {
+          this.toastService.success("Realizado", "OK");
+          this.f.imagenUrl.setValue(this.croppedImage)
+          // this.modalService.dismissAll()
+         // this.files = []
+         // this.getArchivosSubidos()
+          // this.router.navigateByUrl('/mantenimientos/almacen');
+        }
+        setTimeout(() => {
+         this.btnGuardarFotoCargando = false;
+         inputFile.value=''
+         this.imageChangedEvent=null;
+         this.stepNumber=1
+         this.modalService.dismissAll();
+        }, 1000);
+      }, error => {
+         this.btnGuardarFotoCargando = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+
+
+  }
+   async  dataUrlToFile(dataUrl: string, fileName: string): Promise<File> {
+
+    const res: Response = await fetch(dataUrl);
+    const blob: Blob = await res.blob();
+    let file= new File([blob], fileName, { type: 'image/png' });
+    return file;
+}
+zoomOut() {
+  this.scale -= .1;
+  this.transform = {
+      ...this.transform,
+      scale: this.scale
+  };
+}
+
+zoomIn() {
+  this.scale += .1;
+  this.transform = {
+      ...this.transform,
+      scale: this.scale
+  };
+}
+    public getSantizeUrl(url : string) {
+      if(url!=null){
+        return this.sanitizer.bypassSecurityTrustStyle('url(' +url + ')');
+      }
+      }
 }

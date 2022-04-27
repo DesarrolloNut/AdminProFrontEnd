@@ -1,4 +1,4 @@
-<div class="container-fluid animated fadeIn" [hidden]="Cargando">
+<!-- <div class="container-fluid animated fadeIn" [hidden]="Cargando">
 
 
     <div class="row container-print my-4">
@@ -53,8 +53,6 @@
                     <h4 class="m-0 text-dark"><span class="font-weight-normal">{{ orden.cliente.nombres + ' ' +
                             orden.cliente.apellidos | titlecase }}</span>
                     </h4>
-                    <!--<h6 class="text-dark m-0">Teléfono: <span class="font-weight-normal ">{{orden.cliente.celular}}</span></h6>
-                    <h6 class="text-dark m-0">Dirección: <span class="font-weight-normal ">{{'quisquella la bella, santiago RD.' | titlecase}}</span></h6>-->
                 </div>
             </div>
         </div>
@@ -123,7 +121,6 @@
             <table class="table table-striped table-sm">
                 <thead>
                     <tr>
-                        <!-- <th scope="col">#</th> -->
                         <th scope="col">Síntoma</th>
                         <th scope="col">Pwa</th>
                         <th scope="col">Parte causal</th>
@@ -134,31 +131,25 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let sintoma of orden.sintomas; let i = index">
-                        <!-- <th scope="row">{{ i + 1}}</th> -->
                         <td>({{sintoma.codigoReferencia}}) {{sintoma.descripcion | uppercase }}</td>
                         <td>
                             <div style="width: 50px; height: 30px;"
                                 class="border border-dark rounded rounded-sm bg-white"></div>
-                            <!-- <input type="text" name="" id="" style="width: 50px;"> -->
                         </td>
                         <td>
-                            <!-- <input type="text" name="" id="" style="width: 150px;"> -->
                             <div style="width: 150px; height: 30px;"
                                 class="border border-dark rounded rounded-sm bg-white"></div>
                         </td>
                         <td>
-                            <!-- <input type="text" name="" id="" style="width: 120px;"> -->
                             <div style="width: 120px; height: 30px;"
                                 class="border border-dark rounded rounded-sm bg-white"></div>
 
                         </td>
                         <td>
-                            <!-- <input type="text" name="" id="" style="width: 120px;"> -->
                             <div style="width: 120px; height: 30px;"
                                 class="border border-dark rounded rounded-sm bg-white"></div>
                         </td>
                         <td>
-                            <!-- <input type="text" name="" id="" style="width: 120px;"> -->
                             <div style="width: 120px; height: 30px;"
                                 class="border border-dark rounded rounded-sm bg-white"></div>
                         </td>
@@ -262,4 +253,4 @@
             <h3>Estamos generando tu reporte en línea.</h3>
         </div>
     </div>
-</div>
+</div> -->
