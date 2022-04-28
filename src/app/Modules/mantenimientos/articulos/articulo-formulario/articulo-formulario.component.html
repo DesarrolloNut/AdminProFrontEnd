@@ -29,9 +29,11 @@
         <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
 
           <div class="container_picture col-md-4 col-lg-2">
-            <div class="no_image" *ngIf="f.imagenUrl.value==null || f.imagenUrl.value==''">
-              <div class="btn_subirImg w-100 " id="btn_subirImg">
-                <button type="button" class="btn btn-sm btn-secondary w-100"
+            <div class="no_image" *ngIf="f.imagenUrl.value==null || f.imagenUrl.value==''"
+            [style.background-image]="getSantizeUrl(imageDefault400x400)">
+              <div class="btn_subirImg w-100" id="btn_subirImg">
+                <button type="button"
+                   class="btn btn-sm btn-outline-light text-info w-100 bg-white "
                   (click)="openModal(imageUpload)">
                   <i class="fa fa-upload" aria-hidden="true"></i>Subir
                 </button>
@@ -39,15 +41,16 @@
             </div>
 
             <div class="yes_image" *ngIf="f.imagenUrl.value!=null && f.imagenUrl.value!=''"
-              [style.background-image]="getSantizeUrl(f.imagenUrl.value)">
-              <div class="btn_subirImg w-100 " id="btn_subirImg">
+              [style.background-image]="getSantizeUrl(f.imagenUrl.value)" >
+              <div class="btn_subirImg w-100" id="btn_subirImg">
 
                 <button type="button" class="btn btn-sm btn-success w-75"
                   (click)="openModal(modalImagePreview)">
                   <i class="fa fa-eye" aria-hidden="true"></i> Ver
                 </button>
 
-                <button type="button" class="btn btn-sm btn-secondary w-25"
+                <button type="button"
+                  class="btn btn-sm btn-outline-light text-info w-25 bg-white"
                   (click)="openModal(imageUpload)">
                   <i class="fa fa-upload" aria-hidden="true"></i>
                   </button>
@@ -170,6 +173,14 @@
               [ngClass]="{'is-invalid' : submitted && f.costoObjetivo.errors,  'form-control':true  }">
             <div class="invalid-feedback" *ngIf="submitted && f.costoObjetivo.errors">
               <div *ngIf="f.costoObjetivo.errors.required">El campo es obligatorio</div>
+            </div>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="margenObjetivo"> Margen Objetivo</label>
+            <input formControlName="margenObjetivo" type="number" name="margenObjetivo" id="margenObjetivo"
+              [ngClass]="{'is-invalid' : submitted && f.margenObjetivo.errors,  'form-control':true  }">
+            <div class="invalid-feedback" *ngIf="submitted && f.margenObjetivo.errors">
+              <div *ngIf="f.margenObjetivo.errors.required">El campo es obligatorio</div>
             </div>
           </div>
 
@@ -324,6 +335,8 @@
       </div>
       <div class="middle_Text text-center" style="font-size: 50px;">
         <h4>Click aqui para subir imagen</h4>
+        <h5 class="font-weight-bold">Resolución de imagen requerida 400x400</h5>
+
       </div>
     </div>
 
@@ -347,8 +360,8 @@
         <image-cropper
           [imageChangedEvent]="imageChangedEvent"
           [maintainAspectRatio]="true"
-          [aspectRatio]="4 / 3"
-          [resizeToWidth]="256"
+          [aspectRatio]="4 / 4"
+          [resizeToWidth]="400"
           [cropperMinWidth]="128"
            format="png"
           [transform]="transform"

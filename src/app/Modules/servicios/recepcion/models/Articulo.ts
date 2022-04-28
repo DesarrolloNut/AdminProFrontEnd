@@ -28,3 +28,27 @@ export class Articulo {
   gestionado: boolean;
   companiaID: number;
 }
+
+
+export class ArticuloListadoViewModel  {
+  id: number;
+  nombre: string;
+  descripcion: string;
+  codigoReferencia: string;
+  codigoBarra: string;
+  tipoArticuloID: number;
+  marcaID: number;
+  categoriaID: number;
+  familiaID: number;
+  impuestoId: number;
+  tipo: string;
+  marca: string;
+  categoria: string;
+  familia: string;
+  impuesto: string;
+  unidadMedida: string;
+  unidadMedidaId: number;
+  imagenUrl: string;
+  estado: boolean;
+  companiaID: number;
+}

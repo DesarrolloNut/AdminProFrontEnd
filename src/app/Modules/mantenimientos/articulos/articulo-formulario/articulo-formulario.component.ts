@@ -55,6 +55,8 @@ export class ArticuloFormularioComponent implements OnInit {
   transform: ImageTransform = {};
   scale = 1;
 
+  imageDefault400x400='assets/images/image400x400.png'
+  image404='assets/images/image404.png'
 
 
   constructor(
@@ -102,6 +104,7 @@ export class ArticuloFormularioComponent implements OnInit {
       precio: [0,],
       costo: [0,],
       costoObjetivo: [0],
+      margenObjetivo: [0],
       articuloDeCompra: [false,],
       articuloDeVenta: [false,],
       articuloDeInventario: [false,],
@@ -126,7 +129,7 @@ export class ArticuloFormularioComponent implements OnInit {
 
   get f() { return this.Formulario.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
 
-  getItem(id: number) {
+  async getItem(id: number) {
     this.Cargando = true;
     this.httpService.DoPostAny<Articulo>(DataApi.Articulo,
       "GetArticuloByID", id).subscribe(response => {
@@ -136,7 +139,19 @@ export class ArticuloFormularioComponent implements OnInit {
           //validar que existe
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0]
-            this.Formulario.setValue(record);
+            if (record.imagenUrl==null || record.imagenUrl=='') {
+              this.Formulario.setValue(record);
+            }else{
+              this.testImageExecute(record.imagenUrl).then(ok=>{
+                if(!ok){
+                  record.imagenUrl=this.image404;
+                }
+                this.Formulario.setValue(record);
+
+              })
+            }
+
+
           } else {
             this.toastService.warning("Articulo no encontrado");
             this.router.navigateByUrl('/mantenimientos/articulo');
@@ -410,7 +425,8 @@ export class ArticuloFormularioComponent implements OnInit {
 
 
 
-    await this.dataUrlToFile(this.croppedImage,'imagen.png').then(file=>{
+    await this.dataUrlToFile(this.croppedImage,`${this.f.codigoReferencia.value}.png`)
+      .then(file=>{
       formData.append("files", file);
       })
 
@@ -464,9 +480,54 @@ zoomIn() {
       scale: this.scale
   };
 }
-    public getSantizeUrl(url : string) {
-      if(url!=null){
+ public getSantizeUrl(url : string) {
+if(url!=null){
         return this.sanitizer.bypassSecurityTrustStyle('url(' +url + ')');
-      }
-      }
+ }
+  }
+
+
+ testImage(url) {
+
+    // Define the promise
+    const imgPromise = new Promise(function imgPromise(onSuccess, onError) {
+
+        // Create the image
+        const imgElement = new Image();
+
+        // When image is loaded, resolve the promise
+        imgElement.addEventListener('load', function imgOnLoad() {
+            onSuccess(this);
+        });
+
+        // When there's an error during load, reject the promise
+        imgElement.addEventListener('error', function imgOnError() {
+            onError();
+        })
+
+        // Assign URL
+        imgElement.src = url;
+
+    });
+
+    return imgPromise;
+}
+
+testImageExecute(urlImage:string):Promise<boolean>{
+ return this.testImage(urlImage).then(
+
+    function onSuccess(img) {
+       return true;
+    },
+
+    function onError() {
+      return false;
+    }
+
+   );
+
+}
+
+
+
 }
