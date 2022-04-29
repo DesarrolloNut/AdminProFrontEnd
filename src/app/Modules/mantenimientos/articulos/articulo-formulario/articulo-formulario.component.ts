@@ -466,6 +466,9 @@ export class ArticuloFormularioComponent implements OnInit {
     return file;
 }
 zoomOut() {
+  if (this.scale.toFixed(1)=='0.8') {
+      return;
+  }
   this.scale -= .1;
   this.transform = {
       ...this.transform,
