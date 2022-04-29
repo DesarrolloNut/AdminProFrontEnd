@@ -77,6 +77,9 @@ export class UsuarioFormularioComponent implements OnInit {
   loadingDepartamentos: boolean;
 
 
+  loadingUsuarioTiposSolicitud: boolean;
+  usuarioTiposSolicitud: ComboBox[];
+
 
   //VARIABLES | CONFIGURACIONES
   loadingSucursalByUsuario =false;
@@ -107,6 +110,7 @@ export class UsuarioFormularioComponent implements OnInit {
     this.getRoles();
     this.getSucursales();
     this.getDepartamentos();
+    this.getUsuarioTiposSolicitud()
 
     this.CreateForm();
 
@@ -166,7 +170,7 @@ export class UsuarioFormularioComponent implements OnInit {
       rol: [null,],
       telefono: [null, [Validators.required]],
       celular: [null, [Validators.required]],
-      // estadoID: [0,],
+       estado: [0,],
       companiaId: [0,],
       sucursalId: [null, [Validators.required]],
       telefonoExtension: [null, [Validators.required]],
@@ -180,6 +184,7 @@ export class UsuarioFormularioComponent implements OnInit {
       ipEquipo: [null,],
       puertoEquipo: [null,],
       macAddressEquipo: [null,],
+      usuarioTipoSolicitudId:[null,[Validators.required]]
     },
       {
         validator: cedulaestructura('documento', 'documentoTipoID')
@@ -403,6 +408,25 @@ export class UsuarioFormularioComponent implements OnInit {
       });
   }
 
+  getUsuarioTiposSolicitud() {
+    this.loadingUsuarioTiposSolicitud = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetUsuarioTiposSolicitud", null).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.usuarioTiposSolicitud = response.records;
+        }
+        this.loadingUsuarioTiposSolicitud = false;
+      }, error => {
+        this.loadingUsuarioTiposSolicitud = false;
+        this.toastService.error("No se pudo obtener los tipos solicitud", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getUsuarioTiposSolicitud();
+        }, 2000);
+      });
+  }
 
   getSucursales() {
     this.loadingSucursales = true;
