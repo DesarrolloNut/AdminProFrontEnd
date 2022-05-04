@@ -477,6 +477,9 @@ zoomOut() {
 }
 
 zoomIn() {
+  if (this.scale.toFixed(1)=='1.2') {
+    return;
+}
   this.scale += .1;
   this.transform = {
       ...this.transform,

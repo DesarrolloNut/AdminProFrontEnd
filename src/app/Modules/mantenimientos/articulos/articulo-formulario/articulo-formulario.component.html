@@ -31,7 +31,7 @@
           <div class="container_picture  col-xs-8 col-sm-6  col-md-4 col-lg-2">
             <div class="no_image" *ngIf="f.imagenUrl.value==null || f.imagenUrl.value==''"
             [style.background-image]="getSantizeUrl(imageDefault400x400)">
-              <div class="btn_subirImg w-100" id="btn_subirImg">
+              <div class="btn_subirImg w-100" id="btn_subirImg" *ngIf="f.id.value>0">
                 <button type="button"
                    class="btn btn-sm btn-outline-light text-info w-100 bg-white "
                   (click)="openModal(imageUpload)">

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
@@ -29,6 +30,7 @@ export class RolesFormularioComponent implements OnInit {
     private toastService: ToastrService,
     private route: ActivatedRoute,
     private httpService: BackendService,
+    private auth:AuthenticationService,
     private router: Router,
     private formBuilder: FormBuilder) { }
 
@@ -51,6 +53,7 @@ export class RolesFormularioComponent implements OnInit {
       nombre: [null, [Validators.required]],
       descripcion: [null,],
       rutaTipoId: [0,],
+      companiaId: [Number(this.auth.tokenDecoded.primarygroupsid)],
     });
   }
 
