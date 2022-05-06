@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Sucursal } from '../models/Sucursal';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
+import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 
 @Component({
   selector: 'app-sucursales-formulario',
@@ -14,7 +15,7 @@ import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 })
 export class SucursalesFormularioComponent implements OnInit {
 
- 
+
   companias: ComboBox[] = [];
 
   loadingCompanias = false;
@@ -29,18 +30,19 @@ export class SucursalesFormularioComponent implements OnInit {
     private toastService: ToastrService,
     private route: ActivatedRoute,
     private httpService: BackendService,
+    private auth:AuthenticationService,
     private router: Router,
     private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
-    
+
     let id = Number(this.route.snapshot.paramMap.get('id'));
 
     if (id > 0) {
       this.getItem(id);
       this.actualizando = true;
     }
-    
+
     this.getCompanias()
     this.CreateForm();
   }
@@ -50,10 +52,11 @@ export class SucursalesFormularioComponent implements OnInit {
 
     this.Formulario = this.formBuilder.group({
       id: [0],
+
       nombre: [null, [Validators.required]],
-      companiaID: [null, Validators.required],
       telefono: [null, [Validators.required]],
       referencia: [null,],
+      companiaID:[Number( this.auth.tokenDecoded.nameid)]
     });
   }
 
@@ -116,7 +119,7 @@ export class SucursalesFormularioComponent implements OnInit {
   }
 
 
-  
+
   getCompanias() {
     this.loadingCompanias = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,

@@ -23,7 +23,6 @@
                     <div class="col-md-6 col-lg-6 col-12 text-right">
                     </div>
                 </div>
-                <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
                 <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
 
                     <div class="form-group col-md-6">
@@ -53,7 +52,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group col-md-6">
+                    <!-- <div class="form-group col-md-6">
                         <label for="example-email">Compañia</label>
                         <ng-select [items]="companias" bindLabel="nombre" bindValue="codigo"
                             [loading]="loadingCompanias"
@@ -64,7 +63,7 @@
                             class="text-danger small animated animated--fade-in">
                             <div *ngIf="f.companiaID.errors.required  ">El campo es obligatorio</div>
                         </div>
-                    </div>
+                    </div> -->
 
                     <div class="form-group text-right col-md-12">
                         <hr />
