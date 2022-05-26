@@ -11,10 +11,8 @@ import { AuthenticationService } from 'src/app/core/authentication/service/authe
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
-import { Cliente } from 'src/app/Modules/mantenimientos/clientes/models/Cliente';
 import { ArticuloPesosExtras } from 'src/app/Modules/produccion/pesaje/models/ArticuloPesosExtras';
 import { ArticuloPesosExtrasViewModel } from 'src/app/Modules/produccion/pesaje/models/ArticuloPesosExtrasViewModel';
-import { LoteAlmacen } from 'src/app/Modules/produccion/pesaje/models/LoteAlmacen';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { DespachoPedidoDetalleArticuloViewModel, DespachoPedidoDetalleViewModel, DespachoPreventaDetalleViewModel } from '../models/DespachoPedidoDetalleViewModel';
@@ -25,6 +23,7 @@ import { BalanzaPesoGrupoSignalREnum } from 'src/app/shared/enums/BalanzaPesoGru
 import { BalanzaPesajeSignalrService } from 'src/app/Services/balanza-pesaje-signalr.service';
 import { Usuario } from 'src/app/Modules/servicios/recepcion/models/Usuario';
 import { PrintExportFile, TypeReport } from 'src/app/Services/PrintExportFile.service';
+import { Subscriber } from 'rxjs';
 
 @Component({
   selector: 'app-despacho-listado',
@@ -181,14 +180,14 @@ export class DespachoListadoComponent implements OnInit {
 
 
   startPingingBalanza() {
-setTimeout(() => {
+  setTimeout(() => {
 
-      if (!this.loadingPeso && this.usuario) {
-        this.loadingPeso = true;
-        this.signalRService.getPesajeFromBalanza(Number(this.usuario.puertoEquipo),
-          this.usuario.ipEquipo)
-      }
-    }, 2000);
+        if (!this.loadingPeso && this.usuario) {
+          // this.loadingPeso = true;
+          this.signalRService.getPesajeFromBalanza(Number(this.usuario.puertoEquipo),
+            this.usuario.ipEquipo)
+        }
+      }, 2000);
   }
 
 
@@ -216,13 +215,14 @@ setTimeout(() => {
       });
   }
   subscribirPesoBalanzaCambios() {
+
     this.signalRService.startConnection(BalanzaPesoGrupoSignalREnum.Pantalla_Pesaje);
 
     this.signalRService.pesoBalanza.subscribe((peso: string) => {
 
       this.loadingPeso = false;
 
-
+        console.log(peso)
       if(this.despachoPreventaArticuloDetalleSelected.estadoId==1
         && this.despachoPreventaArticuloDetalleSelected.unidadMedida=='LBS'
         && this.despachoPreventaSeleccionado.finalizado==0) {
@@ -914,10 +914,11 @@ getSucursalByUsuarioId() {
         } else {
 
           this.despachoPreventaDetalles = response.valores[0];
+          console.log( this.despachoPreventaDetalles)
           if(tipo==1){
 
 
-             this.despachoPreventaDetalleToPrinter(this.despachoPreventaDetalles)
+            this.despachoPreventaDetalleToPrinter(this.despachoPreventaDetalles)
           }else if(tipo==2){
             this.despachoPreventaDetalleToExcel(this.despachoPreventaDetalles)
           }
@@ -973,6 +974,8 @@ getSucursalByUsuarioId() {
                                   "Hoja de despacho",
                                   "Transacción entre almacenes",
                                 TypeReport.PDF,"RPT006")
+
+
   }
   despachoPreventaDetalleToExcel(data:DespachoPreventaDetalleViewModel[]) {
     data.sort((a, b) =>  a.codigoArticulo.localeCompare(b.codigoArticulo) );
@@ -1285,7 +1288,6 @@ finalizaDespacho(estado:number){
   p.ruta = this.despachoPreventaSeleccionado.rutaId;
   p.fechaEntrega = this.despachoPreventaSeleccionado.fechaEntrega;
   p.estadoId=estado;
-
   this.httpService.DoPostAny<DespachoPreventaDetalleViewModel>(DataApi.Despacho,
     'finalizaDespachoPreventa', p).subscribe(response => {
       if (!response.ok) {
@@ -1405,6 +1407,20 @@ ngOnDestroy(): void {
 
 }
 
+   disconnectBalanza(){
+    setTimeout( () => {
+
+        this.signalRService.disconnectBalanza(Number(this.usuario.puertoEquipo),
+       this.usuario.ipEquipo)
+        }, 2000);
+
+
+}
+
+connectBalanza(){
+  this.subscribirPesoBalanzaCambios()
+  this.startPingingBalanza()
+}
 
  changeViewDetalleDespacho(viewAllArticulos:boolean){
    if (this.existeArticuloPendienteDespachar()) {

@@ -158,10 +158,12 @@ validaHorarioAndGetData(showLoading=false){
   formatDataPreventa(dataPreventa: DespachoListadoPreventaAsignacionVM[]) {
     this.dataPreventaF=[];
     this.dataPreventa.forEach(x=>{
-      this.getEstadoAsignacion(x)
 
+    this.getEstadoAsignacion(x)
+console.log(x)
 
      if(x.despachoDispositivo){
+
       if((x.fechaInicioDespachador!=null) &&
          (x.fechaFinDespachador==null || x.fechainicioValidador==null || x.fechaFinalizacionValidador==null)){
            this.dataPreventaF.push(x);
@@ -294,7 +296,6 @@ validaHorarioAndGetData(showLoading=false){
 
     }
   getDataByPrioridadOrden(data_filtered: DespachoListadoPreventaAsignacionVM[]):DespachoListadoPreventaAsignacionVM[] {
-    console.log(data_filtered)
     if(data_filtered.filter(x=>x.prioridadOrden==1).length>0){return data_filtered.filter(x=>x.prioridadOrden==1)}
     if(data_filtered.filter(x=>x.prioridadOrden==2).length>0){return data_filtered.filter(x=>x.prioridadOrden==2)}
     if(data_filtered.filter(x=>x.prioridadOrden==3).length>0){return data_filtered.filter(x=>x.prioridadOrden==3)}

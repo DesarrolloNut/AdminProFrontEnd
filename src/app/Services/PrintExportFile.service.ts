@@ -439,7 +439,7 @@ export class PrintExportFile {
   private ExportAsPDF(CompanyName,ReportName: string, Header: string, TemplateCallBack: (collection, NumberFormat: (numero: number, formatNumber: FormatNumber, visibleCero: boolean) => string, TotalColletion: (colletion) => any) => Array<any>) {
 
     var Data = TemplateCallBack(this.DATA, this.NumberFormat, this.SumEqualProperty);
-
+       console.log(this.DATA)
      if(this.DATA[0].Despachador==undefined || this.DATA[0].Despachador==''){
        this.DATA[0].Despachador='                                   ';
      }

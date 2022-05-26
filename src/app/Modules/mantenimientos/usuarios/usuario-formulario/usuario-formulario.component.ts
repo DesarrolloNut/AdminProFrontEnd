@@ -701,12 +701,12 @@ export class UsuarioFormularioComponent implements OnInit {
 
 
     let param = this.confirmed.map(x => { return { "UsuarioID": this.usuarioID,"CompaniaID":
-    Number(this.auth.tokenDecoded.primarygroupsid), "SucursalID": x.codigo }; });
+    Number(this.auth.tokenDecoded.primarygroupsid), "SucursalID": x.codigo ,"Predeterminada":0}; });
 
     if(this.confirmed.length<=0)
     {
       param.push({ "UsuarioID": this.usuarioID,"CompaniaID":
-      Number(this.auth.tokenDecoded.primarygroupsid), "SucursalID": 0 })
+      Number(this.auth.tokenDecoded.primarygroupsid), "SucursalID": 0, "Predeterminada":0})
     }
 
     this.guardandoSucursalesAsignadas = true;
