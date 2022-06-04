@@ -10,7 +10,6 @@ import { Subscription } from 'rxjs';
 export class BalanzaPesajeSignalrService {
 
 
-  subscription: Subscription;
 
 
 
@@ -27,9 +26,22 @@ export class BalanzaPesajeSignalrService {
   private grupoBalanzaPesaje = "GRUPO_PANTALLA_PESAJE_USUARIO_" + this.auth.tokenDecoded.nameid
   private grupoBalanzaListado = "GRUPO_PANTALLA_PESAJE_ALMACEN_"
 
+  private ip="";
+  private port=0;
 
   handlerPeso = (pesoBalanza: any) => {
-    this.pesoBalanza.emit(pesoBalanza.data)
+
+    if (pesoBalanza.ok) {
+      this.pesoBalanza.emit(pesoBalanza.data)
+    }else{
+      this.toaster.warning(pesoBalanza.message)
+      this.pesoBalanza.emit(pesoBalanza.message)
+      setTimeout(() => {
+    //    location.reload();
+      }, 3000);
+    }
+
+   // console.log(this.pesoBalanza)
    // this.pesoBalanza.emit(pesoBalanza);
  }
 
@@ -56,13 +68,14 @@ export class BalanzaPesajeSignalrService {
       .withAutomaticReconnect()
       .configureLogging(signalR.LogLevel.Information)
       .build();
-    this.hubConnection
+     this.hubConnection
       .start().
       then(ok => {
         this.subscribirMetodos();
         this.toaster.info("Actualización en tiempo real.", "Sistema pesaje.")
         this.balanzaInitied=true;
         // this.JoinGroup(this.grupoBalanzaPesaje)
+
         switch (grupo) {
           case BalanzaPesoGrupoSignalREnum.Pantalla_Pesaje:
             this.JoinGroup(this.grupoBalanzaPesaje)
@@ -71,7 +84,6 @@ export class BalanzaPesajeSignalrService {
           case BalanzaPesoGrupoSignalREnum.Pantalla_Pesaje_Listado:
             this.JoinGroup(this.grupoBalanzaListado + this.almacenID)
             break;
-
 
           default:
             break;
@@ -82,9 +94,6 @@ export class BalanzaPesajeSignalrService {
         this.balanzaInitied=false;
 
         console.log('Error while starting connection: ' + err);
-
-        // this.toaster.error("Error conexión.", "Turnos realtime.")
-        // this.toaster.info("Se intentará nuevamente.", "Turnos realtime.")
 
         // setTimeout(() => {
         //   this.startConnection(grupo);
@@ -97,7 +106,6 @@ export class BalanzaPesajeSignalrService {
   public desconectarConexion() {
    //  this.hubConnection.
 
-
   }
 
 
@@ -105,7 +113,7 @@ export class BalanzaPesajeSignalrService {
   public subscribirMetodos = () => {
 
 
-    this.hubConnection.on('SendPesoToScreen',this.handlerPeso);
+   this.hubConnection.on('SendPesoToScreen',this.handlerPeso);
 
     this.hubConnection.on('RefreshListScreen', (refresh: boolean) => {
       this.refreshListado.emit(refresh);
@@ -128,23 +136,23 @@ export class BalanzaPesajeSignalrService {
 
   }
 
-  public getPesajeFromBalanza(port: number, ipBalanza: string) {
+  public getPesajeFromBalanza(port: number, ipBalanza: string)   {
     this.hubConnection.invoke("SendPesoToScreen", this.grupoBalanzaPesaje, port, ipBalanza).catch(err => {
-      this.toaster.error("Error conexion con balanza");
+     // this.toaster.warning("Error conexion con balanza");
       return console.error(err);
     });
 
   }
 
 
-  public  disconnectBalanza(port: number, ipBalanza: string) {
-  if(!this.balanzaInitied){return;}
+  public  async disconnectBalanza(port: number, ipBalanza: string)  {
+   if(!this.balanzaInitied){return;}
     this.hubConnection.invoke("DisconnectBalanza",  this.grupoBalanzaPesaje, port, ipBalanza).then(
        x =>{
         this.toaster.success("Balanza desconectada", "Balanza")
          this.balanzaInitied=false;
          if(this.hubConnection?.state==signalR.HubConnectionState.Connected){
-          this.hubConnection.off('SendPesoToScreen'.toLowerCase(),this.handlerPeso);
+          this.hubConnection.off('SendPesoToScreen'.toLowerCase(),this.handlerPeso)
           this.hubConnection.stop();
         }
 
@@ -153,7 +161,6 @@ export class BalanzaPesajeSignalrService {
       this.toaster.error("Error, no se pudo desconectar.", "Balanza")
       return console.error(err);
     });
-    console.log('llego abajo')
 
   }
   public JoinGroup(group: string) {

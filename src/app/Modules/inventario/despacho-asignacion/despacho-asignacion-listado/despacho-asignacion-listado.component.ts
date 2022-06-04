@@ -38,7 +38,7 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
 
 
   totalPaginas: number = 0;
-  paginaSize: number = 10;
+  paginaSize: number = 40;
   paginaTotalRecords: number = 0;
   dataPreventa: DespachoListadoPreventaAsignacionVM[] = [] //tu modelo
   dataPreventaF:DespachoListadoPreventaAsignacionVM[] = [] //tu modelo
@@ -90,6 +90,7 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getAllData();
+
   }
 
  async getAllData(){
@@ -157,10 +158,10 @@ validaHorarioAndGetData(showLoading=false){
  }
   formatDataPreventa(dataPreventa: DespachoListadoPreventaAsignacionVM[]) {
     this.dataPreventaF=[];
+    console.log(dataPreventa)
     this.dataPreventa.forEach(x=>{
 
     this.getEstadoAsignacion(x)
-console.log(x)
 
      if(x.despachoDispositivo){
 
@@ -226,9 +227,9 @@ console.log(x)
 }
 
 
-  // setFocus() {
-  //   this.searchElement.nativeElement.focus();
-  // }
+  setFocus() {
+    this.searchElement.nativeElement.focus();
+  }
 
   // @HostListener('window:keydown', ['$event'])
   // onWindowKeyDown(event: any) {
@@ -332,7 +333,7 @@ console.log(x)
              this.despachoPreventaSeleccionado.despachador=user.nombres+" "+ user.apellidos;
 
              this.loadingStatusMessaje='Enviando despacho para SAP...'
-            if(!this.despachoPreventaSeleccionado.despachoDispositivo){
+            if(!this.despachoPreventaSeleccionado.despachoDispositivo && m.estado!=4){
               await this.finalizaDespacho(2);
             }
 
@@ -341,11 +342,12 @@ console.log(x)
              this.loadingStatusMessaje='Imprimiendo despacho...'
              this.closeModal()
 
-            if(estadoId!=3){
+            if(estadoId!=3 && m.estado!=4){
               setTimeout(() => {
                 this.exportDespachoPreventaDetalle(this.despachoPreventaSeleccionado)
                 }, 500);
             }
+
 
 
            }else{

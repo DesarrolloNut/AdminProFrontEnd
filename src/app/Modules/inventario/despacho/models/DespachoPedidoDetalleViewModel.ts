@@ -57,6 +57,9 @@ export class DespachoPreventaDetalleViewModel   {
   despacho: number;
   validado: number;
   precio: number;
+  costo: number;
+  pedidoOferta: number;
+  pedidoVentas: number;
   totalMonto: number;
   totalMontoDespacho: number;
   peso: number;
@@ -96,7 +99,14 @@ export class DespachoPreventaRequestModel {
   almacen_Destino: string;
   articuloId: number;
   lote: string;
-  precio
+  precio:number;
+  costo:number;
+  montoPedido:number;
+  pedidoVentas:number;
+
+  pedidoOferta:number;
+  despachoTipo:number;
+
   pedido: number;
   despacho: number;
   validado: number;

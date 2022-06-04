@@ -61,7 +61,13 @@ export class FullComponent implements OnInit {
     }
 
     changeOptionsByRole(){
-      if(this.authService.tokenDecoded.role=='PantallaAsignadorDespacho'){
+      if(this.authService.tokenDecoded.role=='PantallaAsignadorDespacho'
+       ){
+        this.options.sidebartype='overlay';
+        this.options.logobg='skin6'
+      }
+      if(
+        this.authService.tokenDecoded.role=='AsignadorDespacho' ){
         this.options.sidebartype='overlay';
         this.options.logobg='skin6'
       }

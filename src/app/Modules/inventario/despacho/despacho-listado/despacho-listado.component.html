@@ -7,7 +7,7 @@
             <h4 class="card-title">Listado de pedidos para despachar </h4>
           </div>
           <div class="col-md-3 text-right">
-            <!-- <button   (click)="connectBalanza()"
+           <!-- <button   (click)="connectBalanza()"
             class="btn btn-info"> <i class=""></i> Conectar
           </button>
             <button   (click)="disconnectBalanza()"
@@ -198,7 +198,7 @@
             </div>
 
             <div *ngxPermissionsOnly="['manual_despacho']" style="display:inline-block">
-              <button *ngIf="item.noEditable==0" [disabled]="btnCargandoPrint" class="btn btn font-bold btn-info m-1"
+              <button *ngIf="item.noEditable==0 && !item.despachoDispositivo" [disabled]="btnCargandoPrint" class="btn btn font-bold btn-info m-1"
                 (click)="openModalConfirmFinalizaDespacho(modalConfirmManual,1,item)">
                 <i class="fa  fa-hand-paper mr-1" aria-hidden="true"></i> D. Manual
               </button>

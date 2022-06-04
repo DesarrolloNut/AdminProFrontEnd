@@ -44,6 +44,7 @@ export class DespachoAsignacionFormularioComponent implements OnInit, OnDestroy 
 
   random: number;
 
+  intervalRefreshFocus: NodeJS.Timeout
 
   @ViewChild('modalConfirm') myModal:ElementRef;
 
@@ -248,24 +249,21 @@ export class DespachoAsignacionFormularioComponent implements OnInit, OnDestroy 
 
   }
 
-  // ngAfterViewInit() {
-  //   setTimeout(() => {
-  //     var elem = this.renderer.selectRootElement('#inputSearch');
-  //     // this.renderer.listen(elem, "focus", () => { console.log('focus') });
-  //     // this.renderer.listen(elem, "blur", () => { console.log('blur') });
-  //     elem.focus();
+  ngAfterViewInit() {
 
-  //   }, 1000);
-  //   setInterval(() => {
-  //     var elem = this.renderer.selectRootElement('#inputSearch');
-  //     // this.renderer.listen(elem, "focus", () => { console.log('focus') });
-  //     // this.renderer.listen(elem, "blur", () => { console.log('blur') });
-  //     elem.focus();
+    if(this.authService.tokenDecoded.role!='PantallaAsignadorDespacho'){
+      this.intervalRefreshFocus = setInterval(() => {
+        var elem = this.renderer.selectRootElement('#inputSearch');
 
-  //   }, 2000);
-  //   this.focusInputSearch()
+        // this.renderer.listen(elem, "focus", () => { console.log('focus') });
+        // this.renderer.listen(elem, "blur", () => { console.log('blur') });
+        elem.focus();
+        this.focusInputSearch()
 
-  // }
+      }, 500)
+    }
+
+  }
 
   focusInputSearch() {
     this.renderer.selectRootElement('#inputSearch').focus();
@@ -281,7 +279,7 @@ export class DespachoAsignacionFormularioComponent implements OnInit, OnDestroy 
     // this.getDataByCondicional()
   }
   ngOnDestroy(): void {
-
+    window.clearInterval(this.intervalRefreshFocus);
   }
 
 

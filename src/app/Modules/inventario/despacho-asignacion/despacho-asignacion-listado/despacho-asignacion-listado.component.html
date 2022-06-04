@@ -41,6 +41,8 @@
                             (click)="exportDespachoPreventaDetalle(item,1)">
                             <i class="fa fa-print" aria-hidden="true"></i>
                           </button>
+                          <span class="badge  badge-light font-weight-bold text-info"  *ngIf="item.fechaInicioDespachador!=null&&item.fechaFinDespachador==null">Actual</span>
+
                         </div>
 
                         <div class="acciones-mensaje" *ngIf="!validaDiferenciaMinimaDespacho(item)">
@@ -58,7 +60,10 @@
                       </td>
                       <td>
                          <span *ngIf="item.despachador==null" class="badge badge-secondary font-weight-bold">No Asignado</span>
-                         <span *ngIf="item.despachador!=null" class="badge badge-info font-weight-bold">{{item.despachador}}</span>
+                         <span *ngIf="item.despachador!=null" class="badge badge-info font-weight-bold">
+                           {{item.despachador}}
+                          </span>
+
 
                       </td>
                       <td>

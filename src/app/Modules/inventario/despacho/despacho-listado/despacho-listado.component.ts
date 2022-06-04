@@ -140,6 +140,7 @@ export class DespachoListadoComponent implements OnInit {
 
 
     pesoBalanza: string = "0.00 KG";
+    emitPesoBalanza:boolean =true;
     pesoBalanzaUltimaFecha: Date = new Date();
     pesoBalanzaLBNumber: number = 0;
 
@@ -182,12 +183,14 @@ export class DespachoListadoComponent implements OnInit {
   startPingingBalanza() {
   setTimeout(() => {
 
-        if (!this.loadingPeso && this.usuario) {
+        if (!this.loadingPeso && this.usuario && this.emitPesoBalanza)  {
           // this.loadingPeso = true;
           this.signalRService.getPesajeFromBalanza(Number(this.usuario.puertoEquipo),
             this.usuario.ipEquipo)
+
+          this.emitPesoBalanza=false;
         }
-      }, 2000);
+      }, 1000);
   }
 
 
@@ -215,15 +218,12 @@ export class DespachoListadoComponent implements OnInit {
       });
   }
   subscribirPesoBalanzaCambios() {
-
     this.signalRService.startConnection(BalanzaPesoGrupoSignalREnum.Pantalla_Pesaje);
 
     this.signalRService.pesoBalanza.subscribe((peso: string) => {
 
       this.loadingPeso = false;
-
-        console.log(peso)
-      if(this.despachoPreventaArticuloDetalleSelected.estadoId==1
+      if(this.despachoPreventaArticuloDetalleSelected?.estadoId==1
         && this.despachoPreventaArticuloDetalleSelected.unidadMedida=='LBS'
         && this.despachoPreventaSeleccionado.finalizado==0) {
           this.ngzone.run(() => {
@@ -914,7 +914,6 @@ getSucursalByUsuarioId() {
         } else {
 
           this.despachoPreventaDetalles = response.valores[0];
-          console.log( this.despachoPreventaDetalles)
           if(tipo==1){
 
 
@@ -1028,7 +1027,6 @@ getSucursalByUsuarioId() {
     }, 200);
 
     this.despachoPreventaArticuloDetalleSelected=item;
-    console.log( this.despachoPreventaArticuloDetalleSelected)
     //Muestra los articulos extras agregados de los despachos registrados
     this.showArticulosExtraEnDespachoRegistrado();
 
@@ -1107,7 +1105,6 @@ getSucursalByUsuarioId() {
       cantidadSeleccionada:x.cantidadSeleccionada
     });
   })
-  console.log(artExtrasSeleccionados)
 
 
 
@@ -1120,6 +1117,11 @@ getSucursalByUsuarioId() {
 
   p.lote = this.despachoPreventaArticuloDetalleSelected.lote;
   p.pedido = this.despachoPreventaArticuloDetalleSelected.pedido;
+  p.pedidoOferta= this.despachoPreventaArticuloDetalleSelected.pedidoOferta;
+  p.pedidoVentas= this.despachoPreventaArticuloDetalleSelected.pedidoVentas;
+  p.despachoTipo=1;
+  p.costo=0;
+  p.montoPedido=0;
   p.despacho = this.despachoPreventaArticuloDetalleSelected.despacho;
   p.fechaEntrega = this.despachoPreventaArticuloDetalleSelected.fechaEntrega;
   p.lote = this.lote.lote;
@@ -1127,6 +1129,7 @@ getSucursalByUsuarioId() {
 
 
   p.precio= this.despachoPreventaArticuloDetalleSelected.precio;
+
   p.validado=  this.despachoPreventaArticuloDetalleSelected.validado;
 
   p.articulosPesajeExtra= artExtrasSeleccionados;
@@ -1301,7 +1304,6 @@ finalizaDespacho(estado:number){
                 this.despachoPreventaSeleccionado.finalizado=1;
                 this.despachoPreventaSeleccionado.noEditable=1;
                 this.despachoPreventaSeleccionado.estadoDespacho=4;
-                console.log(  this.despachoPreventaSeleccionado)
               }
               this.despachoInUseVM.estado=4
 
@@ -1411,8 +1413,10 @@ ngOnDestroy(): void {
     setTimeout( () => {
 
         this.signalRService.disconnectBalanza(Number(this.usuario.puertoEquipo),
-       this.usuario.ipEquipo)
-        }, 2000);
+         this.usuario.ipEquipo)
+
+       this.emitPesoBalanza=true;
+        }, 1000);
 
 
 }
