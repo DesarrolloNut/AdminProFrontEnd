@@ -98,6 +98,7 @@ export class DespachoListadoComponent implements OnInit {
    fahoraServidor = new Date();
    despachoOn = 1
    Diferencia_Minima_Despacho = 0
+   Despacho_Max_Porciento = 0
 
 
    despachoPuedeHorario = true;
@@ -171,14 +172,18 @@ export class DespachoListadoComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.getDiferenciaMinima()
-    this.getCanales();
+    this.getALLAsync()
     this.getSucursalByUsuarioId();
     this.getUsuarioLogueado();
-    this.getAlmacenes();
     this.getArticulosDePesosExtras();
   }
 
+  async getALLAsync(){
+    await  this.getDiferenciaMinima()
+    await  this.getDespachoMaxPorciento()
+    await  this.getCanales();
+    await  this.getAlmacenes();
+  }
 
   startPingingBalanza() {
   setTimeout(() => {
@@ -221,7 +226,6 @@ export class DespachoListadoComponent implements OnInit {
     this.signalRService.startConnection(BalanzaPesoGrupoSignalREnum.Pantalla_Pesaje);
 
     this.signalRService.pesoBalanza.subscribe((peso: string) => {
-
       this.loadingPeso = false;
       if(this.despachoPreventaArticuloDetalleSelected?.estadoId==1
         && this.despachoPreventaArticuloDetalleSelected.unidadMedida=='LBS'
@@ -309,9 +313,9 @@ getAllData(){
     });
 }
 
-getDiferenciaMinima(){
-  this.httpService.DoPostAny<string>(DataApi.Despacho,
-    "GetDiferenciaMinimaDespacho", null).subscribe(response => {
+async getDiferenciaMinima(){
+  await this.httpService.DoPostAnyAsync<string>(DataApi.Despacho,
+    "GetDiferenciaMinimaDespacho", null).then(response => {
 
       if (!response.ok) {
         this.toastService.error(response.errores[0]);
@@ -322,6 +326,22 @@ getDiferenciaMinima(){
       console.error(error)
       this.toastService.error("ha ocurrido un error", "Error conexion al servidor");
     });
+}
+
+async getDespachoMaxPorciento() {
+  await  this.httpService.DoPostAnyAsync<string>(DataApi.Despacho,
+      "GetDespachoMaxPorciento", null).then(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+            this.Despacho_Max_Porciento=parseFloat(response.valores[0])
+
+        }
+      }, error => {
+        console.error(error)
+        this.toastService.error("ha ocurrido un error", "Error conexion al servidor");
+      });
 }
 
 
@@ -512,10 +532,10 @@ getSucursalByUsuarioId() {
         }, 1000);
       });
   }
-  getAlmacenes() {
+  async getAlmacenes() {
     this.loadingAlmacenes = true;
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetAlmacenes", null).subscribe(response => {
+  await  this.httpService.DoPostAsync<ComboBox>(DataApi.ComboBox,
+      "GetAlmacenes", null).then(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
@@ -745,10 +765,10 @@ getSucursalByUsuarioId() {
 
 
 
-  getCanales() {
+  async getCanales() {
     this.loadingCanales = true;
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetCanales", null).subscribe(response => {
+   await this.httpService.DoPostAsync<ComboBox>(DataApi.ComboBox,
+      "GetCanales", null).then(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
@@ -775,8 +795,6 @@ getSucursalByUsuarioId() {
 
   onChangeFechaDesdeFiltro(evento: any) {
     if(++this.primeraVez==1){return;}
-
-
     this.fecha = new Date(evento.value)
     this.getDataByCondicional()
   }
@@ -1054,7 +1072,8 @@ getSucursalByUsuarioId() {
 
  }
  onNextItemPreventaSubmit(){
-
+  let despachoMax=
+  this.despachoPreventaArticuloDetalleSelected.pedido + this.despachoPreventaArticuloDetalleSelected.pedido*(this.Despacho_Max_Porciento/100);
   //VALIDA EXISTE ALGUN ARTICULO PENDIENTE POR DESPACHAR
   if (!this.existeArticuloPendienteDespachar()) {return;}
 
@@ -1064,6 +1083,11 @@ getSucursalByUsuarioId() {
       if(this.lote.lote==undefined){
         this.toastService.warning("Debe digitar un lote existente");
         return;
+      }
+
+      if(despachoMax<this.despachoPreventaArticuloDetalleSelected.despacho){
+          this.toastService.warning("La cantidad a despachar excede la cantidad pedida.");
+          return;
       }
 
       // if(this.lote.disponible<=0){
@@ -1190,10 +1214,6 @@ getEstadoByInfoItem(item:DespachoPreventaDetalleViewModel):number{
   }else if(item.despacho<item.pedido){
      //ESTADO IMCOMPLETO
      return 2;
-  }else if(item.despacho<item.pedido){
-      //ESTADO IMCOMPLETO
-      return 2;
-
   }else{
     //ESTADO NO
    return 1;

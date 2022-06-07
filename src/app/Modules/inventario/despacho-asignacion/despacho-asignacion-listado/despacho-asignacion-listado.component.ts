@@ -125,8 +125,8 @@ validaHorarioAndGetData(showLoading=false){
      { key: "Fecha", value: this.fecha },
     ]
    this.httpService.GetAllWithPagination<DespachoListadoPreventaAsignacionVM>(DataApi.Despacho,
-      "GetDespachoPreventaListadoForAsignacion", "FechaEntrega", this.paginaNumeroActual,
-     this.paginaSize,true, parametros).subscribe(x => {
+      "GetDespachoPreventaListadoForAsignacion", "FechaInicioDespachador", this.paginaNumeroActual,
+     this.paginaSize,false, parametros).subscribe(x => {
        if (x.ok) {
 
          this.dataPreventa = x.valores[0];
@@ -210,7 +210,7 @@ validaHorarioAndGetData(showLoading=false){
 
           this.intervalRefreshData = setInterval(() => {
             this.getDataPreventa(false)
-          }, 5000)
+          }, 10000)
         }else{
           setTimeout(() => {
 
