@@ -58,13 +58,14 @@ export class BalanzaPesajeSignalrService {
   // https://appadmin.nutriciosa.com/BalanzaAPI/
   public  startConnection =  async (grupo: BalanzaPesoGrupoSignalREnum) => {
 
+
       if(this.hubConnection?.state==signalR.HubConnectionState.Connected){
         this.hubConnection.off('SendPesoToScreen'.toLowerCase(),this.handlerPeso);
         await  this.hubConnection.stop();
       }
 
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(this.baseUrl+"balanzaPesaje")
+      .withUrl("https://appadmin.nutriciosa.com/BalanzaAPI/"+"balanzaPesaje")
       .withAutomaticReconnect()
       .configureLogging(signalR.LogLevel.Information)
       .build();

@@ -1,10 +1,17 @@
+import { BarcodeService } from './barcode.service';
 import { Injectable } from '@angular/core';
 import * as moment from 'moment';
 // import * as FileSaver from 'file-saver';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from "pdfmake/build/vfs_fonts";
+import JsBarcode from 'jsbarcode/bin/JsBarcode'
+
+
+
+
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 import * as _ from 'underscore';
+import { DespachoPreventaDetalleExportVM } from '../Modules/inventario/despacho/models/DespachoPedidoDetalleViewModel';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +22,7 @@ export class PrintExportFile {
   constructor() { }
   // IMPORT EXCELJS GLOBAL
   private readonly Excel = require('exceljs');
+  private barcodeService: BarcodeService;
   private Workbook: any;
   private Worksheet: any;
 
@@ -219,50 +227,13 @@ export class PrintExportFile {
     return [];
   }
 
-  private CreateGroupForPropertyWithKey(colletion, propertys: Array<string>) {
 
 
-    //VALIDATIONS
-    let validate = true;
-    for (var i = 0; i < propertys.length; i++) {
-      let data = colletion[0].hasOwnProperty(propertys[i]);
-      if (!data) {
-        validate = false;
-        break;
-      }
-    }
-
-    //DATA
-    if (validate) {
-      let colletionInit = this.CreateOneGroupWithKey(colletion, propertys[0]);
-      for (var key in colletionInit) {
-        for (var y = 1; y < propertys.length; y++) {
-          colletionInit[key] = this.CreateOneGroupWithKey(colletionInit[key], propertys[y]);
-        }
-      }
-      return colletionInit;
-    }
-    return [];
-  }
-
-  private TotalColletion(colletion) {
-    let data = this.SumEqualProperty(colletion);
-    return data;
-  }
 
   //#endregion
 
   //#region METHODS UTILITIES
 
-  private RenameKey(obj, old_key, new_key) {
-    // check if old key = new key
-    if (old_key !== new_key) {
-      Object.defineProperty(obj, new_key, // modify old key
-        // fetch description from object
-        Object.getOwnPropertyDescriptor(obj, old_key));
-      delete obj[old_key];                // delete old key
-    }
-  }
 
   private NumberFormat(x, formatNumber: FormatNumber = FormatNumber.NORMAL, visibleCero: boolean = false) {
 
@@ -329,29 +300,10 @@ export class PrintExportFile {
     switch (ReporteKey) {
 
 
-      case 'RPT001':
-        break;
-
-      case 'RPT002':
-        break;
-
-      case 'RPT003':
-        break;
-
-      case 'RPT004':
-        break;
-
       case 'RPT005':
-        return this.BuildReportTemplate(CompanyName,ReportName, Header, ReportType, this.TemplateReport_BeneficiosLoteriayFechaPDF, this.TemplateReport_BeneficiosLoteriayFechaEXCEL);
-
+       // ADD OTHER TEMPLATE HERE
       case 'RPT006':
-        return this.BuildReportTemplate(CompanyName,ReportName, Header, ReportType, this.TemplateReport_PickingPreventaPDF, this.TemplateReport_TwoExcel);
-
-      case 'RPT007':
-        return this.BuildReportTemplate(CompanyName,ReportName, Header, ReportType,this.TemplateReport_OnePDF, this.TemplateReport_OneExcel);
-
-      case 'RPT008':
-        return this.BuildReportTemplate(CompanyName,ReportName, Header, ReportType,this.TemplateReport_OnePDF, this.TemplateReport_OneExcel);
+        return this.BuildReportTemplate(CompanyName,ReportName, Header, ReportType, this.TemplateReport_PickingPreventaPDF,null);
 
       default:
         break;
@@ -438,11 +390,16 @@ export class PrintExportFile {
 
   private ExportAsPDF(CompanyName,ReportName: string, Header: string, TemplateCallBack: (collection, NumberFormat: (numero: number, formatNumber: FormatNumber, visibleCero: boolean) => string, TotalColletion: (colletion) => any) => Array<any>) {
 
+
     var Data = TemplateCallBack(this.DATA, this.NumberFormat, this.SumEqualProperty);
-       console.log(this.DATA)
-     if(this.DATA[0].Despachador==undefined || this.DATA[0].Despachador==''){
-       this.DATA[0].Despachador='                                   ';
-     }
+
+    let firstData:DespachoPreventaDetalleExportVM= this.DATA[0]
+     if(firstData.Despachador==undefined || firstData.Despachador==''){
+        firstData.Despachador='                                   ';
+      }
+
+    let fechaEntrega =moment(firstData.FechaEntrega).format('YYYY-MM-DD')
+    let textForBarcode = `A-${firstData.Ruta }-${fechaEntrega.split('-').join('')}`;
 
     const documentDefinition = {
       pageMargins: [40,35,40, 100],
@@ -462,7 +419,6 @@ export class PrintExportFile {
               {
                 stack: [
                         {
-
                           text: 'Fecha: ' +moment().format('DD/MM/YYYY'), style: 'fontRightTableBody', fontSize: 10
                         },
                         {
@@ -489,29 +445,38 @@ export class PrintExportFile {
 
         {
           margin: [50,30,50,10],
-          columns:
-          [
+          stack:[
+            {
+              columns:
+              [
+                {
+                  stack: [
+                      { text: firstData.Despachador,fontSize: 13,style: 'fontCenterTableBody',decoration:'underline' },
+                      { text: "Despachador",fontSize: 13,style: 'fontCenterTableBody',},
+                   ]
+                },
+                {
+                  stack: [
+                      { text: "______________________",fontSize: 13,style: 'fontCenterTableBody',},
+                      { text: "Validador",fontSize: 13,style: 'fontCenterTableBody',},
+                   ]
+                },
+                {
+                  stack: [
+                    { text: firstData.Distribuidor+"("+firstData.Ruta+")",fontSize: 13,style: 'fontCenterTableBody', decoration:'underline' },
+                    { text: "Distribuidor",fontSize: 13,style: 'fontCenterTableBody',},
+                 ]
+                },
 
+              ]
+             },
+             {
+              margin: [0,20,0,0],
+              image : this.textToBase64Barcode(textForBarcode),
+              alignment: 'center'
+             }
+          ],
 
-            {
-              stack: [
-                  { text: this.DATA[0].Despachador,fontSize: 13,style: 'fontCenterTableBody',decoration:'underline' },
-                  { text: "Despachador",fontSize: 13,style: 'fontCenterTableBody',},
-               ]
-            },
-            {
-              stack: [
-                  { text: "______________________",fontSize: 13,style: 'fontCenterTableBody',},
-                  { text: "Validador",fontSize: 13,style: 'fontCenterTableBody',},
-               ]
-            },
-            {
-              stack: [
-                { text: this.DATA[0].Distribuidor+"("+this.DATA[0].Ruta+")",fontSize: 13,style: 'fontCenterTableBody', decoration:'underline' },
-                { text: "Distribuidor",fontSize: 13,style: 'fontCenterTableBody',},
-             ]
-            },
-          ]
         },
         // {
         //   margin: [50,30,50,10],
@@ -525,10 +490,14 @@ export class PrintExportFile {
       styles: this.FontStylesPDF
 
     };
+  console.log(this.DATA[0])
 
-    pdfMake.createPdf(documentDefinition).print();
-    //pdfMake.createPdf(documentDefinition).open({}, window);
+  //  MANERA ANTERIOR
+  //  pdfMake.createPdf(documentDefinition).print();
 
+  //  MANERA ACTUAL -> DE ESTA MANERA SE PUEDE UTILIZAR LA FUNCIONALIDA DE SILENT_PRINT QUE OFRECE GOOGLE CHROME
+      const pdfDocGenerator = pdfMake.createPdf(documentDefinition);
+      this.printBlobPDF(pdfDocGenerator);
   }
 
   private ExportAsPDFHorizontal(ReportName: string, Header: string, TemplateCallBack: (collection, NumberFormat: (numero: number, formatNumber: FormatNumber, visibleCero: boolean) => string, TotalColletion: (colletion) => any) => Array<any>) {
@@ -624,180 +593,7 @@ export class PrintExportFile {
 
   // #region REPORTS TEMPLATES
 
-  private TemplateReport_OnePDF(collection, NumberFormat: (numero: number, formatNumber: FormatNumber, visibleCero: boolean) => string, TotalColletion: (colletion) => any) {
-    let DataTemplate = [];
-    let IfNegative = (number: number, StyleNormal: string, StyleRed: string) => { return number < 0 ? StyleRed : StyleNormal }
 
-    // COLUMN TABLE
-    let RowHeader = [];
-    let borderHeader = [false, true, false, true];
-    RowHeader.push({ text: 'Ticket', style: 'fontCenterBoldTableHeader', border: borderHeader });     // 2
-    RowHeader.push({ text: 'Hora', style: 'fontCenterBoldTableHeader', border: borderHeader });        // 3
-    RowHeader.push({ text: null, border: borderHeader });          // 1
-    RowHeader.push({ text: null, border: borderHeader });          // 4
-    RowHeader.push({ text: null, border: borderHeader });          // 5
-    RowHeader.push({ text: null, border: borderHeader });          // 6
-    RowHeader.push({ text: 'Premios', style: 'fontCenterBoldTableHeader', border: borderHeader });     // 8
-    RowHeader.push({ text: null, border: borderHeader });          // 7
-    RowHeader.push({ text: null,  border: borderHeader });          // 9
-    RowHeader.push({ text: 'Saco', style: 'fontCenterBoldTableHeader', border: borderHeader });       // 10
-    // Add Header to Template
-    DataTemplate.push(RowHeader);
-
-
-
-
-    return DataTemplate;
-  }
-  private TemplateReport_OneExcel(collection, worksheet, FontStyles, NumberFormat: (numero: number, formatNumber: FormatNumber,  visibleCero: boolean) => string, TotalColletion: (colletion) => any) {
-
-
-    // COLUMN TABLE
-    let RowHeader = [];
-    RowHeader.push('Ticket');     // 2
-    RowHeader.push('Hora');        // 3
-    RowHeader.push('');          // 1
-    RowHeader.push('');          // 4
-    RowHeader.push('');          // 5
-    RowHeader.push('');          // 6
-    RowHeader.push('Premios');     // 8
-    RowHeader.push('');          // 7
-    RowHeader.push('');          // 9
-    RowHeader.push('Saco');       // 10
-    // Add Header to Template
-    let TableHeader = worksheet.addRow(RowHeader);
-    TableHeader.font = FontStyles.TableHeader.Font;
-    TableHeader.alignment = FontStyles.TableHeader.Alignment;
-    TableHeader.border = FontStyles.TableHeader.Border;
-
-    // CREATING GROUP
-    for (var key in collection) {
-      let GroupOne = collection[key];
-      let SecondKey = Object.keys(GroupOne)[0];
-      let TotalForGropOne = [];
-
-      // ROW GROUP ONE
-      let RowGroupOne = [];
-      RowGroupOne.push('Loteria: ' + key);    // 1
-      RowGroupOne.push('');                 // 2
-      RowGroupOne.push('Numeros');            // 4
-      RowGroupOne.push('Pales');              // 5
-      RowGroupOne.push('Precio');             // 6
-      RowGroupOne.push(GroupOne[SecondKey][0].PremioQ1); // 7
-      RowGroupOne.push(GroupOne[SecondKey][0].PremioQ2); // 8
-      RowGroupOne.push(GroupOne[SecondKey][0].PremioQ3); // 9
-      RowGroupOne.push('Pales');              // 10
-      RowGroupOne.push('');                 // 3
-
-      //Push and Clean RowGroupOne
-      let RowGroupOneStyle = worksheet.addRow(RowGroupOne);
-      RowGroupOneStyle.font = FontStyles.TableGroup.Font;
-      RowGroupOneStyle.alignment = FontStyles.TableGroup.Alignment;
-      RowGroupOneStyle.border = FontStyles.TableGroup.Border;
-      RowGroupOne = [];
-
-      for (var key2 in GroupOne) {
-        let GroupTwo = GroupOne[key2];
-
-
-
-        // ROW GROUP TWO
-        let RowGroupTwo = [];
-        RowGroupTwo.push('Banca: ' + key2);
-        //Push and Clean RowGroupOne
-        let RowGroupTwoStyle = worksheet.addRow(RowGroupTwo);
-        RowGroupTwoStyle.font = FontStyles.TableGroup.Font;
-        RowGroupTwoStyle.alignment = FontStyles.TableGroup.Alignment;
-        RowGroupTwoStyle.border = FontStyles.TableGroup.Border;
-        RowGroupTwo = [];
-
-        for (var key3 in GroupTwo) {
-          let data = GroupTwo[key3];
-
-          //Add Data for Total Group One
-          TotalForGropOne.push(data);
-
-          // ADD DATA TEMPLATE
-          let DataTable = [];
-          DataTable.push(data.Ticket);     // 1
-          DataTable.push(data.Hora);       // 2
-          DataTable.push(NumberFormat(data.Numeros, FormatNumber.NORMAL, false));    // 3
-          DataTable.push(NumberFormat(data.Pales, FormatNumber.CURRENCY, false));      // 4
-          DataTable.push(NumberFormat(data.Costo, FormatNumber.CURRENCY, false));      // 5
-          DataTable.push(NumberFormat(data.CPrimera, FormatNumber.NORMAL, false));   // 6
-          DataTable.push(NumberFormat(data.CSegunda, FormatNumber.NORMAL, false));   // 7
-          DataTable.push(NumberFormat(data.CTercera, FormatNumber.NORMAL, false));   // 8
-          DataTable.push(NumberFormat(data.MPales, FormatNumber.CURRENCY, false));     // 9
-          DataTable.push(NumberFormat(data.Saco, FormatNumber.CURRENCY, false));       // 10
-
-          //Push and Clean DataTable
-          let DataTableStyle = worksheet.addRow(DataTable);
-          DataTableStyle.font = FontStyles.TableBody.Font;
-          DataTableStyle.alignment = FontStyles.TableBody.Alignment;
-          DataTableStyle.border = FontStyles.TableBody.Border;
-          DataTable = [];
-
-        }
-
-
-
-        //TOTALES POR GRUPO DE DATA
-        let listTotal = [];
-        let TotalGroup: any = TotalColletion(GroupTwo);
-        listTotal.push('');     // 1
-        listTotal.push('');     // 1
-        listTotal.push(NumberFormat(TotalGroup.Numeros, FormatNumber.NORMAL, false));    // 3
-        listTotal.push(NumberFormat(TotalGroup.Pales, FormatNumber.CURRENCY, false));      // 4
-        listTotal.push(NumberFormat(TotalGroup.Costo, FormatNumber.CURRENCY, false));      // 5
-        listTotal.push('');     // 1
-        listTotal.push(GroupTwo.length);     // 1
-        listTotal.push('');     // 1
-        listTotal.push(NumberFormat(TotalGroup.MPales, FormatNumber.CURRENCY, false));     // 9
-        listTotal.push(NumberFormat(TotalGroup.Saco, FormatNumber.CURRENCY, false));       // 10
-
-        //Push and Clean DataTable
-        let listTotalStyle = worksheet.addRow(listTotal);
-        listTotalStyle.font = FontStyles.TableTotal.Font;
-        listTotalStyle.alignment = FontStyles.TableTotal.Alignment;
-        listTotalStyle.border = FontStyles.TableTotal.Border;
-        listTotal = [];
-
-
-
-
-      }
-
-      //BLANK SPACE
-      worksheet.addRow([]);
-
-      //TOTALES POR GRUPO DE DATA
-      let TotalGroupTemplate = [];
-      let TotalGroupData: any = TotalColletion(TotalForGropOne);
-      TotalGroupTemplate.push('');     // 1
-      TotalGroupTemplate.push('');     // 1
-      TotalGroupTemplate.push(NumberFormat(TotalGroupData.Numeros, FormatNumber.NORMAL, false));    // 3
-      TotalGroupTemplate.push(NumberFormat(TotalGroupData.Pales, FormatNumber.CURRENCY, false));      // 4
-      TotalGroupTemplate.push(NumberFormat(TotalGroupData.Costo, FormatNumber.CURRENCY, false));      // 5
-      TotalGroupTemplate.push('');     // 1
-      TotalGroupTemplate.push('');     // 1
-      TotalGroupTemplate.push('');     // 1
-      TotalGroupTemplate.push(NumberFormat(TotalGroupData.MPales, FormatNumber.CURRENCY, false));     // 9
-      TotalGroupTemplate.push(NumberFormat(TotalGroupData.Saco, FormatNumber.CURRENCY, false));       // 10
-
-      //Push and Clean DataTable
-      let TotalGroupTemplateStyle = worksheet.addRow(TotalGroupTemplate);
-      TotalGroupTemplateStyle.font = FontStyles.TableTotal.Font;
-      TotalGroupTemplateStyle.alignment = FontStyles.TableTotal.Alignment;
-      TotalGroupTemplateStyle.border = FontStyles.TableTotal.Border;
-      TotalGroupTemplate = [];
-
-      //BLANK SPACE
-      worksheet.addRow([]);
-
-    }
-
-
-  }
 
   private TemplateReport_PickingPreventaPDF(collection:Array<any>, NumberFormat: (numero: number, formatNumber: FormatNumber, visibleCero: boolean) => string, TotalColletion: (colletion) => any) {
     let DataTemplate = [];
@@ -839,898 +635,43 @@ export class PrintExportFile {
 
     return DataTemplate;
   }
-  private TemplateReport_TwoExcel(collection, worksheet, FontStyles, NumberFormat: (numero: number, formatNumber: FormatNumber, visibleCero: boolean) => string, TotalColletion: (colletion) => any) {
-
-
-    // COLUMN TABLE
-    let RowHeader = [];
-    RowHeader.push('Ticket');     // 2
-    RowHeader.push('Hora');        // 3
-    RowHeader.push('');          // 1
-    RowHeader.push('');          // 4
-    RowHeader.push('');          // 5
-    RowHeader.push('');          // 6
-    RowHeader.push('Premios');     // 8
-    RowHeader.push('');          // 7
-    RowHeader.push('');          // 9
-    RowHeader.push('');          // 9
-    RowHeader.push('Saco');       // 10
-    // Add Header to Template
-    let TableHeader = worksheet.addRow(RowHeader);
-    TableHeader.font = FontStyles.TableHeader.Font;
-    TableHeader.alignment = FontStyles.TableHeader.Alignment;
-    TableHeader.border = FontStyles.TableHeader.Border;
-
-    // CREATING GROUP
-    for (var key in collection) {
-      let GroupOne = collection[key];
-      let SecondKey = Object.keys(GroupOne)[0];
-      let TotalForGropOne = [];
-
-      // ROW GROUP ONE
-      let RowGroupOne = [];
-      RowGroupOne.push('Loteria: ' + key);    // 1
-      RowGroupOne.push('');                 // 2
-      RowGroupOne.push('Numeros');            // 4
-      RowGroupOne.push('Pales');              // 5
-      RowGroupOne.push('Precio');             // 6
-      RowGroupOne.push(GroupOne[SecondKey][0].PremioQ1); // 7
-      RowGroupOne.push(GroupOne[SecondKey][0].PremioQ2); // 8
-      RowGroupOne.push(GroupOne[SecondKey][0].PremioQ3); // 9
-      RowGroupOne.push('Pales');              // 10
-      RowGroupOne.push('Impuestos');              // 10
-      RowGroupOne.push('');                 // 3
-
-      //Push and Clean RowGroupOne
-      let RowGroupOneStyle = worksheet.addRow(RowGroupOne);
-      RowGroupOneStyle.font = FontStyles.TableGroup.Font;
-      RowGroupOneStyle.alignment = FontStyles.TableGroup.Alignment;
-      RowGroupOneStyle.border = FontStyles.TableGroup.Border;
-      RowGroupOne = [];
-
-      for (var key2 in GroupOne) {
-        let GroupTwo = GroupOne[key2];
-
-
-
-        // ROW GROUP TWO
-        let RowGroupTwo = [];
-        RowGroupTwo.push('Banca: ' + key2);
-        //Push and Clean RowGroupOne
-        let RowGroupTwoStyle = worksheet.addRow(RowGroupTwo);
-        RowGroupTwoStyle.font = FontStyles.TableGroup.Font;
-        RowGroupTwoStyle.alignment = FontStyles.TableGroup.Alignment;
-        RowGroupTwoStyle.border = FontStyles.TableGroup.Border;
-        RowGroupTwo = [];
-
-        for (var key3 in GroupTwo) {
-          let data = GroupTwo[key3];
-
-          //Add Data for Total Group One
-          TotalForGropOne.push(data);
-
-          // ADD DATA TEMPLATE
-          let DataTable = [];
-          DataTable.push(data.Ticket);     // 1
-          DataTable.push(data.Hora);       // 2
-          DataTable.push(NumberFormat(data.Numeros, FormatNumber.NORMAL, false));    // 3
-          DataTable.push(NumberFormat(data.Pales, FormatNumber.CURRENCY, false));      // 4
-          DataTable.push(NumberFormat(data.Costo, FormatNumber.CURRENCY, false));      // 5
-          DataTable.push(NumberFormat(data.CPrimera, FormatNumber.NORMAL, false));   // 6
-          DataTable.push(NumberFormat(data.CSegunda, FormatNumber.NORMAL, false));   // 7
-          DataTable.push(NumberFormat(data.CTercera, FormatNumber.NORMAL, false));   // 8
-          DataTable.push(NumberFormat(data.MPales, FormatNumber.CURRENCY, false));     // 9
-          DataTable.push(NumberFormat(data.Impuestos, FormatNumber.CURRENCY, false));     // 9
-          DataTable.push(NumberFormat(data.Saco, FormatNumber.CURRENCY, false));       // 10
-
-          //Push and Clean DataTable
-          let DataTableStyle = worksheet.addRow(DataTable);
-          DataTableStyle.font = FontStyles.TableBody.Font;
-          DataTableStyle.alignment = FontStyles.TableBody.Alignment;
-          DataTableStyle.border = FontStyles.TableBody.Border;
-          DataTable = [];
-
-        }
-
-
-
-        //TOTALES POR GRUPO DE DATA
-        let listTotal = [];
-        let TotalGroup: any = TotalColletion(GroupTwo);
-        listTotal.push('');     // 1
-        listTotal.push('');     // 1
-        listTotal.push(NumberFormat(TotalGroup.Numeros, FormatNumber.NORMAL, false));    // 3
-        listTotal.push(NumberFormat(TotalGroup.Pales, FormatNumber.CURRENCY, false));      // 4
-        listTotal.push(NumberFormat(TotalGroup.Costo, FormatNumber.CURRENCY, false));      // 5
-        listTotal.push('');     // 1
-        listTotal.push(GroupTwo.length);     // 1
-        listTotal.push('');     // 1
-        listTotal.push(NumberFormat(TotalGroup.MPales, FormatNumber.CURRENCY, false));     // 9
-        listTotal.push(NumberFormat(TotalGroup.Impuestos, FormatNumber.CURRENCY, false));     // 9
-        listTotal.push(NumberFormat(TotalGroup.Saco, FormatNumber.CURRENCY, false));       // 10
-
-        //Push and Clean DataTable
-        let listTotalStyle = worksheet.addRow(listTotal);
-        listTotalStyle.font = FontStyles.TableTotal.Font;
-        listTotalStyle.alignment = FontStyles.TableTotal.Alignment;
-        listTotalStyle.border = FontStyles.TableTotal.Border;
-        listTotal = [];
 
 
 
 
-      }
 
-      //BLANK SPACE
-      worksheet.addRow([]);
 
-      //TOTALES POR GRUPO DE DATA
-      let TotalGroupTemplate = [];
-      let TotalGroupData: any = TotalColletion(TotalForGropOne);
-      TotalGroupTemplate.push('');     // 1
-      TotalGroupTemplate.push('');     // 1
-      TotalGroupTemplate.push(NumberFormat(TotalGroupData.Numeros, FormatNumber.NORMAL, false));    // 3
-      TotalGroupTemplate.push(NumberFormat(TotalGroupData.Pales, FormatNumber.CURRENCY, false));      // 4
-      TotalGroupTemplate.push(NumberFormat(TotalGroupData.Costo, FormatNumber.CURRENCY, false));      // 5
-      TotalGroupTemplate.push('');     // 1
-      TotalGroupTemplate.push('');     // 1
-      TotalGroupTemplate.push('');     // 1
-      TotalGroupTemplate.push(NumberFormat(TotalGroupData.MPales, FormatNumber.CURRENCY, false));     // 9
-      TotalGroupTemplate.push(NumberFormat(TotalGroupData.Impuestos, FormatNumber.CURRENCY, false));     // 9
-      TotalGroupTemplate.push(NumberFormat(TotalGroupData.Saco, FormatNumber.CURRENCY, false));       // 10
 
-      //Push and Clean DataTable
-      let TotalGroupTemplateStyle = worksheet.addRow(TotalGroupTemplate);
-      TotalGroupTemplateStyle.font = FontStyles.TableTotal.Font;
-      TotalGroupTemplateStyle.alignment = FontStyles.TableTotal.Alignment;
-      TotalGroupTemplateStyle.border = FontStyles.TableTotal.Border;
-      TotalGroupTemplate = [];
 
-      //BLANK SPACE
-      worksheet.addRow([]);
 
+  textToBase64Barcode(text){
+
+    var canvas = document.createElement("canvas");
+    JsBarcode(canvas, text, {
+      format: "code128",
+       height: 30,
+       width: 1,
+       fontSize: 10,
+    });
+    return canvas.toDataURL("image/png");
     }
+    printBlobPDF(pdfDocGenerator){
+      pdfDocGenerator.getBlob((blob) => {
+        var blobURL = URL.createObjectURL(blob);
 
+        let iframe =  document.createElement('iframe'); //load content in an iframe to print later
+        document.body.appendChild(iframe);
 
-  }
-
-
-  private TemplateReport_SimplePDF(collection, NumberFormat: (numero: number, formatNumber: FormatNumber, visibleCero: boolean) => string, TotalColletion: (colletion) => any) {
-    let DataTemplate = [];
-    let IfNegative = (number: number, StyleNormal: string, StyleRed: string) => { return number < 0 ? StyleRed : StyleNormal }
-
-    //GET COLUMN NAME
-    let listNamesColumns = [];
-    let borderHeader = [false, true, false, true];
-    var NamesColumns = Object.keys(collection[0]);
-
-    // Agregando Color a Header
-    for (var i in NamesColumns) {
-      listNamesColumns.push({ text: NamesColumns[i], style: 'fontCenterBoldTableHeader', border: borderHeader});
+        iframe.style.display = 'none';
+        iframe.src = blobURL;
+        iframe.onload = function() {
+          setTimeout(function() {
+            iframe.focus();
+            iframe.contentWindow.print();
+          }, 1);
+        };
+      });
     }
-    // Agregando header a la lista
-    DataTemplate.push(listNamesColumns);
-
-    // CREATING TEMPLATE
-    for (var item in collection) {
-      let selectObject = collection[item];
-      //VALIDANDO FECHA
-      if (!isUndefined(selectObject.Fecha)) {
-        let fecha = moment(selectObject.Fecha).format('DD-MMM');
-        selectObject.Fecha = fecha;
-      }
-      //AGREGANDO DATA
-      var listValue = [];
-      let values = Object.values(selectObject);
-      for (var x in values) {
-        let value = values[x];
-
-        if (value === "") {
-          value = null;
-        }
-
-        let borderDataTable = [false, false, false, false];
-
-
-        if (!Number.isNaN(Number(value)) && value < 0) {
-
-          value = NumberFormat(Number(value), FormatNumber.NORMAL, true);
-          listValue.push({ text: value, style: 'fontRightBoldTableBodyRed', border: borderDataTable });
-
-        } else if (!Number.isNaN(Number(value))) {
-          value = NumberFormat(Number(value), FormatNumber.NORMAL, true);
-          listValue.push({ text: value, style: 'fontRightTableBody', border: borderDataTable });
-
-        } else {
-          listValue.push({ text: value, style: 'fontLeftTableBody', border: borderDataTable });
-        }
-
-      }
-      DataTemplate.push(listValue);
-    }
-
-    //TOTALES POR GRUPO DE DATA
-    //let listTotal = [];
-    let LineOne = [];
-    let LineTwo = [];
-    let Aleatorio: Boolean = true;
-    let borderTotalGroup = [false, true, false, false];
-    let resources = TotalColletion(collection);
-
-    let report = _.uniq(collection, NamesColumns[0]).length;
-    LineOne.unshift({ text: 'Resumen: ', style: 'fontLeftBoldTableBody', border: borderTotalGroup });
-    LineTwo.unshift({ text: report, style: 'fontCenterBoldTableBody', border: [false, false, false, false] });
-
-    for (var x in resources) {
-      let data = resources[x];
-      Aleatorio = !Aleatorio;
-      if (!Number.isNaN(Number(data))) {
-        if (Aleatorio) {
-          LineOne.push({ text: NumberFormat(data, FormatNumber.CURRENCY, true), style: IfNegative(Number(data), 'fontRightBoldTableBody', 'fontRightBoldTableBodyRed'), border: borderTotalGroup })
-          LineTwo.push({ text: null, border: [false, false, false, false]  });
-        } else if (!Aleatorio) {
-          LineTwo.push({ text: NumberFormat(data, FormatNumber.CURRENCY, true), style: IfNegative(Number(data), 'fontRightBoldTableBody', 'fontRightBoldTableBodyRed'), border: [false, false, false, false] })
-          LineOne.push({ text: null, border: borderTotalGroup  });
-        }
-      }
-    }
-    //ESPACIOS VACIOS
-    let CountForComplete = (ArrayCompleted, ArrayForComplete) => { return (ArrayCompleted.length - ArrayForComplete.length) < 0 ? 0 : (ArrayCompleted.length - ArrayForComplete.length); };
-    let dataLenght = CountForComplete(NamesColumns, LineOne);
-    for (var z = 0; z < dataLenght; z++) {
-      LineOne.unshift({ text: null, border: borderTotalGroup });
-      LineTwo.unshift({ text: null, border: [false, false, false, false] });
-    }
-    DataTemplate.push(LineOne);
-    DataTemplate.push(LineTwo);
-
-
-    return DataTemplate;
-  }
-  private TemplateReport_SimpleExcel(collection, worksheet, FontStyles, NumberFormat: (numero: number, formatNumber: FormatNumber, visibleCero: boolean) => string, TotalColletion: (colletion) => any) {
-
-    //GET COLUMN NAME
-    var NamesColumns = Object.keys(collection[0]);
-    //Add Header Row
-    let headerRow = worksheet.addRow(NamesColumns);
-    headerRow.font = FontStyles.TableHeader.Font;
-    headerRow.alignment = FontStyles.TableHeader.Alignment;
-    headerRow.border = FontStyles.TableHeader.Border;
-
-
-    for (var x in collection) {
-
-      let value = collection[x];
-
-      //VALIDANDO FECHA
-      if (!isUndefined(value.Fecha)) {
-        let fecha = moment(value.Fecha).format('DD-MMM');
-        value.Fecha = fecha;
-      }
-
-      let dataForValue = Object.values(value);
-      let dataStyle = worksheet.addRow(dataForValue);
-      dataStyle.font = FontStyles.TableBody.Font;
-      dataStyle.alignment = FontStyles.TableBody.Alignment;
-      dataStyle.border = FontStyles.TableBody.Border;
-    }
-
-    //TOTALES POR GRUPO DE DATA
-    let listTotal = [];
-    let resources = TotalColletion(collection);
-    let report = _.uniq(collection, NamesColumns[0]).length;
-    listTotal.unshift('Resumen: ' + report);
-
-    for (var x in resources) {
-      let data = resources[x];
-      if (!Number.isNaN(Number(data))) {
-        listTotal.push(NumberFormat(data, FormatNumber.CURRENCY, true))
-      }
-    }
-
-    //ESPACIOS VACIOS
-    let dataLenght = (NamesColumns.length - listTotal.length) < 0 ? 0 : (NamesColumns.length - listTotal.length);
-    for (var z = 0; z < dataLenght; z++) {
-      listTotal.unshift(' ');
-    }
-    let TotalGroups = worksheet.addRow(listTotal);
-    TotalGroups.font = FontStyles.TableTotal.Font;
-    TotalGroups.alignment = FontStyles.TableTotal.Alignment;
-    TotalGroups.border = FontStyles.TableTotal.Border;
-    //Blank Row
-    worksheet.addRow([]);
-
-  }
-
-
-  private TemplateReport_GroupOnePDF(collection, NumberFormat: (numero: number, formatNumber: FormatNumber, visibleCero: boolean) => string, TotalColletion: (colletion) => any) {
-    let DataTemplate = [];
-    let IfNegative = (number: number, StyleNormal: string, StyleRed: string) => { return number < 0 ? StyleRed : StyleNormal }
-
-    //GET COLUMN NAME
-    let listNamesColumns = [];
-    let borderHeader = [false, true, false, true];
-
-    let keyGroupOne = Object.keys(collection)[0];
-    var NamesColumns = Object.keys(collection[keyGroupOne][0]);
-
-    // Agregando Color a Header
-    for (var i in NamesColumns) {
-      listNamesColumns.push({ text: NamesColumns[i], style: 'fontCenterBoldTableHeader', border: borderHeader });
-    }
-    // Agregando header a la lista
-    DataTemplate.push(listNamesColumns);
-
-    let allGroupOne = [];
-
-    for (let item in collection) {
-
-      // ROW GROUP ONE
-      let GroupOne = collection[item];
-      DataTemplate.push([{ text: item, colSpan: NamesColumns.length, style: 'fontLeftBoldTableGroup', border: [false, false, false, false] }]);
-
-      // CREATING TEMPLATE
-      for (let key in GroupOne) {
-        let selectObject = GroupOne[key];
-        allGroupOne.push(selectObject);
-        //VALIDANDO FECHA
-        if (!isUndefined(selectObject.Fecha)) {
-          let fecha = moment(selectObject.Fecha).format('DD-MMM');
-          selectObject.Fecha = fecha;
-        }
-        //AGREGANDO DATA
-        var listValue = [];
-        let values = Object.values(selectObject);
-        for (var x in values) {
-          let value = values[x];
-
-          if (value === "") {
-            value = null;
-          }
-
-          let borderDataTable = [false, false, false, false];
-
-          if (!Number.isNaN(Number(value)) && value < 0) {
-
-            value = NumberFormat(Number(value), FormatNumber.NORMAL, true);
-            listValue.push({ text: value, style: 'fontRightBoldTableBodyRed', border: borderDataTable });
-
-          } else if (!Number.isNaN(Number(value))) {
-            value = NumberFormat(Number(value), FormatNumber.NORMAL, true);
-            listValue.push({ text: value, style: 'fontRightTableBody', border: borderDataTable });
-
-          } else {
-            listValue.push({ text: value, style: 'fontLeftTableBody', border: borderDataTable });
-          }
-
-        }
-        DataTemplate.push(listValue);
-      }
-
-      //TOTALES POR GRUPO DE DATA
-      let listTotal = [];
-      let borderTotalGroup = [false, true, false, false];
-      let resources = TotalColletion(GroupOne);
-
-      for (var x in resources) {
-        let data = resources[x];
-        if (!Number.isNaN(Number(data))) {
-          listTotal.push({ text: NumberFormat(data, FormatNumber.CURRENCY, true), style: IfNegative(parseInt(data), 'fontRightBoldTableBody', 'fontRightBoldTableBodyRed'), border: borderTotalGroup })
-        }
-      }
-      //ESPACIOS VACIOS
-      let dataLenght = (NamesColumns.length - listTotal.length) < 0 ? 0 : (NamesColumns.length - listTotal.length);
-      for (var z = 0; z < dataLenght; z++) {
-        listTotal.unshift({ text: null, style: 'fontRightBoldTableBody', border: borderTotalGroup });
-      }
-      DataTemplate.push(listTotal);
-
-    }
-
-
-    //TOTALES
-    //let listTotal = [];
-    let LineOne = [];
-    let LineTwo = [];
-    let Aleatorio: Boolean = false;
-    let borderTotalGroup = [false, true, false, false];
-    let resources = TotalColletion(allGroupOne);
-
-    let report = _.uniq(Object.keys(collection)).length;
-    LineOne.unshift({ text: 'Resumen: ', style: 'fontLeftBoldTableGroup', border: borderTotalGroup });
-    LineTwo.unshift({ text: report, style: 'fontRightBoldTableGroup', border: [false, false, false, false] });
-
-    for (var x in resources) {
-      let data = resources[x];
-      Aleatorio = !Aleatorio;
-      if (!Number.isNaN(Number(data))) {
-        if (Aleatorio) {
-          LineOne.push({ text: NumberFormat(data, FormatNumber.CURRENCY, true), style: IfNegative(Number(data), 'fontRightBoldTableGroup', 'fontRightBoldTableGroupRed'), border: borderTotalGroup })
-          LineTwo.push({ text: null, border: [false, false, false, false] });
-        } else if (!Aleatorio) {
-          LineTwo.push({ text: NumberFormat(data, FormatNumber.CURRENCY, true), style: IfNegative(Number(data), 'fontRightBoldTableGroup', 'fontRightBoldTableGroupRed'), border: [false, false, false, false] })
-          LineOne.push({ text: null, border: borderTotalGroup });
-        }
-        //listTotal.push({ text: NumberFormat(data, FormatNumber.CURRENCY, true), style: IfNegative(parseInt(data), 'fontRightBoldTableGroup', 'fontRightBoldTableGroupRed'), border: borderTotalGroup })
-      }
-    }
-    //ESPACIOS VACIOS
-    let CountForComplete = (ArrayCompleted, ArrayForComplete) => { return (ArrayCompleted.length - ArrayForComplete.length) < 0 ? 0 : (ArrayCompleted.length - ArrayForComplete.length); };
-    let dataLenght = CountForComplete(NamesColumns, LineOne);
-    for (var z = 0; z < dataLenght; z++) {
-      LineOne.unshift({ text: null, border: borderTotalGroup });
-      LineTwo.unshift({ text: null, border: [false, false, false, false] });
-    }
-
-    DataTemplate.push(LineOne);
-    DataTemplate.push(LineTwo);
-
-
-
-    return DataTemplate;
-  }
-  private TemplateReport_GroupOneExcel(collection, worksheet, FontStyles, NumberFormat: (numero: number, formatNumber: FormatNumber, visibleCero: boolean) => string, TotalColletion: (colletion) => any) {
-
-    //GET COLUMN NAME
-    let keyGroupOne = Object.keys(collection)[0];
-    var NamesColumns = Object.keys(collection[keyGroupOne][0]);
-    //Add Header Row
-    let headerRow = worksheet.addRow(NamesColumns);
-    headerRow.font = FontStyles.TableHeader.Font;
-    headerRow.alignment = FontStyles.TableHeader.Alignment;
-    headerRow.border = FontStyles.TableHeader.Border;
-
-    let allGroupOne = [];
-
-    for (let item in collection) {
-      let GroupOne = collection[item];
-
-      // ROW GROUP ONE
-      let GroupOneStyle =  worksheet.addRow([item]);
-      GroupOneStyle.font = FontStyles.TableGroup.Font;
-      GroupOneStyle.alignment = FontStyles.TableGroup.Alignment;
-      GroupOneStyle.border = FontStyles.TableGroup.Border;
-
-      for (let key in GroupOne) {
-        let selectObject = GroupOne[key];
-        allGroupOne.push(selectObject);
-
-        //VALIDANDO FECHA
-        if (!isUndefined(selectObject.Fecha)) {
-          let fecha = moment(selectObject.Fecha).format('DD-MMM');
-          selectObject.Fecha = fecha;
-        }
-
-        //AGREGANDO DATA
-        let dataForValue = Object.values(selectObject);
-        let dataStyle = worksheet.addRow(dataForValue);
-        dataStyle.font = FontStyles.TableBody.Font;
-        dataStyle.alignment = FontStyles.TableBody.Alignment;
-        dataStyle.border = FontStyles.TableBody.Border;
-
-      }
-
-      //TOTALES POR GRUPO DE DATA
-      let listTotal = [];
-      let resources = TotalColletion(GroupOne);
-      //let report = _.uniq(Object.keys(collection)).length;
-      //listTotal.unshift('Resumen: ' + report);
-
-      for (var x in resources) {
-        let data = resources[x];
-        if (!Number.isNaN(Number(data))) {
-          listTotal.push(NumberFormat(data, FormatNumber.CURRENCY, true))
-        }
-      }
-
-      //ESPACIOS VACIOS
-      let dataLenght = (NamesColumns.length - listTotal.length) < 0 ? 0 : (NamesColumns.length - listTotal.length);
-      for (var z = 0; z < dataLenght; z++) {
-        listTotal.unshift(' ');
-      }
-      let TotalGroups = worksheet.addRow(listTotal);
-      TotalGroups.font = FontStyles.TableTotal.Font;
-      TotalGroups.alignment = FontStyles.TableTotal.Alignment;
-      TotalGroups.border = FontStyles.TableTotal.Border;
-      //Blank Row
-      worksheet.addRow([]);
-
-    }
-
-    //TOTALES
-    let listTotal = [];
-    let resources = TotalColletion(allGroupOne);
-    let report = _.uniq(Object.keys(collection)).length;
-    listTotal.unshift('Resumen: ' + report);
-
-    for (var x in resources) {
-      let data = resources[x];
-      if (!Number.isNaN(Number(data))) {
-        listTotal.push(NumberFormat(data, FormatNumber.CURRENCY, true))
-      }
-    }
-
-    //ESPACIOS VACIOS
-    let dataLenght = (NamesColumns.length - listTotal.length) < 0 ? 0 : (NamesColumns.length - listTotal.length);
-    for (var z = 0; z < dataLenght; z++) {
-      listTotal.unshift(' ');
-    }
-    let TotalGroups = worksheet.addRow(listTotal);
-    TotalGroups.font = FontStyles.TableTotal.Font;
-    TotalGroups.alignment = FontStyles.TableTotal.Alignment;
-    TotalGroups.border = FontStyles.TableTotal.Border;
-    //Blank Row
-    worksheet.addRow([]);
-
-
-
-  }
-
-  private TemplateReport_BeneficiosLoteriayFechaPDF(collection, NumberFormat: (numero: number, formatNumber: FormatNumber, visibleCero: boolean) => string, TotalColletion: (colletion) => any) {
-    let DataTemplate = [];
-    let IfNegative = (number: number, StyleNormal: string, StyleRed: string) => { return number < 0 ? StyleRed : StyleNormal }
-
-    //GET COLUMN NAME
-    let listNamesColumns = [];
-    let borderHeader = [false, true, false, true];
-
-    let keyGroupOne = Object.keys(collection)[0];
-    var NamesColumns = Object.keys(collection[keyGroupOne][0]);
-
-    // Agregando Color a Header
-    for (var i in NamesColumns) {
-      listNamesColumns.push({ text: NamesColumns[i], style: 'fontCenterBoldTableHeader', border: borderHeader });
-    }
-    // Agregando header a la lista
-    DataTemplate.push(listNamesColumns);
-
-    let allGroupOne = [];
-
-    for (let item in collection) {
-
-      // ROW GROUP ONE
-      let GroupOne = collection[item];
-      DataTemplate.push([{ text: item, colSpan: NamesColumns.length, style: 'fontLeftBoldTableGroup', border: [false, false, false, false] }]);
-
-      // CREATING TEMPLATE
-      for (let key in GroupOne) {
-        let selectObject = GroupOne[key];
-        allGroupOne.push(selectObject);
-        //VALIDANDO FECHA
-        if (!isUndefined(selectObject.Fecha)) {
-          let fecha = moment(selectObject.Fecha).format('DD-MMM');
-          selectObject.Fecha = fecha;
-        }
-        //AGREGANDO DATA
-        var listValue = [];
-        let values = Object.values(selectObject);
-        for (var x in values) {
-          let value = values[x];
-
-          if (value === "") {
-            value = null;
-          }
-
-          let borderDataTable = [false, false, false, false];
-
-          if (!Number.isNaN(Number(value)) && value < 0) {
-
-            value = NumberFormat(Number(value), FormatNumber.CURRENCY, true);
-            listValue.push({ text: value, style: 'fontRightBoldTableBodyRed', border: borderDataTable });
-
-          } else if (!Number.isNaN(Number(value))) {
-            value = NumberFormat(Number(value), FormatNumber.CURRENCY, true);
-            listValue.push({ text: value, style: 'fontRightTableBody', border: borderDataTable });
-
-          } else {
-            listValue.push({ text: value, style: 'fontLeftTableBody', border: borderDataTable });
-          }
-
-        }
-        DataTemplate.push(listValue);
-      }
-
-      //TOTALES POR GRUPO DE DATA
-      let listTotal = [];
-      let borderTotalGroup = [false, true, false, false];
-      let resources = TotalColletion(GroupOne);
-
-      for (var x in resources) {
-        let data = resources[x];
-        if (!Number.isNaN(Number(data))) {
-          listTotal.push({ text: NumberFormat(data, FormatNumber.CURRENCY, true), style: IfNegative(parseInt(data), 'fontRightBoldTableBody', 'fontRightBoldTableBodyRed'), border: borderTotalGroup })
-        }
-      }
-      //ESPACIOS VACIOS
-      let dataLenght = (NamesColumns.length - listTotal.length) < 0 ? 0 : (NamesColumns.length - listTotal.length);
-      for (var z = 0; z < dataLenght; z++) {
-        listTotal.unshift({ text: null, style: 'fontRightBoldTableBody', border: borderTotalGroup });
-      }
-      DataTemplate.push(listTotal);
-
-    }
-
-
-    //TOTALES
-    //let listTotal = [];
-    let LineOne = [];
-    let LineTwo = [];
-    let Aleatorio: Boolean = false;
-    let borderTotalGroup = [false, true, false, false];
-    let resources = TotalColletion(allGroupOne);
-
-    let report = _.uniq(Object.keys(collection)).length;
-    LineOne.unshift({ text: 'Resumen: ', style: 'fontLeftBoldTableGroup', border: borderTotalGroup });
-    LineTwo.unshift({ text: report, style: 'fontRightBoldTableGroup', border: [false, false, false, false] });
-
-    for (var x in resources) {
-      let data = resources[x];
-      Aleatorio = !Aleatorio;
-      if (!Number.isNaN(Number(data))) {
-        if (Aleatorio) {
-          LineOne.push({ text: NumberFormat(data, FormatNumber.CURRENCY, true), style: IfNegative(Number(data), 'fontRightBoldTableGroup', 'fontRightBoldTableGroupRed'), border: borderTotalGroup })
-          LineTwo.push({ text: null, border: [false, false, false, false] });
-        } else if (!Aleatorio) {
-          LineTwo.push({ text: NumberFormat(data, FormatNumber.CURRENCY, true), style: IfNegative(Number(data), 'fontRightBoldTableGroup', 'fontRightBoldTableGroupRed'), border: [false, false, false, false] })
-          LineOne.push({ text: null, border: borderTotalGroup });
-        }
-        //listTotal.push({ text: NumberFormat(data, FormatNumber.CURRENCY, true), style: IfNegative(parseInt(data), 'fontRightBoldTableGroup', 'fontRightBoldTableGroupRed'), border: borderTotalGroup })
-      }
-    }
-    //ESPACIOS VACIOS
-    let CountForComplete = (ArrayCompleted, ArrayForComplete) => { return (ArrayCompleted.length - ArrayForComplete.length) < 0 ? 0 : (ArrayCompleted.length - ArrayForComplete.length); };
-    let dataLenght = CountForComplete(NamesColumns, LineOne);
-    for (var z = 0; z < dataLenght; z++) {
-      LineOne.unshift({ text: null, border: borderTotalGroup });
-      LineTwo.unshift({ text: null, border: [false, false, false, false] });
-    }
-
-    DataTemplate.push(LineOne);
-    DataTemplate.push(LineTwo);
-
-
-
-    return DataTemplate;
-  }
-  private TemplateReport_BeneficiosLoteriayFechaEXCEL(collection, worksheet, FontStyles, NumberFormat: (numero: number, formatNumber: FormatNumber, visibleCero: boolean) => string, TotalColletion: (colletion) => any) {
-
-    //GET COLUMN NAME
-    let keyGroupOne = Object.keys(collection)[0];
-    var NamesColumns = Object.keys(collection[keyGroupOne][0]);
-    //Add Header Row
-    let headerRow = worksheet.addRow(NamesColumns);
-    headerRow.font = FontStyles.TableHeader.Font;
-    headerRow.alignment = FontStyles.TableHeader.Alignment;
-    headerRow.border = FontStyles.TableHeader.Border;
-
-    let allGroupOne = [];
-
-    for (let item in collection) {
-      let GroupOne = collection[item];
-
-      // ROW GROUP ONE
-      let GroupOneStyle = worksheet.addRow([item]);
-      GroupOneStyle.font = FontStyles.TableGroup.Font;
-      GroupOneStyle.alignment = FontStyles.TableGroup.Alignment;
-      GroupOneStyle.border = FontStyles.TableGroup.Border;
-
-      for (let key in GroupOne) {
-        let selectObject = GroupOne[key];
-        allGroupOne.push(selectObject);
-
-        //VALIDANDO FECHA
-        if (!isUndefined(selectObject.Fecha)) {
-          let fecha = moment(selectObject.Fecha).format('DD-MMM');
-          selectObject.Fecha = fecha;
-        }
-
-        //AGREGANDO DATA
-        let dataForValue = Object.values(selectObject);
-        let dataStyle = worksheet.addRow(dataForValue);
-        dataStyle.font = FontStyles.TableBody.Font;
-        dataStyle.alignment = FontStyles.TableBody.Alignment;
-        dataStyle.border = FontStyles.TableBody.Border;
-
-      }
-
-      //TOTALES POR GRUPO DE DATA
-      let listTotal = [];
-      let resources = TotalColletion(GroupOne);
-      //let report = _.uniq(Object.keys(collection)).length;
-      //listTotal.unshift('Resumen: ' + report);
-
-      for (var x in resources) {
-        let data = resources[x];
-        if (!Number.isNaN(Number(data))) {
-          listTotal.push(NumberFormat(data, FormatNumber.CURRENCY, true))
-        }
-      }
-
-      //ESPACIOS VACIOS
-      let dataLenght = (NamesColumns.length - listTotal.length) < 0 ? 0 : (NamesColumns.length - listTotal.length);
-      for (var z = 0; z < dataLenght; z++) {
-        listTotal.unshift(' ');
-      }
-      let TotalGroups = worksheet.addRow(listTotal);
-      TotalGroups.font = FontStyles.TableTotal.Font;
-      TotalGroups.alignment = FontStyles.TableTotal.Alignment;
-      TotalGroups.border = FontStyles.TableTotal.Border;
-      //Blank Row
-      worksheet.addRow([]);
-
-    }
-
-    //TOTALES
-    let listTotal = [];
-    let resources = TotalColletion(allGroupOne);
-    let report = _.uniq(Object.keys(collection)).length;
-    listTotal.unshift('Resumen: ' + report);
-
-    for (var x in resources) {
-      let data = resources[x];
-      if (!Number.isNaN(Number(data))) {
-        listTotal.push(NumberFormat(data, FormatNumber.CURRENCY, true))
-      }
-    }
-
-    //ESPACIOS VACIOS
-    let dataLenght = (NamesColumns.length - listTotal.length) < 0 ? 0 : (NamesColumns.length - listTotal.length);
-    for (var z = 0; z < dataLenght; z++) {
-      listTotal.unshift(' ');
-    }
-    let TotalGroups = worksheet.addRow(listTotal);
-    TotalGroups.font = FontStyles.TableTotal.Font;
-    TotalGroups.alignment = FontStyles.TableTotal.Alignment;
-    TotalGroups.border = FontStyles.TableTotal.Border;
-    //Blank Row
-    worksheet.addRow([]);
-
-
-
-  }
-
-  private TemplateReport_TicketNoPagadosPDF(collection, NumberFormat: (numero: number, formatNumber: FormatNumber, visibleCero: boolean) => string, TotalColletion: (colletion) => any) {
-    let DataTemplate = [];
-    let IfNegative = (number: number, StyleNormal: string, StyleRed: string) => { return number < 0 ? StyleRed : StyleNormal }
-
-    //GET COLUMN NAME
-    let listNamesColumns = [];
-    let borderHeader = [false, true, false, true];
-
-    let keyGroupOne = Object.keys(collection)[0];
-    var NamesColumns = Object.keys(collection[keyGroupOne][0]);
-
-    // Agregando Color a Header
-    for (var i in NamesColumns) {
-        listNamesColumns.push({ text: NamesColumns[i], style: 'fontCenterBoldTableHeader', border: borderHeader });
-      }
-    // Agregando header a la lista
-    DataTemplate.push(listNamesColumns);
-
-    let allGroupOne = [];
-
-    for (let item in collection) {
-
-      // ROW GROUP ONE
-      let GroupOne = collection[item];
-      DataTemplate.push([{ text: item, colSpan: NamesColumns.length, style: { fontSize: 10, bold: true, alignment: 'left' }, border: [false, false, false, false] }]);
-
-      // CREATING TEMPLATE
-      for (let key in GroupOne) {
-        let selectObject = GroupOne[key];
-        allGroupOne.push(selectObject);
-        //VALIDANDO FECHA
-        if (!isUndefined(selectObject['Hora'])) {
-          let fecha = moment(selectObject['Hora']).format('DD-MMM HH:MM');
-          selectObject['Hora'] = fecha;
-        }
-        //AGREGANDO DATA
-        var listValue = [];
-
-        let borderDataTable = [false, false, false, false];
-        listValue.push({ text: selectObject['Ticket'], style: 'fontLeftTableBody', border: borderDataTable });     // 1
-        listValue.push({ text: selectObject['Hora'], style: 'fontLeftTableBody', border: borderDataTable });       // 2
-        listValue.push({ text: selectObject['Loteria'], style: 'fontLeftTableBody', border: borderDataTable });    // 3
-        listValue.push({ text: NumberFormat(selectObject['Venta'], FormatNumber.CURRENCY, true), style: 'fontRightTableBody', border: borderDataTable });      // 4
-        listValue.push({ text: selectObject['Premios'], style: 'fontCenterTableBody', border: borderDataTable });      // 5
-        listValue.push({ text: NumberFormat(selectObject['Saco'], FormatNumber.CURRENCY, true), style: IfNegative(parseInt(selectObject['Saco']), 'fontRightBoldTableBodyRed', 'fontRightBoldTableBodyRed'), border: borderDataTable });   // 6
-
-        DataTemplate.push(listValue);
-      }
-
-      //TOTALES POR GRUPO DE DATA
-      let listTotal = [];
-      let borderTotalGroup = [false, true, false, false];
-      let resources = TotalColletion(GroupOne);
-
-      listTotal.push({ text: null, style: 'fontLeftTableBody', border: borderTotalGroup });     // 1
-      listTotal.push({ text: null, style: 'fontLeftTableBody', border: borderTotalGroup });       // 2
-      listTotal.push({ text: null, style: 'fontLeftTableBody', border: borderTotalGroup });    // 3
-      listTotal.push({ text: NumberFormat(resources['Venta'], FormatNumber.CURRENCY, true), style: 'fontRightBoldTableBody', border: borderTotalGroup });      // 4
-      listTotal.push({ text: NumberFormat(GroupOne.length, FormatNumber.NORMAL, false), style: 'fontCenterBoldTableBody', border: borderTotalGroup });      // 5
-      listTotal.push({ text: NumberFormat(resources['Saco'], FormatNumber.CURRENCY, true), style: IfNegative(parseInt(resources['Saco']), 'fontRightBoldTableBodyRed', 'fontRightBoldTableBodyRed'), border: borderTotalGroup });   // 6
-
-      DataTemplate.push(listTotal);
-
-    }
-
-
-    return DataTemplate;
-
-  }
-  private TemplateReport_TicketNoPagadosEXCEL(collection, worksheet, FontStyles, NumberFormat: (numero: number, formatNumber: FormatNumber, visibleCero: boolean) => string, TotalColletion: (colletion) => any) {
-
-    //GET COLUMN NAME
-    let keyGroupOne = Object.keys(collection)[0];
-    var NamesColumns = Object.keys(collection[keyGroupOne][0]);
-    //Add Header Row
-    let headerRow = worksheet.addRow(NamesColumns);
-    headerRow.font = FontStyles.TableHeader.Font;
-    headerRow.alignment = FontStyles.TableHeader.Alignment;
-    headerRow.border = FontStyles.TableHeader.Border;
-
-    let allGroupOne = [];
-
-    for (let item in collection) {
-      let GroupOne = collection[item];
-
-      // ROW GROUP ONE
-      let GroupOneStyle = worksheet.addRow([item]);
-      GroupOneStyle.font = FontStyles.TableGroup.Font;
-      GroupOneStyle.alignment = FontStyles.TableGroup.Alignment;
-      GroupOneStyle.border = FontStyles.TableGroup.Border;
-
-      for (let key in GroupOne) {
-        let selectObject = GroupOne[key];
-        allGroupOne.push(selectObject);
-
-        //VALIDANDO FECHA
-        if (!isUndefined(selectObject['Hora'])) {
-          let Hora = moment(selectObject['Hora']).format('DD-MMM HH:MM');
-          selectObject['Hora'] = Hora;
-        }
-
-        //AGREGANDO DATA
-        let DataTable = [];
-        // let dataForValue = Object.values(selectObject);
-
-        DataTable.push(selectObject['Ticket']);    // 3
-        DataTable.push(selectObject['Hora']);      // 4
-        DataTable.push(selectObject['Loteria']);      // 5
-        DataTable.push(NumberFormat(selectObject['Venta'], FormatNumber.CURRENCY, true));   // 6
-        DataTable.push(selectObject['Premios']);   // 7
-        DataTable.push(NumberFormat(selectObject['Saco'], FormatNumber.CURRENCY, true));   // 8
-
-
-        let dataStyle = worksheet.addRow(DataTable);
-        dataStyle.font = FontStyles.TableBody.Font;
-        dataStyle.alignment = FontStyles.TableBody.Alignment;
-        dataStyle.border = FontStyles.TableBody.Border;
-
-      }
-
-      //TOTALES POR GRUPO DE DATA
-      let listTotal = [];
-      let resources = TotalColletion(GroupOne);
-      //let report = _.uniq(Object.keys(collection)).length;
-      //listTotal.unshift('Resumen: ' + report);
-
-      listTotal.push('');     // 1
-      listTotal.push('');     // 1
-      listTotal.push('');    // 3
-      listTotal.push(NumberFormat(resources['Venta'], FormatNumber.CURRENCY, true));      // 4
-      listTotal.push(NumberFormat(GroupOne.length, FormatNumber.NORMAL, false));      // 5
-      listTotal.push(NumberFormat(resources['Saco'], FormatNumber.CURRENCY, true));     // 1
-
-      let TotalGroups = worksheet.addRow(listTotal);
-      TotalGroups.font = FontStyles.TableTotal.Font;
-      TotalGroups.alignment = FontStyles.TableTotal.Alignment;
-      TotalGroups.border = FontStyles.TableTotal.Border;
-      //Blank Row
-      worksheet.addRow([]);
-    }
-
-  }
 
 
   // #endregion

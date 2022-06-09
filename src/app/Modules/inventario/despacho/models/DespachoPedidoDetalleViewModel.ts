@@ -78,6 +78,8 @@ export class DespachoPreventaDetalleExportVM   {
   Despachador?:string;
 
   Ruta?:number;
+  RutaId?:number;
+
   CodigoArticulo: string;
   Descripcion: string;
   Almacen_Desde: string;

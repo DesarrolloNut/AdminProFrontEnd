@@ -454,7 +454,6 @@ exportDespachoPreventaDetalle(despacho:any) {
       }
       this.btnCargandoPrint=false;
     }, error => {
-      console.log(error)
       this.btnCargandoPrint=false;
       this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
     });
@@ -479,7 +478,8 @@ despachoPreventaDetalleToPrinter(data:DespachoPreventaDetalleViewModel[]) {
      dataFormated.push({
        Despachador:this.despachoPreventaSeleccionado.despachador,
        Distribuidor:this.despachoPreventaSeleccionado.distribuidor,
-       Ruta:this.despachoPreventaSeleccionado.ruta,
+       Ruta:this.despachoPreventaSeleccionado.rutaId,
+       FechaEntrega:this.despachoPreventaSeleccionado.fechaEntrega,
        CodigoArticulo:x.codigoArticulo,
        Descripcion:x.articulo,
        Almacen_Desde:x.almacen_Origen,

@@ -17,6 +17,7 @@ import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { DespachoListadoPreventaVM } from '../../despacho/models/DespachoPedidoListadoViewModel';
+import { DespachoInUseVM, DespachoPreventaRequestModel } from '../../despacho/models/DespachoPedidoDetalleViewModel';
 
 @Component({
   selector: 'app-despacho-asignacion-formulario',
@@ -26,36 +27,30 @@ import { DespachoListadoPreventaVM } from '../../despacho/models/DespachoPedidoL
 export class DespachoAsignacionFormularioComponent implements OnInit, OnDestroy {
 
   data :  DespachoListadoPreventaVM[]=[];
-  @ViewChild(DespachoAsignacionListadoComponent) hijo: DespachoAsignacionListadoComponent;
+  @ViewChild(DespachoAsignacionListadoComponent) dAsignacionListado: DespachoAsignacionListadoComponent;
 
-
-  cargando: boolean;
   search: string;
   searching: boolean;
 
 
   searchChanged: Subject<string> = new Subject<string>();
-  fechaActual: Date;
 
-
-  btnGuardarCargando: boolean;
-
-
-
-  random: number;
 
   intervalRefreshFocus: NodeJS.Timeout
+  intervalRefreshCountDown: NodeJS.Timeout
+
 
   @ViewChild('modalConfirm') myModal:ElementRef;
+  @ViewChild('modalLoadingApertura') myModalLoadingApertura:ElementRef;
 
   usuario: Usuario;
 
+  timerSeconds:number;
   constructor(
     private toastService: ToastrService,
     private httpService: BackendService,
     private authService: AuthenticationService,
     private modalService: NgbModal,
-    private router: Router,
     private renderer: Renderer2) {
 
       this.searchChanged.pipe(
@@ -68,12 +63,6 @@ export class DespachoAsignacionFormularioComponent implements OnInit, OnDestroy 
 
   ngOnInit(): void {
 
-    this.getHoraActual()
-    this.getUsuarioLogueado()
-
-
-    // this.empezarAmbientePrueba();
-
   }
 
 
@@ -85,65 +74,13 @@ export class DespachoAsignacionFormularioComponent implements OnInit, OnDestroy 
   }
 
 
-
-
-
-
-
-
-
-
-
-  onSubmit() {
-
-
-    // if (this.lote.cantidad < this.pesoNeto) {
-    //   this.toastService.warning(`No tiene lote disponible para hacer esta transferencia, favor verificar.`);
-    //   return;
-    // }
-
-    this.guardar()
-  }
-
-  guardar() {
-
-    let request: any = {
-      id: 0,
-    };
-
-    this.btnGuardarCargando = true;
-
-    this.httpService.DoPostAny<any>(DataApi.Despacho,
-      "Registrar", request).subscribe(response => {
-
-        if (!response.ok) {
-          this.toastService.error(response.errores[0], "Error");
-        } else {
-          let id = response.valores[0];
-          this.router.navigateByUrl('/impresion/produccion/pesaje-resultado-codigo-barra/' + id);
-        }
-
-        this.btnGuardarCargando = false;
-      }, error => {
-        this.btnGuardarCargando = false;
-        this.toastService.error("Error conexion al servidor");
-      });
-  }
-
-
-
-
-
-
-
-
-
-
   findForSearch(){
 
-    if (this.search && this.search.length >= 10) {
-      this.getUsuarioByDoc(this.search)
-    }
+    if (this.search && this.search.length >= 10)
+     {
+       this.identifyAccionBySearch(this.search);
+     }
+
   }
   onSearchChange(text: string) {
     this.searchChanged.next(text);
@@ -176,13 +113,12 @@ export class DespachoAsignacionFormularioComponent implements OnInit, OnDestroy 
             if (this.usuario.rol!='PICKEADOR') {
               this.toastService.warning("Usted no es un despachador.");
               this.usuario= new Usuario();
+              this.search="";
               this.searching=false;
               return;
              }
 
-             this.hijo.getRamdonDespachoAndAsign(this.usuario)
-
-         //   this.modalService.open(this.myModal)
+             this.dAsignacionListado.getRamdonDespachoAndAsign(this.usuario)
 
           } else {
             this.toastService.warning("Usuario no encontrado");
@@ -200,48 +136,6 @@ export class DespachoAsignacionFormularioComponent implements OnInit, OnDestroy 
 
 
 
-  getUsuarioLogueado() {
-    let usuarioID: number = Number(this.authService.tokenDecoded.nameid)
-
-    this.httpService.DoPostAny<Usuario>(DataApi.Usuario,
-      "GetUsuarioByID", usuarioID).subscribe(response => {
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          //validar que existe
-          if (response != null && response.records != null && response.records.length > 0) {
-
-            let usuario = response.records[0];
-            this.usuario = usuario;
-
-          } else {
-            this.toastService.warning("Usuario no encontrado");
-          }
-        }
-
-      }, error => {
-        this.toastService.error("Error conexion al servidor");
-      });
-  }
-
-
-  getHoraActual() {
-    this.cargando = true;
-    this.httpService.DoPost<ComboBox>(DataApi.Public,
-      "GetHoraActual", null).subscribe(response => {
-
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          this.fechaActual = new Date(response.valores[0]);
-        }
-
-        this.cargando = false;
-      }, error => {
-        this.cargando = false;
-        this.toastService.error("Error conexion al servidor");
-      });
-  }
 
 
   refreshData(data){
@@ -270,18 +164,80 @@ export class DespachoAsignacionFormularioComponent implements OnInit, OnDestroy 
   }
 
 
+  identifyAccionBySearch(searchValue:string){
+
+   if(searchValue.includes('A')){
+    //  CODIGO DE APERTURA
+    //  decodeArr[0] =  Prefijo Apertura
+    //  decodeArr[1] =  RutaId
+    //  decodeArr[2] =  Fecha
+
+    let decodeArr = searchValue.split('-');
+    let parametros= new DespachoPreventaRequestModel();
+    parametros.ruta = parseInt(decodeArr[1]) ;
+    parametros.fechaEntrega = decodeArr[2];
+
+    this.logicForAperturaDespacho(parametros)
+
+   }
+   else{
+    //DOCUMENTO DEL USUARIO
+    this.getUsuarioByDoc(this.search)
+   }
+
+  }
+  logicForAperturaDespacho(parametros:DespachoPreventaRequestModel){
+
+    this.timerSeconds=4;
+    this.modalService.open(this.myModal,{backdrop:true,centered:true,windowClass:'modalLoadingDespacho'})
+    this.intervalRefreshCountDown= setInterval(() => {
+        this.timerSeconds--;
+      }, 1000);
+
+
+    setTimeout(() => {
+      window.clearInterval(this.intervalRefreshCountDown);
+      this.modalService.dismissAll();
+      this.modalService.open(this.myModalLoadingApertura,{backdrop:true,centered:true,windowClass:'modalLoadingDespacho'})
+      setTimeout(() => {
+        this.aperturaDespacho(parametros)
+      }, 500);
+
+    }, 4000);
+
+  }
+  aperturaDespacho(parametros:DespachoPreventaRequestModel){
+     this.httpService.DoPostAny<any>(DataApi.Despacho,
+      'AperturaDespachoPreventa', parametros).subscribe( response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+        } else {
+          if(response.valores?.length>0){
+            let m:DespachoInUseVM = response.valores[0];
+            if(m.estado!=2 )  {
+              this.toastService.success(m.mensaje)
+            }else{
+              this.toastService.error(m.mensaje)
+
+            }
+          }
+        }
+        this.search="";
+        this.modalService.dismissAll();
+
+      }, error => {
+        this.modalService.dismissAll();
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
 
   onChangeFechaDesdeFiltro(evento: any) {
     // if(++this.primeraVez==1){return;}
-
-
     // this.fecha = new Date(evento.value)
     // this.getDataByCondicional()
   }
   ngOnDestroy(): void {
     window.clearInterval(this.intervalRefreshFocus);
   }
-
-
 
 }
