@@ -976,6 +976,8 @@ getSucursalByUsuarioId() {
        dataFormated.push({
          Distribuidor:this.despachoPreventaSeleccionado.distribuidor,
          Ruta:this.despachoPreventaSeleccionado.ruta,
+         RutaId:this.despachoPreventaSeleccionado.rutaId,
+         FechaEntrega:this.despachoPreventaSeleccionado.fechaEntrega,
          CodigoArticulo:x.codigoArticulo,
          Descripcion:x.articulo,
          Almacen_Desde:x.almacen_Origen,
@@ -1422,24 +1424,24 @@ focusInputCantidadCanasto(item:ArticuloPesosExtrasViewModel){
 }
 ngOnDestroy(): void {
   window.clearInterval(this.intervalRefreshData)
-  this.ngzone.run(() => {
-    this.signalRService.disconnectBalanza(Number(this.usuario.puertoEquipo),
-    this.usuario.ipEquipo)
-});
+//   this.ngzone.run(() => {
+//     this.signalRService.disconnectBalanza(Number(this.usuario.puertoEquipo),
+//     this.usuario.ipEquipo)
+// });
 
 }
 
-   disconnectBalanza(){
-    setTimeout( () => {
+//    disconnectBalanza(){
+//     setTimeout( () => {
 
-        this.signalRService.disconnectBalanza(Number(this.usuario.puertoEquipo),
-         this.usuario.ipEquipo)
+//         this.signalRService.disconnectBalanza(Number(this.usuario.puertoEquipo),
+//          this.usuario.ipEquipo)
 
-       this.emitPesoBalanza=true;
-        }, 1000);
+//        this.emitPesoBalanza=true;
+//         }, 1000);
 
 
-}
+// }
 
 connectBalanza(){
   this.subscribirPesoBalanzaCambios()

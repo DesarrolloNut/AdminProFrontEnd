@@ -23,6 +23,9 @@
                     <div class="col-md-6 col-lg-6 col-12 text-right">
                          <button  class="btn btn-primary" (click)="open1(content1)"> Cambiar contraseña</button>
                     </div>
+                    <div class="col-md-6 col-lg-6 col-12 text-right">
+                      <button  class="btn btn-primary" (click)="open1(content1)"> Cambiar contraseña</button>
+                    </div>
                 </div>
                 <!-- <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
 
@@ -49,7 +52,7 @@
                     <div class="form-group col-md-6">
                         <label for="inputEmail4"> <i class="fa fa-id-card"></i> Tipo de Documento</label>
                         <ng-select bindLabel="nombre" bindValue="codigo" [items]="documentos"
-                            [loading]="loadingDocumentos" [clearable]="false" 
+                            [loading]="loadingDocumentos" [clearable]="false"
                             [ngClass]="{'form-control border-danger p-0' : submitted && f.documentoTipoID.errors }"
                             notFoundText="No resultados" formControlName="documentoTipoID">
                         </ng-select>
@@ -62,7 +65,7 @@
                         <label for="documento"> <i class="fa fa-id-card"></i> Documento</label>
                         <div class="input-group">
                             <input (keyup)="onDocumentoKeyUp()" formControlName="documento" type="text" name="documento"
-                                id="documento"  
+                                id="documento"
                                 [ngClass]="{'is-invalid' :f.documento.value && f.documento.errors,  'form-control':true  }">
                             <div class="input-group-append" *ngIf="buscandoDocumento">
                                 <span class="input-group-text bg-white border-0"> <i
@@ -103,7 +106,7 @@
                             <div *ngIf="f.telefono.errors.required">El campo es obligatorio</div>
                         </div>
                     </div>
-                  
+
                     <div class="form-group col-md-6">
                         <label for="celular"><i class="fa fa-mobile"></i> Celular</label>
                         <input formControlName="celular" type="text" name="celular" id="celular"
@@ -125,7 +128,7 @@
 
 
 
- 
+
 
                     <div class="form-group text-right col-md-12">
                         <hr />
@@ -186,14 +189,14 @@
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" (click)="modal.close('Save click')">Cancelar</button>
             <button class="btn btn-primary w-100  text-white" type="submit" (click)="onSubmitChangePassword()" [disabled]="loadingButtonCambiar">
-                Cambiar 
+                Cambiar
                 <i *ngIf="loadingButtonCambiar && submittedPassword" class="fa fa-spin fa-spinner"></i>
             </button>
         </div>
     </ng-template>
-    
-     
+
+
 </div>
 
 
- 
+

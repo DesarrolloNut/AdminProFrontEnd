@@ -57,7 +57,7 @@ export class DespachoAsignacionFormularioComponent implements OnInit, OnDestroy 
         debounceTime(500))
         .subscribe(model => {
           this.search=model;
-         this.findForSearch()
+          this.findForSearch()
         });
      }
 

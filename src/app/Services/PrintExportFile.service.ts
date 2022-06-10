@@ -399,7 +399,7 @@ export class PrintExportFile {
       }
 
     let fechaEntrega =moment(firstData.FechaEntrega).format('YYYY-MM-DD')
-    let textForBarcode = `A-${firstData.Ruta }-${fechaEntrega.split('-').join('')}`;
+    let textForBarcode = `A-${firstData.RutaId}-${fechaEntrega.split('-').join('')}`;
 
     const documentDefinition = {
       pageMargins: [40,35,40, 100],
@@ -413,7 +413,7 @@ export class PrintExportFile {
              {
               stack: [
                 { text: Header,fontSize: 13},
-                { text: "De almacén "+  this.DATA[0].Almacen_Desde,fontSize: 11},
+                { text: "De almacén "+  firstData.Almacen_Desde,fontSize: 11},
                ]
               },
               {
@@ -451,19 +451,19 @@ export class PrintExportFile {
               [
                 {
                   stack: [
-                      { text: firstData.Despachador,fontSize: 13,style: 'fontCenterTableBody',decoration:'underline' },
+                      { text: firstData.Despachador,fontSize: 11,style: 'fontCenterTableBody',decoration:'underline' },
                       { text: "Despachador",fontSize: 13,style: 'fontCenterTableBody',},
                    ]
                 },
                 {
                   stack: [
-                      { text: "______________________",fontSize: 13,style: 'fontCenterTableBody',},
+                      { text: "______________________",fontSize: 11,style: 'fontCenterTableBody',},
                       { text: "Validador",fontSize: 13,style: 'fontCenterTableBody',},
                    ]
                 },
                 {
                   stack: [
-                    { text: firstData.Distribuidor+"("+firstData.Ruta+")",fontSize: 13,style: 'fontCenterTableBody', decoration:'underline' },
+                    { text: firstData.Distribuidor+"("+firstData.Ruta+")",fontSize: 11,style: 'fontCenterTableBody', decoration:'underline' },
                     { text: "Distribuidor",fontSize: 13,style: 'fontCenterTableBody',},
                  ]
                 },

@@ -478,7 +478,8 @@ despachoPreventaDetalleToPrinter(data:DespachoPreventaDetalleViewModel[]) {
      dataFormated.push({
        Despachador:this.despachoPreventaSeleccionado.despachador,
        Distribuidor:this.despachoPreventaSeleccionado.distribuidor,
-       Ruta:this.despachoPreventaSeleccionado.rutaId,
+       Ruta:this.despachoPreventaSeleccionado.ruta,
+       RutaId:this.despachoPreventaSeleccionado.rutaId,
        FechaEntrega:this.despachoPreventaSeleccionado.fechaEntrega,
        CodigoArticulo:x.codigoArticulo,
        Descripcion:x.articulo,
@@ -501,8 +502,6 @@ despachoPreventaDetalleToPrinter(data:DespachoPreventaDetalleViewModel[]) {
 
 onChangeFechaDesdeFiltro(evento: any) {
   // if(++this.primeraVez==1){return;}
-
-
    this.fecha = new Date(evento.value)
    this.validaHorarioAndGetData()
 }
@@ -567,7 +566,6 @@ if (dateini !=undefined && dateini !=null && dateini!='0001-01-01T00:00:00') {
   dateOne = new Date(dateini).getTime();
 }
  var hourDiff = dateTwo - dateOne; //in ms
- var secDiff = hourDiff / 1000; //in s
  var minDiff = hourDiff / 60 / 1000; //in minutes
  var hDiff = hourDiff / 3600 / 1000; //in hours
 
