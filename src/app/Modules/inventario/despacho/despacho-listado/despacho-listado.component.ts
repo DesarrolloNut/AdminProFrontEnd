@@ -1423,12 +1423,9 @@ focusInputCantidadCanasto(item:ArticuloPesosExtrasViewModel){
   }
 }
 ngOnDestroy(): void {
-  window.clearInterval(this.intervalRefreshData)
-//   this.ngzone.run(() => {
-//     this.signalRService.disconnectBalanza(Number(this.usuario.puertoEquipo),
-//     this.usuario.ipEquipo)
-// });
-
+    window.clearInterval(this.intervalRefreshData)
+    this.signalRService.disconnectBalanza(Number(this.usuario.puertoEquipo),
+    this.usuario.ipEquipo)
 }
 
 //    disconnectBalanza(){

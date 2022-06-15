@@ -30,7 +30,7 @@ export class BalanzaPesajeSignalrService {
   private port=0;
 
   handlerPeso = (pesoBalanza: any) => {
-
+ console.log(pesoBalanza)
     if (pesoBalanza.ok) {
       this.pesoBalanza.emit(pesoBalanza.data)
     }else{
@@ -65,7 +65,7 @@ export class BalanzaPesajeSignalrService {
       }
 
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl("https://appadmin.nutriciosa.com/BalanzaAPI/"+"balanzaPesaje")
+      .withUrl("https://appadmin.nutriciosa.com:5000/"+"balanzaPesaje")
       .withAutomaticReconnect()
       .configureLogging(signalR.LogLevel.Information)
       .build();
