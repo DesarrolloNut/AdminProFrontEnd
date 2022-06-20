@@ -100,8 +100,7 @@ export class AutorizacionPedidosComponent implements OnInit {
 
   configRangeDates() {
     var date = new Date();
-    // var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
-    var desde = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 5);
+    var desde = new Date(date.getFullYear(), date.getMonth(),1);
 
     this.fechaDesde = desde;
     this.fechaHasta = date;
@@ -373,7 +372,7 @@ export class AutorizacionPedidosComponent implements OnInit {
       });
   }
 
-  //DETALLE PEDIDOS 
+  //DETALLE PEDIDOS
 
   getCotizacionDetalle(cotizacionID: number) {
     this.loadingCotizacionDetalle = true;

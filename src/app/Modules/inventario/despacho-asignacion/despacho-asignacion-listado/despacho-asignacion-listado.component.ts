@@ -45,6 +45,7 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
   despachoPreventaSeleccionado: DespachoListadoPreventaAsignacionVM;
 
   fecha= new Date()
+  fechaConsultaPantalla= new Date()
 
 
   //LECTURA DEL CODIGO DE BARRA
@@ -69,6 +70,8 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
 
   //PUEDE VER PANTALLA
   intervalRefreshData: NodeJS.Timeout
+  intervalRefreshFecha: NodeJS.Timeout
+
    fDesde = new Date();
    fHasta = new Date();
    dia : string;
@@ -85,12 +88,21 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
   ) { }
   ngOnDestroy(): void {
     window.clearInterval(this.intervalRefreshData);
+    window.clearInterval(this.intervalRefreshFecha);
   }
 
 
   ngOnInit(): void {
-    this.getAllData();
 
+    this.getAllData();
+    this.setDateToday();
+  }
+
+  setDateToday()
+  {
+ this.intervalRefreshFecha= setInterval(() => {
+    this.fecha = new Date();
+    }, (60 * 60 * 1000));
   }
 
  async getAllData(){
@@ -158,7 +170,6 @@ validaHorarioAndGetData(showLoading=false){
  }
   formatDataPreventa(dataPreventa: DespachoListadoPreventaAsignacionVM[]) {
     this.dataPreventaF=[];
-    console.log(dataPreventa)
     this.dataPreventa.forEach(x=>{
 
     this.getEstadoAsignacion(x)
@@ -230,25 +241,6 @@ validaHorarioAndGetData(showLoading=false){
   setFocus() {
     this.searchElement.nativeElement.focus();
   }
-
-  // @HostListener('window:keydown', ['$event'])
-  // onWindowKeyDown(event: any) {
-  //   if (!this.enterPressed) {
-  //     this.setFocus()
-  //   }
-  // }
-
-
-  // @HostListener('window:keyup.enter', ['$event'])
-  // onWindowKeyupEnter(event: any) {
-  //   this.searchElement.nativeElement.blur();
-
-  //   if (!this.enterPressed) {
-  //     this.enterPressed = true;
-  //     this.modalService.dismissAll();
-  //     this.modalService.open(this.modalElement, { size: "xl" })
-  //   }
-  // }
 
 
   getRamdonDespachoAndAsign(user:Usuario){
