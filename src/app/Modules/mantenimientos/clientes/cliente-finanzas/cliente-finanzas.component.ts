@@ -100,6 +100,7 @@ export class ClienteFinanzasComponent implements OnInit {
       usuarioId: [Number(this.auth.tokenDecoded.nameid)],
       limiteCredito: [0, [Validators.required]],
       clienteTipoId: [0],
+      validarCreditoFactura:[1],
       condicionPagoId: [null, [Validators.required]],
       plazoId: [null, [Validators.required]],
     },
@@ -110,6 +111,10 @@ export class ClienteFinanzasComponent implements OnInit {
 
 
   guardarOActualizarClienteFinanza(){
+
+    let valueBool = this.f.validarCreditoFactura.value ? 1 : 0;
+    this.f.validarCreditoFactura.setValue(valueBool)
+
      if(this.f.condicionPagoId.value==1){
       //SI LA CONDICION DE PAGO ES CONTADO
 
@@ -152,6 +157,7 @@ export class ClienteFinanzasComponent implements OnInit {
 
       }, error => {
         this.btnGuardarCargando = false;
+        console.log(error)
         this.toastService.error("Error conexion al servidor");
       });
 }

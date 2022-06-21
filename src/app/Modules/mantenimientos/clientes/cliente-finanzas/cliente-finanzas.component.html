@@ -59,6 +59,18 @@
                 obligatorio</div>
             </div>
           </div>
+          <div class="form-check col-md-6" *ngIf="f.condicionPagoId.value==2">
+            <label for="validarCreditoFactura" class="d-block">Validar credito factura</label>
+            <div class="form-group" style="margin-left: 20px;">
+              <input
+              formControlName="validarCreditoFactura" type="checkbox" name="validarCreditoFactura" id="validarCreditoFactura"
+              [ngClass]="{'is-invalid' : submitted && f.validarCreditoFactura.errors,  'form-check-input':true  }">
+            <label for="validarCreditoFactura">Activo</label>
+            </div>
+            <div class="invalid-feedback" *ngIf="submitted && f.validarCreditoFactura.errors">
+            </div>
+          </div>
+
              <!-- Anexos de cliente -->
              <div class="col-12 container_anexos"  *ngIf="f.condicionPagoId.value==2">
 
