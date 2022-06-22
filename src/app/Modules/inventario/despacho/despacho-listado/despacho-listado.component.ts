@@ -665,24 +665,6 @@ getSucursalByUsuarioId() {
 
 
 
-  empezarAmbientePrueba() {
-
-  this.intervalRefreshBalanza=  setInterval(() => {
-
-    if(this.despachoPreventaArticuloDetalleSelected.estadoId==1
-      && this.despachoPreventaArticuloDetalleSelected.unidadMedida=='LBS'
-      && this.despachoPreventaSeleccionado.finalizado==0) {
-      this.pesoBalanza = this.getRandomInt(1, 100) + 'KGZ';
-      this.pesoBalanzaUltimaFecha = new Date();
-
-      this.formatStringFromBalanza();
-      this.getKilogramosNumberFromPesoBalanza();
-      this.calcularTotales();
-    }
-
-    }, 8000);
-
-  }
   formatStringFromBalanza() {
 
     if (!this.pesoBalanza) {

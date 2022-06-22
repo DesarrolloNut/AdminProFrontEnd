@@ -58,8 +58,9 @@ export class BalanzaPesajeSignalrService {
   // https://appadmin.nutriciosa.com:5000/
   public  startConnection =  async (grupo: BalanzaPesoGrupoSignalREnum) => {
 
-        let url_1="https://appadmin.nutriciosa.com:5000/balanzaPesaje"
-        let url_2="http://192.168.0.248:5000/balanzaPesaje"
+        let url_1="https://appadmin.nutriciosa.com/nutriciosabalanza/balanzaPesaje"
+        let url_2="http://localhost:50552/balanzaPesaje"
+        let url_3="http://localhost:50551/balanzaPesaje"
 
       if(this.hubConnection?.state==signalR.HubConnectionState.Connected){
         this.hubConnection.off('SendPesoToScreen'.toLowerCase(),this.handlerPeso);
@@ -67,7 +68,7 @@ export class BalanzaPesajeSignalrService {
       }
 
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(url_2)
+      .withUrl(url_1)
       .withAutomaticReconnect()
       .configureLogging(signalR.LogLevel.Information)
       .build();
