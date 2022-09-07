@@ -30,7 +30,7 @@ export class BalanzaPesajeSignalrService {
   private port=0;
 
   handlerPeso = (pesoBalanza: any) => {
- console.log(pesoBalanza)
+ //console.log(pesoBalanza)
     if (pesoBalanza.ok) {
       this.pesoBalanza.emit(pesoBalanza.data)
     }else{

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
@@ -29,6 +30,7 @@ export class PermisosFormularioComponent implements OnInit {
     private route: ActivatedRoute,
     private httpService: BackendService,
     private router: Router,
+    private authService: AuthenticationService,
     private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
@@ -44,9 +46,9 @@ export class PermisosFormularioComponent implements OnInit {
 
 
   private CreateForm() {
-
     this.Formulario = this.formBuilder.group({
       id: [0],
+      companiaId: [this.authService.tokenDecoded.primarygroupsid, [Validators.required]],
       nombre: [null, [Validators.required]],
       descripcion: [null,],
       permisoPadreId: [null,  [Validators.required]],
@@ -93,10 +95,10 @@ export class PermisosFormularioComponent implements OnInit {
 
     let metodo: string = this.actualizando ? "Update" : "Registrar";
     this.btnGuardarCargando = true;
-
-    this.httpService.DoPostAny<Permisos>(DataApi.Permisos,
+    //console.log(JSON.stringify(this.Formulario.value));
+   this.httpService.DoPostAny<Permisos>(DataApi.Permisos,
       metodo, this.Formulario.value).subscribe(response => {
-
+    
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
         } else {

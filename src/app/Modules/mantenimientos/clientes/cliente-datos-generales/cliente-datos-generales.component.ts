@@ -2,7 +2,7 @@ import { MapsAPILoader, Marker } from '@agm/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { ViewportScroller } from '@angular/common';
 import { Component, ElementRef, EventEmitter, HostListener, Input, NgZone, OnInit, Output, ViewChild, AfterViewInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, NgForm, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { thresholdFreedmanDiaconis } from 'd3';
@@ -16,6 +16,10 @@ import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { cedulaestructura, validaExistCedulaORNC } from 'src/app/shared/validators/cedula-estructura.validator';
 import { Cliente, ClienteTabsValida, Coordenadas, ValidaExisteClienteViewModel } from '../models/Cliente';
+
+
+
+
 
 const fadeInOut = trigger('fadeInOut', [
   transition(':enter', [
@@ -84,7 +88,9 @@ export class ClienteDatosGeneralesComponent implements OnInit,AfterViewInit {
   //OBJETOS Y DEMAS
   TipoSexo: any[] = [{ codigo: 'M', nombre: 'Hombre' }, { codigo: 'F', nombre: 'Mujer' }];
   geoRegex = '^-?([1-8]?[1-9]|[1-9]0)\\.{1}\\d{1,6}';
-
+  Ref="";
+  nombreCliente="";
+  Calle="";
   latitud:number;
   longitud:number;
   clientePadreSearched = new ValidaExisteClienteViewModel();
@@ -199,7 +205,7 @@ export class ClienteDatosGeneralesComponent implements OnInit,AfterViewInit {
       clienteTipoID: [null, [Validators.required]],
       nombres: [null,  [Validators.required]],
       apellidos: [null,  [Validators.required] ],
-      clienteNombre: [null,  [Validators.required]],
+      clienteNombre: [null,  [Validators.required,Validators.maxLength(100)]],
       documento: [null, [Validators.required, Validators.minLength(9)]],
       documentoAnterior: [null],
 
@@ -212,11 +218,11 @@ export class ClienteDatosGeneralesComponent implements OnInit,AfterViewInit {
       sexo: [null,[Validators.required]],
       codigoReferencia: [null,],
 
-      calle: [null, [Validators.required]],
+      calle: [null, [Validators.required, Validators.maxLength(100)]],
       numero: [null, [Validators.required]],
       residencial: [null],
       apartamento: [null],
-      referencia: [null],
+      referencia: [null,[ Validators.maxLength(10)]],
       provinciaID: [null, Validators.required],
       ciudadID: [null, Validators.required],
       sectorID: [null, Validators.required],
@@ -246,9 +252,13 @@ export class ClienteDatosGeneralesComponent implements OnInit,AfterViewInit {
         validator: cedulaestructura('documento', 'documentoTipoID'),
       });
   }
+  
 
   get f() { return this.FormGenerales.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
 
+  get referencianovalida(){
+    return this.FormGenerales.get('referencia').invalid &&   this.FormGenerales.get('referencia').touched
+   }
 
 
   guardarCliente() {
@@ -279,6 +289,7 @@ export class ClienteDatosGeneralesComponent implements OnInit,AfterViewInit {
         } else {
             this.scrollToTop();
             this.toastService.success("Realizado", "OK");
+            this.router.navigateByUrl('/mantenimientos/cliente');
           if(!this.actualizando){
 
             this.clientId=response.valores[0].clienteId;

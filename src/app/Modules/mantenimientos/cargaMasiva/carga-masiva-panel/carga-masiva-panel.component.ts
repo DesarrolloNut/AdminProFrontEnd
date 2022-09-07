@@ -63,7 +63,6 @@ export class CargaMasivaPanelComponent implements OnInit {
   ngOnInit(): void {
   }
 
-
   onFileChange(event, modal, accionID: number) {
     console.log("file change")
     console.log(accionID)
@@ -97,13 +96,15 @@ export class CargaMasivaPanelComponent implements OnInit {
       const data = XLSX.utils.sheet_to_json(ws); // to get 2d array pass 2nd parameter as object {header: 1}
 
       this.dataExcel = data
+      console.log(this.dataExcel)
       this.getPropiedadesExcel()
     };
   }
 
 
+ 
 
-
+  
   transformData() {
 
     if (this.accionId == 1) { //precios articulos
@@ -143,15 +144,16 @@ export class CargaMasivaPanelComponent implements OnInit {
     } else if (this.accionId == 3) {
       if (this.validarCargaClienteRutaTipo()) {
 
+        
         this.dataTransformed = this.dataExcel.map((x) => {
           let arrayValues = Object.values(x);
           return {
             "CodigoReferencia": arrayValues[0].toString(),
-            "Memo ": arrayValues[1],
+            "Zona": arrayValues[1],
             "DiaVisita": Number(arrayValues[2]),
-            "RutaCodigoReferencia": Number(arrayValues[3]),
+            "SlpCode": Number(arrayValues[3]),
             "Prioridad": arrayValues[4] == null ? "" : arrayValues[4],
-            "TerritorioId": Number(arrayValues[5])
+            "Semana": Number(arrayValues[5])
           };
         });
         console.table(this.dataTransformed)
@@ -166,16 +168,15 @@ export class CargaMasivaPanelComponent implements OnInit {
 
   subirDatosExcel() {
 
-    console.table(this.dataTransformed)
 
+    
 
     if (this.dataExcel.length <= 0) {
       this.toastService.warning("No hay records para subir.")
       return
     }
-
     this.guardandoDataExcel = true;
-
+    console.log(this.metodoEndPoint)
     this.httpService.DoPostAny<any>(this.dataApi,
       this.metodoEndPoint, this.dataTransformed).subscribe(response => {
         this.resetInputsFile();
@@ -191,7 +192,6 @@ export class CargaMasivaPanelComponent implements OnInit {
         this.guardandoDataExcel = false;
       }, error => {
         this.resetInputsFile();
-
         console.log(error)
         this.guardandoDataExcel = false;
         this.toastService.error("Error conexion al servidor");

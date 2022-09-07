@@ -30,9 +30,13 @@ import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { SharedModule } from './Modules/shared/shared.module';
 import { environment } from 'src/environments/environment';
 import { ToastrModule } from 'ngx-toastr';
-
+import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
 import { SpeechSynthesisModule } from '@kamiazya/ngx-speech-synthesis';
 import { AuthenticationService } from './core/authentication/service/authentication.service';
+import { HoraPickingFormularioComponent } from './Modules/mantenimientos/horaPicking/hora-picking-formulario/hora-picking-formulario.component';
+
+
+
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -51,6 +55,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     BreadcrumbComponent,
     SidebarComponent,
     LoginComponent,
+    
   ],
   imports: [
 
@@ -77,6 +82,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     SharedModule,
     HttpClientModule,
     RouterModule.forRoot(Approutes),
+    
 
   ],
   providers: [

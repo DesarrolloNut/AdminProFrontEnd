@@ -317,8 +317,22 @@ export const ROUTES: RouteInfo[] = [
         extralink: false,
         submenu: [],
         permisos: ['asignacion_despacho'],
-        // permisos: ['despacho_asignacion'],
       },
+
+      {
+        
+        path: '/inventario/transferencia',
+        title: 'Transferencia',
+        label: '',
+        icon: '',
+        class: '',
+        labelClass: '',
+        extralink: false,
+        submenu: [],
+        permisos: ['inventario_transferencia_despacho'],
+      },
+
+
       // {
       //   path: '/inventario/autorizaciondevoluciones',
       //   title: 'Autorizacion Devoluciones',
@@ -574,6 +588,17 @@ export const ROUTES: RouteInfo[] = [
         permisos: ["mantenimientos_articulo"],
       },
       {
+        path: '/mantenimientos/asignacion-almacen',
+        label: '',
+        labelClass: '',
+        title: 'Asignación Almacén',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_hora_picking"],
+      },
+      {
         path: '/mantenimientos/articulo-categoria',
         label: '',
         labelClass: '',
@@ -606,6 +631,7 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ["mantenimientos_almacen"],
       },
+      
       // {
       //   path: '/mantenimientos/autorizacionprecios',
       //   label: '',
@@ -627,6 +653,17 @@ export const ROUTES: RouteInfo[] = [
         extralink: false,
         submenu: [],
         permisos: ["mantenimientos_moneda"],
+      },
+      {
+        path: '/mantenimientos/hora-picking',
+        label: '',
+        labelClass: '',
+        title: 'Hora Picking',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_hora_picking"],
       },
       {
         path: '/mantenimientos/listaprecios',

@@ -8,4 +8,5 @@ export enum EstadosGeneralesKeyEnum {
     PRODUCCION = 'PRODUCCION',
     PEDIDO = 'PEDIDO',
     ESTADOSERP = 'ESTADOSERP',
+    TRANSFERENCIA='TRANSFERENCIA',
 }

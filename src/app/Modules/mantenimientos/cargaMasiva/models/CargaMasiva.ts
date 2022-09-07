@@ -6,7 +6,6 @@ export class CargaMasiva {
         this.registros = 0;
         this.detalle = "";
         this.fechaSubida = new Date();
-
     }
 
     id: number
@@ -14,7 +13,6 @@ export class CargaMasiva {
     registros: number
     detalle: string
     fechaSubida: Date
-
 }
 export class DetalleReestructuracionClient {
 

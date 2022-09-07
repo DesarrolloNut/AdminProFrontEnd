@@ -53,12 +53,8 @@ export enum DataApi {
     ComprobanteFiscal = 78,
     SAPCotizacion = 79,
     ChequeDevuelto = 80,
-
-
-
-
-
-
+    HoraPicking = 81,
+    TransferenciaInventario = 82,
     Usuario = 1,
     Authentication = 2,
     ComboBox = 3,
@@ -91,11 +87,7 @@ export enum DataApi {
     Recall = 30,
     Oferta = 31,
 }
-
-
 export const dataApiRootMap: { [api: string]: string } = {
-
-
     "32": "api/ListaPrecio",
     "33": "api/Ruta",
     "35": "api/NivelAutorizacion",
@@ -144,17 +136,8 @@ export const dataApiRootMap: { [api: string]: string } = {
     "78": "api/ComprobanteFiscal",
     "79": "api/SAPCotizacion",
     "80": "api/ChequeDevuelto",
-
-
-
-
-
-
-
-
-
-
-
+    "81": "api/HoraPicking",
+    "82": "api/TransferenciaInventario",
 
 
     "1": "api/Usuario",

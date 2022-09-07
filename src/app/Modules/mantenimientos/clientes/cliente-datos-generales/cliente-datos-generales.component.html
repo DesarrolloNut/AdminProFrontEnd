@@ -158,11 +158,15 @@
           <input
            [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null || puedeModificarDocAndInfo==false"
            formControlName="clienteNombre" (input)="f.clienteNombre.setValue(f.clienteNombre.value.toUpperCase())" type="text" name="clienteNombre" id="clienteNombre"
+           [(ngModel)]="nombreCliente"
             [ngClass]="{'is-invalid' : submitted && f.clienteNombre.errors,  'form-control':true  }">
           <div class="invalid-feedback" *ngIf="submitted && f.clienteNombre.errors">
             <div *ngIf="f.clienteNombre.errors.required">El campo es obligatorio
             </div>
           </div>
+          <div class="invalid-feedback" *ngIf="(submitted && f.clienteNombre.errors) || f.clienteNombre.touched">
+            <div style="color: red" *ngIf="nombreCliente?.length > 10">Este campo no puede ser mayor a 100 carácteres.</div>
+           </div>
         </div>
         <div class="form-group col-md-6"  >
           <label for="email"> <i class="fa fa-envelope-open"></i> Email <span class="text-danger">*</span></label>
@@ -237,12 +241,16 @@
           <textarea
           [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null"
           formControlName="calle" name="calle" id="calle" rows="1"
+          [(ngModel)]="Calle"
           [ngClass]="{'is-invalid' : submitted && f.calle.errors,  'form-control':true  }">
             </textarea>
           <div class="invalid-feedback" *ngIf="submitted && f.calle.errors">
             <div *ngIf="f.calle.errors.required">El campo es obligatorio
             </div>
           </div>
+          <div class="invalid-feedback" *ngIf="(submitted && f.calle.errors) || f.calle.touched">
+            <div style="color: red" *ngIf="Calle?.length > 10">Este campo no puede ser mayor a 100 carácteres.</div>
+           </div>
         </div>
 
 
@@ -288,12 +296,17 @@
           <textarea
           [readonly]="f.clienteTipoID.value==0 || f.clienteTipoID.value==null"
           formControlName="referencia" name="referencia" id="referencia" rows="1"
+          ngModel maxlength="50"
+          [(ngModel)]="Ref"
           [ngClass]="{'is-invalid' : submitted && f.referencia.errors,  'form-control':true  }">
             </textarea>
           <div class="invalid-feedback" *ngIf="submitted && f.referencia.errors">
             <div *ngIf="f.referencia.errors.required">El campo es obligatorio
             </div>
           </div>
+          <div class="invalid-feedback" *ngIf="(submitted && f.referencia.errors) || f.referencia.touched">
+             <div style="color: red" *ngIf="Ref?.length > 10">Este campo no puede ser mayor a 50 carácteres.</div>
+            </div>
         </div>
         <div class="form-group col-md-6"  *ngIf="f.documentoTipoID.value==1">
         </div>

@@ -5,6 +5,9 @@ import { FullComponent } from './core/layouts/full/full.component';
 import { LoginComponent } from './Modules/login/login.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { BlankComponent } from './core/layouts/blank/blank.component';
+import { HoraPickingListadoComponent } from './Modules/mantenimientos/horaPicking/hora-picking-listado/hora-picking-listado.component';
+import { HoraPickingFormularioComponent } from './Modules/mantenimientos/horaPicking/hora-picking-formulario/hora-picking-formulario.component';
+import { TransferenciaFormularioComponent } from './Modules/inventario/transferencia/transferencia-formulario/transferencia-formulario.component';
 
 export const Approutes: Routes = [
   {
@@ -14,6 +17,11 @@ export const Approutes: Routes = [
     },
     component: LoginComponent
   },
+ //{path: 'transferencia',component: TransferenciaFormularioComponent},
+  /*{path: 'formulario-hora',component: HoraPickingFormularioComponent},
+  { path: 'formulario-hora-picking/:id', component: HoraPickingFormularioComponent},*/
+  
+ 
   {
     path: '',
     component: FullComponent,

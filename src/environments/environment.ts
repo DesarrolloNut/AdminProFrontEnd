@@ -5,7 +5,9 @@
 export const environment = {
   production: false,
   apiUrl: 'http://localhost:50551/',
+  //apiUrl: 'http://192.168.0.174/NutriciosaAdmin/'
   // apiUrl: 'http://localhost:50551/',
+  //apiUrl: 'https://appadmin.nutriciosa.com/NutriciosaAdminWeb/',
 };
 /*
  * In development mode, to ignore zone related error stack frames such as

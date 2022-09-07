@@ -41,25 +41,31 @@ export class BackendService {
         request.pagina.paginaSize = PaginaSize;
         request.pagina.ordenAsc = OrderASC;
         request.pagina.ordenColumna = Columna;
+
         return this.http.post<ResponseContenido<T>>(this.baseUrl + dataApiRootMap[api] + "/" + Method, request).pipe(retry(3));
     }
 
     public DoPost<T>(api: DataApi, Method: string, parametros: any): Observable<ResponseContenido<T>> {
         let request = new RequestContenido<T>();
         request.parametros = parametros;
+        
         return this.http.post<ResponseContenido<T>>(this.baseUrl + dataApiRootMap[api] + "/" + Method, request).pipe(retry(3));
     }
 
     public DoPostAny<T>(api: DataApi, Method: string, request: any, reportProgress = false): Observable<ResponseContenido<T>> {
+       console.log(this.baseUrl + dataApiRootMap[api] + "/" + Method, request)
         return this.http.post<ResponseContenido<T>>(this.baseUrl + dataApiRootMap[api] + "/" + Method, request).pipe(retry(3));
     }
     public async DoPostAnyAsync<T>(api: DataApi, Method: string, request: any, reportProgress = false) {
+    
         return  await this.http.post<ResponseContenido<T>>(this.baseUrl + dataApiRootMap[api] + "/" + Method, request).toPromise();
     }
 
     public async DoPostAsync<T>(api: DataApi, Method: string, parametros: any){
       let request = new RequestContenido<T>();
       request.parametros = parametros;
+      //console.log(request);
+      
       return  await this.http.post<ResponseContenido<T>>(this.baseUrl + dataApiRootMap[api] + "/" + Method, request).toPromise();
   }
     // public DoPostUpload<T>(api: DataApi, Method: string, files: File[]) {

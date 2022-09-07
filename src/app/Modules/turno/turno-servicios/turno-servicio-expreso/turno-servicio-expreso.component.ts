@@ -395,10 +395,7 @@ export class TurnoServicioExpresoComponent implements OnInit {
       return turno;
   
     }
-  
-  
     getNuevaCita(): Cita {
-  
       let cita: Cita = new Cita();
       cita.clienteID = this.cliente.id;
       cita.vehiculoID = this.chasisSeleccionado.codigo

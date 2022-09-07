@@ -74,6 +74,7 @@ export class AlmacenesFormularioComponent implements OnInit {
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0]
             this.Formulario.setValue(record);
+           
           } else {
             this.toastService.warning("Almacen no encontrado");
             this.router.navigateByUrl('/mantenimientos/almacen');
@@ -130,6 +131,7 @@ export class AlmacenesFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.sucursales = response.records;
+          //console.log(this.sucursales);
         }
         this.loadingSucursales = false;
       }, error => {

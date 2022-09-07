@@ -6,6 +6,8 @@ import { DevolucionesListadoComponent } from './devoluciones/devoluciones-listad
 import { EntregasListadoComponent } from './entregas/entregas-listado/entregas-listado.component';
 import { InventarioComponent } from './inventario.component';
 import { RecepcionActivoListadoComponent } from './recepcion-activo/recepcion-activo-listado/recepcion-activo-listado.component';
+import { TransferenciaListadoComponent } from './transferencia/transferencia-listado/transferencia-listado.component';
+import { TransferenciaFormularioComponent } from './transferencia/transferencia-formulario/transferencia-formulario.component';
 
 
 const routes: Routes = [  {
@@ -56,6 +58,30 @@ const routes: Routes = [  {
         ]
       }
     },
+
+    //Transferencia
+    {
+      path: 'transferencia', component: TransferenciaListadoComponent, data: {
+        title: 'Transferencia',
+        urls: [
+          { title: 'Inventario' },
+          { title: 'Transferencia' }
+        ]
+      }
+    },
+
+    {
+      path: 'transferencia/:id', component: TransferenciaFormularioComponent, data: {
+        title: 'Formulario Transferencia',
+        urls: [
+          { title: 'Inventario' },
+          { title: 'Transferencia' },
+          { title: 'Formulario Transferencia' }
+        ]
+      }
+    },
+
+    
 
   ]
 

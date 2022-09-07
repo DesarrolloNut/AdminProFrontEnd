@@ -60,6 +60,11 @@
                                     <button class="btn btn-sm btn-info" [routerLink]="[item.id]">
                                         <i class="fa fa-sm fa-edit"></i>
                                     </button>
+
+                                    <button class="btn btn-sm btn-success m-1"
+                                    (click)="openModal(modalAsignacionAlmacenes,item.id)">
+                                    <i class=" fa fa-sm fa-th-list"></i> Almacenes
+                                </button>
                                 </td>
                             </tr>
 
@@ -94,3 +99,30 @@
         </div>
     </div>
 </div>
+
+<ng-template #modalAsignacionAlmacenes let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Asignación de almacenes </h4>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12" [hidden]="loadingArticulosSeleccionados">
+                <dual-list [sort]="keepSorted" [source]="source" [key]="key" [display]="display" [filter]="filter"
+                    [(destination)]="confirmed" height="265px"  [format]="format" [disabled]="disabled"></dual-list>
+            </div>
+
+            <div class="col-12">
+                <app-loading-listado [hidden]="!loadingArticulosSeleccionados"></app-loading-listado>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cancelar</button>
+        <button type="button" class="btn btn-success m-1" *ngIf="!guardandoArticulos"
+            (click)="guardarAlmacenesSeleccionados()">Guardar</button>
+        <!-- boton cargando -->
+        <button *ngIf="guardandoArticulos" disabled class="btn btn-success m-1" type="button">
+            <span class="spinner-border spinner-border-sm"></span> Guardando
+        </button>
+    </div>
+</ng-template>

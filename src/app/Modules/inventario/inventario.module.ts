@@ -14,6 +14,9 @@ import { NgxBarcodeModule } from 'ngx-barcode';
 import { DespachoAsignacionFormularioComponent } from './despacho-asignacion/despacho-asignacion-formulario/despacho-asignacion-formulario.component';
 import { DespachoAsignacionListadoComponent } from './despacho-asignacion/despacho-asignacion-listado/despacho-asignacion-listado.component';
 
+import { TransferenciaListadoComponent } from './transferencia/transferencia-listado/transferencia-listado.component';
+import { TransferenciaFormularioComponent } from './transferencia/transferencia-formulario/transferencia-formulario.component';
+
 
 @NgModule({
   declarations: [InventarioComponent, DevolucionesListadoComponent,
@@ -23,7 +26,9 @@ import { DespachoAsignacionListadoComponent } from './despacho-asignacion/despac
      DespachoListadoComponent,
      DespachoFormularioComponent,
      DespachoAsignacionFormularioComponent,
-     DespachoAsignacionListadoComponent
+     DespachoAsignacionListadoComponent,
+     TransferenciaListadoComponent,
+     TransferenciaFormularioComponent
     ],
   imports: [
     CommonModule,

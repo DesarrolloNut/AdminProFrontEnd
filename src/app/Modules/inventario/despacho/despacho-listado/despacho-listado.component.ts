@@ -87,8 +87,6 @@ export class DespachoListadoComponent implements OnInit {
   canalId:number=1;
   sucursales  : ComboBox[];
   loadingSucursales = false;
-
-
   //extra
   intervalRefreshData: NodeJS.Timeout
   intervalRefreshBalanza: NodeJS.Timeout
@@ -99,8 +97,6 @@ export class DespachoListadoComponent implements OnInit {
    despachoOn = 1
    Diferencia_Minima_Despacho = 0
    Despacho_Max_Porciento = 0
-
-
    despachoPuedeHorario = true;
    loadingRangosFechaDespacho =false;
 
@@ -889,8 +885,6 @@ getSucursalByUsuarioId() {
 
   }
 
-
-
   exportDespachoPreventaDetalle(despacho:any,tipo:number) {
 
     //TIPO 1 = PRINT
@@ -898,25 +892,19 @@ getSucursalByUsuarioId() {
     this.btnCargandoPrint=true;
     this.limpiarDataPreventa()
     this.despachoPreventaSeleccionado = despacho;
-
     let parametros={
      "Fecha":despacho.fechaEntrega
     ,"RutaId": despacho.rutaId
    }
-
-
     this.httpService.DoPostAny<DespachoPreventaDetalleViewModel>(DataApi.Despacho,
       "GetDespachoPreventaDetalles", parametros).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
           this.btnCargandoPrint=false;
-
         } else {
 
           this.despachoPreventaDetalles = response.valores[0];
           if(tipo==1){
-
-
             this.despachoPreventaDetalleToPrinter(this.despachoPreventaDetalles)
           }else if(tipo==2){
             this.despachoPreventaDetalleToExcel(this.despachoPreventaDetalles)

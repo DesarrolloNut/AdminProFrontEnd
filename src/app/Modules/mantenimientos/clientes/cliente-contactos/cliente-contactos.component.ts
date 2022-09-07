@@ -106,6 +106,7 @@ export class ClienteContactosComponent implements OnInit {
                  this.isnotNecesaryFieldsComplete= v.ok;
                  this.isnotNecesaryFieldsCompleteO.emit(v.ok);
                  this.toastService.success("Realizado", "OK");
+                 this.router.navigateByUrl('/mantenimientos/cliente');
                }
             }
           }
@@ -242,7 +243,7 @@ export class ClienteContactosComponent implements OnInit {
   }
 
   send(values) {
-    console.log(values);
+    //console.log(values);
   }
   buscarCliente(documento: string) {
     this.buscandoDocumento = true;

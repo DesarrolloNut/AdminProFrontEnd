@@ -109,10 +109,9 @@ export class PrintExportFile {
     fontCenterBoldTableBodyRed: { fontSize: this.fontSizeTableBody, bold: true, alignment: 'center' , color:'#FF0000'},
     fontLeftBoldTableBodyRed: { fontSize: this.fontSizeTableBody, bold: true, alignment: 'left' , color:'#FF0000'},
     fontRightBoldTableBodyRed: { fontSize: this.fontSizeTableBody, bold: true, alignment: 'right', color:'#FF0000' },
-
-
+  
   };
-
+  
   private readonly FontStylesExcel = {
 
        // HORIZONTAL: left, center, right, fill, justify, centerContinuous, distributed

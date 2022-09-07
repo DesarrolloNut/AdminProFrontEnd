@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 
 import { AngularDualListBoxModule } from 'angular-dual-listbox';
-
+import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
 
 import { CommonModule } from '@angular/common';
 import { MantenimientosRoutingModule } from './mantenimientos-routing.module';
@@ -74,6 +74,7 @@ import { PerfilFormularioComponent } from './perfil-formulario/perfil-formulario
 import { TreeviewModule } from 'ngx-treeview';
 import { CargaMasivaPanelComponent } from './cargaMasiva/carga-masiva-panel/carga-masiva-panel.component';
 import { MonedasListadoComponent } from './monedas/monedas-listado/monedas-listado.component';
+
 import { MonedasFormularioComponent } from './monedas/monedas-formulario/monedas-formulario.component';
 import { DepartamentosFormularioComponent } from './departamentos/departamentos-formulario/departamentos-formulario.component';
 import { DepartamentosListadoComponent } from './departamentos/departamentos-listado/departamentos-listado.component';
@@ -107,6 +108,11 @@ import { ComprobanteFiscalListadoComponent } from './comprobanteFiscal/comproban
 import { ComprobanteFiscalFormularioComponent } from './comprobanteFiscal/comprobante-fiscal-formulario/comprobante-fiscal-formulario.component';
 
 import { ImageCropperModule } from 'ngx-image-cropper';
+import { HoraPickingListadoComponent } from './horaPicking/hora-picking-listado/hora-picking-listado.component';
+import { AsignacionAlmacenListadoComponent } from './asignacionDeAlmacenDestino/asignacion-almacen-listado/asignacion-almacen-listado.component';
+import { AsignacionAlmacenFormularioComponent } from './asignacionDeAlmacenDestino/asignacion-almacen-formulario/asignacion-almacen-formulario.component';
+import { HoraPickingFormularioComponent } from './horaPicking/hora-picking-formulario/hora-picking-formulario.component';
+
 
 
 @NgModule({
@@ -127,7 +133,9 @@ import { ImageCropperModule } from 'ngx-image-cropper';
     ListaPreciosListadoComponent, ListaPreciosFormularioComponent, RutasListadoComponent, RutasFormularioComponent,
     NivelAutorizacionListadoComponent, NivelAutorizacionFormularioComponent, EstadosGeneralesListadoComponent, EstadosGeneralesFormularioComponent,
     NivelAutorizacionModuloFormularioComponent, NivelAutorizacionModuloListadoComponent, RolesListadoComponent, RolesFormularioComponent,
-
+    AsignacionAlmacenListadoComponent,
+    AsignacionAlmacenFormularioComponent,
+    HoraPickingFormularioComponent,
     SapconnectionListadoComponent,
     SapconnectionFormularioComponent,
     PromocionesListadoComponent,
@@ -137,6 +145,7 @@ import { ImageCropperModule } from 'ngx-image-cropper';
     PerfilFormularioComponent,
     CargaMasivaPanelComponent,
     MonedasListadoComponent,
+    HoraPickingListadoComponent,
     MonedasFormularioComponent,
     DepartamentosFormularioComponent,
     DepartamentosListadoComponent,
@@ -164,6 +173,8 @@ import { ImageCropperModule } from 'ngx-image-cropper';
     AngularDualListBoxModule,
     MantenimientosRoutingModule,
     SharedModule,
+   
+    NgxMaterialTimepickerModule,
     ImageCropperModule,
     AgmCoreModule.forRoot({ //mapas
       //  apiKey: 'AIzaSyBaddDDv0d9zuun9qiWj3VkLEzpJot9UQ4',

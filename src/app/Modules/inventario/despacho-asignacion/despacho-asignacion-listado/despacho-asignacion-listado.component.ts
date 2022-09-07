@@ -401,7 +401,6 @@ validaHorarioAndGetData(showLoading=false){
     ];
    await this.httpService.DoPostAsync<ComboBox>(DataApi.ComboBox,
         "GetSucursales", null).then(response => {
-
             if (!response.ok) {
                 this.toastService.error(response.errores[0]);
                 // let thes = this;
@@ -411,13 +410,11 @@ validaHorarioAndGetData(showLoading=false){
             } else {
                 this.sucursales = response.records;
             }
-
         }, error => {
             // let thes = this;
             // this.timeOut = setTimeout(() => {
             //     thes.getSucursales();
             // }, 1000);
-
             this.toastService.error("No se pudo obtener las sucursales.", "Error conexion al servidor");
         });
 }

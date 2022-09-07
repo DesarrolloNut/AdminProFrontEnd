@@ -71,6 +71,9 @@ import { PromocionesFormularioComponent } from './promociones/promociones-formul
 import { PerfilFormularioComponent } from './perfil-formulario/perfil-formulario.component';
 import { CargaMasivaPanelComponent } from './cargaMasiva/carga-masiva-panel/carga-masiva-panel.component';
 import { MonedasListadoComponent } from './monedas/monedas-listado/monedas-listado.component';
+
+
+
 import { MonedasFormularioComponent } from './monedas/monedas-formulario/monedas-formulario.component';
 import { DepartamentosListadoComponent } from './departamentos/departamentos-listado/departamentos-listado.component';
 import { EnrrollvendedorentregasupervisorListadoComponent } from './enrrollvendedorentregasupervisor/enrrollvendedorentregasupervisor-listado/enrrollvendedorentregasupervisor-listado.component';
@@ -84,6 +87,11 @@ import { PlazosListadoComponent } from './plazos/plazos-listado/plazos-listado.c
 import { PlazosFormularioComponent } from './plazos/plazos-formulario/plazos-formulario.component';
 import { ComprobanteFiscalListadoComponent } from './comprobanteFiscal/comprobante-fiscal-listado/comprobante-fiscal-listado.component';
 import { ComprobanteFiscalFormularioComponent } from './comprobanteFiscal/comprobante-fiscal-formulario/comprobante-fiscal-formulario.component';
+import { HoraPickingListadoComponent } from './horaPicking/hora-picking-listado/hora-picking-listado.component';
+import { HoraPickingFormularioComponent } from './horaPicking/hora-picking-formulario/hora-picking-formulario.component';
+import { AsignacionAlmacenFormularioComponent } from './asignacionDeAlmacenDestino/asignacion-almacen-formulario/asignacion-almacen-formulario.component';
+import { AsignacionAlmacenListadoComponent } from './asignacionDeAlmacenDestino/asignacion-almacen-listado/asignacion-almacen-listado.component';
+
 
 
 
@@ -109,6 +117,27 @@ const routes: Routes = [
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Comprobantes fiscales' },
+          ]
+        }
+      },
+
+       //Asignacion almacen
+       {
+        path: 'asignacion-almacen', component: AsignacionAlmacenListadoComponent, data: {
+          title: 'Asignación Almacén',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Asignación Almacén' }
+          ]
+        }
+      },
+      {
+        path: 'asignacion-almacen/:id', component: AsignacionAlmacenFormularioComponent, data: {
+          title: 'Asignación Almacén Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Asignación Almacén' },
+            { title: 'Formulario' }
           ]
         }
       },
@@ -530,6 +559,7 @@ const routes: Routes = [
           ]
         }
       },
+     
 
       {
         path: 'almacen/:id', component: AlmacenesFormularioComponent, data: {
@@ -864,8 +894,6 @@ const routes: Routes = [
           ]
         }
       },
-
-
       // Moneda
       {
         path: 'moneda', component: MonedasListadoComponent, data: {
@@ -876,13 +904,32 @@ const routes: Routes = [
           ]
         }
       },
-
       {
         path: 'moneda/:id', component: MonedasFormularioComponent, data: {
           title: 'Moneda Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Moneda' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+      //Hora Picking
+      {
+        path: 'hora-picking', component: HoraPickingListadoComponent, data: {
+          title: 'Hora Picking',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Horario Picking' }
+          ]
+        }
+      },
+      {
+        path: 'hora-picking/:id', component: HoraPickingFormularioComponent, data: {
+          title: 'Hora Picking Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Hora Picking' },
             { title: 'Formulario' }
           ]
         }
