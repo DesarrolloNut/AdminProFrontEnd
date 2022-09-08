@@ -135,7 +135,7 @@ export class CargaMasivaPanelComponent implements OnInit {
     } else if (this.accionId == 3) {
       if (this.validarCargaClienteRutaTipo()) {
 
-     
+       
         this.dataTransformed = this.dataExcel.map((x) => {
           let arrayValues = Object.values(x);
           return {
@@ -147,8 +147,6 @@ export class CargaMasivaPanelComponent implements OnInit {
             "Fecha":this.fecha
           };
         });
-        console.table(this.dataTransformed)
-
         this.dataApi = DataApi.Cliente;
         this.metodoEndPoint = "UploadExcelFileReestructuraCliente"
         this.subirDatosExcel()
@@ -158,11 +156,17 @@ export class CargaMasivaPanelComponent implements OnInit {
   }
 
   subirDatosExcel() {
-    alert(this.fecha)
+    
     if (this.dataExcel.length <= 0) {
       this.toastService.warning("No hay records para subir.")
-      return
+      return;
     }
+    if(this.fecha == undefined)
+    {
+      this.toastService.error("Selecciona un fecha sincronización.")
+      return;
+    }
+    
     this.guardandoDataExcel = true;
     console.log(this.metodoEndPoint)
     this.httpService.DoPostAny<any>(this.dataApi,
