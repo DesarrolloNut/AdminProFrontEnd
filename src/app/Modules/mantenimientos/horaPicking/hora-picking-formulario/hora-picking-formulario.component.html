@@ -40,7 +40,7 @@
 
                     <div class="form-group col-md-4">
                         <label for="nombre"> Hora Desde</label>
-                        <input formControlName="horaDesde" [format]="24" type="text" [ngxTimepicker]="horaDesde" name="horaDesde" id="horaDesde"
+                        <input formControlName="horaDesde" [format]="12" type="text" [ngxTimepicker]="horaDesde" name="horaDesde" id="horaDesde"
                             [ngClass]="{'is-invalid' : submitted && f.horaDesde.errors,  'form-control':true  }" placeholder="Seleccionar la hora de Inicio">
                         <div class="invalid-feedback" *ngIf="submitted && f.horaDesde.errors">
                             <div *ngIf="f.horaDesde.errors.required">El campo es obligatorio</div>
@@ -49,7 +49,7 @@
                     </div>
                     <div class="form-group col-md-4">
                         <label for="horaHasta"> Hora Hasta</label>
-                        <input [(ngModel)]="horaValida" formControlName="horaHasta"  [format]="24" [ngxTimepicker]="horaHasta" (blur)="validarHora($event)" type="text" name="horaHasta" id="horaHasta"
+                        <input [(ngModel)]="horaValida" formControlName="horaHasta"  [format]="12" [ngxTimepicker]="horaHasta" (blur)="validarHora($event)" type="text" name="horaHasta" id="horaHasta"
                             [ngClass]="{'is-invalid' : submitted && f.horaHasta.errors,  'form-control':true  }" placeholder="Seleccionar la hora de Final">
                         <div class="invalid-feedback" *ngIf="submitted && f.horaHasta.errors">
                             <div *ngIf="f.horaHasta.errors.required">El campo es obligatorio</div>

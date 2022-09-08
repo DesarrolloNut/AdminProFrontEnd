@@ -268,7 +268,7 @@
                 <div class="modal-footer" *ngIf="dataExcel && !guardandoDataExcel && dataExcel.length > 0">
                     <div class="form-group col-md-5" >
                         <label> <i class="fa fa-calendar"></i> Fecha de sincronización</label>
-                        <ejs-datepicker  [format]="'dd-MM-yyyy'"></ejs-datepicker>
+                        <ejs-datepicker  [format]="'dd-MM-yyyy'" [(ngModel)]="fecha"></ejs-datepicker>
                     </div>
                     <div class="form-group col-md-4" >
 

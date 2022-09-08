@@ -587,7 +587,7 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ["mantenimientos_articulo"],
       },
-      {
+      /*{
         path: '/mantenimientos/asignacion-almacen',
         label: '',
         labelClass: '',
@@ -597,7 +597,7 @@ export const ROUTES: RouteInfo[] = [
         extralink: false,
         submenu: [],
         permisos: ["mantenimientos_hora_picking"],
-      },
+      },*/
       {
         path: '/mantenimientos/articulo-categoria',
         label: '',

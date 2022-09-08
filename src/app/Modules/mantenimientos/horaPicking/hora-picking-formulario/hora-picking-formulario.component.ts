@@ -30,6 +30,10 @@ export class HoraPickingFormularioComponent implements OnInit {
   dias: ComboBox[] = [];
   horaValida:any;
   horaExiste = false;
+  horaDesde: any;
+  horaHasta: any;
+  horaD: any;
+  horaH: any;
 
   constructor(
     private toastService: ToastrService,
@@ -93,12 +97,40 @@ export class HoraPickingFormularioComponent implements OnInit {
      this.horaValida="23:00"
  }
 
+ //validarHora($event)
   onSubmit() {
     this.submitted = true;
     if (this.Formulario.invalid) {
       return;
       
     }
+  
+    if( Number( this.Formulario.get('horaDesde').value.split(":",1)[0]) >= Number( this.Formulario.get('horaHasta').value.split(":",1)[0]) )
+    {
+      this.toastService.error("La Hora Final no puede ser menor a la hora Inicial.");
+      return;
+    }
+    if(this.Formulario.get('horaHasta').value.includes('PM'))
+    {
+      
+       this.horaHasta= 12+Number(this.Formulario.get('horaHasta').value.split(":",2)[0] )  + ":"  +this.Formulario.get('horaHasta').value.split(":",2)[1];
+    }
+    else
+    {
+      this.horaHasta= this.horaDesde=this.Formulario.get('horaHasta').value;
+    }
+    if(this.Formulario.get('horaDesde').value.includes('PM'))
+    {
+      
+       this.horaDesde= 12+Number(this.Formulario.get('horaDesde').value.split(":",2)[0] )  + ":"  +this.Formulario.get('horaDesde').value.split(":",2)[1];
+    }
+    else{
+      this.horaDesde=this.Formulario.get('horaDesde').value;
+    }
+ 
+    console.log(this.horaDesde)
+    console.log(this.horaHasta)
+   
     this.submitted = true;
     if (this.Formulario.invalid) {
       return;
@@ -106,24 +138,7 @@ export class HoraPickingFormularioComponent implements OnInit {
     this.guardar();
   }
 
-   /*horaPickingExiste() {
-      let parametros = new HoraPicking();
-      parametros.diaId = Number(this.Formulario.get('diaId').value); 
-      parametros.companiaId = Number(this.authService.tokenDecoded.primarygroupsid);
-      this.httpService.DoPostAny<HoraPicking>(DataApi.HoraPicking,
-        "horaPickingExiste", parametros).subscribe(response => {
-         
-            if (!response.ok) {
-                this.toastService.error(response.errores[0]);
-            } else {
-              if (response.records.length > 0){
-                this.horaExiste=true;
-              }
-            }
-        }, error => {
-            this.toastService.error("Este horario ya existe.", "Error conexion al servidor");
-        });
-    }*/
+  
 
   guardar() {
     let metodo: string = this.actualizando ? "Update" : "Registrar";
@@ -133,8 +148,8 @@ export class HoraPickingFormularioComponent implements OnInit {
       parametros.id =this.Formulario.get('id').value;
       parametros.diaId = Number(this.Formulario.get('diaId').value); 
       parametros.companiaId = Number(this.authService.tokenDecoded.primarygroupsid);
-      parametros.horaDesde =this.Formulario.get('horaDesde').value;
-      parametros.horaHasta =this.Formulario.get('horaHasta').value;
+      parametros.horaDesde =this.horaDesde;
+      parametros.horaHasta =this.horaHasta;
     
     this.httpService.DoPostAny<any>(DataApi.HoraPicking,
       metodo, parametros).subscribe(response => {
