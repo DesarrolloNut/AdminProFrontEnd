@@ -62,6 +62,8 @@ export class UsuarioAlmacenEnrrollFormularioComponent implements OnInit {
       almacenID: [null, Validators.required],
       moduloID: [null, Validators.required],
       predeterminado: [false],
+      enviar:[true],
+      recibir:[true],
       companiaID: [Number(this.auth.tokenDecoded.primarygroupsid),],
     });
   }
@@ -99,7 +101,8 @@ export class UsuarioAlmacenEnrrollFormularioComponent implements OnInit {
     if (this.Formulario.invalid) {
       return;
     }
-    this.guardar();
+    console.log(this.Formulario.value)
+    //this.guardar();
   }
 
 

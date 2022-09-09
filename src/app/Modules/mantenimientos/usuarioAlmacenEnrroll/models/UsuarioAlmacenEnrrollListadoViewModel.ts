@@ -4,4 +4,6 @@ export interface UsuarioAlmacenEnrrollListadoViewModel {
     almacen: string;
     modulo: string;
     predeterminado: boolean;
+    enviar:boolean;
+    recibir:boolean;
 }

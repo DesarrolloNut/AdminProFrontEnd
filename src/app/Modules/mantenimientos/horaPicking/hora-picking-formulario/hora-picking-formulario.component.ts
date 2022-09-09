@@ -104,8 +104,9 @@ export class HoraPickingFormularioComponent implements OnInit {
       return;
       
     }
-  
-    if( Number( this.Formulario.get('horaDesde').value.split(":",1)[0]) >= Number( this.Formulario.get('horaHasta').value.split(":",1)[0]) )
+    let h2=this.Formulario.get('horaHasta').value.includes('PM')? 12+Number(this.Formulario.get('horaHasta').value.split(":",2)[0] ): Number(this.Formulario.get('horaHasta').value.split(":",2)[0] );
+    let h1=this.Formulario.get('horaDesde').value.includes('PM')? 12+Number(this.Formulario.get('horaDesde').value.split(":",2)[0] ): Number(this.Formulario.get('horaDesde').value.split(":",2)[0] );
+    if( Number( h1 >= h2 ))
     {
       this.toastService.error("La Hora Final no puede ser menor a la hora Inicial.");
       return;
