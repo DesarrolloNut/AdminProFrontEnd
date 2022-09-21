@@ -81,35 +81,29 @@
                   
 
 
-                  <h5 *ngIf="item.estadoERP==0" >
+                  <h5 *ngIf="item.estadoIdERP==1" >
                     <span> <i class="fa fa-circle"
                             [ngStyle]="{'color': '#f4d03f'}"></i>
                        Pendiente</span>
                     </h5>
-                    <h5 *ngIf="item.estadoERP==1" >
-                      <span> <i class="fa fa-circle"
-                              [ngStyle]="{'color': '#6599fb'}"></i>
-                              Pendiente Sincronizar</span>
-                      </h5>
-                      <h5 *ngIf="item.estadoERP==2" >
+                  
+                      <h5 *ngIf="item.estadoIdERP==0" >
                         <span> <i class="fa fa-circle"
                                 [ngStyle]="{'color': '#82e0aa'}"></i>
                                 Sincronizado</span>
                         </h5>
                 </td>
                 <td>
-                  <button [hidden]="item.nombreEstado == 'Confirmado' || item.nombreEstado == 'Recibido' || item.nombreEstado == 'Cancelado'" title="Confirmar" type="button" class="btn btn-outline-success m-1"
+                  <button [hidden]="item.nombreEstado == 'Confirmado' || item.nombreEstado == 'Recibido' || item.nombreEstado == 'Cancelado' || item.enviar==false" title="Confirmar" type="button" class="btn btn-outline-success m-1"
                   (click)="confirmarTransferenciaInventario(item.id)"
                   >
                     <i class="fas fa-check"></i>
                  </button>
-                  
                   <button  type="button" title="Ver Detalle" class="btn  btn-light m-1" 
                   (click)="openModalDetalle(modalDetalleSolicitud,item)"
                   >
                     <i class="fa  fa-eye"></i>
                 </button>
-                
                   <button  [hidden]="item.nombreEstado == 'Confirmado' || item.nombreEstado == 'Recibido' || item.nombreEstado == 'Cancelado'" title="Editar"  type="button" class="btn btn-outline-info m-1" [routerLink]="[item.id]" >
                     <i class="fa fa-edit"></i>
                 </button>
@@ -118,7 +112,7 @@
                   >
                     <i class="fa fa-times"></i>
                 </button>
-                <button *ngIf="item.nombreEstado == 'Confirmado'" title="Confirmar Recepción" type="button" class="btn btn-outline-success m-1"
+                <button [hidden]="item.recibir==false || item.nombreEstado == 'Pendiente' || item.nombreEstado == 'Recibido' || item.nombreEstado == 'Cancelado'" title="Confirmar Recepción" type="button" class="btn btn-outline-success m-1"
                 [routerLink]="[item.id]"
                 >
                   <i class="mdi mdi-package-variant-closed"></i>

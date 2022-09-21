@@ -29,7 +29,8 @@ export class UsuarioAlmacenEnrrollFormularioComponent implements OnInit {
   almacenes: ComboBox[];
   loadingNivelAutorizacionCategorias: boolean;
   NivelAutorizacionCategorias: ComboBox[];
-
+  moduloSeleccionado:number;
+  mostrarAcceso: string="";
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
@@ -43,6 +44,7 @@ export class UsuarioAlmacenEnrrollFormularioComponent implements OnInit {
     let id = Number(this.route.snapshot.paramMap.get('id'));
 
     if (id > 0) {
+      this.GetNivelAutorizacionModuloComboBox()
       this.getItem(id);
       this.actualizando = true;
     }
@@ -82,6 +84,7 @@ export class UsuarioAlmacenEnrrollFormularioComponent implements OnInit {
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0]
             this.Formulario.setValue(record);
+            this.mostrarAcceso= this.NivelAutorizacionCategorias.find(X=>X.codigo==record.moduloID).nombre.toUpperCase(); 
           } else {
             this.toastService.warning("Enrroll no encontrado");
             this.router.navigateByUrl('/mantenimientos/usuario-almacen-enrroll');
@@ -94,15 +97,16 @@ export class UsuarioAlmacenEnrrollFormularioComponent implements OnInit {
       });
   }
 
-
+  changeFn(moduloID){
+    this.mostrarAcceso= this.NivelAutorizacionCategorias.find(X=>X.codigo==moduloID).nombre.toUpperCase(); 
+  }
   onSubmit() {
 
     this.submitted = true;
     if (this.Formulario.invalid) {
       return;
     }
-    console.log(this.Formulario.value)
-    //this.guardar();
+    this.guardar();
   }
 
 
@@ -161,6 +165,7 @@ export class UsuarioAlmacenEnrrollFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.NivelAutorizacionCategorias = response.records;
+       
         }
         this.loadingNivelAutorizacionCategorias = false;
       }, error => {

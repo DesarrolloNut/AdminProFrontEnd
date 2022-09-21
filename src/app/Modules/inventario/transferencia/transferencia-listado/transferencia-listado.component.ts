@@ -17,6 +17,7 @@ import { Archivo } from 'src/app/shared/model/Archivo';
 import { CambiarEstado } from 'src/app/shared/model/CambiarEstado';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { PrintTransferenciaInventarioVM } from '../models/PrintTransferenciaInventarioVM';
+import { RequestTransferenciaInventario } from '../models/RequestTransferenciaInventario';
 import { SolicitudArticuloDetalle } from '../models/SolicitudArticuloDetalle';
 import { SolicitudTransferenciaInventarioDetalles } from '../models/SolicitudCompraDetalle';
 import { SolicitudCompraListadoViewModel } from '../models/SolicitudCompraListadoViewModel';
@@ -76,14 +77,14 @@ export class TransferenciaListadoComponent implements OnInit {
   }
   getData() {
     this.Cargando = true;
-    let parametros: Parametro[] = [
-      { key: "Search", value: this.Search },
-      { key: "UsuarioId", value: this.authService.tokenDecoded.nameid },
-    ]
-    this.httpService.GetAllWithPagination<any>(DataApi.TransferenciaInventario, "GetTransferenciaInventarioListado", "ID", this.paginaNumeroActual,
-      this.paginaSize, false, parametros).subscribe(x => {
+    let parametros = new RequestTransferenciaInventario();
+    parametros.CompaniaId =Number(this.authService.tokenDecoded.primarygroupsid),
+    parametros.UsuarioId=Number(this.authService.tokenDecoded.nameid), 
+    this.httpService.DoPostAny<any>(DataApi.TransferenciaInventario,
+      "GetTransferenciaInventarioListado", parametros).subscribe(x => {
         if (x.ok) {
           this.data = x.records;
+          console.log(this.data);
           this.asignarPagination(x);
         } else {
           this.toastService.error(x.errores[0]);

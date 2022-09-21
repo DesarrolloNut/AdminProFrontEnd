@@ -41,7 +41,7 @@ export class BackendService {
         request.pagina.paginaSize = PaginaSize;
         request.pagina.ordenAsc = OrderASC;
         request.pagina.ordenColumna = Columna;
-
+        
         return this.http.post<ResponseContenido<T>>(this.baseUrl + dataApiRootMap[api] + "/" + Method, request).pipe(retry(3));
     }
 
@@ -53,7 +53,7 @@ export class BackendService {
     }
 
     public DoPostAny<T>(api: DataApi, Method: string, request: any, reportProgress = false): Observable<ResponseContenido<T>> {
-       console.log(this.baseUrl + dataApiRootMap[api] + "/" + Method, request)
+      
         return this.http.post<ResponseContenido<T>>(this.baseUrl + dataApiRootMap[api] + "/" + Method, request).pipe(retry(3));
     }
     public async DoPostAnyAsync<T>(api: DataApi, Method: string, request: any, reportProgress = false) {

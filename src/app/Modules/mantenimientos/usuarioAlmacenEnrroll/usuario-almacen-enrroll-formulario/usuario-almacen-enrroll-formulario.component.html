@@ -53,10 +53,11 @@
 
                     <div class="form-group col-md-6">
                         <label for="example-email">Nivel Modulo</label>
-                        <ng-select [items]="NivelAutorizacionCategorias" bindLabel="nombre" bindValue="codigo"
+                        <ng-select (change)="changeFn(moduloSeleccionado)" [items]="NivelAutorizacionCategorias" [(ngModel)]="moduloSeleccionado" bindLabel="nombre" bindValue="codigo"
                             [loading]="loadingNivelAutorizacionCategorias" [clearable]="false"
                             [ngClass]="{'form-control border-danger p-0' : submitted && f.moduloID.errors }"
                             notFoundText="No resultados" formControlName="moduloID">
+                           
                         </ng-select>
                         <div *ngIf="submitted && f.moduloID.errors"
                             class="text-danger small animated animated--fade-in">
@@ -73,6 +74,7 @@
                                 </label>
                             </div>
                         </div>
+                    <div *ngIf="mostrarAcceso =='TRANSFERENCIA'">
                         <div class="form-group col-md-3">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="enviar"
@@ -91,6 +93,7 @@
                                 </label>
                             </div>
                         </div>
+                    </div>
 
                     </div>
 
