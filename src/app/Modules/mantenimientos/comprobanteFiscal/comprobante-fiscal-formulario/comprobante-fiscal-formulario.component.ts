@@ -55,7 +55,7 @@ export class ComprobanteFiscalFormularioComponent implements OnInit {
 
     this.Formulario = this.formBuilder.group({
       id: [0],
-      serie: [null, [Validators.required, Validators.minLength(3)]],
+      serie: [null, [Validators.required, Validators.minLength(4)]],
       tipoComprobanteID: [null, Validators.required],
       secuenciaDesde: [null, [Validators.required, Validators.minLength(7)]],
       secuenciaHasta: [null, [Validators.required, Validators.minLength(7)]],
