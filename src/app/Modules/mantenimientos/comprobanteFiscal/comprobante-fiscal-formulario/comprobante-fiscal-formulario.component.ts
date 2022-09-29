@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FocusEventArgs } from '@syncfusion/ej2-angular-calendars';
 import { ToastrService } from 'ngx-toastr';
+import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
@@ -31,6 +32,7 @@ export class ComprobanteFiscalFormularioComponent implements OnInit {
     private route: ActivatedRoute,
     private httpService: BackendService,
     private router: Router,
+    private authService: AuthenticationService,
     private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
@@ -57,6 +59,7 @@ export class ComprobanteFiscalFormularioComponent implements OnInit {
       secuenciaHasta: [null, [Validators.required, Validators.minLength(8)]],
       fechaVencimiento: [null, Validators.required],
       estadoID: [ComprobanteFiscalEstadosEnum.No_SINCRONIZADO,],
+      companiaId: [Number(this.authService.tokenDecoded.primarygroupsid),],
     });
   }
 
@@ -79,13 +82,11 @@ export class ComprobanteFiscalFormularioComponent implements OnInit {
             this.router.navigateByUrl('/mantenimientos/comprobante-fiscal');
           }
         }
-
       }, error => {
         this.Cargando = false;
         this.toastService.error("Error conexion al servidor");
       });
   }
-
 
   onSubmit() {
 

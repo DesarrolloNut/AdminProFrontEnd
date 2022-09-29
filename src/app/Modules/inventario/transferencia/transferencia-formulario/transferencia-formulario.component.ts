@@ -388,6 +388,9 @@ export class TransferenciaFormularioComponent implements OnInit {
     if(this.loteAlmacenSeleccionado.reduce((n, {cantidadEnvio})=> n+cantidadEnvio,0) !== this.solicitudTransferenciaInventario.filter(x=>x.gestionado).reduce((n, {envio})=> n+envio,0))
     {
       this.toastService.error("El total de articulos a transferir no corresponse a la cantidad de lote a digitado.")
+
+      console.log(this.loteAlmacenSeleccionado.reduce((n, {cantidadEnvio})=> n+cantidadEnvio,0));
+      console.log(this.solicitudTransferenciaInventario.filter(x=>x.gestionado).reduce((n, {envio})=> n+envio,0));
       return;
     }
     if(this.loteAlmacenSeleccionado.reduce((n, {recepcion})=> n+recepcion,0) !== this.solicitudTransferenciaInventario.filter(x=>x.gestionado).reduce((n, {recepcion})=> n+recepcion,0))

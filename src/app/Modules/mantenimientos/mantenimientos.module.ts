@@ -112,6 +112,8 @@ import { HoraPickingListadoComponent } from './horaPicking/hora-picking-listado/
 import { AsignacionAlmacenListadoComponent } from './asignacionDeAlmacenDestino/asignacion-almacen-listado/asignacion-almacen-listado.component';
 import { AsignacionAlmacenFormularioComponent } from './asignacionDeAlmacenDestino/asignacion-almacen-formulario/asignacion-almacen-formulario.component';
 import { HoraPickingFormularioComponent } from './horaPicking/hora-picking-formulario/hora-picking-formulario.component';
+import { ComprobanteFiscalEnrollListadoComponent } from './comprobanteFiscalEnrroll/comprobante-fiscal-enroll-listado/comprobante-fiscal-enroll-listado.component';
+import { ComprobanteFiscalEnrollFormularioComponent } from './comprobanteFiscalEnrroll/comprobante-fiscal-enroll-formulario/comprobante-fiscal-enroll-formulario.component';
 
 
 
@@ -143,6 +145,8 @@ import { HoraPickingFormularioComponent } from './horaPicking/hora-picking-formu
     PermisosListadoComponent,
     PermisosFormularioComponent,
     PerfilFormularioComponent,
+    ComprobanteFiscalEnrollListadoComponent,
+    ComprobanteFiscalEnrollFormularioComponent,
     CargaMasivaPanelComponent,
     MonedasListadoComponent,
     HoraPickingListadoComponent,

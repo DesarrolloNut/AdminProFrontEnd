@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
+import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
@@ -54,6 +55,7 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     public permissionsService: NgxPermissionsService,
+    private authService: AuthenticationService,
     private modalService: NgbModal,
 
   ) { }
@@ -63,8 +65,6 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
     this.getComprobanteFiscalEstados();
     this.getSucursales()
     this.getRutasVendedores()
-
-
   }
 
   filterRutas(item: ComprobanteFiscalDetalle): boolean {
@@ -222,6 +222,8 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
     }
 
     this.guardarDetalle();
+    
+
   }
 
 
@@ -238,6 +240,7 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
       "Detalles": this.comprobanteDetalles
         .filter(x => x.valorID > 0)
     }
+   
 
     this.btnGuardarCargando = true;
 
@@ -249,7 +252,7 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
         } else {
           this.toastService.success("Realizado", "OK");
           // this.router.navigateByUrl('/ventas/comprobante');
-          // this.modalService.dismissAll()
+           this.modalService.dismissAll()
 
           this.getComprobanteDetalles(this.itemSelected.id);
 
@@ -291,7 +294,7 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
   agregarDetalleVacio(tipo: ComprobanteFiscalTipoEnum.RUTA | ComprobanteFiscalTipoEnum.SUCURSAL) {
 
     this.comprobanteDetalles.push
-      ({ comprobanteID: 0, desde: 0, hasta: 0, id: 0, valorID: 0, asignados: 0, tipoID: tipo, editable: true })
+      ({ comprobanteID: 0, desde: 0, hasta: 0, id: 0, valorID: 0, asignados: 0, tipoID: tipo, editable: true, companiaId:Number(this.authService.tokenDecoded.primarygroupsid),estadoERPID:1 })
 
   }
 

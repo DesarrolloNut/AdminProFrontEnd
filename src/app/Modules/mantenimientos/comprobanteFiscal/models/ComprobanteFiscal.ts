@@ -6,4 +6,5 @@ export interface ComprobanteFiscal {
     secuenciaHasta: string;
     fechaVencimiento: string;
     estadoID: number;
+    CompaniaId:number;
 }

@@ -690,6 +690,18 @@ export const ROUTES: RouteInfo[] = [
       },
 
       {
+        path: '/mantenimientos/comprobante-fiscal-enrroll',
+        label: '',
+        labelClass: '',
+        title: 'Comprobante Fiscal Enroll',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_comprobante_fiscal"],
+      },
+
+      {
         path: '/mantenimientos/cargamasiva',
         label: '',
         labelClass: '',
