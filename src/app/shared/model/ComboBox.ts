@@ -14,3 +14,12 @@ export class ComboBoxLote {
   disabled?:boolean;
   predeterminado?:boolean;
 }
+export class ComboBoxTipoComprobante {
+  codigo: number;
+  nombre: string;
+  otroProp: string;
+  grupo: string
+  grupoID: string;
+  disabled?:boolean;
+  predeterminado?:boolean;
+}

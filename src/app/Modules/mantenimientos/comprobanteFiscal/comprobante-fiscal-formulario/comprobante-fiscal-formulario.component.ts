@@ -1,3 +1,4 @@
+import { filter } from 'rxjs/operators';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -6,7 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
-import { ComboBox } from 'src/app/shared/model/ComboBox';
+import { ComboBox, ComboBoxTipoComprobante } from 'src/app/shared/model/ComboBox';
 import { ComprobanteFiscal } from '../models/ComprobanteFiscal';
 import { ComprobanteFiscalEstadosEnum } from '../models/ComprobanteFiscalEstadosEnum';
 
@@ -22,6 +23,7 @@ export class ComprobanteFiscalFormularioComponent implements OnInit {
   submitted = false;
   btnGuardarCargando = false;
   actualizando = false;
+  _serie:string="";
 
   tipoComprobantes: any;
   loadingTipoComprobantes: boolean;
@@ -55,8 +57,8 @@ export class ComprobanteFiscalFormularioComponent implements OnInit {
       id: [0],
       serie: [null, [Validators.required, Validators.minLength(3)]],
       tipoComprobanteID: [null, Validators.required],
-      secuenciaDesde: [null, [Validators.required, Validators.minLength(8)]],
-      secuenciaHasta: [null, [Validators.required, Validators.minLength(8)]],
+      secuenciaDesde: [null, [Validators.required, Validators.minLength(7)]],
+      secuenciaHasta: [null, [Validators.required, Validators.minLength(7)]],
       fechaVencimiento: [null, Validators.required],
       estadoID: [ComprobanteFiscalEstadosEnum.No_SINCRONIZADO,],
       companiaId: [Number(this.authService.tokenDecoded.primarygroupsid),],
@@ -91,7 +93,7 @@ export class ComprobanteFiscalFormularioComponent implements OnInit {
   onSubmit() {
 
     this.submitted = true;
-    
+
     if (this.Formulario.invalid) {
       return;
     }
@@ -100,7 +102,7 @@ export class ComprobanteFiscalFormularioComponent implements OnInit {
       this.toastService.warning("Secuencia hasta no puede ser menor a secuencia desde.");
       return;
     }
-
+    console.log(this.Formulario.value);
     this.guardar();
   }
 
@@ -131,7 +133,7 @@ export class ComprobanteFiscalFormularioComponent implements OnInit {
 
   getTipoComprobantes() {
     this.loadingTipoComprobantes = true;
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+    this.httpService.DoPost<ComboBoxTipoComprobante>(DataApi.ComboBox,
       "GetTipoComprobante", null).subscribe(response => {
 
         if (!response.ok) {
@@ -149,6 +151,10 @@ export class ComprobanteFiscalFormularioComponent implements OnInit {
         }, 1000);
 
       });
+  }
+  getSerie(event){
+    const tipoComprobanteId=(event.target as HTMLInputElement).value.split("|",1)[0];
+    this._serie=this.tipoComprobantes.find(x=>x.codigo==tipoComprobanteId).otroProp;
   }
 
 
