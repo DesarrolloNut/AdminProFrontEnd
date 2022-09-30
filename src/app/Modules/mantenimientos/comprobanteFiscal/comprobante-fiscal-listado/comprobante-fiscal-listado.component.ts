@@ -50,6 +50,7 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
   ocultarBotonesAgregar: boolean;
   excedioLimite: boolean;
   btnEnviandoSAP: boolean;
+  comprobanteID: number=0;
 
 
   constructor(private toastService: ToastrService,
@@ -64,7 +65,7 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
   ngOnInit(): void {
     this.getComprobanteFiscalEstados();
     this.getSucursales()
-    this.getRutasVendedores()
+    this.getRutasComprobantes()
   }
 
   filterRutas(item: ComprobanteFiscalDetalle): boolean {
@@ -88,6 +89,7 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
 
         if (x.ok) {
           this.data = x.records;
+         
           this.asignarPagination(x);
         } else {
           this.toastService.error(x.errores[0]);
@@ -143,15 +145,20 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
       });
   }
 
-
   openModal(content, item: ComprobanteFiscalListadoViewModel) {
     this.modalService.open(content, { windowClass: "myCustomModalClass", });
     this.itemSelected = item;
+    this.comprobanteID=item.tipoComprobanteID;
     this.getComprobanteDetalles(item.id);
+    this.getRutasComprobantes();
+    this.getSucursales();
   }
-  getRutasVendedores() {
+  getRutasComprobantes() {
     this.loadingRutasVendedores = true;
-    let parametros: Parametro[] = [{ key: "tipoRuta", value: TipoRutaEnum.VENTAS }]
+    let parametros: Parametro[] = [
+      { key: "tipoRuta", value: TipoRutaEnum.VENTAS },
+      { key: "TipoComprobanteId", value:  this.comprobanteID  }
+    ]
 
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
       "GetRutasComprobantesComboBox", parametros).subscribe(response => {
@@ -167,7 +174,7 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
         this.toastService.error("No se pudo obtener las rutas", "Error conexion al servidor");
 
         setTimeout(() => {
-          this.getRutasVendedores();
+          this.getRutasComprobantes();
         }, 1000);
 
       });
@@ -175,10 +182,12 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
 
   getSucursales() {
     this.loadingSucursales = true;
+    let parametros: Parametro[] = [
+      { key: "TipoComprobanteId", value:  this.comprobanteID  }
+    ]
 
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetSucursales", null).subscribe(response => {
-
+      "GetSucursalesDetalleComprobanteFiscal", parametros).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
@@ -313,7 +322,7 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
     this.excedioLimite = this.comprobanteDetalles.some(x => x.hasta > this.itemSelected.secuenciaHasta)
   }
 
-
+  
   ActualizarNumerosComprobantesFiscalesSAP(itemSucursal: ComprobanteFiscalDetalle) {
 
     this.btnEnviandoSAP = true;
