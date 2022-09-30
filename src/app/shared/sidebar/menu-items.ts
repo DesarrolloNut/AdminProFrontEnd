@@ -700,6 +700,17 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ["mantenimientos_comprobante_fiscal"],
       },
+      {
+        path: '/mantenimientos/tipo-comprobante-fiscal',
+        label: '',
+        labelClass: '',
+        title: 'Tipo Comprobante Fiscal',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_comprobante_fiscal"],
+      },
 
       {
         path: '/mantenimientos/cargamasiva',

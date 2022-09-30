@@ -93,6 +93,8 @@ import { AsignacionAlmacenFormularioComponent } from './asignacionDeAlmacenDesti
 import { AsignacionAlmacenListadoComponent } from './asignacionDeAlmacenDestino/asignacion-almacen-listado/asignacion-almacen-listado.component';
 import { ComprobanteFiscalEnrollListadoComponent } from './comprobanteFiscalEnrroll/comprobante-fiscal-enroll-listado/comprobante-fiscal-enroll-listado.component';
 import { ComprobanteFiscalEnrollFormularioComponent } from './comprobanteFiscalEnrroll/comprobante-fiscal-enroll-formulario/comprobante-fiscal-enroll-formulario.component';
+import { TipoComprobanteFiscalListadoComponent } from './tipoComprobanteFiscal/tipo-comprobante-fiscal-listado/tipo-comprobante-fiscal-listado.component';
+import { TipoComprobanteFiscaFormularioComponent } from './tipoComprobanteFiscal/tipo-comprobante-fiscal-formulario/tipo-comprobante-fiscal-formulario.component';
 
 
 
@@ -946,12 +948,33 @@ const routes: Routes = [
           ]
         }
       },
+     
       {
         path: 'comprobante-fiscal-enrroll/:id', component: ComprobanteFiscalEnrollFormularioComponent, data: {
           title: 'Comprobante Fiscal Enrrol',
           urls: [
             { title: 'Mantenimientos' },
-            { title: 'Comprobante Fiscal Enrrol' }
+            { title: 'Comprobante Fiscal Enrrol' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+      {
+        path: 'tipo-comprobante-fiscal', component: TipoComprobanteFiscalListadoComponent, data: {
+          title: 'Tipo Comprobante Fiscal',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Tipo Comprobante Fiscal' }
+          ]
+        }
+      },
+      {
+        path: 'tipo-comprobante-fiscal/:id', component: TipoComprobanteFiscaFormularioComponent, data: {
+          title: 'Comprobante Fiscal Fiscal',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Tipo Comprobante Fiscal' },
+            { title: 'Formulario' }
           ]
         }
       },

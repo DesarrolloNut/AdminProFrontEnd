@@ -114,6 +114,8 @@ import { AsignacionAlmacenFormularioComponent } from './asignacionDeAlmacenDesti
 import { HoraPickingFormularioComponent } from './horaPicking/hora-picking-formulario/hora-picking-formulario.component';
 import { ComprobanteFiscalEnrollListadoComponent } from './comprobanteFiscalEnrroll/comprobante-fiscal-enroll-listado/comprobante-fiscal-enroll-listado.component';
 import { ComprobanteFiscalEnrollFormularioComponent } from './comprobanteFiscalEnrroll/comprobante-fiscal-enroll-formulario/comprobante-fiscal-enroll-formulario.component';
+import { TipoComprobanteFiscaFormularioComponent } from './tipoComprobanteFiscal/tipo-comprobante-fiscal-formulario/tipo-comprobante-fiscal-formulario.component';
+import { TipoComprobanteFiscalListadoComponent } from './tipoComprobanteFiscal/tipo-comprobante-fiscal-listado/tipo-comprobante-fiscal-listado.component';
 
 
 
@@ -167,7 +169,9 @@ import { ComprobanteFiscalEnrollFormularioComponent } from './comprobanteFiscalE
     PlazosListadoComponent,
     PlazosFormularioComponent,
     ComprobanteFiscalListadoComponent,
-    ComprobanteFiscalFormularioComponent
+    ComprobanteFiscalFormularioComponent,
+    TipoComprobanteFiscaFormularioComponent,
+    TipoComprobanteFiscalListadoComponent
 
 
   ],

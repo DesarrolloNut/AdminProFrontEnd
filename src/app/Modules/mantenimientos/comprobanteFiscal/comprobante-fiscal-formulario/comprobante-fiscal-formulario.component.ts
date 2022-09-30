@@ -155,6 +155,7 @@ export class ComprobanteFiscalFormularioComponent implements OnInit {
   getSerie(event){
     const tipoComprobanteId=(event.target as HTMLInputElement).value.split("|",1)[0];
     this._serie=this.tipoComprobantes.find(x=>x.codigo==tipoComprobanteId).otroProp;
+
   }
 
 

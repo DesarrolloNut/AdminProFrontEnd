@@ -28,7 +28,7 @@
 
                     <div class="form-group col-md-4">
                         <label for="serie"> Serie</label>
-                        <input formControlName="serie" [(ngModel)]="_serie"  [attr.disabled]="true" type="text" mask="AAA"
+                        <input formControlName="serie" [(ngModel)]="_serie"  [attr.disabled]="true" type="text" mask="AAAA"
                             [ngClass]="{'is-invalid' : submitted && f.serie.errors,  'form-control':true }">
                         <div class="invalid-feedback" *ngIf="submitted && f.serie.errors">
                             <div *ngIf="f.serie.errors.required">El campo es obligatorio</div>
