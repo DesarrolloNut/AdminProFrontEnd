@@ -154,7 +154,7 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
     let parametros: Parametro[] = [{ key: "tipoRuta", value: TipoRutaEnum.VENTAS }]
 
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetRutasComboBox", parametros).subscribe(response => {
+      "GetRutasComprobantesComboBox", parametros).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
@@ -211,9 +211,9 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
       this.toastService.warning("Llena todos los campos.")
       return;
     }
-    
+
     this.guardarDetalle();
-    
+
   }
 
 
@@ -230,8 +230,8 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
       "Detalles": this.comprobanteDetalles
         .filter(x => x.valorID > 0)
     }
-   
- 
+
+
     this.btnGuardarCargando = true;
 
     this.httpService.DoPostAny<any>(DataApi.ComprobanteFiscal,
