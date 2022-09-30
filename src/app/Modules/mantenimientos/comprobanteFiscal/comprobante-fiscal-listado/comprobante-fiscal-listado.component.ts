@@ -101,8 +101,6 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
       });
 
   }
-
-
   asignarPagination(x: ResponseContenido<any>) {
 
     if (x.pagina != null) {
@@ -116,8 +114,6 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
     }
 
   }
-
-
   getComprobanteFiscalEstados() {
     this.loadingEstados = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
@@ -151,13 +147,8 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
   openModal(content, item: ComprobanteFiscalListadoViewModel) {
     this.modalService.open(content, { windowClass: "myCustomModalClass", });
     this.itemSelected = item;
-
     this.getComprobanteDetalles(item.id);
-
   }
-
-
-
   getRutasVendedores() {
     this.loadingRutasVendedores = true;
     let parametros: Parametro[] = [{ key: "tipoRuta", value: TipoRutaEnum.VENTAS }]
@@ -220,10 +211,9 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
       this.toastService.warning("Llena todos los campos.")
       return;
     }
-
+    
     this.guardarDetalle();
     
-
   }
 
 
@@ -241,7 +231,7 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
         .filter(x => x.valorID > 0)
     }
    
-
+ 
     this.btnGuardarCargando = true;
 
     this.httpService.DoPostAny<any>(DataApi.ComprobanteFiscal,
@@ -292,10 +282,8 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
 
 
   agregarDetalleVacio(tipo: ComprobanteFiscalTipoEnum.RUTA | ComprobanteFiscalTipoEnum.SUCURSAL) {
-
     this.comprobanteDetalles.push
       ({ comprobanteID: 0, desde: 0, hasta: 0, id: 0, valorID: 0, asignados: 0, tipoID: tipo, editable: true, companiaId:Number(this.authService.tokenDecoded.primarygroupsid),estadoERPID:1 })
-
   }
 
 

@@ -28,6 +28,7 @@ export class ComprobanteFiscalFormularioComponent implements OnInit {
   tipoComprobantes: any;
   loadingTipoComprobantes: boolean;
   fechaActual: Date;
+  hayDetalle: boolean;
 
   constructor(
     private toastService: ToastrService,
@@ -79,6 +80,7 @@ export class ComprobanteFiscalFormularioComponent implements OnInit {
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0]
             this.Formulario.setValue(record);
+            this.getComprobanteDetalles(id);
           } else {
             this.toastService.warning("No encontrado");
             this.router.navigateByUrl('/mantenimientos/comprobante-fiscal');
@@ -87,6 +89,21 @@ export class ComprobanteFiscalFormularioComponent implements OnInit {
       }, error => {
         this.Cargando = false;
         this.toastService.error("Error conexion al servidor");
+      });
+  }
+
+  getComprobanteDetalles(comprobanteID: number) {
+    this.httpService.DoPostAny<any>(DataApi.ComprobanteFiscal,
+      "GetComprobanteDetalles", comprobanteID).subscribe(response => {
+        if (!response || !response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          if (response.records) {
+            this.hayDetalle=true;
+          }
+        }
+      }, error => {
+        this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
       });
   }
 
