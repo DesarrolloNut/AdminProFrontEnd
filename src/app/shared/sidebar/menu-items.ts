@@ -331,6 +331,19 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ['inventario_transferencia_despacho'],
       },
+      {
+        
+        path: '/inventario/solicitud-devolucion',
+        title: 'Solicitud de Devolución',
+        label: '',
+        icon: '',
+        class: '',
+        labelClass: '',
+        extralink: false,
+        submenu: [],
+        permisos: ['inventario_transferencia_despacho'],
+      },
+
 
 
       // {

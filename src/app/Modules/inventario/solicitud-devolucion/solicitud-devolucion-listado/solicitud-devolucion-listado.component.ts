@@ -16,20 +16,22 @@ import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKe
 import { Archivo } from 'src/app/shared/model/Archivo';
 import { CambiarEstado } from 'src/app/shared/model/CambiarEstado';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
+import { SolicitudArticuloDetalle } from '../../transferencia/models/SolicitudArticuloDetalle';
 import { PrintTransferenciaInventarioVM } from '../models/PrintTransferenciaInventarioVM';
 import { RequestTransferenciaInventario } from '../models/RequestTransferenciaInventario';
-import { SolicitudArticuloDetalle } from '../models/SolicitudArticuloDetalle';
+
 import { SolicitudTransferenciaInventarioDetalles } from '../models/SolicitudCompraDetalle';
 import { SolicitudCompraListadoViewModel } from '../models/SolicitudCompraListadoViewModel';
+import { SolicitudDevolucion } from '../models/SolicitudDevolucion';
 import { TransferenciaInventario } from '../models/TransferenciaInventario';
 import { Imprimir } from '../print/ImprimirTransferenciaInventario';
 
 @Component({
-  selector: 'app-transferencia-listado',
-  templateUrl: './transferencia-listado.component.html',
-  styleUrls: ['./transferencia-listado.component.scss']
+  selector: 'app-solicitud-devolucion-listado',
+  templateUrl: './solicitud-devolucion-listado.component.html',
+  styleUrls: ['./solicitud-devolucion-listado.component.scss']
 })
-export class TransferenciaListadoComponent implements OnInit {
+export class SolicitudDevolucionListadoComponent implements OnInit {
 
   // COPIAR AL CREAR UN LISTADO NUEVO
   Search: string = "";
@@ -39,7 +41,7 @@ export class TransferenciaListadoComponent implements OnInit {
   totalPaginas: number = 0;
   paginaSize: number = 5;
   paginaTotalRecords: number = 0;
-  data: SolicitudCompraListadoViewModel[] = [] //tu modelo
+  data: SolicitudDevolucion[] = [] //tu modelo
 
   cargandoAnexos: boolean
   solicitudSeleccionada: TransferenciaInventario;
@@ -77,14 +79,12 @@ export class TransferenciaListadoComponent implements OnInit {
   }
   getData() {
     this.Cargando = true;
-    let parametros = new RequestTransferenciaInventario();
-    parametros.CompaniaId =Number(this.authService.tokenDecoded.primarygroupsid),
-    parametros.UsuarioId=Number(this.authService.tokenDecoded.nameid), 
-    this.httpService.DoPostAny<any>(DataApi.TransferenciaInventario,
-      "GetTransferenciaInventarioListado", parametros).subscribe(x => {
+    let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
+    this.httpService.GetAllWithPagination<SolicitudDevolucion>(DataApi.SolicitudDevolucion, "GetSolicitudDevolucionListado", "ID", this.paginaNumeroActual,
+      this.paginaSize, true, parametros).subscribe(x => {
         if (x.ok) {
           this.data = x.records;
-          //console.log(this.data);
+          console.log(x.records);
           this.asignarPagination(x);
         } else {
           this.toastService.error(x.errores[0]);
@@ -96,6 +96,7 @@ export class TransferenciaListadoComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
         this.Cargando = false;
       });
+
   }
   asignarPagination(x: ResponseContenido<any>) {
     if (x.pagina != null) {
@@ -109,19 +110,11 @@ export class TransferenciaListadoComponent implements OnInit {
     }
   }
   openModalSolicitud(content, item: TransferenciaInventario) {
-    this.modalService.open(content, { size: 'lg' });
+    this.modalService.open(content, { windowClass: 'my-class'});
     this.solicitudSeleccionada = item
-    this.files = []
+ 
   }
-  openModalDetalle(content, item: any) {
-    this.solicitudSeleccionada = item;
-    this.almacenOrigin=item.almacenOrigen;
-    this.almacenDestino=item.almacenDestino;
-    this.usuario=item.usuario;
-    this.modalService.open(content, { size: 'lg' });
-    this.transferenciaInventarioDetalles = [];
-    this.getTransferenciaDetalles(Number(item.id));
-  }
+ 
  
   getTransferenciaDetalles(id: number) {
     this.loadingSolicitudDetalle = true;
@@ -215,12 +208,7 @@ transferenciaInventarioDetalleToPrinter(data:SolicitudArticuloDetalle[],encabeza
       AlmacenOrigen:encabezado.codigoreferenciaAlmacenOrigen,
       HechoPor:encabezado.usuario,
       RecibidoPor:encabezado.usuario,
-      Codigo:x.codigoReferencia,
-      Descripcicon:x.nombre,
-      AlmacenDestino:x.codigoreferenciaAlmacenDestino,
-      UnidadMedida:x.unidadMedida,
-      Envio:x.envio,
-      Recepcion:(x.recepcion>0? x.recepcion : undefined)
+   
      })
   });
    this.printService.ExportFile(dataFormated,

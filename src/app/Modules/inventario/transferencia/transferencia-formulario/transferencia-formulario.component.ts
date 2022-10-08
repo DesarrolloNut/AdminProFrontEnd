@@ -20,6 +20,7 @@ import { TransferenciaInventario } from '../models/TransferenciaInventario';
   templateUrl: './transferencia-formulario.component.html',
   styleUrls: ['./transferencia-formulario.component.scss']
 })
+
 export class TransferenciaFormularioComponent implements OnInit {
   Cargando: boolean = false;
   Formulario: FormGroup;
@@ -464,7 +465,7 @@ export class TransferenciaFormularioComponent implements OnInit {
       "TransferenciaInventarioDetalles": this.solicitudTransferenciaInventario.filter(x => x.articuloId > 0 && x.envio > 0),
       "LoteTransacciones": this.loteAlmacenSeleccionado.filter(x => x.cantidadEnvio > 0)
     }
-   
+ 
    
     let metodo: string = this.actualizando ? "Update" : "Registrar";
     this.btnGuardarCargando = true;

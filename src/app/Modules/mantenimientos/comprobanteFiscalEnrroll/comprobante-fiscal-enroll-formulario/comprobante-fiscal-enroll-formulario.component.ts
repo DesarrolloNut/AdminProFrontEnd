@@ -17,7 +17,7 @@ export class ComprobanteFiscalEnrollFormularioComponent implements OnInit {
   companias: ComboBox[] = [];
 
   loadingCompanias = false;
-
+  
   Cargando: boolean = false;
   Formulario: FormGroup;
   submitted = false;
@@ -60,7 +60,7 @@ export class ComprobanteFiscalEnrollFormularioComponent implements OnInit {
     }
     this.getTipoComprobantes();
     this.getTipoAsignacionComprobante();
-    this. getRutas();
+    //this. getRutas();
     this.CreateForm();
   }
 
@@ -89,7 +89,16 @@ export class ComprobanteFiscalEnrollFormularioComponent implements OnInit {
           //validar que existe
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0]
-            this.Formulario.setValue(record);
+            this.Formulario.patchValue(record);
+            const tipoAsgC= this.tipoAsignacionComprobante.find(x=>x.codigo==record.tipoAsignacionComprobanteId).nombre;
+            if(tipoAsgC.toUpperCase()==="RUTA")
+            {
+             this.getRutas()
+            }
+            else if(tipoAsgC.toUpperCase()==="SUCURSAL")
+            {
+               this.getSucursales();
+            }  
           } else {
             this.toastService.warning("Enrroll no encontrado");
             this.router.navigateByUrl('/mantenimientos/usuario-almacen-enrroll');
@@ -125,7 +134,7 @@ export class ComprobanteFiscalEnrollFormularioComponent implements OnInit {
           this.router.navigateByUrl('/mantenimientos/comprobante-fiscal-enrroll');
         }
         this.btnGuardarCargando = false;
-      }, error => {
+      }, () => {
         this.btnGuardarCargando = false;
         this.toastService.error("Error conexion al servidor");
       });
@@ -175,7 +184,7 @@ export class ComprobanteFiscalEnrollFormularioComponent implements OnInit {
          this.valores = response.records;
         }
         this.loadingTipoComprobantes = false;
-      }, error => {
+      }, () => {
         this.loadingTipoComprobantes = false;
         this.toastService.error("No se pudo obtener los tipos de comprobantes", "Error conexion al servidor");
         setTimeout(() => {
@@ -214,12 +223,12 @@ export class ComprobanteFiscalEnrollFormularioComponent implements OnInit {
           this.tipoAsignacionComprobante = response.records;
         }
         this.loadingTipoAsignacionComprobante = false;
-      }, error => {
+      }, () => {
         this.loadingTipoAsignacionComprobante = false;
         this.toastService.error("No se pudo obtener los tipos de asignacion comprobantes", "Error conexion al servidor");
 
         setTimeout(() => {
-          this.getTipoComprobantes()
+          this.getTipoAsignacionComprobante()
         }, 1000);
       });
   }

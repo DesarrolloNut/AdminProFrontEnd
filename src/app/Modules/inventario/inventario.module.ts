@@ -16,6 +16,8 @@ import { DespachoAsignacionListadoComponent } from './despacho-asignacion/despac
 
 import { TransferenciaListadoComponent } from './transferencia/transferencia-listado/transferencia-listado.component';
 import { TransferenciaFormularioComponent } from './transferencia/transferencia-formulario/transferencia-formulario.component';
+import { SolicitudDevolucionFormularioComponent } from './solicitud-devolucion/solicitud-devolucion-formulario/solicitud-devolucion-formulario.component';
+import { SolicitudDevolucionListadoComponent } from './solicitud-devolucion/solicitud-devolucion-listado/solicitud-devolucion-listado.component';
 
 
 @NgModule({
@@ -28,7 +30,10 @@ import { TransferenciaFormularioComponent } from './transferencia/transferencia-
      DespachoAsignacionFormularioComponent,
      DespachoAsignacionListadoComponent,
      TransferenciaListadoComponent,
-     TransferenciaFormularioComponent
+     TransferenciaFormularioComponent,
+     SolicitudDevolucionFormularioComponent,
+     SolicitudDevolucionListadoComponent
+
     ],
   imports: [
     CommonModule,

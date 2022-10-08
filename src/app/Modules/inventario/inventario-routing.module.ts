@@ -8,6 +8,8 @@ import { InventarioComponent } from './inventario.component';
 import { RecepcionActivoListadoComponent } from './recepcion-activo/recepcion-activo-listado/recepcion-activo-listado.component';
 import { TransferenciaListadoComponent } from './transferencia/transferencia-listado/transferencia-listado.component';
 import { TransferenciaFormularioComponent } from './transferencia/transferencia-formulario/transferencia-formulario.component';
+import { SolicitudDevolucionListadoComponent } from './solicitud-devolucion/solicitud-devolucion-listado/solicitud-devolucion-listado.component';
+import { SolicitudDevolucionFormularioComponent } from './solicitud-devolucion/solicitud-devolucion-formulario/solicitud-devolucion-formulario.component';
 
 
 const routes: Routes = [  {
@@ -80,11 +82,28 @@ const routes: Routes = [  {
         ]
       }
     },
+    //Solicitud de Devolucion
+    {
+      path: 'solicitud-devolucion', component: SolicitudDevolucionListadoComponent, data: {
+        title: 'Solicitu de Devolución',
+        urls: [
+          { title: 'Inventario' },
+          { title: 'Solicitu de Devolución' }
+        ]
+      }
+    },
 
-    
-
+    {
+      path: 'solicitud-devolucion/:id', component: SolicitudDevolucionFormularioComponent, data: {
+        title: 'Solicitu de Devolución',
+        urls: [
+          { title: 'Inventario' },
+          { title: 'Solicitu de Devolución' },
+          { title: 'Formulario Solicitu de Devolución'}
+        ]
+      }
+    },
   ]
-
 }];
 
 @NgModule({

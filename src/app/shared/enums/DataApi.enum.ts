@@ -57,6 +57,7 @@ export enum DataApi {
     TransferenciaInventario = 82,
     ComprobanteEnrroll = 83,
     TipoComprobanteFiscal = 84,
+    SolicitudDevolucion=85,
     Usuario = 1,
     Authentication = 2,
     ComboBox = 3,
@@ -142,7 +143,7 @@ export const dataApiRootMap: { [api: string]: string } = {
     "82": "api/TransferenciaInventario",
     "83":"api/ComprobanteEnrroll",
     "84":"api/TipoComprobanteFiscal",
-    
+    "85":"api/SolicitudDevolucion",
     "1": "api/Usuario",
     "2": "api/Authentication",
     "3": "api/ComboBox",
