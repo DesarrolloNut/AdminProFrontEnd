@@ -83,7 +83,7 @@ export class SolicitudDevolucionFormularioComponent implements OnInit {
             this.Formulario.patchValue(x.records[0])
             
             this.encabezadoFactura=x.records;
-            console.log(this.encabezadoFactura)
+            //console.log(this.encabezadoFactura)
             this.getDetalleFactura(numFac)
           }
           else{
@@ -100,10 +100,12 @@ export class SolicitudDevolucionFormularioComponent implements OnInit {
         this.Cargando = false;
       });
   }
-  seleccionarFactura(valor:any,index:number)
+  seleccionarFactura(valor:any,index:number,cantidad:number)
   {
     if ( valor.target.checked ) {
+
      this.solicitudDevolucionDetalle[index].destalleFacturaSelecionada=true;
+    
    }
    else{
     this.solicitudDevolucionDetalle[index].destalleFacturaSelecionada=false;
@@ -139,7 +141,7 @@ export class SolicitudDevolucionFormularioComponent implements OnInit {
         this.Cargando = false;
       });
   }
-  actualizarTotal(value:any, id:any,index:number){
+  actualizarTotal(value:any, index:number){
 
     if(this.solicitudDevolucionDetalle[index].destalleFacturaSelecionada)
     {
@@ -150,10 +152,11 @@ export class SolicitudDevolucionFormularioComponent implements OnInit {
       let impuesto= (subTotal -descuento)*(this.solicitudDevolucionDetalle[index].porcientoImpuesto/100)
       let detalleTotalNeto= (subTotal- descuento) +impuesto;
 
+      this.solicitudDevolucionDetalle[index].subtotal=subTotal;
       this.solicitudDevolucionDetalle[index].totalDescuento=descuento;
       this.solicitudDevolucionDetalle[index].totalImpuesto=impuesto;
       this.solicitudDevolucionDetalle[index].totalNeto=detalleTotalNeto;
-  
+      console.log(this.solicitudDevolucionDetalle)
       this.calcularTotal();
 
     }
@@ -196,6 +199,7 @@ export class SolicitudDevolucionFormularioComponent implements OnInit {
      this.encabezadoFactura[0].estadoId=0;
      this.encabezadoFactura[0].comentario="";
      this.encabezadoFactura[0].preFijo="";
+     this.encabezadoFactura[0].subTotal=this.solicitudDevolucionDetalle.filter(x=>x.destalleFacturaSelecionada).reduce((n, {precio,cantidad})=> n+(precio*cantidad),0)
      this.encabezadoFactura[0].impuestoTotal=this.solicitudDevolucionDetalle.filter(x=>x.destalleFacturaSelecionada).reduce((n, {totalImpuesto})=> n+totalImpuesto,0);
      this.encabezadoFactura[0].descuentoTotal=this.solicitudDevolucionDetalle.filter(x=>x.destalleFacturaSelecionada).reduce((n, {totalDescuento})=> n+totalDescuento,0)
      this.encabezadoFactura[0].totalNeto=this.solicitudDevolucionDetalle.filter(x=>x.destalleFacturaSelecionada).reduce((n, {totalNeto})=> n+totalNeto,0)
@@ -203,7 +207,7 @@ export class SolicitudDevolucionFormularioComponent implements OnInit {
       "SolicitudDevolucion": this.encabezadoFactura[0],
       "SolicitudDevolucionDetalle": this.solicitudDevolucionDetalle.filter(x => x.destalleFacturaSelecionada == true )
     }
-
+    console.log(parametro)
     let metodo: string = this.actualizando ? "Update" : "Registrar";
     this.btnGuardarCargando = true;
     this.httpService.DoPostAny<any>(DataApi.SolicitudDevolucion,

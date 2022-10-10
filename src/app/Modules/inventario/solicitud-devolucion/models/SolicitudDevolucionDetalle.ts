@@ -14,6 +14,7 @@ export class SolicitudDevolucionDetalle {
     totalNeto:number
     totalDescuento :number
     totalImpuesto :number
+    subtotal:number
     destalleFacturaSelecionada:boolean
     usuarioId : number
     sucursalId: number

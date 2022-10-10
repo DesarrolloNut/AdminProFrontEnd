@@ -136,7 +136,8 @@
                                                 [disabled]="!cantidadEditable"  mask="separator"
                                                 thousandSeparator="," 
                                                 [(ngModel)]="item.envio"
-                                                [disabled]="transferenciaInventarioConfirmado"
+                                                [disabled]="transferenciaInventarioConfirmado || item.articuloId==0"
+                                               
                                                 [ngModelOptions]="{standalone: true}"
                                                 [ngClass]="{'form-control border-danger p-0' : item.hayErrores }"
                                                 (blur)="validarInventario($event,item.inventario,i,item.articuloId,modalLoteSolicitud)"
@@ -237,7 +238,7 @@
                     <tr>
                         <th scope="col">Lote</th>
                         <th scope="col">Envio</th> 
-                        <th scope="col">Recepción</th> 
+                        <th [hidden]="!transferenciaInventarioConfirmado" scope="col">Recepción</th> 
                         <th scope="col">Existencia</th>
                         <th scope="col">Vencimiento</th>
                         

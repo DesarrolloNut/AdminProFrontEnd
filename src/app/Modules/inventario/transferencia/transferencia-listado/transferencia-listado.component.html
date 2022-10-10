@@ -94,7 +94,7 @@
                         </h5>
                 </td>
                 <td>
-                  <button [hidden]="item.nombreEstado == 'Confirmado' || item.nombreEstado == 'Recibido' || item.nombreEstado == 'Cancelado' || item.enviar==false" title="Confirmar" type="button" class="btn btn-outline-success m-1"
+                  <button [hidden]="item.nombreEstado == 'Confirmado' || item.nombreEstado == 'Recibido' || item.nombreEstado == 'Cancelado' || item.enviar==false || item.nombreEstado == 'Enviado'" title="Confirmar" type="button" class="btn btn-outline-success m-1"
                   (click)="confirmarTransferenciaInventario(item.id)"
                   >
                     <i class="fas fa-check"></i>
@@ -104,15 +104,15 @@
                   >
                     <i class="fa  fa-eye"></i>
                 </button>
-                  <button  [hidden]="item.nombreEstado == 'Confirmado' || item.nombreEstado == 'Recibido' || item.nombreEstado == 'Cancelado'" title="Editar"  type="button" class="btn btn-outline-info m-1" [routerLink]="[item.id]" >
+                  <button  [hidden]="item.nombreEstado == 'Confirmado' || item.nombreEstado == 'Recibido' || item.nombreEstado == 'Cancelado' || item.nombreEstado == 'Enviado'" title="Editar"  type="button" class="btn btn-outline-info m-1" [routerLink]="[item.id]" >
                     <i class="fa fa-edit"></i>
                 </button>
-                  <button [hidden]="item.nombreEstado == 'Confirmado' || item.nombreEstado == 'Recibido' || item.nombreEstado == 'Cancelado'" title="Cancelar" type="button" class="btn btn-outline-danger m-1"
+                  <button [hidden]="item.nombreEstado == 'Confirmado' || item.nombreEstado == 'Recibido' || item.nombreEstado == 'Cancelado' || item.nombreEstado == 'Enviado'" title="Cancelar" type="button" class="btn btn-outline-danger m-1"
                   (click)="cancelarTransferenciaInventario(item.id)"
                   >
                     <i class="fa fa-times"></i>
                 </button>
-                <button [hidden]="item.recibir==false || item.nombreEstado == 'Pendiente' || item.nombreEstado == 'Recibido' || item.nombreEstado == 'Cancelado'" title="Confirmar Recepción" type="button" class="btn btn-outline-success m-1"
+                <button [hidden]="item.recibir==false || item.nombreEstado == 'Pendiente' || item.nombreEstado == 'Recibido' || item.nombreEstado == 'Cancelado' || item.nombreEstado == 'Confirmado'" title="Confirmar Recepción" type="button" class="btn btn-outline-success m-1"
                 [routerLink]="[item.id]"
                 >
                   <i class="mdi mdi-package-variant-closed"></i>

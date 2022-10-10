@@ -44,7 +44,7 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
   data: SolicitudDevolucion[] = [] //tu modelo
 
   cargandoAnexos: boolean
-  solicitudSeleccionada: TransferenciaInventario;
+  solicitudDevolucionSeleccionada: any;
   progress: number;
   files: any[] = [];
   filesSubidos: Archivo[] = [];
@@ -58,6 +58,7 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
   estadoAutorizacionFinal: number;
   loadingSolicitudDetalle: boolean;
   transferenciaInventarioDetalles:  SolicitudArticuloDetalle[] = [];
+  solicitudDevolucionDetalle:any;
 
   total: number;
   btnConvertirCargando: boolean;
@@ -109,26 +110,31 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
       this.paginaSize = 0;
     }
   }
-  openModalSolicitud(content, item: TransferenciaInventario) {
+  openModalSolicitud(content, item: any) {
     this.modalService.open(content, { windowClass: 'my-class'});
-    this.solicitudSeleccionada = item
- 
+    this.solicitudDevolucionSeleccionada = item;
+    this.getTransferenciaDetalles(String(item.id))
   }
+  
+  
  
- 
-  getTransferenciaDetalles(id: number) {
+  getTransferenciaDetalles(solicituDevolucionId: string) {
+    let parametros = new SolicitudDevolucion();
+    parametros.companiaId =Number(this.authService.tokenDecoded.primarygroupsid),
+    parametros.numeroFactura=solicituDevolucionId, 
     this.loadingSolicitudDetalle = true;
-    this.httpService.DoPostAny<SolicitudArticuloDetalle>(DataApi.TransferenciaInventario,
-      "GetTransferenciaInventarioDetalles", id).subscribe(response => {
+    this.httpService.DoPostAny<any>(DataApi.SolicitudDevolucion,
+      "GetSolicitudDevolucionDetalle", parametros).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          this.transferenciaInventarioDetalles = response.records;
+          this.solicitudDevolucionDetalle = response.records;
+       
         }
         this.loadingSolicitudDetalle = false;
       }, error => {
         this.loadingSolicitudDetalle = false;
-        this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
+        this.toastService.error("No se pudo obtener el detalle de devolución", "Error conexion al servidor");
         this.modalService.dismissAll()
       });
   }

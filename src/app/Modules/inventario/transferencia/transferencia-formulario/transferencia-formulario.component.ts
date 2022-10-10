@@ -78,9 +78,10 @@ export class TransferenciaFormularioComponent implements OnInit {
     if (id > 0) {
       this.getTransferenciaInventario(id)
       this.actualizando = true;
-      
+     
     } else {
       this.getUsuarioByID(Number(this.auth.tokenDecoded.nameid))
+     
     }
     //Trayendo los almacenes
     this.getAlmacenesOrigenUsuarioEnrroll(0);
@@ -130,7 +131,7 @@ export class TransferenciaFormularioComponent implements OnInit {
             this.idAlamacenDesdeSeleccionado=record.almacenOrigenId;
             this.idalmacenesHastaSeleccionado=record.almacenDestinoId;
             this.IdTransferenciaInventario=this.Formulario.get("id").value > 0 ? true: false;
-            this.transferenciaInventarioConfirmado = this.Formulario.get("estado").value == 1 ? true: false; 
+            this.transferenciaInventarioConfirmado = this.Formulario.get("estado").value == EstadoGeneral.ENVIADO ? true: false; 
             this.cantidad= this.Formulario.get("estado").value == 1 ? "Envio" : "Cantidad"; 
           } else {
             this.toastService.warning("no encontrado");
@@ -378,14 +379,14 @@ export class TransferenciaFormularioComponent implements OnInit {
       return;
     }
   }
-    if(this.transferenciaInventarioConfirmado)
+   /* if(this.transferenciaInventarioConfirmado)
     {
       if (this.solicitudTransferenciaInventario.some(x => x.articuloId > 0 && x.recepcion <= 0)) {
-        this.toastService.warning("La Recepción  no pueder ser menor o igual a zero.")
+        this.toastService.warning("La Recepción  no pueder ser menor o igual a zerokkkkkkkkkkkkkkk.")
         return;
       }
 
-    }
+    }*/
     if(this.loteAlmacenSeleccionado.reduce((n, {cantidadEnvio})=> n+cantidadEnvio,0) !== this.solicitudTransferenciaInventario.filter(x=>x.gestionado).reduce((n, {envio})=> n+envio,0))
     {
       this.toastService.error("El total de articulos a transferir no corresponse a la cantidad de lote a digitado.")
