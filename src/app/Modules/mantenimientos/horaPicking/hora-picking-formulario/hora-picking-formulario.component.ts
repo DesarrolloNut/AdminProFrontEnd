@@ -204,7 +204,7 @@ export class HoraPickingFormularioComponent implements OnInit {
   ];
 
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetSucursalesByCompania",parametros).subscribe(response => {
+      "GetSucursalesByCompaniaComboboxPicking",parametros).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
