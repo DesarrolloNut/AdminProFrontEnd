@@ -132,4 +132,5 @@ export class DespachoInUseVM  {
 }
 export class DespachoRangoHoraRequestModel {
   fecha: Date;
+  SucursalId:number;
 }

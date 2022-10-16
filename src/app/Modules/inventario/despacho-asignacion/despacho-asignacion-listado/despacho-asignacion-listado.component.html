@@ -78,6 +78,9 @@
                      <div class="over_despacho" *ngIf="!despachoPuedeHorario || loadingRangosFechaDespacho || despachoOn==0">
                       <div class="row justify-content-center  text-center align-items-center "
                         style="font-size: 20px;     height: 100%;">
+
+
+                       <!--
                         <h3 *ngIf="!loadingRangosFechaDespacho  && despachoOn==1" class="font-weight-bold h3_over_despacho">
                           <i class="fa fa-clock" style="font-size: 30px;" aria-hidden="true"></i>
                           {{dia | uppercase}}
@@ -92,7 +95,7 @@
                           <br>
                           No se puede despachar en este momento
                         </h3>
-
+                          -->
                         <h3 *ngIf="loadingRangosFechaDespacho" class="font-weight-bold h3_over_despacho">
                           <i class="spinner-border spinner-border-sm"></i>
 
@@ -102,6 +105,8 @@
 
                       </div>
                     </div>
+
+
                   </tbody>
                 </table>
                 <app-loading-listado [hidden]="!Cargando"></app-loading-listado>

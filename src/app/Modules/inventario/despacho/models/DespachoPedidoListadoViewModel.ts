@@ -40,6 +40,7 @@ export class DespachoListadoPreventaVM  {
   almacen_Destino: number;
   estadoDespacho: number;
   rutasVendedoresDistribuidor:string;
+  fechacreacion: string;
   totales:DespachoListadoPreventaVMTotales = new DespachoListadoPreventaVMTotales();
 
   sucursalID:number;
@@ -109,12 +110,15 @@ export class DespachoListadoPreventaVMTotales {
 export class DepachoHorasVM   {
   diaNombre: string;
   horaDesde: HoraTimeObject;
-  horaDesdeSTR: string;
+   horaDesdeSTR: string;
   horaHasta: HoraTimeObject;
   horaHastaSTR: string;
   horaActual: HoraTimeObject;
   horaActualSTR: string;
   puedeDespachar: boolean;
+  HorarioEstablecido: boolean;
+  id :number;
+  horario:boolean;
 }
 export class HoraTimeObject   {
   hours: number;

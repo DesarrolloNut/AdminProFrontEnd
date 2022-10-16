@@ -31,7 +31,8 @@
               <tr>
                 <th>ID</th>
                 <th>Fecha</th>
-                <th>Código Referencia</th>
+                <th>Solicitud</th>
+                <th>Referencia</th>
                 <th>Almacén</th>
                 <th>Usuario</th>
                 <th>Estado</th>
@@ -43,7 +44,7 @@
             <tbody [hidden]="Cargando">
               <tr *ngFor="let item of data">
                 <td>
-                  <span class="badge badge-light text-info ">{{item.id}}</span> 
+                  <span class="badge badge-light text-info ">{{item.id}}</span>
                   <small class="badge" [ngClass]="{'badge-danger': item.tipoID == 2}"> {{ item.tipo}}</small>
 
                   <button  type="button" title="Imprimir" class="btn btn-outline-light m-1"
@@ -53,7 +54,10 @@
                 </button>
                 </td>
                 <td>
-                  {{ item.fecha | date: 'dd/MM/yyyy hh:mm a' }} 
+                  {{ item.fecha | date: 'dd/MM/yyyy hh:mm a' }}
+                </td>
+                <td>
+                  {{ item.solicitud }}
                 </td>
                 <td>
                   <small>{{item.codigoReferencia}}</small>
@@ -78,7 +82,7 @@
                     </h5>
                 </td>
                 <td>
-                  
+
 
 
                   <h5 *ngIf="item.estadoIdERP==1" >
@@ -86,7 +90,7 @@
                             [ngStyle]="{'color': '#f4d03f'}"></i>
                        Pendiente</span>
                     </h5>
-                  
+
                       <h5 *ngIf="item.estadoIdERP==0" >
                         <span> <i class="fa fa-circle"
                                 [ngStyle]="{'color': '#82e0aa'}"></i>
@@ -99,7 +103,7 @@
                   >
                     <i class="fas fa-check"></i>
                  </button>
-                  <button  type="button" title="Ver Detalle" class="btn  btn-light m-1" 
+                  <button  type="button" title="Ver Detalle" class="btn  btn-light m-1"
                   (click)="openModalDetalle(modalDetalleSolicitud,item)"
                   >
                     <i class="fa  fa-eye"></i>
@@ -207,6 +211,6 @@
     </div>
   </div>
 
-  
+
 
 </ng-template>

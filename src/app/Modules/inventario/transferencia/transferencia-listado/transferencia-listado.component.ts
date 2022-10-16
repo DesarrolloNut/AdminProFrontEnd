@@ -62,7 +62,7 @@ export class TransferenciaListadoComponent implements OnInit {
   urlCarpetaArchivosCompartidos: string;
   btnConfirmarCargando: boolean;
   btnCargandoPrint: boolean;
-  
+
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
@@ -79,12 +79,12 @@ export class TransferenciaListadoComponent implements OnInit {
     this.Cargando = true;
     let parametros = new RequestTransferenciaInventario();
     parametros.CompaniaId =Number(this.authService.tokenDecoded.primarygroupsid),
-    parametros.UsuarioId=Number(this.authService.tokenDecoded.nameid), 
+    parametros.UsuarioId=Number(this.authService.tokenDecoded.nameid),
     this.httpService.DoPostAny<any>(DataApi.TransferenciaInventario,
       "GetTransferenciaInventarioListado", parametros).subscribe(x => {
         if (x.ok) {
           this.data = x.records;
-          //console.log(this.data);
+         console.log(this.data);
           this.asignarPagination(x);
         } else {
           this.toastService.error(x.errores[0]);
@@ -122,7 +122,7 @@ export class TransferenciaListadoComponent implements OnInit {
     this.transferenciaInventarioDetalles = [];
     this.getTransferenciaDetalles(Number(item.id));
   }
- 
+
   getTransferenciaDetalles(id: number) {
     this.loadingSolicitudDetalle = true;
     this.httpService.DoPostAny<SolicitudArticuloDetalle>(DataApi.TransferenciaInventario,
@@ -150,7 +150,7 @@ export class TransferenciaListadoComponent implements OnInit {
 confirmar(id:number) {
   let parametros = new CambiarEstado();
   parametros .Id = id,
-  parametros.Estado= EstadoGeneral.CONFIRMADO, 
+  parametros.Estado= EstadoGeneral.CONFIRMADO,
   this.btnConfirmarCargando = true;
   this.httpService.DoPostAny<any>(DataApi.TransferenciaInventario,
     "Confirmar", parametros).subscribe(response => {
@@ -170,7 +170,7 @@ confirmar(id:number) {
 cancelar(id:number) {
   let parametros = new CambiarEstado();
   parametros .Id = id,
-  parametros.Estado= EstadoGeneral.CANCELADO, 
+  parametros.Estado= EstadoGeneral.CANCELADO,
   this.btnConfirmarCargando = true;
   this.httpService.DoPostAny<any>(DataApi.TransferenciaInventario,
     "Confirmar", parametros).subscribe(response => {
@@ -188,7 +188,7 @@ cancelar(id:number) {
 }
 
 imprimirToPDF( encabezado: any){
- 
+
   this.loadingSolicitudDetalle = true;
     this.httpService.DoPostAny<SolicitudArticuloDetalle>(DataApi.TransferenciaInventario,
       "GetTransferenciaInventarioDetalles", Number(encabezado.id)).subscribe(response => {

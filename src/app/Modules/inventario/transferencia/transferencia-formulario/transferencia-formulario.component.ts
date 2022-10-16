@@ -78,10 +78,10 @@ export class TransferenciaFormularioComponent implements OnInit {
     if (id > 0) {
       this.getTransferenciaInventario(id)
       this.actualizando = true;
-     
+
     } else {
       this.getUsuarioByID(Number(this.auth.tokenDecoded.nameid))
-     
+
     }
     //Trayendo los almacenes
     this.getAlmacenesOrigenUsuarioEnrroll(0);
@@ -89,21 +89,21 @@ export class TransferenciaFormularioComponent implements OnInit {
     this.getSucursales()
   }
   private CreateForm() {
-    
+
     this.Formulario = this.formBuilder.group({
-     
+
       id: [0],
       usuarioId: [this.authService.tokenDecoded.nameid,[Validators.required]],
       sucursalId: [this.authService.tokenDecoded.groupsid, [Validators.required]],
-      companiaId:[this.authService.tokenDecoded.primarygroupsid, [Validators.required]], 
-      almacenOrigenId:[null,[Validators.required]], 
-      almacenDestinoId:[null,[Validators.required]], 
+      companiaId:[this.authService.tokenDecoded.primarygroupsid, [Validators.required]],
+      almacenOrigenId:[null,[Validators.required]],
+      almacenDestinoId:[null,[Validators.required]],
       fecha: [new Date()],
       estadoIdERP: [EstadoERP.PENDIENTESINCRONIZADO,],
       estado: [EstadoGeneral.PENDIENTE,],
       usuarioIdRecibe:[0 ,],
       fechaRecepcion:[ new Date(),],
-   
+
     });
   }
   agregarDetalleVacio() {
@@ -131,8 +131,8 @@ export class TransferenciaFormularioComponent implements OnInit {
             this.idAlamacenDesdeSeleccionado=record.almacenOrigenId;
             this.idalmacenesHastaSeleccionado=record.almacenDestinoId;
             this.IdTransferenciaInventario=this.Formulario.get("id").value > 0 ? true: false;
-            this.transferenciaInventarioConfirmado = this.Formulario.get("estado").value == EstadoGeneral.ENVIADO ? true: false; 
-            this.cantidad= this.Formulario.get("estado").value == 1 ? "Envio" : "Cantidad"; 
+            this.transferenciaInventarioConfirmado = this.Formulario.get("estado").value == EstadoGeneral.ENVIADO ? true: false;
+            this.cantidad= this.Formulario.get("estado").value == 1 ? "Envio" : "Cantidad";
           } else {
             this.toastService.warning("no encontrado");
             this.router.navigateByUrl('/inventario/transferencia');
@@ -166,7 +166,7 @@ export class TransferenciaFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.loteAlmacenSeleccionado = response.records;
-        
+
         }
       }, error => {
         this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
@@ -175,7 +175,7 @@ export class TransferenciaFormularioComponent implements OnInit {
 
   onSelectArticulo(item: any, index: number) {
      if(!this.solicitudTransferenciaInventario.some(x => x.codigoReferencia == item.codigoReferencia))
-     {      
+     {
             this.solicitudTransferenciaInventario.forEach(x => {
             this.solicitudTransferenciaInventario[index].articuloId = item.articuloId;
             this.solicitudTransferenciaInventario[index].codigoReferencia = item.codigoReferencia;
@@ -189,7 +189,7 @@ export class TransferenciaFormularioComponent implements OnInit {
      else
      {
       this.toastService.warning("Este artículo ya existe en la lista.");
-     
+
         this.onDeleteitem(index,0)
         return;
      }
@@ -204,7 +204,7 @@ export class TransferenciaFormularioComponent implements OnInit {
   validarInventario(event:any,inventario:any,index:number,idArticulo:number,content){
     this.cantidadAtransferir =  event.target.value;
     this.hayErrores=true;
-    
+
     if(this.transferenciaInventarioConfirmado)
     {
       if(this.solicitudTransferenciaInventario[index].envio < this.cantidadAtransferir)
@@ -213,7 +213,7 @@ export class TransferenciaFormularioComponent implements OnInit {
         }
     }
 
-    if((this.cantidadAtransferir <= inventario && this.cantidadAtransferir > 0) || (this.transferenciaInventarioConfirmado)) 
+    if((this.cantidadAtransferir <= inventario && this.cantidadAtransferir > 0) || (this.transferenciaInventarioConfirmado))
       {
          if(this.actualizando){
           //Agregando las propiedades de recepcion
@@ -249,21 +249,21 @@ export class TransferenciaFormularioComponent implements OnInit {
             this.agregarDetalleVacio();
           }
          }
-         
+
       }
       else
       {
         this.solicitudTransferenciaInventario[index].hayErrores = true;
         this.toastService.error("La cantidad no puede ser mayor al Inventario", "Error");
       }
-   
+
   }
   agregarCantidadEnAlmacenLote(event:any,index:number,loteEnExistencia:number){
       let valorDigitado =event.target.value;
       if(!this.transferenciaInventarioConfirmado){
-        if( valorDigitado >= 0 && loteEnExistencia > valorDigitado )    
+        if( valorDigitado >= 0 && loteEnExistencia > valorDigitado )
         {
-         
+
           this.loteAlmacen[index].cantidadEnvio = Number(valorDigitado);
           this.loteAlmacen[index].moduloId = Number(DataApi.TransferenciaInventario);
           this.loteAlmacen[index].hayErrores = false;
@@ -277,8 +277,8 @@ export class TransferenciaFormularioComponent implements OnInit {
         }
       }
       else{
-            if(valorDigitado >= 0 && loteEnExistencia > valorDigitado){ 
-           
+            if(valorDigitado >= 0 && loteEnExistencia > valorDigitado){
+
               this.loteAlmacen[index].recepcion = Number(valorDigitado);
               this.loteAlmacen[index].moduloId = Number(DataApi.TransferenciaInventario);
               this.loteAlmacen[index].hayErrores = false;
@@ -294,9 +294,9 @@ export class TransferenciaFormularioComponent implements OnInit {
   }
   validarCantidadLoteAlmacenAtransferir(modal){
     let tot=0;
-   
+
      tot= this.transferenciaInventarioConfirmado? this.loteAlmacen.reduce((n, {recepcion})=> n+recepcion,0):this.loteAlmacen.reduce((n, {cantidadEnvio})=> n+cantidadEnvio,0)
-  
+
    if(tot > this.cantidadAtransferir || tot == 0 || tot < this.cantidadAtransferir){
       this.toastService.warning("El Total debe ser igual.")
       this.hayErrores=true;
@@ -307,9 +307,9 @@ export class TransferenciaFormularioComponent implements OnInit {
          this.loteAlmacenSeleccionado.push(x);
          this.solicitudTransferenciaInventario.find(item=>item.articuloId==x.articuloID).lotesSeleccionado=true;
         })
-        
+
         this.loteAlmacenSeleccionado = this.loteAlmacenSeleccionado.filter((item, index, self) => self.indexOf(item) === index);
-      } 
+      }
   }
   onDeleteitem(index: number, articuloId: number) {
     this.solicitudTransferenciaInventario.splice(index, 1);
@@ -327,7 +327,7 @@ export class TransferenciaFormularioComponent implements OnInit {
   getArticulosParaIntercambioDeAlmacen(almacenid:any) {
 
     let parametros = new ParametroArticuloParaIntercambioDeAlmacen();
-    parametros.almacenid = almacenid; 
+    parametros.almacenid = almacenid;
     parametros.companiaid = Number(this.authService.tokenDecoded.primarygroupsid);
       this.httpService.DoPostAny<any>(DataApi.Articulo,
         "GetArticulosParaIntercambioDeAlmaces", parametros).subscribe(response => {
@@ -362,7 +362,7 @@ export class TransferenciaFormularioComponent implements OnInit {
     const nombre=(event.target as HTMLInputElement).value.split("|",2);
     this.almacenesHastaSeleccionado=nombre[1];
 }
-  
+
   onSubmit() {
     this.submitted = true;
     if (this.Formulario.invalid) {
@@ -379,20 +379,19 @@ export class TransferenciaFormularioComponent implements OnInit {
       return;
     }
   }
-   /* if(this.transferenciaInventarioConfirmado)
+  if(this.transferenciaInventarioConfirmado)
     {
       if (this.solicitudTransferenciaInventario.some(x => x.articuloId > 0 && x.recepcion <= 0)) {
         this.toastService.warning("La Recepción  no pueder ser menor o igual a zerokkkkkkkkkkkkkkk.")
         return;
       }
 
-    }*/
+    }
     if(this.loteAlmacenSeleccionado.reduce((n, {cantidadEnvio})=> n+cantidadEnvio,0) !== this.solicitudTransferenciaInventario.filter(x=>x.gestionado).reduce((n, {envio})=> n+envio,0))
     {
       this.toastService.error("El total de articulos a transferir no corresponse a la cantidad de lote a digitado.")
 
-      console.log(this.loteAlmacenSeleccionado.reduce((n, {cantidadEnvio})=> n+cantidadEnvio,0));
-      console.log(this.solicitudTransferenciaInventario.filter(x=>x.gestionado).reduce((n, {envio})=> n+envio,0));
+
       return;
     }
     if(this.loteAlmacenSeleccionado.reduce((n, {recepcion})=> n+recepcion,0) !== this.solicitudTransferenciaInventario.filter(x=>x.gestionado).reduce((n, {recepcion})=> n+recepcion,0))
@@ -406,20 +405,20 @@ export class TransferenciaFormularioComponent implements OnInit {
       return;
     }
 
-  
+
     for (var i = 0; i < this.solicitudTransferenciaInventario.length; i++) {
       this.solicitudTransferenciaInventario[i] = Object.assign(this.solicitudTransferenciaInventario[i] , {
       id:this.Formulario.get("id").value,
       UsuarioId:Number(this.Formulario.get("usuarioId").value),
-      CompaniaId:Number(this.Formulario.get("companiaId").value), 
+      CompaniaId:Number(this.Formulario.get("companiaId").value),
       SucursalId:Number(this.Formulario.get("sucursalId").value),
       Estado:this.transferenciaInventarioConfirmado ? EstadoGeneral.RECIBIDO: this.Formulario.get('estado').value,
       EstadoIdERP:this.Formulario.get("estadoIdERP").value,
       AlmacenDestinoId:this.Formulario.get("almacenDestinoId").value,
       AlmacenOrigenId: Number(this.idAlamacenDesdeSeleccionado),
       Fecha:this.Formulario.get("fecha").value,
-    }); 
- 
+    });
+
         delete this.solicitudTransferenciaInventario[i].codigoReferencia;
         delete this.solicitudTransferenciaInventario[i].nombre;
         delete this.solicitudTransferenciaInventario[i].enTransito;
@@ -427,7 +426,7 @@ export class TransferenciaFormularioComponent implements OnInit {
         delete this.solicitudTransferenciaInventario[i].almacenId;
         delete this.solicitudTransferenciaInventario[i].inventario;
         delete this.solicitudTransferenciaInventario[i].inventarioTipoId;
-        delete this.solicitudTransferenciaInventario[i].companiaID;    
+        delete this.solicitudTransferenciaInventario[i].companiaID;
    }
   this.solicitudTransferenciaInventario = this.solicitudTransferenciaInventario.filter(x => x.articuloId > 0 );
   if(this.actualizando){
@@ -446,18 +445,18 @@ export class TransferenciaFormularioComponent implements OnInit {
 };
 
   guardar() {
-  
+
     let encabezadoTransferenciaInventario  = {
        Id : Number(this.Formulario.get('id').value),
        AlmacenOrigenId : Number(this.idAlamacenDesdeSeleccionado),
        AlmacenDestinoId :Number(this.Formulario.get('almacenDestinoId').value),
        Fecha : this.Formulario.get('fecha').value,
-       UsuarioId :Number(this.Formulario.get('usuarioId').value), 
+       UsuarioId :Number(this.Formulario.get('usuarioId').value),
        Estado: this.transferenciaInventarioConfirmado ? EstadoGeneral.RECIBIDO: this.Formulario.get('estado').value,
        EstadoIdERP : this.Formulario.get('estadoIdERP').value,
        CompaniaId : Number(this.Formulario.get('companiaId').value),
        SucursalId : Number(this.Formulario.get('sucursalId').value),
-       usuarioIdRecibe: this.transferenciaInventarioConfirmado ? Number(this.authService.tokenDecoded.nameid): 0,  
+       usuarioIdRecibe: this.transferenciaInventarioConfirmado ? Number(this.authService.tokenDecoded.nameid): 0,
        fechaRecepcion:this.transferenciaInventarioConfirmado ? new Date(): new Date(),
       };
 
@@ -466,8 +465,8 @@ export class TransferenciaFormularioComponent implements OnInit {
       "TransferenciaInventarioDetalles": this.solicitudTransferenciaInventario.filter(x => x.articuloId > 0 && x.envio > 0),
       "LoteTransacciones": this.loteAlmacenSeleccionado.filter(x => x.cantidadEnvio > 0)
     }
- 
-   
+
+
     let metodo: string = this.actualizando ? "Update" : "Registrar";
     this.btnGuardarCargando = true;
     this.httpService.DoPostAny<any>(DataApi.TransferenciaInventario,
@@ -539,7 +538,7 @@ export class TransferenciaFormularioComponent implements OnInit {
   }
 
   getAlmacenesOrigenUsuarioEnrroll(id:number) {
- 
+
     let parametros: Parametro[] = [
       { key: "almacenId", value: id },
       { key: "usuarioId", value: this.authService.tokenDecoded.nameid },
@@ -565,10 +564,10 @@ export class TransferenciaFormularioComponent implements OnInit {
           this.getAlmacenesOrigenUsuarioEnrroll(id);
         }, 1000);
 
-      }); 
+      });
   }
   getAlmacenesDestinUsuarioEnrroll(almacenOrigenId:number,id:number) {
-    
+
     let parametros: Parametro[] = [
       { key: "almacenId", value: this.actualizando ? Number(this.idalmacenesHastaSeleccionado):  Number(almacenOrigenId) },
       { key: "CompaniaId", value: Number(this.authService.tokenDecoded.primarygroupsid) },
@@ -591,7 +590,7 @@ export class TransferenciaFormularioComponent implements OnInit {
           this.getAlmacenesDestinUsuarioEnrroll(almacenOrigenId,id);
         }, 1000);
 
-      }); 
+      });
   }
 
   GetLoteAlmacenPorArticulo(articuloId: number) {
@@ -605,7 +604,7 @@ export class TransferenciaFormularioComponent implements OnInit {
       this.paginaSize, false, parametros).subscribe(x => {
         if (x.ok) {
           this.loteAlmacen=x.records;
-      
+
         } else {
           this.toastService.error(x.errores[0]);
           console.error(x.errores[0]);
@@ -620,7 +619,7 @@ export class TransferenciaFormularioComponent implements OnInit {
   }
   ConfirmarRecepcionTransferenciaInventario(id:number,recepcion:number,index:number){
     if(recepcion <= 0)
-    { 
+    {
       this.solicitudTransferenciaInventario[index].hayErrores = true;
       return;
     }
@@ -653,5 +652,5 @@ export class TransferenciaFormularioComponent implements OnInit {
             this.solicitudTransferenciaInventario[index].hayErrores = false;
   }
 
- 
+
 }

@@ -52,7 +52,9 @@ export class HoraPickingFormularioComponent implements OnInit {
 
 
     if (id > 0) {
+      this.getSucursal();
       this.getItem(id);
+
       this.actualizando = true;
     }
     this.getDias();
@@ -83,7 +85,7 @@ export class HoraPickingFormularioComponent implements OnInit {
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0]
             this.Formulario.setValue(record);
-            //console.log(JSON.stringify(record));
+          //  console.log(JSON.stringify(record));
           } else {
             this.toastService.warning("Registro no encontrada");
             this.router.navigateByUrl('/mantenimientos/hora-picking');
@@ -209,7 +211,7 @@ export class HoraPickingFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.Sucursal = response.records;
-          console.log(this.Sucursal);
+
         }
         this.loadingSucursal = false;
       }, error => {
