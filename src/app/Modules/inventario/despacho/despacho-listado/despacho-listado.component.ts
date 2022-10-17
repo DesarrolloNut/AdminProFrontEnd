@@ -299,8 +299,8 @@ getAllData(){
           this.dia=h.diaNombre;
           this.idPicking=h.id;
           this.Horario=h.horario;
-
-
+         
+         
 
 
           this.fDesde.setHours(h.horaDesde .hours);

@@ -82,7 +82,10 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
       this.paginaSize, true, parametros).subscribe(x => {
         if (x.ok) {
           this.data = x.records;
-          this.data=this.data.filter(x=>x.estadoId != this.autorizado && x.estadoId !=4 /*&& x.*/);
+          //this.data=this.data.filter(x=> x.estadoId != this.autorizado && x.estadoId !=4);
+          this.data=x.records;
+     
+  
         } else {
           this.toastService.error(x.errores[0]);
           console.error(x.errores[0]);

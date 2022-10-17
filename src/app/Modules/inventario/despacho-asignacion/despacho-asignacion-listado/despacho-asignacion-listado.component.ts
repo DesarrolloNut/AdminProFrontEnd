@@ -16,6 +16,7 @@ import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { DespachoInUseVM, DespachoPreventaDetalleExportVM, DespachoPreventaDetalleViewModel, DespachoPreventaRequestModel, DespachoRangoHoraRequestModel } from '../../despacho/models/DespachoPedidoDetalleViewModel';
 import { DepachoHorasVM, DespachoListadoPreventaAsignacionVM } from '../../despacho/models/DespachoPedidoListadoViewModel';
 import * as XLSX from 'xlsx';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-despacho-asignacion-listado',
@@ -35,7 +36,7 @@ export class DespachoAsignacionListadoComponent implements OnInit, OnDestroy {
   btnAsignaDespachoCargando=false;
   loadingStatusMessaje='Asignando despacho random...';
 
-
+ 
 
   totalPaginas: number = 0;
   paginaSize: number = 40;
@@ -134,7 +135,7 @@ validaHorarioAndGetData(showLoading=false){
      { key: "Search", value: '' },
      {  key: "UsuarioId",value:Number(this.authService.tokenDecoded.nameid)},
      { key: "SucursalId", value: 0 },
-     { key: "Fecha", value: new Date(this.fecha).toLocaleDateString() }, 
+     { key: "Fecha", value: formatDate(this.fecha,'yyyy-MM-dd', 'en-US')  }, 
     ]
 
     
@@ -142,12 +143,12 @@ validaHorarioAndGetData(showLoading=false){
       "GetDespachoPreventaListadoForAsignacion", "FechaInicioDespachador", this.paginaNumeroActual,
      this.paginaSize,false, parametros).subscribe(x => {
        if (x.ok) {
-
+        
          this.dataPreventa = x.valores[0];
-
+         console.log(this.dataPreventa)
          this.formatDataPreventa(this.dataPreventa)
 
-
+      
          this.dataPreventaEmit.emit(this.dataPreventa);
          this.asignarPagination(x);
        } else {
@@ -494,7 +495,7 @@ despachoPreventaDetalleToPrinter(data:DespachoPreventaDetalleViewModel[]) {
 onChangeFechaDesdeFiltro(evento: any) {
   // if(++this.primeraVez==1){return;}
    this.fecha = new Date(evento.value)
-   this.validaHorarioAndGetData()
+   this.getDataPreventa(true)
 }
 
 async getDiferenciaMinima(){

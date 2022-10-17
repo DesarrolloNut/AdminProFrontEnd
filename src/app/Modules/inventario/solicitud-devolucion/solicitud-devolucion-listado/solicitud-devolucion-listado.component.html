@@ -47,9 +47,10 @@
             <tbody [hidden]="Cargando">
               <tr *ngFor="let item of data">
                 <td>
-                  <button [hidden]=" autorizado == null || item.archivoAnexoURL ==null || item.archivoAnexoURL =='' " title="Autorizar" type="button" class="btn btn-outline-success m-1"
+                  <button [hidden]=" autorizado == null || item.archivoAnexoURL ==null || item.archivoAnexoURL =='' " title="Autorizar" type="button" class="btn btn-success mx-1"
                     (click)="autorizarSolicitudDevolucion(item.id,'Autorizar')">
                     <i class="fas fa-check"></i>
+                   
                  </button>
                 </td>
                 <td>
