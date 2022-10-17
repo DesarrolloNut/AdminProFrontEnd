@@ -711,7 +711,7 @@ export const ROUTES: RouteInfo[] = [
         class: '',
         extralink: false,
         submenu: [],
-        permisos: ["mantenimientos_comprobante_fiscal"],
+        permisos: ["mantenimientos_comprobante_fiscal_enroll"],
       },
       {
         path: '/mantenimientos/tipo-comprobante-fiscal',
@@ -722,7 +722,7 @@ export const ROUTES: RouteInfo[] = [
         class: '',
         extralink: false,
         submenu: [],
-        permisos: ["mantenimientos_comprobante_fiscal"],
+        permisos: ["mantenimientos_tipos_comprobante_fiscal"],
       },
 
       {

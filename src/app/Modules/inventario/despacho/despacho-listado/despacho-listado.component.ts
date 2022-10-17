@@ -24,6 +24,7 @@ import { BalanzaPesajeSignalrService } from 'src/app/Services/balanza-pesaje-sig
 import { Usuario } from 'src/app/Modules/servicios/recepcion/models/Usuario';
 import { PrintExportFile, TypeReport } from 'src/app/Services/PrintExportFile.service';
 import { Subscriber } from 'rxjs';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-despacho-listado',
@@ -281,6 +282,8 @@ getAllData(){
  let p= new DespachoRangoHoraRequestModel();
      p.fecha = this.fecha;
 
+    
+
   this.httpService.DoPostAny<string>(DataApi.Despacho,
     "GetDespachoRangoValor", p).subscribe(response => {
 
@@ -298,6 +301,7 @@ getAllData(){
 
         if (this.despachoPuedeHorario) {
            this.getAllData()
+          
         }
       }
       this.loadingRangosFechaDespacho=false;
@@ -614,7 +618,7 @@ getSucursalByUsuarioId() {
     this.lotesDisponibles=[];
     // if(this.btnFinalizarDespachoCargando){return;}
 
-
+    
     this.loadingLote = true;
     let ap = new SAPLoteDespachoPedido();
     ap.articulo = this.despachoPreventaArticuloDetalleSelected.codigoArticulo;
@@ -769,7 +773,7 @@ getSucursalByUsuarioId() {
 
 
 
-
+ 
 
   onChangeFechaDesdeFiltro(evento: any) {
     if(++this.primeraVez==1){return;}
@@ -789,13 +793,13 @@ getSucursalByUsuarioId() {
      }else{
       this.CargandoRealtime =true;
      }
-
+     
 
     let parametros: Parametro[] = [
       { key: "Search", value: this.Search },
       {  key: "UsuarioId",value:Number(this.authService.tokenDecoded.nameid)},
       { key: "SucursalId", value: this.sucursalId },
-      { key: "Fecha", value: this.fecha },
+      { key: "Fecha", value: formatDate(this.fecha,'yyyy-MM-dd',"en-US") },
      ]
     this.httpService.GetAllWithPagination<DespachoListadoPreventaVM>(DataApi.Despacho,
        "GetDespachoPreventaListado", "FechaEntrega", this.paginaNumeroActual,
@@ -803,7 +807,7 @@ getSucursalByUsuarioId() {
         if (x.ok) {
 
           this.dataPreventa = x.valores[0];
-
+          console.log(x.valores[0])
           this.dataPreventaTotales= x.valores[1];
           this.asignarPagination(x);
         } else {

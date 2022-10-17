@@ -28,6 +28,8 @@ export class SolicitudDevolucion {
         this.comentario =""
         this.preFijo =""
         this.tasa =0
+        this.archivoAnexo=null;
+        this.archivoAnexoURL=null
            
     }
     id :number
@@ -58,6 +60,8 @@ export class SolicitudDevolucion {
     comentario :string
     preFijo :string
     tasa :number
+    archivoAnexo: File
+    archivoAnexoURL:string;
     
     
   

@@ -19,6 +19,8 @@ export class SolicitudDevolucionDetalle {
     usuarioId : number
     sucursalId: number
     facturaId:number
+    cantidadFijo:number
+    hayErrores: boolean
 }
 
 

@@ -106,6 +106,7 @@ export class TransferenciaFormularioComponent implements OnInit {
    
     });
   }
+ 
   agregarDetalleVacio() {
     this.solicitudTransferenciaInventario.push(new SolicitudArticuloDetalle())
   }
@@ -160,13 +161,14 @@ export class TransferenciaFormularioComponent implements OnInit {
   }
 
   getLotesTransacciones(id: number) {
+    
     this.httpService.DoPostAny<any>(DataApi.TransferenciaInventario,
       "GetLotesTransacciones", id).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
           this.loteAlmacenSeleccionado = response.records;
-        
+          
         }
       }, error => {
         this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
@@ -194,6 +196,7 @@ export class TransferenciaFormularioComponent implements OnInit {
         return;
      }
   }
+
   calcularTotal() {
     this.total = 0
     this.solicitudTransferenciaInventario.forEach(x => {
@@ -222,7 +225,8 @@ export class TransferenciaFormularioComponent implements OnInit {
               this.solicitudTransferenciaInventario[index].fechaRecepcion=new Date();
               this.solicitudTransferenciaInventario[index].solicitado=0;
             }
-          this.loteAlmacen =this.loteAlmacenSeleccionado.filter(x=>x.articuloID==idArticulo);
+          
+         this.loteAlmacen =this.loteAlmacenSeleccionado.filter(x=>x.articuloID==idArticulo);
           this.solicitudTransferenciaInventario[index].hayErrores = false;
           if(this.solicitudTransferenciaInventario[index].gestionado)
           {
@@ -387,14 +391,11 @@ export class TransferenciaFormularioComponent implements OnInit {
       }
 
     }*/
-    if(this.loteAlmacenSeleccionado.reduce((n, {cantidadEnvio})=> n+cantidadEnvio,0) !== this.solicitudTransferenciaInventario.filter(x=>x.gestionado).reduce((n, {envio})=> n+envio,0))
+    /*if(this.loteAlmacenSeleccionado.reduce((n, {cantidadEnvio})=> n+cantidadEnvio,0) !== this.solicitudTransferenciaInventario.filter(x=>x.gestionado).reduce((n, {envio})=> n+envio,0))
     {
-      this.toastService.error("El total de articulos a transferir no corresponse a la cantidad de lote a digitado.")
-
-      console.log(this.loteAlmacenSeleccionado.reduce((n, {cantidadEnvio})=> n+cantidadEnvio,0));
-      console.log(this.solicitudTransferenciaInventario.filter(x=>x.gestionado).reduce((n, {envio})=> n+envio,0));
+      this.toastService.error("El total de articulos a transferir no corresponse a la cantidad de lote a digitadokkk.")
       return;
-    }
+    }*/
     if(this.loteAlmacenSeleccionado.reduce((n, {recepcion})=> n+recepcion,0) !== this.solicitudTransferenciaInventario.filter(x=>x.gestionado).reduce((n, {recepcion})=> n+recepcion,0))
     {
       this.toastService.error("El total de articulos a recibir no corresponse a la cantidad de lote a digitado.")
@@ -466,6 +467,7 @@ export class TransferenciaFormularioComponent implements OnInit {
       "TransferenciaInventarioDetalles": this.solicitudTransferenciaInventario.filter(x => x.articuloId > 0 && x.envio > 0),
       "LoteTransacciones": this.loteAlmacenSeleccionado.filter(x => x.cantidadEnvio > 0)
     }
+    
  
    
     let metodo: string = this.actualizando ? "Update" : "Registrar";

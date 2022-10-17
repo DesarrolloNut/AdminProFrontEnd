@@ -134,8 +134,10 @@ validaHorarioAndGetData(showLoading=false){
      { key: "Search", value: '' },
      {  key: "UsuarioId",value:Number(this.authService.tokenDecoded.nameid)},
      { key: "SucursalId", value: 0 },
-     { key: "Fecha", value: this.fecha },
+     { key: "Fecha", value: new Date(this.fecha).toLocaleDateString() }, 
     ]
+
+    
    this.httpService.GetAllWithPagination<DespachoListadoPreventaAsignacionVM>(DataApi.Despacho,
       "GetDespachoPreventaListadoForAsignacion", "FechaInicioDespachador", this.paginaNumeroActual,
      this.paginaSize,false, parametros).subscribe(x => {

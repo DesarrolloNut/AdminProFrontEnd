@@ -145,7 +145,7 @@
                                         <div class="ml-3">
                                             <input style="width: 100px;" type="text" class="form-control"
                                             mask="separator"
-                                            (keyup)="actualizarTotal($event,item.id,i)"
+                                            (blur)="actualizarTotal($event,i)"
                                             thousandSeparator="," 
                                             [disabled]="!item.destalleFacturaSelecionada"
                                             [(ngModel)]="item.cantidad"

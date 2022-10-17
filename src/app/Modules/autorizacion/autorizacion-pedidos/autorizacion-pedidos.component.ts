@@ -38,7 +38,7 @@ export class AutorizacionPedidosComponent implements OnInit {
   paginaTotalRecords: number = 0;
   data: CotizacionListadoViewModel[] = [] //tu modelo
 
-  MODULO: EstadosGeneralesKeyEnum = EstadosGeneralesKeyEnum.PEDIDO
+ 
 
   // AUTORIZACION
   estadosAutorizacion: ComboBox[];
@@ -115,18 +115,18 @@ export class AutorizacionPedidosComponent implements OnInit {
   getEstadoAutorizacionUsuario() {
     let parametro = {
       "UsuarioID": Number(this.authService.tokenDecoded.nameid),
-      "KeynameModule": this.MODULO,
+      "KeynameModule": EstadosGeneralesKeyEnum.PEDIDO,
     }
 
     this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
       "GetEstadoAutorizacionUsuario", parametro).subscribe(response => {
-
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
           console.error(response.errores[0]);
         } else {
           this.estadoAutorizacionUsuario = response.valores[0];
           this.getEstadosAutorizacion()
+          console.log(response)
         }
       }, error => {
         this.toastService.error("No se pudo obtener el estado de autorización del usuario", "Error conexion al servidor");
@@ -173,7 +173,7 @@ export class AutorizacionPedidosComponent implements OnInit {
 
     let parametros: Parametro[] = [{
       key: "NameKey",
-      value: this.MODULO
+      value: EstadosGeneralesKeyEnum.PEDIDO
     }]
 
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
