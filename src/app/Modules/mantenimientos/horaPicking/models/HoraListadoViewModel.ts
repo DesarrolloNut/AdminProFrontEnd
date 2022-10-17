@@ -8,13 +8,15 @@ export class HoraPickingViewModel {
         this.compania= ""
         this.horaDesde = ""
         this.horaHasta = ""
-        
+        this.sucursal= ""
+
     }
     id: number
     diaId: number
     nombre: string
     companiaId: number
     compania: string
+    sucursal: string
     horaDesde: string
     horaHasta: string
 }

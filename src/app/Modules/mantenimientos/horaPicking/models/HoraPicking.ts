@@ -7,11 +7,13 @@ export class HoraPicking {
         this.companiaId = 0
         this.horaDesde = null
         this.horaHasta = null
+        this.sucursalId=0
     }
     id: number
     diaId: number
     companiaId: number
     horaDesde: string
     horaHasta: string
+    sucursalId:number
 }
 

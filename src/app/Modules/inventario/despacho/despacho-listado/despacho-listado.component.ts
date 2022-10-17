@@ -99,7 +99,9 @@ export class DespachoListadoComponent implements OnInit {
    Diferencia_Minima_Despacho = 0
    Despacho_Max_Porciento = 0
    despachoPuedeHorario = true;
+   HorarioEstablecido=false;
    loadingRangosFechaDespacho =false;
+   Horario=false;
 
   //PREVENTA
    despachoPreventaSeleccionado: DespachoListadoPreventaVM;
@@ -152,6 +154,7 @@ export class DespachoListadoComponent implements OnInit {
 
 
     puedeFinalizarDespacho=false;
+    idPicking: number;
 
       //PESAJE
 
@@ -281,6 +284,7 @@ getAllData(){
  this.loadingRangosFechaDespacho=true;
  let p= new DespachoRangoHoraRequestModel();
      p.fecha = this.fecha;
+     p.SucursalId=Number(this.sucursalId);
 
     
 
@@ -293,16 +297,20 @@ getAllData(){
           let h:DepachoHorasVM =  response.valores[0]
           this.despachoPuedeHorario=h.puedeDespachar;
           this.dia=h.diaNombre;
+          this.idPicking=h.id;
+          this.Horario=h.horario;
 
-          this.fDesde.setHours(h.horaDesde.hours);
+
+
+
+          this.fDesde.setHours(h.horaDesde .hours);
           this.fDesde.setMinutes(h.horaDesde.minutes);
           this.fHasta.setHours(h.horaHasta.hours);
           this.fHasta.setMinutes(h.horaHasta.minutes);
 
         if (this.despachoPuedeHorario) {
            this.getAllData()
-          
-        }
+           }
       }
       this.loadingRangosFechaDespacho=false;
 
@@ -795,12 +803,15 @@ getSucursalByUsuarioId() {
      }
      
 
-    let parametros: Parametro[] = [
+     let parametros: Parametro[] = [
       { key: "Search", value: this.Search },
       {  key: "UsuarioId",value:Number(this.authService.tokenDecoded.nameid)},
       { key: "SucursalId", value: this.sucursalId },
-      { key: "Fecha", value: formatDate(this.fecha,'yyyy-MM-dd',"en-US") },
+      { key: "Fecha", value: formatDate(this.fecha,'yyyy-MM-dd', 'en-US')  },
      ]
+
+
+
     this.httpService.GetAllWithPagination<DespachoListadoPreventaVM>(DataApi.Despacho,
        "GetDespachoPreventaListado", "FechaEntrega", this.paginaNumeroActual,
       this.paginaSize,true, parametros).subscribe(x => {

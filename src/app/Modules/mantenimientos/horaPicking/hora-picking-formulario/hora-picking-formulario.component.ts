@@ -1,3 +1,4 @@
+import { Sucursal } from './../../sucursales/models/Sucursal';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -27,6 +28,8 @@ export class HoraPickingFormularioComponent implements OnInit {
   actualizando = false;
 
   loadingDias = false;
+  loadingSucursal = false;
+  Sucursal: ComboBox[] = [];
   dias: ComboBox[] = [];
   horaValida:any;
   horaExiste = false;
@@ -44,20 +47,24 @@ export class HoraPickingFormularioComponent implements OnInit {
     private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
-    
+
     let id = Number(this.route.snapshot.paramMap.get('id'));
 
 
     if (id > 0) {
+      this.getSucursal();
       this.getItem(id);
+
       this.actualizando = true;
     }
     this.getDias();
+    this.getSucursal();
     this.CreateForm();
   }
   private CreateForm() {
     this.Formulario = this.formBuilder.group({
       id: [0],
+      sucursalId:[null, [Validators.required]],
       diaId: [null, [Validators.required]],
       companiaId: [this.authService.tokenDecoded.primarygroupsid, [Validators.required]],
       horaDesde: [null, [Validators.required]],
@@ -78,7 +85,7 @@ export class HoraPickingFormularioComponent implements OnInit {
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0]
             this.Formulario.setValue(record);
-            //console.log(JSON.stringify(record));
+          //  console.log(JSON.stringify(record));
           } else {
             this.toastService.warning("Registro no encontrada");
             this.router.navigateByUrl('/mantenimientos/hora-picking');
@@ -102,7 +109,7 @@ export class HoraPickingFormularioComponent implements OnInit {
     this.submitted = true;
     if (this.Formulario.invalid) {
       return;
-      
+
     }
     let h2=this.Formulario.get('horaHasta').value.includes('PM')? 12+Number(this.Formulario.get('horaHasta').value.split(":",2)[0] ): Number(this.Formulario.get('horaHasta').value.split(":",2)[0] );
     let h1=this.Formulario.get('horaDesde').value.includes('PM')? 12+Number(this.Formulario.get('horaDesde').value.split(":",2)[0] ): Number(this.Formulario.get('horaDesde').value.split(":",2)[0] );
@@ -113,7 +120,7 @@ export class HoraPickingFormularioComponent implements OnInit {
     }
     if(this.Formulario.get('horaHasta').value.includes('PM'))
     {
-      
+
        this.horaHasta= 12+Number(this.Formulario.get('horaHasta').value.split(":",2)[0] )  + ":"  +this.Formulario.get('horaHasta').value.split(":",2)[1];
     }
     else
@@ -122,16 +129,16 @@ export class HoraPickingFormularioComponent implements OnInit {
     }
     if(this.Formulario.get('horaDesde').value.includes('PM'))
     {
-      
+
        this.horaDesde= 12+Number(this.Formulario.get('horaDesde').value.split(":",2)[0] )  + ":"  +this.Formulario.get('horaDesde').value.split(":",2)[1];
     }
     else{
       this.horaDesde=this.Formulario.get('horaDesde').value;
     }
- 
+
     console.log(this.horaDesde)
     console.log(this.horaHasta)
-   
+
     this.submitted = true;
     if (this.Formulario.invalid) {
       return;
@@ -139,22 +146,23 @@ export class HoraPickingFormularioComponent implements OnInit {
     this.guardar();
   }
 
-  
+
 
   guardar() {
     let metodo: string = this.actualizando ? "Update" : "Registrar";
-   
+
     this.btnGuardarCargando = true;
     let parametros = new HoraPicking();
+      parametros.sucursalId =Number(this.Formulario.get('sucursalId').value);
       parametros.id =this.Formulario.get('id').value;
-      parametros.diaId = Number(this.Formulario.get('diaId').value); 
+      parametros.diaId = Number(this.Formulario.get('diaId').value);
       parametros.companiaId = Number(this.authService.tokenDecoded.primarygroupsid);
       parametros.horaDesde =this.horaDesde;
       parametros.horaHasta =this.horaHasta;
-    
+
     this.httpService.DoPostAny<any>(DataApi.HoraPicking,
       metodo, parametros).subscribe(response => {
-        
+
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
         } else {
@@ -188,4 +196,35 @@ export class HoraPickingFormularioComponent implements OnInit {
 
       });
   }
+
+
+
+  getSucursal() {
+    this.loadingSucursal = true;
+    let parametros: Parametro[] = [
+      { key: "CompaniaID", value: this.authService.tokenDecoded.primarygroupsid }
+  ];
+
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetSucursalesByCompaniaComboboxPicking",parametros).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.Sucursal = response.records;
+
+        }
+        this.loadingSucursal = false;
+      }, error => {
+        this.loadingSucursal = false;
+        this.toastService.error("No se pudo obtener las sucursales de Combo", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getSucursal()
+        }, 1000);
+
+      });
+  }
+
+
+
+
 }
