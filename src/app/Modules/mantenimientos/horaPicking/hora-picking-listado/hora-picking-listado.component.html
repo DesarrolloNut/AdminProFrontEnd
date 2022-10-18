@@ -35,6 +35,8 @@
                                 <th>Día</th>
                                 <th>Hora Desde</th>
                                 <th>Hora Hasta</th>
+                                <th>Hora Tope</th>
+                                <th>Horario Activado</th>
                                 <th></th>
 
                             </tr>
@@ -46,7 +48,10 @@
                                 <td><span> {{item.sucursal}}</span></td>
                                 <td><span> {{item.nombre}}</span></td>
                                 <td><span> {{item.horaDesde}}</span></td>
-                                <td><span> {{item.horaHasta}}</span></td>                                <td>
+                                <td><span> {{item.horaHasta}}</span></td> 
+                                <td><span> {{item.horaTope}}</span></td>
+                                <td><span> {{item.horarioActivado}}</span></td>                               
+                                <td>
                                     <button class="btn btn-sm btn-info" [routerLink]="[item.id]">
                                         <i class="fa fa-sm fa-edit"></i>
                                     </button>

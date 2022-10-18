@@ -8,6 +8,8 @@ export class HoraPicking {
         this.horaDesde = null
         this.horaHasta = null
         this.sucursalId=0
+        this.horaTope=null
+        this.hayHorario=false
     }
     id: number
     diaId: number
@@ -15,5 +17,8 @@ export class HoraPicking {
     horaDesde: string
     horaHasta: string
     sucursalId:number
+    horaTope:string
+    hayHorario:boolean
+
 }
 

@@ -21,36 +21,61 @@
                        
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-10 col-lg-10 col-12">
+                     
+                    </div>
+                    <div class="col-md-2 col-lg-2 col-12 text-right">
+                      
+                    </div>
+                </div>
 
             
-                <div class="">
-                    <label class="switch">
-                        <input class="switch-input" type="checkbox" />
-                        <span class="switch-label" data-on="On" data-off="Off"></span> 
-                        <span class="switch-handle"></span> 
-                    </label>
-                </div>
+             
                 <form class="form-row " [formGroup]="Formulario" (ngSubmit)="onSubmit()">
-
-                  
-                   
-                   
-                
-              
-                   
-                    
-                    <div class="form-group col-md-4">
-                      <label for="sucursalId"> Sucursal </label>
-                      <ng-select bindLabel="nombre" bindValue="codigo" placeholder="Seleccionar una Sucursal" [items]="Sucursal"
-                          [clearable]="false"
-                          [ngClass]="{'form-control border-danger p-0' : submitted && f.sucursalId.errors }"
-
-                          notFoundText="No resultados" formControlName="sucursalId">
-                      </ng-select>
-                      <div *ngIf="submitted && f.sucursalId.errors" class="text-danger small">
-                          <div *ngIf="f.sucursalId.errors.required  ">El campo es obligatorio</div>
-                      </div>
+                    <div class=" col-md-6">
+                    </div>
+                  <div class="form-group col-md-1 ">
+                    <label >  </label>
+                    <div class="text-right">
+                        <label class="switch">
+                            <input class="switch-input" formControlName="hayHorario" type="checkbox" (change)="activarHorario($event)" />
+                            <span class="switch-label" data-on="On" data-off="Off"></span> 
+                            <span class="switch-handle"></span> 
+                        </label>
+                    </div>
                   </div>
+                  <div class=" col-md-1">
+                 
+                </div>
+                 
+                <div  class="form-group col-md-4 ">
+                    <div *ngIf="hayHorario">
+                    <label for="nombre"> Hora Tope</label>
+                    <input formControlName="horaTope" [format]="12" type="text" [ngxTimepicker]="horaTope" name="horaTope" id="horaTope"
+                    [ngClass]="{'is-invalid' : submitted && f.horaTope.errors,  'form-control':true  }" placeholder="Seleccionar la hora de Inicio">
+                    <div class="invalid-feedback" *ngIf="submitted && f.horaTope.errors">
+                        <div *ngIf="f.horaTope.errors.required">El campo es obligatorio</div>
+                    </div>
+                    <ngx-material-timepicker #horaTope></ngx-material-timepicker>
+                </div>
+                </div>
+
+            
+                <div class="form-group col-md-4">
+                    <label for="sucursalId"> Sucursal </label>
+                    <ng-select bindLabel="nombre" bindValue="codigo" placeholder="Seleccionar una Sucursal" [items]="Sucursal"
+                        [clearable]="false"
+                        [ngClass]="{'form-control border-danger p-0' : submitted && f.sucursalId.errors }"
+
+                        notFoundText="No resultados" formControlName="sucursalId">
+                    </ng-select>
+                    <div *ngIf="submitted && f.sucursalId.errors" class="text-danger small">
+                        <div *ngIf="f.sucursalId.errors.required  ">El campo es obligatorio</div>
+                    </div>
+                </div>
+
+
 
 
                     <div class="form-group col-md-4">
@@ -67,9 +92,9 @@
                         </div>
 
                         
+                       
 
-
-                    <div class="form-group col-md-4">
+                    <div *ngIf="hayHorario" class="form-group col-md-4">
                         <label for="nombre"> Hora Desde</label>
                         <input formControlName="horaDesde" [format]="12" type="text" [ngxTimepicker]="horaDesde" name="horaDesde" id="horaDesde"
                             [ngClass]="{'is-invalid' : submitted && f.horaDesde.errors,  'form-control':true  }" placeholder="Seleccionar la hora de Inicio">
@@ -78,7 +103,7 @@
                         </div>
                         <ngx-material-timepicker #horaDesde></ngx-material-timepicker>
                     </div>
-                    <div class="form-group col-md-4">
+                    <div *ngIf="hayHorario" class="form-group col-md-4">
                         <label for="horaHasta"> Hora Hasta</label>
                         <input [(ngModel)]="horaValida" formControlName="horaHasta"  [format]="12" [ngxTimepicker]="horaHasta" (blur)="validarHora($event)" type="text" name="horaHasta" id="horaHasta"
                             [ngClass]="{'is-invalid' : submitted && f.horaHasta.errors,  'form-control':true  }" placeholder="Seleccionar la hora de Final">
@@ -87,6 +112,7 @@
                         </div>
                         <ngx-material-timepicker #horaHasta></ngx-material-timepicker>
                     </div>
+                
                     <div class="form-group text-right col-md-12">
                         <hr />
                         <button class="btn btn-light m-1" routerLink="../" type="button">

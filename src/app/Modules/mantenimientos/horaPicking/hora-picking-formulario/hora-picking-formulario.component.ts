@@ -33,10 +33,11 @@ export class HoraPickingFormularioComponent implements OnInit {
   dias: ComboBox[] = [];
   horaValida:any;
   horaExiste = false;
-  horaDesde: any;
-  horaHasta: any;
+  horaDesde= null;
+  horaHasta=null;
   horaD: any;
   horaH: any;
+  hayHorario: boolean;
 
   constructor(
     private toastService: ToastrService,
@@ -47,10 +48,7 @@ export class HoraPickingFormularioComponent implements OnInit {
     private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
-
     let id = Number(this.route.snapshot.paramMap.get('id'));
-
-
     if (id > 0) {
       this.getSucursal();
       this.getItem(id);
@@ -67,8 +65,10 @@ export class HoraPickingFormularioComponent implements OnInit {
       sucursalId:[null, [Validators.required]],
       diaId: [null, [Validators.required]],
       companiaId: [this.authService.tokenDecoded.primarygroupsid, [Validators.required]],
-      horaDesde: [null, [Validators.required]],
-      horaHasta: [null, [Validators.required]],
+      horaDesde: [null],
+      horaHasta: [null],
+      hayHorario:[false],
+      horaTope:[null]
     });
   }
 
@@ -81,11 +81,14 @@ export class HoraPickingFormularioComponent implements OnInit {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          //validar que existe
+       
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0]
+      
+            this.hayHorario=record.hayHorario ? true: false;
+            this.horaValida=record.horaHasta;
             this.Formulario.setValue(record);
-          //  console.log(JSON.stringify(record));
+          
           } else {
             this.toastService.warning("Registro no encontrada");
             this.router.navigateByUrl('/mantenimientos/hora-picking');
@@ -96,6 +99,17 @@ export class HoraPickingFormularioComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
       });
   }
+  activarHorario(event) {
+    if ( event.target.checked ) {
+        this.hayHorario=true;
+    }
+    else{
+      this.hayHorario=false;
+      this.horaDesde=null;
+      this.horaHasta=null;
+      this.Formulario.controls['horaTope'].setValue(null);  
+    }
+}
 
  validarHora(event:any){
   let horaHasta=event.target.value.split(":",1)
@@ -103,14 +117,13 @@ export class HoraPickingFormularioComponent implements OnInit {
   if(horaHasta == "00")
      this.horaValida="23:00"
  }
-
  //validarHora($event)
   onSubmit() {
     this.submitted = true;
     if (this.Formulario.invalid) {
       return;
-
     }
+    if(this.hayHorario){
     let h2=this.Formulario.get('horaHasta').value.includes('PM')? 12+Number(this.Formulario.get('horaHasta').value.split(":",2)[0] ): Number(this.Formulario.get('horaHasta').value.split(":",2)[0] );
     let h1=this.Formulario.get('horaDesde').value.includes('PM')? 12+Number(this.Formulario.get('horaDesde').value.split(":",2)[0] ): Number(this.Formulario.get('horaDesde').value.split(":",2)[0] );
     if( Number( h1 >= h2 ))
@@ -135,18 +148,25 @@ export class HoraPickingFormularioComponent implements OnInit {
     else{
       this.horaDesde=this.Formulario.get('horaDesde').value;
     }
-
-    console.log(this.horaDesde)
-    console.log(this.horaHasta)
-
+      if(!this.Formulario.get('horaTope').value.includes('AM')){
+        this.toastService.error("La Hora tope debe ser hora de la madruga.");
+        return;
+      }
+      else{
+        if(this.Formulario.get('horaTope').value.split(":",1)[0] >= 12)
+        {
+          this.toastService.error("Elige otra hora de tope.");
+          return;
+  
+        }
+      }
+    }
     this.submitted = true;
     if (this.Formulario.invalid) {
       return;
     }
     this.guardar();
   }
-
-
 
   guardar() {
     let metodo: string = this.actualizando ? "Update" : "Registrar";
@@ -159,7 +179,8 @@ export class HoraPickingFormularioComponent implements OnInit {
       parametros.companiaId = Number(this.authService.tokenDecoded.primarygroupsid);
       parametros.horaDesde =this.horaDesde;
       parametros.horaHasta =this.horaHasta;
-
+      parametros.horaTope= this.Formulario.get('horaTope').value;
+      parametros.hayHorario=this.Formulario.get('hayHorario').value;
     this.httpService.DoPostAny<any>(DataApi.HoraPicking,
       metodo, parametros).subscribe(response => {
 
