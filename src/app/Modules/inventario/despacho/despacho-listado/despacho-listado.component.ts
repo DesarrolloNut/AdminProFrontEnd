@@ -298,7 +298,7 @@ getAllData(){
           this.despachoPuedeHorario=h.puedeDespachar;
           this.dia=h.diaNombre;
           this.idPicking=h.id;
-          this.Horario=h.horario;
+          this.Horario=h.hayHorario;
          
          
 
@@ -414,14 +414,6 @@ getSucursalByUsuarioId() {
 
   }
 
-
-
-
-
-
-
-
-
   asignarPagination(x: ResponseContenido<any>) {
 
     if (x.pagina != null) {
@@ -477,15 +469,6 @@ getSucursalByUsuarioId() {
     this.despachoSeleccionado = despacho;
     this.modalService.open(content, { size: 'lg', });
   }
-
-
-
-
-
-
-
-
-
 
   cancelarDespacho() {
     this.modalService.dismissAll();

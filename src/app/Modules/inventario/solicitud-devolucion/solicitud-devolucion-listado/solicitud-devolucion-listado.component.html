@@ -47,7 +47,8 @@
             <tbody [hidden]="Cargando">
               <tr *ngFor="let item of data">
                 <td>
-                  <button [hidden]=" autorizado == null || item.archivoAnexoURL ==null || item.archivoAnexoURL =='' " title="Autorizar" type="button" class="btn btn-success mx-1"
+                  <button [hidden]=" autorizado == null || item.archivoAnexoURL ==null || item.archivoAnexoURL =='' " title="Autorizar" type="button" 
+                  [ngClass]="check == 1 ? 'btn btn-success mx-1' : 'btn btn-outline-info mx-1'"
                     (click)="autorizarSolicitudDevolucion(item.id,'Autorizar')">
                     <i class="fas fa-check"></i>
                    
@@ -88,7 +89,9 @@
                   {{item.ncf}}
                 </td>
                 <td>
-                  <div class="my-2"> <span class="text-600 text-90"></span> <span class="badge badge-warning badge-pill px-25">Sin Autorizado</span></div>
+                  <div *ngIf="item.estado =='Autorizado'" class="my-2"> <span class="text-600 text-90"></span> <span class="badge badge-success badge-pill px-25">{{item.estado}}</span></div>
+                  <div *ngIf="item.estado =='Pendiente'"  class="my-2"> <span class="text-600 text-90"></span> <span class="badge badge-warning badge-pill px-25">{{item.estado}}</span></div>
+                  <div *ngIf="item.estado =='Rechazado'"  class="my-2"> <span class="text-600 text-90"></span> <span class="badge badge-danger badge-pill px-25">{{item.estado}}</span></div>
                 </td>
                 <td>
                   <div class="d-flex align-items-center">
@@ -326,7 +329,7 @@
 
           <div class="row">
 
-            <div class="col-md-6 p-2 text-center border-light border rounded-sm"
+           <!-- <div class="col-md-6 p-2 text-center border-light border rounded-sm"
               *ngFor="let item of files; let i = index">
 
               <div class="row">
@@ -344,6 +347,32 @@
 
               </div>
 
+            </div>-->
+            <div class="col-12">
+              <div class="table-responsive">
+                <table class="table table-hover table-sm mb-0 no-wrap v-middle">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody >
+                    <tr *ngFor="let item of files; let i = index">
+                      <td>
+                        <i class="fa fa-file-pdf text-danger"></i>
+                      </td>
+                      <td>
+                        <span class="">{{item.name}}</span>
+                      </td>
+                      <td>
+                        <button class="btn btn-sm" (click)="onDeleteitem(i)"><i class="fa fa-times"></i></button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
 
           </div>

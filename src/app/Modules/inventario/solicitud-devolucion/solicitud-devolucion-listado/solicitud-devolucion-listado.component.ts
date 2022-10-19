@@ -41,7 +41,7 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
   progress: number;
   files: any[] = [];
   filesSubidos: Archivo[] = [];
-
+  check:number;
   almacenOrigin:string;
   almacenDestino:string;
   usuario:string;
@@ -82,10 +82,9 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
       this.paginaSize, true, parametros).subscribe(x => {
         if (x.ok) {
           this.data = x.records;
-          //this.data=this.data.filter(x=> x.estadoId != this.autorizado && x.estadoId !=4);
+          this.check=1;
           this.data=x.records;
-     
-  
+          
         } else {
           this.toastService.error(x.errores[0]);
           console.error(x.errores[0]);
@@ -125,7 +124,6 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.solicitudDevolucionDetalle = response.records;
-       
         }
         this.loadingSolicitudDetalle = false;
       }, error => {
@@ -165,9 +163,6 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
     this.filaSelecccionado=item;
 
   }
-
-  
-
   setFiles(files) {
     this.files = []
     for (let i = 0; i < files.length; i++) {
@@ -178,7 +173,6 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
         this.toastService.error(`El tamano del archivo debe ser menos a 20MB`);
         return;
       }
-
       if (extensionAllowed) {
         var nam = files[i].name.split('.').pop();
         if (!extensionAllowed[nam]) {

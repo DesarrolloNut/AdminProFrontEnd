@@ -118,7 +118,7 @@ export class DepachoHorasVM   {
   puedeDespachar: boolean;
   HorarioEstablecido: boolean;
   id :number;
-  horario:boolean;
+  hayHorario:boolean;
 }
 export class HoraTimeObject   {
   hours: number;
