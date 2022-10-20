@@ -8,7 +8,7 @@
                         <h4 class="card-title">Listado de artículos por autorizar</h4>
                     </div>
                     <div class="col-md-6 text-right">
-                        <!-- 
+                        <!--
                         <button type="button"
                             [disabled]="!data || data.length == 0 || estadoAutorizacionComboModel != estadoAutorizacionUsuario || estadoAutorizacionComboModel == 3"
                             (click)="autorizarMasiva()" class="btn btn-info"> <i class="fa fa-check"></i> Autorizar
@@ -82,7 +82,7 @@
                                 <th>
                                     <span>Precio Actual</span>
                                 </th>
-                                <th [hidden]="estadoAutorizacionComboModel == 3">
+                                <th >
                                     <span>Precio Sugerido</span>
                                 </th>
                                 <th>Precio ERP</th>
@@ -172,7 +172,7 @@
                                     <span class="font-weight-bold">RD$ {{item.precioActual}}</span>
                                 </td>
 
-                                <td [hidden]="estadoAutorizacionComboModel == 3">
+                                <td >
                                     <span class="text-info font-weight-bold">RD$ {{item.precioSugerido}} </span>
                                 </td>
                                 <td>
