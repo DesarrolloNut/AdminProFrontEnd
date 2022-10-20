@@ -99,6 +99,7 @@ export class ClienteDatosGeneralesComponent implements OnInit,AfterViewInit {
   searchLocalidad:string;
 
   puedeModificarDocAndInfo=true;
+  tipoDocumento:string="CEDULA";
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
@@ -206,7 +207,7 @@ export class ClienteDatosGeneralesComponent implements OnInit,AfterViewInit {
       nombres: [null,  [Validators.required]],
       apellidos: [null,  [Validators.required] ],
       clienteNombre: [null,  [Validators.required,Validators.maxLength(100)]],
-      documento: [null, [Validators.required, Validators.minLength(9)]],
+      documento: [null, [Validators.required,Validators.minLength(9),Validators.maxLength(11)]],
       documentoAnterior: [null],
 
       email: ['', [ Validators.email]],
@@ -846,10 +847,8 @@ onClickRadioPrincipalOSucursal(value:number){
     this.f.clientePadreId.updateValueAndValidity();
 
 }
-
 //METODOS LOGIC
 onDocumentoKeyUp(event) {
-
   if (this.f.documento.valid) {
     this.buscarClienteByRncOCedula(this.f.documento.value,this.f.documentoTipoID.value);
   }
@@ -878,13 +877,13 @@ onSectorChange() {
 
 onTipoDocumentoChange(tipo:ComboBox) {
  // this.f.documento.setValue(null)
+  this.tipoDocumento=tipo.nombre.toUpperCase();
   this.f.documento.setErrors(null);
   this.f.apellidos.setValue(null);
   this.buscarClienteByRncOCedula(this.f.documento.value,tipo.codigo);
   this.clearOrputValidatosSomeField();
   this.getTipoComprobante();
 }
-
 
 clearOrputValidatosSomeField(){
 

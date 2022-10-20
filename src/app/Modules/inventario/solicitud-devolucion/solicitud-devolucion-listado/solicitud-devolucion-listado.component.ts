@@ -4,7 +4,8 @@ import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
-import { filter } from 'rxjs/operators';
+import Swal from 'sweetalert2'
+
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
@@ -82,8 +83,7 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
       this.paginaSize, true, parametros).subscribe(x => {
         if (x.ok) {
           this.data = x.records;
-          this.check=1;
-          this.data=x.records;
+          
           
         } else {
           this.toastService.error(x.errores[0]);
@@ -97,6 +97,7 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
       });
 
   }
+ 
   asignarPagination(x: ResponseContenido<any>) {
     if (x.pagina != null) {
       this.totalPaginas = x.pagina.totalPaginas == null ? 0 : x.pagina.totalPaginas;
@@ -133,6 +134,8 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
       });
   }
   getAutorizacionUsuario() {
+
+
     let parametro = {
       "UsuarioID": Number(this.authService.tokenDecoded.nameid),
       "KeynameModule": EstadosGeneralesKeyEnum.INVENTARIOSOLICITUDDEVOLUCION,
@@ -146,7 +149,6 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
           
           this.autorizado=response.valores[0];
         }
-        console.log(this.autorizado)
       }, error => {
         this.toastService.error("No se pudo obtener el estado de autorización del usuario", "Error conexion al servidor");
         setTimeout(() => {
@@ -161,36 +163,68 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
     this.files = []
     this.solicitudDevolucionID=item.id;
     this.filaSelecccionado=item;
-
+    this.getArchivosSubidos(item.id);
   }
-  setFiles(files) {
-    this.files = []
-    for (let i = 0; i < files.length; i++) {
-      let extensionAllowed = {"png":true,"jpeg":true,"jpg":true,"pdf":true};
 
-      if (files[i].size / 1024 / 1024 > 20) {
+  getArchivosSubidos(id:number) {
+    this.cargandoAnexos = true;
+    this.httpService.DoPostAny<Archivo>(DataApi.SolicitudDevolucion,
+      "GetSolicitudDevolucionArchivos", id).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+        } else {
+          this.filesSubidos = response.records;
+        }
+        this.cargandoAnexos = false;
+      }, error => {
+        this.cargandoAnexos = false;
+        console.error(error)
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+  fileExists(username) {
+    return this.filesSubidos.some(function(el) {
+      return el.nombre === username;
+    }); 
+  }
+
+  setFiles(archivos) {
+    for (let i = 0; i < archivos.length; i++) {
+      if(this.fileExists(archivos[i].name)){
+        this.toastService.error(`El archivo ${archivos[i].name}. ya existe.`);
+        return;
+      }
+      let extensionAllowed = {"png":true,"jpeg":true,"jpg":true,"pdf":true};
+      if (archivos[i].size / 1024 / 1024 > 20) {
         alert("File size should be less than 20MB")
         this.toastService.error(`El tamano del archivo debe ser menos a 20MB`);
         return;
       }
       if (extensionAllowed) {
-        var nam = files[i].name.split('.').pop();
+        var nam = archivos[i].name.split('.').pop();
         if (!extensionAllowed[nam]) {
           this.toastService.error(`Por favor cargue archivo  ${Object.keys(extensionAllowed)}`);
           return;
         }
       }
-      const element = files[i];
-      this.files.push(element)
+      if(this.files.find(x=>x.name === archivos[i].name))
+      {
+        this.toastService.error(`Este archivo ya esta selecccionado.`);
+        return;
+      }
+      this.files.push(archivos[i]);
     }
-
   }
 
   subirArchivosAlServidor() {
     const formData = new FormData();
     formData.append("id", this.solicitudDevolucionID.toString());
-    for (let file of this.files)
-      formData.append("Files", file);
+    for(let i = 0; i < this.files.length; i++)
+    {
+      formData.append("Files", this.files[i]);
+     
+    }
+      
     this.httpService.DoPostAny<any>(DataApi.SolicitudDevolucion,
       "UploadSolicitudDevolucionAnexos", formData).subscribe(response => {
         if (!response.ok) {
@@ -207,13 +241,76 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
 
   }
 
-
-
   onDeleteitem(index: number) {
     this.files.splice(index, 1);
   }
 
-  autorizarSolicitudDevolucion(id:number,accion:string) {
+
+
+  deleteSolicitudDevolucionArchivoByID(id: number) {
+    this.loadingSolicitudDetalle = true;
+    this.httpService.DoPostAny<string>(DataApi.SolicitudDevolucion,
+      "DeleteSolicitudDevolucionArchivo", id).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.toastService.success("Realizado");
+          this.getArchivosSubidos(this.solicitudDevolucionID);
+        }
+        this.loadingSolicitudDetalle = false;
+      }, error => {
+        console.error(error)
+        this.loadingSolicitudDetalle = false;
+        this.toastService.error("No se pudo obtener la url de los archivos", "Error conexion al servidor");
+      });
+  }
+
+  buscarArchivosSubidos(id:number) {
+    this.httpService.DoPostAny<Archivo>(DataApi.SolicitudDevolucion,
+      "GetSolicitudDevolucionArchivos", id).subscribe(response => {
+        if (!response.ok) {
+        return 0;
+        } else {
+          return  response.records.length;
+        }
+      }, error => {
+        this.cargandoAnexos = false;
+        console.error(error)
+      });
+  }
+
+  confirmarSolicitudDevolucion(id:number,accion: string){
+    this.getArchivosSubidos(id)
+    Swal.fire({
+      title: 'Estas seguro que quieres confirmar esta devolución?',
+      text: 'Luego de ser confirmado no se puedo desahacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'SI',
+      cancelButtonText: 'NO'
+    }).then((result) => {
+      if (result.value) {
+        this.autorizarSolicitudDevolucion(id,accion);
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        Swal.fire(
+          'Cancelado',
+          'Se ha cancelado la operacion.)',
+          'error'
+        )
+      }
+    })
+
+  }
+  autorizarSolicitudDevolucion(id:number,accion: string) {
+   if(this.filesSubidos.length <=0){
+    Swal.fire(
+      'Error',
+      'Este registro no tiene anexo.',
+      'error'
+    )
+    return;
+   }
     let parametros = new SolicitudDevolucion();
     parametros.companiaId =Number(this.authService.tokenDecoded.primarygroupsid),
     parametros.id=id, 
@@ -224,7 +321,11 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
        if (!response.ok) {
          this.toastService.error(response.errores[0], "Error");
        } else {
-         this.toastService.success("Realizado", "OK");
+        Swal.fire(
+          'Confirmado',
+          'Se ha autorizado la solicitud.',
+          'success'
+        )
          this.getData();
        }
        this.btnActualizarCargando = false;

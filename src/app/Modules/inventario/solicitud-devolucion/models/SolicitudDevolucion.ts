@@ -29,7 +29,7 @@ export class SolicitudDevolucion {
         this.preFijo =""
         this.tasa =0
         this.archivoAnexo=null;
-        this.archivoAnexoURL=null
+        
            
     }
     id :number

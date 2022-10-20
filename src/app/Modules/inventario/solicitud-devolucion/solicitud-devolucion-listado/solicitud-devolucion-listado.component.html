@@ -47,9 +47,9 @@
             <tbody [hidden]="Cargando">
               <tr *ngFor="let item of data">
                 <td>
-                  <button [hidden]=" autorizado == null || item.archivoAnexoURL ==null || item.archivoAnexoURL =='' " title="Autorizar" type="button" 
-                  [ngClass]="check == 1 ? 'btn btn-success mx-1' : 'btn btn-outline-info mx-1'"
-                    (click)="autorizarSolicitudDevolucion(item.id,'Autorizar')">
+                  <button [hidden]=" autorizado == null || item.estado =='Rechazado' || autorizado ==item.estadoId" title="Autorizar" type="button" 
+                  [ngClass]="item.estadoId ==autorizado  ? 'btn btn-success mx-1' : 'btn btn-outline-success mx-1'"
+                    (click)="confirmarSolicitudDevolucion(item.id,'Autorizar')">
                     <i class="fas fa-check"></i>
                    
                  </button>
@@ -61,8 +61,6 @@
                 </td>
                 <td>
                   <div >{{item.codigoReferencia  }}</div> <br>
-             
-                
                 </td>
                 <td>
                   
@@ -140,7 +138,7 @@
                   >
                     <i class="fa  fa-eye"></i>
                 </button>
-                  <button [hidden]=" autorizado == null || item.archivoAnexoURL ==null || item.archivoAnexoURL =='' "  title="Rechazar" type="button" class="btn btn-outline-danger m-1"
+                  <button [hidden]=" autorizado == null || item.estado =='Rechazado' || autorizado ==item.estadoId "  title="Rechazar" type="button" class="btn btn-outline-danger m-1"
                   (click)="autorizarSolicitudDevolucion(item.id,'Rechazar')">
                     <i class="fa fa-times"></i>
                 </button>
@@ -310,7 +308,7 @@
           </button>
         </div>
         <div class="modal-body">
-        <div *ngIf="filaSelecccionado.archivoAnexoURL ==null">
+       
           <div class="row">
             <div class="col-12">
               <div class="box-part text-center">
@@ -329,7 +327,7 @@
 
           <div class="row">
 
-           <!-- <div class="col-md-6 p-2 text-center border-light border rounded-sm"
+           <div class="col-md-6 p-2 text-center border-light border rounded-sm"
               *ngFor="let item of files; let i = index">
 
               <div class="row">
@@ -340,55 +338,27 @@
 
                 <div class="col-12 text-center">
                   <span>
-                    <i class="fa fa-file-pdf text-danger fa-3x"></i>
+                    <i  [ngClass]="item.type == 'application/pdf'? 'fa fa-file-pdf text-danger fa-3x' : 'fa fa-image fa-3x'" ></i>
                   </span>
                   <h6 class="mt-2 text-info">{{item.name}}</h6>
                 </div>
 
               </div>
 
-            </div>-->
-            <div class="col-12">
-              <div class="table-responsive">
-                <table class="table table-hover table-sm mb-0 no-wrap v-middle">
-                  <thead>
-                    <tr>
-                      <th></th>
-                      <th></th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody >
-                    <tr *ngFor="let item of files; let i = index">
-                      <td>
-                        <i class="fa fa-file-pdf text-danger"></i>
-                      </td>
-                      <td>
-                        <span class="">{{item.name}}</span>
-                      </td>
-                      <td>
-                        <button class="btn btn-sm" (click)="onDeleteitem(i)"><i class="fa fa-times"></i></button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
             </div>
-
           </div>
-
+         <br>
           <div class="row">
             <div class="col text-right">
-              <button type="button" class="btn btn-info" *ngIf="files.length > 0" (click)="subirArchivosAlServidor()">
+              <button  type="button" class="btn btn-info" *ngIf="files.length > 0" (click)="subirArchivosAlServidor()">
                 <span>Subir {{files.length}} archivo</span> <span *ngIf="files.length > 1">s</span></button>
             </div>
           </div>
-        </div>
+        
       
-              <div class="row" *ngIf="filaSelecccionado.archivoAnexoURL !=null " >
                 <div class="col-12">
                   <hr>
-                  <h6>Anexos subidos <span class="badge badge-info badge-pill">1</span></h6>
+                  <h6>Anexos subidos <span class="badge badge-info badge-pill">{{filesSubidos.length}}</span></h6>
                 </div>
 
                 <div class="col-12">
@@ -396,31 +366,31 @@
                     <table class="table table-hover table-sm mb-0 no-wrap v-middle">
                       <thead>
                         <tr>
-                          <th></th>
+                         
                           <th></th>
                           <th></th>
                         </tr>
                       </thead>
                       <tbody [hidden]="Cargando">
                         <!-- *ngFor="let item of filesSubidos; let i = index" -->
-                        <tr>
+                        <tr *ngFor="let item of filesSubidos; let i = index">
                           <!-- <td>
                           <span class="badge badge-light text-info ">{{item.id}}</span>
                         </td> -->
+                         
                           <td>
-                            <i class="fa fa-file-pdf text-danger"></i>
-                          </td>
-                          <td>
-                            <span class="">Anexo</span>
+                            <span class=""> {{item.nombre}}</span>
                           </td>
                           <td>
 
                             <!-- <button class="btn btn-sm btn-danger m-1"><i class="fa fa-times"></i></button> -->
 
-                            <a target="_blank" [href]="filaSelecccionado.archivoAnexoURL"
+                            <a target="_blank" [href]="item.url"
                               class="btn btn-sm btn-light m-1"><i class="fa fa-download"></i></a>
 
-                           
+                            <button  class="btn btn-sm"
+                              (click)="deleteSolicitudDevolucionArchivoByID(item.id)"><i
+                                class="fa fa-times"></i></button>
                           </td>
                         </tr>
                       </tbody>
@@ -428,7 +398,7 @@
                   </div>
                 </div>
 
-              </div>
+              
             
           
 
