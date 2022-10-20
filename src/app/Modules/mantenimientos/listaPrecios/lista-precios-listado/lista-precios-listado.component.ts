@@ -33,7 +33,7 @@ export class ListaPreciosListadoComponent implements OnInit {
   paginaTotalRecords: number = 0;
   data: ListaPrecio[] = [] //tu modelo
 
-  // Dual List options 
+  // Dual List options
   tab = 1;
   keepSorted = true;
   key: string;
@@ -103,9 +103,11 @@ export class ListaPreciosListadoComponent implements OnInit {
     let fecha = new Date();
 
     fecha.setDate(fecha.getDate() + 1);
-    this.preciosParaSubir.push({ "articuloCodigoReferencia": null, "listaPrecioCodigoReferencia": null, "fechaAplicacion": fecha, "precio": null });
+    this.preciosParaSubir.push({ "articuloCodigoReferencia": null, "listaPrecioCodigoReferencia": null, "fechaAplicacion": fecha, "precio": null,"CompaniaId":null });
 
   }
+
+
 
 
   getData() {
@@ -189,6 +191,37 @@ export class ListaPreciosListadoComponent implements OnInit {
     this.display = 'nombre';
     this.keepSorted = true;
   }
+
+
+
+
+  GetArticulosAsignadosListaPrecioModal(listaId: number) {
+    this.loadingArticulosSeleccionados = true;
+    let param: Parametro[] = [{ key: "listaID", value: listaId }]
+
+    this.httpService.DoPost<any>(DataApi.Articulo,
+      "GetArticulosAsignadosListaPrecioModal", param).subscribe(response => {
+
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.confirmed = response.records;
+          console.log(this.confirmed)
+
+        }
+        this.loadingArticulosSeleccionados = false;
+      }, error => {
+        this.loadingArticulosSeleccionados = false;
+        this.toastService.error("No se pudo obtener los articulos seleccionados", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.GetArticulosAsignadosListaPrecioModal(listaId)
+        }, 1000)
+
+      });
+  }
+
+
 
   //#region MODAL ASIGNACION ARTICULOS
 
@@ -470,7 +503,7 @@ export class ListaPreciosListadoComponent implements OnInit {
     this.listaSeleccionada = listaId;
     this.preciosParaSubir = []
     this.addPrecioParaSubirEmptyItem();
-    this.getArticulosSeleccionadosLista(listaId);
+    this.GetArticulosAsignadosListaPrecioModal(listaId);
     this.getListasPrecio()
 
   }
@@ -523,6 +556,7 @@ export class ListaPreciosListadoComponent implements OnInit {
     this.preciosParaSubir.forEach(x => {
       x.listaPrecioCodigoReferencia = listaPrecioCodRef
       x.precio = Number(x.precio)
+      x.CompaniaId=Number(this.authService.tokenDecoded.primarygroupsid)
     })
 
     this.guardarPreciosMasivo();

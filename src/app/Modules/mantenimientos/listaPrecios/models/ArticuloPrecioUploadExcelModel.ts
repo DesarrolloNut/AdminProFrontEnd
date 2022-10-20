@@ -3,4 +3,5 @@ export interface ArticuloPrecioUploadExcelModel {
     listaPrecioCodigoReferencia: string;
     precio: number;
     fechaAplicacion: Date;
+    CompaniaId:number
 }
