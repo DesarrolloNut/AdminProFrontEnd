@@ -10,6 +10,8 @@ import { TransferenciaListadoComponent } from './transferencia/transferencia-lis
 import { TransferenciaFormularioComponent } from './transferencia/transferencia-formulario/transferencia-formulario.component';
 import { SolicitudDevolucionListadoComponent } from './solicitud-devolucion/solicitud-devolucion-listado/solicitud-devolucion-listado.component';
 import { SolicitudDevolucionFormularioComponent } from './solicitud-devolucion/solicitud-devolucion-formulario/solicitud-devolucion-formulario.component';
+import { SolicitudCambioListadoComponent } from './solicitud-cambio/solicitud-cambio-listado/solicitud-cambio-listado.component';
+import { SolicitudCambioFormularioComponent } from './solicitud-cambio/solicitud-cambio-formulario/solicitud-cambio-formulario.component';
 
 
 const routes: Routes = [  {
@@ -100,6 +102,27 @@ const routes: Routes = [  {
           { title: 'Inventario' },
           { title: 'Solicitu de Devolución' },
           { title: 'Formulario Solicitu de Devolución'}
+        ]
+      }
+    },
+    //Solicitud cambio
+    {
+      path: 'solicitud-cambio', component: SolicitudCambioListadoComponent, data: {
+        title: 'Solicitu Cambio',
+        urls: [
+          { title: 'Inventario' },
+          { title: 'Solicitu Cambio' }
+        ]
+      }
+    },
+
+    {
+      path: 'solicitud-cambio/:id', component: SolicitudCambioFormularioComponent, data: {
+        title: 'Solicitu Cambio',
+        urls: [
+          { title: 'Inventario' },
+          { title: 'Solicitu Cambio' },
+          { title: 'Formulario Solicitu Cambio'}
         ]
       }
     },

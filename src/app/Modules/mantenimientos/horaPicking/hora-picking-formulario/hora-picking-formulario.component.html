@@ -50,7 +50,7 @@
                 </div>
                  
                 <div  class="form-group col-md-4 ">
-                    <div *ngIf="hayHorario">
+                    <div [hidden]="!hayHorario">
                     <label for="nombre"> Hora Tope</label>
                     <input formControlName="horaTope" [format]="12" type="text" [ngxTimepicker]="horaTope" name="horaTope" id="horaTope"
                     [ngClass]="{'is-invalid' : submitted && f.horaTope.errors,  'form-control':true  }" placeholder="Seleccionar la hora de Inicio">
@@ -94,7 +94,7 @@
                         
                        
 
-                    <div *ngIf="hayHorario" class="form-group col-md-4">
+                    <div [hidden]="!hayHorario" class="form-group col-md-4">
                         <label for="nombre"> Hora Desde</label>
                         <input formControlName="horaDesde" [format]="12" type="text" [ngxTimepicker]="horaDesde" name="horaDesde" id="horaDesde"
                             [ngClass]="{'is-invalid' : submitted && f.horaDesde.errors,  'form-control':true  }" placeholder="Seleccionar la hora de Inicio">
@@ -103,7 +103,7 @@
                         </div>
                         <ngx-material-timepicker #horaDesde></ngx-material-timepicker>
                     </div>
-                    <div *ngIf="hayHorario" class="form-group col-md-4">
+                    <div [hidden]="!hayHorario" class="form-group col-md-4">
                         <label for="horaHasta"> Hora Hasta</label>
                         <input [(ngModel)]="horaValida" formControlName="horaHasta"  [format]="12" [ngxTimepicker]="horaHasta" (blur)="validarHora($event)" type="text" name="horaHasta" id="horaHasta"
                             [ngClass]="{'is-invalid' : submitted && f.horaHasta.errors,  'form-control':true  }" placeholder="Seleccionar la hora de Final">

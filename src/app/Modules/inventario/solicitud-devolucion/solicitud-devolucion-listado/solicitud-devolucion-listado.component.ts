@@ -1,21 +1,16 @@
-import { HttpEventType, HttpRequest } from '@angular/common/http';
+
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import Swal from 'sweetalert2'
-
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
-
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
-
 import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { Archivo } from 'src/app/shared/model/Archivo';
-
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { SolicitudArticuloDetalle } from '../../transferencia/models/SolicitudArticuloDetalle';
 import { SolicitudDevolucion } from '../models/SolicitudDevolucion';
@@ -65,6 +60,7 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
   solicitudDevolucionID: any;
   filSelecccionado: any;
   filaSelecccionado: any;
+  estadoDevolucion: any;
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private authService: AuthenticationService,
@@ -112,7 +108,7 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
   openModalSolicitud(content, item: any) {
     this.modalService.open(content, { windowClass: 'my-class'});
     this.solicitudDevolucionSeleccionada = item;
-    this.getTransferenciaDetalles(String(item.id))
+    this.getTransferenciaDetalles(String(item.id));
   }
   getTransferenciaDetalles(solicituDevolucionId: string) {
     let parametros = new SolicitudDevolucion();
@@ -164,6 +160,8 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
     this.solicitudDevolucionID=item.id;
     this.filaSelecccionado=item;
     this.getArchivosSubidos(item.id);
+    this.estadoDevolucion=item.estado;
+   
   }
 
   getArchivosSubidos(id:number) {

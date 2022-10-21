@@ -33,11 +33,13 @@ export class HoraPickingFormularioComponent implements OnInit {
   dias: ComboBox[] = [];
   horaValida:any;
   horaExiste = false;
-  horaDesde= null;
-  horaHasta=null;
+
   horaD: any;
   horaH: any;
   hayHorario: boolean;
+  horaHasta: string;
+  horaDesde: any;
+  horaTope: string;
 
   constructor(
     private toastService: ToastrService,
@@ -86,7 +88,11 @@ export class HoraPickingFormularioComponent implements OnInit {
             let record = response.records[0]
       
             this.hayHorario=record.hayHorario ? true: false;
+            //Rellenar estos campos parar guardar la persistencia de los datos 
             this.horaValida=record.horaHasta;
+           // this.horaDesde=record.horaDesde;
+           // this.horaHasta=record.horaHasta;
+            //this.horaTope=record.horaTope;
             this.Formulario.setValue(record);
           
           } else {
@@ -105,9 +111,6 @@ export class HoraPickingFormularioComponent implements OnInit {
     }
     else{
       this.hayHorario=false;
-      this.horaDesde=null;
-      this.horaHasta=null;
-      this.Formulario.controls['horaTope'].setValue(null);  
     }
 }
 
@@ -126,14 +129,17 @@ export class HoraPickingFormularioComponent implements OnInit {
     if(this.hayHorario){
     let h2=this.Formulario.get('horaHasta').value.includes('PM')? 12+Number(this.Formulario.get('horaHasta').value.split(":",2)[0] ): Number(this.Formulario.get('horaHasta').value.split(":",2)[0] );
     let h1=this.Formulario.get('horaDesde').value.includes('PM')? 12+Number(this.Formulario.get('horaDesde').value.split(":",2)[0] ): Number(this.Formulario.get('horaDesde').value.split(":",2)[0] );
+    
+    let t1=this.Formulario.get('horaDesde').value.includes('AM')? "AM":"PM";
+    let t2=this.Formulario.get('horaHasta').value.includes('AM')? "AM":"PM";
     if( Number( h1 >= h2 ))
     {
-      this.toastService.error("La Hora Final no puede ser menor a la hora Inicial.");
-      return;
+        this.toastService.error("La Hora Final no puede ser menor a la hora Inicial.");
+        return;
     }
+   
     if(this.Formulario.get('horaHasta').value.includes('PM'))
     {
-
        this.horaHasta= 12+Number(this.Formulario.get('horaHasta').value.split(":",2)[0] )  + ":"  +this.Formulario.get('horaHasta').value.split(":",2)[1];
     }
     else
@@ -166,12 +172,13 @@ export class HoraPickingFormularioComponent implements OnInit {
       return;
     }
     this.guardar();
+   
   }
 
   guardar() {
     let metodo: string = this.actualizando ? "Update" : "Registrar";
 
-    this.btnGuardarCargando = true;
+    //this.btnGuardarCargando = true;
     let parametros = new HoraPicking();
       parametros.sucursalId =Number(this.Formulario.get('sucursalId').value);
       parametros.id =this.Formulario.get('id').value;
@@ -181,6 +188,8 @@ export class HoraPickingFormularioComponent implements OnInit {
       parametros.horaHasta =this.horaHasta;
       parametros.horaTope= this.Formulario.get('horaTope').value;
       parametros.hayHorario=this.Formulario.get('hayHorario').value;
+
+      console.log(parametros);
     this.httpService.DoPostAny<any>(DataApi.HoraPicking,
       metodo, parametros).subscribe(response => {
 

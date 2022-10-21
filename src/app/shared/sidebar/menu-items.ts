@@ -1,7 +1,5 @@
 import { RouteInfo } from './sidebar.metadata';
-
 export const ROUTES: RouteInfo[] = [
-
   {
     path: '/home',
     title: 'Inicio',
@@ -13,7 +11,6 @@ export const ROUTES: RouteInfo[] = [
     submenu: [],
     permisos: [],
   },
-
   // ******************************************************
   {
     path: '/',
@@ -26,7 +23,6 @@ export const ROUTES: RouteInfo[] = [
     submenu: [],
     permisos: ["crm"],
   },
-
   {
     path: '/',
     title: 'Ventas',
@@ -113,7 +109,6 @@ export const ROUTES: RouteInfo[] = [
             submenu: [],
             permisos: ["ventas_reportes_ofertas_otorgadas"],
           },
-
           {
             path: '/ventas/reporteprontopago',
             label: '',
@@ -125,13 +120,10 @@ export const ROUTES: RouteInfo[] = [
             submenu: [],
             permisos: ["ventas_reporte_prontopago"]
           },
-
-
         ]
       },
     ],
   },
-
   {
     path: '/',
     title: 'Compras',
@@ -164,20 +156,8 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ["compras_orden_compra"],
       },
-      // {
-      //   path: '/compras/solicitud-compras-autorizacion',
-      //   label: '',
-      //   labelClass: '',
-      //   title: 'Auth. Solicitud de compras',
-      //   icon: '',
-      //   class: '',
-      //   extralink: false,
-      //   submenu: [],
-      //   permisos: ["compras_solicitud_compra"],
-      // },
     ],
   },
-
   {
     path: '/',
     title: 'Finanzas',
@@ -211,35 +191,8 @@ export const ROUTES: RouteInfo[] = [
           },
         ],
       },
-
-      // {
-      //   path: '/',
-      //   label: '',
-      //   labelClass: '',
-      //   title: 'Cuentas Por Pagar',
-      //   icon: '',
-      //   class: 'has-arrow',
-      //   extralink: false,
-      //   permisos: ["finanzas_cuentas_por_pagar"],
-      //   submenu: [
-      //     // {
-      //     //   path: '/finanzas/cuentas-por-cobrar/cheques-devueltos',
-      //     //   label: '',
-      //     //   labelClass: '',
-      //     //   title: 'Cheques Devueltos',
-      //     //   icon: '',
-      //     //   class: '',
-      //     //   extralink: false,
-      //     //   permisos: ["finanzas_cuentas_por_cobrar_cheques_devueltos"],
-      //     //   submenu: [],
-      //     // },
-      //   ],
-      // },
-
     ],
   },
-
-
   {
     path: '/',
     title: 'Recursos Humanos',
@@ -251,8 +204,6 @@ export const ROUTES: RouteInfo[] = [
     submenu: [],
     permisos: ["recursos-humanos"],
   },
-
-
   {
     path: '',
     title: 'Inventario',
@@ -318,9 +269,7 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ['asignacion_despacho'],
       },
-
       {
-        
         path: '/inventario/transferencia',
         title: 'Transferencia',
         label: '',
@@ -332,7 +281,6 @@ export const ROUTES: RouteInfo[] = [
         permisos: ['inventario_transferencia_despacho'],
       },
       {
-        
         path: '/inventario/solicitud-devolucion',
         title: 'Solicitud de Devolución',
         label: '',
@@ -343,23 +291,19 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ['inventario_transferencia_despacho'],
       },
-
-
-
-      // {
-      //   path: '/inventario/autorizaciondevoluciones',
-      //   title: 'Autorizacion Devoluciones',
-      //   label: '',
-      //   icon: '',
-      //   class: '',
-      //   labelClass: '',
-      //   extralink: false,
-      //   submenu: [],
-      //   permisos: ['inventario_autorizacion_devoluciones'],
-      // },
+      {
+        path: '/inventario/solicitud-cambio',
+        title: 'Solicitud Cambio',
+        label: '',
+        icon: '',
+        class: '',
+        labelClass: '',
+        extralink: false,
+        submenu: [],
+        permisos: ['inventario_transferencia_despacho'],
+      },
     ],
   },
-
 
   {
     path: '/',

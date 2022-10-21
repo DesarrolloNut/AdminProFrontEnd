@@ -18,6 +18,8 @@ import { TransferenciaListadoComponent } from './transferencia/transferencia-lis
 import { TransferenciaFormularioComponent } from './transferencia/transferencia-formulario/transferencia-formulario.component';
 import { SolicitudDevolucionFormularioComponent } from './solicitud-devolucion/solicitud-devolucion-formulario/solicitud-devolucion-formulario.component';
 import { SolicitudDevolucionListadoComponent } from './solicitud-devolucion/solicitud-devolucion-listado/solicitud-devolucion-listado.component';
+import { SolicitudCambioFormularioComponent } from './solicitud-cambio/solicitud-cambio-formulario/solicitud-cambio-formulario.component';
+import { SolicitudCambioListadoComponent } from './solicitud-cambio/solicitud-cambio-listado/solicitud-cambio-listado.component';
 
 
 @NgModule({
@@ -32,7 +34,9 @@ import { SolicitudDevolucionListadoComponent } from './solicitud-devolucion/soli
      TransferenciaListadoComponent,
      TransferenciaFormularioComponent,
      SolicitudDevolucionFormularioComponent,
-     SolicitudDevolucionListadoComponent
+     SolicitudDevolucionListadoComponent,
+     SolicitudCambioFormularioComponent,
+     SolicitudCambioListadoComponent
 
     ],
   imports: [

@@ -1,11 +1,10 @@
-import { MapsAPILoader, Marker } from '@agm/core';
+
 import { animate, style, transition, trigger } from '@angular/animations';
-import { ViewportScroller } from '@angular/common';
-import { Component, ElementRef, EventEmitter, HostListener, Input, NgZone, OnInit, Output, ViewChild, AfterViewInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, NgForm, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { Component, EventEmitter, HostListener, Input, NgZone, OnInit, Output, ViewChild, AfterViewInit } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { thresholdFreedmanDiaconis } from 'd3';
+
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
@@ -14,7 +13,7 @@ import { BackendService } from 'src/app/core/http/service/backend.service';
 import { ParametrosCita } from 'src/app/Modules/turno/models/ParametrosCita';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
-import { cedulaestructura, validaExistCedulaORNC } from 'src/app/shared/validators/cedula-estructura.validator';
+import { cedulaestructura } from 'src/app/shared/validators/cedula-estructura.validator';
 import { Cliente, ClienteTabsValida, Coordenadas, ValidaExisteClienteViewModel } from '../models/Cliente';
 
 
