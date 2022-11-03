@@ -185,6 +185,7 @@ export class ListaPreciosListadoComponent implements OnInit {
       });
   }
 
+
   configDualList() {
     this.key = 'id';
     this.display = 'nombre';
@@ -254,11 +255,11 @@ export class ListaPreciosListadoComponent implements OnInit {
   guardarArticulosSeleccionados() {
 
     let param = this.confirmed.map(x => {
-      return { "ArticuloID": x.id, "ListaPrecioID": this.listaSeleccionada }
+      return { "ArticuloID": x.id, "ListaPrecioID": this.listaSeleccionada, "CompaniaId": Number(this.authService.tokenDecoded.primarygroupsid)}
     })
 
     if (param.length == 0) {
-      param.push({ "ListaPrecioID": this.listaSeleccionada, "ArticuloID": 0 })
+      param.push({ "ListaPrecioID": this.listaSeleccionada, "ArticuloID": 0,"CompaniaId":0 })
     }
 
     this.guardandoArticulos = true;

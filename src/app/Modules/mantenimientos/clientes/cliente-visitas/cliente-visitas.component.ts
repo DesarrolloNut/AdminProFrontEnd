@@ -311,6 +311,7 @@ export class ClienteVisitasComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.tiposRuta = response.records;
+          console.log(this.tiposRuta);
         }
         this.cargandoTiposRuta = false;
       }, error => {
