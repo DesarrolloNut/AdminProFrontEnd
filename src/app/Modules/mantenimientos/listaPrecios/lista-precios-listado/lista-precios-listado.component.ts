@@ -154,6 +154,7 @@ export class ListaPreciosListadoComponent implements OnInit {
   openModal(content, listaId: number) {
     this.modalService.open(content, { windowClass: "myCustomModalClass", backdrop: "static", });
     this.listaSeleccionada = listaId;
+    
     this.getArticulosSeleccionadosLista(listaId);
   }
 
@@ -163,7 +164,7 @@ export class ListaPreciosListadoComponent implements OnInit {
   getArticulosSeleccionadosLista(listaId: number) {
     this.loadingArticulosSeleccionados = true;
     let param: Parametro[] = [{ key: "listaID", value: listaId }]
-
+   
     this.httpService.DoPost<any>(DataApi.Articulo,
       "GetArticulosAsignadosListaPrecio", param).subscribe(response => {
 
@@ -171,7 +172,7 @@ export class ListaPreciosListadoComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.confirmed = response.records;
-        
+          console.log(listaId)
         }
         this.loadingArticulosSeleccionados = false;
       }, error => {
@@ -220,12 +221,7 @@ export class ListaPreciosListadoComponent implements OnInit {
 
       });
   }
-
-
-
   //#region MODAL ASIGNACION ARTICULOS
-
-
   getArticulosVenta() {
     this.loadingArticulos = true;
     this.httpService.DoPost<Articulo>(DataApi.Articulo,
@@ -251,21 +247,16 @@ export class ListaPreciosListadoComponent implements OnInit {
 
       });
   }
-
   guardarArticulosSeleccionados() {
-
     let param = this.confirmed.map(x => {
       return { "ArticuloID": x.id, "ListaPrecioID": this.listaSeleccionada, "CompaniaId": Number(this.authService.tokenDecoded.primarygroupsid)}
     })
-
     if (param.length == 0) {
       param.push({ "ListaPrecioID": this.listaSeleccionada, "ArticuloID": 0,"CompaniaId":0 })
     }
-
     this.guardandoArticulos = true;
     this.httpService.DoPostAny<any>(DataApi.Articulo,
       "RegistrarArticulosAListaPrecio", param).subscribe(response => {
-
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
           console.error(response.errores[0]);
@@ -279,7 +270,6 @@ export class ListaPreciosListadoComponent implements OnInit {
         this.toastService.error("No se pudo guardar", "Error conexion al servidor");
         console.error(error);
       });
-
   }
 
 

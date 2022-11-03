@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import {  FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
@@ -10,9 +9,8 @@ import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import Swal from 'sweetalert2';
 import { FrecuenciaVisitaCliente } from '../models/ClienteFrecuencia';
-
 import { Dias } from '../models/Dias';
-import { FrecuenciaVisita, FrecuenciaVisitaFormated, FrecuenciaVisitaResponse } from '../models/FrecuenciaVisita';
+import { FrecuenciaVisita, FrecuenciaVisitaFormated } from '../models/FrecuenciaVisita';
 
 @Component({
   selector: 'app-cliente-visitas',
@@ -38,8 +36,6 @@ export class ClienteVisitasComponent implements OnInit {
 
   //LISTA
    diaSemana: Dias[] = new Array<Dias>();
-
- 
    frecuenciaVisita  : FrecuenciaVisita[] = new Array<FrecuenciaVisita>();
    frecuenciaVisitaCliente:FrecuenciaVisitaCliente[];
    frecuenciaVisitas : any[];
@@ -56,71 +52,10 @@ export class ClienteVisitasComponent implements OnInit {
 
   constructor(
     private toastService: ToastrService,
-    private route: ActivatedRoute,
     private httpService: BackendService,
-    private router: Router,
     private auth: AuthenticationService,
     private formBuilder: FormBuilder
     ) { }
-
-  
-       
-        
-       
-       
-
-    information = [
-      {
-        id: 1,
-        clienteId: 60063,
-        usuarioId: 2,
-        companiaId: 1,
-        rutaId:145,
-        tipoRutaId: 1,
-        frecuenciaVisitaId:1,
-        visitaLunes:true,
-        visitaMartes:false,
-        visitaMiercoles:false,
-        visitaJueves:true,
-        visitaViernes:false,
-        visitaSabado:true,
-        visitaDomingo:false,
-
-      },
-      {
-        id: 2,
-        clienteId: 60063,
-        usuarioId: 2,
-        companiaId: 1,
-        rutaId:75,
-        tipoRutaId: 2,
-        frecuenciaVisitaId:1,
-        visitaLunes:true,
-        visitaMartes:false,
-        visitaMiercoles:false,
-        visitaJueves:true,
-        visitaViernes:false,
-        visitaSabado:true,
-        visitaDomingo:false,
-      },
-      {
-        id: 3,
-        clienteId: 60063,
-        usuarioId: 2,
-        companiaId: 1,
-        rutaId:145,
-        tipoRutaId: 1,
-        frecuenciaVisitaId:1,
-        visitaLunes:true,
-        visitaMartes:false,
-        visitaMiercoles:false,
-        visitaJueves:true,
-        visitaViernes:false,
-        visitaSabado:true,
-        visitaDomingo:false,
-      }
-    ];
-  
 
   ngOnInit() {
     this.CreateForm();
@@ -128,15 +63,8 @@ export class ClienteVisitasComponent implements OnInit {
    this.getTipoRutas();
    this.getFrecuenciaVisitas();
    this.getRutas(0);
-  
-   
   }
- 
-
   onSubmit() {
-    
-  
-  
     this.submitted = true;
     if (this.FormVisitas.invalid)
       {
@@ -154,14 +82,12 @@ export class ClienteVisitasComponent implements OnInit {
   get f() { return this.FormVisitas.controls; }
   get r() { return this.f.rutas as FormArray; }
 
- 
   get lasRutas(): FormArray {
     return <FormArray>this.FormVisitas.get('rutas');
   }
   addRuta(ruta: any) {
     this.lasRutas.push(this.onAddRuta(ruta));
   }
-
   onAddRuta(rRuta?:any) : FormGroup{
     if(this.tiposRuta!=undefined || this.tiposRuta!=null )
     {
@@ -194,7 +120,6 @@ export class ClienteVisitasComponent implements OnInit {
       ))
     }
     else{
-     
    return  this.formBuilder.group({
         id:[0],
         clienteId: [this.clientId, [Validators.required]],
@@ -214,9 +139,7 @@ export class ClienteVisitasComponent implements OnInit {
       },)
     }
   }
-
   guardarOActualizarFrecuenciaVisita(){
- 
       this.btnGuardarCargando = true;
       this.httpService.DoPostAny<FrecuenciaVisita>(DataApi.ClienteFrecuenciaVisitaRuta,
         'InsertarOActualizarFrecuenciaVisitas', this.FormVisitas.value).subscribe(response => {
@@ -247,6 +170,7 @@ export class ClienteVisitasComponent implements OnInit {
       "GetRutasPorCliente", parametros).subscribe(response => {
        let frecuencia = response.records[0];
        this.rutasExistentes=response.records;
+       console.log(this.rutasExistentes)
        this.info = this.rutasExistentes;
        this.info.forEach(ruta => {
          this.addRuta(ruta)
@@ -261,13 +185,11 @@ export class ClienteVisitasComponent implements OnInit {
   getDias(fv:FrecuenciaVisitaFormated[]) {
     this.httpService.DoPost<Dias>(DataApi.Cliente,
       "GetDias", null).subscribe(response => {
-
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
           this.diaSemana = response.records;
           if(fv!=null){
-           
           }
         }
         this.cargando = false;
@@ -276,15 +198,11 @@ export class ClienteVisitasComponent implements OnInit {
         this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
       });
   }
-
-
-
   //COMBOBOX
   getFrecuenciaVisitas() {
     this.cargandoFVisitasCombo = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
       "GetFrecuenciaVisitaComboBox", null).subscribe(response => {
-
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
@@ -298,10 +216,8 @@ export class ClienteVisitasComponent implements OnInit {
         setTimeout(() => {
           this.getFrecuenciaVisitas();
         }, 1000);
-
       });
   }
-
 
   getTipoRutas() {
     this.cargandoTiposRuta = true;
@@ -351,9 +267,7 @@ export class ClienteVisitasComponent implements OnInit {
         return;
       }
   }
- 
   eliminarRuta(ruta:any,index:number){
-   
       Swal.fire({
     title: 'Estas seguro que quieres eliminar esta ruta?',
     text: 'Luego de ser confirmado no se puedo desahacer.',

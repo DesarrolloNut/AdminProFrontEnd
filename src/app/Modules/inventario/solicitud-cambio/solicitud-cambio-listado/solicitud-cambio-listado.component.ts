@@ -80,8 +80,6 @@ export class SolicitudCambioListadoComponent implements OnInit {
       this.paginaSize, true, parametros).subscribe(x => {
         if (x.ok) {
           this.data = x.records;
-          
-          
         } else {
           this.toastService.error(x.errores[0]);
           console.error(x.errores[0]);
@@ -92,7 +90,6 @@ export class SolicitudCambioListadoComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
         this.Cargando = false;
       });
-
   }
  
   asignarPagination(x: ResponseContenido<any>) {
@@ -131,8 +128,6 @@ export class SolicitudCambioListadoComponent implements OnInit {
       });
   }
   getAutorizacionUsuario() {
-
-
     let parametro = {
       "UsuarioID": Number(this.authService.tokenDecoded.nameid),
       "KeynameModule": EstadosGeneralesKeyEnum.INVENTARIOSOLICITUDDEVOLUCION,
@@ -140,10 +135,8 @@ export class SolicitudCambioListadoComponent implements OnInit {
     this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
       "GetEstadoAutorizacionUsuario", parametro).subscribe(response => {
         if (!response.ok) {
-          //Si el usuario no tiene permiso la variable es igual a null y no se mostrara el boton autorizar
           this.autorizado=null;
         } else {
-          
           this.autorizado=response.valores[0];
         }
       }, error => {
@@ -151,9 +144,7 @@ export class SolicitudCambioListadoComponent implements OnInit {
         setTimeout(() => {
           this.getAutorizacionUsuario()
         }, 1000);
-
       });
-
   }
   openModalAnexo(content, item: any) {
     this.modalService.open(content, { size: 'lg' });
@@ -162,7 +153,6 @@ export class SolicitudCambioListadoComponent implements OnInit {
     this.filaSelecccionado=item;
     this.getArchivosSubidos(item.id);
     this.estadoDevolucion=item.estado;
-   
   }
 
   getArchivosSubidos(id:number) {
@@ -214,14 +204,12 @@ export class SolicitudCambioListadoComponent implements OnInit {
       this.files.push(archivos[i]);
     }
   }
-
   subirArchivosAlServidor() {
     const formData = new FormData();
     formData.append("id", this.solicitudDevolucionID.toString());
     for(let i = 0; i < this.files.length; i++)
     {
       formData.append("Files", this.files[i]);
-     
     }
       
     this.httpService.DoPostAny<any>(DataApi.SolicitudCambio,
