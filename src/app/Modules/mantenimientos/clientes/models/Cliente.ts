@@ -15,8 +15,8 @@ export class Cliente {
         this.clienteNombre = ""
         this.documento = ""
         this.email = ""
-        this.fechaNacimiento =  ""
-        this.fechaRegistrado = ""
+        this.fechaNacimiento =  new Date()
+        this.fechaRegistrado = new Date()
         this.codigoReferencia = ""
         this.calle = ""
         this.numero = ""
@@ -44,6 +44,7 @@ export class Cliente {
         this.isClientPrincipal=0
         this.salario=0
         this.updateMobile=0
+        this.companiaId=0
 
     }
 
@@ -57,8 +58,8 @@ export class Cliente {
     clienteNombre: string;
     documento: string;
     email: string;
-    fechaNacimiento: string;
-    fechaRegistrado: string;
+    fechaNacimiento: Date;
+    fechaRegistrado: Date;
     estadoID: number;
     sucursalID: number;
     codigoReferencia: string;
@@ -90,6 +91,7 @@ export class Cliente {
     salario: number;
     usuarioId: number;
     updateMobile: number;
+    companiaId:number
 
 
     // contactos: Array<ClienteContactos>

@@ -171,8 +171,7 @@ export class ListaPreciosListadoComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.confirmed = response.records;
-          console.log(this.confirmed)
-
+        
         }
         this.loadingArticulosSeleccionados = false;
       }, error => {

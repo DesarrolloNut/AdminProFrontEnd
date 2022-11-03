@@ -1,28 +1,20 @@
-import { HttpEventType, HttpRequest } from '@angular/common/http';
+
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
+import Swal from 'sweetalert2'
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
-import { PrintExportFile, TypeReport } from 'src/app/Services/PrintExportFile.service';
-import { Configuraciones } from 'src/app/shared/enums/Configuraciones';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
-import { EstadoGeneral } from 'src/app/shared/enums/EstadoGeneral';
 import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { Archivo } from 'src/app/shared/model/Archivo';
-import { CambiarEstado } from 'src/app/shared/model/CambiarEstado';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
-import { PrintTransferenciaInventarioVM } from '../models/PrintTransferenciaInventarioVM';
-import { RequestTransferenciaInventario } from '../models/RequestTransferenciaInventario';
-import { SolicitudArticuloDetalle } from '../models/SolicitudArticuloDetalle';
-import { SolicitudTransferenciaInventarioDetalles } from '../models/SolicitudCompraDetalle';
-import { SolicitudCompraListadoViewModel } from '../models/SolicitudCompraListadoViewModel';
-import { TransferenciaInventario } from '../models/TransferenciaInventario';
-import { Imprimir } from '../print/ImprimirTransferenciaInventario';
+import { SolicitudArticuloDetalle } from '../../transferencia/models/SolicitudArticuloDetalle';
+import { SolicitudDevolucion } from '../../solicitud-devolucion/models/SolicitudDevolucion';
+
 
 @Component({
   selector: 'app-solicitud-cambio-listado',
@@ -39,14 +31,14 @@ export class SolicitudCambioListadoComponent implements OnInit {
   totalPaginas: number = 0;
   paginaSize: number = 5;
   paginaTotalRecords: number = 0;
-  data: SolicitudCompraListadoViewModel[] = [] //tu modelo
+  data: SolicitudDevolucion[] = [] //tu modelo
 
   cargandoAnexos: boolean
-  solicitudSeleccionada: TransferenciaInventario;
+  solicitudDevolucionSeleccionada: any;
   progress: number;
   files: any[] = [];
   filesSubidos: Archivo[] = [];
-
+  check:number;
   almacenOrigin:string;
   almacenDestino:string;
   usuario:string;
@@ -56,36 +48,40 @@ export class SolicitudCambioListadoComponent implements OnInit {
   estadoAutorizacionFinal: number;
   loadingSolicitudDetalle: boolean;
   transferenciaInventarioDetalles:  SolicitudArticuloDetalle[] = [];
+  solicitudDevolucionDetalle:any;
 
   total: number;
   btnConvertirCargando: boolean;
   urlCarpetaArchivosCompartidos: string;
   btnConfirmarCargando: boolean;
   btnCargandoPrint: boolean;
-
-
+  autorizado: number;
+  btnActualizarCargando: boolean;
+  solicitudDevoluciones: SolicitudDevolucion[];
+  solicitudDevolucionID: any;
+  filSelecccionado: any;
+  filaSelecccionado: any;
+  estadoDevolucion: any;
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private authService: AuthenticationService,
     private modalService: NgbModal,
-    private printService :Imprimir ,
-    private router: Router,
     public permissionsService: NgxPermissionsService,
   ) { }
   ngOnInit(): void {
-    this.getData()
+   
+    this.getAutorizacionUsuario();
+    this.getData();
   }
   getData() {
     this.Cargando = true;
-    let parametros = new RequestTransferenciaInventario();
-    parametros.CompaniaId =Number(this.authService.tokenDecoded.primarygroupsid),
-    parametros.UsuarioId=Number(this.authService.tokenDecoded.nameid),
-    this.httpService.DoPostAny<any>(DataApi.TransferenciaInventario,
-      "GetTransferenciaInventarioListado", parametros).subscribe(x => {
+    let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
+    this.httpService.GetAllWithPagination<SolicitudDevolucion>(DataApi.SolicitudCambio, "GetSolicitudCambioListado", "ID", this.paginaNumeroActual,
+      this.paginaSize, true, parametros).subscribe(x => {
         if (x.ok) {
           this.data = x.records;
-         console.log(this.data);
-          this.asignarPagination(x);
+          
+          
         } else {
           this.toastService.error(x.errores[0]);
           console.error(x.errores[0]);
@@ -96,7 +92,9 @@ export class SolicitudCambioListadoComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
         this.Cargando = false;
       });
+
   }
+ 
   asignarPagination(x: ResponseContenido<any>) {
     if (x.pagina != null) {
       this.totalPaginas = x.pagina.totalPaginas == null ? 0 : x.pagina.totalPaginas;
@@ -108,131 +106,243 @@ export class SolicitudCambioListadoComponent implements OnInit {
       this.paginaSize = 0;
     }
   }
-  openModalSolicitud(content, item: TransferenciaInventario) {
-    this.modalService.open(content, { size: 'lg' });
-    this.solicitudSeleccionada = item
-    this.files = []
+  openModalSolicitud(content, item: any) {
+    this.modalService.open(content, { windowClass: 'my-class'});
+    this.solicitudDevolucionSeleccionada = item;
+    this.getTransferenciaDetalles(String(item.id));
   }
-  openModalDetalle(content, item: any) {
-    this.solicitudSeleccionada = item;
-    this.almacenOrigin=item.almacenOrigen;
-    this.almacenDestino=item.almacenDestino;
-    this.usuario=item.usuario;
-    this.modalService.open(content, { size: 'lg' });
-    this.transferenciaInventarioDetalles = [];
-    this.getTransferenciaDetalles(Number(item.id));
-  }
-
-  getTransferenciaDetalles(id: number) {
+  getTransferenciaDetalles(solicituDevolucionId: string) {
+    let parametros = new SolicitudDevolucion();
+    parametros.companiaId =Number(this.authService.tokenDecoded.primarygroupsid),
+    parametros.numeroFactura=solicituDevolucionId, 
     this.loadingSolicitudDetalle = true;
-    this.httpService.DoPostAny<SolicitudArticuloDetalle>(DataApi.TransferenciaInventario,
-      "GetTransferenciaInventarioDetalles", id).subscribe(response => {
+    this.httpService.DoPostAny<any>(DataApi.SolicitudDevolucion,
+      "GetSolicitudDevolucionDetalle", parametros).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          this.transferenciaInventarioDetalles = response.records;
+          this.solicitudDevolucionDetalle = response.records;
         }
         this.loadingSolicitudDetalle = false;
       }, error => {
         this.loadingSolicitudDetalle = false;
-        this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
+        this.toastService.error("No se pudo obtener el detalle de devolución", "Error conexion al servidor");
         this.modalService.dismissAll()
       });
   }
+  getAutorizacionUsuario() {
 
-  confirmarTransferenciaInventario(idTransferenciaInventario:number){
-      this.confirmar(idTransferenciaInventario)
+
+    let parametro = {
+      "UsuarioID": Number(this.authService.tokenDecoded.nameid),
+      "KeynameModule": EstadosGeneralesKeyEnum.INVENTARIOSOLICITUDDEVOLUCION,
+    }
+    this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
+      "GetEstadoAutorizacionUsuario", parametro).subscribe(response => {
+        if (!response.ok) {
+          //Si el usuario no tiene permiso la variable es igual a null y no se mostrara el boton autorizar
+          this.autorizado=null;
+        } else {
+          
+          this.autorizado=response.valores[0];
+        }
+      }, error => {
+        this.toastService.error("No se pudo obtener el estado de autorización del usuario", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getAutorizacionUsuario()
+        }, 1000);
+
+      });
+
   }
-  cancelarTransferenciaInventario(idTransferenciaInventario:number){
-   this.cancelar(idTransferenciaInventario)
-}
+  openModalAnexo(content, item: any) {
+    this.modalService.open(content, { size: 'lg' });
+    this.files = []
+    this.solicitudDevolucionID=item.id;
+    this.filaSelecccionado=item;
+    this.getArchivosSubidos(item.id);
+    this.estadoDevolucion=item.estado;
+   
+  }
 
-confirmar(id:number) {
-  let parametros = new CambiarEstado();
-  parametros .Id = id,
-  parametros.Estado= EstadoGeneral.CONFIRMADO,
-  this.btnConfirmarCargando = true;
-  this.httpService.DoPostAny<any>(DataApi.TransferenciaInventario,
-    "Confirmar", parametros).subscribe(response => {
-      if (!response.ok) {
-        this.toastService.error(response.errores[0], "Error");
-      } else {
-        this.toastService.success("Realizado", "OK");
-        this.getData();
+  getArchivosSubidos(id:number) {
+    this.cargandoAnexos = true;
+    this.httpService.DoPostAny<Archivo>(DataApi.SolicitudDevolucion,
+      "GetSolicitudDevolucionArchivos", id).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+        } else {
+          this.filesSubidos = response.records;
+        }
+        this.cargandoAnexos = false;
+      }, error => {
+        this.cargandoAnexos = false;
+        console.error(error)
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+  fileExists(username) {
+    return this.filesSubidos.some(function(el) {
+      return el.nombre === username;
+    }); 
+  }
+
+  setFiles(archivos) {
+    for (let i = 0; i < archivos.length; i++) {
+      if(this.fileExists(archivos[i].name)){
+        this.toastService.error(`El archivo ${archivos[i].name}. ya existe.`);
+        return;
       }
-      this.btnConfirmarCargando = false;
-    }, error => {
-      this.btnConfirmarCargando = false;
-      this.toastService.error("Error conexion al servidor");
-    });
-}
-
-cancelar(id:number) {
-  let parametros = new CambiarEstado();
-  parametros .Id = id,
-  parametros.Estado= EstadoGeneral.CANCELADO,
-  this.btnConfirmarCargando = true;
-  this.httpService.DoPostAny<any>(DataApi.TransferenciaInventario,
-    "Confirmar", parametros).subscribe(response => {
-      if (!response.ok) {
-        this.toastService.error(response.errores[0], "Error");
-      } else {
-        this.toastService.warning("Realizado", "OK");
-        this.getData();
+      let extensionAllowed = {"png":true,"jpeg":true,"jpg":true,"pdf":true};
+      if (archivos[i].size / 1024 / 1024 > 20) {
+        alert("File size should be less than 20MB")
+        this.toastService.error(`El tamano del archivo debe ser menos a 20MB`);
+        return;
       }
-      this.btnConfirmarCargando = false;
-    }, error => {
-      this.btnConfirmarCargando = false;
-      this.toastService.error("Error conexion al servidor");
-    });
-}
+      if (extensionAllowed) {
+        var nam = archivos[i].name.split('.').pop();
+        if (!extensionAllowed[nam]) {
+          this.toastService.error(`Por favor cargue archivo  ${Object.keys(extensionAllowed)}`);
+          return;
+        }
+      }
+      if(this.files.find(x=>x.name === archivos[i].name))
+      {
+        this.toastService.error(`Este archivo ya esta selecccionado.`);
+        return;
+      }
+      this.files.push(archivos[i]);
+    }
+  }
 
-imprimirToPDF( encabezado: any){
+  subirArchivosAlServidor() {
+    const formData = new FormData();
+    formData.append("id", this.solicitudDevolucionID.toString());
+    for(let i = 0; i < this.files.length; i++)
+    {
+      formData.append("Files", this.files[i]);
+     
+    }
+      
+    this.httpService.DoPostAny<any>(DataApi.SolicitudCambio,
+      "UploadSolicitudCambioAnexos", formData).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0], "Error");
+        } else {
+          this.toastService.success("Realizado", "OK");
+           this.modalService.dismissAll()
+          this.files = []
+        }
+      }, error => { 
+        this.toastService.error("Error conexion al servidor");
+      });
 
-  this.loadingSolicitudDetalle = true;
-    this.httpService.DoPostAny<SolicitudArticuloDetalle>(DataApi.TransferenciaInventario,
-      "GetTransferenciaInventarioDetalles", Number(encabezado.id)).subscribe(response => {
+
+  }
+
+  onDeleteitem(index: number) {
+    this.files.splice(index, 1);
+  }
+
+
+
+  deleteSolicitudDevolucionArchivoByID(id: number) {
+    this.loadingSolicitudDetalle = true;
+    this.httpService.DoPostAny<string>(DataApi.SolicitudCambio,
+      "DeleteSolicitudCambioArchivo", id).subscribe(response => {
+
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          this.transferenciaInventarioDetalles = response.records;
-          this.transferenciaInventarioDetalleToPrinter(this.transferenciaInventarioDetalles,encabezado)
+          this.toastService.success("Realizado");
+          this.getArchivosSubidos(this.solicitudDevolucionID);
         }
         this.loadingSolicitudDetalle = false;
       }, error => {
+        console.error(error)
         this.loadingSolicitudDetalle = false;
-        this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
+        this.toastService.error("No se pudo obtener la url de los archivos", "Error conexion al servidor");
       });
+  }
+
+  buscarArchivosSubidos(id:number) {
+    this.httpService.DoPostAny<Archivo>(DataApi.SolicitudDevolucion,
+      "GetSolicitudDevolucionArchivos", id).subscribe(response => {
+        if (!response.ok) {
+        return 0;
+        } else {
+          return  response.records.length;
+        }
+      }, error => {
+        this.cargandoAnexos = false;
+        console.error(error)
+      });
+  }
+
+  confirmarSolicitudDevolucion(id:number,accion: string){
+    this.getArchivosSubidos(id)
+    Swal.fire({
+      title: 'Estas seguro que quieres confirmar esta devolución?',
+      text: 'Luego de ser confirmado no se puedo desahacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'SI',
+      cancelButtonText: 'NO'
+    }).then((result) => {
+      if (result.value) {
+        this.autorizarSolicitudDevolucion(id,accion);
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        Swal.fire(
+          'Cancelado',
+          'Se ha cancelado la operacion.)',
+          'error'
+        )
+      }
+    })
+
+  }
+  autorizarSolicitudDevolucion(id:number,accion: string) {
+   if(this.filesSubidos.length <=0){
+    Swal.fire(
+      'Error',
+      'Este registro no tiene anexo.',
+      'error'
+    )
+    return;
+   }
+    let parametros = new SolicitudDevolucion();
+    parametros.companiaId =Number(this.authService.tokenDecoded.primarygroupsid),
+    parametros.id=id, 
+    parametros.estadoId=accion=="Autorizar" ? this.autorizado:4
+   this.btnActualizarCargando = true;
+   this.httpService.DoPostAny<any>(DataApi.SolicitudDevolucion,
+     "AutorizarSolicitudDevolucion", parametros).subscribe(response => {
+       if (!response.ok) {
+         this.toastService.error(response.errores[0], "Error");
+       } else {
+        Swal.fire(
+          'Confirmado',
+          'Se ha autorizado la solicitud.',
+          'success'
+        )
+         this.getData();
+       }
+       this.btnActualizarCargando = false;
+     }, error => {
+       this.btnActualizarCargando = false;
+       this.toastService.error("Error conexion al servidor");
+     });
+ }
+
 }
 
-transferenciaInventarioDetalleToPrinter(data:SolicitudArticuloDetalle[],encabezado) {
-  let dataFormated:any[] = [];
-  data.forEach(x=>{
-      dataFormated.push({
-      FechaEntrega:encabezado.fecha,
-      FechaCreacion: encabezado.fecha,
-      ValidadoPor:encabezado.usuario,
-      AlmacenOrigen:encabezado.codigoreferenciaAlmacenOrigen,
-      HechoPor:encabezado.usuario,
-      RecibidoPor:encabezado.usuario,
-      Codigo:x.codigoReferencia,
-      Descripcicon:x.nombre,
-      AlmacenDestino:x.codigoreferenciaAlmacenDestino,
-      UnidadMedida:x.unidadMedida,
-      Envio:x.envio,
-      Recepcion:(x.recepcion>0? x.recepcion : undefined)
-     })
-  });
-   this.printService.ExportFile(dataFormated,
-                               "Industrias La Nutriciosa, SRL",
-                                "Hoja de Transferencia Inventario",
-                                "Transacción entre almacenes",
-                                "Del Almacen",TypeReport.PDF,"RPT007")
-}
 
 
 
-}
+
+
+
+
 
 
 

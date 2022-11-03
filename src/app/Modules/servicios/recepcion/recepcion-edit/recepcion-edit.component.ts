@@ -749,8 +749,8 @@ export class RecepcionEditComponent implements OnInit {
     clienteEntregaVehiculo.nombres = this.fc.nombres.value
     clienteEntregaVehiculo.apellidos = this.fc.apellidos.value
     clienteEntregaVehiculo.documento = this.fc.documento.value
-    clienteEntregaVehiculo.fechaNacimiento = "2020-08-01T00:00:00"
-    clienteEntregaVehiculo.fechaRegistrado = "2020-08-01T00:00:00"
+    clienteEntregaVehiculo.fechaNacimiento = new Date
+    clienteEntregaVehiculo.fechaRegistrado = new Date
     let parametro = {
       "Cita": this.FormularioCita.value,
       "Sintomas": this.sintomasCita,

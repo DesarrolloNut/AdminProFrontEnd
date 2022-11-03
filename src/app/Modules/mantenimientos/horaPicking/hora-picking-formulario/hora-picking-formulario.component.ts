@@ -205,7 +205,7 @@ export class HoraPickingFormularioComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
       });
   }
-
+ 
   getDias() {
     this.loadingDias = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,

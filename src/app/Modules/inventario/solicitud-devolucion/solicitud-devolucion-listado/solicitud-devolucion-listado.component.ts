@@ -290,7 +290,8 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
     }).then((result) => {
       if (result.value) {
         this.autorizarSolicitudDevolucion(id,accion);
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
+      } 
+      else if (result.dismiss === Swal.DismissReason.cancel) {
         Swal.fire(
           'Cancelado',
           'Se ha cancelado la operacion.)',

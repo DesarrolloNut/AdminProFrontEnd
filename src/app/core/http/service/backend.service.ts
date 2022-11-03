@@ -47,12 +47,12 @@ export class BackendService {
     public DoPost<T>(api: DataApi, Method: string, parametros: any): Observable<ResponseContenido<T>> {
         let request = new RequestContenido<T>();
         request.parametros = parametros;
-        
+      
         return this.http.post<ResponseContenido<T>>(this.baseUrl + dataApiRootMap[api] + "/" + Method, request).pipe(retry(3));
     }
 
     public DoPostAny<T>(api: DataApi, Method: string, request: any, reportProgress = false): Observable<ResponseContenido<T>> {
-      
+     
         return this.http.post<ResponseContenido<T>>(this.baseUrl + dataApiRootMap[api] + "/" + Method, request).pipe(retry(3));
     }
     public async DoPostAnyAsync<T>(api: DataApi, Method: string, request: any, reportProgress = false) {

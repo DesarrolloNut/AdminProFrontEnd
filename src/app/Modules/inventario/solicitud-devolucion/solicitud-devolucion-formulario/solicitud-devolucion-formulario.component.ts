@@ -172,8 +172,6 @@ export class SolicitudDevolucionFormularioComponent implements OnInit {
       this.calcularTotal();
 
     }
-
-    
   }
 
   calcularTotal(){
@@ -195,7 +193,7 @@ export class SolicitudDevolucionFormularioComponent implements OnInit {
 
   
   onSubmit() {
-    /*this.submitted = true;
+    this.submitted = true;
     if (this.solicitudDevolucionDetalle.filter(x=>x.destalleFacturaSelecionada).length <= 0) {
       this.toastService.warning("Debes selecccionar un registro.");
       return;
@@ -204,7 +202,7 @@ export class SolicitudDevolucionFormularioComponent implements OnInit {
     {
       this.toastService.error("Algunas filas contienen errores.");
       return;
-    }*/
+    }
   
 
     
@@ -234,7 +232,7 @@ export class SolicitudDevolucionFormularioComponent implements OnInit {
       "SolicitudDevolucionDetalle": this.solicitudDevolucionDetalle.filter(x => x.destalleFacturaSelecionada == true ),
     
     }
-    console.log(parametro)
+   
     let metodo: string = this.actualizando ? "Update" : "Registrar";
     this.btnGuardarCargando = true;
     this.httpService.DoPostAny<any>(DataApi.SolicitudDevolucion,

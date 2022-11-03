@@ -24,7 +24,7 @@
                     </div>
                 </div>
                 <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
-                <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
+                <form class="form-row m-t-40" [formGroup]="Formulario" (keydown.enter)="$event.preventDefault()" (ngSubmit)="onSubmit()">
                     <div class="col-12 mb-2" *ngIf="usuario">
                         <div class="row border border-light p-2">
 
@@ -57,69 +57,137 @@
                         </div>
                     </div>
 
-                    <div class="col-12">
+                    <label class="ml-5" ><strong>Usted cuenta con la factura?</strong></label>
+                    <div class="text-right">
+                        <label class="switch">
+                            <input class="switch-input"  type="checkbox" (change)="verificarSiHayFactura($event)" />
+                            <span class="switch-label" data-on="SI" data-off="NO"></span> 
+                            <span class="switch-handle"></span>
+                        </label>
+                        
+                    </div>
+                      <!-- Cuando la devolucion  tiene factura-->
+                    <div class="col-12" *ngIf="hayFactura">
                         <div class="row border border-light p-2">
                             <div class="col-12">
                                 <h4 class="card-subtitle">
-                                    <span class="badge badge-info">Datos del Almacén</span>
+                                    <span class="badge badge-info">Datos de la Factura</span>
                                 </h4>
                             </div>
-                            <div class="form-group col-md-6">
-                                <label for="almacenOrigenId">Almacén Desde </label>
-                                  <select    class="form-control" formControlName="almacenOrigenId" placeholder="almacenOrigenId"
-                                  (change)="getAlmacenDesde($event)"
-                                  [attr.disabled]="IdTransferenciaInventario ? 'disabled' : null"
-                                  >
-                                    <option [value]="ald.codigo+'|'+ ald.nombre" *ngFor="let ald  of almacenesDesde">{{ald.nombre}}</option>
-                                  </select>
-                                  <div style="color:red;" *ngIf=" submitted && f.almacenOrigenId.errors ">Elige el Almacén</div>
+                            <div class="form-group col-md-3">
+                                <label for="numeroFactura"> Código Factura</label>
+                                <input formControlName="numeroFactura" autocomplete="off" (keyup.enter)=" getFacturaByID($event)" class="form-control" 
+                                    type="text"  name="numeroFactura" id="numeroFactura">
+                            </div>
+
+                    
+                            <div class="form-group col-md-3">
+                                <label for="ncf">NCF</label>
+                                <input  formControlName="ncf" class="form-control" [readonly]="'true'"
+                                    type="text"  name="ncf" id="ncf">
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="fechaCreacion"> Fecha Creación</label>
+                                <input   formControlName="fechaCreacion" class="form-control" [readonly]="'true'"
+                                    type="text"  name="fechaCreacion" id="fechaCreacion">
+                            </div>
+                        
+                            <div class="form-group col-md-3">
+                                <label for="codigoreferenciaCliente">Código Refencia Cliente</label>
+                                <input  formControlName="codigoreferenciaCliente" class="form-control" [readonly]="'true'"
+                                    type="text"  name="codigoreferenciaCliente" id="codigoreferenciaCliente">
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="almacenDestinoId"> Almacén Hasta </label>
-                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="almacenesHasta"
-                                    [clearable]="false"
-                                    [ngClass]="{'form-control border-danger p-0' : submitted && f.almacenOrigenId.errors }"
-                                    [readonly]="IdTransferenciaInventario"
-                                    notFoundText="No resultados" formControlName="almacenDestinoId">
-                                </ng-select>
-                                <div *ngIf="submitted && f.almacenDestinoId.errors" class="text-danger small">
-                                    <div *ngIf="f.almacenDestinoId.errors.required  ">El campo es obligatorio</div>
-                                </div>
+                                <label for="cliente"> Cliente</label>
+                                <input  formControlName="cliente" class="form-control" [readonly]="'true'"
+                                    type="text"  name="cliente" id="cliente">
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="totalNetoFactura"> Total Neto</label>
+                                <input  formControlName="totalNetoFactura" class="form-control" [readonly]="'true'"
+                                    type="text"  name="totalNetoFactura" id="totalNetoFactura">
                             </div>
 
                         </div>
                     </div>
-                    <div class="col-12">
+                   <!-- Fin Cuando la devolucion  tiene factura-->
+
+                    <!--Cuando la devolucion no tiene factura-->
+                    <div class="col-12 mb-2"  *ngIf="!hayFactura" >
                         <div class="row border border-light p-2">
+
+                            <div class="col-12">
+                                <h4 class="card-subtitle">
+                                    <span class="badge badge-info">Datos del cliente</span>
+                                </h4>
+                            </div>
+
+                            <div class="form-group col-md-3">
+                                <label for="numeroFactura"> Código</label>
+                                <input formControlName="codigoCliente" autocomplete="off" (keyup.enter)=" getCliente($event)" class="form-control" 
+                                    type="text"  name="codigoCliente" id="codigoCliente">
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                <label for="nombre">  Nombre Cliente</label>
+                                <input  [ngModel]="nombreCliente"   class="form-control"
+                                    type="text" [ngModelOptions]="{standalone: true}" name="nombre"
+                                    id="nombre">
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                <label for="nombre">Cédula</label>
+                                <input  [ngModel]="documentoCliente"  class="form-control" 
+                                    type="text" [ngModelOptions]="{standalone: true}" name="nombre" id="nombre">
+                            </div>
                         </div>
                     </div>
+            <!--Fin Cuando la devolucion no tiene factura-->
+              
                     <div class="col-md-12">
 
                         <table class="table table-hover mb-0 no-wrap v-middle">
                             <thead>
                                 <tr>
+                                    <th  ></th>
                                     <th scope="col">Código</th>
                                     <th scope="col">Descripción</th> 
                                     <th scope="col" >{{cantidad}} </th>
                                     <th scope="col">Precio</th>
-                                    <th scope="col">Costo</th>
-                                    <th scope="col"></th>
+                                    <th scope="col">% Descuento</th>
+                                    <th scope="col">Descuento</th>
+                                    <th scope="col">Impuesto</th>
+                                    <th scope="col">Total Neto</th>
+                                    <th ></th>
                                 </tr>
                             </thead>
 
                             <tbody>
-                                <!-- <tr *ngFor="let item of confirmed | filter: searchText; let i  = index"> -->
-                                <tr *ngFor="let item of solicitudTransferenciaInventario let i=index">
+                         
+                                <tr *ngFor="let item of solicitudCambio let i=index">
                                     <td>
-                                        <ng-select style="width: 200px;" [items]="articulosDeTransferenciaInventario" bindLabel="codigoReferencia"
-                                            [clearable]="false" bindValue="articuloId" [loading]="loadingArticulosDeCompra"
-                                            [(ngModel)]="item.articuloId" [ngModelOptions]="{standalone: true}"
-                                           
-                                            (change)="onSelectArticulo($event,i)" notFoundText="No resultados">
-                                        </ng-select>
+                                            <input *ngIf="hayFactura" class="form-check-input"  (change)="seleccionarFactura($event,i)" type="checkbox" id="predeterminado"
+                                            class="form-control"
+                                            [ngModelOptions]="{standalone: true}"
+                                            > 
                                     </td>
                                     <td>
-                                        <input style="width: 500px;" type="text" class="form-control"
+                                        <ng-select *ngIf="!hayFactura" style="width: 150px;" [items]="articulosParaInterCambio" bindLabel="codigoReferencia"
+                                            [clearable]="false" bindValue="articuloId" [loading]="loadingArticulosDeCompra"
+                                            [(ngModel)]="item.id" [ngModelOptions]="{standalone: true}"
+                                            (focus)="obtenerValorAnterior(item.articuloId,i)"
+                                            (change)="onSelectArticulo($event,i)" notFoundText="No resultados">
+                                        </ng-select>
+
+                                        <input *ngIf="hayFactura" style="width: 150px;" type="text" class="form-control"
+                                        placeholder="Núm.Factura" 
+                                        [(ngModel)]="item.id"
+                                        [ngModelOptions]="{standalone: true}"
+                                        [disabled]="true"
+                                       >
+                                    </td>
+                                    <td>
+                                        <input style="width: 400px;" type="text" class="form-control"
                                          placeholder="Descripción" 
                                          [(ngModel)]="item.nombre"
                                          [ngModelOptions]="{standalone: true}"
@@ -133,34 +201,62 @@
                                                 <input style="width: 100px;" type="text" class="form-control"
                                                 [disabled]="!cantidadEditable"  mask="separator"
                                                 thousandSeparator="," 
-                                                [(ngModel)]="item.envio"
-                                                [disabled]="transferenciaInventarioConfirmado || item.articuloId==0"
-                                               
+                                                (blur)="actualizarTotal($event,i)"
+                                                [(ngModel)]="item.cantidad"
+                                                [disabled]="!item.destalleFacturaSelecionada && hayFactura"
                                                 [ngModelOptions]="{standalone: true}"
                                                 [ngClass]="{'form-control border-danger p-0' : item.hayErrores }"
-                                                (blur)="validarInventario($event,item.inventario,i,item.articuloId,modalLoteSolicitud)"
+                                              
                                                 >
                                             </div>
-                                                <!--<i class="fas fa-cubes text-right m-1" [hidden]="!transferenciaInventarioConfirmado || !item.gestionado " title="Ver Lotes"
-                                                (click)="validarInventario(item.envio,item.inventario,i,item.articuloId,modalLoteSolicitud)"
-                                                ></i>-->
+                                           
                                           </div>
                                     </td>
-                                
+                                 
                                     <td>
-                                        <input style="width: 200px;" type="text" class="form-control"
-                                            [(ngModel)]="item.costo"
+                                        <input style="width: 100px;" type="text" class="form-control"
+                                            [(ngModel)]="item.precio"
                                             [disabled]="!cantidadEditable"  mask="separator"
                                             thousandSeparator=","
-                                           
+                                            [disabled]="hayFactura"
                                             [ngModelOptions]="{standalone: true}">
                                     </td>
                                     <td>
                                         <input style="width: 100px;" type="text" class="form-control"
-                                            [(ngModel)]="item.inventario"
+                                            [(ngModel)]="item.porcientoDescuento"
                                             [disabled]="!cantidadEditable"  mask="separator"
                                             thousandSeparator=","
-                                            
+                                            [disabled]="hayFactura"
+                                            [ngModelOptions]="{standalone: true}"
+                                           
+                                            >
+                                    </td>
+                                    <td>
+                                        <input style="width: 100px;" type="text" class="form-control"
+                                            [(ngModel)]="item.totalDescuento"
+                                            [disabled]="!cantidadEditable"  mask="separator"
+                                            thousandSeparator=","
+                                            [disabled]="hayFactura"
+                                            [ngModelOptions]="{standalone: true}"
+                                           
+                                            >
+                                    </td>
+                                    <td>
+                                        <input style="width: 100px;" type="text" class="form-control"
+                                            [(ngModel)]="item.totalImpuesto"
+                                            [disabled]="!cantidadEditable"  mask="separator"
+                                            thousandSeparator=","
+                                            [disabled]="hayFactura"
+                                            [ngModelOptions]="{standalone: true}"
+                                           
+                                            >
+                                    </td>
+                                    <td>
+                                        <input style="width: 100px;" type="text" class="form-control"
+                                            [(ngModel)]="item.totalNeto"
+                                            [disabled]="!cantidadEditable"  mask="separator"
+                                            thousandSeparator=","
+                                            [disabled]="hayFactura"
                                             [ngModelOptions]="{standalone: true}"
                                            
                                             >
@@ -168,7 +264,7 @@
                                    
                                     <td>
                                        
-                                        <button [hidden]="transferenciaInventarioConfirmado" title="Eliminar" (click)="onDeleteitem(i,item.articuloId)" type="button" class="btn btn-outline-danger">
+                                        <button *ngIf="!hayFactura" title="Eliminar" (click)="onDeleteitem(i,item.articuloId)" type="button" class="btn btn-outline-danger">
                                             <i class="fa fa-times"></i>
                                         </button>
                                     </td>
@@ -177,9 +273,15 @@
                         </table>
                     </div>
 
-                    <!-- <div class="form-group text-right col-md-12" *ngIf="total > 0">
-                        <h1>$ {{total | number:'1.2-5' }}</h1>
-                    </div> -->
+
+                    <div class="form-group text-right col-md-12">
+                        <hr />
+                   
+                     <h3  class="font-weight-bold ">
+                        Total:{{totalDelaFactura | number}}
+                      </h3>
+                     
+                    </div>
 
                     <div class="form-group text-right col-md-12">
                         <hr />
@@ -204,106 +306,3 @@
     </div>
 </div>  
 
-<ng-template #modalLoteSolicitud let-modal class="modal hide" data-backdrop="static" data-keyboard="false">
-    <div class="modal-header">
-      <h4 class="modal-title">Elección de Lote</h4>
-    </div>
-    <div class="modal-body">
-      <div class="row">
-
-        <div class="col-6">
-          <h5 class="text-info"> <i class="fa fa-warehouse "></i>{{ almacenesDesdeSeleccionado}}  </h5>
-          <hr>
-        </div>
-        <div class="col-6">
-            <h5> <i class="fas fa-cubes"></i>Cantidad a Transferir: {{cantidadAtransferir}}  </h5>
-           
-          </div>
-  
-        <div class="col-md-12">
-
-            <table class="table table-hover mb-0 no-wrap v-middle">
-                <thead>
-                    <tr>
-                        <th scope="col">Lote</th>
-                        <th scope="col">Envio</th> 
-                        <th [hidden]="!transferenciaInventarioConfirmado" scope="col">Recepción</th> 
-                        <th scope="col">Existencia</th>
-                        <th scope="col">Vencimiento</th>
-                        
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- <tr *ngFor="let item of confirmed | filter: searchText; let i  = index"> -->
-                    <tr *ngFor="let item of loteAlmacen let i=index">
-                        <td>
-                            <input style="width: 100px;" type="text" class="form-control"
-                             placeholder="Lote" 
-                             [(ngModel)]="item.lote"
-                             [ngModelOptions]="{standalone: true}"
-                             [disabled]="true"
-                            >
-                        </td>
-
-                        <td>
-                            <input style="width: 100px;" type="text" class="form-control"
-                                [disabled]="!cantidadEditable"  
-                                thousandSeparator="," 
-                                [(ngModel)]="item.cantidadEnvio"
-                                [disabled]="transferenciaInventarioConfirmado"
-                                [ngClass]="{'form-control border-danger p-0' : item.hayErrores }"
-                                [ngModelOptions]="{standalone: true}"
-                                (blur)="agregarCantidadEnAlmacenLote($event,i,item.cantidad)"
-                                >
-                        </td>
-                        <td  [hidden]="!transferenciaInventarioConfirmado">
-                            <input style="width: 100px;" type="text" class="form-control"
-                                [disabled]="!cantidadEditable"  
-                                thousandSeparator="," 
-                                [(ngModel)]="item.recepcion"
-                                [ngClass]="{'form-control border-danger p-0' : item.hayErrores }"
-                                [ngModelOptions]="{standalone: true}"
-                                (blur)="agregarCantidadEnAlmacenLote($event,i,item.cantidad)"
-                                >
-                        </td>
-                      
-                        <td>
-                            <input style="width: 100px;" type="text"  class="form-control"
-                                [(ngModel)]="item.cantidad"
-                                [disabled]="!cantidadEditable"  
-                                thousandSeparator=","
-                                [disabled]="true"
-                                [ngModelOptions]="{standalone: true}"
-                                >
-                        </td>
-                        <td>
-                            <input style="width: 150px;" type="text" class="form-control"
-                                [(ngModel)]="item.fechaExpira"
-                                [disabled]="!cantidadEditable"  
-                                thousandSeparator=","
-                                [disabled]="true"
-                                [ngModelOptions]="{standalone: true}"
-                                >
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="col-12">
-          <app-loading-listado [hidden]="!loadingSolicitudDetalle"></app-loading-listado>
-        </div>
-      </div>
-      <div class="form-group text-right col-md-12">
-        <hr />
-        <button class="btn btn-light m-1" (click)="modal.dismiss('Cross click')"  type="button">
-            <i class="fas fa-times"></i> Cancelar
-        </button>
-        <button  class="btn btn-info m-1" 
-        (click)="validarCantidadLoteAlmacenAtransferir(modalLoteSolicitud)" 
-        [disabled]="hayErrores"
-        type="button">
-            <i class="fas fa-check"></i> Validar
-        </button>
-    </div>
-    </div>
-  </ng-template>

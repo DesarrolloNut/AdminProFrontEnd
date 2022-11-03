@@ -1,47 +1,57 @@
 export class SolicitudArticuloDetalle {
     constructor() {
-       
-            this.almacenId = 0,
-            this.articuloId = 0,
-            this.codigoReferencia = "",
-            this.companiaID = 0,
-            this.costo = 0,
-            this.enTransito= 0,
-            this.inventario= 0,
-            this.inventarioTipoId= 0,
-            this.nombre= "",
-            this.unidadMedida= "",
-            this.envio= 0,
-            this.hayErrores=false,
-            this.gestionado =false,    
-            this.lotesSeleccionado=false
-            this.usuarioIdRecibe=0
-            this.fechaRecepcion= new Date()
-            this.solicitado= 0
-            this.recepcion=0
-            this.estado=0
-            this.codigoreferenciaAlmacenDestino = ""
+    this.id=0
+    this.companiaId=0
+    this.numeroFactura=""
+    this.articuloId=0
+   
+    this.descripcion=""
+    this.precio=0
+    this.cantidad=0
+    this.porcientoDescuento=0
+    this.porcientoImpuesto=0
+    this.linea=0
+    this.tipoOperacionArticuloId=0
+    this.almacenId=0
+    this.totalNeto=0
+    this.totalDescuento =0
+    this.totalImpuesto =0
+    this.subtotal=0
+    this.destalleFacturaSelecionada=false
+    this.usuarioId =0
+    this.sucursalId=0
+    this.facturaId=0
+    this.cantidadFijo=0
+    this.hayErrores=false 
+    this.nombre="" 
+    this.codigoReferencia=""
     }
-    almacenId: number
+   
+
+    id: number
+    companiaId: number
+    numeroFactura:string
     articuloId: number
-    codigoReferencia: string
-    companiaID: number
-    costo: number
-    enTransito: number
-    inventario: number
-    inventarioTipoId: number
-    nombre: string
-    unidadMedida: string
-    envio: number
-    hayErrores:boolean
-    gestionado:boolean
-    lotesSeleccionado:boolean
-    usuarioIdRecibe:number
-    fechaRecepcion:Date
-    solicitado:number
-    recepcion:number
-    estado:number
-    codigoreferenciaAlmacenDestino:string
+    descripcion: string
+    precio: number
+    cantidad:number
+    porcientoDescuento:number
+    porcientoImpuesto:number
+    linea:number
+    tipoOperacionArticuloId:number
+    almacenId:number
+    totalNeto:number
+    totalDescuento :number
+    totalImpuesto :number
+    subtotal:number
+    destalleFacturaSelecionada:boolean
+    usuarioId : number
+    sucursalId: number
+    facturaId:number
+    cantidadFijo:number
+    hayErrores: boolean
+    nombre:string
+    codigoReferencia:string
     
 
 }

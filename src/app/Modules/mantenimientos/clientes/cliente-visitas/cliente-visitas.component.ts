@@ -1,15 +1,16 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NullLogger } from '@aspnet/signalr';
+
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
-import { Cliente } from '../models/Cliente';
-import { ClienteFrecuencia } from '../models/ClienteFrecuencia';
+import Swal from 'sweetalert2';
+import { FrecuenciaVisitaCliente } from '../models/ClienteFrecuencia';
+
 import { Dias } from '../models/Dias';
 import { FrecuenciaVisita, FrecuenciaVisitaFormated, FrecuenciaVisitaResponse } from '../models/FrecuenciaVisita';
 
@@ -37,11 +38,21 @@ export class ClienteVisitasComponent implements OnInit {
 
   //LISTA
    diaSemana: Dias[] = new Array<Dias>();
+
+ 
    frecuenciaVisita  : FrecuenciaVisita[] = new Array<FrecuenciaVisita>();
+   frecuenciaVisitaCliente:FrecuenciaVisitaCliente[];
    frecuenciaVisitas : any[];
    tiposRuta         : ComboBox[];
    rutas             : ComboBox[];
    diasSigla=["D","L", "M", "MI", "J", "V", "S"];
+  noSePuedeAgregarMasRutas:boolean;
+
+  info: any;
+  paginaSize: 5;
+  Cargando: boolean;
+  paginaNumeroActual: 0;
+  rutasExistentes: any[];
 
   constructor(
     private toastService: ToastrService,
@@ -52,71 +63,169 @@ export class ClienteVisitasComponent implements OnInit {
     private formBuilder: FormBuilder
     ) { }
 
+  
+       
+        
+       
+       
+
+    information = [
+      {
+        id: 1,
+        clienteId: 60063,
+        usuarioId: 2,
+        companiaId: 1,
+        rutaId:145,
+        tipoRutaId: 1,
+        frecuenciaVisitaId:1,
+        visitaLunes:true,
+        visitaMartes:false,
+        visitaMiercoles:false,
+        visitaJueves:true,
+        visitaViernes:false,
+        visitaSabado:true,
+        visitaDomingo:false,
+
+      },
+      {
+        id: 2,
+        clienteId: 60063,
+        usuarioId: 2,
+        companiaId: 1,
+        rutaId:75,
+        tipoRutaId: 2,
+        frecuenciaVisitaId:1,
+        visitaLunes:true,
+        visitaMartes:false,
+        visitaMiercoles:false,
+        visitaJueves:true,
+        visitaViernes:false,
+        visitaSabado:true,
+        visitaDomingo:false,
+      },
+      {
+        id: 3,
+        clienteId: 60063,
+        usuarioId: 2,
+        companiaId: 1,
+        rutaId:145,
+        tipoRutaId: 1,
+        frecuenciaVisitaId:1,
+        visitaLunes:true,
+        visitaMartes:false,
+        visitaMiercoles:false,
+        visitaJueves:true,
+        visitaViernes:false,
+        visitaSabado:true,
+        visitaDomingo:false,
+      }
+    ];
+  
+
   ngOnInit() {
-   this.CreateForm();
+    this.CreateForm();
+   this.GetFrecuenciaVisitasByClienteID();
    this.getTipoRutas();
    this.getFrecuenciaVisitas();
-   this.GetFrecuenciaVisitasByClienteID();
+   this.getRutas(0);
+  
+   
   }
-
+ 
 
   onSubmit() {
-    this.f.diasSemana.setValue(this.diaSemana.filter(function (x) {
-      return x.select==true;
-    }));
-
+    
+  
+  
     this.submitted = true;
     if (this.FormVisitas.invalid)
-      return;
-     this.guardarOActualizarFrecuenciaVisita()
+      {
+        this.toastService.error("Algunas informaciones no estan validas");
+        return;
+      }
+     this.guardarOActualizarFrecuenciaVisita();
   }
-
-
     private CreateForm() {
-
     this.FormVisitas = this.formBuilder.group({
-      clienteId: [this.clientId, [Validators.required]],
-      usuarioId: [Number(this.auth.tokenDecoded.nameid)],
-      companiaId:[Number(this.auth.tokenDecoded.primarygroupsid)],
-      rutaId:[0,[Validators.required]],
-      tipoRutaId: [1, [Validators.required]],
-      frecuenciaVisitaId:[0,[Validators.required]],
-      diasSemana:[null,],
-    }
-     );
-
+      rutas: new FormArray([]),
+    });
   }
 
   get f() { return this.FormVisitas.controls; }
+  get r() { return this.f.rutas as FormArray; }
 
+ 
+  get lasRutas(): FormArray {
+    return <FormArray>this.FormVisitas.get('rutas');
+  }
+  addRuta(ruta: any) {
+    this.lasRutas.push(this.onAddRuta(ruta));
+  }
+
+  onAddRuta(rRuta?:any) : FormGroup{
+    if(this.tiposRuta!=undefined || this.tiposRuta!=null )
+    {
+        if( this.lasRutas.length >= this.tiposRuta.length)
+          {
+            this.noSePuedeAgregarMasRutas=true;
+            return;
+          }
+    }
+    if(rRuta==undefined || rRuta==null){
+      
+      (this.f.rutas as FormArray).push(
+        this.formBuilder.group({
+        id:[0],
+        clienteId: [this.clientId, [Validators.required]],
+        usuarioId: [Number(this.auth.tokenDecoded.nameid)],
+        companiaId:[Number(this.auth.tokenDecoded.primarygroupsid)],
+        rutaId:[null,[Validators.required]],
+        tipoRutaId: [null, [Validators.required]],
+        frecuenciaVisitaId:[null,[Validators.required]],
+        visitaLunes:[false,],
+        visitaMartes:[false,],
+        visitaMiercoles:[false,],
+        visitaJueves:[false,],
+        visitaViernes:[false,],
+        visitaSabado:[false,],
+        visitaDomingo:[false,],
+        cargando: [false],
+      } ,
+      ))
+    }
+    else{
+     
+   return  this.formBuilder.group({
+        id:[0],
+        clienteId: [this.clientId, [Validators.required]],
+        usuarioId: [Number(this.auth.tokenDecoded.nameid)],
+        companiaId:[Number(this.auth.tokenDecoded.primarygroupsid)],
+        rutaId:[rRuta.rutaId,[Validators.required]],
+        tipoRutaId: [rRuta.tipoRutaId, [Validators.required]],
+        frecuenciaVisitaId:[rRuta.frecuenciaVisitaId,[Validators.required]],
+        visitaLunes:[rRuta.visitaLunes,],
+        visitaMartes:[rRuta.visitaMartes,],
+        visitaMiercoles:[rRuta.visitaMiercoles,],
+        visitaJueves:[rRuta.visitaJueves,],
+        visitaViernes:[rRuta.visitaViernes,],
+        visitaSabado:[rRuta.visitaSabado,],
+        visitaDomingo:[rRuta.visitaDomingo,],
+        cargando: [false],
+      },)
+    }
+  }
 
   guardarOActualizarFrecuenciaVisita(){
-      let diasArr:any[]= this.f.diasSemana.value;
-      if(diasArr.length<=0){
-        this.toastService.warning("Debe seleccionar al menos un dia de visita");
-        return;
-      }
-
-      this.f.clienteId.setValue(this.clientId);
+ 
       this.btnGuardarCargando = true;
-
       this.httpService.DoPostAny<FrecuenciaVisita>(DataApi.ClienteFrecuenciaVisitaRuta,
         'InsertarOActualizarFrecuenciaVisitas', this.FormVisitas.value).subscribe(response => {
           if (!response.ok) {
             this.toastService.error(response.errores[0], "Error");
             this.btnGuardarCargando = false;
           } else {
-              if(response.valores?.length>0){
-
-                let f:FrecuenciaVisitaResponse= response.valores[0];
-
-                 if(f.countId>0){
-                  let v= f.clienteTabsValida.tabsValida.find(x=>x.keyName=='VISITAS_RUTA')
-                  this.isnotNecesaryFieldsComplete= v.ok;
-                  this.isnotNecesaryFieldsCompleteO.emit(v.ok);
-                   this.toastService.success("Realizado", "OK");
-                 }
-              }
+            this.toastService.success("Realizado", "OK");
+            
           }
           this.btnGuardarCargando = false;
 
@@ -124,28 +233,28 @@ export class ClienteVisitasComponent implements OnInit {
           this.btnGuardarCargando = false;
           this.toastService.error("Error conexion al servidor");
         });
-
-
-
   }
 
-
+  removeRuta(index) {
+    (this.f.rutas as FormArray).removeAt(index);
+  }
 
   GetFrecuenciaVisitasByClienteID() {
-    this.cargando = true;
-    this.httpService.DoPostAny<FrecuenciaVisita>(DataApi.ClienteFrecuenciaVisitaRuta,
-      "GetFrecuenciaVisitasByClienteID", this.FormVisitas.value).subscribe(response => {
+    let parametros = new FrecuenciaVisitaFormated();
+    parametros.clienteId =this.clientId;
+    parametros.companiaId =Number(this.auth.tokenDecoded.primarygroupsid);
+    this.httpService.DoPostAny<any>(DataApi.ClienteFrecuenciaVisitaRuta,
+      "GetRutasPorCliente", parametros).subscribe(response => {
        let frecuencia = response.records[0];
+       this.rutasExistentes=response.records;
+       this.info = this.rutasExistentes;
+       this.info.forEach(ruta => {
+         this.addRuta(ruta)
+       })
       this.getDias(frecuencia.dias);
-      this.fillForm(frecuencia)
       }, error => {
         this.cargando = false;
-        this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
-
-        // setTimeout(() => {
-        //   this.getDias();
-        // }, 1000);
-
+        this.toastService.error("No se pudo obtener las rutas", "Error conexion al servidor");
       });
   }
 
@@ -156,44 +265,18 @@ export class ClienteVisitasComponent implements OnInit {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          // console.log("api data",response.records);
           this.diaSemana = response.records;
           if(fv!=null){
-            this.setValueDiaSemana(fv);
+           
           }
         }
         this.cargando = false;
       }, error => {
         this.cargando = false;
         this.toastService.error("No se pudo obtener las categorias", "Error conexion al servidor");
-
-        // setTimeout(() => {
-        //   this.getDias();
-        // }, 1000);
-
       });
   }
-  setValueDiaSemana(cf : FrecuenciaVisitaFormated[]) {
-    let dias = this.diaSemana;
-    let visitas =cf;
-    if (dias != undefined) {
-    for (let i = 0; i < dias.length; i++) {
-      let dia = dias[i];
-      if (visitas) {
-        for (let x = 0; x < visitas.length; x++) {
-          let visita = visitas[x];
 
-          if (dia.id == visita.diaId) {
-            dia.select = true;
-          }
-
-        }
-      }
-
-    }
-  }
-
-  }
 
 
   //COMBOBOX
@@ -219,11 +302,11 @@ export class ClienteVisitasComponent implements OnInit {
       });
   }
 
+
   getTipoRutas() {
     this.cargandoTiposRuta = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
       "GetRutaTipoComboBox", null).subscribe(response => {
-
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
@@ -233,52 +316,74 @@ export class ClienteVisitasComponent implements OnInit {
       }, error => {
         this.cargandoTiposRuta = false;
         this.toastService.error("No se pudo obtener las frecuencias", "Error conexion al servidor");
-
         setTimeout(() => {
           this.getTipoRutas();
         }, 1000);
-
       });
   }
-  getRutas() {
+  getRutas(tipoRuta?:number) {
     this.cargadoRutas = true;
-    let parametros: Parametro[] = [{ key: "tipoRuta", value: this.f.tipoRutaId.value }]
-
+    let parametros: Parametro[] = [{ key: "tipoRuta", value: tipoRuta}]
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
       "GetRutasComboBox", parametros).subscribe(response => {
-
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
           this.rutas = response.records;
+       
         }
         this.cargadoRutas = false;
       }, error => {
         this.cargadoRutas = false;
         this.toastService.error("No se pudo obtener las rutas", "Error conexion al servidor");
-
-        setTimeout(() => {
-          this.getRutas();
-        }, 1000);
-
       });
   }
-
-
-  //LOGIC METHODS
-  fillForm(f:FrecuenciaVisita){
-    this.f.rutaId.setValue(f.rutaId);
-    this.f.frecuenciaVisitaId.setValue(f.frecuenciaVisitaId);
-    this.getRutas();
-  }
-  clearFields(){
-    this.f.rutaId.setValue(0);
-    this.f.frecuenciaVisitaId.setValue(0);
-  }
   //EVENT METHODS
-  onChangeTipoRuta(tp:ComboBox){
-    this.rutas=[];
-    this.clearFields();
-    this.GetFrecuenciaVisitasByClienteID();
+  onChangeTipoRuta(tp:ComboBox,index:number){
+  let tiposDeRutasQueExisten = (this.lasRutas.value.map(v => v.tipoRutaId));
+  tiposDeRutasQueExisten.splice(tiposDeRutasQueExisten.indexOf(tp.codigo), 1);
+      if(tiposDeRutasQueExisten.includes(tp.codigo))
+      {
+        this.toastService.error("Este Tipo de ruta ya existe");
+        this.removeRuta(index);
+        this.noSePuedeAgregarMasRutas=false;
+        return;
+      }
+  }
+ 
+  eliminarRuta(ruta:any,index:number){
+   
+      Swal.fire({
+    title: 'Estas seguro que quieres eliminar esta ruta?',
+    text: 'Luego de ser confirmado no se puedo desahacer.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'SI',
+    cancelButtonText: 'NO'
+  }).then((result) => {
+    if (result.value) {
+      this.removeRuta(index);
+      if( (this.f.rutas as FormArray).length < this.tiposRuta.length)
+      {
+        this.noSePuedeAgregarMasRutas=false;
+      }
+
+    } else if (result.dismiss === Swal.DismissReason.cancel) {
+      Swal.fire(
+        'Cancelado',
+        'Se ha cancelado la operacion.)',
+        'error'
+      )
+    }
+  })
+
+  }
+  
+  buscarRuta(index:number){
+    if(this.r.value[index].tipoRutaId != null)
+    {
+      this.getRutas(this.r.value[index].tipoRutaId);
+    }
+   
   }
 }

@@ -6,15 +6,19 @@ import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { BackendService } from 'src/app/core/http/service/backend.service';
+import { Cliente } from 'src/app/Modules/mantenimientos/clientes/models/Cliente';
 import { Usuario } from 'src/app/Modules/servicios/recepcion/models/Usuario';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
-import { EstadoERP, EstadoGeneral } from 'src/app/shared/enums/EstadoGeneral';
-import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
+
+
 import { ComboBox } from 'src/app/shared/model/ComboBox';
+import { SolicitudDevolucion } from '../../solicitud-devolucion/models/SolicitudDevolucion';
+import { ArticuloParaIntercambioRequest } from '../models/ArticuloParaIntercambioRequest';
+import { ArticulosParaInterCambio } from '../models/ArticulosParaInterCambio';
 import { LoteAlmacen } from '../models/LoteAlmacen';
-import { ParametroArticuloParaIntercambioDeAlmacen } from '../models/ParametroArticuloParaIntercambioDeAlmacen';
+
 import { SolicitudArticuloDetalle } from '../models/SolicitudArticuloDetalle';
-import { TransferenciaInventario } from '../models/TransferenciaInventario';
+
 @Component({
   selector: 'app-solicitud-cambio-formulario',
   templateUrl: './solicitud-cambio-formulario.component.html',
@@ -32,13 +36,15 @@ export class SolicitudCambioFormularioComponent implements OnInit {
   IdTransferenciaInventario: boolean;
   usuario: Usuario;
   loadingSolicitudCompraTipo: boolean;
-  articulosDeTransferenciaInventario: TransferenciaInventario[];
-  solicitudTransferenciaInventario: SolicitudArticuloDetalle[] = [new SolicitudArticuloDetalle()];
+  articulosParaInterCambio: ArticulosParaInterCambio[];
+  solicitudCambio: SolicitudArticuloDetalle[] = [new SolicitudArticuloDetalle()];
+  encabezadoFactura: SolicitudDevolucion[]= [new SolicitudDevolucion()];
   loteAlmacen: LoteAlmacen [] = [new LoteAlmacen()];
   total: number;
   loadingArticulosDeTransferenciaInventario: boolean;
   loadingCotizacionDetalle: boolean;
   cantidadEditable= true;
+  totalDelaFactura: number=0.00;
   //Propiedades para almacenes
   almacenesDesde: ComboBox[];
   loadingAlmacenesDesde: boolean;
@@ -61,6 +67,15 @@ export class SolicitudCambioFormularioComponent implements OnInit {
   hayErrores: boolean=true;
   loteAlmacenSeleccionado=  [];
   btnRecepcionCargando: boolean;
+  codigoArticuloAnteriorSeleccionado: any;
+  indexAnteriorSeleccionado: number;
+  hayFactura: boolean;
+  loadingClientes: boolean;
+  nombreCliente:string="";
+  documentoCliente:string="";
+  listaPrecioId: any;
+  clienteId: number;
+ 
 
   constructor(
     private toastService: ToastrService,
@@ -76,17 +91,18 @@ export class SolicitudCambioFormularioComponent implements OnInit {
     let id = Number(this.route.snapshot.paramMap.get('id'));
     this.CreateForm();
     if (id > 0) {
-      this.getTransferenciaInventario(id)
+     
       this.actualizando = true;
 
     } else {
       this.getUsuarioByID(Number(this.auth.tokenDecoded.nameid))
-
+     
     }
     //Trayendo los almacenes
-    this.getAlmacenesOrigenUsuarioEnrroll(0);
+  
    // this.getArticulosParaIntercambioDeAlmacen();
     this.getSucursales()
+
   }
   private CreateForm() {
 
@@ -96,400 +112,272 @@ export class SolicitudCambioFormularioComponent implements OnInit {
       usuarioId: [this.authService.tokenDecoded.nameid,[Validators.required]],
       sucursalId: [this.authService.tokenDecoded.groupsid, [Validators.required]],
       companiaId:[this.authService.tokenDecoded.primarygroupsid, [Validators.required]],
-      almacenOrigenId:[null,[Validators.required]],
-      almacenDestinoId:[null,[Validators.required]],
-      fecha: [new Date()],
-      estadoIdERP: [EstadoERP.PENDIENTESINCRONIZADO,],
-      estado: [EstadoGeneral.PENDIENTE,],
-      usuarioIdRecibe:[0 ,],
-      fechaRecepcion:[ new Date(),],
+      codigoCliente:[null],   
+      numeroFactura:[null],  
+      secuenciaFactura:[null,],
+      codigoreferenciaCliente: [null,[Validators.required]],
+      ncf: [null,[Validators.required]],
+      fechaCreacion:[null,[Validators.required]],
+      cliente:[ null,[Validators.required]],
+      totalNetoFactura:[ null,]
 
     });
   }
- 
-  agregarDetalleVacio() {
-    this.solicitudTransferenciaInventario.push(new SolicitudArticuloDetalle())
-  }
-  get f() { return this.Formulario.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
-  //articulosDeCompra
-  getTransferenciaInventario(id: number) {
-    this.Cargando = true;
-    this.httpService.DoPostAny<any>(DataApi.TransferenciaInventario,
-      "GetTransferenciaInventarioByID", id).subscribe(response => {
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          //validar que existe
-          if (response != null && response.records != null && response.records.length > 0) {
-            this.agregarDetalleVacio();
-            let record = response.records[0]
-            this.Formulario.setValue(record);
-            this.getAlmacenesOrigenUsuarioEnrroll(record.almacenOrigenId);
-            this.getArticulosParaIntercambioDeAlmacen(record.almacenOrigenId);
-            this.getTransferenciaDetalles(record.id);
-            this.getLotesTransacciones(record.id)
-            this.getUsuarioByID(record.usuarioId);
-            this.idAlamacenDesdeSeleccionado=record.almacenOrigenId;
-            this.idalmacenesHastaSeleccionado=record.almacenDestinoId;
-            this.IdTransferenciaInventario=this.Formulario.get("id").value > 0 ? true: false;
-            this.transferenciaInventarioConfirmado = this.Formulario.get("estado").value == EstadoGeneral.ENVIADO ? true: false;
-            this.cantidad= this.Formulario.get("estado").value == 1 ? "Envio" : "Cantidad";
-          } else {
-            this.toastService.warning("no encontrado");
-            this.router.navigateByUrl('/inventario/transferencia');
-          }
-        }
-      }, error => {
-        this.Cargando = false;
-        this.toastService.error("Error conexion al servidor");
-      });
-  }
-  getTransferenciaDetalles(id: number) {
-    this.loadingSolicitudDetalle = true;
-    this.httpService.DoPostAny<any>(DataApi.TransferenciaInventario,
-      "GetTransferenciaInventarioDetalles", id).subscribe(response => {
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          this.solicitudTransferenciaInventario = response.records;
-        }
-        this.loadingSolicitudDetalle = false;
-      }, error => {
-        this.loadingSolicitudDetalle = false;
-        this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
-      });
-  }
 
-  getLotesTransacciones(id: number) {
+   seleccionarFactura(valor:any,index:number)
+  {
+    if ( valor.target.checked ) {
+     this.solicitudCambio[index].destalleFacturaSelecionada=true;
+   }
+   else{
+
+    this.solicitudCambio[index].destalleFacturaSelecionada=false;
     
-    this.httpService.DoPostAny<any>(DataApi.TransferenciaInventario,
-      "GetLotesTransacciones", id).subscribe(response => {
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          this.loteAlmacenSeleccionado = response.records;
-        }
-      }, error => {
-        this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
-      });
+  
+   }
   }
-  articuloExistsSolicitudTransferenciaInventario(articuloId) {
-    return this.solicitudTransferenciaInventario.some(function(x) {
-      return x.articuloId === articuloId;
-    }); 
-  }
-
-  onSelectArticulo(item: any, index: number) {
-
-    
-     if(!this.solicitudTransferenciaInventario.find(x => x.codigoReferencia == item.codigoReferencia))
-     {      
-            this.solicitudTransferenciaInventario[index].articuloId = item.articuloId;
-            this.solicitudTransferenciaInventario[index].codigoReferencia = item.codigoReferencia;
-            this.solicitudTransferenciaInventario[index].nombre = item.nombre;
-           
-         this.agregarDetalleVacio();
-     }
-     else
-     {
- 
-      this.toastService.warning("Este artículo ya existe en la lista.");
-    
-        return;
-     }
-  }
-
-  calcularTotal() {
-    this.total = 0
-    this.solicitudTransferenciaInventario.forEach(x => {
-      this.total += x.envio > 0 ? x.envio : 4
-    })
-  }
-  isValid:boolean=false;
-  validarInventario(event:any,inventario:any,index:number,idArticulo:number,content){
-    this.cantidadAtransferir =  event.target.value;
-    this.hayErrores=true;
-
-    if(this.transferenciaInventarioConfirmado)
-    {
-      if(this.solicitudTransferenciaInventario[index].envio < this.cantidadAtransferir)
-        {
-          this.isValid=true;
-        }
+  getFacturaByID(value) {
+    const numFac=value.target.value;
+    if(numFac ==="" || numFac == null ){
+      this.toastService.warning("Digite un numero de factura.");
+      return;
     }
-
-    if((this.cantidadAtransferir <= inventario && this.cantidadAtransferir > 0) || (this.transferenciaInventarioConfirmado))
-      {
-         if(this.actualizando){
-          //Agregando las propiedades de recepcion
-            if(this.transferenciaInventarioConfirmado){
-              this.solicitudTransferenciaInventario[index].usuarioIdRecibe=Number(this.authService.tokenDecoded.nameid);
-              this.solicitudTransferenciaInventario[index].fechaRecepcion=new Date();
-              this.solicitudTransferenciaInventario[index].solicitado=0;
-            }
-          
-         this.loteAlmacen =this.loteAlmacenSeleccionado.filter(x=>x.articuloID==idArticulo);
-          this.solicitudTransferenciaInventario[index].hayErrores = false;
-          if(this.solicitudTransferenciaInventario[index].gestionado)
+    this.Formulario.reset();
+    let chk=10004030;
+    this.Cargando = true;
+    let parametros = new SolicitudDevolucion();
+    parametros.companiaId =Number(this.authService.tokenDecoded.primarygroupsid),
+    parametros.numeroFactura=numFac, 
+    this.httpService.DoPostAny<any>(DataApi.SolicitudCambio,
+      "GetFacturaCambioByID", parametros).subscribe(x => {
+        if (x.ok) {
+          if(x.records.length >0)
           {
-            this.modalService.open(content, { size: 'lg', backdrop  : 'static',
-            keyboard  : false });
-          }
-         }
-         else{
-          this.solicitudTransferenciaInventario[index].envio = Number(this.cantidadAtransferir) ;
-          if(!this.solicitudTransferenciaInventario.find(x=>x.articuloId == idArticulo).lotesSeleccionado){
-            this.GetLoteAlmacenPorArticulo(idArticulo);
+            this.Formulario.patchValue(x.records[0])
+            this.encabezadoFactura=x.records;
+            this.getDetalleFactura(numFac)
           }
           else{
-            this.loteAlmacen =this.loteAlmacenSeleccionado.filter(x=>x.articuloID==idArticulo);
+            this.toastService.error(`No se pudo encontrar la factura: ${numFac} `);
           }
-          this.solicitudTransferenciaInventario[index].hayErrores = false;
-          if(this.solicitudTransferenciaInventario[index].gestionado)
+         
+        } else {
+          this.toastService.error(x.errores[0]);
+          this.toastService.error(`No se pudo encontrar la factura: ${numFac} `);
+        }
+        this.Cargando = false;
+      }, error => {
+        this.toastService.error("Error conexion al servidor");
+        this.Cargando = false;
+      });
+  }
+
+  verificarSiHayFactura(event){
+    if ( event.target.checked ) {
+      this.hayFactura=true;
+   
+  }
+  else {
+    this.hayFactura=false;
+    this.solicitudCambio = [new SolicitudArticuloDetalle()];
+    this.nombreCliente="";
+    this.documentoCliente="";
+    this.totalDelaFactura=0.00;
+    this.Formulario.reset();
+    this.articulosParaInterCambio=[];
+  }
+  }
+
+  getDetalleFactura(numeroFactura:string) {
+ 
+    this.Cargando = true;
+    let parametros = new SolicitudDevolucion();
+    parametros.companiaId =Number(this.authService.tokenDecoded.primarygroupsid),
+    parametros.numeroFactura=numeroFactura, 
+    this.httpService.DoPostAny<any>(DataApi.SolicitudCambio,
+      "GetDetalleFacturaCambio", parametros).subscribe(x => {
+        if (x.ok) {
+          if(x.records.length >0)
           {
-            this.modalService.open(content, { size: 'lg', backdrop  : 'static',
-            keyboard  : false });
+            this.Formulario.patchValue(x.records[0])
+            this.solicitudCambio=x.records
+            console.log(this.solicitudCambio)
+            this.calcularTotal();
+           
           }
-          if(this.solicitudTransferenciaInventario.filter(x => x.articuloId <= 0).length < 1)
-          {
-            this.agregarDetalleVacio();
+          else{
+            this.toastService.error(`La factura ${numeroFactura} no tiene detalle`);
           }
-         }
-
-      }
-      else
-      {
-        this.solicitudTransferenciaInventario[index].hayErrores = true;
-        this.toastService.error("La cantidad no puede ser mayor al Inventario", "Error");
-      }
-
-  }
-  agregarCantidadEnAlmacenLote(event:any,index:number,loteEnExistencia:number){
-      let valorDigitado =event.target.value;
-      if(!this.transferenciaInventarioConfirmado){
-        if( valorDigitado >= 0 && loteEnExistencia > valorDigitado )
-        {
-
-          this.loteAlmacen[index].cantidadEnvio = Number(valorDigitado);
-          this.loteAlmacen[index].moduloId = Number(DataApi.TransferenciaInventario);
-          this.loteAlmacen[index].hayErrores = false;
-          this.hayErrores=false;
+         
+        } else {
+          this.toastService.error(x.errores[0]);
+          this.toastService.error(`No se pudo encontrar detalle para la factura ${numeroFactura}`);
         }
-        else
-        {
-          this.loteAlmacen[index].hayErrores = true;
-          this.hayErrores=true;
-          this.toastService.error("La Cantidad a enviar no puede ser mayor a la cantidad en existencia.", "Error");
-        }
-      }
-      else{
-            if(valorDigitado >= 0 && loteEnExistencia > valorDigitado){
-
-              this.loteAlmacen[index].recepcion = Number(valorDigitado);
-              this.loteAlmacen[index].moduloId = Number(DataApi.TransferenciaInventario);
-              this.loteAlmacen[index].hayErrores = false;
-              this.hayErrores=false;
-            }
-            else
-        {
-          this.loteAlmacen[index].hayErrores = true;
-          this.hayErrores=true;
-          this.toastService.error("La Recepción no puede ser mayor a la cantidad en existencia.", "Error");
-        }
-      }
+        this.Cargando = false;
+      }, error => {
+        this.toastService.error("Error conexion al servidor");
+        this.Cargando = false;
+      });
   }
-  validarCantidadLoteAlmacenAtransferir(modal){
-    let tot=0;
-
-     tot= this.transferenciaInventarioConfirmado? this.loteAlmacen.reduce((n, {recepcion})=> n+recepcion,0):this.loteAlmacen.reduce((n, {cantidadEnvio})=> n+cantidadEnvio,0)
-
-   if(tot > this.cantidadAtransferir || tot == 0 || tot < this.cantidadAtransferir){
-      this.toastService.warning("El Total debe ser igual.")
-      this.hayErrores=true;
-    }
-    else{
-         this.modalService.dismissAll();
-         this.loteAlmacen.forEach(x => {
-         this.loteAlmacenSeleccionado.push(x);
-         this.solicitudTransferenciaInventario.find(item=>item.articuloId==x.articuloID).lotesSeleccionado=true;
-        })
-
-        this.loteAlmacenSeleccionado = this.loteAlmacenSeleccionado.filter((item, index, self) => self.indexOf(item) === index);
-      }
-  }
-  onDeleteitem(index: number, articuloId: number) {
-    this.solicitudTransferenciaInventario.splice(index, 1);
-    if(this.loteAlmacen.find(x=>x.articuloID ==articuloId))
-       this.loteAlmacen=this.loteAlmacen.filter(x=>x.articuloID !==articuloId);
-
-    if(this.loteAlmacenSeleccionado.find(x=>x.articuloID ==articuloId))
-       this.loteAlmacenSeleccionado=this.loteAlmacenSeleccionado.filter(x=>x.articuloID !==articuloId);
-
-    if (!this.solicitudTransferenciaInventario.some(x => x.articuloId <= 0)) {
-      if(!this.actualizando)
-        this.agregarDetalleVacio()
+  
+ 
+  calcularTotal(){
+    this.totalDelaFactura=0.00;
+    this.totalDelaFactura=0.00;
+    for(let i=0; i<this.solicitudCambio.length; i++ ){
+      let subTotal=(this.solicitudCambio[i].cantidad * this.solicitudCambio[i].precio)
+      let descuento=   (subTotal*(this.solicitudCambio[i].porcientoDescuento/100))
+      let impuesto= (subTotal -descuento)*(this.solicitudCambio[i].porcientoImpuesto/100)
+      let totalNeto= (subTotal- descuento) +impuesto;
+      this.totalDelaFactura= this.totalDelaFactura +totalNeto
     }
   }
-  getArticulosParaIntercambioDeAlmacen(almacenid:any) {
+  getCliente(value) {
+  const codigoCliente=value.target.value;
+  if(codigoCliente ==="" || codigoCliente == null ){
+    this.toastService.warning("Digite un código cliente.");
+    return;
+  }
+  let parametros = new Cliente();
+  parametros.companiaId =Number(this.authService.tokenDecoded.primarygroupsid),
+  parametros.codigoReferencia=codigoCliente, 
 
-    let parametros = new ParametroArticuloParaIntercambioDeAlmacen();
+    this.httpService.DoPostAny<any>(DataApi.SolicitudCambio,
+      "GetClienteParaSolicitudCambio", parametros).subscribe(response => {
+        if (response.ok) {
+          if(response.records.length >0)
+          {
+            this.documentoCliente=response.records[0].documento;
+            this.nombreCliente=response.records[0].nombres;
+            this.listaPrecioId=response.records[0].listaPrecioId;
+            this.clienteId=response.records[0].id
+            this.getArticulosParaIntercambio(17,this.listaPrecioId)  
+            
+          }
+          else{
+            this.toastService.error(`No se pudo encontrar el cliente con código : ${codigoCliente} `);
+          }
+         
+        } else {
+          this.toastService.error(response.errores[0]);
+          this.toastService.error(`No se pudo encontrar el cliente con código : ${codigoCliente} `);
+        }
+      }, error => {
+       
+        this.toastService.error("No se pudo obtener los clientes ", "Error conexion al servidor");
+      });
+  }
+
+  getArticulosParaIntercambio(almacenid:number,listaPrecioId:number ) {
+    let parametros = new ArticuloParaIntercambioRequest();
     parametros.almacenid = almacenid;
     parametros.companiaid = Number(this.authService.tokenDecoded.primarygroupsid);
-      this.httpService.DoPostAny<any>(DataApi.Articulo,
-        "GetArticulosParaIntercambioDeAlmaces", parametros).subscribe(response => {
+    parametros.listaPrecioId=listaPrecioId
+
+      this.httpService.DoPostAny<any>(DataApi.SolicitudCambio,
+        "GetArticulosParaIntercambio", parametros).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          this.articulosDeTransferenciaInventario = response.records;
-         
+          this.articulosParaInterCambio = response.records;
+          
         }
         this.loadingArticulosDeTransferenciaInventario = false;
       }, error => {
         this.loadingArticulosDeTransferenciaInventario = false;
         this.toastService.error("No se pudo obtener los articulos", "Error conexion al servidor");
         setTimeout(() => {
-          this.getArticulosParaIntercambioDeAlmacen(almacenid);
+          //this.getArticulosParaIntercambioDeAlmacen(almacenid);
         }, 1000);
 
       });
   }
+ 
+  agregarDetalleVacio() {
+    this.solicitudCambio.push(new SolicitudArticuloDetalle())
+  }
+  get f() { return this.Formulario.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
+ 
+ 
+  onSelectArticulo(item: any, index: number) {
+     if(!this.solicitudCambio.find(x => x.codigoReferencia == item.codigoReferencia))
+     {      
+           
+            this.solicitudCambio[index].articuloId = item.articuloid;
+            this.solicitudCambio[index].codigoReferencia = item.codigoReferencia;
+            this.solicitudCambio[index].nombre = item.nombre;
+            this.solicitudCambio[index].precio = item.precio;
+            if(this.codigoArticuloAnteriorSeleccionado > 0)
+            {
+              this.articulosParaInterCambio.find(x=>x.articuloid == this.codigoArticuloAnteriorSeleccionado).disabled=false;
+            }
+            this.articulosParaInterCambio.find(x=>x.articuloid == item.articuloid).disabled=true;
+            if(this.solicitudCambio.filter(x=>x.articuloId ==0).length ==0)
+            {
+              this.agregarDetalleVacio();
+            }  
+             
 
-  getAlmacenDesde(event: any){
-          const almacenId=(event.target as HTMLInputElement).value.split("|",1);
-          this.idAlamacenDesdeSeleccionado=almacenId;
-          const nombre=(event.target as HTMLInputElement).value.split("|",2);
-          this.almacenesDesdeSeleccionado=nombre[1];
-          this.getArticulosParaIntercambioDeAlmacen(Number(this.idAlamacenDesdeSeleccionado));
-          this.getAlmacenesDestinUsuarioEnrroll(this.idAlamacenDesdeSeleccionado,0)
+     }
+     else
+     {
+      this.toastService.warning("Este artículo ya existe en la lista.");
+      this.solicitudCambio[index].articuloId = 0;
+      this.solicitudCambio[index].nombre = "";
+      this.solicitudCambio[index].codigoReferencia = "";
+      this.onDeleteitem(index,item.articuloId)
+        return;
+     }
+    
+  }
+  
+  obtenerValorAnterior(codigoArticulo: any, index: number){
+   this.codigoArticuloAnteriorSeleccionado=codigoArticulo;
+   this.indexAnteriorSeleccionado=index;
+  }
+  isValid:boolean=false;
+  onDeleteitem(index: number, articuloId: number) {
+    this.solicitudCambio.splice(index, 1);
+    if(this.loteAlmacen.find(x=>x.articuloID ==articuloId))
+       this.loteAlmacen=this.loteAlmacen.filter(x=>x.articuloID !==articuloId);
+
+    if(this.loteAlmacenSeleccionado.find(x=>x.articuloID ==articuloId))
+       this.loteAlmacenSeleccionado=this.loteAlmacenSeleccionado.filter(x=>x.articuloID !==articuloId);
+
+    if (!this.solicitudCambio.some(x => x.articuloId <= 0)) {
+      if(!this.actualizando)
+        this.agregarDetalleVacio();
+    }
   }
 
-  getAlmacenHasta(event: any){
-    const almacenId=(event.target as HTMLInputElement).value.split("|",1);
-    this.idalmacenesHastaSeleccionado=Number(almacenId);
-    const nombre=(event.target as HTMLInputElement).value.split("|",2);
-    this.almacenesHastaSeleccionado=nombre[1];
-}
-
-  onSubmit() {
-    this.submitted = true;
-    if (this.Formulario.invalid) {
-      return;
-    }
-    if (!this.solicitudTransferenciaInventario.some(x => x.articuloId > 0)) {
-      this.toastService.warning("Debes de tener al menos un artículo.")
-      return;
-    }
-    if(!this.transferenciaInventarioConfirmado)
-    {
-    if (this.solicitudTransferenciaInventario.some(x => x.articuloId > 0 && x.envio <= 0)) {
-      this.toastService.warning("La candidad no pueder ser menor o igual a zero.")
-      return;
-    }
-  }
-  if(this.transferenciaInventarioConfirmado)
-    {
-      if (this.solicitudTransferenciaInventario.some(x => x.articuloId > 0 && x.recepcion <= 0)) {
-        this.toastService.warning("La Recepción  no pueder ser menor o igual a zerokkkkkkkkkkkkkkk.")
+  actualizarTotal(value:any, index:number){
+     
+    if(this.solicitudCambio[index].cantidad > this.solicitudCambio[index].cantidadFijo && this.hayFactura)
+      {
+        this.toastService.error("Valor digitado no puede ser mayor a la cantidad facturado.");
+        this.solicitudCambio[index].hayErrores=true;
         return;
       }
+      else{
+        this.solicitudCambio[index].hayErrores=false;
+      }
 
-    }
-    if(this.loteAlmacenSeleccionado.reduce((n, {cantidadEnvio})=> n+cantidadEnvio,0) !== this.solicitudTransferenciaInventario.filter(x=>x.gestionado).reduce((n, {envio})=> n+envio,0))
-    {
-      this.toastService.error("El total de articulos a transferir no corresponse a la cantidad de lote a digitado.")
+  
+      
+      this.solicitudCambio[index].cantidad=Number(value.target.value);
 
+      let subTotal=(this.solicitudCambio[index].cantidad * this.solicitudCambio[index].precio)
+      let descuento=   (subTotal*(this.solicitudCambio[index].porcientoDescuento/100))
+      let impuesto= (subTotal -descuento)*(this.solicitudCambio[index].porcientoImpuesto/100)
+      let detalleTotalNeto= (subTotal- descuento) +impuesto;
 
-      return;
-    }
-    if(this.loteAlmacenSeleccionado.reduce((n, {recepcion})=> n+recepcion,0) !== this.solicitudTransferenciaInventario.filter(x=>x.gestionado).reduce((n, {recepcion})=> n+recepcion,0))
-    {
-      this.toastService.error("El total de articulos a recibir no corresponse a la cantidad de lote a digitado.")
-      return;
-    }
+      this.solicitudCambio[index].subtotal=subTotal;
+      this.solicitudCambio[index].totalDescuento=descuento;
+      this.solicitudCambio[index].totalImpuesto=impuesto;
+      this.solicitudCambio[index].totalNeto=detalleTotalNeto;
+      this.calcularTotal();
 
-    if (this.idAlamacenDesdeSeleccionado == this.idalmacenesHastaSeleccionado) {
-      this.toastService.warning("Los almacenes no pueden ser iguales.")
-      return;
-    }
-
-
-    for (var i = 0; i < this.solicitudTransferenciaInventario.length; i++) {
-      this.solicitudTransferenciaInventario[i] = Object.assign(this.solicitudTransferenciaInventario[i] , {
-      id:this.Formulario.get("id").value,
-      UsuarioId:Number(this.Formulario.get("usuarioId").value),
-      CompaniaId:Number(this.Formulario.get("companiaId").value),
-      SucursalId:Number(this.Formulario.get("sucursalId").value),
-      Estado:this.transferenciaInventarioConfirmado ? EstadoGeneral.RECIBIDO: this.Formulario.get('estado').value,
-      EstadoIdERP:this.Formulario.get("estadoIdERP").value,
-      AlmacenDestinoId:this.Formulario.get("almacenDestinoId").value,
-      AlmacenOrigenId: Number(this.idAlamacenDesdeSeleccionado),
-      Fecha:this.Formulario.get("fecha").value,
-    });
-
-        delete this.solicitudTransferenciaInventario[i].codigoReferencia;
-        delete this.solicitudTransferenciaInventario[i].nombre;
-        delete this.solicitudTransferenciaInventario[i].enTransito;
-        delete this.solicitudTransferenciaInventario[i].unidadMedida;
-        delete this.solicitudTransferenciaInventario[i].almacenId;
-        delete this.solicitudTransferenciaInventario[i].inventario;
-        delete this.solicitudTransferenciaInventario[i].inventarioTipoId;
-        delete this.solicitudTransferenciaInventario[i].companiaID;
-   }
-  this.solicitudTransferenciaInventario = this.solicitudTransferenciaInventario.filter(x => x.articuloId > 0 );
-  if(this.actualizando){
-    this.solicitudTransferenciaInventario.forEach(x=>{
-      x.fechaRecepcion= new Date();
-    })
-  }
-  if(this.transferenciaInventarioConfirmado){
-    this.solicitudTransferenciaInventario.forEach(x=>{
-      x.fechaRecepcion= new Date();
-      x.estado=EstadoGeneral.CONFIRMADO
-    })
-  }
-
-  this.guardar();
-};
-
-  guardar() {
-
-    let encabezadoTransferenciaInventario  = {
-       Id : Number(this.Formulario.get('id').value),
-       AlmacenOrigenId : Number(this.idAlamacenDesdeSeleccionado),
-       AlmacenDestinoId :Number(this.Formulario.get('almacenDestinoId').value),
-       Fecha : this.Formulario.get('fecha').value,
-       UsuarioId :Number(this.Formulario.get('usuarioId').value),
-       Estado: this.transferenciaInventarioConfirmado ? EstadoGeneral.RECIBIDO: this.Formulario.get('estado').value,
-       EstadoIdERP : this.Formulario.get('estadoIdERP').value,
-       CompaniaId : Number(this.Formulario.get('companiaId').value),
-       SucursalId : Number(this.Formulario.get('sucursalId').value),
-       usuarioIdRecibe: this.transferenciaInventarioConfirmado ? Number(this.authService.tokenDecoded.nameid): 0,
-       fechaRecepcion:this.transferenciaInventarioConfirmado ? new Date(): new Date(),
-      };
-
-    let parametro: any = {
-      "TransferenciaInventario": encabezadoTransferenciaInventario,
-      "TransferenciaInventarioDetalles": this.solicitudTransferenciaInventario.filter(x => x.articuloId > 0 && x.envio > 0),
-      "LoteTransacciones": this.loteAlmacenSeleccionado.filter(x => x.cantidadEnvio > 0)
-    }
-
-
-    let metodo: string = this.actualizando ? "Update" : "Registrar";
-    this.btnGuardarCargando = true;
-    this.httpService.DoPostAny<any>(DataApi.TransferenciaInventario,
-      metodo, parametro).subscribe(response => {
-        if (!response.ok) {
-          this.toastService.error(response.errores[0], "Error");
-        } else {
-          this.toastService.success("Realizado", "OK");
-          this.solicitudTransferenciaInventario=[new SolicitudArticuloDetalle()];
-          this.router.navigateByUrl('/inventario/transferencia');
-        }
-        this.btnGuardarCargando = false;
-      }, error => {
-        this.btnGuardarCargando = false;
-        this.toastService.error("Error conexion al servidor");
-      });
+    
   }
 
   getUsuarioByID(usuarioID: number) {
@@ -543,121 +431,60 @@ export class SolicitudCambioFormularioComponent implements OnInit {
         }, 1000);
       });
   }
-
-  getAlmacenesOrigenUsuarioEnrroll(id:number) {
-
-    let parametros: Parametro[] = [
-      { key: "almacenId", value: id },
-      { key: "usuarioId", value: this.authService.tokenDecoded.nameid },
-      { key: "CompaniaId", value: this.authService.tokenDecoded.primarygroupsid },
-      { key: "Modulo", value: EstadosGeneralesKeyEnum.TRANSFERENCIA },
-    ]
-    this.loadingAlmacenesDesde = true;
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetAlmacenesDestinUsuarioEnrroll", parametros).subscribe(response => {
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          this.almacenesDesde = response.records;
-          this.almacenesDesdeSeleccionado= this.almacenesDesde.find(x=>x.codigo == this.idAlamacenDesdeSeleccionado).nombre;
-          this.getAlmacenesDestinUsuarioEnrroll(this.idAlamacenDesdeSeleccionado,0)
-        }
-        this.loadingAlmacenesDesde = false;
-      }, error => {
-        this.loadingAlmacenesDesde = false;
-        this.toastService.error("No se pudo obtener los almacenes", "Error conexion al servidor");
-
-        setTimeout(() => {
-          this.getAlmacenesOrigenUsuarioEnrroll(id);
-        }, 1000);
-
-      });
-  }
-  getAlmacenesDestinUsuarioEnrroll(almacenOrigenId:number,id:number) {
-
-    let parametros: Parametro[] = [
-      { key: "almacenId", value: this.actualizando ? Number(this.idalmacenesHastaSeleccionado):  Number(almacenOrigenId) },
-      { key: "CompaniaId", value: Number(this.authService.tokenDecoded.primarygroupsid) },
-      { key: "Tipo", value: this.actualizando? 1:0 },
-    ]
-    this.loadingAlmacenesDesde = true;
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetUsuarioAlmacenesDestinoModulo", parametros).subscribe(response => {
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          this.almacenesHasta = response.records;
-        }
-        this.loadingAlmacenesDesde = false;
-      }, error => {
-        this.loadingAlmacenesDesde = false;
-        this.toastService.error("No se pudo obtener los almacenes", "Error conexion al servidor");
-
-        setTimeout(() => {
-          this.getAlmacenesDestinUsuarioEnrroll(almacenOrigenId,id);
-        }, 1000);
-
-      });
-  }
-
-  GetLoteAlmacenPorArticulo(articuloId: number) {
-    this.Cargando = true;
-    let parametros: Parametro[] = [
-      { key: "Search", value: this.Search },
-      { key: "articuloId", value: articuloId},
-      { key: "almacenId", value:Number(this.idAlamacenDesdeSeleccionado)},
-    ]
-    this.httpService.GetAllWithPagination<LoteAlmacen>(DataApi.TransferenciaInventario, "GetLoteAlmacenPorArticulo", "ID", this.paginaNumeroActual,
-      this.paginaSize, false, parametros).subscribe(x => {
-        if (x.ok) {
-          this.loteAlmacen=x.records;
-
-        } else {
-          this.toastService.error(x.errores[0]);
-          console.error(x.errores[0]);
-        }
-        this.Cargando = false;
-      }, error => {
-        console.error(error);
-        this.toastService.error("Error conexion al servidor");
-        this.Cargando = false;
-      });
-
-  }
-  ConfirmarRecepcionTransferenciaInventario(id:number,recepcion:number,index:number){
-    if(recepcion <= 0)
-    {
-      this.solicitudTransferenciaInventario[index].hayErrores = true;
+  onSubmit(){
+    
+    this.submitted = true;
+    if (this.solicitudCambio.filter(x=>x.destalleFacturaSelecionada).length <= 0) {
+      this.toastService.error("Debes selecccionar un registro.");
       return;
     }
-      let parametros =[
-        { UsuarioIdRecibe: Number(this.authService.tokenDecoded.nameid) },
-        { FechaRecepcion: new Date()},
-        { Despachado: 10.5},
-        { Estado: EstadoGeneral.RECIBIDO},
-        { IdDetalleTransferenciaInventario:id},
-        { Recepcion:recepcion},
-      ];
-      console.log(parametros);
-      /*this.btnRecepcionCargando = true;
-      this.httpService.DoPostAny<any>(DataApi.TransferenciaInventario,
-        "RecepcionTransferenciaInventario", parametros).subscribe(response => {
-          if (!response.ok) {
-            this.toastService.error(response.errores[0], "Error");
-          } else {
-            this.toastService.success("Realizado", "OK");
-          }
-          this.btnRecepcionCargando = false;
-        }, error => {
-          this.btnRecepcionCargando = false;
-          this.toastService.error("Error conexion al servidor.");
-        });*/
+    if(this.solicitudCambio.some(x=>x.hayErrores==true))
+    {
+      this.toastService.error("Algunas filas contienen errores.");
+      return;
+    }
+ this.guardar();
+
   }
-  validarRecepcion(event:any, index:number){
-       let recepcion =event.target.value;
-       if( recepcion > 0)
-            this.solicitudTransferenciaInventario[index].hayErrores = false;
-  }
+
+  guardar() {
+    this.encabezadoFactura[0].companiaId=Number(this.authService.tokenDecoded.primarygroupsid);
+    this.encabezadoFactura[0].usuarioId=Number(this.auth.tokenDecoded.nameid);
+    this.encabezadoFactura[0].sucursalId=Number(this.authService.tokenDecoded.groupsid);
+    this.encabezadoFactura[0].fechaDocumento=new Date();
+    this.encabezadoFactura[0].estadoERPID=1;
+    this.encabezadoFactura[0].clienteId=this.clienteId;
+    this.encabezadoFactura[0].tasa=0;
+    this.encabezadoFactura[0].fechaRegistro=new Date();
+    this.encabezadoFactura[0].estadoId=0;
+    this.encabezadoFactura[0].comentario="";
+    this.encabezadoFactura[0].preFijo="";
+    this.encabezadoFactura[0].subTotal=this.solicitudCambio.filter(x=>x.destalleFacturaSelecionada).reduce((n, {precio,cantidad})=> n+(precio*cantidad),0)
+    this.encabezadoFactura[0].impuestoTotal=this.solicitudCambio.filter(x=>x.destalleFacturaSelecionada).reduce((n, {totalImpuesto})=> n+totalImpuesto,0);
+    this.encabezadoFactura[0].descuentoTotal=this.solicitudCambio.filter(x=>x.destalleFacturaSelecionada).reduce((n, {totalDescuento})=> n+totalDescuento,0)
+    this.encabezadoFactura[0].totalNeto=this.solicitudCambio.filter(x=>x.destalleFacturaSelecionada).reduce((n, {totalNeto})=> n+totalNeto,0)
+    this.solicitudCambio.filter(x => x.articuloId > 0 )
+    let parametro: any = {
+      "SolicitudCambio": this.encabezadoFactura[0],
+      "SolicitudCambioDetalle": this.hayFactura? this.solicitudCambio.filter(x => x.destalleFacturaSelecionada == true ):this.solicitudCambio,
+    }
+   let metodo: string = this.actualizando ? "Update" : "Registrar";
+   this.btnGuardarCargando = true;
+   this.httpService.DoPostAny<any>(DataApi.SolicitudCambio,
+     metodo, parametro).subscribe(response => {
+       if (!response.ok) {
+         this.toastService.error(response.errores[0], "Error");
+       } else {
+         this.toastService.success("Realizado", "OK");
+         this.router.navigateByUrl('/inventario/solicitud-cambio');
+       }
+       this.btnGuardarCargando = false;
+     }, error => {
+       this.btnGuardarCargando = false;
+       this.toastService.error("Error conexion al servidor");
+     });
+ }
+
 
 
 }

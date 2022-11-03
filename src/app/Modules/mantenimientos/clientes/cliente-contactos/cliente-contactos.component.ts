@@ -58,7 +58,7 @@ export class ClienteContactosComponent implements OnInit {
    this.CreateForm();
    this.getPuestos();
    if (this.clientId > 0) {
-    this.GetContactosByClienteID();
+    //this.GetContactosByClienteID();
     this.actualizando = true;
   }
 
@@ -85,7 +85,7 @@ export class ClienteContactosComponent implements OnInit {
      );
 
   }
-
+ 
   get f() { return this.FormContactos.controls; }
   get c() { return this.f.contactos as FormArray; }
 
@@ -321,7 +321,7 @@ onDocumentoKeyUp(contact: FormGroup) {
   openModal(content, contact: FormGroup,index:any) {
     this.modalService.open(content, { size: 'sm',centered:true });
     this.contactoFormGroupToDelete= contact;
-    console.log(this.contactoFormGroupToDelete.get('id').value)
+   // console.log(this.contactoFormGroupToDelete.get('id').value)
     this.contactoIndexToDelete = index;
     // this.articuloSeleccionado = item
   }

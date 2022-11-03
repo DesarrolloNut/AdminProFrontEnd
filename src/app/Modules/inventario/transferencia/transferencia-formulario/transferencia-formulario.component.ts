@@ -338,6 +338,7 @@ export class TransferenciaFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.articulosDeTransferenciaInventario = response.records;
+          
         }
         this.loadingArticulosDeTransferenciaInventario = false;
       }, error => {
@@ -468,7 +469,7 @@ export class TransferenciaFormularioComponent implements OnInit {
       "TransferenciaInventarioDetalles": this.solicitudTransferenciaInventario.filter(x => x.articuloId > 0 && x.envio > 0),
       "LoteTransacciones": this.loteAlmacenSeleccionado.filter(x => x.cantidadEnvio > 0)
     }
-
+    console.log(parametro)
 
     let metodo: string = this.actualizando ? "Update" : "Registrar";
     this.btnGuardarCargando = true;
