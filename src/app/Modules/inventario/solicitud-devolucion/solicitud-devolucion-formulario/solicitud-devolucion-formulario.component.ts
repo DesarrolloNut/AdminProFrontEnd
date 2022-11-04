@@ -7,6 +7,7 @@ import { AuthenticationService } from 'src/app/core/authentication/service/authe
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Usuario } from 'src/app/Modules/servicios/recepcion/models/Usuario';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
+import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { SolicitudDevolucion } from '../models/SolicitudDevolucion';
 import { SolicitudDevolucionDetalle } from '../models/SolicitudDevolucionDetalle';
 
@@ -26,6 +27,8 @@ export class SolicitudDevolucionFormularioComponent implements OnInit {
   encabezadoFactura: SolicitudDevolucion[]= [new SolicitudDevolucion()];
   totalDelaFactura: number=0.00;
   fileAnexo: any;
+  tipoSolicitudDevolucion: boolean;
+  tipoSolicitudDevoluciones: ComboBox[];
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
@@ -47,6 +50,7 @@ export class SolicitudDevolucionFormularioComponent implements OnInit {
       this.getUsuarioByID(Number(this.auth.tokenDecoded.nameid))
 
     }
+    this.getTipoSolicitudDevoluciones();
   }
   private CreateForm() {
     this.Formulario = this.formBuilder.group({
@@ -60,7 +64,8 @@ export class SolicitudDevolucionFormularioComponent implements OnInit {
       ncf: [null,[Validators.required]],
       fechaCreacion:[null,[Validators.required]],
       cliente:[ null,[Validators.required]],
-      totalNetoFactura:[ null,]
+      totalNetoFactura:[ null,],
+      tipoSolicitudDevolucionId:[null,[Validators.required]]
     });
   }
   
@@ -110,6 +115,24 @@ export class SolicitudDevolucionFormularioComponent implements OnInit {
    else{
     this.solicitudDevolucionDetalle[index].destalleFacturaSelecionada=false;
    }
+  }
+  getTipoSolicitudDevoluciones() {
+    this.tipoSolicitudDevolucion = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetTipoSolicitudDevoluciones", null).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.tipoSolicitudDevoluciones = response.records;
+        }
+        this.tipoSolicitudDevolucion = false;
+      }, error => {
+        this.tipoSolicitudDevolucion = false;
+        this.toastService.error("No se pudo obtener las frecuencias", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getTipoSolicitudDevoluciones();
+        }, 1000);
+      });
   }
   
 
@@ -203,6 +226,10 @@ export class SolicitudDevolucionFormularioComponent implements OnInit {
       this.toastService.error("Algunas filas contienen errores.");
       return;
     }
+    if (this.Formulario.get('tipoSolicitudDevolucionId').invalid)
+    {
+      return;
+    }
   
 
     
@@ -213,6 +240,7 @@ export class SolicitudDevolucionFormularioComponent implements OnInit {
      this.encabezadoFactura[0].companiaId=Number(this.authService.tokenDecoded.primarygroupsid);
      this.encabezadoFactura[0].usuarioId=Number(this.auth.tokenDecoded.nameid);
      this.encabezadoFactura[0].sucursalId=Number(this.authService.tokenDecoded.groupsid);
+     this.encabezadoFactura[0].tipoSolicitudDevolucionId=Number(this.Formulario.get('tipoSolicitudDevolucionId').value);
      this.encabezadoFactura[0].fechaDocumento=new Date();
      this.encabezadoFactura[0].estadoERPID=1;
      this.encabezadoFactura[0].tasa=0;

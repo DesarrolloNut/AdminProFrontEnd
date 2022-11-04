@@ -131,6 +131,7 @@ export class AlmacenesListadoComponent implements OnInit {
             return { "AlmacenDestinoId": x.codigo, "nombre": x.nombre }
           });
          
+         
         }
         this.loadingTransferenciaInventarioAlmacenEnrroll = false;
       }, error => {

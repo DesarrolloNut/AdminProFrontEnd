@@ -75,7 +75,10 @@ export class SolicitudCambioListadoComponent implements OnInit {
   }
   getData() {
     this.Cargando = true;
-    let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
+    let parametros: Parametro[] = [
+      { key: "Search", value: this.Search },
+      { key: "TipoSolicitud", value: 'Cambio' }
+   ]
     this.httpService.GetAllWithPagination<SolicitudDevolucion>(DataApi.SolicitudCambio, "GetSolicitudCambioListado", "ID", this.paginaNumeroActual,
       this.paginaSize, true, parametros).subscribe(x => {
         if (x.ok) {
@@ -290,7 +293,7 @@ export class SolicitudCambioListadoComponent implements OnInit {
 
   }
   autorizarSolicitudDevolucion(id:number,accion: string) {
-   if(this.filesSubidos.length <=0){
+   if(this.filesSubidos.length <=0 && accion !=='Rechazar'){
     Swal.fire(
       'Error',
       'Este registro no tiene anexo.',

@@ -56,16 +56,33 @@
 
                         </div>
                     </div>
-
-                    <label class="ml-5" ><strong>Usted cuenta con la factura?</strong></label>
+                         
+                    <div class="form-group col-md-6">
+                      
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="tipoSolicitudDevoluciones"
+                            [clearable]="false"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.tipoSolicitudDevolucionId.errors }"
+                            [readonly]="IdTransferenciaInventario"
+                            placeholder="Seleccione el tipo de devolución"
+                            notFoundText="No resultados" formControlName="tipoSolicitudDevolucionId">
+                        </ng-select>
+                        <div *ngIf="submitted && f.tipoSolicitudDevolucionId.errors" class="text-danger small">
+                            <div *ngIf="f.tipoSolicitudDevolucionId.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
+                   
+                        <label class="ml-5" ><strong>Usted cuenta con la factura?</strong></label>
                     <div class="text-right">
                         <label class="switch">
                             <input class="switch-input"  type="checkbox" (change)="verificarSiHayFactura($event)" />
                             <span class="switch-label" data-on="SI" data-off="NO"></span> 
                             <span class="switch-handle"></span>
                         </label>
-                        
                     </div>
+                    
+                   
+
+               
                       <!-- Cuando la devolucion  tiene factura-->
                     <div class="col-12" *ngIf="hayFactura">
                         <div class="row border border-light p-2">

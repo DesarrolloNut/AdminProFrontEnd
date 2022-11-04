@@ -74,7 +74,10 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
   }
   getData() {
     this.Cargando = true;
-    let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
+    let parametros: Parametro[] = [
+      { key: "Search", value: this.Search },
+      { key: "TipoSolicitud", value: 'Cambio' }
+   ]
     this.httpService.GetAllWithPagination<SolicitudDevolucion>(DataApi.SolicitudDevolucion, "GetSolicitudDevolucionListado", "ID", this.paginaNumeroActual,
       this.paginaSize, true, parametros).subscribe(x => {
         if (x.ok) {

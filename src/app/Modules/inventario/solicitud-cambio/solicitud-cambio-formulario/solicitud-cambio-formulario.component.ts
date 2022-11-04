@@ -75,6 +75,8 @@ export class SolicitudCambioFormularioComponent implements OnInit {
   documentoCliente:string="";
   listaPrecioId: any;
   clienteId: number;
+  tipoSolicitudDevolucion: boolean;
+  tipoSolicitudDevoluciones: ComboBox[];
  
 
   constructor(
@@ -99,11 +101,12 @@ export class SolicitudCambioFormularioComponent implements OnInit {
      
     }
     //Trayendo los almacenes
-  
    // this.getArticulosParaIntercambioDeAlmacen();
-    this.getSucursales()
+    this.getSucursales();
+    this.getTipoSolicitudDevoluciones();
 
   }
+
   private CreateForm() {
 
     this.Formulario = this.formBuilder.group({
@@ -119,7 +122,8 @@ export class SolicitudCambioFormularioComponent implements OnInit {
       ncf: [null,[Validators.required]],
       fechaCreacion:[null,[Validators.required]],
       cliente:[ null,[Validators.required]],
-      totalNetoFactura:[ null,]
+      totalNetoFactura:[ null,],
+      tipoSolicitudDevolucionId:[null,[Validators.required]]
 
     });
   }
@@ -169,6 +173,25 @@ export class SolicitudCambioFormularioComponent implements OnInit {
       }, error => {
         this.toastService.error("Error conexion al servidor");
         this.Cargando = false;
+      });
+  }
+
+  getTipoSolicitudDevoluciones() {
+    this.tipoSolicitudDevolucion = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetTipoSolicitudDevoluciones", null).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.tipoSolicitudDevoluciones = response.records;
+        }
+        this.tipoSolicitudDevolucion = false;
+      }, error => {
+        this.tipoSolicitudDevolucion = false;
+        this.toastService.error("No se pudo obtener las frecuencias", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getTipoSolicitudDevoluciones();
+        }, 1000);
       });
   }
 
@@ -443,6 +466,11 @@ export class SolicitudCambioFormularioComponent implements OnInit {
       this.toastService.error("Algunas filas contienen errores.");
       return;
     }
+
+    if (this.Formulario.get('tipoSolicitudDevolucionId').invalid)
+    {
+      return;
+    }
  this.guardar();
 
   }
@@ -451,6 +479,7 @@ export class SolicitudCambioFormularioComponent implements OnInit {
     this.encabezadoFactura[0].companiaId=Number(this.authService.tokenDecoded.primarygroupsid);
     this.encabezadoFactura[0].usuarioId=Number(this.auth.tokenDecoded.nameid);
     this.encabezadoFactura[0].sucursalId=Number(this.authService.tokenDecoded.groupsid);
+    this.encabezadoFactura[0].tipoSolicitudDevolucionId=Number(this.Formulario.get('tipoSolicitudDevolucionId').value);
     this.encabezadoFactura[0].fechaDocumento=new Date();
     this.encabezadoFactura[0].estadoERPID=1;
     this.encabezadoFactura[0].clienteId=this.clienteId;
@@ -469,6 +498,7 @@ export class SolicitudCambioFormularioComponent implements OnInit {
       "SolicitudCambioDetalle": this.hayFactura? this.solicitudCambio.filter(x => x.destalleFacturaSelecionada == true ):this.solicitudCambio,
     }
    let metodo: string = this.actualizando ? "Update" : "Registrar";
+   console.log(parametro)
    this.btnGuardarCargando = true;
    this.httpService.DoPostAny<any>(DataApi.SolicitudCambio,
      metodo, parametro).subscribe(response => {
