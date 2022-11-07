@@ -24,7 +24,7 @@
                     </div>
                 </div>
                 <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
-                <form class="form-row m-t-40" [formGroup]="Formulario" (keydown.enter)="$event.preventDefault()" (ngSubmit)="onSubmit()">
+                <form class="form-row m-t-40" [formGroup]="Formulario" (keydown.enter)="$event.preventDefault()" (ngSubmit)="onSubmit()" #aForm>
                     <div class="col-12 mb-2" *ngIf="usuario">
                         <div class="row border border-light p-2">
 
@@ -76,7 +76,7 @@
                         
                             <div class="form-group col-md-3">
                                 <label for="numeroFactura"> Código Factura</label>
-                                <input formControlName="numeroFactura" autocomplete="off" (keyup.enter)=" getFacturaByID($event)" class="form-control" 
+                                <input formControlName="numeroFactura" autocomplete="off" (blur)="getFacturaByID($event)" (keyup.enter)=" getFacturaByID($event)" class="form-control" 
                                     type="text"  name="numeroFactura" id="numeroFactura">
                             </div>
 

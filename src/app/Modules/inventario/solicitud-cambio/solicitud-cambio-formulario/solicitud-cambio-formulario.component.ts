@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -26,6 +26,7 @@ import { SolicitudArticuloDetalle } from '../models/SolicitudArticuloDetalle';
 })
 
 export class SolicitudCambioFormularioComponent implements OnInit {
+  @ViewChild('aForm') aForm: ElementRef;
   Cargando: boolean = false;
   Formulario: FormGroup;
   submitted = false;
@@ -152,16 +153,22 @@ export class SolicitudCambioFormularioComponent implements OnInit {
     let parametros = new SolicitudDevolucion();
     parametros.companiaId =Number(this.authService.tokenDecoded.primarygroupsid),
     parametros.numeroFactura=numFac, 
-    this.httpService.DoPostAny<any>(DataApi.SolicitudCambio,
+    this.httpService.DoPostAny<SolicitudDevolucion>(DataApi.SolicitudCambio,
       "GetFacturaCambioByID", parametros).subscribe(x => {
         if (x.ok) {
           if(x.records.length >0)
           {
             this.Formulario.patchValue(x.records[0])
             this.encabezadoFactura=x.records;
+            this.clienteId=x.records[0].clienteId;
+           
             this.getDetalleFactura(numFac)
           }
           else{
+            this.Formulario.reset();
+            this.solicitudCambio=[];
+            this.setFocus('numeroFactura');
+            this.totalDelaFactura=0.00;
             this.toastService.error(`No se pudo encontrar la factura: ${numFac} `);
           }
          
@@ -175,11 +182,11 @@ export class SolicitudCambioFormularioComponent implements OnInit {
         this.Cargando = false;
       });
   }
-
+  
   getTipoSolicitudDevoluciones() {
     this.tipoSolicitudDevolucion = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetTipoSolicitudDevoluciones", null).subscribe(response => {
+      "GetTipoSolicitudDeCambios", null).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
@@ -224,7 +231,6 @@ export class SolicitudCambioFormularioComponent implements OnInit {
           {
             this.Formulario.patchValue(x.records[0])
             this.solicitudCambio=x.records
-            console.log(this.solicitudCambio)
             this.calcularTotal();
            
           }
@@ -242,8 +248,7 @@ export class SolicitudCambioFormularioComponent implements OnInit {
         this.Cargando = false;
       });
   }
-  
- 
+
   calcularTotal(){
     this.totalDelaFactura=0.00;
     this.totalDelaFactura=0.00;
@@ -253,6 +258,13 @@ export class SolicitudCambioFormularioComponent implements OnInit {
       let impuesto= (subTotal -descuento)*(this.solicitudCambio[i].porcientoImpuesto/100)
       let totalNeto= (subTotal- descuento) +impuesto;
       this.totalDelaFactura= this.totalDelaFactura +totalNeto
+    }
+  }
+
+  setFocus(name) {    
+    const ele = this.aForm.nativeElement[name];    
+    if (ele) {
+      ele.focus();
     }
   }
   getCliente(value) {
@@ -278,6 +290,13 @@ export class SolicitudCambioFormularioComponent implements OnInit {
             
           }
           else{
+            this.solicitudCambio = [new SolicitudArticuloDetalle()];
+            this.nombreCliente="";
+            this.documentoCliente="";
+            this.totalDelaFactura=0.00;
+            this.Formulario.reset();
+            this.articulosParaInterCambio=[];
+            this.setFocus('codigoCliente');
             this.toastService.error(`No se pudo encontrar el cliente con código : ${codigoCliente} `);
           }
          
@@ -315,7 +334,7 @@ export class SolicitudCambioFormularioComponent implements OnInit {
 
       });
   }
- 
+  
   agregarDetalleVacio() {
     this.solicitudCambio.push(new SolicitudArticuloDetalle())
   }
@@ -330,6 +349,8 @@ export class SolicitudCambioFormularioComponent implements OnInit {
             this.solicitudCambio[index].codigoReferencia = item.codigoReferencia;
             this.solicitudCambio[index].nombre = item.nombre;
             this.solicitudCambio[index].precio = item.precio;
+            this.solicitudCambio[index].id = 0;
+            this.solicitudCambio[index].companiaId=Number(this.authService.tokenDecoded.primarygroupsid);
             if(this.codigoArticuloAnteriorSeleccionado > 0)
             {
               this.articulosParaInterCambio.find(x=>x.articuloid == this.codigoArticuloAnteriorSeleccionado).disabled=false;
@@ -339,8 +360,7 @@ export class SolicitudCambioFormularioComponent implements OnInit {
             {
               this.agregarDetalleVacio();
             }  
-             
-
+            
      }
      else
      {
@@ -374,8 +394,9 @@ export class SolicitudCambioFormularioComponent implements OnInit {
   }
 
   actualizarTotal(value:any, index:number){
-     
-    if(this.solicitudCambio[index].cantidad > this.solicitudCambio[index].cantidadFijo && this.hayFactura)
+
+ if(this.hayFactura){
+  if(this.solicitudCambio[index].cantidad > this.solicitudCambio[index].cantidadFijo && this.hayFactura)
       {
         this.toastService.error("Valor digitado no puede ser mayor a la cantidad facturado.");
         this.solicitudCambio[index].hayErrores=true;
@@ -384,23 +405,31 @@ export class SolicitudCambioFormularioComponent implements OnInit {
       else{
         this.solicitudCambio[index].hayErrores=false;
       }
+ }
+ else{
+    if(this.solicitudCambio[index].cantidad <=0)
+    {
+      this.toastService.error("Digitar un cantidad.");
+      this.solicitudCambio[index].hayErrores=true;
+        return;
+    }
+    else{
+      this.solicitudCambio[index].hayErrores=false;
 
-  
-      
+    }
+ }
+     
+    
       this.solicitudCambio[index].cantidad=Number(value.target.value);
-
       let subTotal=(this.solicitudCambio[index].cantidad * this.solicitudCambio[index].precio)
       let descuento=   (subTotal*(this.solicitudCambio[index].porcientoDescuento/100))
       let impuesto= (subTotal -descuento)*(this.solicitudCambio[index].porcientoImpuesto/100)
       let detalleTotalNeto= (subTotal- descuento) +impuesto;
-
       this.solicitudCambio[index].subtotal=subTotal;
       this.solicitudCambio[index].totalDescuento=descuento;
       this.solicitudCambio[index].totalImpuesto=impuesto;
       this.solicitudCambio[index].totalNeto=detalleTotalNeto;
       this.calcularTotal();
-
-    
   }
 
   getUsuarioByID(usuarioID: number) {
@@ -421,7 +450,6 @@ export class SolicitudCambioFormularioComponent implements OnInit {
             this.router.navigateByUrl('/inventario/transferencia');
           }
         }
-
       }, error => {
         this.Cargando = false;
         this.toastService.error("Error conexion al servidor");
@@ -438,13 +466,11 @@ export class SolicitudCambioFormularioComponent implements OnInit {
     ];
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
       "GetSucursalesByCompania", parametros).subscribe(response => {
-
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
           this.sucursales = response.records;
         }
-
         this.loadingSucursales = false;
       }, error => {
         this.loadingSucursales = false;
@@ -457,22 +483,27 @@ export class SolicitudCambioFormularioComponent implements OnInit {
   onSubmit(){
     
     this.submitted = true;
-    if (this.solicitudCambio.filter(x=>x.destalleFacturaSelecionada).length <= 0) {
+    if (this.solicitudCambio.filter(x=>x.destalleFacturaSelecionada).length <= 0 && this.hayFactura) {
       this.toastService.error("Debes selecccionar un registro.");
       return;
     }
+
+    if (this.solicitudCambio.filter(x=> !x.destalleFacturaSelecionada && x.articuloId > 0).filter(z=>z.cantidad==0).length >1 && !this.hayFactura) {
+      this.toastService.error("Algunas filas contienen errores.");
+      this.solicitudCambio.filter(x=>x.articuloId >0).forEach(y=> y.hayErrores=true)
+      return;
+    }
+
     if(this.solicitudCambio.some(x=>x.hayErrores==true))
     {
       this.toastService.error("Algunas filas contienen errores.");
       return;
     }
-
     if (this.Formulario.get('tipoSolicitudDevolucionId').invalid)
     {
       return;
     }
- this.guardar();
-
+     this.guardar();
   }
 
   guardar() {
@@ -488,17 +519,19 @@ export class SolicitudCambioFormularioComponent implements OnInit {
     this.encabezadoFactura[0].estadoId=0;
     this.encabezadoFactura[0].comentario="";
     this.encabezadoFactura[0].preFijo="";
-    this.encabezadoFactura[0].subTotal=this.solicitudCambio.filter(x=>x.destalleFacturaSelecionada).reduce((n, {precio,cantidad})=> n+(precio*cantidad),0)
-    this.encabezadoFactura[0].impuestoTotal=this.solicitudCambio.filter(x=>x.destalleFacturaSelecionada).reduce((n, {totalImpuesto})=> n+totalImpuesto,0);
-    this.encabezadoFactura[0].descuentoTotal=this.solicitudCambio.filter(x=>x.destalleFacturaSelecionada).reduce((n, {totalDescuento})=> n+totalDescuento,0)
-    this.encabezadoFactura[0].totalNeto=this.solicitudCambio.filter(x=>x.destalleFacturaSelecionada).reduce((n, {totalNeto})=> n+totalNeto,0)
+    this.encabezadoFactura[0].subTotal=this.hayFactura ? this.solicitudCambio.filter(x=>x.destalleFacturaSelecionada).reduce((n, {precio,cantidad})=> n+(precio*cantidad),0):this.solicitudCambio.reduce((n, {precio,cantidad})=> n+(precio*cantidad),0)
+    this.encabezadoFactura[0].subtotal=this.hayFactura ? this.solicitudCambio.filter(x=>x.destalleFacturaSelecionada).reduce((n, {precio,cantidad})=> n+(precio*cantidad),0):this.solicitudCambio.reduce((n, {precio,cantidad})=> n+(precio*cantidad),0)
+    this.encabezadoFactura[0].impuestoTotal=this.hayFactura ? this.solicitudCambio.filter(x=>x.destalleFacturaSelecionada).reduce((n, {totalImpuesto})=> n+totalImpuesto,0):this.solicitudCambio.reduce((n, {totalImpuesto})=> n+totalImpuesto,0);
+    this.encabezadoFactura[0].descuentoTotal= this.hayFactura ? this.solicitudCambio.filter(x=>x.destalleFacturaSelecionada).reduce((n, {totalDescuento})=> n+totalDescuento,0):this.solicitudCambio.reduce((n, {totalDescuento})=> n+totalDescuento,0)
+    this.encabezadoFactura[0].totalNeto= this.hayFactura ? this.solicitudCambio.filter(x=>x.destalleFacturaSelecionada).reduce((n, {totalNeto})=> n+totalNeto,0):this.solicitudCambio.reduce((n, {totalNeto})=> n+totalNeto,0)
     this.solicitudCambio.filter(x => x.articuloId > 0 )
+   
     let parametro: any = {
       "SolicitudCambio": this.encabezadoFactura[0],
-      "SolicitudCambioDetalle": this.hayFactura? this.solicitudCambio.filter(x => x.destalleFacturaSelecionada == true ):this.solicitudCambio,
+      "SolicitudCambioDetalle": !this.hayFactura?this.solicitudCambio.filter(x=>x.articuloId >0): this.solicitudCambio.filter(x => x.destalleFacturaSelecionada == true )
     }
+
    let metodo: string = this.actualizando ? "Update" : "Registrar";
-   console.log(parametro)
    this.btnGuardarCargando = true;
    this.httpService.DoPostAny<any>(DataApi.SolicitudCambio,
      metodo, parametro).subscribe(response => {
@@ -514,7 +547,4 @@ export class SolicitudCambioFormularioComponent implements OnInit {
        this.toastService.error("Error conexion al servidor");
      });
  }
-
-
-
 }

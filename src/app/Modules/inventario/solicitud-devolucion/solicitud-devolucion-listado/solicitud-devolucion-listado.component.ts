@@ -68,7 +68,6 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
     public permissionsService: NgxPermissionsService,
   ) { }
   ngOnInit(): void {
-   
     this.getAutorizacionUsuario();
     this.getData();
   }
@@ -76,7 +75,7 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
     this.Cargando = true;
     let parametros: Parametro[] = [
       { key: "Search", value: this.Search },
-      { key: "TipoSolicitud", value: 'Cambio' }
+      { key: "namekey", value: 'INVENTARIOSOLICITUDDEVOLUCION' }
    ]
     this.httpService.GetAllWithPagination<SolicitudDevolucion>(DataApi.SolicitudDevolucion, "GetSolicitudDevolucionListado", "ID", this.paginaNumeroActual,
       this.paginaSize, true, parametros).subscribe(x => {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -17,6 +17,7 @@ import { SolicitudDevolucionDetalle } from '../models/SolicitudDevolucionDetalle
   styleUrls: ['./solicitud-devolucion-formulario.component.scss']
 })
 export class SolicitudDevolucionFormularioComponent implements OnInit {
+  @ViewChild('aForm') aForm: ElementRef;
   Cargando: boolean = false;
   Formulario: FormGroup;
   submitted = false;
@@ -29,6 +30,7 @@ export class SolicitudDevolucionFormularioComponent implements OnInit {
   fileAnexo: any;
   tipoSolicitudDevolucion: boolean;
   tipoSolicitudDevoluciones: ComboBox[];
+  clienteId: any;
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
@@ -68,7 +70,12 @@ export class SolicitudDevolucionFormularioComponent implements OnInit {
       tipoSolicitudDevolucionId:[null,[Validators.required]]
     });
   }
-  
+  setFocus(name) {    
+    const ele = this.aForm.nativeElement[name];    
+    if (ele) {
+      ele.focus();
+    }
+  }
 
   getFacturaByID(value) {
     const numFac=value.target.value;
@@ -89,9 +96,14 @@ export class SolicitudDevolucionFormularioComponent implements OnInit {
           {
             this.Formulario.patchValue(x.records[0])
             this.encabezadoFactura=x.records;
+            this.clienteId=x.records[0].clienteId;
             this.getDetalleFactura(numFac)
           }
           else{
+            this.Formulario.reset();
+            this.solicitudDevolucionDetalle=[];
+            this.setFocus('numeroFactura');
+            this.totalDelaFactura=0.00;
             this.toastService.error(`No se pudo encontrar la factura: ${numFac} `);
           }
          
@@ -243,6 +255,7 @@ export class SolicitudDevolucionFormularioComponent implements OnInit {
      this.encabezadoFactura[0].tipoSolicitudDevolucionId=Number(this.Formulario.get('tipoSolicitudDevolucionId').value);
      this.encabezadoFactura[0].fechaDocumento=new Date();
      this.encabezadoFactura[0].estadoERPID=1;
+     this.encabezadoFactura[0].clienteId=this.clienteId;
      this.encabezadoFactura[0].tasa=0;
      this.encabezadoFactura[0].archivoAnexo=this.fileAnexo;
      this.encabezadoFactura[0].fechaRegistro=new Date();
@@ -260,7 +273,6 @@ export class SolicitudDevolucionFormularioComponent implements OnInit {
       "SolicitudDevolucionDetalle": this.solicitudDevolucionDetalle.filter(x => x.destalleFacturaSelecionada == true ),
     
     }
-   
     let metodo: string = this.actualizando ? "Update" : "Registrar";
     this.btnGuardarCargando = true;
     this.httpService.DoPostAny<any>(DataApi.SolicitudDevolucion,

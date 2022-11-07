@@ -77,7 +77,7 @@ export class SolicitudCambioListadoComponent implements OnInit {
     this.Cargando = true;
     let parametros: Parametro[] = [
       { key: "Search", value: this.Search },
-      { key: "TipoSolicitud", value: 'Cambio' }
+      { key: "namekey", value: 'INVENTARIOCAMBIO' }
    ]
     this.httpService.GetAllWithPagination<SolicitudDevolucion>(DataApi.SolicitudCambio, "GetSolicitudCambioListado", "ID", this.paginaNumeroActual,
       this.paginaSize, true, parametros).subscribe(x => {
@@ -110,6 +110,7 @@ export class SolicitudCambioListadoComponent implements OnInit {
     this.modalService.open(content, { windowClass: 'my-class'});
     this.solicitudDevolucionSeleccionada = item;
     this.getTransferenciaDetalles(String(item.id));
+    
   }
   getTransferenciaDetalles(solicituDevolucionId: string) {
     let parametros = new SolicitudDevolucion();
@@ -122,6 +123,7 @@ export class SolicitudCambioListadoComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.solicitudDevolucionDetalle = response.records;
+          console.log( this.solicitudDevolucionDetalle )
         }
         this.loadingSolicitudDetalle = false;
       }, error => {
