@@ -84,7 +84,7 @@ export class UsuarioAlmacenEnrrollFormularioComponent implements OnInit {
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0]
             this.Formulario.setValue(record);
-            this.mostrarAcceso= this.NivelAutorizacionCategorias.find(X=>X.codigo==record.moduloID).nombre.toUpperCase(); 
+            this.mostrarAcceso= this.NivelAutorizacionCategorias.find(X=>X.codigo==record.moduloID).nombre.toUpperCase();
           } else {
             this.toastService.warning("Enrroll no encontrado");
             this.router.navigateByUrl('/mantenimientos/usuario-almacen-enrroll');
@@ -98,7 +98,7 @@ export class UsuarioAlmacenEnrrollFormularioComponent implements OnInit {
   }
 
   changeFn(moduloID){
-    this.mostrarAcceso= this.NivelAutorizacionCategorias.find(X=>X.codigo==moduloID).nombre.toUpperCase(); 
+    this.mostrarAcceso= this.NivelAutorizacionCategorias.find(X=>X.codigo==moduloID).nombre.toUpperCase();
   }
   onSubmit() {
 
@@ -159,13 +159,13 @@ export class UsuarioAlmacenEnrrollFormularioComponent implements OnInit {
   GetNivelAutorizacionModuloComboBox() {
     this.loadingNivelAutorizacionCategorias = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetNivelAutorizacionModuloComboBox", null).subscribe(response => {
+      "GetModuloComboBox", null).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
           this.NivelAutorizacionCategorias = response.records;
-       
+
         }
         this.loadingNivelAutorizacionCategorias = false;
       }, error => {
