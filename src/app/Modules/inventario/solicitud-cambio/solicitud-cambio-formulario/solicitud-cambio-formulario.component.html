@@ -139,7 +139,11 @@
                             <div class="form-group col-md-3">
                                 <label for="numeroFactura"> Código</label>
                                 <input formControlName="codigoCliente" autocomplete="off" (blur)="getCliente($event)" (keyup.enter)=" getCliente($event)" class="form-control" 
+                             
                                     type="text"  name="codigoCliente" id="codigoCliente">
+                                    <div *ngIf="submitted && f.codigoCliente.errors" class="text-danger small">
+                                        <div *ngIf="f.codigoCliente.errors.required  ">El campo es obligatorio</div>
+                                    </div>
                             </div>
 
                             <div class="form-group col-md-4">
@@ -149,11 +153,20 @@
                                     id="nombre">
                             </div>
 
-                            <div class="form-group col-md-4">
-                                <label for="nombre">Cédula</label>
-                                <input  [ngModel]="documentoCliente"  class="form-control" 
-                                    type="text" [ngModelOptions]="{standalone: true}" name="nombre" id="nombre">
-                            </div>
+                                  
+                    <div class="form-group col-md-4">
+                        <label for="nombre">Almacen</label>
+                        <ng-select [readonly]="!abilitarAlmacen"  bindLabel="nombre" bindValue="codigo" [items]="almacenesDesde"
+                            [clearable]="false"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.almacenId.errors }"
+                            placeholder="Seleccione un alamcén"
+                            (change)="onSelectAlmacen($event)"
+                            notFoundText="No resultados" formControlName="almacenId">
+                        </ng-select>
+                        <div *ngIf="submitted && f.almacenId.errors" class="text-danger small">
+                            <div *ngIf="f.almacenId.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
                         </div>
                     </div>
             <!--Fin Cuando la devolucion no tiene factura-->
@@ -165,7 +178,7 @@
                                 <tr>
                                     <th  ></th>
                                     <th scope="col">Código</th>
-                                    <th scope="col">Descripción</th> 
+                                    <th  scope="col">{{descripcion}}</th> 
                                     <th scope="col" >{{cantidad}} </th>
                                     <th scope="col">Precio</th>
                                     <th scope="col">% Descuento</th>
@@ -175,9 +188,7 @@
                                     <th ></th>
                                 </tr>
                             </thead>
-
                             <tbody>
-                         
                                 <tr *ngFor="let item of solicitudCambio let i=index">
                                     <td>
                                             <input *ngIf="hayFactura" class="form-check-input"  (change)="seleccionarFactura($event,i)" type="checkbox" id="predeterminado"
@@ -186,7 +197,7 @@
                                             > 
                                     </td>
                                     <td>
-                                        <ng-select *ngIf="!hayFactura" style="width: 150px;" [items]="articulosParaInterCambio" bindLabel="codigoReferencia"
+                                        <ng-select *ngIf="!hayFactura" style="width: 600px;" [items]="articulosParaInterCambio" bindLabel="nombreYCodigoReferencia"
                                             [clearable]="false" bindValue="articuloId" [loading]="loadingArticulosDeCompra"
                                             [(ngModel)]="item.id" [ngModelOptions]="{standalone: true}"
                                             (focus)="obtenerValorAnterior(item.articuloId,i)"
@@ -201,7 +212,7 @@
                                        >
                                     </td>
                                     <td>
-                                        <input style="width: 400px;" type="text" class="form-control"
+                                        <input [hidden]="!hayFactura" style="width: 400px;" type="text" class="form-control"
                                          placeholder="Descripción" 
                                          [(ngModel)]="item.nombre"
                                          [ngModelOptions]="{standalone: true}"
@@ -210,7 +221,6 @@
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            
                                             <div class="ml-3">
                                                 <input style="width: 100px;" type="text" class="form-control"
                                                 [disabled]="!cantidadEditable"  mask="separator"
@@ -220,13 +230,10 @@
                                                 [disabled]="!item.destalleFacturaSelecionada && hayFactura"
                                                 [ngModelOptions]="{standalone: true}"
                                                 [ngClass]="{'form-control border-danger p-0' : item.hayErrores }"
-                                              
                                                 >
                                             </div>
-                                           
                                           </div>
                                     </td>
-                                 
                                     <td>
                                         <input style="width: 100px;" type="text" class="form-control"
                                             [(ngModel)]="item.precio"
@@ -242,7 +249,6 @@
                                             thousandSeparator=","
                                             [disabled]="hayFactura"
                                             [ngModelOptions]="{standalone: true}"
-                                           
                                             >
                                     </td>
                                     <td>
@@ -319,4 +325,21 @@
         </div>
     </div>
 </div>  
+
+<ng-template #selecionarProductoPorNombre let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Selección de Artículo</h4>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="form-group col-md-12">
+                <ng-select   [items]="articulosParaInterCambio" bindLabel="nombreYCodigoReferencia"
+                [clearable]="false" bindValue="articuloId" [loading]="loadingArticulosDeCompra"
+                 [ngModelOptions]="{standalone: true}"
+                (change)="onSelectArticulo($event,i)" notFoundText="No resultados">
+            </ng-select>
+            </div>
+        </div>
+    </div>
+</ng-template>
 

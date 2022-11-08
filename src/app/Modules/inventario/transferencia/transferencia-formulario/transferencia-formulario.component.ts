@@ -542,7 +542,6 @@ export class TransferenciaFormularioComponent implements OnInit {
   }
 
   getAlmacenesOrigenUsuarioEnrroll(id:number) {
-
     let parametros: Parametro[] = [
       { key: "almacenId", value: id },
       { key: "usuarioId", value: this.authService.tokenDecoded.nameid },

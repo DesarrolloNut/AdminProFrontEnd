@@ -9,6 +9,7 @@ import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Cliente } from 'src/app/Modules/mantenimientos/clientes/models/Cliente';
 import { Usuario } from 'src/app/Modules/servicios/recepcion/models/Usuario';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
+import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 
 
 import { ComboBox } from 'src/app/shared/model/ComboBox';
@@ -63,6 +64,7 @@ export class SolicitudCambioFormularioComponent implements OnInit {
   cantidadAtransferir: number;
   transferenciaInventarioConfirmado: boolean;
   cantidad: string = "Cantidad";
+  descripcion: string = "";
  //Propiedades del modal Lote almacen
   cantidadesDijitadoEnLoteDeAlmacen: number;
   hayErrores: boolean=true;
@@ -78,6 +80,7 @@ export class SolicitudCambioFormularioComponent implements OnInit {
   clienteId: number;
   tipoSolicitudDevolucion: boolean;
   tipoSolicitudDevoluciones: ComboBox[];
+  abilitarAlmacen: boolean=false;
  
 
   constructor(
@@ -105,6 +108,8 @@ export class SolicitudCambioFormularioComponent implements OnInit {
    // this.getArticulosParaIntercambioDeAlmacen();
     this.getSucursales();
     this.getTipoSolicitudDevoluciones();
+    this.getAlmacenesOrigenUsuarioEnrroll(0)
+
 
   }
 
@@ -124,7 +129,8 @@ export class SolicitudCambioFormularioComponent implements OnInit {
       fechaCreacion:[null,[Validators.required]],
       cliente:[ null,[Validators.required]],
       totalNetoFactura:[ null,],
-      tipoSolicitudDevolucionId:[null,[Validators.required]]
+      tipoSolicitudDevolucionId:[null,[Validators.required]],
+      almacenId:[null,[Validators.required]]
 
     });
   }
@@ -182,6 +188,34 @@ export class SolicitudCambioFormularioComponent implements OnInit {
         this.Cargando = false;
       });
   }
+
+  getAlmacenesOrigenUsuarioEnrroll(id:number) {
+    let parametros: Parametro[] = [
+      { key: "almacenId", value: id },
+      { key: "usuarioId", value: this.authService.tokenDecoded.nameid },
+      { key: "CompaniaId", value: this.authService.tokenDecoded.primarygroupsid },
+      { key: "Modulo", value: EstadosGeneralesKeyEnum.INVENTARIOCAMBIO },
+    ]
+    this.loadingAlmacenesDesde = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetAlmacenesDestinUsuarioEnrroll", parametros).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.almacenesDesde = response.records;
+         
+        }
+        this.loadingAlmacenesDesde = false;
+      }, error => {
+        this.loadingAlmacenesDesde = false;
+        this.toastService.error("No se pudo obtener los almacenes", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getAlmacenesOrigenUsuarioEnrroll(id);
+        }, 1000);
+
+      });
+  }
   
   getTipoSolicitudDevoluciones() {
     this.tipoSolicitudDevolucion = true;
@@ -205,7 +239,8 @@ export class SolicitudCambioFormularioComponent implements OnInit {
   verificarSiHayFactura(event){
     if ( event.target.checked ) {
       this.hayFactura=true;
-   
+      this.solicitudCambio=null; 
+      this.descripcion="Descripción";
   }
   else {
     this.hayFactura=false;
@@ -215,6 +250,7 @@ export class SolicitudCambioFormularioComponent implements OnInit {
     this.totalDelaFactura=0.00;
     this.Formulario.reset();
     this.articulosParaInterCambio=[];
+    this.descripcion="";
   }
   }
 
@@ -267,6 +303,7 @@ export class SolicitudCambioFormularioComponent implements OnInit {
       ele.focus();
     }
   }
+  
   getCliente(value) {
   const codigoCliente=value.target.value;
   if(codigoCliente ==="" || codigoCliente == null ){
@@ -284,12 +321,12 @@ export class SolicitudCambioFormularioComponent implements OnInit {
           {
             this.documentoCliente=response.records[0].documento;
             this.nombreCliente=response.records[0].nombres;
-            this.listaPrecioId=response.records[0].listaPrecioId;
             this.clienteId=response.records[0].id
-            this.getArticulosParaIntercambio(17,this.listaPrecioId)  
+            this.abilitarAlmacen=true;
             
           }
           else{
+            this.abilitarAlmacen=false;
             this.solicitudCambio = [new SolicitudArticuloDetalle()];
             this.nombreCliente="";
             this.documentoCliente="";
@@ -310,11 +347,11 @@ export class SolicitudCambioFormularioComponent implements OnInit {
       });
   }
 
-  getArticulosParaIntercambio(almacenid:number,listaPrecioId:number ) {
+  getArticulosParaIntercambio(almacenid:number,clienteId:number ) {
     let parametros = new ArticuloParaIntercambioRequest();
     parametros.almacenid = almacenid;
     parametros.companiaid = Number(this.authService.tokenDecoded.primarygroupsid);
-    parametros.listaPrecioId=listaPrecioId
+    parametros.clienteId=clienteId
 
       this.httpService.DoPostAny<any>(DataApi.SolicitudCambio,
         "GetArticulosParaIntercambio", parametros).subscribe(response => {
@@ -322,7 +359,6 @@ export class SolicitudCambioFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.articulosParaInterCambio = response.records;
-          
         }
         this.loadingArticulosDeTransferenciaInventario = false;
       }, error => {
@@ -331,26 +367,23 @@ export class SolicitudCambioFormularioComponent implements OnInit {
         setTimeout(() => {
           //this.getArticulosParaIntercambioDeAlmacen(almacenid);
         }, 1000);
-
       });
   }
-  
   agregarDetalleVacio() {
     this.solicitudCambio.push(new SolicitudArticuloDetalle())
   }
   get f() { return this.Formulario.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
  
- 
   onSelectArticulo(item: any, index: number) {
      if(!this.solicitudCambio.find(x => x.codigoReferencia == item.codigoReferencia))
      {      
-           
             this.solicitudCambio[index].articuloId = item.articuloid;
             this.solicitudCambio[index].codigoReferencia = item.codigoReferencia;
             this.solicitudCambio[index].nombre = item.nombre;
             this.solicitudCambio[index].precio = item.precio;
             this.solicitudCambio[index].id = 0;
             this.solicitudCambio[index].companiaId=Number(this.authService.tokenDecoded.primarygroupsid);
+            this.solicitudCambio[index].almacenId=Number(this.Formulario.get('almacenId').value);
             if(this.codigoArticuloAnteriorSeleccionado > 0)
             {
               this.articulosParaInterCambio.find(x=>x.articuloid == this.codigoArticuloAnteriorSeleccionado).disabled=false;
@@ -360,7 +393,6 @@ export class SolicitudCambioFormularioComponent implements OnInit {
             {
               this.agregarDetalleVacio();
             }  
-            
      }
      else
      {
@@ -372,6 +404,20 @@ export class SolicitudCambioFormularioComponent implements OnInit {
         return;
      }
     
+  }
+  onSelectAlmacen(event:any){
+   
+    if(this.clienteId ==null || this.clienteId===0 )
+    {
+      this.toastService.error("Debe seelccionar un cliente.");
+      return;
+    }
+    if(event.codigo ==null || event.codigo===0 || event.codigo=== undefined )
+    {
+      this.toastService.error("Hubo un problema seleccionar los productos");
+      return;
+    }
+    this.getArticulosParaIntercambio(event.codigo,this.clienteId)  
   }
   
   obtenerValorAnterior(codigoArticulo: any, index: number){
@@ -455,6 +501,11 @@ export class SolicitudCambioFormularioComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
       });
   }
+  
+  openModalSeleccionarArticuloPorNombre(content,index) {
+
+    this.modalService.open(content, { windowClass: "myCustomModalClass", backdrop: "static", })
+  }
   getSucursales() {
     this.loadingSucursales = true;
     let parametros: Parametro[] = [
@@ -480,6 +531,7 @@ export class SolicitudCambioFormularioComponent implements OnInit {
         }, 1000);
       });
   }
+  
   onSubmit(){
     
     this.submitted = true;
@@ -487,19 +539,34 @@ export class SolicitudCambioFormularioComponent implements OnInit {
       this.toastService.error("Debes selecccionar un registro.");
       return;
     }
-
-    if (this.solicitudCambio.filter(x=> !x.destalleFacturaSelecionada && x.articuloId > 0).filter(z=>z.cantidad==0).length >1 && !this.hayFactura) {
+   
+    if (this.solicitudCambio.filter(x=> !x.destalleFacturaSelecionada && x.articuloId > 0).filter(z=>z.cantidad ===0).length >=1 && !this.hayFactura) {
       this.toastService.error("Algunas filas contienen errores.");
       this.solicitudCambio.filter(x=>x.articuloId >0).forEach(y=> y.hayErrores=true)
       return;
     }
-
+    if(this.solicitudCambio.length === 1)
+    {
+      if(this.solicitudCambio.filter(x=> !x.destalleFacturaSelecionada && !this.hayFactura).some(y=>y.articuloId ===0))
+    {
+      this.toastService.error("Algunas filas contienen errores.");
+      return;
+    }
+    }
     if(this.solicitudCambio.some(x=>x.hayErrores==true))
     {
       this.toastService.error("Algunas filas contienen errores.");
       return;
     }
     if (this.Formulario.get('tipoSolicitudDevolucionId').invalid)
+    {
+      return;
+    }
+    if (this.Formulario.get('almacenId').invalid)
+    {
+      return;
+    }
+    if (this.Formulario.get('codigoCliente').invalid)
     {
       return;
     }
@@ -530,6 +597,7 @@ export class SolicitudCambioFormularioComponent implements OnInit {
       "SolicitudCambio": this.encabezadoFactura[0],
       "SolicitudCambioDetalle": !this.hayFactura?this.solicitudCambio.filter(x=>x.articuloId >0): this.solicitudCambio.filter(x => x.destalleFacturaSelecionada == true )
     }
+    console.log(parametro)
 
    let metodo: string = this.actualizando ? "Update" : "Registrar";
    this.btnGuardarCargando = true;
