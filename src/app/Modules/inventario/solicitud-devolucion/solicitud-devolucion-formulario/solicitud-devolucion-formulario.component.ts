@@ -242,6 +242,12 @@ export class SolicitudDevolucionFormularioComponent implements OnInit {
     {
       return;
     }
+
+    if (this.solicitudDevolucionDetalle.filter(x=> x.destalleFacturaSelecionada).filter(z=>z.cantidad ===0).length >=1) {
+      this.toastService.error("Algunas filas contienen errores.");
+      this.solicitudDevolucionDetalle.filter(x=>x.cantidad ===0).forEach(y=> y.hayErrores=true)
+      return;
+    }
   
 
     

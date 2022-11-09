@@ -29,7 +29,7 @@ export class SolicitudCambioListadoComponent implements OnInit {
   Cargando: boolean = false;
   CargandoBar: boolean = false;
   totalPaginas: number = 0;
-  paginaSize: number = 5;
+  paginaSize: number = 1000;
   paginaTotalRecords: number = 0;
   data: SolicitudDevolucion[] = [] //tu modelo
 
@@ -123,7 +123,6 @@ export class SolicitudCambioListadoComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.solicitudDevolucionDetalle = response.records;
-          console.log( this.solicitudDevolucionDetalle )
         }
         this.loadingSolicitudDetalle = false;
       }, error => {
@@ -229,16 +228,11 @@ export class SolicitudCambioListadoComponent implements OnInit {
       }, error => { 
         this.toastService.error("Error conexion al servidor");
       });
-
-
   }
 
   onDeleteitem(index: number) {
     this.files.splice(index, 1);
   }
-
-
-
   deleteSolicitudDevolucionArchivoByID(id: number) {
     this.loadingSolicitudDetalle = true;
     this.httpService.DoPostAny<string>(DataApi.SolicitudCambio,
@@ -257,7 +251,6 @@ export class SolicitudCambioListadoComponent implements OnInit {
         this.toastService.error("No se pudo obtener la url de los archivos", "Error conexion al servidor");
       });
   }
-
   buscarArchivosSubidos(id:number) {
     this.httpService.DoPostAny<Archivo>(DataApi.SolicitudDevolucion,
       "GetSolicitudDevolucionArchivos", id).subscribe(response => {
@@ -292,7 +285,6 @@ export class SolicitudCambioListadoComponent implements OnInit {
         )
       }
     })
-
   }
   autorizarSolicitudDevolucion(id:number,accion: string) {
    if(this.filesSubidos.length <=0 && accion !=='Rechazar'){

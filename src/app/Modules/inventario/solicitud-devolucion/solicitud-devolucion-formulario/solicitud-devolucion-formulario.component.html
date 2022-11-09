@@ -156,6 +156,7 @@
                                             <input style="width: 100px;" type="text" class="form-control"
                                             mask="separator"
                                             (blur)="actualizarTotal($event,i)"
+                                            (keyup.enter)="actualizarTotal($event,i)"
                                             thousandSeparator="," 
                                             [disabled]="!item.destalleFacturaSelecionada"
                                             [(ngModel)]="item.cantidad"

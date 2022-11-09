@@ -226,6 +226,7 @@
                                                 [disabled]="!cantidadEditable"  mask="separator"
                                                 thousandSeparator="," 
                                                 (blur)="actualizarTotal($event,i)"
+                                                (keyup.enter)="actualizarTotal($event,i)"
                                                 [(ngModel)]="item.cantidad"
                                                 [disabled]="!item.destalleFacturaSelecionada && hayFactura"
                                                 [ngModelOptions]="{standalone: true}"

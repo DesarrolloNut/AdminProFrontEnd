@@ -24,7 +24,7 @@
                     </div>
                 </div>
                 <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
-                <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
+                <form class="form-row m-t-40" [formGroup]="Formulario" (keydown.enter)="$event.preventDefault()"  (ngSubmit)="onSubmit()">
                     <div class="col-12 mb-2" *ngIf="usuario">
                         <div class="row border border-light p-2">
 
@@ -100,7 +100,7 @@
                             <thead>
                                 <tr>
                                     <th scope="col">Código</th>
-                                    <th scope="col">Descripción</th> 
+        
                                     <th scope="col" >{{cantidad}} </th>
                                     <th scope="col" [hidden]="!transferenciaInventarioConfirmado">Recepción</th>
                                     <th scope="col">Costo</th>
@@ -113,21 +113,14 @@
                                 <!-- <tr *ngFor="let item of confirmed | filter: searchText; let i  = index"> -->
                                 <tr *ngFor="let item of solicitudTransferenciaInventario let i=index">
                                     <td>
-                                        <ng-select style="width: 200px;" [items]="articulosDeTransferenciaInventario" bindLabel="codigoReferencia"
+                                        <ng-select style="width: 600px;" [items]="articulosDeTransferenciaInventario" bindLabel="nombreYCodigoReferencia"
                                             [clearable]="false" bindValue="articuloId" [loading]="loadingArticulosDeCompra"
                                             [(ngModel)]="item.articuloId" [ngModelOptions]="{standalone: true}"
                                             [readonly]="IdTransferenciaInventario"
                                             (change)="onSelectArticulo($event,i)" notFoundText="No resultados">
                                         </ng-select>
                                     </td>
-                                    <td>
-                                        <input style="width: 500px;" type="text" class="form-control"
-                                         placeholder="Descripción" 
-                                         [(ngModel)]="item.nombre"
-                                         [ngModelOptions]="{standalone: true}"
-                                         [disabled]="true"
-                                        >
-                                    </td>
+                                  
                                     <td>
                                         <div class="d-flex align-items-center">
                                             
@@ -137,10 +130,11 @@
                                                 thousandSeparator="," 
                                                 [(ngModel)]="item.envio"
                                                 [disabled]="transferenciaInventarioConfirmado || item.articuloId==0"
-                                               
+                                                
                                                 [ngModelOptions]="{standalone: true}"
                                                 [ngClass]="{'form-control border-danger p-0' : item.hayErrores }"
                                                 (blur)="validarInventario($event,item.inventario,i,item.articuloId,modalLoteSolicitud)"
+                                                (keyup.enter)="validarInventario($event,item.inventario,i,item.articuloId,modalLoteSolicitud)"
                                                 >
                                             </div>
                                                 <!--<i class="fas fa-cubes text-right m-1" [hidden]="!transferenciaInventarioConfirmado || !item.gestionado " title="Ver Lotes"
@@ -156,6 +150,7 @@
                                         [ngModelOptions]="{standalone: true}"
                                         [ngClass]="{'form-control border-danger p-0' : item.hayErrores }"
                                         (blur)="validarInventario($event,item.inventario,i,item.articuloId,modalLoteSolicitud)"
+                                        (keyup.enter)="validarInventario($event,item.inventario,i,item.articuloId,modalLoteSolicitud)"
                                         >
                                     </td>
                                     <td>
@@ -167,18 +162,15 @@
                                             [ngModelOptions]="{standalone: true}">
                                     </td>
                                     <td>
-                                        <input style="width: 100px;" type="text" class="form-control"
+                                        <input style="width: 200px;" type="text" class="form-control"
                                             [(ngModel)]="item.inventario"
                                             [disabled]="!cantidadEditable"  mask="separator"
                                             thousandSeparator=","
                                             [disabled]="true"
                                             [ngModelOptions]="{standalone: true}"
-                                           
                                             >
                                     </td>
-                                   
                                     <td>
-                                       
                                         <button [hidden]="transferenciaInventarioConfirmado" title="Eliminar" (click)="onDeleteitem(i,item.articuloId)" type="button" class="btn btn-outline-danger">
                                             <i class="fa fa-times"></i>
                                         </button>
@@ -265,6 +257,7 @@
                                 [ngClass]="{'form-control border-danger p-0' : item.hayErrores }"
                                 [ngModelOptions]="{standalone: true}"
                                 (blur)="agregarCantidadEnAlmacenLote($event,i,item.cantidad)"
+                                (keyup.enter)="agregarCantidadEnAlmacenLote($event,i,item.cantidad)"
                                 >
                         </td>
                         <td  [hidden]="!transferenciaInventarioConfirmado">
@@ -275,6 +268,7 @@
                                 [ngClass]="{'form-control border-danger p-0' : item.hayErrores }"
                                 [ngModelOptions]="{standalone: true}"
                                 (blur)="agregarCantidadEnAlmacenLote($event,i,item.cantidad)"
+                                (keyup.enter)="agregarCantidadEnAlmacenLote($event,i,item.cantidad)"
                                 >
                         </td>
                       

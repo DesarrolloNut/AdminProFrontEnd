@@ -173,7 +173,7 @@ export class TransferenciaFormularioComponent implements OnInit {
         this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
       });
   }
-
+  
   onSelectArticulo(item: any, index: number) {
      if(!this.solicitudTransferenciaInventario.some(x => x.codigoReferencia == item.codigoReferencia))
      {
@@ -338,7 +338,7 @@ export class TransferenciaFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.articulosDeTransferenciaInventario = response.records;
-          
+       
         }
         this.loadingArticulosDeTransferenciaInventario = false;
       }, error => {
