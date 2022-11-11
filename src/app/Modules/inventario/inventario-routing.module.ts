@@ -12,6 +12,7 @@ import { SolicitudDevolucionListadoComponent } from './solicitud-devolucion/soli
 import { SolicitudDevolucionFormularioComponent } from './solicitud-devolucion/solicitud-devolucion-formulario/solicitud-devolucion-formulario.component';
 import { SolicitudCambioListadoComponent } from './solicitud-cambio/solicitud-cambio-listado/solicitud-cambio-listado.component';
 import { SolicitudCambioFormularioComponent } from './solicitud-cambio/solicitud-cambio-formulario/solicitud-cambio-formulario.component';
+import { AlmacenInventarioListadoComponent } from './almacen-inventario/almacen-inventario-listado/almacen-inventario-listado.component';
 
 
 const routes: Routes = [  {
@@ -123,6 +124,15 @@ const routes: Routes = [  {
           { title: 'Inventario' },
           { title: 'Solicitu Cambio' },
           { title: 'Formulario Solicitu Cambio'}
+        ]
+      }
+    },
+    {
+      path: 'almacen-inventario', component: AlmacenInventarioListadoComponent, data: {
+        title: 'Almacén Inventario',
+        urls: [
+          { title: 'Inventario' },
+          { title: 'Almacén Inventario' }
         ]
       }
     },

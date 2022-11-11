@@ -20,6 +20,7 @@ import { SolicitudDevolucionFormularioComponent } from './solicitud-devolucion/s
 import { SolicitudDevolucionListadoComponent } from './solicitud-devolucion/solicitud-devolucion-listado/solicitud-devolucion-listado.component';
 import { SolicitudCambioFormularioComponent } from './solicitud-cambio/solicitud-cambio-formulario/solicitud-cambio-formulario.component';
 import { SolicitudCambioListadoComponent } from './solicitud-cambio/solicitud-cambio-listado/solicitud-cambio-listado.component';
+import { AlmacenInventarioListadoComponent } from './almacen-inventario/almacen-inventario-listado/almacen-inventario-listado.component';
 
 
 @NgModule({
@@ -36,7 +37,8 @@ import { SolicitudCambioListadoComponent } from './solicitud-cambio/solicitud-ca
      SolicitudDevolucionFormularioComponent,
      SolicitudDevolucionListadoComponent,
      SolicitudCambioFormularioComponent,
-     SolicitudCambioListadoComponent
+     SolicitudCambioListadoComponent,
+     AlmacenInventarioListadoComponent
 
     ],
   imports: [

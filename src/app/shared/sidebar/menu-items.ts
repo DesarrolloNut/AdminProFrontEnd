@@ -302,6 +302,17 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ['inventario_transferencia_despacho'],
       },
+      {
+        path: '/inventario/almacen-inventario',
+        title: 'Almacén Inventario',
+        label: '',
+        icon: '',
+        class: '',
+        labelClass: '',
+        extralink: false,
+        submenu: [],
+        permisos: ['inventario_transferencia_despacho'],
+      },
     ],
   },
 
