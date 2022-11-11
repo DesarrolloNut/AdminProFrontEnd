@@ -1,0 +1,288 @@
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-3 col-lg-3 col-12">
+            <h4 class="card-title font-weight-bold">Datos Finanzas</h4>
+
+          </div>
+          <div class="col-md-9 col-lg-9 col-12 text-right">
+            <p class="badge badge-pill badge-danger"
+               style="font-size: 15px;"
+             *ngIf="!isnotNecesaryFieldsComplete">
+             Debe completar los campos pendientes</p>
+          </div>
+        </div>
+        <app-loading-listado [hidden]="!cargando"></app-loading-listado>
+         <div   class="form_finanzas"
+         [style.opacity]="cargando ? '0' : '1'"
+         [style.visibility]="cargando ? 'hidden' : 'visible'" >
+
+        <form class="form-row m-t-40" [formGroup]="FormFinanza" >
+
+          <div class="form-group col-md-6">
+            <label for="condicionPagoId">Condición de pago</label>
+            <ng-select bindLabel="nombre" bindValue="codigo" [items]="CondicionesPagos"
+             placeholder="seleccione un tipo de condición"
+              [loading]="loadingCondicionPagos" [clearable]="false"
+              [ngClass]="{'form-control border-danger p-0' : submitted && f.condicionPagoId.errors }"
+              notFoundText="No resultados" formControlName="condicionPagoId">
+            </ng-select>
+            <div *ngIf="submitted && f.condicionPagoId.errors" class="text-danger small">
+              <div *ngIf="f.condicionPagoId.errors.required  ">El campo es
+                obligatorio</div>
+            </div>
+          </div>
+          <div class="form-group col-md-6" *ngIf="f.condicionPagoId.value==2">
+            <label for="plazoId">Plazo</label>
+            <ng-select bindLabel="nombre" bindValue="codigo" [items]="Plazos"
+              [loading]="loadingPlazos" [clearable]="false"
+              [ngClass]="{'form-control border-danger p-0' : submitted && f.plazoId.errors }"
+              notFoundText="No resultados" formControlName="plazoId">
+            </ng-select>
+            <div *ngIf="submitted && f.plazoId.errors" class="text-danger small">
+              <div *ngIf="f.plazoId.errors.required  ">El campo es
+                obligatorio</div>
+            </div>
+          </div>
+
+          <div class="form-group col-md-6" *ngIf="f.condicionPagoId.value==2">
+            <label for="limiteCredito"><i class="fa fa-hashtag"></i> Límite
+              Crédito</label>
+            <input  formControlName="limiteCredito" type="text" prefix="$ " mask="separator"
+              thousandSeparator="," name="limiteCredito" id="limiteCredito"
+              [ngClass]="{'is-invalid' : submitted && f.limiteCredito.errors,  'form-control':true  }">
+            <div class="invalid-feedback" *ngIf="submitted && f.limiteCredito.errors">
+              <div *ngIf="f.limiteCredito.errors.required">El campo es
+                obligatorio</div>
+            </div>
+          </div>
+          <div class="form-check col-md-6" *ngIf="f.condicionPagoId.value==2">
+            <label for="validarCreditoFactura" class="d-block">Validar credito factura</label>
+            <div class="form-group" style="margin-left: 20px;">
+              <input
+              formControlName="validarCreditoFactura" type="checkbox" name="validarCreditoFactura" id="validarCreditoFactura"
+              [ngClass]="{'is-invalid' : submitted && f.validarCreditoFactura.errors,  'form-check-input':true  }">
+            <label for="validarCreditoFactura">Activo</label>
+            </div>
+            <div class="invalid-feedback" *ngIf="submitted && f.validarCreditoFactura.errors">
+            </div>
+          </div>
+
+             <!-- Anexos de cliente -->
+             <div class="col-12 container_anexos"  *ngIf="f.condicionPagoId.value==2">
+
+              <div class="row">
+
+                  <!-- Anexos -->
+                  <div class="col-md-12">
+                      <div class="row">
+                          <div class="col-8">
+                              <hr>
+                              <h6 class="font-weight-bold">Subir Anexos
+                                  <span class="badge badge-info badge-pill">{{filesFromInput.length}}</span>
+                              </h6>
+                              <span style="position: relative; top: -8px; font-size: 14px;color: gray;font-weight: 600;">
+                                Ej. foto cedula, registro mercantil...
+                              </span>
+
+                          </div>
+                          <div class="col-4 text-right">
+                              <hr>
+                              <input accept="application/pdf,.png,.gif,.jpg,.jpeg,.jfif" class="d-none" (change)="setFiles(file.files)"
+                                  #file multiple type="file" />
+                              <button (click)="file.click()" type="button" class="btn btn-light "><i
+                                      class="fa fa-upload"></i>
+                              </button>
+                          </div>
+
+
+                            <div class="   col-md-12">
+                            <app-loading-listado [hidden]="!cargandoAnexos"></app-loading-listado>
+
+                             </div>
+                          <ng-container  *ngIf="filesFromInput.length>0 && !cargandoAnexos; else elseTemplate2">
+
+                              <div class=" row  col-md-12">
+
+                                <div class="col-md-3  p-2 text-center" *ngFor="let item of filesFromInput; let i = index">
+
+                                  <div class="row ml-1" *ngIf="!isImage(item)"  >
+                                    <div class="card  border rounded-sm "
+                                    [ngClass]="{'border_Subido': item.uploaded == true, 'border_NoSubido' : item.uploaded == false }"
+                                    style="width: 18rem;">
+                                      <div style="background-image: url('assets/images/pdf.png');background-size: cover;
+                                      min-height: 140px;
+                                      background-repeat: no-repeat;
+                                      background-position: center center;" class="card-img-top  img-responsive">
+
+                                              <p class="pending_subirp"  *ngIf="!item.uploaded">
+                                                <i class="fa fa-upload " aria-hidden="true"></i>
+                                                <span class="ml-1 span_text_subir" >Pendiente subir</span>
+                                              </p>
+
+
+                                      </div>
+                                      <div class="card-body ">
+                                        <h5 class="card-title" style="font-size: 13px; ">{{truncateString(item.name) }}</h5>
+                                        <hr>
+
+
+                                        <div class="btn-group mr-3" >
+                                          <button type="button " style="border-top-left-radius: 50px;    min-width: 130px;
+                                          border-bottom-left-radius: 50px; font-size: 10px; font-weight: 500;" class="btn btn-sm btn-info">{{getNameTipoAnexo(item)}}</button>
+                                          <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
+                                            <button class="btn btn-sm btn-outline-info" ngbDropdownToggle></button>
+                                            <div class="dropdown-menu" ngbDropdownMenu>
+                                              <button  class="btn-sm" (click)="onSelectDocumentoTipoAnexo(item,d)" *ngFor="let d of DocumentosTipoAnexo"  ngbDropdownItem>{{d.nombre}}</button>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <hr>
+
+
+
+
+
+                                        <div class="col-12 text-center">
+                                          <button class="btn btn btn-outline-danger btn-sm rounded" *ngIf="item.loading" disabled>
+                                            <i class="spinner-border spinner-border-sm  mr-1"></i></button>
+                                          <button class="btn btn btn-outline-danger btn-sm rounded" *ngIf="!item.loading" (click)="deleteFile(item,i)">
+                                            <i class="fa fa-times  mr-1"></i>Quitar</button>
+
+                                          <button class="btn btn-outline-info btn-sm ml-2 rounded" *ngIf="item.uploaded" (click)="goPdf(item)"><i class="fa fa-eye mr-1"></i>Ver</button>
+
+                                        </div>
+
+                                      </div>
+                                    </div>
+                                  </div>
+                                    <div class="row ml-1" *ngIf="isImage(item)">
+                                      <div class="card   border rounded-sm"
+                                      [ngClass]="{'border_Subido': item.uploaded == true, 'border_NoSubido' : item.uploaded == false }"
+                                      style="width: 18rem;">
+
+                                        <div [ngStyle]="{'background-image': 'url(' + formatUrlFile(item) + ')'}" style="background-size: cover;
+                                        min-height: 140px;
+                                        background-repeat: no-repeat;
+                                        background-position: center center;" class="card-img-top  img-responsive" >
+
+                                          <p class="pending_subirp"  *ngIf="!item.uploaded">
+                                            <i class="fa fa-upload " aria-hidden="true"></i>
+                                            <span class="ml-1 span_text_subir" >Pendiente subir</span>
+                                          </p>
+
+                                      </div>
+                                        <div class="card-body ">
+                                          <h5 class="card-title" style="font-size: 13px; ">{{truncateString(item.name) }}</h5>
+                                          <hr>
+                                          <!-- <span class="badge badge-pill badge-primary">selecione tipo anexo</span> -->
+
+
+
+
+                                          <div class="btn-group mr-3" >
+                                            <button type="button " style="border-top-left-radius: 50px;    min-width: 130px;
+                                            border-bottom-left-radius: 50px; font-size: 10px; font-weight: 500;" class="btn btn-sm btn-info">{{getNameTipoAnexo(item)}}</button>
+                                            <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
+                                              <button class="btn btn-sm btn-outline-info" ngbDropdownToggle></button>
+                                              <div class="dropdown-menu" ngbDropdownMenu>
+                                                <button  class="btn-sm" (click)="onSelectDocumentoTipoAnexo(item,d)" *ngFor="let d of DocumentosTipoAnexo"  ngbDropdownItem>{{d.nombre}}</button>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <hr>
+
+
+
+
+
+                                          <div class="col-12 text-center">
+                                            <button class="btn btn btn-outline-danger btn-sm rounded" *ngIf="item.loading" disabled>
+                                              <i class="spinner-border spinner-border-sm  mr-1"></i></button>
+                                            <button class="btn btn btn-outline-danger btn-sm rounded" *ngIf="!item.loading" (click)="deleteFile(item,i)">
+                                              <i class="fa fa-times  mr-1"></i>Quitar</button>
+
+                                            <button class="btn btn-outline-info btn-sm ml-2 rounded" (click)=" openModal(modalImagePreview,item)  "><i class="fa fa-eye mr-1"></i>Ver</button>
+
+                                          </div>
+
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                  </div>
+
+
+
+                              </div>
+
+                          </ng-container>
+                          <ng-template  [hidden]="cargandoAnexos"  #elseTemplate2>
+
+                              <div [hidden]="cargandoAnexos" class="col-12 no_hay_archivos text-center">
+                                  <i class="fa fa-info-circle text-info fa-3x"></i>
+                                  <h3>No hay anexos</h3>
+                              </div>
+
+                          </ng-template>
+
+
+
+                      </div>
+                  </div>
+
+              </div>
+
+          </div>
+
+          <div class="form-group text-right col-md-12" >
+            <hr />
+
+            <button class="btn btn-light m-1" routerLink="../" type="button">
+              <i class="fas fa-times"></i> Cancelar
+            </button>
+
+            <button *ngIf="!btnGuardarCargando" (click)="onSubmit()" class="btn btn-info m-1" type="submit">
+              <i class="fas fa-check"></i>Subir y Guardar
+            </button>
+
+            <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+              <span class="spinner-border spinner-border-sm"></span> Guardando
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #modalImagePreview let-modal>
+  <div class="container-fluid">
+    <div class="row"  >
+      <div class="col">
+        <div class="modal-header">
+          <button type="button" class="close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body text-center">
+          <img src="{{imageFilselected.url}}" class="imagepreview" style="width: 100%;" >
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="modal.close('Close click')">Salir</button>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+</ng-template>
+
+

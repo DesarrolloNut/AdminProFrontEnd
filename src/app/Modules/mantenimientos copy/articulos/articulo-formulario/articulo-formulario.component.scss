@@ -1,0 +1,80 @@
+
+
+.no_image{
+  cursor: pointer;
+  position: absolute;
+  background-color: white;
+  bottom:0;
+  height: 150px;
+  width: 150px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  z-index: 0;
+}
+.yes_image{
+  cursor: pointer;
+  position: absolute;
+  bottom:0;
+  height: 150px;
+  width: 150px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  z-index: 0;
+  border: 1px solid gainsboro;
+}
+
+
+// .container_picture {
+// 	&:hover {
+// 		.no_image {
+// 			-webkit-filter: blur(5px);
+// 			-moz-filter: blur(5px);
+// 			-o-filter: blur(5px);
+// 			-ms-filter: blur(5px);
+// 			filter: blur(5px);
+// 		}
+// 	}
+// }
+
+.no_image,.yes_image {
+	&:hover {
+		&  .btn_subirImg {
+			display: block;
+		}
+	}
+}
+
+
+
+ .btn_subirImg:hover
+  {
+      display: block !important;
+  }
+
+
+  .btn_subirImg{
+    display: none;
+    z-index: 10;
+    position: absolute;
+    bottom: 0;
+  }
+
+
+
+  .image_original{
+    width:50%;
+    margin: 0 auto;
+
+  }
+  .image_cropped{
+    width:50%;
+    margin: 0 auto;
+
+  }
+  .c_image_cropper {
+    margin-top: 20px;
+    border: 1px solid gainsboro;
+
+  }

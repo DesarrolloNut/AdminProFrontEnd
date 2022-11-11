@@ -1,0 +1,163 @@
+ 
+       <div class="row">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-md-3 col-lg-3 col-12">
+                          <h4 class="card-title font-weight-bold">Datos Contactos</h4>
+                        </div>
+                       <div class="col-md-9 col-lg-9 col-12 text-right">
+                        <p class="badge badge-pill badge-danger"
+                           style="font-size: 15px;"
+                         *ngIf="!isnotNecesaryFieldsComplete">
+                         Debe agregar al menos un contacto</p>
+                       </div>
+                      </div>
+                      <app-loading-listado [hidden]="!cargando"></app-loading-listado>
+
+                     <div  class="form_contactos" 
+                     [style.opacity]="cargando ? '0' : '1'" 
+                     [style.visibility]="cargando ? 'hidden' : 'visible'" >
+                      <form class="form-row m-t-10" [formGroup]="FormContactos" (ngSubmit)="onSubmit()">
+                   
+ 
+                        <div class="row col-md-12" *ngFor="let contact of getContactFormControls(); let i = index" >
+                          <fieldset class="hm-fieldset row">
+                            <legend class="hm-legend">Contacto  {{contact.get('nombres').value}}</legend>
+                              <div [formGroup]="contact" class="form-row row col-md-12">
+                                <div class="form-group  col-md-3">
+                                  <label >Cedula</label>
+                                  <input type="text" (keyup)="onDocumentoKeyUp(contact)" formControlName="documento" class="form-control form-control-sm"  
+                                    [ngClass]="{ 'is-invalid': submitted && contact.get('documento').errors }" />
+                                  <div *ngIf="submitted && contact.get('documento').errors" class="invalid-feedback">
+                                    <div *ngIf="contact.get('documento').errors.required">
+                                      El campo es obligatorio</div>
+                                  </div>
+                                  <div *ngIf="contact.get('documento').hasError('cedulaestructura')">Documento no
+                                    válido</div>
+                                  <div *ngIf="contact.get('documento').hasError('minlength')">Mínimo 9 caracteres
+                                  </div>
+                                  </div>  
+                                <div class="form-group  col-md-3">
+                                  <label >Nombres</label>
+                                  <input type="text" formControlName="nombres" (input)="contact.get('nombres').setValue(contact.get('nombres').value.toUpperCase())" class="form-control form-control-sm" 
+                                    [ngClass]="{ 'is-invalid': submitted && contact.get('nombres').errors }" />
+                                  <div *ngIf="submitted && contact.get('nombres').errors" class="invalid-feedback">
+                                    <div *ngIf="contact.get('nombres').errors.required">
+                                      El campo es obligatorio</div>
+                                  </div>
+                                  </div>  
+                    
+
+                                <div class="form-group  col-md-3">
+                                  <label >Telefono</label>
+                                  <input type="text" formControlName="telefono" class="form-control form-control-sm" mask="(000) 000-0000"
+                                    [ngClass]="{ 'is-invalid': submitted && contact.get('telefono').errors }" />
+                                  <div *ngIf="submitted && contact.get('telefono').errors" class="invalid-feedback">
+                                    <div *ngIf="contact.get('telefono').errors.required">
+                                      El campo es obligatorio</div>
+                                  </div>
+                                </div>
+
+                                <div class="form-group  col-md-3">
+                                  <label>Celular</label>
+                                  <input type="text" formControlName="celular" class="form-control form-control-sm" mask="(000) 000-0000"
+                                    [ngClass]="{ 'is-invalid': submitted && contact.get('celular').errors }" />
+                                  <div *ngIf="submitted && contact.get('celular').errors" class="invalid-feedback">
+                                    <div *ngIf="contact.get('celular').errors.required">
+                                      El campo es obligatorio</div>
+                                  </div>
+                                </div>
+
+                                <div class="form-group  col-md-6">
+                                  <label>Email</label>
+                                  <input type="text" formControlName="email" class="form-control form-control-sm"
+                                    [ngClass]="{ 'is-invalid': submitted && contact.get('email').errors }" />
+                                  <div *ngIf="submitted && contact.get('email').errors" class="invalid-feedback">
+                                    <div *ngIf="contact.get('email').errors.required">
+                                      Email es obligatorio</div>
+                                    <div *ngIf="contact.get('email').errors.email">
+                                      Favor introduce un email valido</div>
+                                  </div>
+                                </div>
+
+                              
+                                  <div class="form-group col-md-6">
+                                    <label for="inputEmail4"> Puesto</label>
+                                    <ng-select bindLabel="nombre" bindValue="codigo" [items]="puestos"
+                                      [loading]="false" [clearable]="false"
+                                      [ngClass]="{'form-control border-danger p-0' : submitted && contact.get('puestoId').errors }"
+                                      notFoundText="No resultados" formControlName="puestoId">
+                                    </ng-select>
+                                    <div *ngIf="submitted && contact.get('puestoId').errors" class="text-danger small">
+                                      <div *ngIf="contact.get('puestoId').errors.required  ">El campo es
+                                        obligatorio</div>
+                                    </div>
+                                  </div>
+                                
+                              <div class="form-group  col-md-2  mt-1">
+                                <button type="button" [disabled]="i==0"  *ngIf="!contact.get('cargando').value" (click)="openModal(modalConfirm,contact,i)" class="btn btn-danger btn-round-sm btn-sm">
+                                  <i class="fas fa-minus"></i> Eliminar
+                                </button>
+                                <button type="button" *ngIf="contact.get('cargando').value" disabled   class="btn btn-danger btn-round-sm btn-sm">
+                                  <i class="spinner-border spinner-border-sm"></i> Eliminando
+                                </button>
+                              </div>
+                            </div>
+                          </fieldset>
+  
+                      </div>
+                        <div class="form-group text-right col-md-12">
+                          <hr />
+                          <div class="text-right mr-5" style="display: inline-block;">
+
+                            <button class="btn btn-success " (click)="onAddContact()" type="button">
+                              <i class="fas fa-plus"></i> Agregar contacto
+                            </button>
+                          </div>
+                          <button class="btn btn-light m-1" routerLink="../" type="button">
+                            <i class="fas fa-times"></i> Cancelar 
+                          </button>
+
+                          <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+                            <i class="fas fa-check"></i> Guardar contactos
+                          </button>
+                          <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span> Guardando
+                          </button>
+                        </div>
+
+                      </form>
+                     </div>
+    
+
+                    </div>
+                  </div>
+                </div>
+              </div> 
+              <ng-template #modalConfirm let-modal>
+                <div class="container-fluid">
+                  <div class="row"  >
+                    <div class="col">
+                      <div class="modal-header">
+                        <h4 class="modal-title" id="modal-title">Confirmación</h4>
+                        <button type="button" class="close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body text-center">
+                        <i class="fa fa-question fa-3x text-info"></i>
+                        <p class="mt-2"><strong>¿Estás seguro/a?</strong></p>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="modal.close('Close click')">Cancel</button>
+                        <button type="button" class="btn btn-danger" (click)="onBtnModalOk()">Si</button>
+                      </div>
+                    </div>
+                  </div>
+              
+                  <app-loading-listado [hidden]="!cargandoAutorizacion"></app-loading-listado>
+              
+                </div>
+              </ng-template>

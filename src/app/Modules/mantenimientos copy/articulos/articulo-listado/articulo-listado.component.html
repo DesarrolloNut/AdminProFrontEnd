@@ -1,0 +1,165 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-md-6 align-middle">
+                        <h4 class="card-title">Listado de artículos</h4>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <button [routerLink]="[0]" class="btn btn-info"> <i class="fa fa-plus"></i> Nuevo
+                            artículo
+                        </button>
+                    </div>
+                    <div class="col-md-12 p-2">
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <label for="search" class="input-group-text bg-white">
+                                    <span class="bg-white" style="border-right:none">
+                                        <i class="ti-search"></i>
+                                    </span>
+                                </label>
+                            </div>
+                            <input [(ngModel)]="Search" (keyup)="getData()" type="text"
+                                style="border-left:none !important;" class="form-control" placeholder="Buscar">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 no-wrap v-middle">
+                        <thead>
+                            <tr>
+                              <th>Acciones</th>
+
+                                <th>Codigo</th>
+                                <th>Nombre</th>
+                                <th>Tipo</th>
+                                <th>Categoria</th>
+                                <th>Familia</th>
+                                <th>Marca</th>
+                                <th>Impuesto</th>
+                                <th>Estado</th>
+
+                            </tr>
+                        </thead>
+                        <tbody [hidden]="Cargando">
+
+                            <tr *ngFor="let item of data">
+
+                                  <td>
+                                    <button class="btn btn-sm btn-info mr-2" [routerLink]="[item.id]">
+                                        <i class="fa fa-sm fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-success" (click)="openModal(modalListaPreciosArticulo,item)" >
+                                      <i class="fa fa-sm fa-list"></i>
+                                  </button>
+                                </td>
+
+                                <td>
+                                  <span class="font-weight-bold "> {{item.codigoReferencia }}</span>
+                                </td>
+
+                                <td>
+                                    <span > {{ item.nombre | titlecase }}</span>
+                                </td>
+
+
+                                 <td> <span> {{item.tipo }}  </span></td>
+
+                                 <td> <span> {{item.categoria }}  </span></td>
+
+                                 <td> <span> {{item.familia }}  </span></td>
+
+                                 <td> <span> {{item.marca }}  </span></td>
+
+                                 <td> <span> {{item.impuesto }}  </span></td>
+                                 <td>
+                                  <span *ngIf="item.estado"  class="badge badge-success">Activo</span>
+                                  <span *ngIf="!item.estado"  class="badge badge-danger">Inactivo</span>
+                                 </td>
+
+
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+
+
+                <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+
+                <div class="row ">
+                    <div class="col-md-8 col-xs-12 ">
+                        <ngb-pagination [collectionSize]="paginaTotalRecords" [(page)]="paginaNumeroActual"
+                            [pageSize]="paginaSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="getData()">
+                        </ngb-pagination>
+                    </div>
+
+                    <div class="col-md-4 text-right d-none d-md-block  ">
+                        <select class="form-control d-block" name="paginaSize" [(ngModel)]="paginaSize"
+                            (change)="getData()">
+                            <option [ngValue]="5">5 registro por pagina</option>
+                            <option [ngValue]="10">10 registro por pagina</option>
+                            <option [ngValue]="15">15 registro por pagina</option>
+                        </select>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<ng-template #modalListaPreciosArticulo let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title font-weight-bold" id="modal-basic-title">Precios</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0 no-wrap v-middle">
+                <thead>
+                    <tr>
+                        <th>Codigo</th>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                    </tr>
+                </thead>
+                <tbody [hidden]="loadinglistaPreciosEnrroladosArticulo">
+
+                    <tr *ngFor="let item of listaPreciosEnrroladosArticulo">
+                        <td>
+                          <span class=" font-weight-bold"> {{ item.listaPrecioID }}</span>
+                      </td>
+                        <td>
+                            <span class=" font-weight-bold"> {{ item.listaPrecio | titlecase }}</span>
+                        </td>
+
+                         <td>
+                            <span> {{item.precio }} </span>
+                         </td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+        </div>
+
+        <app-loading-listado [hidden]="!loadinglistaPreciosEnrroladosArticulo"></app-loading-listado>
+    </div>
+    <div class="modal-footer">
+    </div>
+</ng-template>

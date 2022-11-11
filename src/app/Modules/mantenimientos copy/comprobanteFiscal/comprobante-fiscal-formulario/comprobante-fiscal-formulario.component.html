@@ -1,0 +1,107 @@
+<div class="row">
+    <div class="control-section">
+        <div id="control_wrapper">
+        </div>
+    </div>
+</div>
+
+<div class="row mb-2">
+    <div class="col">
+        <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 col-12">
+                        <h4 class="card-title">Formulario de comprobantes</h4>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-12 text-right">
+                    </div>
+                </div>
+                <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
+                <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
+
+                    <div class="form-group col-md-4">
+                        <label for="serie"> Serie</label>
+                        <input formControlName="serie" [(ngModel)]="_serie"  [attr.disabled]="true" type="text" mask="AAAA"
+                            [ngClass]="{'is-invalid' : submitted && f.serie.errors,  'form-control':true }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.serie.errors">
+                            <div *ngIf="f.serie.errors.required">El campo es obligatorio</div>
+                            <div *ngIf="f.serie.errors.minlength">Mínimo 3 caracteres </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="form-group col-md-4  ">
+                                <label for="secuenciaDesde"> Secuencia Desde</label>
+                                <input formControlName="secuenciaDesde" type="text" mask="0000000" [attr.disabled]="hayDetalle"
+                                    [ngClass]="{'is-invalid' : submitted && f.secuenciaDesde.errors,  'form-control':true }">
+                                <div class="invalid-feedback" *ngIf="submitted && f.secuenciaDesde.errors">
+                                    <div *ngIf="f.secuenciaDesde.errors.required">El campo es obligatorio</div>
+                                    <div *ngIf="f.secuenciaDesde.errors.minlength">Mínimo 7 caracteres </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="secuenciaHasta"> Secuencia Hasta</label>
+                                <input formControlName="secuenciaHasta" type="text" mask="0000000"
+                                    [ngClass]="{'is-invalid' : submitted && f.secuenciaHasta.errors,  'form-control':true }">
+                                <div class="invalid-feedback" *ngIf="submitted && f.secuenciaHasta.errors">
+                                    <div *ngIf="f.secuenciaHasta.errors.required">El campo es obligatorio</div>
+                                    <div *ngIf="f.secuenciaHasta.errors.minlength">Mínimo 7 caracteres </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+             
+
+                    <div class="form-group col-md-4">
+                      <label for="tipoComprobanteID">Tipo </label>
+                        <select    class="form-control" formControlName="tipoComprobanteID" [attr.disabled]="hayDetalle" placeholder="tipoComprobanteID"
+                        (change)="getSerie($event)"
+                        >
+                          <option [value]="tc.codigo" *ngFor="let tc  of tipoComprobantes">{{tc.nombre}}</option>
+                        </select>
+                        <div style="color:red;" *ngIf=" submitted && f.tipoComprobanteID.errors ">Elige el Almacén</div>
+                  </div>
+
+                    <div class="form-group col-md-4">
+                        <label>Fecha de vencimiento</label>
+                        <ejs-datepicker #default (focus)='onFocus($event)' formControlName="fechaVencimiento"
+                            [format]="'dd-MM-yyyy'" [min]='fechaActual'>
+                        </ejs-datepicker>
+                        <div *ngIf="submitted && f.fechaVencimiento.errors"
+                            class="text-danger small animated animated--fade-in">
+                            <div *ngIf="f.fechaVencimiento.errors.required">El campo es obligatorio</div>
+                            <div *ngIf="f.fechaVencimiento.errors.min">La fecha no puede ser menor a la actual</div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group text-right col-md-12">
+                        <hr />
+
+                        <button class="btn btn-light m-1" routerLink="../" type="button">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+
+                        <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+                            <i class="fas fa-check"></i> Guardar
+                        </button>
+
+                        <!-- boton cargando -->
+                        <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span> Guardando
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

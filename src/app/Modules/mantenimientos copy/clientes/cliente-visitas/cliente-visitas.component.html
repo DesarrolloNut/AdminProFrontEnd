@@ -1,0 +1,171 @@
+ 
+       <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-3 col-lg-3 col-12">
+                  <h4 class="card-title font-weight-bold">Datos de la Rutas</h4>
+                </div>
+               <div class="col-md-9 col-lg-9 col-12 text-right">
+              
+               </div>
+              </div>
+              <app-loading-listado [hidden]="!cargando"></app-loading-listado>
+
+             <div  class="form_contactos" 
+             [style.opacity]="cargando ? '0' : '1'" 
+             [style.visibility]="cargando ? 'hidden' : 'visible'" >
+              <form class="form-row m-t-10" [formGroup]="FormVisitas" (ngSubmit)="onSubmit()">
+           
+            <div class="row col-md-12" *ngFor="let ruta of lasRutas.controls;  let i = index" >
+                <div class="row border border-light p-2 col-12">
+                  <div class="col-12">
+                      <h4 class="card-subtitle">
+                          <span class="badge badge-info">Ruta {{i}}</span>
+                      </h4>
+                  </div>
+                  <div [formGroup]="ruta" class="form-row row col-md-12">          
+                    <div class="form-group col-md-6">
+                      <label for="example-email">Tipo de Ruta</label>
+                      <ng-select [items]="tiposRuta" bindLabel="nombre" bindValue="codigo" (change)="onChangeTipoRuta($event,i)"
+                        placeholder="Seleccionar tipo ruta" [loading]="cargandoTiposRuta" [clearable]="false"
+                        notFoundText="No resultados" formControlName="tipoRutaId"
+                        [ngClass]="{ 'is-invalid': submitted && ruta.get('tipoRutaId').errors }"
+                        >
+                      </ng-select>
+                      <div *ngIf="submitted && ruta.get('tipoRutaId').errors" class="invalid-feedback">
+                        <div *ngIf="ruta.get('tipoRutaId').errors.required">
+                          El campo es obligatorio</div>
+                      </div>
+                    </div>
+        
+                    <div class="form-group col-md-6">
+                      <label for="example-email"> Ruta</label>
+                      <ng-select [items]="rutas" bindLabel="nombre" bindValue="codigo" placeholder="Seleccionar  ruta"
+                        [loading]="cargadoRutas" [clearable]="false"
+                        (focus)="buscarRuta(i)"
+                        [ngClass]="{ 'is-invalid': submitted && ruta.get('rutaId').errors }"
+                        notFoundText="No resultados" formControlName="rutaId">
+                      </ng-select>
+                      <div *ngIf="submitted && ruta.get('rutaId').errors" class="invalid-feedback">
+                        <div *ngIf="ruta.get('rutaId').errors.required">
+                          El campo es obligatorio</div>
+                      </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label for="example-email">Tipo de Visita</label>
+                      <ng-select [items]="frecuenciaVisitas" bindLabel="nombre" bindValue="codigo"
+                        placeholder="Seleccionar tipo" [loading]="cargandoFVisitasCombo" [clearable]="false"
+                        [ngClass]="{ 'is-invalid': submitted && ruta.get('frecuenciaVisitaId').errors }"
+                        notFoundText="No resultados" formControlName="frecuenciaVisitaId">
+                      </ng-select>
+                      <div *ngIf="submitted && ruta.get('frecuenciaVisitaId').errors" class="invalid-feedback">
+                        <div *ngIf="ruta.get('frecuenciaVisitaId').errors.required">
+                          El campo es obligatorio</div>
+                      </div>
+                    </div>
+        
+        
+                    <div class="form-group col-md-12">
+                      <label>Dia de Semana</label>
+                      <br>
+                      <span class="text_seleccione">Marque los dias de visita</span>
+                      <br>
+                      <div  class="btn-group btn-group-toggle  custom-btns rectangle">
+                        <label ngbButtonLabel class=" btn-outline-dark">
+                          <input ngbButton type="checkbox" [disabled]="this.r.value[i].tipoRutaId ==null"  formControlName="visitaLunes">
+                          <span style="font-weight: 500;">L</span>
+                          <br>
+                         Lunes
+                        </label>
+                      </div>
+                      <div class="btn-group btn-group-toggle  custom-btns rectangle ">
+                        <label ngbButtonLabel class=" btn-outline-dark">
+                          <input ngbButton type="checkbox" [disabled]="this.r.value[i].tipoRutaId ==null"   formControlName="visitaMartes">
+                          <span style="font-weight: 500;">M</span>
+                          <br>
+                         Martes
+                        </label>
+                      </div>
+                      <div class="btn-group btn-group-toggle  custom-btns rectangle">
+                        <label ngbButtonLabel class=" btn-outline-dark">
+                          <input ngbButton type="checkbox" [disabled]="this.r.value[i].tipoRutaId ==null"   formControlName="visitaMiercoles">
+                          <span style="font-weight: 500;">M</span>
+                          <br>
+                         Miercoles
+                        </label>
+                      </div>
+                      <div class="btn-group btn-group-toggle  custom-btns rectangle">
+                        <label ngbButtonLabel class=" btn-outline-dark">
+                          <input ngbButton type="checkbox" [disabled]="this.r.value[i].tipoRutaId ==null"   formControlName="visitaJueves">
+                          <span style="font-weight: 500;">J</span>
+                          <br>
+                         Jueves
+                        </label>
+                      </div>
+                      <div class="btn-group btn-group-toggle  custom-btns rectangle">
+                        <label ngbButtonLabel class=" btn-outline-dark">
+                          <input ngbButton type="checkbox" [disabled]="this.r.value[i].tipoRutaId ==null"   formControlName="visitaViernes">
+                          <span style="font-weight: 500;">V</span>
+                          <br>
+                         Viernes
+                        </label>
+                      </div>
+                      <div class="btn-group btn-group-toggle  custom-btns rectangle">
+                        <label ngbButtonLabel class=" btn-outline-dark">
+                          <input ngbButton type="checkbox" [disabled]="this.r.value[i].tipoRutaId ==null"  formControlName="visitaSabado">
+                          <span style="font-weight: 500;">S</span>
+                          <br>
+                         Sabado
+                        </label>
+                      </div>
+                      <div class="btn-group btn-group-toggle  custom-btns rectangle">
+                        <label ngbButtonLabel class=" btn-outline-dark">
+                          <input ngbButton type="checkbox" [disabled]="this.r.value[i].tipoRutaId ==null"   formControlName="visitaDomingo">
+                          <span style="font-weight: 500;">D</span>
+                          <br>
+                         Domingo
+                        </label>
+                      </div>
+                    </div>
+                    
+                              <div class="form-group  col-md-2  mt-1">
+                                <button type="button" [disabled]="i==0"  *ngIf="!ruta.get('cargando').value" (click)="eliminarRuta(ruta,i)" class="btn btn-danger btn-round-sm btn-sm">
+                                  <i class="fas fa-minus"></i> Eliminar
+                                </button>
+                                <button type="button" *ngIf="ruta.get('cargando').value" disabled   class="btn btn-danger btn-round-sm btn-sm">
+                                  <i class="spinner-border spinner-border-sm"></i> Eliminando
+                                </button>
+                              </div>
+                            </div>
+                </div>
+            </div>
+                <div class="form-group text-right col-md-12">
+                  <hr />
+                  <div class="text-right mr-5" style="display: inline-block;">
+
+                    <button [disabled]="noSePuedeAgregarMasRutas" class="btn btn-success " (click)="onAddRuta()" type="button">
+                      <i class="fas fa-plus"></i> Agregar ruta
+                    </button>
+                  </div>
+                  <button class="btn btn-light m-1" routerLink="../" type="button">
+                    <i class="fas fa-times"></i> Cancelar 
+                  </button>
+
+                  <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+                    <i class="fas fa-check"></i> Guardar Rutas
+                  </button>
+                  <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                    <span class="spinner-border spinner-border-sm"></span> Guardando
+                  </button>
+                </div>
+
+              </form>
+             </div>
+
+
+            </div>
+          </div>
+        </div>
+      </div> 

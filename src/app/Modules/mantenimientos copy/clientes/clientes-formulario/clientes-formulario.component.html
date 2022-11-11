@@ -1,0 +1,183 @@
+<div class="row">
+  <div class="control-section">
+    <div id="control_wrapper">
+    </div>
+  </div>
+</div>
+
+<div class="row mb-2">
+  <div class="col">
+    <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
+  </div>
+</div>
+
+
+<div class="row">
+
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title ">Formulario de cliente <br>
+          <div *ngIf="loadingClienteInfo" class="spinner-border spinner-border-sm" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+          <span *ngIf="!loadingClienteInfo"  class="font-weight-bold" style="font-size: 16px;">
+
+            <i  class="fa fa-user" aria-hidden="true"></i>
+          <!-- FIRST PART TEXT HEADER -->
+            <span *ngIf="clienteId<=0">
+              NUEVO CLIENTE
+            </span>
+            <span *ngIf="clienteId>0">
+                  <!-- {{clienteInfo.nombres | uppercase}} {{clienteInfo.apellidos | uppercase }}   -->
+                  {{clienteInfo.clienteNombre | uppercase}}
+                  |
+            </span>
+          <!-- FIRST PART TEXT HEADER -->
+
+
+         <!-- SECOND PART TEXT HEADER -->
+            <span class="badge badge-info" style="font-weight: 700 !important;" *ngIf=" clienteId>0 && clienteInfo.clientePadreId<=0 || clienteInfo.clientePadreId==null ">
+                    PRINCIPAL
+           </span>
+           <span  class="badge badge-secondary"  style="font-weight: 700 !important;"  *ngIf="clienteInfo.clientePadreId>0">
+                    SUCURSAL
+           </span>
+         <!-- FIRST PART TEXT HEADER -->
+
+          </span>
+        </h4>
+        <!-- <h6 class="card-subtitle">This is basic Default pagination</h6> -->
+        <ngb-tabset #tabset="ngbTabset">
+
+          <ngb-tab id="GENERALES">
+            <ng-template ngbTabTitle>
+              <b>Generales
+                <div class="pulse-container" >
+                  <div class="pulse-box"  *ngIf="isnotNecesaryFieldsCompleteInGenerales else circulePulsating">
+                  </div>
+                </div>
+            </b></ng-template>
+            <ng-template ngbTabContent>
+              <app-cliente-datos-generales
+               (clienteTabsValida)="setClienteTabsValida($event)"
+               (goTabByKey)="changeTabByKey($event)"
+               (clienteExtraInfo)="setClienteInfo($event)"
+               (clienteIdCreado)="setClienteIdGuardado($event)"
+               [clientId]="clienteId">
+              </app-cliente-datos-generales>
+            </ng-template>
+          </ngb-tab>
+
+          <ngb-tab  *ngxPermissionsOnly="['mantenimientos_cliente_visitas']"
+           id="VISITAS_RUTA" [disabled]="clienteId<=0 ">
+            <ng-template ngbTabTitle>
+              <b>Visitas/Rutas
+                <div class="pulse-container" >
+                  <div class="pulse-box"  *ngIf="isnotNecesaryFieldsCompleteInVisitas else circulePulsating">
+                  </div>
+                </div>
+            </b></ng-template>
+            <ng-template ngbTabContent>
+            <app-cliente-visitas
+              [clientId]="clienteId"
+              (goTabByKey)="changeTabByKey($event)"
+              (isnotNecesaryFieldsCompleteO)="isnotNecesaryFieldsCompleteInVisitas=$event"
+              [isnotNecesaryFieldsComplete]="isnotNecesaryFieldsCompleteInVisitas">
+            </app-cliente-visitas>
+            </ng-template>
+          </ngb-tab>
+
+          <ngb-tab *ngxPermissionsOnly="['mantenimientos_cliente_contactos']"
+           id="CONTACTOS" [disabled]="clienteId<=0 ">
+            <ng-template ngbTabTitle>
+              <b>Contactos
+                <div class="pulse-container" >
+                  <div class="pulse-box"  *ngIf="isnotNecesaryFieldsCompleteInContactos else circulePulsating">
+                  </div>
+                </div>
+            </b></ng-template>
+            <ng-template ngbTabContent>
+            <app-cliente-contactos
+              [clientId]="clienteId"
+              (goTabByKey)="changeTabByKey($event)"
+              (isnotNecesaryFieldsCompleteO)="isnotNecesaryFieldsCompleteInContactos=$event"
+              [isnotNecesaryFieldsComplete]="isnotNecesaryFieldsCompleteInContactos">
+            </app-cliente-contactos>
+            </ng-template>
+          </ngb-tab>
+
+          <ngb-tab *ngxPermissionsOnly="['mantenimientos_cliente_finanzas']"
+          id="FINANZAS" [disabled]="clienteId<=0">
+            <ng-template ngbTabTitle>
+              <b>Finanzas
+                <div class="pulse-container" >
+                  <div class="pulse-box"  *ngIf="isnotNecesaryFieldsCompleteInFinanzas else circulePulsating">
+                  </div>
+                </div>
+              </b></ng-template>
+            <ng-template ngbTabContent>
+              <app-cliente-finanzas
+               [clientId]="clienteId"
+               [clientExtraInfo]="clienteInfo"
+               (goTabByKey)="changeTabByKey($event)"
+               (isnotNecesaryFieldsCompleteO)="isnotNecesaryFieldsCompleteInFinanzas=$event"
+               [isnotNecesaryFieldsComplete]="isnotNecesaryFieldsCompleteInFinanzas">
+              </app-cliente-finanzas>
+            </ng-template>
+          </ngb-tab>
+
+
+          <ngb-tab *ngxPermissionsOnly="['mantenimientos_cliente_comercial']"
+           id="COMERCIAL"  [disabled]="clienteId<=0">
+            <ng-template ngbTabTitle>
+              <b>Comercial
+                <div class="pulse-container" >
+                  <div class="pulse-box"  *ngIf="isnotNecesaryFieldsCompleteInComercial else circulePulsating">
+                  </div>
+                </div>
+              </b></ng-template>
+            <ng-template ngbTabContent>
+              <app-cliente-comercial
+                [clientId]="clienteId"
+                (goTabByKey)="changeTabByKey($event)"
+                (isnotNecesaryFieldsCompleteO)="isnotNecesaryFieldsCompleteInComercial=$event"
+                [isnotNecesaryFieldsComplete]="isnotNecesaryFieldsCompleteInComercial">
+              </app-cliente-comercial>
+            </ng-template>
+          </ngb-tab>
+
+          <ngb-tab *ngxPermissionsOnly="['mantenimientos_cliente_imagen_negocio']"
+           id="NEGOCIO"  [disabled]="clienteId<=0">
+            <ng-template ngbTabTitle>
+              <b>Imagen cliente/negocio
+                <div class="pulse-container" >
+                  <div class="pulse-box"  *ngIf="isnotNecesaryFieldsCompleteInNegocio else circulePulsating">
+                  </div>
+                </div>
+              </b></ng-template>
+            <ng-template ngbTabContent>
+              <app-cliente-negocio
+               [clientId]="clienteId"
+               (goTabByKey)="changeTabByKey($event)"
+               (isnotNecesaryFieldsCompleteO)="isnotNecesaryFieldsCompleteInNegocio=$event"
+               [isnotNecesaryFieldsComplete]="isnotNecesaryFieldsCompleteInNegocio"></app-cliente-negocio>
+            </ng-template>
+          </ngb-tab>
+        </ngb-tabset>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<ng-template #circulePulsating>
+    <div class="pulse-box" >
+      <svg class="pulse-svg" width="10px" height="8px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <circle class="circle first-circle" fill="#FF6347" cx="25" cy="25" r="25"></circle>
+        <circle class="circle second-circle" fill="#FF6347" cx="25" cy="25" r="25"></circle>
+        <circle class="circle third-circle" fill="#FF6347" cx="25" cy="25" r="25"></circle>
+        <circle class="circle" fill="#FF6347" cx="25" cy="25" r="25"></circle>
+      </svg>
+    </div>
+</ng-template>

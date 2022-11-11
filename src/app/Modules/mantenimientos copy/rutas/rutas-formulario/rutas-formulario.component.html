@@ -1,0 +1,173 @@
+<div class="row">
+  <div class="control-section">
+      <div id="control_wrapper">
+      </div>
+  </div>
+</div>
+
+<div class="row mb-2">
+  <div class="col">
+      <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-12">
+      <div class="card">
+          <div class="card-body">
+              <div class="row">
+                  <div class="col-md-6 col-lg-6 col-12">
+                      <h4 class="card-title">Formulario de Ruta</h4>
+                  </div>
+                  <div class="col-md-6 col-lg-6 col-12 text-right">
+                  </div>
+              </div>
+              <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
+              <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
+
+                <div class="form-group col-md-6">
+                  <label for="nombre">Nombre Ruta</label>
+                  <input formControlName="nombre" type="text" name="nombre" id="nombre"
+                      [ngClass]="{'is-invalid' : submitted && f.nombre.errors,  'form-control':true  }">
+                  <div class="invalid-feedback" *ngIf="submitted && f.nombre.errors">
+                      <div *ngIf="f.nombre.errors.required">El campo es obligatorio</div>
+                  </div>
+              </div>
+
+              <div class="form-group col-md-6">
+                <label for="codigoreferencia"># Código de Referencia</label>
+                <input formControlName="codigoReferencia" type="number" name="codigoReferencia" id="codigoreferencia"
+                    [ngClass]="{'is-invalid' : submitted && f.codigoReferencia.errors,  'form-control':true  }">
+                <div class="invalid-feedback" *ngIf="submitted && f.codigoReferencia.errors">
+                    <div *ngIf="f.codigoReferencia.errors.required">El campo es obligatorio</div>
+                </div>
+            </div>
+
+                  <div class="form-group col-md-6">
+                      <label for="example-email">Tipo Ruta</label>
+                      <ng-select [items]="RutaTipo" bindLabel="nombre" bindValue="codigo" placeholder="Seleccionar tipo ruta"
+                          [loading]="loadingRutatipo" [clearable]="false"
+                          [ngClass]="{'form-control border-danger p-0' : submitted && f.tipoRutaId.errors }"
+                          notFoundText="No resultados" formControlName="tipoRutaId">
+                      </ng-select>
+                      <div *ngIf="submitted && f.tipoRutaId.errors"
+                          class="text-danger small animated animated--fade-in">
+                          <div *ngIf="f.tipoRutaId.errors.required  ">El campo es obligatorio</div>
+                      </div>
+                  </div>
+
+                  <div class="form-group col-md-6">
+                    <label for="example-email">Canal</label>
+                    <ng-select [items]="canales" bindLabel="nombre" bindValue="codigo" placeholder="Seleccionar canal"
+                        [loading]="loadingCanales" [clearable]="false"
+                        [ngClass]="{'form-control border-danger p-0' : submitted && f.canalId.errors }"
+                        notFoundText="No resultados" formControlName="canalId">
+                    </ng-select>
+                    <div *ngIf="submitted && f.canalId.errors"
+                        class="text-danger small animated animated--fade-in">
+                        <div *ngIf="f.canalId.errors.required  ">El campo es obligatorio</div>
+                    </div>
+                </div>
+
+                  <div class="form-group col-md-6">
+                    <label for="example-email">Territorio</label>
+                    <ng-select [items]="territorios" bindLabel="nombre" bindValue="codigo" placeholder="Seleccionar territorio"
+                        [loading]="loadingTerritorios" [clearable]="false"
+                        [ngClass]="{'form-control border-danger p-0' : submitted && f.territorioId.errors }"
+                        notFoundText="No resultados" formControlName="territorioId">
+                    </ng-select>
+                    <div *ngIf="submitted && f.territorioId.errors"
+                        class="text-danger small animated animated--fade-in">
+                        <div *ngIf="f.territorioId.errors.required">El campo es obligatorio</div>
+                    </div>
+                </div>
+
+
+
+              <div class="form-check col-md-3">
+                <label for="estado" class="d-block">Estado</label>
+                <div class="form-group" style="margin-left: 20px;">
+                  <input
+
+                  formControlName="estado" type="checkbox" name="estado" id="estado"
+                  [ngClass]="{'is-invalid' : submitted && f.estado.errors,  'form-check-input':true  }">
+                <label for="estado">Activo</label>
+                </div>
+                <div class="invalid-feedback" *ngIf="submitted && f.estado.errors">
+                </div>
+              </div>
+
+              <div class="form-check col-md-3">
+                <label for="despachoDispositivo" class="d-block">¿Despacho dispositivo?</label>
+                <div class="form-group" style="margin-left: 20px;">
+                  <input
+
+                  formControlName="despachoDispositivo" type="checkbox" name="despachoDispositivo" id="despachoDispositivo"
+                  [ngClass]="{'is-invalid' : submitted && f.despachoDispositivo.errors,  'form-check-input':true  }">
+                <label for="despachoDispositivo">Activo</label>
+                </div>
+                <div class="invalid-feedback" *ngIf="submitted && f.despachoDispositivo.errors">
+                </div>
+              </div>
+
+                  <!-- <div class="form-group col-md-6">
+                    <label for="example-email">Entregador</label>
+                    <ng-select [items]="Entregador" bindLabel="nombre" bindValue="codigo" placeholder="Seleccionar Supervisor"
+                        [loading]="loadingRutatipo" [clearable]="false"
+                        [ngClass]="{'form-control border-danger p-0' : submitted && f.usuarioId.errors }"
+                        notFoundText="No resultados" formControlName="usuarioId">
+                    </ng-select>
+                    <div *ngIf="submitted && f.usuarioId.errors"
+                        class="text-danger small animated animated--fade-in">
+                        <div *ngIf="f.usuarioId.errors.required  ">El campo es obligatorio</div>
+                    </div>
+                </div> -->
+
+<!--
+              <div class="col-md-6 py-4 px-4">
+                <div class="form-group">
+                  <input formControlName="estado" type="checkbox" name="estado" id="estado"
+                  [ngClass]="{'is-invalid' : submitted && f.estado.errors,  'form-check-input':true  }">
+                  <label for="estado" class="form-check-label">Estado</label>
+              </div>
+              </div> -->
+
+
+              <!-- <div class="form-group form-check col-md-6">
+                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                <label class="form-check-label" for="exampleCheck1">Estado: </label>
+              </div> -->
+
+                  <!-- <div class="form-group col-md-12">
+                      <label for="descripcion"> Descripción</label>
+
+                      <textarea formControlName="descripcion" class="form-control" name="descripcion" id="descripcion"
+                          rows="5"></textarea>
+                      <div class="invalid-feedback" *ngIf="submitted && f.descripcion.errors">
+                          <div *ngIf="f.descripcion.errors.required">El campo es obligatorio</div>
+                      </div>
+                  </div> -->
+
+                  <div class="form-group text-right col-md-12">
+                      <hr />
+
+                      <button class="btn btn-light m-1" routerLink="../" type="button">
+                          <i class="fas fa-times"></i> Cancelar
+                      </button>
+
+                      <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+                          <i class="fas fa-check"></i> Guardar
+                      </button>
+
+                      <!-- boton cargando -->
+                      <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                          <span class="spinner-border spinner-border-sm"></span> Guardando
+                      </button>
+                  </div>
+
+              </form>
+          </div>
+      </div>
+  </div>
+</div>

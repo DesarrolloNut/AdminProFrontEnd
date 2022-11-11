@@ -234,7 +234,6 @@ export class HoraPickingFormularioComponent implements OnInit {
     let parametros: Parametro[] = [
       { key: "CompaniaID", value: this.authService.tokenDecoded.primarygroupsid }
   ];
-
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
       "GetSucursalesByCompaniaComboboxPicking",parametros).subscribe(response => {
         if (!response.ok) {

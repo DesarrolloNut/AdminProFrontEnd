@@ -1,0 +1,223 @@
+<div class="row">
+    <div class="control-section">
+        <div id="control_wrapper">
+        </div>
+    </div>
+</div>
+
+<div class="row mb-2">
+    <div class="col">
+        <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 col-12">
+                        <h4 class="card-title">Formulario de promociones</h4>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-12 text-right" *ngIf="actualizando">
+
+                        <ng-template [ngxPermissionsOnly]="'mantenimientos_promocion_solicitar_autorizacion'">
+
+                            <button *ngIf="f.estadoID.value == 1" class="btn btn-sm btn-light m-1"
+                                (click)="openModal(modalConfirm, 2)">
+                                <i class=" fa fa-sm fa-paper-plane"></i> Solicitar autorización
+                            </button>
+
+                        </ng-template>
+
+                        <ng-template [ngxPermissionsOnly]="'mantenimientos_promocion_autorizacion'">
+
+                            <button *ngIf="f.estadoID.value > 1 && f.estadoID.value < 3"
+                                class="btn btn-sm btn-success m-1" (click)="openModal(modalConfirm, 3)">
+                                <i class=" fa fa-sm fa-check"></i> Autorizar
+                            </button>
+
+                            <button *ngIf="f.estadoID.value > 1 && f.estadoID.value < 4" class="btn btn-sm btn-warning m-1"
+                                (click)="openModal(modalConfirm, 1)">
+                                <i class=" fa fa-sm fa-times"></i> Desautorizar
+                            </button>
+                        </ng-template>
+
+                    </div>
+                </div>
+
+
+                <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
+                <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
+
+                    <div class="form-group col-md-6">
+                        <label for="nombre"> Nombre</label>
+                        <input [readonly]="IsFormDisabled" formControlName="nombre" type="text" name="nombre"
+                            id="nombre"
+                            [ngClass]="{'is-invalid' : submitted && f.nombre.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.nombre.errors">
+                            <div *ngIf="f.nombre.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="example-email">Lista precio</label>
+                        <ng-select [readonly]="IsFormDisabled" [items]="listasPrecios" bindLabel="nombre"
+                            bindValue="codigo" [loading]="loadingListasPrecios"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.listaPrecioID.errors }"
+                            notFoundText="No resultados" formControlName="listaPrecioID">
+                        </ng-select>
+                        <div *ngIf="submitted && f.listaPrecioID.errors"
+                            class="text-danger small animated animated--fade-in">
+                            <div *ngIf="f.listaPrecioID.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                      <label for="example-email">Canales</label>
+                      <ng-select [readonly]="IsFormDisabled" [items]="listasCanal" bindLabel="nombre"
+                          bindValue="codigo" [loading]="loadingCanal"
+                          [ngClass]="{'form-control border-danger p-0' : submitted && f.canalID.errors }"
+                          notFoundText="No resultados" formControlName="canalID">
+                      </ng-select>
+                      <div *ngIf="submitted && f.canalID.errors"
+                          class="text-danger small animated animated--fade-in">
+                          <div *ngIf="f.canalID.errors.required  ">El campo es obligatorio</div>
+                      </div>
+                  </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="example-email">Artículo promoción</label>
+                        <ng-select [readonly]="IsFormDisabled" [items]="articulos" bindLabel="nombre" bindValue="codigo"
+                            [loading]="loadingArticulos"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.articuloPromocionID.errors }"
+                            notFoundText="No resultados" formControlName="articuloPromocionID">
+                        </ng-select>
+                        <div *ngIf="submitted && f.articuloPromocionID.errors"
+                            class="text-danger small animated animated--fade-in">
+                            <div *ngIf="f.articuloPromocionID.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="cantidadPromocion">Cantidad a comprar</label>
+                        <input [readonly]="IsFormDisabled" formControlName="cantidadPromocion" type="number"
+                            name="cantidadPromocion" id="cantidadPromocion"
+                            [ngClass]="{'is-invalid' : submitted && f.cantidadPromocion.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.cantidadPromocion.errors">
+                            <div *ngIf="f.cantidadPromocion.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="example-email">Artículo entrega</label>
+                        <ng-select [readonly]="IsFormDisabled" [items]="articulos" bindLabel="nombre" bindValue="codigo"
+                            [loading]="loadingArticulos"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.articuloEntregaID.errors }"
+                            notFoundText="No resultados" formControlName="articuloEntregaID">
+                        </ng-select>
+                        <div *ngIf="submitted && f.articuloEntregaID.errors"
+                            class="text-danger small animated animated--fade-in">
+                            <div *ngIf="f.articuloEntregaID.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="cantidadEntrega">Cantidad a entregar</label>
+                        <input [readonly]="IsFormDisabled" formControlName="cantidadEntrega" type="number"
+                            name="cantidadEntrega" id="cantidadEntrega"
+                            [ngClass]="{'is-invalid' : submitted && f.cantidadEntrega.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.cantidadEntrega.errors">
+                            <div *ngIf="f.cantidadEntrega.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group col-md-6">
+                        <label>Desde</label>
+                        <ejs-datepicker [readonly]="IsFormDisabled" formControlName="fechaDesde" [min]="fechaActual"
+                            [format]="'dd-MM-yyyy'">
+                        </ejs-datepicker>
+                        <div *ngIf="submitted && f.fechaDesde.errors"
+                            class="text-danger small animated animated--fade-in">
+                            <div *ngIf="f.fechaDesde.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label>Hasta</label>
+                        <ejs-datepicker [readonly]="IsFormDisabled" formControlName="fechaHasta" [min]="fechaActual"
+                            [format]="'dd-MM-yyyy'">
+                        </ejs-datepicker>
+                        <div *ngIf="submitted && f.fechaHasta.errors"
+                            class="text-danger small animated animated--fade-in">
+                            <div *ngIf="f.fechaHasta.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-12">
+                        <label for="descripcion"> Descripción</label>
+
+                        <textarea [readonly]="IsFormDisabled" formControlName="descripcion" class="form-control"
+                            name="descripcion" id="descripcion" rows="5"></textarea>
+                        <div class="invalid-feedback" *ngIf="submitted && f.descripcion.errors">
+                            <div *ngIf="f.descripcion.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group text-right col-md-12">
+                        <hr />
+
+                        <button [disabled]="IsFormDisabled" class="btn btn-light m-1" routerLink="../" type="button">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+
+                        <button [disabled]="IsFormDisabled" *ngIf="!btnGuardarCargando" class="btn btn-info m-1"
+                            type="submit">
+                            <i class="fas fa-check"></i> Guardar
+                        </button>
+
+                        <!-- boton cargando -->
+                        <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span> Guardando
+                        </button>
+                    </div>
+
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<ng-template #modalConfirm let-modal>
+    <div class="container-fluid">
+        <div class="row" *ngIf="!cargandoAutorizacion">
+            <div class="col">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modal-title">Confirmación</h4>
+                    <button type="button" class="close" aria-describedby="modal-title"
+                        (click)="modal.dismiss('Cross click')">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <i class="fa fa-question fa-3x text-info"></i>
+                    <p class="mt-2"><strong>¿Estás seguro?</strong></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary"
+                        (click)="modal.close('Close click')">Cancel</button>
+                    <button type="button" class="btn btn-info" (click)="onBtnModalOk()">Ok</button>
+                </div>
+            </div>
+        </div>
+
+        <app-loading-listado [hidden]="!cargandoAutorizacion"></app-loading-listado>
+
+    </div>
+</ng-template>

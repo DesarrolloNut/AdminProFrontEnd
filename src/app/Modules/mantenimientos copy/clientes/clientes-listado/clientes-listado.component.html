@@ -1,0 +1,290 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+
+                    <div class="col-md-6 align-middle">
+                        <h4 class="card-title">Listado de clientes</h4>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <button *ngxPermissionsOnly="['mantenimientos_cliente_crear']"  [routerLink]="[0]" class="btn btn-info"> <i class="fa fa-plus"></i> Nuevo
+                            cliente
+                        </button>
+                    </div>
+                    <div class="col-md-10 pt-3">
+                      <label for="">Busqueda</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <label for="search" class="input-group-text bg-white">
+                                    <span class="bg-white" style="border-right:none">
+                                        <i class="ti-search"></i>
+                                    </span>
+                                </label>
+                            </div>
+                            <input [(ngModel)]="Search" (keyup)="getClientes()" type="text"
+                             style="border-left:none !important;" class="form-control" placeholder="BUSCAR CLIENTE POR CODIGO | NOMBRE | DOCUMENTO">
+
+                        </div>
+
+                    </div>
+                    <!-- <div class="form-group col-md-2 pt-3" id="section_EstadoERP">
+                      <label for="">Estado ERP</label>
+                        <ng-select [items]="estadosERP" [searchable]="false" bindLabel="nombre" bindValue="codigo" (change)="onChangeTipo($event)"
+                        placeholder="Seleccionar tipo" [clearable]="false"
+                        notFoundText="No resultados" [(ngModel)]="estadoERPSelected" >
+
+                        <ng-template ng-label-tmp let-item="item">
+                          <span>
+                              <i class="fa fa-circle" [ngStyle]="{'color': item.grupo}"></i> {{item.nombre}}
+                          </span>
+                      </ng-template>
+                      <ng-template ng-option-tmp let-item="item" let-index="index">
+                          <span>
+                              <i class="fa fa-circle" [ngStyle]="{'color': item.grupo}"></i> {{item.nombre}}
+                          </span>
+
+                      </ng-template>
+                        </ng-select>
+
+
+
+                   </div> -->
+
+                <div class="form-group col-md-2 pt-3">
+                  <label for="">¿Principal?</label>
+                    <ng-select [items]="tipos" [searchable]="false" bindLabel="nombre" bindValue="codigo" (change)="onChangeTipo($event)"
+                    placeholder="Seleccionar tipo" [clearable]="false"
+                    notFoundText="No resultados" [(ngModel)]="tipo" >
+                    </ng-select>
+                </div>
+                </div>
+                <!-- <h6 class="card-subtitle">Create responsive tables by wrapping any <code>.table</code> in <code>.table-responsive </code></h6>-->
+
+
+
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 no-wrap v-middle">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>ID</th>
+                                <th>Tipo Cliente</th>
+                                <th>Cliente</th>
+                                <th>Documento</th>
+                                <th>Estado</th>
+                                <th>Estado ERP Externo</th>
+                                <th>Condicion Pago</th>
+                                <th>Plazo</th>
+                                <th>Limite Credito</th>
+                                <th>Direccion</th>
+                                <th>Longitud</th>
+                                <th>Latitud</th>
+                                <th>Ruta Vendedor </th>
+                                <th>Ruta Entrega </th>
+                                <th>Ruta Recogida</th>
+                                <th>Ruta Merchandising</th>
+                            </tr>
+                        </thead>
+                        <tbody [hidden]="Cargando">
+
+                            <tr *ngFor="let cliente of clientes">
+                                <td>
+                                    <button class="btn btn-sm btn-info m-1"  *ngxPermissionsOnly="['mantenimientos_cliente_editar']" [routerLink]="[cliente.id]">
+                                        <i class="fa fa-sm fa-edit"></i>
+                                    </button>
+
+                                    <div  *ngxPermissionsOnly="['mantenimientos_cliente_autoriza_subidaSAP']" style="display: inline-block;">
+
+                                      <button   class="btn btn-sm btn-success m-1" (click)="autorizarCambiosCliente(cliente)"
+                                          *ngIf="cliente.estadoERPID==3 && !cliente.loadingAutorizarCambios">
+                                          <i class="fa fa-sm fa-check"></i>
+                                      </button>
+
+                                        <button *ngIf="cliente.loadingAutorizarCambios" disabled class="btn btn-sm btn-success m-1" type="button">
+                                          <span class="spinner-border spinner-border-sm"></span>
+                                      </button>
+                                    </div>
+
+                                    <!-- <button type="button" class="btn btn-sm btn-light m-1"
+                                        *ngIf="!cliente.codigoReferencia || cliente.codigoReferencia == undefined || cliente.codigoReferencia == '' || cliente.codigoReferencia.length == 0 "
+                                        (click)="enviarOrdenSmartService(item.citaID)">
+                                        <i class="fa fa-sm fa-sync"></i>
+                                    </button> -->
+
+                                    <!-- <button type="button" class="btn btn-sm btn-light m-1"
+                                        *ngIf="!cliente.codigoReferencia || cliente.codigoReferencia == undefined || cliente.codigoReferencia == '' || cliente.codigoReferencia.length == 0 "
+                                        (click)="buscarCodigoReferenciaClienteSmart(cliente.id)">
+                                        <i class="fa fa-sm fa-hashtag"></i>
+                                    </button> -->
+                                </td>
+                                <td>
+                                    <span class="badge badge-light text-info "> {{cliente.id}}</span><br>
+                               </td>
+                                <td>
+                                      <span class="text-dark">
+                                        {{cliente.clienteTipo | uppercase }}
+                                       </span>
+                                </td>
+                                <!-- SHOW INFO COLUMNA CLIENTE -->
+
+                                <td>
+                                    <div class="d-flex align-items-center">
+
+                                        <i class="fa fa-user fa-2x text-light"></i>
+
+                                        <div class="ml-3">
+                                            <p class="font-bold mb-0">
+                                                <span> {{cliente.clienteNombre | uppercase }}</span>
+
+                                            </p>
+                                            <!-- <span class="badge badge-light text-info ">ID: {{cliente.id}}</span><br> -->
+                                            <small class="text-info"> <i class=" fa fa-hashtag"></i>
+                                                {{cliente.codigoReferencia }}
+                                                <span *ngIf="cliente.codigoReferencia==null">
+                                                    &nbsp;&nbsp;
+                                                    &nbsp;&nbsp;
+                                                    &nbsp;&nbsp;
+                                                    &nbsp;&nbsp;
+                                                    &nbsp;&nbsp;
+                                                    &nbsp;&nbsp;
+                                                    &nbsp;
+                                                </span>
+                                              |  <span *ngIf="cliente.clientePadreId<=0 || cliente.clientePadreId==null " class="badge badge-info ">PRINCIPAL</span>
+                                                <span *ngIf="cliente.clientePadreId" class="badge badge-secondary">SUCURSAL</span>
+
+                                            </small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <!-- SHOW INFO COLUMNA DOCUMENTO -->
+
+                                <td>
+                                    <span  style="color: #8d8d8d;" class="font-weight-bold">{{cliente.documentoTipo | uppercase}}
+                                    </span>
+                                    <span>: {{cliente.documento}}</span>
+                                </td>
+
+                                <td>
+                                    <span *ngIf="cliente.estadoID==1" class="badge badge-success">Activo</span>
+                                    <span *ngIf="cliente.estadoID==0" class="badge badge-light">Inactivo</span>
+
+
+                                </td>
+
+                                <td>
+                                    <div class="circulo" [ngStyle]="{'background-color':  cliente.estadoColorERP}"></div>
+                                    <span class="text-dark">
+                                        {{cliente.estadoERP}}
+                                    </span>
+                                </td>
+
+                                  <!-- SHOW INFO COLUMNA Condicion Pago -->
+                                  <td>
+                                    <span class="text-dark">
+                                        {{cliente.condicionPago | uppercase}}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="text-dark">
+                                          {{cliente.plazo }} <span *ngIf="cliente.plazo!=='' && cliente.plazo!==null">dias</span>
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="text-dark">
+                                          {{cliente.limiteCredito | currency }}
+                                    </span>
+                                </td>
+
+
+                                     <!-- SHOW INFO COLUMNA DIRECCION -->
+                                <td>
+                                    <span class="font-weight-bold">
+                                         {{cliente.ciudad | uppercase}},
+                                         {{cliente.provincia | uppercase}},
+                                         {{cliente.subSector | uppercase}}
+                                        </span>
+                                    <p class="font-bold mb-0">
+                                        <span class="small d-block text-lowercase">{{cliente.calle | slice: 0:60}}</span>
+                                    </p>
+                                 </td>
+
+
+                              <!-- SHOW INFO COLUMNAS COORDENADAS -->
+                                <td>
+                                    <span class="text-dark">
+                                        {{cliente.longitud }}
+                                    </span>
+                                 </td>
+                                 <td>
+                                    <span class="text-dark">
+                                        {{cliente.latitud }}
+                                    </span>
+                                 </td>
+                                <!-- SHOW INFO COLUMNA RUTAS -->
+                                <td>
+                                    <span class="text-dark">
+                                        {{cliente.rutaVendedor | uppercase}}
+                                    </span>
+                                </td>
+                                <td>
+
+
+                                    <span class="text-dark">
+                                     {{cliente.rutaEntrega | uppercase}}
+                                    </span>
+
+                                </td>
+                                <td>
+
+                                    <span class="text-dark">
+                                      {{cliente.rutaRecogida | uppercase}}
+                                    </span>
+                                    <br>
+
+
+                                </td>
+                                <td>
+                                    <span class="text-dark">
+                                         {{cliente.rutaMerchandising | uppercase}}
+                                    </span>
+                                </td>
+
+
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+
+
+                <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+
+                <div class="row ">
+                    <div class="col-md-8 col-xs-12 ">
+                        <ngb-pagination [collectionSize]="paginaTotalRecords" [(page)]="paginaNumeroActual"
+                            [pageSize]="paginaSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="getClientes()">
+                        </ngb-pagination>
+                    </div>
+
+                    <div class="col-md-4 text-right d-none d-md-block  ">
+                        <select class="form-control d-block" name="paginaSize" [(ngModel)]="paginaSize"
+                            (change)="getClientes()">
+                            <option [ngValue]="5">5 registro por pagina</option>
+                            <option [ngValue]="10">10 registro por pagina</option>
+                            <option [ngValue]="15">15 registro por pagina</option>
+                        </select>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+</div>
+

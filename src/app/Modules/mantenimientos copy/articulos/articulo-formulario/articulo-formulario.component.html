@@ -1,0 +1,439 @@
+<div class="row">
+  <div class="control-section">
+    <div id="control_wrapper">
+    </div>
+  </div>
+</div>
+
+<div class="row mb-2">
+  <div class="col">
+    <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row mb-2">
+          <div class="col-md-6 col-lg-6 col-12">
+            <h4 class="card-title">Formulario de artículos</h4>
+          </div>
+          <div class="col-md-6 col-lg-6 col-12 text-right">
+            <div class=""></div>
+
+          </div>
+        </div>
+        <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
+        <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
+
+          <div class="container_picture  col-xs-8 col-sm-6  col-md-4 col-lg-2">
+            <div class="no_image" *ngIf="f.imagenUrl.value==null || f.imagenUrl.value==''"
+            [style.background-image]="getSantizeUrl(imageDefault400x400)">
+              <div class="btn_subirImg w-100" id="btn_subirImg" *ngIf="f.id.value>0">
+                <button type="button"
+                   class="btn btn-sm btn-outline-light text-info w-100 bg-white "
+                  (click)="openModal(imageUpload)">
+                  <i class="fa fa-upload" aria-hidden="true"></i>Subir
+                </button>
+              </div>
+            </div>
+
+            <div class="yes_image" *ngIf="f.imagenUrl.value!=null && f.imagenUrl.value!=''"
+              [style.background-image]="getSantizeUrl(f.imagenUrl.value)" >
+              <div class="btn_subirImg w-100" id="btn_subirImg">
+
+                <button type="button" class="btn btn-sm btn-success w-75"
+                  (click)="openModal(modalImagePreview)">
+                  <i class="fa fa-eye" aria-hidden="true"></i> Ver
+                </button>
+
+                <button type="button"
+                  class="btn btn-sm btn-outline-light text-info w-25 bg-white"
+                  (click)="openModal(imageUpload)">
+                  <i class="fa fa-upload" aria-hidden="true"></i>
+                  </button>
+
+
+              </div>
+            </div>
+          </div>
+
+
+          <div class="form-group col-xs-4 col-sm-6 col-md-4 col-lg-5 mt-5">
+            <label for="codigoReferencia"> <i class="fa fa-hashtag"></i> Código de Referencia</label>
+            <input formControlName="codigoReferencia" type="text" name="codigoReferencia" id="codigoReferencia"
+              [ngClass]="{'is-invalid' : submitted && f.codigoReferencia.errors,  'form-control':true  }" readonly>
+            <div class="invalid-feedback" *ngIf="submitted && f.codigoReferencia.errors">
+              <div *ngIf="f.codigoReferencia.errors.required">El campo es obligatorio</div>
+            </div>
+          </div>
+
+          <div class="form-group col-xs-12 col-sm-12  col-md-4  col-lg-5 mt-5">
+            <label for="codigoBarra"> <i class="fa fa-hashtag"></i> Código de barra</label>
+            <input formControlName="codigoBarra" type="text" name="codigoBarra" id="codigoBarra"
+              [ngClass]="{'is-invalid' : submitted && f.codigoBarra.errors,  'form-control':true  }">
+            <div class="invalid-feedback" *ngIf="submitted && f.codigoBarra.errors">
+              <div *ngIf="f.codigoBarra.errors.required">El campo es obligatorio</div>
+            </div>
+          </div>
+
+          <div class="form-group col-md-12 mt-2">
+            <label for="nombre"> Nombre</label>
+            <input formControlName="nombre" type="text" name="nombre" id="nombre"
+              [ngClass]="{'is-invalid' : submitted && f.nombre.errors,  'form-control':true  }">
+            <div class="invalid-feedback" *ngIf="submitted && f.nombre.errors">
+              <div *ngIf="f.nombre.errors.required">El campo es obligatorio</div>
+            </div>
+          </div>
+
+          <div class="form-group col-md-4">
+            <label for="inputEmail4"> Tipo</label>
+            <ng-select bindLabel="nombre" bindValue="codigo" [items]="articuloTipos" [loading]="loadingArticuloTipos"
+              [clearable]="false" [ngClass]="{'form-control border-danger p-0' : submitted && f.tipoArticuloID.errors }"
+              notFoundText="No resultados" formControlName="tipoArticuloID">
+            </ng-select>
+            <div *ngIf="submitted && f.tipoArticuloID.errors" class="text-danger small">
+              <div *ngIf="f.tipoArticuloID.errors.required  ">El campo es obligatorio</div>
+            </div>
+          </div>
+
+          <div class="form-group col-md-4">
+            <label for="example-email">Categoría</label>
+            <ng-select [items]="articuloCategorias" bindLabel="nombre" bindValue="codigo"
+              [loading]="loadingArticuloCategorias" [clearable]="false"
+              [ngClass]="{'form-control border-danger p-0' : submitted && f.categoriaID.errors }"
+              notFoundText="No resultados" formControlName="categoriaID">
+            </ng-select>
+            <div *ngIf="submitted && f.categoriaID.errors" class="text-danger small animated animated--fade-in">
+              <div *ngIf="f.categoriaID.errors.required  ">El campo es obligatorio</div>
+            </div>
+          </div>
+
+          <div class="form-group col-md-4">
+            <label for="inputEmail4"> Familia</label>
+            <ng-select bindLabel="nombre" bindValue="codigo" [items]="articuloFamilias" [loading]="loadingMarcas"
+              [clearable]="false" [ngClass]="{'form-control border-danger p-0' : submitted && f.familiaID.errors }"
+              notFoundText="No resultados" formControlName="familiaID">
+            </ng-select>
+            <div *ngIf="submitted && f.familiaID.errors" class="text-danger small">
+              <div *ngIf="f.familiaID.errors.required  ">El campo es obligatorio</div>
+            </div>
+          </div>
+
+          <div class="form-group col-md-4">
+            <label for="inputEmail4"> Marca</label>
+            <ng-select bindLabel="nombre" bindValue="codigo" [items]="marcas" [loading]="loadingMarcas"
+              [clearable]="false" [ngClass]="{'form-control border-danger p-0' : submitted && f.marcaID.errors }"
+              notFoundText="No resultados" formControlName="marcaID">
+            </ng-select>
+            <div *ngIf="submitted && f.marcaID.errors" class="text-danger small">
+              <div *ngIf="f.marcaID.errors.required  ">El campo es obligatorio</div>
+            </div>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="inputEmail4"> Unidad de Medida</label>
+            <ng-select bindLabel="nombre" bindValue="codigo" [items]="unidadesMedida" [loading]="loadingUnidadesMedida"
+              [clearable]="false" [ngClass]="{'form-control border-danger p-0' : submitted && f.unidadMedidaId.errors }"
+              notFoundText="No resultados" formControlName="unidadMedidaId">
+            </ng-select>
+            <div *ngIf="submitted && f.unidadMedidaId.errors" class="text-danger small">
+              <div *ngIf="f.unidadMedidaId.errors.required  ">El campo es obligatorio</div>
+            </div>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="ubicacion"> Ubicacion</label>
+            <input formControlName="ubicacion" type="number" name="ubicacion" id="ubicacion"
+              [ngClass]="{'is-invalid' : submitted && f.ubicacion.errors,  'form-control':true  }">
+            <div class="invalid-feedback" *ngIf="submitted && f.ubicacion.errors">
+              <div *ngIf="f.ubicacion.errors.required">El campo es obligatorio</div>
+            </div>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="peso">Peso</label>
+            <input formControlName="peso" type="number" name="peso" id="peso"
+              [ngClass]="{'is-invalid' : submitted && f.peso.errors,  'form-control':true  }">
+            <div class="invalid-feedback" *ngIf="submitted && f.peso.errors">
+              <div *ngIf="f.peso.errors.required">El campo es obligatorio</div>
+            </div>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="costo"> Costo</label>
+            <input formControlName="costo" type="number" name="costo" id="costo"
+              [ngClass]="{'is-invalid' : submitted && f.costo.errors,  'form-control':true  }">
+            <div class="invalid-feedback" *ngIf="submitted && f.costo.errors">
+              <div *ngIf="f.costo.errors.required">El campo es obligatorio</div>
+            </div>
+          </div>
+
+          <div class="form-group col-md-4">
+            <label for="costoObjetivo"> Costo Objetivo</label>
+            <input formControlName="costoObjetivo" type="number" name="costoObjetivo" id="costoObjetivo"
+              [ngClass]="{'is-invalid' : submitted && f.costoObjetivo.errors,  'form-control':true  }">
+            <div class="invalid-feedback" *ngIf="submitted && f.costoObjetivo.errors">
+              <div *ngIf="f.costoObjetivo.errors.required">El campo es obligatorio</div>
+            </div>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="margenObjetivo"> Margen Objetivo</label>
+            <input formControlName="margenObjetivo" type="number" name="margenObjetivo" id="margenObjetivo"
+              [ngClass]="{'is-invalid' : submitted && f.margenObjetivo.errors,  'form-control':true  }">
+            <div class="invalid-feedback" *ngIf="submitted && f.margenObjetivo.errors">
+              <div *ngIf="f.margenObjetivo.errors.required">El campo es obligatorio</div>
+            </div>
+          </div>
+
+
+
+          <div class="form-group col-md-4">
+            <label for="inputEmail4"> Impuesto</label>
+            <ng-select bindLabel="nombre" bindValue="codigo" [items]="impuestos" [loading]="loadingImpuestos"
+              [clearable]="false" [ngClass]="{'form-control border-danger p-0' : submitted && f.impuestoId.errors }"
+              notFoundText="No resultados" formControlName="impuestoId">
+            </ng-select>
+            <div *ngIf="submitted && f.impuestoId.errors" class="text-danger small">
+              <div *ngIf="f.impuestoId.errors.required  ">El campo es obligatorio</div>
+            </div>
+          </div>
+
+
+          <div class="form-check col-md-2">
+            <label for="estado" class="d-block">Estado</label>
+            <div class="form-group" style="margin-left: 20px;">
+              <input formControlName="estado" type="checkbox" name="estado" id="estado"
+                [ngClass]="{'is-invalid' : submitted && f.estado.errors,  'form-check-input':true  }">
+              <label for="estado">Activo</label>
+            </div>
+            <div class="invalid-feedback" *ngIf="submitted && f.estado.errors">
+            </div>
+          </div>
+
+          <div class="form-check col-md-2">
+            <label for="gestionado" class="d-block">Gestionado</label>
+            <div class="form-group" style="margin-left: 20px;">
+              <input formControlName="gestionado" type="checkbox" name="gestionado" id="gestionado"
+                [ngClass]="{'is-invalid' : submitted && f.gestionado.errors,  'form-check-input':true  }">
+              <label for="gestionado">Activo</label>
+            </div>
+            <div class="invalid-feedback" *ngIf="submitted && f.estado.errors">
+            </div>
+          </div>
+
+          <div class="form-group col-md-12">
+            <label for="descripcion"> Descripción</label>
+
+            <textarea formControlName="descripcion" class="form-control" name="descripcion" id="descripcion"
+              rows="2"></textarea>
+            <div class="invalid-feedback" *ngIf="submitted && f.descripcion.errors">
+              <div *ngIf="f.descripcion.errors.required">El campo es obligatorio</div>
+            </div>
+          </div>
+
+
+          <div class="col-12 mt-2">
+            <div class="row border border-light p-2 bg bg-light">
+              <div class="col-12">
+                <h4 class="font-weight-bold ">Artículo de =></h4>
+              </div>
+
+              <div class="col-sm-6 col-md-3 col-lg-2">
+
+                <div class="form-check">
+                  <input formControlName="articuloDeCompra" class="form-check-input" type="checkbox"
+                    id="articuloDeCompra">
+                  <label class="form-check-label font-weight-bold" for="articuloDeCompra">
+                    Compra
+                  </label>
+                </div>
+
+              </div>
+
+              <div class="col-sm-6 col-md-3 col-lg-2">
+
+                <div class="form-check">
+                  <input formControlName="articuloDeVenta" class="form-check-input" type="checkbox"
+                    id="articuloDeVenta">
+                  <label class="form-check-label font-weight-bold" for="articuloDeVenta">
+                    Venta
+                  </label>
+                </div>
+              </div>
+
+              <div class="col-sm-6 col-md-3  col-lg-2">
+
+                <div class="form-check">
+                  <input formControlName="articuloDeInventario" class="form-check-input" type="checkbox"
+                    id="articuloDeInventario">
+                  <label class="form-check-label font-weight-bold" for="articuloDeInventario">
+                    Inventario
+                  </label>
+                </div>
+
+              </div>
+              <div class="col-sm-6 col-md-3  col-lg-2">
+
+                <div class="form-check">
+                  <input formControlName="articuloActivoFijo" class="form-check-input" type="checkbox"
+                    id="articuloActivoFijo">
+                  <label class="form-check-label font-weight-bold" for="articuloActivoFijo">
+                    Activo fijo
+                  </label>
+                </div>
+
+              </div>
+              <div class="col-sm-6 col-md-3  col-lg-2">
+
+                <div class="form-check">
+                  <input formControlName="articuloDeReproceso" class="form-check-input" type="checkbox"
+                    id="articuloDeReproceso">
+                  <label class="form-check-label font-weight-bold" for="articuloDeReproceso">
+                    Reproceso
+                  </label>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group text-right col-md-12">
+            <hr />
+
+            <button class="btn btn-light m-1" routerLink="../" type="button">
+              <i class="fas fa-times"></i> Cancelar
+            </button>
+
+            <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+              <i class="fas fa-check"></i> Guardar
+            </button>
+
+            <!-- boton cargando -->
+            <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+              <span class="spinner-border spinner-border-sm"></span> Guardando
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #imageUpload let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title font-weight-bold" id="modal-basic-title">Subir Imagen del articulo</h4>
+  </div>
+  <div class="modal-body" style="min-height: 470px;">
+    <form #formFile>
+      <input type="file" accept="application/image,.png,.gif,.jpg,.jpeg,.jfif" class="d-none"
+        (change)="fileChangeEvent($event)" #inputFile />
+    </form>
+
+    <div *ngIf="stepNumber==1" class="Step_1 UploadImage mt-4 mb-4" style="cursor: pointer;"
+      (click)="inputFile.click()">
+      <div class="top_Icon text-center" style="font-size: 50px;">
+        <i class="fa fa-cloud-upload-alt" aria-hidden="true"></i>
+      </div>
+      <div class="middle_Text text-center" style="font-size: 50px;">
+        <h4>Click aqui para subir imagen</h4>
+        <h5 class="font-weight-bold">Resolución de imagen requerida 400x400</h5>
+
+      </div>
+    </div>
+
+    <div *ngIf="stepNumber==2" class="Step_2 UploadImage">
+      <div class="image_original">
+        <h5 class="font-weight-bold">2. Recorta/ajusta la imagen</h5>
+        <div class="btns_scale mb-1 text-center" >
+
+         <button class="btn btn-sm btn-danger mr-2" (click)="zoomOut()">
+           Zoom
+           <i class="fa fa-minus"></i>
+          </button>
+
+         <button class="btn btn-sm btn-success" (click)="zoomIn()">
+           Zoom
+           <i class="fa fa-plus"></i>
+          </button>
+        </div>
+
+      <div class="c_image_cropper">
+        <image-cropper
+          [imageChangedEvent]="imageChangedEvent"
+          [maintainAspectRatio]="true"
+          [aspectRatio]="4 / 4"
+          [resizeToWidth]="400"
+          [cropperMinWidth]="128"
+           format="png"
+          [transform]="transform"
+          (imageCropped)="imageCropped($event)"
+           (imageLoaded)="imageLoaded()"
+          (cropperReady)="cropperReady()"
+          (loadImageFailed)="loadImageFailed()">
+        </image-cropper>
+      </div>
+
+      </div>
+    </div>
+
+    <div *ngIf="stepNumber==3" class="Step_3 UploadImage">
+      <div class="image_cropped">
+        <h5 class="font-weight-bold">3. Previsualización de la imagen</h5>
+        <img [src]="croppedImage" class="mt-5" />
+      </div>
+    </div>
+
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" *ngIf="stepNumber==1" class="btn btn-outline-dark" (click)="modal.close('Ok click')">
+      <i class="fa fa-times"></i> Cerrar
+    </button>
+
+    <button type="button" *ngIf="stepNumber==2" class="btn btn-outline-dark" (click)="re_uploadImage(inputFile)">
+      <i class="fa fa-redo"></i>
+      Volver a cargar
+    </button>
+
+    <button type="button" *ngIf="stepNumber==2" class="btn btn-info" (click)="nextToSavePrevImage()">Siguiente</button>
+
+    <button type="button" [disabled]="btnGuardarFotoCargando" *ngIf="stepNumber==3" class="btn btn-outline-dark"
+      (click)="stepNumber=2">
+      <i class="fa fa-redo"></i> Volver a recortar
+    </button>
+
+    <button type="button" *ngIf="stepNumber==3 && !btnGuardarFotoCargando" class="btn btn-info"
+      (click)="savePrevImage(inputFile)">
+      <i class="fa fa-save"></i> Subir imagen
+    </button>
+
+    <button type="button" [disabled]="true" *ngIf="btnGuardarFotoCargando" class="btn btn-info">
+      <div class="spinner-border spinner-border-sm text-secondary" role="status">
+        <span class="sr-only">Loading...</span>
+      </div> Subiendo
+    </button>
+
+  </div>
+</ng-template>
+
+
+<ng-template #modalImagePreview let-modal>
+  <div class="container-fluid">
+    <div class="row"  >
+      <div class="col">
+        <div class="modal-header">
+          <h5 class="font-weight-bold">{{f.codigoReferencia.value}} | {{f.nombre.value}}</h5>
+          <button type="button" class="close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body text-center">
+          <img src="{{f.imagenUrl.value}}" class="imagepreview" style="width: 60%;" >
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="modal.close('Close click')">Salir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</ng-template>

@@ -1,0 +1,341 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-md-6 align-middle">
+                        <h4 class="card-title">Listado de listas de precios</h4>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <button [routerLink]="[0]" class="btn btn-info"> <i class="fa fa-plus"></i> Nueva
+                            lista de precio
+                        </button>
+                    </div>
+
+                    <div class="col-md-12 p-2">
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <label for="search" class="input-group-text bg-white">
+                                    <span class="bg-white" style="border-right:none">
+                                        <i class="ti-search"></i>
+                                    </span>
+                                </label>
+                            </div>
+                            <input [(ngModel)]="Search" (keyup)="getData()" type="text"
+                                style="border-left:none !important;" class="form-control" placeholder="Buscar">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 no-wrap v-middle">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Nombre</th>
+                                <th>Código Referencia</th>
+                                <th></th>
+
+                                <!-- <th>Estado</th> -->
+                            </tr>
+                        </thead>
+                        <tbody [hidden]="Cargando">
+
+                            <tr *ngFor="let item of data">
+                                <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
+                                <td>
+                                    <span> {{item.nombre}}</span>
+                                </td>
+                                <td>
+                                    <span> {{item.codigoReferencia}}</span>
+                                </td>
+                                <!-- <td>
+                                    <span>  {{item.descripcion |  slice:0:60}} ...</span>
+                                </td> -->
+                                <td class="text-right">
+
+
+                                    <button class="btn btn-sm btn-success m-1"
+                                        (click)="openModalAsignacionPreciosMasiva(modalAsignacionPreciosMasivo,item.id)">
+                                        <i class=" fa fa-sm fa-dollar-sign"></i> Precios
+                                    </button>
+
+
+                                    <button class="btn btn-sm btn-success m-1"
+                                        (click)="openModal(modalArticuloAsignacion,item.id)">
+                                        <i class=" fa fa-sm fa-th-list"></i> Artículos
+                                    </button>
+
+                                    <!-- <button class="btn btn-sm btn-success m-1"
+                                        (click)="openModal(modalArticuloPrecio,item.id)">
+                                        <i class=" fa fa-sm fa-dollar-sign"></i>
+                                    </button> -->
+
+                                    <button class="btn btn-sm btn-info" [routerLink]="[item.id]">
+                                        <i class="fa fa-sm fa-edit"></i>
+                                    </button>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+
+
+                <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+
+                <div class="row ">
+                    <div class="col-md-8 col-xs-12 ">
+                        <ngb-pagination [collectionSize]="paginaTotalRecords" [(page)]="paginaNumeroActual"
+                            [pageSize]="paginaSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="getData()">
+                        </ngb-pagination>
+                    </div>
+
+                    <div class="col-md-4 text-right d-none d-md-block  ">
+                        <select class="form-control d-block" name="paginaSize" [(ngModel)]="paginaSize"
+                            (change)="getData()">
+                            <option [ngValue]="5">5 registro por pagina</option>
+                            <option [ngValue]="10">10 registro por pagina</option>
+                            <option [ngValue]="15">15 registro por pagina</option>
+                        </select>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<ng-template #modalAsignacionPreciosMasivo let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Asignación de precios</h4>
+   
+    </div>
+    <div class="modal-body">
+
+        <div class="row">
+            <div class="col mt-4">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th scope="col"></th>
+                            <th scope="col">Artículo</th>
+                            <th scope="col">Precio Nuevo</th>
+                            <th scope="col">Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody [hidden]="loadingArticulosSeleccionados">
+                        <tr *ngFor="let item of preciosParaSubir; let i = index">
+                            <td style="width: 40px;">
+                                <div>
+                                    <button (click)="onDeleteItem(i)" class="btn btn-light btn-sm">
+                                        <i class="fa fa-times "></i>
+                                    </button>
+                                </div>
+                            </td>
+                            <td style="width: 500px;">
+                                <div>
+
+                                    <ng-select [(ngModel)]="item.articuloCodigoReferencia" [items]="confirmed"
+                                        (change)="onArticuloChange($event)" bindLabel="nombre"
+                                        bindValue="codigoReferencia" [clearable]="false" notFoundText="No resultados">
+
+                                        <ng-template ng-label-tmp let-item="item">
+                                            <span>
+                                                {{item.nombre | slice:0:30}}
+                                            </span>
+                                            <span class="badge badge-success">
+                                                {{item.precioActual | currency}}
+                                            </span>
+
+                                        </ng-template>
+                                        <ng-template ng-option-tmp let-item="item" let-index="index">
+                                            <span>
+                                                {{item.nombre | slice:0:30}} ...
+                                            </span>
+                                            <span class="badge badge-success">
+                                                {{item.precioActual | currency}}
+                                            </span>
+
+                                        </ng-template>
+                                    </ng-select>
+
+
+
+                                </div>
+                            </td>
+                            <td style="width: 300px;">
+                                <div>
+                                    <input [(ngModel)]="item.precio" type="text" mask="separator.2"
+                                        thousandSeparator="," class="form-control">
+                                </div>
+                            </td>
+                            <td style="width: 300px;">
+                                <div>
+                                    <ejs-datepicker [(ngModel)]="item.fechaAplicacion" [showClearButton]="false"
+                                        [format]="'dd-MM-yyyy'" [min]="fechaActual">
+                                    </ejs-datepicker>
+                                </div>
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <app-loading-listado [hidden]="!loadingArticulosSeleccionados"></app-loading-listado>
+
+            </div>
+        </div>
+
+
+    </div>
+    <div class="modal-footer" *ngIf="!mostrarBtnCancelarAceptar">
+        <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cancelar</button>
+        <button type="button" class="btn btn-success m-1" *ngIf="!guardandoPrecios"
+            (click)="onSubmit()">Guardar</button>
+        <!-- boton cargando -->
+        <button *ngIf="guardandoPrecios" disabled class="btn btn-success m-1" type="button">
+            <span class="spinner-border spinner-border-sm"></span> Guardando
+        </button>
+    </div>
+</ng-template>
+
+
+
+<ng-template #modalArticuloAsignacion let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Asignación de artículos a la lista</h4>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12" [hidden]="loadingArticulosSeleccionados">
+                <dual-list [sort]="keepSorted" [source]="source" [key]="key" [display]="display" [filter]="filter"
+                    [(destination)]="confirmed" height="265px" [format]="format" [disabled]="disabled"></dual-list>
+            </div>
+            <div class="col-12">
+                <app-loading-listado [hidden]="!loadingArticulosSeleccionados"></app-loading-listado>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cancelar</button>
+        <button type="button" class="btn btn-success m-1" *ngIf="!guardandoArticulos"
+            (click)="guardarArticulosSeleccionados()">Guardar</button>
+        <!-- boton cargando -->
+        <button *ngIf="guardandoArticulos" disabled class="btn btn-success m-1" type="button">
+            <span class="spinner-border spinner-border-sm"></span> Guardando
+        </button>
+    </div>
+</ng-template>
+
+
+
+
+<!-- <ng-template #modalArticuloPrecio let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Asignación de precio a artículos</h4>
+    </div>
+    <div class="modal-body">
+       
+        <div class="row">
+            <div class="col-md-12 p-2">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <label for="search" class="input-group-text bg-white">
+                            <span class="bg-white" style="border-right:none">
+                                <i class="ti-search"></i>
+                            </span>
+                        </label>
+                    </div>
+                    <input [(ngModel)]="searchText" type="text" style="border-left:none !important;"
+                        class="form-control">
+                </div>
+            </div>
+
+            <div class="col-12" [hidden]="loadingArticulosSeleccionados">
+
+                <div class="table-responsive" style="height: 400px;">
+                    <table class="table table-hover mb-0 no-wrap v-middle">
+                        <thead>
+                            <tr>
+                                <th scope="col">
+                                    <div class="custom-control custom-checkbox" *ngIf="mostrarBtnCancelarAceptar">
+                                        <input (change)="toggleSelection()" type="checkbox" class="custom-control-input"
+                                            id="checkAll">
+                                        <label class="custom-control-label" for="checkAll">
+                                        </label>
+                                    </div>
+                                </th>
+                                <th scope="col">Artículo</th>
+                                <th scope="col">Precio</th>
+                                <th scope="col">Fecha de aplicación</th>
+                            </tr>
+                        </thead>
+
+                        <tbody [hidden]="loadingArticulosSeleccionados">
+
+                            <tr *ngFor="let item of confirmed | filter: searchText; let i  = index">
+
+
+                                <td>
+                                    <div class="custom-control custom-checkbox" *ngIf="
+                                         (mostrarBtnCancelarAceptar && item.estadoID == estadoAutorizacionAnterior.codigo && isAutorizando)
+                                         ||   
+                                         (mostrarBtnCancelarAceptar && item.estadoID == estadoAutorizacionUsuario && !isAutorizando)
+                                           ">
+                                        <input [(ngModel)]="item.IsChecked" type="checkbox" class="custom-control-input"
+                                            [attr.id]="item.id">
+                                        <label class="custom-control-label" [attr.for]="item.id">
+                                        </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span>
+                                        <i class="fa fa-circle" [ngStyle]="{'color': item.colorEstado}"></i>
+                                        {{item.estado}}
+                                    </span>
+                                    <span> {{item.nombre}}</span>
+
+                                </td>
+                                <td>
+                                    <input style="width: 100px;"
+                                        [disabled]="item.estadoID > estadoIDAutorizacionDefault"
+                                        [(ngModel)]="item.precio" type="text" class="form-control" prefix="$ "
+                                        mask="separator" thousandSeparator=",">
+                                </td>
+                                <td>
+                                    <ejs-datepicker [readonly]="item.estadoID > estadoIDAutorizacionDefault"
+                                        [(ngModel)]="item.fechaAplicacion" [format]="'dd-MM-yyyy'" [min]="fechaActual">
+                                    </ejs-datepicker>
+                                </td>
+
+
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </div>
+
+            <div class="col-12">
+                <app-loading-listado [hidden]="!loadingArticulosSeleccionados"></app-loading-listado>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer" *ngIf="!mostrarBtnCancelarAceptar">
+        <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cancelar</button>
+        <button type="button" class="btn btn-success m-1" *ngIf="!guardandoArticulos"
+            (click)="guardarArticulosSeleccionadosPrecios()">Guardar</button>
+      
+    </div>
+</ng-template> -->

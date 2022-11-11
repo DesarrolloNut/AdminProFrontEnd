@@ -1,0 +1,165 @@
+ 
+       <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-3 col-lg-3 col-12">
+                  <h4 class="card-title font-weight-bold">Datos Comercial</h4>
+                </div>
+                <div class="col-md-9 col-lg-9 col-12 text-right">
+                  <p class="badge badge-pill badge-danger"
+                     style="font-size: 15px;" 
+                   *ngIf="!isnotNecesaryFieldsComplete">
+                   Debe completar los campos pendientes</p>
+              </div>
+              </div>
+              <app-loading-listado [hidden]="!cargando"></app-loading-listado>
+              <div   class="form_comercial" 
+              [style.opacity]="cargando ? '0' : '1'" 
+              [style.visibility]="cargando ? 'hidden' : 'visible'" >
+                <form class="form-row m-t-10" [formGroup]="FormComercial" (ngSubmit)="onSubmit()">
+                <div class="form-group col-md-4">
+                  <label for="inputEmail4">Lista de Precio</label>
+                  <ng-select bindLabel="nombre" bindValue="codigo" [items]="listasPrecios"
+                    [loading]="cargandoListasPrecios" [clearable]="false"
+                    [ngClass]="{'form-control border-danger p-0' : submitted && f.listaPrecioId.errors }"
+                    notFoundText="No resultados" formControlName="listaPrecioId">
+                  </ng-select>
+                  <div *ngIf="submitted && f.listaPrecioId.errors" class="text-danger small">
+                    <div *ngIf="f.listaPrecioId.errors.required  ">El campo es
+                      obligatorio</div>
+                  </div>
+                </div>
+                <div class="row col-md-12" *ngFor="let negociacion of getNegociacionFormControls(); let i = index" >
+           
+                  <div class="card border border-sm col-md-12" >
+                    <h5 class="card-header">Negociacion {{i+1}}</h5>
+                    <div class="card-body">
+                      <div [formGroup]="negociacion" class="form-row row col-md-12">
+                                                 
+                        <div class="form-group col-md-3">
+                          <label for="inputEmail4"> Tipo Negociación</label>
+                          <ng-select  formControlName="negociacionClienteId"
+                           (change)="onChangeTipoNegociacion($event)" 
+                           bindLabel="nombre" bindValue="codigo" [items]="tiposNegociacion"
+                            [loading]="loadingTipoNegociacion" [clearable]="false"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && negociacion.get('negociacionClienteId').errors }"
+                            notFoundText="No resultados">
+                          </ng-select>
+                          <div *ngIf="submitted && negociacion.get('negociacionClienteId').errors" class="text-danger small">
+                            <div *ngIf="negociacion.get('negociacionClienteId').errors.required  ">El campo es
+                              obligatorio</div>
+                          </div>
+                        </div>
+
+
+                 
+
+                          <div class="form-group col-md-6" *ngIf="negociacion.get('negociacionClienteId').value==1 
+                          || negociacion.get('negociacionClienteId').value==null ">
+                            <label for="inputEmail4"> Articulo</label>
+                            <ng-select bindLabel="nombre" bindValue="codigo" (search)="getArticulos($event)" [items]="articulos"
+                              [loading]="loadingArticulos" [clearable]="false"
+                              [ngClass]="{'form-control border-danger p-0' : submitted && negociacion.get('articuloId').errors }"
+                              notFoundText="No resultados" formControlName="articuloId">
+                            </ng-select>
+                            <div *ngIf="submitted && negociacion.get('articuloId').errors" class="text-danger small">
+                              <div *ngIf="negociacion.get('articuloId').errors.required  ">El campo es
+                                obligatorio</div>
+                            </div>
+                          </div>
+                          <div class="form-group col-md-6" *ngIf="negociacion.get('negociacionClienteId').value>1 &&
+                            negociacion.get('negociacionClienteId').value!==null" >
+                            <label for="comentario"><i class="fa fa-hashtag"></i> Comentario</label>
+                            <textarea  formControlName="comentario" name="comentario" id="comentario" rows="1" 
+                            [ngClass]="{'form-control':true  }">
+                              </textarea>
+                          </div>
+
+                          <div class="form-group  col-md-3">
+                            <label for="monto"><i class="fa fa-money"></i>
+                              Monto
+                            </label>
+
+                            <input type="text" formControlName="monto" class="form-control form-control-sm"  
+                            prefix="$ " mask="separator" thousandSeparator=","
+                              [ngClass]="{ 'is-invalid': submitted && negociacion.get('monto').errors }" />
+                            <div *ngIf="submitted && negociacion.get('monto').errors" class="invalid-feedback">
+                              <div *ngIf="negociacion.get('monto').errors.required">
+                                El campo es obligatorio</div>
+                            </div>
+                            </div>  
+
+                      <div class="form-group  col-md-2  mt-1">
+                        <button type="button"  *ngIf="!negociacion.get('cargando').value" (click)="openModal(modalConfirm,negociacion,i)" class="btn btn-danger btn-round-sm btn-sm">
+                          <i class="fas fa-minus"></i> Eliminar
+                        </button>
+                        <button type="button" *ngIf="negociacion.get('cargando').value" disabled   class="btn btn-danger btn-round-sm btn-sm">
+                          <i class="spinner-border spinner-border-sm"></i> Eliminando
+                        </button>
+                      </div>
+                      
+                    </div>
+                    </div>
+                  </div>
+           
+
+
+            
+
+              </div>
+          
+
+
+                <div class="form-group text-right col-md-12">
+                  <hr />
+                  <div class="text-right mr-5" style="display: inline-block;">
+
+                    <button class="btn btn-success " (click)="onAddNegociacion()" type="button">
+                      <i class="fas fa-plus"></i> Agregar negociación
+                    </button>
+                  </div>
+                  <button class="btn btn-light m-1" routerLink="../" type="button">
+                    <i class="fas fa-times"></i> Cancelar 
+                  </button>
+
+                  <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+                    <i class="fas fa-check"></i> Guardar Información
+                  </button>
+                  <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                    <span class="spinner-border spinner-border-sm"></span> Guardando
+                  </button>
+                </div>
+
+              </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> 
+      <ng-template #modalConfirm let-modal>
+        <div class="container-fluid">
+          <div class="row"  >
+            <div class="col">
+              <div class="modal-header">
+                <h4 class="modal-title" id="modal-title">Confirmación</h4>
+                <button type="button" class="close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body text-center">
+                <i class="fa fa-question fa-3x text-info"></i>
+                <p class="mt-2"><strong>¿Estás seguro/a?</strong></p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="modal.close('Close click')">Cancel</button>
+                <button type="button" class="btn btn-danger" (click)="onBtnModalOk()">Si</button>
+              </div>
+            </div>
+          </div>
+      
+          <app-loading-listado [hidden]="!cargandoAutorizacion"></app-loading-listado>
+      
+        </div>
+      </ng-template>

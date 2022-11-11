@@ -1,0 +1,135 @@
+<div class="row">
+    <div class="control-section">
+        <div id="control_wrapper">
+        </div>
+    </div>
+</div>
+
+<div class="row mb-2">
+    <div class="col">
+        <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 col-12">
+                        <h4 class="card-title">Formulario de compañías</h4>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-12 text-right">
+                    </div>
+                </div>
+                <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
+                <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
+
+                    <div class="form-group col-md-6">
+                        <label for="nombre"> Nombre</label>
+                        <input formControlName="nombre" type="text" name="nombre" id="nombre"
+                            [ngClass]="{'is-invalid' : submitted && f.nombre.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.nombre.errors">
+                            <div *ngIf="f.nombre.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group col-md-6">
+                        <label for="rnc"> RNC</label>
+                        <input formControlName="rnc" type="text" name="rnc" id="rnc"
+                            [ngClass]="{'is-invalid' : submitted && f.rnc.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.rnc.errors">
+                            <div *ngIf="f.rnc.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="referencia"> Referencia</label>
+                        <input formControlName="referencia" type="text" name="referencia" id="referencia"
+                            [ngClass]="{'is-invalid' : submitted && f.referencia.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.referencia.errors">
+                            <div *ngIf="f.referencia.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="impuesto"> Impuesto % </label>
+                        <input formControlName="impuesto" type="number" name="impuesto" id="impuesto"
+                            [ngClass]="{'is-invalid' : submitted && f.impuesto.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.impuesto.errors">
+                            <div *ngIf="f.impuesto.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group col-md-6">
+                        <label for="telefono"> Teléfono</label>
+                        <input formControlName="telefono" type="text" name="telefono" id="telefono"
+                            mask="(000) 000-0000"
+                            [ngClass]="{'is-invalid' : submitted && f.telefono.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.telefono.errors">
+                            <div *ngIf="f.telefono.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="email"> Email</label>
+                        <input formControlName="email" type="email" name="email" id="email"
+                            [ngClass]="{'is-invalid' : submitted && f.email.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.email.errors">
+                            <div *ngIf="f.email.errors.required">El campo es obligatorio</div>
+                            <div *ngIf="f.email.errors.email"> Ingresa un email correcto</div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group col-md-12">
+                        <label for="direccion"> Dirección</label>
+
+                        <textarea formControlName="direccion" class="form-control" name="direccion" id="direccion"
+                            rows="3"></textarea>
+
+                        <!-- <input type="text" name="direccion" id="direccion"
+                            [ngClass]="{'is-invalid' : submitted && f.direccion.errors,  'form-control':true  }"> -->
+                        <div class="invalid-feedback" *ngIf="submitted && f.direccion.errors">
+                            <div *ngIf="f.direccion.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-12">
+                        <label for="descripcion"> Descripción</label>
+
+                        <textarea formControlName="descripcion" class="form-control" name="descripcion" id="descripcion"
+                            rows="4"></textarea>
+
+                        <!-- <input type="text" name="descripcion" id="descripcion"
+                            [ngClass]="{'is-invalid' : submitted && f.descripcion.errors,  'form-control':true  }"> -->
+                        <div class="invalid-feedback" *ngIf="submitted && f.descripcion.errors">
+                            <div *ngIf="f.descripcion.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group text-right col-md-12">
+                        <hr />
+
+                        <button class="btn btn-light m-1" routerLink="../" type="button">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+
+                        <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+                            <i class="fas fa-check"></i> Guardar
+                        </button>
+
+                        <!-- boton cargando -->
+                        <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span> Guardando
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

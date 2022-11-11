@@ -180,7 +180,7 @@ export class SolicitudCambioListadoComponent implements OnInit {
       return el.nombre === username;
     }); 
   }
-
+ 
   setFiles(archivos) {
     for (let i = 0; i < archivos.length; i++) {
       if(this.fileExists(archivos[i].name)){

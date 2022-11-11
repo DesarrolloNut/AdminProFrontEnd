@@ -1,0 +1,204 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-md-6 align-middle">
+                        <h4 class="card-title">Listado de recall</h4>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <button [routerLink]="[0]" class="btn btn-info  mx-1"> <i class="fa fa-plus"></i> Nuevo
+                            recall
+                        </button>
+                        
+                        <button class="btn btn-success" (click)="openModal(modalUploadRecalls)"
+                            *ngxPermissionsOnly="['mantenimientos_recall_puede_importar_excel']"> <i
+                                class="fa fa-file-excel"></i>
+                            Importar
+                        </button>
+
+                        <button class="btn btn-primary mx-1" (click)="exportarReporteExcel()"
+                            *ngxPermissionsOnly="['mantenimientos_recall_puede_importar_excel']"> <i
+                                class="fa fa-download"></i>
+                            Descargar
+                        </button>
+                    </div>
+                    <div class="col-md-12 p-2">
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <label for="search" class="input-group-text bg-white">
+                                    <span class="bg-white" style="border-right:none">
+                                        <i class="ti-search"></i>
+                                    </span>
+                                </label>
+                            </div>
+                            <input [(ngModel)]="Search" (keyup)="getData()" type="text"
+                                style="border-left:none !important;" class="form-control" placeholder="Buscar">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 no-wrap v-middle">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Chasis</th>
+                                <th>Nombre</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody [hidden]="Cargando">
+
+                            <tr *ngFor="let item of data">
+                                <td><span class="badge badge-light text-info ">{{item.codigoReferencia}}</span></td>
+                                <td>
+                                    <span> {{ item.chasis | uppercase }}</span>
+                                </td>
+                                <td>
+                                    <span> {{item.sintoma}}</span>
+                                </td>
+                                <td>
+                                    <span> {{item.estado}}</span>
+                                </td>
+
+                                <td>
+                                    <button class="btn btn-sm btn-info" [routerLink]="[item.id]">
+                                        <i class="fa fa-sm fa-edit"></i>
+                                    </button>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+
+
+                <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+
+                <div class="row ">
+                    <div class="col-md-8 col-xs-12 ">
+                        <ngb-pagination [collectionSize]="paginaTotalRecords" [(page)]="paginaNumeroActual"
+                            [pageSize]="paginaSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="getData()">
+                        </ngb-pagination>
+                    </div>
+
+                    <div class="col-md-4 text-right d-none d-md-block  ">
+                        <select class="form-control d-block" name="paginaSize" [(ngModel)]="paginaSize"
+                            (change)="getData()">
+                            <option [ngValue]="5">5 registro por pagina</option>
+                            <option [ngValue]="10">10 registro por pagina</option>
+                            <option [ngValue]="15">15 registro por pagina</option>
+                        </select>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+<ng-template #modalUploadRecalls let-modal>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <div class="modal-header">
+                    <!-- <h4 class="modal-title" id="modal-title">Artículo</h4> -->
+                    <button type="button" class="close" aria-describedby="modal-title"
+                        (click)="modal.dismiss('Cross click')">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" *ngIf="!dataExcel">
+                        <div class="col-md-4 my-3 offset-md-4">
+                            <div class="card p-6 text-center cursor-pointer" (click)="file.click()">
+                                <input accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                    class="d-none" (change)="onFileChange($event)" #file multiple type="file" />
+
+                                <div class="inline-block p-6 mx-auto text-info" style="cursor: pointer;">
+                                    <i class="fa fa-upload fa-4x border border-light p-4 rounded-circle"></i>
+                                </div>
+                                <div>
+                                    <button class="rounded-circle max-w-full w-100 d-none" type="button">
+                                        SELECCIONAR ARCHIVO</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row" *ngIf="dataExcel && !guardandoDataExcel">
+
+                        <div class="form-group col-md-12 ">
+                            <label for="inputEmail4">Recall</label>
+                            <ng-select bindLabel="nombre" bindValue="codigo" [items]="recallSintomas"
+                                [loading]="loadingRecallSintomas" [clearable]="false" notFoundText="No resultados"
+                                [(ngModel)]="recallID">
+                            </ng-select>
+                        </div>
+                        <div class="col-12">
+                            <div class="table-responsive" style="height: 300px;">
+                                <table class="table table-hover mb-0 no-wrap v-middle">
+                                    <thead>
+                                        <tr>
+                                            <th>Chasis</th>
+                                            <th>Código de Referencia</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of dataExcel">
+                                            <td> {{item.chasis}} </td>
+                                            <td> {{item.codigoReferencia}} </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                        <div class="col-12 mt-2 ">
+                            <h5 class="text-right"><span class="badge badge-light">{{dataExcel.length}}
+                                    records
+                                </span></h5>
+                        </div>
+                    </div>
+
+                    <div class="row" *ngIf="guardandoDataExcel">
+                        <div class="col">
+                            <div class="text-center">
+                                <h5> <i class="fa fa-sync fa-spin"></i> Subiendo a la nube</h5>
+                            </div>
+                            <div class="progress" style="height: 20px;">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-info"
+                                    role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"
+                                    style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="modal-footer" *ngIf="dataExcel && !guardandoDataExcel">
+                    <button type="button" class="btn btn-outline-secondary"
+                        (click)="modal.close('Close click')">Cancelar</button>
+                    <button type="button" class="btn btn-info" (click)="subirDatosExcel()">Guardar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- <app-loading-listado [hidden]="!CargandoDelete"></app-loading-listado> -->
+
+    </div>
+</ng-template>

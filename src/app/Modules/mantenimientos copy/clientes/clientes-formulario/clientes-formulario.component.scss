@@ -1,0 +1,98 @@
+.custom-btns .btn-dark:not(:disabled):not(.disabled).active,
+.custom-btns .btn-dark:not(:disabled):not(.disabled):active,.custom-btns .show>.btn-dark.dropdown-toggle {
+    color: #fff;
+    background-color: #028ee1;
+    border-color: #028ee1;
+}
+// .custom-btns .btn-primary {
+//     color: #fff;
+//     background-color: #4CAF50;
+//     border-color: #4CAF50;
+// }
+// .custom-btns .btn-primary:hover {
+//     color: #fff;
+//     background-color: #3e9941;
+//     border-color: #3e9941;
+// }
+.custom-btns .btn-dark.focus, .btn-dark:focus {
+    box-shadow: 0 0 0 0.2rem #028ee1;
+}
+ 
+  
+  
+ .pulse-container{
+    display:inline-block;position: relative;
+    left: 4px; 
+ }
+
+
+  @mixin circle($circleSize){
+    width: $circleSize;
+    height: $circleSize;
+    -webkit-border-radius: $circleSize/2;
+       -moz-border-radius: $circleSize/2;
+            border-radius: $circleSize/2;
+  }
+  
+ 
+  /* pulse in SVG */
+  svg.pulse-svg{
+      overflow: visible;
+      .first-circle{
+          fill: #f00;
+          transform: scale(0.5);
+          transform-origin: center center;
+          animation: pulse-me 3s linear infinite;
+      }
+      .second-circle{
+          @extend .first-circle;
+          animation-delay: 1s;
+      }
+      .third-circle{
+          @extend .first-circle;
+          animation-delay: 2s;
+      }
+  }
+  
+  /* pulse in CSS */
+  .pulse-css{
+
+      @include circle(50px);
+      background: tomato;
+      position: relative;
+      &:before,
+      &:after{
+          content: '';
+          @include circle(50px);
+          background-color: tomato;
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
+          margin: auto;
+          transform: scale(0.3);
+          transform-origin: center center;
+          animation: pulse-me 3s linear infinite;
+      }
+      &:after{
+          animation-delay: 2s;
+      }
+  }
+  
+  @keyframes pulse-me{
+      0%{
+          transform: scale(0.3);
+          opacity: 0;
+      }
+      50%{
+          opacity: 0.1;
+      }
+      70%{
+          opacity: 0.09;
+      }
+      100%{
+          transform: scale(4);
+          opacity: 0;
+      }
+  }

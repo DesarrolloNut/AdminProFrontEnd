@@ -1,0 +1,456 @@
+<div class="row">
+    <div class="control-section">
+        <div id="control_wrapper">
+        </div>
+    </div>
+</div>
+
+<div class="row mb-2">
+    <div class="col">
+        <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 col-12">
+                        <h4 class="card-title">Formulario de usuarios</h4>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-12 text-right" *ngIf="actualizandoUsuario">
+
+                      <div class="btn-group mr-3">
+                        <button type="button" class="btn btn-outline-info"> Configuraciones</button>
+                        <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
+                          <button class="btn btn-info" ngbDropdownToggle></button>
+                          <div class="dropdown-menu" ngbDropdownMenu>
+                              <button
+                                      (click)="openModalNivelAutorizacion(modalNivelAutorizacion)"
+                                      ngbDropdownItem> <i class="fa fa-check-circle" aria-hidden="true"></i> Nivel autorización</button>
+                              <button
+                                      (click)="openModalAsignacionSucursales(modalAsignacionSucursales)"
+                                      ngbDropdownItem><i class="fa fa-map-marker"></i> Asignación sucursales</button>
+                              <button
+                                      (click)="openModalAsignacionClienteTipo(modalAsignacionClienteTipo)"
+                                      ngbDropdownItem> <i class="fa fa-user" aria-hidden="true"></i>   Asignación cliente tipo</button>
+
+                              <div class="dropdown-divider"></div>
+
+                              <button
+                                        (click)="open1(content1)"
+                                        ngbDropdownItem><i class="fa fa-key"></i> Actualizar contraseña</button>
+                          </div>
+                        </div>
+                      </div>
+<!--
+                        <button class="btn btn-sm btn-light m-1"
+                            (click)="openModalNivelAutorizacion(modalNivelAutorizacion)">
+                            Nivel autorización
+                        </button>
+
+                        <button class="btn btn-sm btn-light m-1" (click)="open1(content1)">
+                            Actualizar contraseña</button> -->
+
+                        <!-- <button class="btn btn-sm btn-light m-1" (click)="openModalCambiaContrasena()">
+                            <i class=" fa fa-sm fa-envelope-open"></i> Enviar correo
+                        </button> -->
+
+                        <!-- <button class="btn btn-sm btn-light" routerLink="">
+                            <i class=" fa fa-sm fa-key"></i>
+                        </button> -->
+
+                    </div>
+                </div>
+                <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
+
+                    <div class="form-group col-md-6">
+                        <label for="userName"> <i class="fa fa-user-circle"></i> Usuario</label>
+                        <input formControlName="userName" type="text" name="userName" id="userName"
+                            [ngClass]="{'is-invalid' : submitted && f.userName.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.userName.errors">
+                            <div *ngIf="f.userName.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="codigoReferencia"> <i class="fa fa-hashtag"></i> Código de Referencia</label>
+                        <input formControlName="codigoReferencia" type="text" name="codigoReferencia"
+                            id="codigoReferencia"
+                            [ngClass]="{'is-invalid' : submitted && f.codigoReferencia.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.codigoReferencia.errors">
+                            <div *ngIf="f.codigoReferencia.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="inputEmail4"> Rol</label>
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="roles" [loading]="loadingRoles"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.rolID.errors }"
+                            notFoundText="No resultados" formControlName="rolID" (change)="getRutasbyRol()">
+                        </ng-select>
+                        <div *ngIf="submitted && f.rolID.errors" class="text-danger small">
+                            <div *ngIf="f.rolID.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group col-md-6">
+                        <label for="email"> <i class="fa fa-envelope-open"></i> Email</label>
+                        <input formControlName="email" type="email" name="email" id="email"
+                            [ngClass]="{'is-invalid' : submitted && f.email.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.email.errors">
+                            <div *ngIf="f.email.errors.required">El campo es obligatorio</div>
+                            <div *ngIf="f.email.errors.email"> Ingresa un email correcto</div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group col-md-6">
+                        <label for="inputEmail4"> <i class="fa fa-id-card"></i> Tipo de Documento</label>
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="documentos"
+                            [loading]="loadingDocumentos" [clearable]="false"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.documentoTipoID.errors }"
+                            notFoundText="No resultados" formControlName="documentoTipoID">
+                        </ng-select>
+                        <div *ngIf="submitted && f.documentoTipoID.errors" class="text-danger small">
+                            <div *ngIf="f.documentoTipoID.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="documento"> <i class="fa fa-id-card"></i> Documento</label>
+                        <div class="input-group">
+                            <input (keyup)="onDocumentoKeyUp()" formControlName="documento" type="text" name="documento"
+                                cleareable="false" id="documento"
+                                [ngClass]="{'is-invalid' :f.documento.value && f.documento.errors,  'form-control':true  }">
+                            <div class="input-group-append" *ngIf="buscandoDocumento">
+                                <span class="input-group-text bg-white border-0"> <i
+                                        class="fa fa-spin fa-spinner"></i></span>
+                            </div>
+                        </div>
+                        <div class="text-danger pt-1" style="font-size:13px"
+                            *ngIf="f.documento.value && f.documento.errors">
+                            <div *ngIf="f.documento.errors.required">El campo es obligatorio</div>
+                            <div *ngIf="f.documento.errors.cedulaestructura">Documento no válido</div>
+                            <div *ngIf="f.documento.errors.minlength">Mínimo 9 caracteres</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="nombres"><i class=""></i> Nombres</label>
+                        <input formControlName="nombres" type="text" name="nombres" id="nombres"
+                            [ngClass]="{'is-invalid' : submitted && f.nombres.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.nombres.errors">
+                            <div *ngIf="f.nombres.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="apellidos">Apellidos</label>
+                        <input formControlName="apellidos" type="text" name="apellidos" id="apellidos"
+                            [ngClass]="{'is-invalid' : submitted && f.apellidos.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.apellidos.errors">
+                            <div *ngIf="f.apellidos.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group col-md-4 col-8">
+                        <label for="telefono"><i class="fa fa-phone"></i> Teléfono</label>
+                        <input formControlName="telefono" type="text" name="telefono" id="telefono"
+                            mask="(000) 000-0000"
+                            [ngClass]="{'is-invalid' : submitted && f.telefono.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.telefono.errors">
+                            <div *ngIf="f.telefono.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-2 col-4">
+                      <label for="telefonoExtension"> Ext.</label>
+                      <input formControlName="telefonoExtension" type="text" name="telefonoExtension"
+                          id="telefonoExtension"
+                          [ngClass]="{'is-invalid' : submitted && f.telefonoExtension.errors,  'form-control':true  }">
+                      <div class="invalid-feedback" *ngIf="submitted && f.telefonoExtension.errors">
+                          <div *ngIf="f.telefonoExtension.errors.required">El campo es obligatorio</div>
+                      </div>
+                  </div>
+
+                    <div class="form-group col-md-3">
+                        <label for="celular"><i class="fa fa-mobile"></i> Celular</label>
+                        <input formControlName="celular" type="text" name="celular" id="celular" mask="(000) 000-0000"
+                            [ngClass]="{'is-invalid' : submitted && f.celular.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.celular.errors">
+                            <div *ngIf="f.celular.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-3" *ngIf="MostrarRutas">
+                      <label for="inputEmail4">Rutas</label>
+                      <ng-select bindLabel="nombre" bindValue="codigo" [items]="rutas" [loading]="loadingRutas"
+                          [ngClass]="{'form-control border-danger p-0' : submitted && f.rutaId.errors }"
+                          notFoundText="No resultados" formControlName="rutaId" (change)="VerificarRutaEnUso($event)">
+                      </ng-select>
+                      <div *ngIf="submitted && f.rutaId.errors" class="text-danger small">
+                          <div *ngIf="f.rutaId.errors.required  ">El campo es obligatorio</div>
+                      </div>
+                    </div>
+
+
+                    <div class="form-group col-md-4">
+                        <label for="inputEmail4"> Supervisor</label>
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="supervisores"
+                            [loading]="loadingUsuarios" [clearable]="false"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.idUsuarioSupervisor.errors }"
+                            notFoundText="No resultados" formControlName="idUsuarioSupervisor">
+                        </ng-select>
+                        <div *ngIf="submitted && f.idUsuarioSupervisor.errors" class="text-danger small">
+                            <div *ngIf="f.idUsuarioSupervisor.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <label for="sucursalId"> <i class="fa fa-map-marker"></i> Sucursal </label>
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="sucursales"
+                            [loading]="loadingSucursales"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.sucursalId.errors }"
+                            notFoundText="No resultados" formControlName="sucursalId">
+                        </ng-select>
+                        <div *ngIf="submitted && f.sucursalId.errors" class="text-danger small">
+                            <div *ngIf="f.sucursalId.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group col-md-4">
+                        <label for="departamentoId"> <i class="fa fa-map-marker"></i> Departamento </label>
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="departamentos"
+                            [loading]="loadingDepartamentos"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.departamentoId.errors }"
+                            notFoundText="No resultados" formControlName="departamentoId">
+                        </ng-select>
+                        <div *ngIf="submitted && f.departamentoId.errors" class="text-danger small">
+                            <div *ngIf="f.departamentoId.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-4" >
+                      <label for="inputEmail4">Tipos de Solicitud</label>
+                      <ng-select bindLabel="nombre" bindValue="codigo" [items]="usuarioTiposSolicitud" [loading]="loadingUsuarioTiposSolicitud"
+                          [ngClass]="{'form-control border-danger p-0' : submitted && f.usuarioTipoSolicitudId.errors }"
+                          notFoundText="No resultados" formControlName="usuarioTipoSolicitudId" >
+                      </ng-select>
+                      <div *ngIf="submitted && f.usuarioTipoSolicitudId.errors" class="text-danger small">
+                          <div *ngIf="f.usuarioTipoSolicitudId.errors.required  ">El campo es obligatorio</div>
+                      </div>
+                  </div>
+
+                    <div class="form-group col-md-4">
+                        <label for="descuentoVenta"> Descuento venta</label>
+                        <input formControlName="descuentoVenta" type="number" name="descuentoVenta" id="descuentoVenta"
+                            [ngClass]="{'is-invalid' : submitted && f.descuentoVenta.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.descuentoVenta.errors">
+                            <div *ngIf="f.descuentoVenta.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <label for="descuentoCompra"> Descuento compra</label>
+                        <input formControlName="descuentoCompra" type="number" name="descuentoCompra"
+                            id="descuentoCompra"
+                            [ngClass]="{'is-invalid' : submitted && f.descuentoCompra.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.descuentoCompra.errors">
+                            <div *ngIf="f.descuentoCompra.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <fieldset class="hm-fieldset row">
+                            <legend class="hm-legend"><i class="fa fa-laptop"></i> Información del equipo</legend>
+                            <div class="form-group col-md-6">
+                                <label for="ipEquipo">Equipo IP</label>
+                                <input formControlName="ipEquipo" type="text" name="ipEquipo" id="ipEquipo"
+                                    [ngClass]="{'is-invalid' : submitted && f.ipEquipo.errors,  'form-control':true  }">
+                                <div class="invalid-feedback" *ngIf="submitted && f.ipEquipo.errors">
+                                    <div *ngIf="f.ipEquipo.errors.required">El campo es obligatorio</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label for="puertoEquipo">Equipo Puerto</label>
+                                <input formControlName="puertoEquipo" type="text" name="puertoEquipo" id="puertoEquipo"
+                                    [ngClass]="{'is-invalid' : submitted && f.puertoEquipo.errors,  'form-control':true  }">
+                                <div class="invalid-feedback" *ngIf="submitted && f.puertoEquipo.errors">
+                                    <div *ngIf="f.puertoEquipo.errors.required">El campo es obligatorio</div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+
+
+
+
+                    <div class="form-group text-right col-md-12">
+                        <hr />
+
+                        <button class="btn btn-light m-1" routerLink="../" type="button">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+
+                        <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+                            <i class="fas fa-check"></i> Guardar
+                        </button>
+
+                        <!-- boton cargando -->
+                        <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span> Guardando
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #content1 let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title"> <span class="font-weight-bold"> {{f.nombres.value}}</span> | Actualizar Contraseña</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="FormularioChangePassword" (ngSubmit)="onSubmitChangePassword()">
+            <!-- <div class="form-group col-md-10">
+                <label for="password"> <i class="fa fa-key"></i> Contraseña actual</label>
+                <input formControlName="passwordActual" type="password" name="passwordActual"
+                    autocomplete="off"
+                    [ngClass]="{'is-invalid' : submittedPassword && fC.passwordActual.errors,  'form-control':true  }">
+                <div class="invalid-feedback" *ngIf="submittedPassword && fC.passwordActual.errors">
+                    <div *ngIf="fC.passwordActual.errors.required">El campo es obligatorio</div>
+                </div>
+            </div> -->
+            <div class="form-group col-md-10">
+                <label for="password"> <i class="fa fa-key"></i> Nueva contraseña</label>
+                <input formControlName="password" type="password" name="password"
+                    [ngClass]="{'is-invalid' : submittedPassword && fC.password.errors,  'form-control':true  }">
+                <div class="invalid-feedback" *ngIf="submittedPassword && fC.password.errors">
+                    <div *ngIf="fC.password.errors.required">El campo es obligatorio</div>
+                </div>
+            </div>
+            <div class="form-group col-md-10">
+                <label for="password"> <i class="fa fa-key"></i>Confirma contraseña</label>
+                <input formControlName="passwordConfirm" type="password" name="passwordConfirm"
+                    [ngClass]="{'is-invalid' : submittedPassword && fC.passwordConfirm.errors,  'form-control':true  }">
+                <div class="invalid-feedback" *ngIf="submittedPassword && fC.passwordConfirm.errors">
+                    <div *ngIf="fC.passwordConfirm.errors.required  ">Confirma tu clave</div>
+                    <div *ngIf="fC.passwordConfirm.errors.mustMatch  ">Las claves deben ser iguales</div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modal.close('Save click')">Cancelar</button>
+        <button class="btn btn-primary w-100  text-white" type="submit" (click)="onSubmitChangePassword()"
+            [disabled]="loadingButtonCambiar">
+            Cambiar
+            <i *ngIf="loadingButtonCambiar && submittedPassword" class="fa fa-spin fa-spinner"></i>
+        </button>
+    </div>
+</ng-template>
+
+
+
+<ng-template #modalNivelAutorizacion let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title"><span class="font-weight-bold"> {{f.nombres.value}}</span> | Asignación de niveles de autorización</h4>
+        <!-- <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button> -->
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12" [hidden]="loadingNiveles">
+                <dual-list [sort]="keepSorted" [source]="source" [key]="key" [display]="display" [filter]="filter"
+                    [(destination)]="confirmed" height="265px" [format]="format" [disabled]="disabled"></dual-list>
+            </div>
+
+            <div class="col-12">
+                <app-loading-listado [hidden]="!loadingNiveles"></app-loading-listado>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cancelar</button>
+        <button type="button" class="btn btn-success m-1" *ngIf="!guardandoNivelesAsignados"
+            (click)="guardarNivelesAutorizacionSeleccionados()">Guardar</button>
+        <button *ngIf="guardandoNivelesAsignados" disabled class="btn btn-success m-1" type="button">
+            <span class="spinner-border spinner-border-sm"></span> Guardando
+        </button>
+    </div>
+</ng-template>
+
+
+
+
+<ng-template #modalAsignacionSucursales let-modal>
+  <div class="modal-header">
+      <h4 class="modal-title"><span class="font-weight-bold"> {{f.nombres.value}}</span> | Asignación de  sucursales</h4>
+      <!-- <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">&times;</span>
+      </button> -->
+  </div>
+  <div class="modal-body">
+      <div class="row">
+          <div class="col-12" [hidden]="loadingSucursalByUsuario">
+              <dual-list [sort]="keepSorted" [source]="source" [key]="key" [display]="display" [filter]="filter"
+                  [(destination)]="confirmed" height="265px" [format]="format" [disabled]="disabled"></dual-list>
+          </div>
+
+          <div class="col-12">
+              <app-loading-listado [hidden]="!loadingSucursalByUsuario"></app-loading-listado>
+          </div>
+      </div>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cancelar</button>
+      <button type="button" class="btn btn-success m-1" *ngIf="!guardandoSucursalesAsignadas"
+          (click)="guardarAsignacionSucursalesSeleccionadas()">Guardar</button>
+      <button *ngIf="guardandoSucursalesAsignadas" disabled class="btn btn-success m-1" type="button">
+          <span class="spinner-border spinner-border-sm"></span> Guardando
+      </button>
+  </div>
+</ng-template>
+
+
+<ng-template #modalAsignacionClienteTipo let-modal>
+  <div class="modal-header">
+      <h4 class="modal-title"><span class="font-weight-bold"> {{f.nombres.value}}</span> | Asignación de cliente tipos</h4>
+      <!-- <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">&times;</span>
+      </button> -->
+  </div>
+  <div class="modal-body">
+      <div class="row">
+          <div class="col-12" [hidden]="loadingClienteTipo">
+              <dual-list [sort]="keepSorted" [source]="source" [key]="key" [display]="display" [filter]="filter"
+                  [(destination)]="confirmed" height="265px" [format]="format" [disabled]="disabled"></dual-list>
+          </div>
+
+          <div class="col-12">
+              <app-loading-listado [hidden]="!loadingClienteTipo"></app-loading-listado>
+          </div>
+      </div>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cancelar</button>
+      <button type="button" class="btn btn-success m-1" *ngIf="!guardandoClienteTiposAsignados"
+          (click)="guardarAsignacionClienteTiposSeleccionados()">Guardar</button>
+      <button *ngIf="guardandoClienteTiposAsignados" disabled class="btn btn-success m-1" type="button">
+          <span class="spinner-border spinner-border-sm"></span> Guardando
+      </button>
+  </div>
+</ng-template>

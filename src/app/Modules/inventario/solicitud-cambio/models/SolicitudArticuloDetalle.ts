@@ -25,6 +25,8 @@ export class SolicitudArticuloDetalle {
     this.hayErrores=false 
     this.nombre="" 
     this.codigoReferencia=""
+    this.almacenDestinoId=0
+    this.estadoERPID=0
     }
    
 
@@ -52,6 +54,8 @@ export class SolicitudArticuloDetalle {
     hayErrores: boolean
     nombre:string
     codigoReferencia:string
+    almacenDestinoId:number
+    estadoERPID:number
     
 
 }

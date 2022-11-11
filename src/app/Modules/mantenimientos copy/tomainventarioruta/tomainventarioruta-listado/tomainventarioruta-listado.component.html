@@ -1,0 +1,172 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2 ">
+                    <div class="col-md-12 ">
+                        <h4 class="card-title">Listado de Usuario para asignar Ruta</h4>
+                    </div>
+
+                    <div class="col-md-6 ">
+                        <label for="selectrutas"> <i class="fa fa-id-card"></i> Tipo de ruta</label>
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="TipoRutas" [(ngModel)]="TipoRutaId"
+                            [loading]="loadingTipoRutas" [clearable]="false" id="selectrutas" (change)="getData()"
+                            class="form-control  p-0" notFoundText="No resultados">
+                        </ng-select>
+                    </div>
+
+                    <div class="col-md-6 align-self-end">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <label for="search" class="input-group-text bg-white">
+                                    <span class="bg-white" style="border-right:none">
+                                        <i class="ti-search"></i>
+                                    </span>
+                                </label>
+                            </div>
+                            <input [(ngModel)]="Search" (keyup)="getData()" type="text"
+                                style="border-left:none !important;" class="form-control" placeholder="Buscar">
+                        </div>
+                    </div>
+
+
+
+
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 no-wrap v-middle">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Chofer</th>
+                                <th>Celular</th>
+                                <!-- <th>Cantidad Clientes</th> -->
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody [hidden]="Cargando">
+
+                            <tr *ngFor="let item of dataListado">
+                                <td><span class="badge badge-light text-info ">{{item.rutaId}}</span></td>
+                                <td>
+                                    <span class="font-weight-bold"> {{item.usuario}}</span>
+                                    <span class="small d-block font-weight-bold text-info"> <i
+                                            class="fas fa-address-card"></i> {{item.documento | mask:
+                                        '000-0000000-0'}}</span>
+                                    <!-- <span class="small d-block fon font-weight-bold"> Fecha: {{item.fecha | date:'medium'}}</span> -->
+                                </td>
+                                <td>
+                                    <span class="d-block "> {{item.celular | mask: '(000) 000-0000'}} </span>
+                                </td>
+                                <!-- <td>
+                                  <span class="d-block " > {{item.cantidadCliente }} </span>
+                              </td> -->
+                                <td>
+                                    <button class="btn btn-sm btn-info"
+                                        (click)="openModal(modalRolPermisoAsignacion,item)">
+                                        <i class="fa fa-sm fa-list"></i>
+                                    </button>
+                                </td>
+
+
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+
+
+                <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+
+                <div class="row ">
+                    <div class="col-md-8 col-xs-12 ">
+                        <ngb-pagination [collectionSize]="paginaTotalRecords" [(page)]="paginaNumeroActual"
+                            [pageSize]="paginaSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="getData()">
+                        </ngb-pagination>
+                    </div>
+
+                    <div class="col-md-4 text-right d-none d-md-block  ">
+                        <select class="form-control d-block" name="paginaSize" [(ngModel)]="paginaSize"
+                            (change)="getData()">
+                            <option [ngValue]="5">5 registro por pagina</option>
+                            <option [ngValue]="10">10 registro por pagina</option>
+                            <option [ngValue]="15">15 registro por pagina</option>
+                            <option [ngValue]="50">50 registro por pagina</option>
+                            <option [ngValue]="100">100 registro por pagina</option>
+                            <option [ngValue]="150">150 registro por pagina</option>
+                        </select>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<ng-template #modalRolPermisoAsignacion let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Asignación de Usuario a Ruta</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row p-2">
+
+            <div class="col-md-6 ">
+                <label for="id1">Zonas</label>
+                <ng-select bindLabel="nombre" bindValue="codigo" [items]="rutasPorTipo" [(ngModel)]="selectData.zonaId"
+                    [loading]="loadingRutasPorTipo" [clearable]="false" id="id1" class="form-control  p-0"
+                    (change)="getClientesTomaInventario(modelSelected.rutaId,selectData.zonaId)"
+                    notFoundText="No resultados">
+                </ng-select>
+            </div>
+
+            <!-- <div class="col-md-6 ">
+      <label for="id2">Provincia</label>
+      <ng-select bindLabel="nombre" bindValue="codigo" [items]="TipoRutas" [(ngModel)]="TipoRutaId"
+          [loading]="loadingTipoRutas" [clearable]="false" id="id2" (change)="getData()"
+          class="form-control  p-0" notFoundText="No resultados" >
+      </ng-select>
+  </div>
+
+  <div class="col-md-6 ">
+    <label for="id3">Sector</label>
+    <ng-select bindLabel="nombre" bindValue="codigo" [items]="TipoRutas" [(ngModel)]="TipoRutaId"
+        [loading]="loadingTipoRutas" [clearable]="false" id="id3" (change)="getData()"
+        class="form-control  p-0" notFoundText="No resultados" >
+    </ng-select>
+</div> -->
+            <div class="col-md-6 ">
+                <label for="id4">Dia</label>
+                <ng-select bindLabel="nombre" bindValue="codigo" [items]="Dias" [(ngModel)]="selectData.diaId"
+                    [clearable]="false" id="id4" class="form-control  p-0" notFoundText="No resultados">
+                </ng-select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12" [hidden]="loadingDualLits">
+                <dual-list [sort]="keepSorted" [source]="source" [key]="key" [display]="display" [filter]="filter"
+                    [(destination)]="confirmed" height="265px" [format]="format" [disabled]="disabled"></dual-list>
+            </div>
+
+            <div class="col-12">
+                <app-loading-listado [hidden]="!loadingDualLits"></app-loading-listado>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cancelar</button>
+        <button type="button" class="btn btn-success m-1" *ngIf="!btnGuardarCargando"
+            (click)="SaveChanges()">Guardar</button>
+        <button *ngIf="btnGuardarCargando" disabled class="btn btn-success m-1" type="button">
+            <span class="spinner-border spinner-border-sm"></span> Guardando
+        </button>
+    </div>
+</ng-template>

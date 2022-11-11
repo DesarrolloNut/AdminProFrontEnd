@@ -30,6 +30,8 @@ export class SolicitudDevolucion {
         this.tasa =0
         this.archivoAnexo=null;
         this.tipoSolicitudDevolucionId=0;
+        this.almacenId=0
+        this.almacenDestinoId=0
         
            
     }
@@ -63,7 +65,9 @@ export class SolicitudDevolucion {
     tasa :number
     archivoAnexo: File
     archivoAnexoURL:string;
-    tipoSolicitudDevolucionId:number;	
+    tipoSolicitudDevolucionId:number;
+    almacenId:number
+    almacenDestinoId:number
     
     
   

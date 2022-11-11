@@ -1,0 +1,174 @@
+<div class="row">
+
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+
+
+                <div class="row p-2">
+                    <div class="col-md-10 ">
+
+                        <div class="input-group ">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <i class="fas fa-search"></i>
+                                </div>
+                            </div>
+                            <input class="form-control " type="text">
+                        </div>
+
+
+                    </div>
+                    <div class=" col-md-2 m-auto">
+                        <button class="btn btn-success btn-sm "> Nuevo <i class="fas fa-plus"></i></button>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class=" col-md-12 table-responsive">
+
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">Descripción</th>
+                                    <th scope="col">Fecha de creación</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr *ngFor="let comite of comites$ | async">
+                                    <th scope="row">{{ comite.nombre }}</th>
+                                    <td>{{ comite.descripcion  }}</td>
+                                    <td>{{ comite.fechaCreacion }}</td>
+                                    <td>
+                                        <div class="btn-group" role="group" aria-label="Basic example">
+                                            <button type="button" class="btn btn-outline-primary"
+                                                (click)="open1(content1,comite)"><i class="fas fa-users"></i></button>
+                                            <button type="button" class="btn btn-outline-info"><i
+                                                    class="fas fa-pencil-alt"></i></button>
+                                            <button type="button" class="btn btn-outline-danger"><i
+                                                    class="fas fa-trash"></i></button>
+                                        </div>
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+                        </table>
+
+                        <div class="d-flex justify-content-between p-2">
+                            <ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [pageSize]="pageSize">
+                            </ngb-pagination>
+
+                            <select class="custom-select" style="width: auto" [(ngModel)]="pageSize"
+                                (change)="getComites()">
+                                <option [ngValue]="2">2 items per page</option>
+                                <option [ngValue]="4">4 items per page</option>
+                                <option [ngValue]="6">6 items per page</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #content1 let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Miembros de este comite</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row p-2">
+            <div class="col-md-10 ">
+
+                <div class="input-group ">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">
+                            <i  class="fas fa-search"></i>
+                        </div>
+                    </div>
+                    <input [(ngModel)]="search"   (ngModelChange)="searching()"    class="form-control " type="text">
+                </div>
+
+
+            </div>
+            <div class=" col-md-2 m-auto">
+                <button class="btn btn-success btn-sm "> Nuevo <i class="fas fa-plus"></i></button>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class=" col-md-12 table-responsive">
+
+                <table class="table table-striped">
+                    <thead>
+
+                        <tr>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Cargo</th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let miembro of miembros">
+                            <th scope="row">{{ miembro.nombre }}</th>
+                            <td>{{ miembro.cargo  }}</td>
+                            <td> 
+                                <button *ngIf="miembro.isMember === selectedComite.id" (click)="miembro.isMember = 0"
+                                 class="btn btn-success btn-sm">Es miembro</button>
+ 
+                                <button *ngIf="miembro.isMember !== selectedComite.id" (click)="miembro.isMember = selectedComite.id"
+                                 class="btn btn-danger btn-sm">No es miembro</button>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-outline-danger"><i
+                                        class="fas fa-trash"></i></button>
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <div class="d-flex justify-content-between p-2">
+
+                    <ngb-pagination [collectionSize]="collectionSizeMiembro" (click)="getMiembros()" [(page)]="pageMiembro" [pageSize]="pageSizeMiembro">
+                        <ng-template ngbPaginationFirst (click)="getMiembros()">First</ng-template>
+                        <ng-template ngbPaginationLast (click)="getMiembros()">Last</ng-template>
+                        <ng-template ngbPaginationPrevious (click)="getMiembros()">Prev</ng-template>
+                        <ng-template ngbPaginationNext (click)="getMiembros()">Next</ng-template>
+                        <ng-template ngbPaginationEllipsis>...</ng-template>
+                        <ng-template ngbPaginationNumber let-page (click)="getMiembros()">{{ page }}</ng-template>
+                      </ngb-pagination>
+
+<!--                       
+                    <ngb-pagination [collectionSize]="collectionSizeMiembro" [(page)]="pageMiembro" [pageSize]="pageSizeMiembro">
+                    </ngb-pagination> -->
+
+                    <select class="custom-select" style="width: auto" [(ngModel)]="pageSizeMiembro" (change)="getMiembros()">
+                        <option [ngValue]="2">2 items per page</option>
+                        <option [ngValue]="4">4 items per page</option>
+                        <option [ngValue]="6">6 items per page</option>
+                    </select>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
+    </div>
+</ng-template>

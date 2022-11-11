@@ -1,0 +1,454 @@
+<div class="row">
+    <div class="control-section">
+        <div id="control_wrapper">
+        </div>
+    </div>
+</div>
+
+<div class="row mb-2">
+    <div class="col">
+        <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Formulario de ofertas</h4>
+                <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
+                <form class="form-row m-t-40" [formGroup]="Formulario">
+
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-lg-3 col-md-6">
+                                <div class="card border-bottom border-right"
+                                    [ngClass]="{'border-success': f.margenPorciento.value >= 0, 'border-danger': f.margenPorciento.value < 0}">
+                                    <div class="card-body">
+                                        <div class="d-flex no-block align-items-center">
+                                            <div>
+                                                <h2>{{ margenGeneralOrferta | number:'1.0-2'}}</h2>
+                                                <h6
+                                                    [ngClass]="{'text-success': f.margenPorciento.value >= 0, 'text-danger': f.margenPorciento.value < 0}">
+                                                    Margen de ganancias
+                                                </h6>
+                                            </div>
+                                            <div class="ml-auto">
+                                                <span class="display-6"
+                                                    [ngClass]="{'text-success': f.margenPorciento.value >= 0, 'text-danger': f.margenPorciento.value < 0}">
+                                                    <i class="fa fa-percent"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group col-md-6">
+                        <label for="nombre"> Nombre</label>
+                        <input [readonly]="edicionBloqueada" formControlName="nombre" type="text" name="nombre"
+                            id="nombre"
+                            [ngClass]="{'is-invalid' : submitted && f.nombre.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.nombre.errors">
+                            <div *ngIf="f.nombre.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group col-md-6" *ngxPermissionsOnly="['mantenimientos_oferta_puede_autorizar']">
+                        <label for="inputEmail4"> Estado</label>
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="estados" (change)="habilitaEdicion()"
+                            [clearable]="false"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.estadoID.errors }"
+                            notFoundText="No resultados" formControlName="estadoID">
+                        </ng-select>
+                        <div *ngIf="submitted && f.estadoID.errors" class="text-danger small">
+                            <div *ngIf="f.estadoID.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+
+
+
+                    <!-- <div class="form-group col-md-6">
+                        <label for="nombre">Margen ganancia</label>
+                        <div class="input-group">
+                            <input formControlName="margenPorciento" type="number" name="margenPorciento"
+                                id="margenPorciento"
+                                [ngClass]="{'is-invalid' : submitted && f.margenPorciento.errors,  'form-control':true  }">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">%</span>
+                            </div>
+                            <div class="invalid-feedback" *ngIf="submitted && f.margenPorciento.errors">
+                                <div *ngIf="f.margenPorciento.errors.required">El campo es obligatorio</div>
+                            </div>
+                        </div>
+
+                    </div> -->
+
+                    <div class="form-group col-md-12">
+                        <label for="descripcion"> Descripción</label>
+                        <textarea [readonly]="edicionBloqueada" formControlName="descripcion" class="form-control"
+                            name="descripcion" id="descripcion" rows="3">
+                        </textarea>
+                        <div class="invalid-feedback" *ngIf="submitted && f.descripcion.errors">
+                            <div *ngIf="f.descripcion.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-6">
+                        <label>Fecha de inicio</label>
+                        <ejs-datepicker [readonly]="edicionBloqueada" formControlName="fechaInicio"
+                            [format]="'dd-MM-yyyy'">
+                        </ejs-datepicker>
+                        <!-- <input type="date" name="fechaInicio" id="fechaInicio" formControlName="fechaInicio"
+                            class="form-control"> -->
+                        <div *ngIf="submitted && f.fechaInicio.errors"
+                            class="text-danger small animated animated--fade-in">
+                            <div *ngIf="f.fechaInicio.errors.required">El campo es obligatorio</div>
+                            <div *ngIf="f.fechaInicio.errors.min">La fecha no puede ser menor a la actual</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-6">
+                        <label>Válida hasta</label>
+                        <!-- <input type="date" name="fechaFinal" id="fechaFinal" formControlName="fechaFinal"
+                            class="form-control"> -->
+                        <ejs-datepicker formControlName="fechaFinal" [format]="'dd-MM-yyyy'"
+                            [readonly]="edicionBloqueada">
+                        </ejs-datepicker>
+                        <div *ngIf="submitted && f.fechaFinal.errors"
+                            class="text-danger small animated animated--fade-in">
+                            <div *ngIf="f.fechaFinal.errors.required">El campo es obligatorio</div>
+                            <div *ngIf="f.fechaFinal.errors.min">La fecha no puede ser menor a la actual</div>
+                        </div>
+                    </div>
+
+                </form>
+
+                <div class="row">
+
+                    <hr />
+                    <div class="form-group col-12">
+                        <hr>
+                        <h3 class="p-2 bg-info text-white">Artículos de la oferta</h3>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="card border border-light">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12 text-center">
+                                        <button class="btn btn-lg btn-success rounded-circle"
+                                            [disabled]="edicionBloqueada"
+                                            (click)="openArticuloModal(modalArticulosFormulario)" type="button"><i
+                                                class="fa fa-plus"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6" *ngFor="let a of ofertaArticulos; let i = index">
+                        <div class="card border border-light">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <h2 class="card-title"><span class="badge badge-light">
+                                                {{a.articuloNombre}}</span>
+                                        </h2>
+                                    </div>
+                                    <div class="col-md-4 text-right">
+                                        <button class="btn btn-sm m-1" [disabled]="edicionBloqueada"
+                                            (click)="openArticuloModal(modalArticulosFormulario,a,true,i)">
+                                            <i class=" fa fa-sm fa-edit text-info"></i>
+                                        </button>
+                                        <button class="btn btn-sm m-1" [disabled]="edicionBloqueada"
+                                            (click)="onDeleteOfertaArticulo(i,a)">
+                                            <i class=" fa fa-sm fa-times text-danger"></i>
+                                        </button>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <h3 class="card-title">
+                                            <span class="badge badge-success">Precio:
+                                                {{a.precioArticulo | number}}</span>
+                                            <span class="badge badge-success mx-1">Costo:
+                                                {{a.costoArticulo | number}}</span>
+                                        </h3>
+                                    </div>
+
+                                    <div class="col-md-6 text-right">
+                                        <h3 class="card-title">
+                                            <span class="badge badge-success"> Costo P:
+                                                {{a.costoProyectado | number}}</span>
+                                        </h3>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <h3 class="card-title">
+                                            <span class="badge badge-success mr-1">Cantidad:
+                                                {{a.cantidad}}</span>
+                                            <span class="badge badge-success">Total:
+                                                {{ (a.precioArticulo * a.cantidad) - ( (a.precioArticulo * a.cantidad) * (a.descuentoMinPorcentaje / 100) )| number}}</span>
+                                        </h3>
+                                    </div>
+
+                                    <div class="col-md-6 text-right">
+                                        <h3 class="card-title">
+                                            <span class="badge "
+                                                [ngClass]="{'badge-success': a.margen >= 0, 'badge-danger': a.margen < 0}">Margen
+                                                P: {{a.margen | number:'1.0-2'}}</span>
+                                        </h3>
+                                    </div>
+
+
+                                    <div class="col-12">
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col"></th>
+                                                        <th scope="col"></th>
+                                                        <th scope="col">Cant</th>
+                                                        <th scope="col">Costo</th>
+                                                        <th scope="col">Precio</th>
+                                                        <th scope="col">T Precio</th>
+                                                        <th scope="col">T Costo</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+
+                                                    <ng-template ngFor let-ap let-ii="index"
+                                                        [ngForOf]="ofertaArticulosPromocion">
+                                                        <tr *ngIf="a.articuloID == ap.articuloID">
+                                                            <td>
+                                                                <span
+                                                                    class="badge badge-light text-info">#{{ap.articuloPromocionID}}
+                                                                </span>
+                                                            </td>
+                                                            <td>{{ap.articuloNombre}}</td>
+                                                            <th>{{ap.cantidad}}</th>
+                                                            <td>{{ap.costoArticulo}}</td>
+                                                            <td>{{ap.precio}}</td>
+                                                            <td>{{ap.precio * ap.cantidad}}</td>
+                                                            <td>{{ap.total}}</td>
+                                                            <td>
+                                                                <button class="btn btn-sm m-1"
+                                                                    [disabled]="edicionBloqueada"
+                                                                    (click)="openArticuloPromocionModal(a,modalArticulosPromocionFormulario,ap,true,ii)">
+                                                                    <i class=" fa fa-sm fa-edit text-info"></i>
+                                                                </button>
+                                                                <button class="btn btn-sm m-1"
+                                                                    [disabled]="edicionBloqueada"
+                                                                    (click)="onDeleteOfertaArticuloPromocion(ii)">
+                                                                    <i class=" fa fa-sm fa-times text-danger"></i>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    </ng-template>
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-md-12 text-center">
+                                                <button
+                                                    (click)="openArticuloPromocionModal(a,modalArticulosPromocionFormulario)"
+                                                    [disabled]="edicionBloqueada"
+                                                    class="btn btn-sm btn-success rounded-circle" type="button"><i
+                                                        class="fa fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class=" text-right col-md-12">
+                        <hr />
+
+                        <button class="btn btn-light m-1" routerLink="/servicios/citas" type="button">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+
+                        <button class="btn btn-info m-1" type="button" [disabled]="!canSubmitForm" (click)="onSubmit()"
+                            *ngIf="!btnGuardarCargando">
+                            <i class="fas fa-check"></i> Guardar
+                        </button>
+
+                        <!-- boton cargando -->
+                        <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span> Guardando
+                        </button>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<ng-template #modalArticulosFormulario let-modal>
+    <div class="container-fluid">
+        <form class="row" [formGroup]="FormularioArticulo" (ngSubmit)="onSubmitArticulo()">
+            <div class="col">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modal-title">Artículo</h4>
+                    <button type="button" class="close" aria-describedby="modal-title"
+                        (click)="modal.dismiss('Cross click')">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+
+                        <div class="form-group col-md-12">
+                            <label for=""> Artículo </label>
+                            <ng-select bindLabel="nombre" bindValue="id" [items]="articulos"
+                                [loading]="loadingArticulos" [clearable]="false" (search)="getArticulos($event)"
+                                (change)="onArticuloOfertaComboboxChange($event)"
+                                [ngClass]="{'form-control border-danger p-0' : submittedArticulo && fa.articuloID.errors }"
+                                notFoundText="No resultados" formControlName="articuloID">
+                            </ng-select>
+                            <div *ngIf="submittedArticulo && fa.articuloID.errors" class="text-danger small">
+                                <div *ngIf="fa.articuloID.errors.required  ">El campo es obligatorio</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="sucursalID">Cantidad</label>
+                            <input formControlName="cantidad" type="number" name="cantidad" id="cantidad"
+                                [ngClass]="{'is-invalid' : submittedArticulo && fa.cantidad.errors,  'form-control':true  }">
+                            <div class="invalid-feedback" *ngIf="submittedArticulo && fa.cantidad.errors">
+                                <div *ngIf="fa.cantidad.errors.required">El campo es obligatorio</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="sucursalID">Descuento mínimo</label>
+                            <div class="input-group">
+                                <input formControlName="descuentoMinPorcentaje" type="number"
+                                    name="descuentoMinPorcentaje" id="descuentoMinPorcentaje"
+                                    [ngClass]="{'is-invalid' : submittedArticulo && fa.descuentoMinPorcentaje.errors,  'form-control':true  }">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                                <div class="invalid-feedback"
+                                    *ngIf="submittedArticulo && fa.descuentoMinPorcentaje.errors">
+                                    <div *ngIf="fa.descuentoMinPorcentaje.errors.required">El campo es obligatorio</div>
+                                </div>
+                            </div>
+                        </div>
+                   
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary"
+                        (click)="modal.close('Close click')">Cancel</button>
+                    <button type="submit" class="btn btn-info">Guardar</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- <app-loading-listado [hidden]="!CargandoDelete"></app-loading-listado> -->
+
+    </div>
+</ng-template>
+
+
+
+
+
+<ng-template #modalArticulosPromocionFormulario let-modal>
+    <div class="container-fluid">
+        <form class="row" [formGroup]="FormularioArticuloPromocion" (ngSubmit)="onSubmitArticuloPromocion()">
+            <div class="col">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modal-title">Artículo</h4>
+                    <button type="button" class="close" aria-describedby="modal-title"
+                        (click)="modal.dismiss('Cross click')">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+
+                        <div class="form-group col-md-12">
+                            <label for=""> Artículo </label>
+                            <ng-select bindLabel="nombre" bindValue="id" [items]="articulos"
+                                [loading]="loadingArticulos" [clearable]="false"
+                                (change)="onArticuloPromocionOfertaComboboxChange($event)"
+                                (search)="getArticulos($event)"
+                                [ngClass]="{'form-control border-danger p-0' : submittedArticuloPromocion && fap.articuloPromocionID.errors }"
+                                notFoundText="No resultados" formControlName="articuloPromocionID">
+                            </ng-select>
+                            <div *ngIf="submittedArticuloPromocion && fap.articuloPromocionID.errors"
+                                class="text-danger small">
+                                <div *ngIf="fap.articuloPromocionID.errors.required  ">El campo es obligatorio</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="sucursalID">Cantidad</label>
+                            <input formControlName="cantidad" type="number" name="cantidad" id="cantidad"
+                                [ngClass]="{'is-invalid' : submittedArticuloPromocion && fap.cantidad.errors,  'form-control':true  }">
+                            <div class="invalid-feedback" *ngIf="submittedArticuloPromocion && fap.cantidad.errors">
+                                <div *ngIf="fap.cantidad.errors.required">El campo es obligatorio</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="sucursalID">Precio</label>
+                            <input [readonly]="true" formControlName="precio" type="number" name="precio" id="precio"
+                                [ngClass]="{'is-invalid' : submittedArticuloPromocion && fap.precio.errors,  'form-control':true  }">
+                            <div class="invalid-feedback" *ngIf="submittedArticuloPromocion && fap.precio.errors">
+                                <div *ngIf="fap.precio.errors.required">El campo es obligatorio</div>
+                            </div>
+                        </div>
+
+                        <!-- <div class="form-group col-md-6">
+                            <label for="sucursalID">Total</label>
+                            <input formControlName="total" type="number" name="total" id="total"
+                                [ngClass]="{'is-invalid' : submittedArticuloPromocion && fap.total.errors,  'form-control':true  }">
+                            <div class="invalid-feedback" *ngIf="submittedArticuloPromocion && fap.total.errors">
+                                <div *ngIf="fap.total.errors.required">El campo es obligatorio</div>
+                            </div>
+                        </div> -->
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary"
+                        (click)="modal.close('Close click')">Cancel</button>
+                    <button type="submit" class="btn btn-info">Guardar</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- <app-loading-listado [hidden]="!CargandoDelete"></app-loading-listado> -->
+
+    </div>
+</ng-template>

@@ -95,6 +95,10 @@ import { ComprobanteFiscalEnrollListadoComponent } from './comprobanteFiscalEnrr
 import { ComprobanteFiscalEnrollFormularioComponent } from './comprobanteFiscalEnrroll/comprobante-fiscal-enroll-formulario/comprobante-fiscal-enroll-formulario.component';
 import { TipoComprobanteFiscalListadoComponent } from './tipoComprobanteFiscal/tipo-comprobante-fiscal-listado/tipo-comprobante-fiscal-listado.component';
 import { TipoComprobanteFiscaFormularioComponent } from './tipoComprobanteFiscal/tipo-comprobante-fiscal-formulario/tipo-comprobante-fiscal-formulario.component';
+import { ModuloFormularioComponent } from './modulos/modulo-formulario/modulo-formulario.component';
+import { ModuloListadoComponent } from './modulos/modulo-listado/modulo-listado.component';
+import { TipoSolicitudDevolucionListadoComponent } from './tipoSolicitudDevolucion/tipoSolicitudDevolucion-listado/tipoSolicitudDevolucion-listado.component';
+import { TipoSolicitudDevolucionFormularioComponent } from './tipoSolicitudDevolucion/tipoSolicitudDevolucion-formulario/tipoSolicitudDevolucion-formulario.component';
 
 
 
@@ -1081,6 +1085,47 @@ const routes: Routes = [
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Plazo' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+      {
+        path: 'modulo', component: ModuloListadoComponent, data: {
+          title: 'Modulo',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Modulo' }
+          ]
+        }
+      },
+      
+      {
+        path: 'modulo/:id', component: ModuloFormularioComponent, data: {
+          title: 'Modulo Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Modulo' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+      {
+        path: 'tipo-solicitud-devolucion', component: TipoSolicitudDevolucionListadoComponent, data: {
+          title: 'Tipo Solicitud Devolución',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Tipo Solicitud Devolución' }
+          ]
+        }
+      },
+   
+      {
+        path: 'tipo-solicitud-devolucion/:id', component: TipoSolicitudDevolucionFormularioComponent, data: {
+          title: 'Tipo Solicitud Devolución Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Tipo Solicitud Devolución' },
             { title: 'Formulario' }
           ]
         }

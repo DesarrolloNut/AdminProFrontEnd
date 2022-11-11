@@ -1,0 +1,114 @@
+<div class="row">
+  <div class="control-section">
+    <div id="control_wrapper">
+    </div>
+  </div>
+</div>
+
+<div class="row mb-2">
+  <div class="col">
+    <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6 col-lg-6 col-12">
+            <h4 class="card-title">Formulario de Conexion SAP</h4>
+          </div>
+          <div class="col-md-6 col-lg-6 col-12 text-right">
+          </div>
+        </div>
+        <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
+        <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
+
+          <div class="form-group col-md-6">
+            <label for="keyConnection"> Key Conexion</label>
+            <input formControlName="keyConnection" type="text" name="keyConnection" id="keyConnection"
+              [ngClass]="{'is-invalid' : submitted && f.keyConnection.errors,  'form-control':true  }">
+            <div class="invalid-feedback" *ngIf="submitted && f.keyConnection.errors">
+              <div *ngIf="f.keyConnection.errors.required">El campo es obligatorio</div>
+            </div>
+          </div>
+          
+          <div class="form-group col-md-6">
+            <label for="server"> Servidor</label>
+            <input formControlName="server" type="text" name="server" id="server"
+              [ngClass]="{'is-invalid' : submitted && f.server.errors,  'form-control':true  }">
+            <div class="invalid-feedback" *ngIf="submitted && f.server.errors">
+              <div *ngIf="f.server.errors.required">El campo es obligatorio</div>
+            </div>
+          </div>
+
+          <div class="form-group col-md-6">
+            <label for="companyDB"> Base de Datos</label>
+            <input formControlName="companyDB" type="text" name="companyDB" id="companyDB"
+              [ngClass]="{'is-invalid' : submitted && f.companyDB.errors,  'form-control':true  }">
+            <div class="invalid-feedback" *ngIf="submitted && f.companyDB.errors">
+              <div *ngIf="f.companyDB.errors.required">El campo es obligatorio</div>
+            </div>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="userDB"> Usuario DB</label>
+            <input formControlName="userDB" type="text" name="userDB" id="userDB"
+              [ngClass]="{'is-invalid' : submitted && f.userDB.errors,  'form-control':true  }">
+            <div class="invalid-feedback" *ngIf="submitted && f.userDB.errors">
+              <div *ngIf="f.userDB.errors.required">El campo es obligatorio</div>
+            </div>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="passwordDB">Contraseña DB</label>
+            <input formControlName="passwordDB" type="password" name="passwordDB" id="passwordDB"
+              [ngClass]="{'is-invalid' : submitted && f.passwordDB.errors,  'form-control':true  }">
+            <div class="invalid-feedback" *ngIf="submitted && f.passwordDB.errors">
+              <div *ngIf="f.passwordDB.errors.required">El campo es obligatorio</div>
+            </div>
+          </div>
+
+          <div class="form-group col-md-6">
+            <label for="dbServerType">Tipo Servidor</label>
+            <ng-select [items]="ServerTypeCategorias" bindLabel="nombre" bindValue="codigo" [clearable]="false"
+              [ngClass]="{'form-control border-danger p-0' : submitted && f.dbServerType.errors }"
+              notFoundText="No resultados" formControlName="dbServerType">
+            </ng-select>
+            <div *ngIf="submitted && f.dbServerType.errors" class="text-danger small animated animated--fade-in">
+              <div *ngIf="f.dbServerType.errors.required  ">El campo es obligatorio</div>
+            </div>
+          </div>
+
+          <div class="col-md-6 py-4 px-4">
+            <div class="custom-control custom-switch">
+              <input formControlName="inUse" type="checkbox" name="inUse" id="inUse"
+                [ngClass]="{'is-invalid' : submitted && f.inUse.errors,  'custom-control-input':true  }">
+              <label for="inUse" class="custom-control-label">Conexion Predeterminada</label>
+            </div>
+          </div>
+
+
+          <div class="form-group text-right col-md-12">
+            <hr />
+
+            <button class="btn btn-light m-1" routerLink="../" type="button">
+              <i class="fas fa-times"></i> Cancelar
+            </button>
+
+            <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+              <i class="fas fa-check"></i> Guardar
+            </button>
+
+            <!-- boton cargando -->
+            <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+              <span class="spinner-border spinner-border-sm"></span> Guardando
+            </button>
+          </div>
+
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

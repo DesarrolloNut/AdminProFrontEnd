@@ -67,7 +67,8 @@ export class SolicitudDevolucionFormularioComponent implements OnInit {
       fechaCreacion:[null,[Validators.required]],
       cliente:[ null,[Validators.required]],
       totalNetoFactura:[ null,],
-      tipoSolicitudDevolucionId:[null,[Validators.required]]
+      tipoSolicitudDevolucionId:[null,[Validators.required]],
+      almacenId:[null,[Validators.required]],
     });
   }
   setFocus(name) {    
@@ -259,6 +260,7 @@ export class SolicitudDevolucionFormularioComponent implements OnInit {
      this.encabezadoFactura[0].usuarioId=Number(this.auth.tokenDecoded.nameid);
      this.encabezadoFactura[0].sucursalId=Number(this.authService.tokenDecoded.groupsid);
      this.encabezadoFactura[0].tipoSolicitudDevolucionId=Number(this.Formulario.get('tipoSolicitudDevolucionId').value);
+     this.encabezadoFactura[0].almacenId=Number(this.Formulario.get('almacenId').value);
      this.encabezadoFactura[0].fechaDocumento=new Date();
      this.encabezadoFactura[0].estadoERPID=1;
      this.encabezadoFactura[0].clienteId=this.clienteId;
@@ -277,8 +279,8 @@ export class SolicitudDevolucionFormularioComponent implements OnInit {
      let parametro: any = {
       "SolicitudDevolucion": this.encabezadoFactura[0],
       "SolicitudDevolucionDetalle": this.solicitudDevolucionDetalle.filter(x => x.destalleFacturaSelecionada == true ),
-    
     }
+    console.log(parametro)
     let metodo: string = this.actualizando ? "Update" : "Registrar";
     this.btnGuardarCargando = true;
     this.httpService.DoPostAny<any>(DataApi.SolicitudDevolucion,

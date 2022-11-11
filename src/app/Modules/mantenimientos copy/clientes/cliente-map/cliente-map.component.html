@@ -1,0 +1,29 @@
+<div class="agm_map_style">
+  <div class="form-group"  >
+    <input  placeholder="buscar por localidad" 
+    autocorrect="off" autocapitalize="off" spellcheck="off" type="text" 
+    class="form-control input_search_map" #search [formControl]="searchControl">
+  </div>
+  <agm-map 
+   [latitude]="latitud" 
+   [longitude]="longitud"
+   [scrollwheel]="true" 
+   [zoom]="zoom"
+   [usePanning]='true'
+   [disableDefaultUI]="false"
+   (mapClick)="mapClicked($event)"
+   (mapReady)="mapReady($event)
+    ">
+
+    <agm-marker 
+    *ngFor="let m of markers; let i = index"
+    (markerClick)="clickedMarker(m.label, i)"
+    [latitude]="m?.lat"
+    [longitude]="m?.lng"
+    [label]="m?.label"
+    [markerDraggable]="m.draggable"
+    (dragEnd)="markerDragEnd(m, $event)"></agm-marker>
+  </agm-map>
+</div>
+
+ 

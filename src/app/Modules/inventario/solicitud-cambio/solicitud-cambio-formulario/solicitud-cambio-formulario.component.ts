@@ -130,21 +130,19 @@ export class SolicitudCambioFormularioComponent implements OnInit {
       cliente:[ null,[Validators.required]],
       totalNetoFactura:[ null,],
       tipoSolicitudDevolucionId:[null,[Validators.required]],
-      almacenId:[null,[Validators.required]]
+      almacenId:[null,[Validators.required]],
+      almacenDestinoId:[null,[Validators.required]],
+      estadoERPID:[1,[Validators.required]]
 
     });
   }
-
    seleccionarFactura(valor:any,index:number)
   {
     if ( valor.target.checked ) {
      this.solicitudCambio[index].destalleFacturaSelecionada=true;
    }
    else{
-
     this.solicitudCambio[index].destalleFacturaSelecionada=false;
-    
-  
    }
   }
   getFacturaByID(value) {
@@ -203,17 +201,33 @@ export class SolicitudCambioFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.almacenesDesde = response.records;
-         
+      
         }
         this.loadingAlmacenesDesde = false;
       }, error => {
         this.loadingAlmacenesDesde = false;
         this.toastService.error("No se pudo obtener los almacenes", "Error conexion al servidor");
+      });
+  }
 
-        setTimeout(() => {
-          this.getAlmacenesOrigenUsuarioEnrroll(id);
-        }, 1000);
-
+  getAlmacenesDestinUsuarioEnrroll(almacenOrigenId:number) {
+    let parametros: Parametro[] = [
+      { key: "almacenId", value: this.actualizando ? Number(this.idalmacenesHastaSeleccionado):  Number(almacenOrigenId) },
+      { key: "CompaniaId", value: Number(this.authService.tokenDecoded.primarygroupsid) },
+      { key: "Tipo", value: 0},
+    ]
+    this.loadingAlmacenesHasta = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetUsuarioAlmacenesDestinoModulo", parametros).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.almacenesHasta = response.records;
+        }
+        this.loadingAlmacenesHasta = false;
+      }, error => {
+        this.loadingAlmacenesDesde = false;
+        this.toastService.error("No se pudo obtener los almacenes", "Error conexion al servidor");
       });
   }
   
@@ -255,7 +269,6 @@ export class SolicitudCambioFormularioComponent implements OnInit {
   }
 
   getDetalleFactura(numeroFactura:string) {
- 
     this.Cargando = true;
     let parametros = new SolicitudDevolucion();
     parametros.companiaId =Number(this.authService.tokenDecoded.primarygroupsid),
@@ -268,7 +281,6 @@ export class SolicitudCambioFormularioComponent implements OnInit {
             this.Formulario.patchValue(x.records[0])
             this.solicitudCambio=x.records
             this.calcularTotal();
-           
           }
           else{
             this.toastService.error(`La factura ${numeroFactura} no tiene detalle`);
@@ -384,6 +396,8 @@ export class SolicitudCambioFormularioComponent implements OnInit {
             this.solicitudCambio[index].id = 0;
             this.solicitudCambio[index].companiaId=Number(this.authService.tokenDecoded.primarygroupsid);
             this.solicitudCambio[index].almacenId=Number(this.Formulario.get('almacenId').value);
+            this.solicitudCambio[index].almacenDestinoId=Number(this.Formulario.get('almacenDestinoId').value);
+            this.solicitudCambio[index].estadoERPID=1;
             if(this.codigoArticuloAnteriorSeleccionado > 0)
             {
               this.articulosParaInterCambio.find(x=>x.articuloid == this.codigoArticuloAnteriorSeleccionado).disabled=false;
@@ -417,7 +431,10 @@ export class SolicitudCambioFormularioComponent implements OnInit {
       this.toastService.error("Hubo un problema seleccionar los productos");
       return;
     }
-    this.getArticulosParaIntercambio(event.codigo,this.clienteId)  
+  
+    this.getAlmacenesDestinUsuarioEnrroll(event.codigo);
+    this.getArticulosParaIntercambio(event.codigo,this.clienteId);  
+    
   }
   
   obtenerValorAnterior(codigoArticulo: any, index: number){
@@ -583,6 +600,8 @@ export class SolicitudCambioFormularioComponent implements OnInit {
     this.encabezadoFactura[0].usuarioId=Number(this.auth.tokenDecoded.nameid);
     this.encabezadoFactura[0].sucursalId=Number(this.authService.tokenDecoded.groupsid);
     this.encabezadoFactura[0].tipoSolicitudDevolucionId=Number(this.Formulario.get('tipoSolicitudDevolucionId').value);
+    this.encabezadoFactura[0].almacenId=Number(this.Formulario.get('almacenId').value);
+    this.encabezadoFactura[0].almacenDestinoId=Number(this.Formulario.get('almacenDestinoId').value);
     this.encabezadoFactura[0].fechaDocumento=new Date();
     this.encabezadoFactura[0].estadoERPID=1;
     this.encabezadoFactura[0].clienteId=this.clienteId;
@@ -603,7 +622,6 @@ export class SolicitudCambioFormularioComponent implements OnInit {
       "SolicitudCambioDetalle": !this.hayFactura?this.solicitudCambio.filter(x=>x.articuloId >0): this.solicitudCambio.filter(x => x.destalleFacturaSelecionada == true )
     }
     console.log(parametro)
-
    let metodo: string = this.actualizando ? "Update" : "Registrar";
    this.btnGuardarCargando = true;
    this.httpService.DoPostAny<any>(DataApi.SolicitudCambio,
