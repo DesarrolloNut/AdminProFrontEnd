@@ -6,10 +6,10 @@
                     <div class="col-md-6 align-middle">
                         <h4 class="card-title">Almacén Inventario</h4>
                     </div>
-                    <div class="col-md-6 text-right">
+                   <!-- <div class="col-md-6 text-right">
                         <button [routerLink]="[0]" class="btn btn-info"> <i class="fa fa-plus"></i>Registrar Modulo
                         </button>
-                    </div>
+                    </div>-->
                     <div class="col-md-12 p-2">
 
                         <div class="input-group">
@@ -36,11 +36,11 @@
                                 <th>Inventario</th>
                                 <th>Reservado</th>
                                 <th>En Transito</th>
-                                <th>Fecha Actualización</th>
                                 <th>Tipo Inventario</th>
-                                
+                                <th>Fecha Actualización</th>
+
                                 <th></th>
-                                
+
 
                             </tr>
                         </thead>
@@ -49,14 +49,14 @@
                             <tr *ngFor="let item of data">
                                 <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
                                 <td> {{item.articulo}}</td>
-                                <td> {{item.almacen}}</td> 
+                                <td> {{item.almacen}}</td>
                                 <td> {{item.inventario}}</td>
                                 <td>{{item.reservado}}</td>
                                 <td> {{item.entransito}}</td>
                                 <td> {{item.tipoInventario}}</td>
                                 <td>{{ item.fechaActualizacion | date: 'dd/MM/yyyy hh:mm a' }}</td>
-                                                         
-                                
+
+
                             </tr>
 
                         </tbody>
