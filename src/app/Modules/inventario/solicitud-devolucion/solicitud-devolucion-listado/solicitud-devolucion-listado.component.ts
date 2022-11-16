@@ -196,7 +196,7 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
       }
       let extensionAllowed = {"png":true,"jpeg":true,"jpg":true,"pdf":true};
       if (archivos[i].size / 1024 / 1024 > 20) {
-        alert("File size should be less than 20MB")
+        this.toastService.error("File size should be less than 20MB")
         this.toastService.error(`El tamano del archivo debe ser menos a 20MB`);
         return;
       }
@@ -222,9 +222,7 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
     for(let i = 0; i < this.files.length; i++)
     {
       formData.append("Files", this.files[i]);
-     
     }
-      
     this.httpService.DoPostAny<any>(DataApi.SolicitudDevolucion,
       "UploadSolicitudDevolucionAnexos", formData).subscribe(response => {
         if (!response.ok) {
@@ -237,8 +235,6 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
       }, error => { 
         this.toastService.error("Error conexion al servidor");
       });
-
-
   }
 
   onDeleteitem(index: number) {

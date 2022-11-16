@@ -3,7 +3,8 @@ export enum EstadoGeneral {
     CONFIRMADO=1,
     ENVIADO=2,
     RECIBIDO=3,
-    CANCELADO=4
+    CANCELADO=4,
+    CONFIRMARDIFERENCIA=5
 }
 
 export enum EstadoERP {

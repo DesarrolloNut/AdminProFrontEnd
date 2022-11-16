@@ -11,6 +11,7 @@ import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { EstadoERP, EstadoGeneral } from 'src/app/shared/enums/EstadoGeneral';
 import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
+import { DetalleTransferenciaInventarioRequest } from '../models/DetalleTransferenciaInventarioRequest';
 import { LoteAlmacen } from '../models/LoteAlmacen';
 import { ParametroArticuloParaIntercambioDeAlmacen } from '../models/ParametroArticuloParaIntercambioDeAlmacen';
 import { SolicitudArticuloDetalle } from '../models/SolicitudArticuloDetalle';
@@ -123,10 +124,11 @@ export class TransferenciaFormularioComponent implements OnInit {
           if (response != null && response.records != null && response.records.length > 0) {
             this.agregarDetalleVacio();
             let record = response.records[0]
-            this.Formulario.setValue(record);
+            this.Formulario.patchValue(record);
             this.getAlmacenesOrigenUsuarioEnrroll(record.almacenOrigenId);
             this.getArticulosParaIntercambioDeAlmacen(record.almacenOrigenId);
-            this.getTransferenciaDetalles(record.id);
+            this.getTransferenciaDetalles(record.id,record.usuarioId);
+            
             this.getLotesTransacciones(record.id)
             this.getUsuarioByID(record.usuarioId);
             this.idAlamacenDesdeSeleccionado=record.almacenOrigenId;
@@ -144,14 +146,18 @@ export class TransferenciaFormularioComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
       });
   }
-  getTransferenciaDetalles(id: number) {
+  getTransferenciaDetalles(id: number,usuarioId:number) {
     this.loadingSolicitudDetalle = true;
-    this.httpService.DoPostAny<any>(DataApi.TransferenciaInventario,
-      "GetTransferenciaInventarioDetalles", id).subscribe(response => {
+    let parametros = new DetalleTransferenciaInventarioRequest();
+    parametros.companiaId =Number(this.authService.tokenDecoded.primarygroupsid),
+    parametros.usuarioId=usuarioId, 
+    parametros.id=id
+    this.httpService.DoPostAny<SolicitudArticuloDetalle>(DataApi.TransferenciaInventario,
+      "GetTransferenciaInventarioDetalles", parametros).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          this.solicitudTransferenciaInventario = response.records;
+          this.solicitudTransferenciaInventario = response.records;   
         }
         this.loadingSolicitudDetalle = false;
       }, error => {
@@ -351,6 +357,7 @@ export class TransferenciaFormularioComponent implements OnInit {
       });
   }
 
+
   getAlmacenDesde(event: any){
           const almacenId=(event.target as HTMLInputElement).value.split("|",1);
           this.idAlamacenDesdeSeleccionado=almacenId;
@@ -449,14 +456,20 @@ export class TransferenciaFormularioComponent implements OnInit {
 };
 
   guardar() {
-
+    let estado=this.Formulario.get('estado').value
+    if(this.transferenciaInventarioConfirmado){
+       estado=EstadoGeneral.RECIBIDO;
+    }
+    if(this.transferenciaInventarioConfirmado && (this.solicitudTransferenciaInventario.reduce((n, {recepcion})=> n+recepcion,0) > this.solicitudTransferenciaInventario.reduce((n, {envio})=> n+envio,0) )){
+      estado=EstadoGeneral.CONFIRMARDIFERENCIA;
+   }
     let encabezadoTransferenciaInventario  = {
        Id : Number(this.Formulario.get('id').value),
        AlmacenOrigenId : Number(this.idAlamacenDesdeSeleccionado),
        AlmacenDestinoId :Number(this.Formulario.get('almacenDestinoId').value),
        Fecha : this.Formulario.get('fecha').value,
        UsuarioId :Number(this.Formulario.get('usuarioId').value),
-       Estado: this.transferenciaInventarioConfirmado ? EstadoGeneral.RECIBIDO: this.Formulario.get('estado').value,
+       Estado: estado,
        EstadoIdERP : this.Formulario.get('estadoIdERP').value,
        CompaniaId : Number(this.Formulario.get('companiaId').value),
        SucursalId : Number(this.Formulario.get('sucursalId').value),
@@ -464,12 +477,14 @@ export class TransferenciaFormularioComponent implements OnInit {
        fechaRecepcion:this.transferenciaInventarioConfirmado ? new Date(): new Date(),
       };
 
+     
+
     let parametro: any = {
       "TransferenciaInventario": encabezadoTransferenciaInventario,
       "TransferenciaInventarioDetalles": this.solicitudTransferenciaInventario.filter(x => x.articuloId > 0 && x.envio > 0),
       "LoteTransacciones": this.loteAlmacenSeleccionado.filter(x => x.cantidadEnvio > 0)
     }
-    console.log(parametro)
+ 
 
     let metodo: string = this.actualizando ? "Update" : "Registrar";
     this.btnGuardarCargando = true;
@@ -480,6 +495,7 @@ export class TransferenciaFormularioComponent implements OnInit {
         } else {
           this.toastService.success("Realizado", "OK");
           this.solicitudTransferenciaInventario=[new SolicitudArticuloDetalle()];
+         
           this.router.navigateByUrl('/inventario/transferencia');
         }
         this.btnGuardarCargando = false;
@@ -524,13 +540,11 @@ export class TransferenciaFormularioComponent implements OnInit {
     ];
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
       "GetSucursalesByCompania", parametros).subscribe(response => {
-
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
           this.sucursales = response.records;
         }
-
         this.loadingSucursales = false;
       }, error => {
         this.loadingSucursales = false;
