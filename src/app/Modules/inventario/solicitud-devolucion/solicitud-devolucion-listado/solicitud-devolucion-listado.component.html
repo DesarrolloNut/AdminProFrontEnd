@@ -36,6 +36,7 @@
                 <th>Cliente</th>
                 <th>NCF</th>
                 <th>Estado</th>
+                <th>EstadoERP</th>
                 <th>Subtotal</th>
                 <th>Impuesto</th>
                 <th>Descuento</th>
@@ -72,16 +73,12 @@
                   </div>
                 </td>
                 <td>
-                 
                   <div class="d-flex align-items-center">
                     <i class="fa fa-user fa-2x text-light"></i>
                     <div class="ml-3">
                       <p class="mb-0"><span class=" font-weight-bold">{{item.nombre | titlecase }} </span></p>
                     </div>
-                    
                   </div>
-             
-               
                 </td>
                 <td>
                   {{item.ncf}}
@@ -90,6 +87,18 @@
                   <div *ngIf="item.estado =='Autorizado'" class="my-2"> <span class="text-600 text-90"></span> <span class="badge badge-success badge-pill px-25">{{item.estado}}</span></div>
                   <div *ngIf="item.estado =='Pendiente'"  class="my-2"> <span class="text-600 text-90"></span> <span class="badge badge-warning badge-pill px-25">{{item.estado}}</span></div>
                   <div *ngIf="item.estado =='Rechazado'"  class="my-2"> <span class="text-600 text-90"></span> <span class="badge badge-danger badge-pill px-25">{{item.estado}}</span></div>
+                </td>
+                <td>
+                  <h5 *ngIf="item.estadoERPID==1" >
+                    <span> <i class="fa fa-circle"
+                            [ngStyle]="{'color': '#f4d03f'}"></i>
+                       Pendiente</span>
+                    </h5>
+                      <h5 *ngIf="item.estadoERPID==0" >
+                        <span> <i class="fa fa-circle"
+                                [ngStyle]="{'color': '#82e0aa'}"></i>
+                                Sincronizado</span>
+                        </h5>
                 </td>
                 <td>
                   <div class="d-flex align-items-center">
@@ -370,6 +379,7 @@
                     </table>
                   </div>
                 </div>
+
         </div>
       </div>
     </div>

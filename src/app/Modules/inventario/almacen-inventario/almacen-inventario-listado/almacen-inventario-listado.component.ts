@@ -6,6 +6,7 @@ import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
+import { ComboBox } from 'src/app/shared/model/ComboBox';
 import Swal from 'sweetalert2';
 import { Modulo } from '../models/Modulo';
 import { ModuloViewModel } from '../models/ModuloViewModel';
@@ -26,8 +27,18 @@ export class AlmacenInventarioListadoComponent implements OnInit {
   totalPaginas: number = 0;
   paginaSize: number = 5;
   paginaTotalRecords: number = 0;
-  data:ModuloViewModel[] = [] //tu modelo
+  data:any[] = [] //tu modelo
   btnEliminarCargando: boolean;
+
+  filtrador:any[] = [
+    {codigo:"Almacén",nombre:"Almacén"},
+    {codigo:"Tipo Inventario",nombre:"Tipo Inventario"}
+  ] 
+  loadingAlmacenes: boolean;
+  almacenes: { codigo: any; nombre: any; }[];
+  loadingInventarioTipo: boolean;
+  inventarioTipos: { codigo: number; nombre: string; }[];
+
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
@@ -37,19 +48,25 @@ export class AlmacenInventarioListadoComponent implements OnInit {
 
 
   ngOnInit(): void {
-   this.getData()
+   this.getData();
+   this.getAlmacenes();
+   this.getInventarioTipos();
   }
  
 
-
+  selectedAlmacen=1;
+  selectedTipoInventario=1;
   getData() {
     this.Cargando = true;
-    let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
+    let parametros: Parametro[] = [
+      { key: "Search", value: this.Search },
+      { key: "Almacen", value: this.selectedAlmacen },
+      { key: "TipoInventario", value: this.selectedTipoInventario }
+  ]
     this.httpService.GetAllWithPagination<ModuloViewModel>(DataApi.AlmacenInventario, "GetAlmacenIventarioListado", "ID", this.paginaNumeroActual,
       this.paginaSize, true, parametros).subscribe(x => {
         if (x.ok) {
           this.data = x.records;
-         console.log(x.records)
           this.asignarPagination(x);
         } else {
           this.toastService.error(x.errores[0]);
@@ -62,6 +79,57 @@ export class AlmacenInventarioListadoComponent implements OnInit {
         this.Cargando = false;
       });
 
+  }
+  almacenSeleccionado(event:ComboBox){
+   this.getData();
+  }
+
+  tipoInventarioSeleccionado(event:ComboBox){
+    this.getData();
+   }
+ 
+  getAlmacenes() {
+    this.loadingAlmacenes = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetAlmacenes", null).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.almacenes = response.records.map(x => {
+            return { "codigo": x.codigo, "nombre": x.nombre }
+          });
+        }
+        this.loadingAlmacenes = false;
+      }, error => {
+        this.loadingAlmacenes = false;
+        this.toastService.error("No se pudo obtener los almacenes", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getAlmacenes()
+        }, 1000);
+
+      });
+  }
+  getInventarioTipos() {
+    this.loadingInventarioTipo = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetInventarioTipos", null).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.inventarioTipos = response.records.map(x => {
+            return { "codigo": x.codigo, "nombre": x.nombre }
+          });
+        
+        }
+        this.loadingInventarioTipo = false;
+      }, error => {
+        this.loadingInventarioTipo = false;
+        this.toastService.error("No se pudo obtener los Inventarios Tipos", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getAlmacenes()
+        }, 1000);
+
+      });
   }
 
   asignarPagination(x: ResponseContenido<any>) {

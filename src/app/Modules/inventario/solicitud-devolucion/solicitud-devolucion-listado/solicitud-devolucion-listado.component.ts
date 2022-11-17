@@ -81,8 +81,7 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
       this.paginaSize, true, parametros).subscribe(x => {
         if (x.ok) {
           this.data = x.records;
-          
-          
+         
         } else {
           this.toastService.error(x.errores[0]);
           console.error(x.errores[0]);
@@ -95,7 +94,6 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
       });
 
   }
- 
   asignarPagination(x: ResponseContenido<any>) {
     if (x.pagina != null) {
       this.totalPaginas = x.pagina.totalPaginas == null ? 0 : x.pagina.totalPaginas;
@@ -131,9 +129,8 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
         this.modalService.dismissAll()
       });
   }
+
   getAutorizacionUsuario() {
-
-
     let parametro = {
       "UsuarioID": Number(this.authService.tokenDecoded.nameid),
       "KeynameModule": EstadosGeneralesKeyEnum.INVENTARIOSOLICITUDDEVOLUCION,
@@ -152,10 +149,9 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
         setTimeout(() => {
           this.getAutorizacionUsuario()
         }, 1000);
-
       });
-
   }
+
   openModalAnexo(content, item: any) {
     this.modalService.open(content, { size: 'lg' });
     this.files = []
@@ -163,7 +159,6 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
     this.filaSelecccionado=item;
     this.getArchivosSubidos(item.id);
     this.estadoDevolucion=item.estado;
-   
   }
 
   getArchivosSubidos(id:number) {
@@ -187,7 +182,6 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
       return el.nombre === username;
     }); 
   }
-
   setFiles(archivos) {
     for (let i = 0; i < archivos.length; i++) {
       if(this.fileExists(archivos[i].name)){
@@ -215,7 +209,6 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
       this.files.push(archivos[i]);
     }
   }
-
   subirArchivosAlServidor() {
     const formData = new FormData();
     formData.append("id", this.solicitudDevolucionID.toString());
@@ -236,13 +229,9 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
       });
   }
-
   onDeleteitem(index: number) {
     this.files.splice(index, 1);
   }
-
-
-
   deleteSolicitudDevolucionArchivoByID(id: number) {
     this.loadingSolicitudDetalle = true;
     this.httpService.DoPostAny<string>(DataApi.SolicitudDevolucion,

@@ -460,9 +460,10 @@ export class TransferenciaFormularioComponent implements OnInit {
     if(this.transferenciaInventarioConfirmado){
        estado=EstadoGeneral.RECIBIDO;
     }
-    if(this.transferenciaInventarioConfirmado && (this.solicitudTransferenciaInventario.reduce((n, {recepcion})=> n+recepcion,0) > this.solicitudTransferenciaInventario.reduce((n, {envio})=> n+envio,0) )){
+    if(this.transferenciaInventarioConfirmado && (this.solicitudTransferenciaInventario.reduce((n, {recepcion})=> n+recepcion,0) !== this.solicitudTransferenciaInventario.reduce((n, {envio})=> n+envio,0) )){
       estado=EstadoGeneral.CONFIRMARDIFERENCIA;
    }
+
     let encabezadoTransferenciaInventario  = {
        Id : Number(this.Formulario.get('id').value),
        AlmacenOrigenId : Number(this.idAlamacenDesdeSeleccionado),

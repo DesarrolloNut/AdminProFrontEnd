@@ -64,6 +64,8 @@ export class TransferenciaListadoComponent implements OnInit {
   estadoTransferencia: any;
   configuracionCompania: ConfiguracionCompania;
   transferenciaInventarioId: number;
+  anexoRecepcion: any;
+  anexoEnvio: any;
 
 
   constructor(private toastService: ToastrService,
@@ -88,7 +90,6 @@ export class TransferenciaListadoComponent implements OnInit {
         if (x.ok) {
           this.data = x.records;
           this.asignarPagination(x);
-         
         } else {
           this.toastService.error(x.errores[0]);
           console.error(x.errores[0]);
@@ -217,7 +218,7 @@ export class TransferenciaListadoComponent implements OnInit {
       this.files.push(archivos[i]);
     }
   }
-  uploadTransferenciaInventarioAnexosEnvioAsync() {
+  uploadTransferenciaInventarioAnexosEnvio() {
     const formData = new FormData();
     formData.append("id", this.transferenciaInventarioId.toString());
     formData.append("NameKeyModulo",EstadosGeneralesKeyEnum.TRANSFERENCIA);
@@ -434,6 +435,12 @@ uploadTransferenciaInventarioAnexosRecibido() {
     }, error => { 
       this.toastService.error("Error conexion al servidor");
     });
+}
+
+mostrarAnexosSubidos(content,item:any){
+  item.archivoEnvio !==null?this.anexoEnvio=item.archivoEnvio:"#"
+  item.anexoRecepcion !==null?this.anexoRecepcion=item.anexoRecepcion:"#"
+  this.modalService.open(content, { size: 'lg' });
 }
 
 

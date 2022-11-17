@@ -198,7 +198,7 @@ export class DespachoListadoComponent implements OnInit {
       }, 1000);
   }
 
-
+ 
   getUsuarioLogueado() {
     let usuarioID: number = Number(this.authService.tokenDecoded.nameid)
 
