@@ -43,6 +43,7 @@ getData() {
 
       if (x.ok) {
         this.data = x.records;
+        console.log( this.data);
         this.asignarPagination(x);
       } else {
         this.toastService.error(x.errores[0]);

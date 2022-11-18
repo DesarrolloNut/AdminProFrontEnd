@@ -5,10 +5,14 @@ export class Permisos {
       this.descripcion = ""
       this.permisoPadreId = 0
       this.companiaId= 0
+      this.nombres = ""
+
   }
   id: number;
   nombre: string;
   descripcion: string
   permisoPadreId: number
   companiaId:number;
+  nombres: string;
+
 }

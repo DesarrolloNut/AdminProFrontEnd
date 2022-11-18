@@ -54,11 +54,13 @@ export class RolesListadoComponent implements OnInit {
   };
 
 
+
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private modalService: NgbModal,
     private auth:AuthenticationService,
     public permissionsService: NgxPermissionsService,
+    private authService: AuthenticationService
   ) { }
 
 
@@ -120,10 +122,14 @@ export class RolesListadoComponent implements OnInit {
     this.modalService.open(content, { size: 'xl', backdrop: "static", });
   }
 
+
   getPermisos() {
+    let param: Parametro[] = [{ key: "companiaId", value: this.authService.tokenDecoded.primarygroupsid }]
+  //  console.log(param);
     this.loadingPermisos = true;
+
     this.httpService.DoPost<Permisos>(DataApi.Permisos,
-      "GetAllPermisos", null).subscribe(response => {
+      "GetAllPermisos", param).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);

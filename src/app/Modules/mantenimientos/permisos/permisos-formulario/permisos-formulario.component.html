@@ -28,12 +28,20 @@
 
                   <div class="form-group col-md-6">
                       <label for="nombre"> Nombre</label>
-                      <input formControlName="nombre" type="text" name="nombre" id="nombre"
-                          [ngClass]="{'is-invalid' : submitted && f.nombre.errors,  'form-control':true  }">
-                      <div class="invalid-feedback" *ngIf="submitted && f.nombre.errors">
+                      <input formControlName="nombres" type="text" name="nombres" id="nombres"
+                          [ngClass]="{'is-invalid' : submitted && f.nombres.errors,  'form-control':true  }">
+                      <div class="invalid-feedback" *ngIf="submitted && f.nombres.errors">
                           <div *ngIf="f.nombre.errors.required">El campo es obligatorio</div>
                       </div>
                   </div>
+                  <div class="form-group col-md-6">
+                    <label for="nombre"> NameKey</label>
+                    <input formControlName="nombre" type="text" name="nombre" id="nombre"
+                        [ngClass]="{'is-invalid' : submitted && f.nombre.errors,  'form-control':true  }">
+                    <div class="invalid-feedback" *ngIf="submitted && f.nombre.errors">
+                        <div *ngIf="f.nombre.errors.required">El campo es obligatorio</div>
+                    </div>
+                </div>
                   <!-- <div class="form-group col-md-6">
                       <label for="codigoReferencia"> <i class="fa fa-hashtag"></i> Código de referencia</label>
                       <input formControlName="codigoReferencia" type="text" name="codigoReferencia"

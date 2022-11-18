@@ -48,8 +48,9 @@ export class PermisosFormularioComponent implements OnInit {
   private CreateForm() {
     this.Formulario = this.formBuilder.group({
       id: [0],
-      companiaId: [this.authService.tokenDecoded.primarygroupsid, [Validators.required]],
+     // companiaId: [this.authService.tokenDecoded.primarygroupsid, [Validators.required]],
       nombre: [null, [Validators.required]],
+      nombres: [null, [Validators.required]],
       descripcion: [null,],
       permisoPadreId: [null,  [Validators.required]],
     });
@@ -98,7 +99,7 @@ export class PermisosFormularioComponent implements OnInit {
     //console.log(JSON.stringify(this.Formulario.value));
    this.httpService.DoPostAny<Permisos>(DataApi.Permisos,
       metodo, this.Formulario.value).subscribe(response => {
-    
+
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
         } else {
