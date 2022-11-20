@@ -7,6 +7,7 @@ import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { UsuarioAlmacenEnrroll } from '../models/UsuarioAlmacenEnrroll';
+import { Parametro } from 'src/app/core/http/model/Parametro';
 
 @Component({
   selector: 'app-usuario-almacen-enrroll-formulario',
@@ -36,6 +37,7 @@ export class UsuarioAlmacenEnrrollFormularioComponent implements OnInit {
     private route: ActivatedRoute,
     private httpService: BackendService,
     private auth:AuthenticationService,
+    private authService: AuthenticationService,
     private router: Router,
     private formBuilder: FormBuilder) { }
 
@@ -157,9 +159,10 @@ export class UsuarioAlmacenEnrrollFormularioComponent implements OnInit {
   }
 
   GetNivelAutorizacionModuloComboBox() {
+    let param: Parametro[] = [{ key: "companiaId", value: this.authService.tokenDecoded.primarygroupsid }]
     this.loadingNivelAutorizacionCategorias = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetModuloComboBox", null).subscribe(response => {
+      "GetPermisosAlmacen", param).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
