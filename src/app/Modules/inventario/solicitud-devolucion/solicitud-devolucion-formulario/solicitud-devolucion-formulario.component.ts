@@ -4,9 +4,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
+import { Parametro } from 'src/app/core/http/model/Parametro';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { Usuario } from 'src/app/Modules/servicios/recepcion/models/Usuario';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
+import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { SolicitudDevolucion } from '../models/SolicitudDevolucion';
 import { SolicitudDevolucionDetalle } from '../models/SolicitudDevolucionDetalle';
@@ -131,20 +133,21 @@ export class SolicitudDevolucionFormularioComponent implements OnInit {
   }
   getTipoSolicitudDevoluciones() {
     this.tipoSolicitudDevolucion = true;
+    let parametros: Parametro[] = [
+      { key: "Modulo", value: EstadosGeneralesKeyEnum.INVENTARIOSOLICITUDDEVOLUCION },
+   ]
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetTipoSolicitudDevoluciones", null).subscribe(response => {
+      "GetTipoSolicitudDevoluciones", parametros).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
           this.tipoSolicitudDevoluciones = response.records;
+          console.log(this.tipoSolicitudDevoluciones)
         }
         this.tipoSolicitudDevolucion = false;
       }, error => {
         this.tipoSolicitudDevolucion = false;
         this.toastService.error("No se pudo obtener las frecuencias", "Error conexion al servidor");
-        setTimeout(() => {
-          this.getTipoSolicitudDevoluciones();
-        }, 1000);
       });
   }
   

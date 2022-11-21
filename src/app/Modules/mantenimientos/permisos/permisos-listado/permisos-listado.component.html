@@ -42,10 +42,10 @@
                           <tr *ngFor="let item of data">
                               <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
                               <td>
-                                  <span> {{item.nombres}}</span>
+                                  <span> {{item.nombre}}</span>
                               </td>
                               <td>
-                                  <span> {{item.descripcion |  slice:0:60}} ...</span>
+                                  <span> {{item.nombres |  slice:0:60}} ...</span>
                               </td>
                               <td>
                                   <button class="btn btn-sm btn-info" [routerLink]="[item.id]">

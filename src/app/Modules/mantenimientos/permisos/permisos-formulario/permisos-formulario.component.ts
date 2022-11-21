@@ -48,10 +48,13 @@ export class PermisosFormularioComponent implements OnInit {
   private CreateForm() {
     this.Formulario = this.formBuilder.group({
       id: [0],
-     // companiaId: [this.authService.tokenDecoded.primarygroupsid, [Validators.required]],
+      //companiaId: [this.authService.tokenDecoded.primarygroupsid, [Validators.required]],
       nombre: [null, [Validators.required]],
       nombres: [null, [Validators.required]],
       descripcion: [null,],
+      usaAlmacen: [false,],
+      tipoDevolucion: [false,],  
+      solicitudCambio: [false,], 
       permisoPadreId: [null,  [Validators.required]],
     });
   }

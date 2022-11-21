@@ -300,7 +300,7 @@ export const ROUTES: RouteInfo[] = [
         labelClass: '',
         extralink: false,
         submenu: [],
-        permisos: ['inventario_transferencia_despacho'],
+        permisos: ['inventario_solicitud_cambio'],
       },
       {
         path: '/inventario/almacen-inventario',
@@ -633,6 +633,7 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ["mantenimientos_hora_picking"],
       },
+     
       {
         path: '/mantenimientos/listaprecios',
         label: '',
@@ -1326,6 +1327,28 @@ export const ROUTES: RouteInfo[] = [
         extralink: false,
         submenu: [],
         permisos: ["configuraciones_sap_panel_sincronizacion"],
+      },
+      {
+        path: '/configuraciones/modulo-compania-enrroll',
+        label: '',
+        labelClass: '',
+        title: 'Modulo Compañia Enrroll',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["configuraciones_modulo-compania-enrroll"],
+      },
+      {
+        path: '/mantenimientos/permisos',
+        label: '',
+        labelClass: '',
+        title: 'Permisos',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_permiso"],
       },
 
 

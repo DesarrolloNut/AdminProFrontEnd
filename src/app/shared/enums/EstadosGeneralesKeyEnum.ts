@@ -9,7 +9,7 @@ export enum EstadosGeneralesKeyEnum {
     PEDIDO = 'PEDIDO',
     ESTADOSERP = 'ESTADOSERP',
     TRANSFERENCIA='inventario_transferencia_despacho',
-    INVENTARIOSOLICITUDDEVOLUCION='INVENTARIOSOLICITUDDEVOLUCION',
-    INVENTARIOCAMBIO='INVENTARIOCAMBIO'
+    INVENTARIOSOLICITUDDEVOLUCION='inventario_solicitud_devolucion',
+    INVENTARIOCAMBIO='inventario_solicitud_cambio'
 
 }

@@ -231,24 +231,27 @@ export class SolicitudCambioFormularioComponent implements OnInit {
       });
   }
   
+
   getTipoSolicitudDevoluciones() {
     this.tipoSolicitudDevolucion = true;
+    let parametros: Parametro[] = [
+      { key: "Modulo", value: EstadosGeneralesKeyEnum.INVENTARIOCAMBIO },
+   ]
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetTipoSolicitudDeCambios", null).subscribe(response => {
+      "GetTipoSolicitudDevoluciones", parametros).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
           this.tipoSolicitudDevoluciones = response.records;
+          console.log(this.tipoSolicitudDevoluciones)
         }
         this.tipoSolicitudDevolucion = false;
       }, error => {
         this.tipoSolicitudDevolucion = false;
         this.toastService.error("No se pudo obtener las frecuencias", "Error conexion al servidor");
-        setTimeout(() => {
-          this.getTipoSolicitudDevoluciones();
-        }, 1000);
       });
   }
+  
 
   verificarSiHayFactura(event){
     if ( event.target.checked ) {

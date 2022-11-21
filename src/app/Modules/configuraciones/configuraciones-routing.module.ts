@@ -4,6 +4,8 @@ import { AdminWebSincronizacionComponent } from './admin-web-sincronizacion/admi
 
 import { ConfiguracionesComponent } from './configuraciones.component';
 import { ControlHorarioCitasComponent } from './control-horario-citas/control-horario-citas.component';
+import { ModuloCompaniaEnrrollFormularioComponent } from './modulo-compania-enrroll/modulo-compania-enrroll-formulario/modulo-compania-enrroll-formulario.component';
+import { ModuloCompaniaEnrrollListadoComponent } from './modulo-compania-enrroll/modulo-compania-enrroll-listado/modulo-compania-enrroll-listado.component';
 import { SapSincronizacionPanelComponent } from './sap-sincronizacion/sap-sincronizacion-panel/sap-sincronizacion-panel.component';
 
 const routes: Routes = [
@@ -48,6 +50,28 @@ const routes: Routes = [
           ]
         }
       },
+
+        // Modulo Compnia Enrroll
+        {
+          path: 'modulo-compania-enrroll', component: ModuloCompaniaEnrrollListadoComponent, data: {
+            title: 'Modulo Compañia',
+            urls: [
+              { title: 'Configuraciones' },
+              { title: 'Modulo Compañia' }
+            ]
+          }
+        },
+  
+        {
+          path: 'modulo-compania-enrroll/:id', component: ModuloCompaniaEnrrollFormularioComponent, data: {
+            title: 'Modulo Compañia Formulario',
+            urls: [
+              { title: 'Configuraciones' },
+              { title: 'Modulo Compañia', },
+              { title: 'Formulario' }
+            ]
+          }
+        },
 
 
     ]
