@@ -118,8 +118,6 @@ import { TipoComprobanteFiscaFormularioComponent } from './tipoComprobanteFiscal
 import { TipoComprobanteFiscalListadoComponent } from './tipoComprobanteFiscal/tipo-comprobante-fiscal-listado/tipo-comprobante-fiscal-listado.component';
 import { ModuloFormularioComponent } from './modulos/modulo-formulario/modulo-formulario.component';
 import { ModuloListadoComponent } from './modulos/modulo-listado/modulo-listado.component';
-import { TipoSolicitudDevolucionFormularioComponent } from './tipoSolicitudDevolucion/tipoSolicitudDevolucion-formulario/tipoSolicitudDevolucion-formulario.component';
-import { TipoSolicitudDevolucionListadoComponent } from './tipoSolicitudDevolucion/tipoSolicitudDevolucion-listado/tipoSolicitudDevolucion-listado.component';
 
 
 
@@ -145,8 +143,6 @@ import { TipoSolicitudDevolucionListadoComponent } from './tipoSolicitudDevoluci
     AsignacionAlmacenFormularioComponent,
     HoraPickingFormularioComponent,
     ModuloFormularioComponent,
-    TipoSolicitudDevolucionFormularioComponent,
-    TipoSolicitudDevolucionListadoComponent,
     SapconnectionListadoComponent,
     SapconnectionFormularioComponent,
     PromocionesListadoComponent,

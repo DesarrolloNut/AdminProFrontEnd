@@ -119,7 +119,6 @@ export class AlmacenInventarioListadoComponent implements OnInit {
           this.inventarioTipos = response.records.map(x => {
             return { "codigo": x.codigo, "nombre": x.nombre }
           });
-        
         }
         this.loadingInventarioTipo = false;
       }, error => {

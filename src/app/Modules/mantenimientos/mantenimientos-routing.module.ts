@@ -97,8 +97,6 @@ import { TipoComprobanteFiscalListadoComponent } from './tipoComprobanteFiscal/t
 import { TipoComprobanteFiscaFormularioComponent } from './tipoComprobanteFiscal/tipo-comprobante-fiscal-formulario/tipo-comprobante-fiscal-formulario.component';
 import { ModuloFormularioComponent } from './modulos/modulo-formulario/modulo-formulario.component';
 import { ModuloListadoComponent } from './modulos/modulo-listado/modulo-listado.component';
-import { TipoSolicitudDevolucionListadoComponent } from './tipoSolicitudDevolucion/tipoSolicitudDevolucion-listado/tipoSolicitudDevolucion-listado.component';
-import { TipoSolicitudDevolucionFormularioComponent } from './tipoSolicitudDevolucion/tipoSolicitudDevolucion-formulario/tipoSolicitudDevolucion-formulario.component';
 
 
 
@@ -1105,27 +1103,6 @@ const routes: Routes = [
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Modulo' },
-            { title: 'Formulario' }
-          ]
-        }
-      },
-
-      {
-        path: 'tipo-solicitud-devolucion', component: TipoSolicitudDevolucionListadoComponent, data: {
-          title: 'Tipo Solicitud Devolución',
-          urls: [
-            { title: 'Mantenimientos' },
-            { title: 'Tipo Solicitud Devolución' }
-          ]
-        }
-      },
-   
-      {
-        path: 'tipo-solicitud-devolucion/:id', component: TipoSolicitudDevolucionFormularioComponent, data: {
-          title: 'Tipo Solicitud Devolución Formulario',
-          urls: [
-            { title: 'Mantenimientos' },
-            { title: 'Tipo Solicitud Devolución' },
             { title: 'Formulario' }
           ]
         }

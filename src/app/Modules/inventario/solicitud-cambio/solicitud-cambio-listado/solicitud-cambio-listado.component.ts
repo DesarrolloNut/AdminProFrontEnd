@@ -14,6 +14,7 @@ import { Archivo } from 'src/app/shared/model/Archivo';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { SolicitudArticuloDetalle } from '../../transferencia/models/SolicitudArticuloDetalle';
 import { SolicitudDevolucion } from '../../solicitud-devolucion/models/SolicitudDevolucion';
+import { ConfiguracionCompania } from 'src/app/Modules/configuraciones/models/ConfiguracionCompania';
 
 
 @Component({
@@ -32,7 +33,7 @@ export class SolicitudCambioListadoComponent implements OnInit {
   paginaSize: number = 1000;
   paginaTotalRecords: number = 0;
   data: SolicitudDevolucion[] = [] //tu modelo
-
+  configuracionCompania: ConfiguracionCompania;
   cargandoAnexos: boolean
   solicitudDevolucionSeleccionada: any;
   progress: number;
@@ -72,6 +73,7 @@ export class SolicitudCambioListadoComponent implements OnInit {
    
     this.getAutorizacionUsuario();
     this.getData();
+    this. getConfiguracionCompnia();
   }
   getData() {
     this.Cargando = true;
@@ -211,6 +213,7 @@ export class SolicitudCambioListadoComponent implements OnInit {
   subirArchivosAlServidor() {
     const formData = new FormData();
     formData.append("id", this.solicitudDevolucionID.toString());
+    formData.append("NameKeyModulo",EstadosGeneralesKeyEnum.INVENTARIOCAMBIO);
     for(let i = 0; i < this.files.length; i++)
     {
       formData.append("Files", this.files[i]);
@@ -287,7 +290,7 @@ export class SolicitudCambioListadoComponent implements OnInit {
     })
   }
   autorizarSolicitudDevolucion(id:number,accion: string) {
-   if(this.filesSubidos.length <=0 && accion !=='Rechazar'){
+   if(this.filesSubidos.length <=0 && accion !=='Rechazar' && this.configuracionCompania.configValue){
     Swal.fire(
       'Error',
       'Este registro no tiene anexo.',
@@ -318,6 +321,26 @@ export class SolicitudCambioListadoComponent implements OnInit {
        this.toastService.error("Error conexion al servidor");
      });
  }
+
+ getConfiguracionCompnia() {
+  this.loadingSolicitudDetalle = true;
+  let parametros = new ConfiguracionCompania();
+  parametros.companiaId =Number(this.authService.tokenDecoded.primarygroupsid),
+  parametros.nameKeyModulo=EstadosGeneralesKeyEnum.TRANSFERENCIA, 
+  this.httpService.DoPostAny<ConfiguracionCompania>(DataApi.Configuracion,
+    "ConfiguracionCompania", parametros).subscribe(response => {
+      if (!response.ok) {
+        this.toastService.error(response.errores[0]);
+      } else {
+        this.configuracionCompania=response.records[0];
+      }
+      this.loadingSolicitudDetalle = false;
+    }, error => {
+      this.loadingSolicitudDetalle = false;
+      this.toastService.error("No se pudo la configuracion de la compania", "Error conexion al servidor");
+      this.modalService.dismissAll()
+    });
+}
 
 }
 

@@ -14,6 +14,7 @@ import { Archivo } from 'src/app/shared/model/Archivo';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { SolicitudArticuloDetalle } from '../../transferencia/models/SolicitudArticuloDetalle';
 import { SolicitudDevolucion } from '../models/SolicitudDevolucion';
+import { ConfiguracionCompania } from 'src/app/Modules/configuraciones/models/ConfiguracionCompania';
 
 @Component({
   selector: 'app-solicitud-devolucion-listado',
@@ -42,12 +43,12 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
   almacenDestino:string;
   usuario:string;
 
-  keyModule = EstadosGeneralesKeyEnum.SOLICITUDCOMPRAS;
   estadosAutorizacion: ComboBox[];
   estadoAutorizacionFinal: number;
   loadingSolicitudDetalle: boolean;
   transferenciaInventarioDetalles:  SolicitudArticuloDetalle[] = [];
   solicitudDevolucionDetalle:any;
+  configuracionCompania: ConfiguracionCompania;
 
   total: number;
   btnConvertirCargando: boolean;
@@ -70,6 +71,7 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
   ngOnInit(): void {
     this.getAutorizacionUsuario();
     this.getData();
+    this.getConfiguracionCompnia();
   }
   getData() {
     this.Cargando = true;
@@ -190,7 +192,6 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
       }
       let extensionAllowed = {"png":true,"jpeg":true,"jpg":true,"pdf":true};
       if (archivos[i].size / 1024 / 1024 > 20) {
-        this.toastService.error("File size should be less than 20MB")
         this.toastService.error(`El tamano del archivo debe ser menos a 20MB`);
         return;
       }
@@ -212,6 +213,7 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
   subirArchivosAlServidor() {
     const formData = new FormData();
     formData.append("id", this.solicitudDevolucionID.toString());
+    formData.append("NameKeyModulo",EstadosGeneralesKeyEnum.INVENTARIOSOLICITUDDEVOLUCION);
     for(let i = 0; i < this.files.length; i++)
     {
       formData.append("Files", this.files[i]);
@@ -289,7 +291,7 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
 
   }
   autorizarSolicitudDevolucion(id:number,accion: string) {
-   if(this.filesSubidos.length <=0){
+   if(this.filesSubidos.length <=0 && this.configuracionCompania.configValue){
     Swal.fire(
       'Error',
       'Este registro no tiene anexo.',
@@ -320,6 +322,27 @@ export class SolicitudDevolucionListadoComponent implements OnInit {
        this.toastService.error("Error conexion al servidor");
      });
  }
+
+ 
+ getConfiguracionCompnia() {
+  this.loadingSolicitudDetalle = true;
+  let parametros = new ConfiguracionCompania();
+  parametros.companiaId =Number(this.authService.tokenDecoded.primarygroupsid),
+  parametros.nameKeyModulo=EstadosGeneralesKeyEnum.TRANSFERENCIA, 
+  this.httpService.DoPostAny<ConfiguracionCompania>(DataApi.Configuracion,
+    "ConfiguracionCompania", parametros).subscribe(response => {
+      if (!response.ok) {
+        this.toastService.error(response.errores[0]);
+      } else {
+        this.configuracionCompania=response.records[0];
+      }
+      this.loadingSolicitudDetalle = false;
+    }, error => {
+      this.loadingSolicitudDetalle = false;
+      this.toastService.error("No se pudo la configuracion de la compania", "Error conexion al servidor");
+      this.modalService.dismissAll()
+    });
+}
 
 }
 
