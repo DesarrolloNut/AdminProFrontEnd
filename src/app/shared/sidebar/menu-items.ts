@@ -782,17 +782,7 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ["mantenimientos_permiso"],
       },
-      {
-        path: '/mantenimientos/tipo-solicitud-devolucion',
-        label: '',
-        labelClass: '',
-        title: 'Tipo Solicitud Devolución',
-        icon: '',
-        class: '',
-        extralink: false,
-        submenu: [],
-        permisos: ["mantenimientos_permiso"],
-      },
+      
       {
         path: '/mantenimientos/proveedor',
         label: '',
@@ -1056,8 +1046,17 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ["mantenimientos_asignaciones_rutas"],
       },
-
-
+      {
+        path: '/mantenimientos/tipoSolicitudDevolucion',
+        label: '',
+        labelClass: '',
+        title: 'Tipo Solicitud Devolución',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_tipo_solicitud_devolucion"],
+      },
     ]
   },
   {
@@ -1284,15 +1283,15 @@ export const ROUTES: RouteInfo[] = [
         permisos: ["mantenimientos_estado_general"],
       },
       {
-        path: '/mantenimientos/configuracion',
+        path: '/mantenimientos/configuracion-compania',
         label: '',
         labelClass: '',
-        title: 'Configuración',
+        title: 'Configuración Compañia',
         icon: '',
         class: '',
         extralink: false,
         submenu: [],
-        permisos: ["mantenimientos_estado_general"],
+        permisos: ["mantenimientos_configuration_compania"],
       },
       {
         path: '/mantenimientos/sapconnection',

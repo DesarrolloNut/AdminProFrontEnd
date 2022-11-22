@@ -79,7 +79,7 @@ export class SolicitudCambioListadoComponent implements OnInit {
     this.Cargando = true;
     let parametros: Parametro[] = [
       { key: "Search", value: this.Search },
-      { key: "namekey", value: EstadosGeneralesKeyEnum.INVENTARIOSOLICITUDDEVOLUCION }
+      { key: "namekey", value: EstadosGeneralesKeyEnum.INVENTARIOCAMBIO }
    ]
     this.httpService.GetAllWithPagination<SolicitudDevolucion>(DataApi.SolicitudCambio, "GetSolicitudCambioListado", "ID", this.paginaNumeroActual,
       this.paginaSize, true, parametros).subscribe(x => {

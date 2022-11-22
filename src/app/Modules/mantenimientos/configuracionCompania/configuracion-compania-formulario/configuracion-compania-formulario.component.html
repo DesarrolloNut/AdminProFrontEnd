@@ -15,7 +15,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6 col-lg-6 col-12">
-                        <h4 class="card-title">Formulario de Modulo</h4>
+                        <h4 class="card-title">Formulario de Configuración Compañia</h4>
                     </div>
                     <div class="col-md-6 col-lg-6 col-12 text-right">
                        
@@ -33,7 +33,31 @@
             
              
                 <form class="form-row " [formGroup]="Formulario" (ngSubmit)="onSubmit()">
-                
+                 
+                        <div class="form-group col-md-6">
+                            <label for="configuracionTipoCompaniaId"> Configuración Tipo Compañia </label>
+                            <ng-select bindLabel="nombre" bindValue="codigo" [items]="configuracionTipoCompanias"
+                                [clearable]="false"
+                                placeholder="Selecione un Modulo"
+                                [ngClass]="{'form-control border-danger p-0' : submitted && f.configuracionTipoCompaniaId.errors }"
+                                notFoundText="No resultados" formControlName="configuracionTipoCompaniaId">
+                            </ng-select>
+                            <div *ngIf="submitted && f.configuracionTipoCompaniaId.errors" class="text-danger small">
+                                <div *ngIf="f.configuracionTipoCompaniaId.errors.required  ">El campo es obligatorio</div>
+                            </div>
+                        </div>
+                   
+                    <div class="form-group col-md-6">
+                        <label for=""> </label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="configValue"
+                                formControlName="configValue">
+                            <label class="form-check-label" for="configValue">
+                                Valor de Configuración
+                            </label>
+                        </div>
+                    </div>
+
 
                     <div class="form-group col-md-6">
                         <label for="moduloId"> Modulo </label>

@@ -97,6 +97,10 @@ import { TipoComprobanteFiscalListadoComponent } from './tipoComprobanteFiscal/t
 import { TipoComprobanteFiscaFormularioComponent } from './tipoComprobanteFiscal/tipo-comprobante-fiscal-formulario/tipo-comprobante-fiscal-formulario.component';
 import { ModuloFormularioComponent } from './modulos/modulo-formulario/modulo-formulario.component';
 import { ModuloListadoComponent } from './modulos/modulo-listado/modulo-listado.component';
+import { TipoSolicitudDevolucionListadoComponent } from './tipoSolicitudDevolucion/tipoSolicitudDevolucion-listado/tipoSolicitudDevolucion-listado.component';
+import { TipoSolicitudDevolucionFormularioComponent } from './tipoSolicitudDevolucion/tipoSolicitudDevolucion-formulario/tipoSolicitudDevolucion-formulario.component';
+import { ConfiguracionCompaniaListadoComponent } from './configuracionCompania/configuracion-compania-listado/configuracion-compania-listado.component';
+import { ConfiguracionCompaniaFormularioComponent } from './configuracionCompania/configuracion-compania-formulario/configuracion-compania-formulario.component';
 
 
 
@@ -712,6 +716,53 @@ const routes: Routes = [
           ]
         }
       },
+      
+     // Tipo Solicitud Devolucion
+    {
+      path: 'tipoSolicitudDevolucion', component: TipoSolicitudDevolucionListadoComponent, data: {
+        title: 'Tipo Solicitud Devolución',
+        urls: [
+          { title: 'Mantenimientos' },
+          { title: 'Tipo Solicitud Devolución' }
+        ]
+      }
+    },
+
+    {
+      path: 'tipoSolicitudDevolucion/:id', component: TipoSolicitudDevolucionFormularioComponent, data: {
+        title: 'Tipo Solicitud Devolución Formulario',
+        urls: [
+          { title: 'Mantenimientos' },
+          { title: 'Tipo Solicitud Devolución' },
+          { title: 'Formulario' }
+        ]
+      }
+    },
+
+
+
+     // Configuracion Compañia
+     {
+      path: 'configuracion-compania', component: ConfiguracionCompaniaListadoComponent, data: {
+        title: 'Configuración Compañia',
+        urls: [
+          { title: 'Mantenimientos' },
+          { title: 'Configuración Compañia' }
+        ]
+      }
+    },
+
+    {
+      path: 'configuracion-compania/:id', component: ConfiguracionCompaniaFormularioComponent, data: {
+        title: 'Configuración Compañia Formulario',
+        urls: [
+          { title: 'Mantenimientos' },
+          { title: 'Configuración Compañia' },
+          { title: 'Formulario' }
+        ]
+      }
+    },
+
 
 
       // sucursal

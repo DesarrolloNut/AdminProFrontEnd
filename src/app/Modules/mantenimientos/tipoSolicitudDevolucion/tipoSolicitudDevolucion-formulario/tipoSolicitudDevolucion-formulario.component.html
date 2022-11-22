@@ -15,7 +15,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6 col-lg-6 col-12">
-                        <h4 class="card-title">Formulario de Modulo</h4>
+                        <h4 class="card-title">Formulario de Tipo Solicitud Devolución</h4>
                     </div>
                     <div class="col-md-6 col-lg-6 col-12 text-right">
                        
@@ -33,7 +33,19 @@
             
              
                 <form class="form-row " [formGroup]="Formulario" (ngSubmit)="onSubmit()">
-                
+                    <div class="form-group col-md-6">
+                        <label for="nombre"> Nombre</label>
+                        <input formControlName="nombre" type="text" name="nombre" id="nombre"
+                            placeholder="Nombre"
+                            [ngClass]="{'is-invalid' : submitted && f.nombre.errors,  'form-control':true  }">
+                        <div class="invalid-feedback" *ngIf="submitted && f.nombre.errors">
+                            <div *ngIf="f.nombre.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                       
+                    </div>
+
 
                     <div class="form-group col-md-6">
                         <label for="moduloId"> Modulo </label>
