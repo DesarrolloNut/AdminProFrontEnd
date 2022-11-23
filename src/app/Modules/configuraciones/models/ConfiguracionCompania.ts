@@ -7,7 +7,7 @@ export class ConfiguracionCompania {
             this.nameKeyModulo="";
             this.configuracionTipoCompniaId=0;
             this.nameKeyConfiguracionTipo="";
-            this.configValue=0;
+            this.configValue=false;
             this.configValueConfiguracion="";
 
     }
@@ -18,7 +18,7 @@ export class ConfiguracionCompania {
            nameKeyModulo:string
            configuracionTipoCompniaId:number
            nameKeyConfiguracionTipo:string
-           configValue:number
+           configValue:boolean
            configValueConfiguracion:string
 
 }

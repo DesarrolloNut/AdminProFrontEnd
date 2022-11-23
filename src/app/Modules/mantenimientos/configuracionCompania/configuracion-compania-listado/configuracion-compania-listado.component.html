@@ -25,7 +25,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="table-responsive">
                     <table class="table table-hover mb-0 no-wrap v-middle">
                         <thead>
@@ -42,14 +41,14 @@
                             <tr *ngFor="let item of data">
                                 <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
                                 <td><span> {{item.configuracionTipoCompania}}</span></td>
-                                <td><span> {{item.configValue}}</span></td>
+                                <td><span> {{item.valor}}</span></td>
                                 <td><span> {{item.modulo}}</span></td>
                                 <td><span> {{item.compania}}</span></td>                             
                                 <td>
                                     <button class="btn btn-outline-info m-1" [routerLink]="[item.id]">
                                         <i class="fa fa-sm fa-edit"></i>
                                     </button>
-                                    <button   title="Eliminar" type="button" (click)="confirmarTipoSolicitudDevolucion(item.id)" class="btn btn-outline-danger m-1">
+                                    <button   title="Eliminar" type="button" (click)="confirmarConfiguracionCompania(item.id)" class="btn btn-outline-danger m-1">
                                       <i class="fa fa-times"></i>
                                   </button>
                                 </td>
@@ -58,7 +57,6 @@
                         </tbody>
                     </table>
                 </div>
-
                 <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
                 <div class="row ">
                     <div class="col-md-8 col-xs-12 ">
@@ -66,7 +64,6 @@
                             [pageSize]="paginaSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="getData()">
                         </ngb-pagination>
                     </div>
-
                     <div class="col-md-4 text-right d-none d-md-block  ">
                         <select class="form-control d-block" name="paginaSize" [(ngModel)]="paginaSize"
                             (change)="getData()">
@@ -76,8 +73,6 @@
                         </select>
                     </div>
                 </div>
-
-
             </div>
         </div>
     </div>

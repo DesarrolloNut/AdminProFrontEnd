@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
-import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
@@ -9,19 +8,12 @@ import { ConfiguracionCompania } from 'src/app/Modules/configuraciones/models/Co
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import Swal from 'sweetalert2';
 import { ConfiguracionCompaniaViewModel } from '../models/ConfiguracionCompaniaViewModel';
-
-
-
-
-
-
 @Component({
   selector: 'app-configuracion-compania-listado.component',
   templateUrl: './configuracion-compania-listado.component.html',
   styleUrls: ['./configuracion-compania-listado.component.scss']
 })
 export class ConfiguracionCompaniaListadoComponent implements OnInit {
-
   // COPIAR AL CREAR UN LISTADO NUEVO
   Search: string = "";
   paginaNumeroActual = 1;
@@ -30,23 +22,19 @@ export class ConfiguracionCompaniaListadoComponent implements OnInit {
   totalPaginas: number = 0;
   paginaSize: number = 5;
   paginaTotalRecords: number = 0;
-  data:ConfiguracionCompaniaViewModel[] = [
-    {id:1,configuracionTipoCompania:"Mi Configuracion",modulo:"Mi Modulo",compania:"Mi Compania", configValue:true}
-  ] //tu modelo
+  data:ConfiguracionCompaniaViewModel[] = [] //tu modelo
   btnEliminarCargando: boolean;
-
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
-    private authService: AuthenticationService,
     public permissionsService: NgxPermissionsService,
   ) { }
   ngOnInit(): void {
-   //this.getData()
+   this.getData()
   }
   getData() {
     this.Cargando = true;
     let parametros: Parametro[] = [{ key: "search", value: this.Search }]
-    this.httpService.GetAllWithPagination<ConfiguracionCompaniaViewModel>(DataApi.TipoSolicitudDevolucion, "GetTipoSolicitudSolicitudDevolucion", "ID", this.paginaNumeroActual,
+    this.httpService.GetAllWithPagination<ConfiguracionCompaniaViewModel>(DataApi.ConfiguracionCompania, "GetConfiguracionCompania", "ID", this.paginaNumeroActual,
       this.paginaSize, true, parametros).subscribe(x => {
         if (x.ok) {
           this.data = x.records;
@@ -61,11 +49,8 @@ export class ConfiguracionCompaniaListadoComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
         this.Cargando = false;
       });
-
   }
-
   asignarPagination(x: ResponseContenido<any>) {
-
     if (x.pagina != null) {
       this.totalPaginas = x.pagina.totalPaginas == null ? 0 : x.pagina.totalPaginas;
       this.paginaTotalRecords = x.pagina.totalRecords == null ? 0 : x.pagina.totalRecords;
@@ -75,9 +60,8 @@ export class ConfiguracionCompaniaListadoComponent implements OnInit {
       this.paginaTotalRecords = 0;
       this.paginaSize = 0;
     }
-
   }
-  confirmarTipoSolicitudDevolucion(id:number){
+  confirmarConfiguracionCompania(id:number){
     Swal.fire({
       title: 'Estas seguro que quieres eliminar este registro?',
       text: 'Luego de ser eliminado no se puedo desahacer.',
@@ -87,7 +71,7 @@ export class ConfiguracionCompaniaListadoComponent implements OnInit {
       cancelButtonText: 'NO'
     }).then((result) => {
       if (result.value) {
-        this.eliminarTipoSolicitudDevolucion(id);
+        this.eliminarConfiguracionCompania(id);
       } else if (result.dismiss === Swal.DismissReason.cancel) {
         Swal.fire(
           'Cancelado',
@@ -97,11 +81,11 @@ export class ConfiguracionCompaniaListadoComponent implements OnInit {
       }
     })
   }
-  eliminarTipoSolicitudDevolucion(id:number) {
+  eliminarConfiguracionCompania(id:number) {
      let parametros = new ConfiguracionCompania();
      parametros.id=id, 
     this.btnEliminarCargando = true;
-    this.httpService.DoPostAny<any>(DataApi.TipoSolicitudDevolucion,
+    this.httpService.DoPostAny<any>(DataApi.ConfiguracionCompania,
       "Delete", parametros).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");

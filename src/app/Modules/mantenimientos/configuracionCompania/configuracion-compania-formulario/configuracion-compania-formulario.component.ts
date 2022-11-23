@@ -9,11 +9,6 @@ import { ConfiguracionCompania } from 'src/app/Modules/configuraciones/models/Co
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 
-
-
-
-//import { Moneda } from '../models/Moneda';
-
 @Component({
   selector: 'app-configuracion-compania-formulario',
   templateUrl: './configuracion-compania-formulario.component.html',
@@ -63,7 +58,6 @@ export class ConfiguracionCompaniaFormularioComponent implements OnInit {
       id: [0],
       companiaId: [null, [Validators.required]],
       moduloId: [null,[Validators.required]],
-      nombre: [null,[Validators.required]],
       configValue: [null,],
       configuracionTipoCompaniaId: [null,[Validators.required]],
       
@@ -74,14 +68,13 @@ export class ConfiguracionCompaniaFormularioComponent implements OnInit {
 
   getItem(id: number) {
     this.Cargando = true;
-    this.httpService.DoPostAny<ConfiguracionCompania>(DataApi.TipoSolicitudDevolucion,
-      "GetTipoSolicitudDevolucionByID", id).subscribe(response => {
+    this.httpService.DoPostAny<ConfiguracionCompania>(DataApi.ConfiguracionCompania,
+      "GetConfiguracionCompaniaByID", id).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0]
-            console.log(record)
             this.Formulario.setValue(record);
           } else {
             this.toastService.warning("Registro no encontrada");
@@ -148,23 +141,24 @@ export class ConfiguracionCompaniaFormularioComponent implements OnInit {
  }
  //validarHora($event)
   onSubmit() {
+   
     this.submitted = true;
     if (this.Formulario.invalid) {
       return;
     }
     this.guardar();
-    console.log(this.Formulario.value)
+    
   }
 
   guardar() {
     let metodo: string = this.actualizando ? "Update" : "Registrar";
-    this.httpService.DoPostAny<ConfiguracionCompania>(DataApi.TipoSolicitudDevolucion,
+    this.httpService.DoPostAny<ConfiguracionCompania>(DataApi.ConfiguracionCompania,
       metodo, this.Formulario.value).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
         } else {
           this.toastService.success("Realizado", "OK");
-          this.router.navigateByUrl('/mantenimientos/tipoSolicitudDevolucion');
+          this.router.navigateByUrl('/mantenimientos/configuracion-compania');
         }
         this.btnGuardarCargando = false;
       }, error => {
@@ -173,19 +167,5 @@ export class ConfiguracionCompaniaFormularioComponent implements OnInit {
       });
   }
 
-  eliminarModulo(id: number) {
-    this.Cargando = true;
-    this.httpService.DoPostAny<ConfiguracionCompania>(DataApi.ModuloCompaniaEnrroll,
-      "EliminarModulo", id).subscribe(response => {
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-            this.toastService.success("Se ha eliminado correctamente el modulo.");
-            this.router.navigateByUrl('/mantenimientos/modulo');
-         }
-      }, error => {
-        this.Cargando = false;
-        this.toastService.error("Error conexion al servidor");
-      });
-  }
+
 }

@@ -18,7 +18,6 @@ import { Modulo } from '../models/Modulo';
 })
 export class ModuloFormularioComponent implements OnInit {
 
-
   Cargando: boolean = false;
   Formulario: FormGroup;
   submitted = false;
@@ -56,7 +55,7 @@ export class ModuloFormularioComponent implements OnInit {
   private CreateForm() {
     this.Formulario = this.formBuilder.group({
       id: [0],
-      companiaId: [Number(this.authService.tokenDecoded.primarygroupsid), [Validators.required]],
+      //companiaId: [Number(this.authService.tokenDecoded.primarygroupsid), [Validators.required]],
       nameKey: [null,[Validators.required]],
       nombre: [null,[Validators.required]],
   

@@ -140,6 +140,7 @@ export class TransferenciaListadoComponent implements OnInit {
         this.toastService.error(response.errores[0]);
       } else {
         this.configuracionCompania=response.records[0];
+        console.log(this.configuracionCompania);
       }
       this.loadingSolicitudDetalle = false;
     }, error => {
