@@ -15,8 +15,6 @@ import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKe
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { Cotizacion } from '../models/Cotizacion';
 import { CotizacionDetalle } from '../models/CotizacionDetalle';
-import { CotizacionDetalleViewModel } from '../models/CotizacionDetalleViewModel';
-
 @Component({
   selector: 'app-cotizaciones-formulario',
   templateUrl: './cotizaciones-formulario.component.html',
@@ -47,8 +45,7 @@ export class CotizacionesFormularioComponent implements OnInit {
   loadingVendedores: boolean;
 
   usuario: Usuario;
-  ITBIS: number = 0;
-
+  ITBIS: number = 18;
   cotizacion: Cotizacion = new Cotizacion();
   cotizacionDetalles: CotizacionDetalle[] = [];
 
@@ -59,7 +56,8 @@ export class CotizacionesFormularioComponent implements OnInit {
   loadingListaPrecios: boolean;
   listasPrecios: ComboBox[];
   fechaEntrega: Date = new Date();
-
+  loadingAlmacenesDestino: boolean;
+  almacenesDestino: ComboBox[];
   constructor(
     private toastService: ToastrService,
     private httpService: BackendService,
@@ -70,23 +68,21 @@ export class CotizacionesFormularioComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-
     let id = Number(this.route.snapshot.paramMap.get('id'));
     if (id > 0) {
       this.getCotizacion(id);
       this.actualizando = true;
     }
-
     this.getUsuarioByID(Number(this.authService.tokenDecoded.nameid));
-    this.getITBIS()
-    this.getAlmacenes()
-    this.getClientes()
-    this.getTipoCondicionPago()
-    this.getMonedaTipos()
-    this.getVendedores()
-    this.getListasPrecios()
+    this.getAlmacenes();
+    this.getClientes();
+    this.getTipoCondicionPago();
+    this.getMonedaTipos();
+   
+    this.getListasPrecios();
+    this.getAlmacenesOrigenUsuarioEnrroll(0);
   }
-
+  almacenesDestino
   getCotizacion(id: number) {
     this.Cargando = true;
     this.httpService.DoPostAny<Cotizacion>(DataApi.Cotizacion,
@@ -98,7 +94,6 @@ export class CotizacionesFormularioComponent implements OnInit {
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0]
             this.cotizacion = record;
-            console.log(this.cotizacion)
             this.getClienteByID(this.cotizacion.clienteId)
             this.getCotizacionDetalles(this.cotizacion.id)
           } else {
@@ -106,23 +101,21 @@ export class CotizacionesFormularioComponent implements OnInit {
             this.router.navigateByUrl('/ventas/cotizacion');
           }
         }
-
       }, error => {
         this.Cargando = false;
         this.toastService.error("Error conexion al servidor");
       });
   }
-
+ 
   getCotizacionDetalles(cotizacionID: number) {
     this.loadingCotizacionDetalle = true;
-    this.httpService.DoPostAny<CotizacionDetalleViewModel>(DataApi.Cotizacion,
+    this.httpService.DoPostAny<any>(DataApi.Cotizacion,
       "GetCotizacionDetalles", cotizacionID).subscribe(response => {
-
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
           this.cotizacionDetalles = response.records;
-          this.agregarDetalleVacio()
+          this.agregarDetalleVacio();
         }
         this.loadingCotizacionDetalle = false;
       }, error => {
@@ -131,7 +124,6 @@ export class CotizacionesFormularioComponent implements OnInit {
         this.router.navigateByUrl('/ventas/cotizacion');
       });
   }
-
   getUsuarioByID(usuarioID: number) {
     this.Cargando = true;
     this.httpService.DoPostAny<Usuario>(DataApi.Usuario,
@@ -155,18 +147,18 @@ export class CotizacionesFormularioComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
       });
   }
-
+ 
   agregarDetalleVacio() {
     this.cotizacionDetalles.push({
       almacenId: this.almacenes[0].codigo, articuloId: 0, cantidad: undefined, costo: 0,
       cotizacionId: 0, id: 0,
       porcientoDescuento: undefined, precio: 0,
-      subtotal: 0, totalDescuento: 0, totalImpuesto: 0, totalNeto: 0
+      subtotal: 0, totalDescuento: 0, totalImpuesto: 0, totalNeto: 0,codigoReferencia:"",
+      inventario:0,hayErroresCantidad:false, hayErroresPorcientoDescuento:false,companiaId:0,impuesto:0
     })
   }
-
+  
   onSubmit() {
-
     if (!this.cotizacion.vendedorId || this.cotizacion.vendedorId < 1) {
       this.toastService.warning("Selecciona un vendedor")
       return;
@@ -176,7 +168,12 @@ export class CotizacionesFormularioComponent implements OnInit {
       this.toastService.warning("Selecciona una moneda")
       return;
     }
+    if (this.cotizacion.almacenId < 1) {
+      this.toastService.warning("Selecciona un almacén")
+      return;
+    }
 
+    
     if (!this.cotizacionDetalles.some(x => x.articuloId > 0)) {
       this.toastService.warning("No puedes hacer una cotización sin artículos")
       return;
@@ -193,6 +190,9 @@ export class CotizacionesFormularioComponent implements OnInit {
       return;
     }
 
+   
+   
+
     this.guardar();
   }
 
@@ -203,12 +203,16 @@ export class CotizacionesFormularioComponent implements OnInit {
     this.cotizacion.sucursalId = Number(this.authService.tokenDecoded.groupsid)
     this.cotizacion.usuarioId = Number(this.authService.tokenDecoded.nameid)
     this.cotizacion.condicionPagoId = this.cliente.condicionPagoId;
+    this.cotizacion.companiaId=Number(this.authService.tokenDecoded.primarygroupsid);
+    
     this.cotizacion.listaPrecioID = this.cliente.listaPrecioId;
     
     let parametro: any = {
       "Cotizacion": this.cotizacion,
       "CotizacionDetalles": this.cotizacionDetalles.filter(x => x.articuloId > 0 && x.cantidad > 0 && x.precio > 0)
     }
+   
+    console.log(parametro)
 
     this.btnGuardarCargando = true;
 
@@ -228,7 +232,7 @@ export class CotizacionesFormularioComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
       });
   }
-
+ 
   getClientes(searchObj: any = null, clienteID: number = 0) {
     let search = ""
 
@@ -237,19 +241,16 @@ export class CotizacionesFormularioComponent implements OnInit {
 
     this.loadingClientes = true;
     let parametros: Parametro[] = [
-      { key: "CompaniaID", value: this.authService.tokenDecoded.primarygroupsid },
-      { key: "Search", value: search },
-      { key: "clienteID", value: clienteID },
+      { key: "Compania", value: this.authService.tokenDecoded.primarygroupsid },
+      { key: "UsuarioId", value: this.authService.tokenDecoded.nameid },
     ];
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
       "GetClientesComboBox", parametros).subscribe(response => {
-
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
           this.clientes = response.records;
         }
-
         this.loadingClientes = false;
       }, error => {
         this.loadingClientes = false;
@@ -266,9 +267,8 @@ export class CotizacionesFormularioComponent implements OnInit {
         } else {
           //validar que existe
           if (response != null && response.records != null && response.records.length > 0) {
-
-            this.cliente = response.records[0];
-            this.getArticulosPrecioActual()
+           this.cliente = response.records[0];
+            this.getArticulosPrecioActual();
           } else {
             this.toastService.warning("Cliente no encontrado");
           }
@@ -280,7 +280,37 @@ export class CotizacionesFormularioComponent implements OnInit {
       });
   }
 
-  onSelectCliente(cliente: ComboBox) {
+  getAlmacenesOrigenUsuarioEnrroll(id:number) {
+    let parametros: Parametro[] = [
+      { key: "almacenId", value: id },
+      { key: "usuarioId", value: this.authService.tokenDecoded.nameid },
+      { key: "CompaniaId", value: this.authService.tokenDecoded.primarygroupsid },
+      { key: "Modulo", value: EstadosGeneralesKeyEnum.COTIZACION },
+    ]
+    this.loadingAlmacenesDestino = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetAlmacenesDestinUsuarioEnrroll", parametros).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.almacenesDestino = response.records;
+          console.log(this.almacenesDestino)
+    
+        }
+        this.loadingAlmacenesDestino = false;
+      }, error => {
+        this.loadingAlmacenesDestino = false;
+        this.toastService.error("No se pudo obtener los almacenes", "Error conexion al servidor");
+
+        setTimeout(() => {
+          this.getAlmacenesOrigenUsuarioEnrroll(id);
+        }, 1000);
+
+      });
+  }
+
+  onSelectCliente(cliente: any) {
+    this.cotizacion.direccion=cliente.otroProp;
     this.cliente = null
     if (cliente) {
       this.getClienteByID(cliente.codigo)
@@ -288,24 +318,40 @@ export class CotizacionesFormularioComponent implements OnInit {
     this.cotizacionDetalles = []
     this.agregarDetalleVacio()
     this.limpiarTotales()
-
+    this.getVendedores(cliente.codigo);
+    
   }
+  onSelectArticulo(item: any, index: number) {
+    console.log(item)
+    if(!this.cotizacionDetalles.some(x => x.codigoReferencia === item.codigoReferencia))
+    {
+           this.cotizacionDetalles[index].codigoReferencia = item.codigoReferencia;
+           this.cotizacionDetalles[index].articuloId = item.articuloId;
+           this.cotizacionDetalles[index].precio = item.precioActual;
+           this.cotizacionDetalles[index].almacenId = item.almacenId;
+           this.cotizacionDetalles[index].costo = item.costo;
+           this.cotizacionDetalles[index].inventario = item.disponible;
+           this.cotizacionDetalles[index].impuesto = item.impuesto;
+           this.cotizacionDetalles[index].companiaId=Number(this.authService.tokenDecoded.primarygroupsid);
 
+           this.agregarDetalleVacio()
+    }
+    else
+    {
+     this.toastService.warning("Este artículo ya existe en la lista.");
 
-  onSelectArticulo(item: ArticuloListaPrecioViewModel, index: number) {
-    this.cotizacionDetalles[index].precio = item.precioActual;
-    this.cotizacionDetalles[index].costo = item.costo;
-    if (!this.cotizacionDetalles.some(x => x.articuloId <= 0)) {
-      this.agregarDetalleVacio()
+       this.onDeleteitem(index)
+       return;
     }
     this.calcularTotales()
-
   }
-
-
   getArticulosPrecioActual() {
-    this.httpService.DoPostAny<ArticuloListaPrecioViewModel>(DataApi.Articulo,
-      "GetArticulosPrecioActual", this.cliente.listaPrecioId).subscribe(response => {
+    let parametros: Parametro[] = [
+      { key: "ListaPrecioId", value: this.cliente.listaPrecioId },
+      { key: "AlmacenId", value: 1 },
+    ]
+    this.httpService.DoPost<ArticuloListaPrecioViewModel>(DataApi.Articulo,
+      "GetArticulosPrecioActual", parametros).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
@@ -325,27 +371,50 @@ export class CotizacionesFormularioComponent implements OnInit {
 
   onDeleteitem(index: number) {
     this.cotizacionDetalles.splice(index, 1);
-    if (!this.cotizacionDetalles.some(x => x.id <= 0)) {
+    if (!this.cotizacionDetalles.some(x => x.articuloId <= 0)) {
       this.agregarDetalleVacio()
     }
     this.calcularTotales()
   }
-
+ 
   calcularTotales() {
+  
     this.limpiarTotales()
-
     this.cotizacionDetalles.forEach(x => {
+      if(x.cantidad <=0)
+      {
+        x.hayErroresCantidad=true;
+        x.subtotal=0;
+        x.totalDescuento=0;
+        x.totalImpuesto=0;
+        x.totalNeto=0;
+        return;
+      }
+      else{
+        x.hayErroresCantidad=false;
+      }
+      if(x.totalDescuento <0)
+      {
+        x.hayErroresPorcientoDescuento=true;
+        x.subtotal=0;
+        x.totalDescuento=0;
+        x.totalImpuesto=0;
+        x.totalNeto=0;
+        return;
+      }
+      else{
+        x.hayErroresPorcientoDescuento=false;
+      }
       x.subtotal = x.cantidad && x.articuloId ? (x.precio * x.cantidad) : 0;
       x.totalDescuento = x.porcientoDescuento ? (x.subtotal * x.porcientoDescuento / 100) : 0;
-      x.totalImpuesto = (x.subtotal - x.totalDescuento) * (this.ITBIS / 100);
+      x.totalImpuesto = (x.subtotal - x.totalDescuento) * (x.impuesto / 100);
       x.totalNeto = x.subtotal - x.totalDescuento + x.totalImpuesto;
-
       this.cotizacion.descuentoTotal += x.totalDescuento;
       this.cotizacion.subtotal += x.subtotal;
       this.cotizacion.costoTotal += x.cantidad && x.costo ? (x.costo * x.cantidad) : 0;
     })
     this.cotizacion.totalNeto = this.cotizacion.subtotal - this.cotizacion.descuentoTotal;
-    this.cotizacion.impuestoTotal = this.cotizacion.totalNeto * (this.ITBIS / 100);
+    this.cotizacion.impuestoTotal = this.cotizacionDetalles.reduce((n, {totalImpuesto})=> n+totalImpuesto,0);
     this.cotizacion.totalNeto += this.cotizacion.impuestoTotal;
   }
 
@@ -387,6 +456,7 @@ export class CotizacionesFormularioComponent implements OnInit {
   }
 
   getTipoCondicionPago() {
+ 
     this.loadingCondicionPagos = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
       "GetTipoCondicionPago", null).subscribe(response => {
@@ -408,24 +478,24 @@ export class CotizacionesFormularioComponent implements OnInit {
       });
   }
 
-  getVendedores() {
+  getVendedores(ClienteId:number) {
+    let parametros: Parametro[] = [{ key: "ClienteId", value: ClienteId },{ key: "Companiaid", value: this.authService.tokenDecoded.primarygroupsid }]
     this.loadingVendedores = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetVendedores", null).subscribe(response => {
+      "GetVendedores", parametros).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
           this.vendedores = response.records;
+          
         }
         this.loadingVendedores = false;
       }, error => {
         this.loadingVendedores = false;
         this.toastService.error("No se pudo obtener los vendedores", "Error conexion al servidor");
 
-        setTimeout(() => {
-          this.getVendedores();
-        }, 1000);
+        
 
       });
   }
@@ -460,8 +530,10 @@ export class CotizacionesFormularioComponent implements OnInit {
 
   getAlmacenes() {
     let parametros: Parametro[] = [
-      { key: "usuarioID", value: this.authService.tokenDecoded.nameid },
-      { key: "ModuloKey", value: EstadosGeneralesKeyEnum.COTIZACION },
+      { key: "almacenId", value: 0 },
+      { key: "usuarioId", value: this.authService.tokenDecoded.nameid },
+      { key: "CompaniaId", value: this.authService.tokenDecoded.primarygroupsid },
+      { key: "Modulo", value: EstadosGeneralesKeyEnum.COTIZACION },
     ]
     this.loadingAlmacenes = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
@@ -515,7 +587,7 @@ export class CotizacionesFormularioComponent implements OnInit {
 
 
 
-
+ 
   getListasPrecios() {
     this.loadingListaPrecios = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
