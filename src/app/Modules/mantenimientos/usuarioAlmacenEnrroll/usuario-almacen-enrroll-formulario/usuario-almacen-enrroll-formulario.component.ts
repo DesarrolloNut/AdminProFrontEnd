@@ -66,6 +66,7 @@ export class UsuarioAlmacenEnrrollFormularioComponent implements OnInit {
       almacenID: [null, Validators.required],
       moduloID: [null, Validators.required],
       predeterminado: [false],
+      validarInventario:[true],
       enviar:[true],
       recibir:[true],
       companiaID: [Number(this.auth.tokenDecoded.primarygroupsid),],
@@ -86,7 +87,8 @@ export class UsuarioAlmacenEnrrollFormularioComponent implements OnInit {
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0]
             this.Formulario.setValue(record);
-            this.mostrarAcceso= this.NivelAutorizacionCategorias.find(X=>X.codigo==record.moduloID).nombre.toUpperCase();
+            this.mostrarAcceso= this.NivelAutorizacionCategorias.find(X=>X.codigo==record.moduloID).nombre;
+          
           } else {
             this.toastService.warning("Enrroll no encontrado");
             this.router.navigateByUrl('/mantenimientos/usuario-almacen-enrroll');
@@ -100,7 +102,8 @@ export class UsuarioAlmacenEnrrollFormularioComponent implements OnInit {
   }
 
   changeFn(moduloID){
-    this.mostrarAcceso= this.NivelAutorizacionCategorias.find(X=>X.codigo==moduloID).nombre.toUpperCase();
+    
+    this.mostrarAcceso= this.NivelAutorizacionCategorias.find(X=>X.codigo==moduloID).nombre;
   }
   onSubmit() {
 
@@ -109,6 +112,7 @@ export class UsuarioAlmacenEnrrollFormularioComponent implements OnInit {
       return;
     }
     this.guardar();
+    
   }
 
 

@@ -74,7 +74,16 @@
                                 </label>
                             </div>
                         </div>
-                    <div *ngIf="mostrarAcceso =='TRANSFERENCIA'">
+                        <div class="form-group col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="validarInventario"
+                                    formControlName="validarInventario">
+                                <label class="form-check-label" for="validarInventario">
+                                    Validar Inventario
+                                </label>
+                            </div>
+                        </div>
+                    <div *ngIf="mostrarAcceso =='inventario_transferencia_despacho'">
                         <div class="form-group col-md-3">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="enviar"

@@ -15,7 +15,7 @@ export class ArticuloListaPrecioViewModel {
     codigoReferencia: string;
     listaPrecioID: number;
     listaPrecio: string;
-
+    articuloId:number;
     precioSugerido: number;
     precioActual: number;
     precioAnterior: number;

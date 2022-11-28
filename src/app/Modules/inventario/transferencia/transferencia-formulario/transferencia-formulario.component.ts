@@ -62,7 +62,8 @@ export class TransferenciaFormularioComponent implements OnInit {
   hayErrores: boolean=true;
   loteAlmacenSeleccionado=  [];
   btnRecepcionCargando: boolean;
-
+  
+  
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
@@ -128,7 +129,6 @@ export class TransferenciaFormularioComponent implements OnInit {
             this.getAlmacenesOrigenUsuarioEnrroll(record.almacenOrigenId);
             this.getArticulosParaIntercambioDeAlmacen(record.almacenOrigenId);
             this.getTransferenciaDetalles(record.id,record.usuarioId);
-            
             this.getLotesTransacciones(record.id)
             this.getUsuarioByID(record.usuarioId);
             this.idAlamacenDesdeSeleccionado=record.almacenOrigenId;
@@ -401,8 +401,6 @@ export class TransferenciaFormularioComponent implements OnInit {
     if(this.loteAlmacenSeleccionado.reduce((n, {cantidadEnvio})=> n+cantidadEnvio,0) !== this.solicitudTransferenciaInventario.filter(x=>x.gestionado).reduce((n, {envio})=> n+envio,0))
     {
       this.toastService.error("El total de articulos a transferir no corresponse a la cantidad de lote a digitado.")
-
-
       return;
     }
     if(this.loteAlmacenSeleccionado.reduce((n, {recepcion})=> n+recepcion,0) !== this.solicitudTransferenciaInventario.filter(x=>x.gestionado).reduce((n, {recepcion})=> n+recepcion,0))
@@ -505,7 +503,7 @@ export class TransferenciaFormularioComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
       });
   }
-
+  
   getUsuarioByID(usuarioID: number) {
     this.Cargando = true;
     this.httpService.DoPostAny<any>(DataApi.Usuario,

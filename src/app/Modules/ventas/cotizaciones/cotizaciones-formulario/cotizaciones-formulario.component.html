@@ -36,13 +36,31 @@
                         </div>
                     </div>
 
-                    <div class="form-group col-md-12">
+                   
+                    <div class="form-group col-md-6">
                         <label for="inputEmail4">Cliente</label>
                         <ng-select [ngModelOptions]="{standalone: true}" [(ngModel)]="cotizacion.clienteId"
                             bindLabel="nombre" bindValue="codigo" [items]="clientes" [loading]="loadingClientes"
+                            placeholder="Seleccione un cliente"
                             [clearable]="false" (search)="getClientes($event)" (change)="onSelectCliente($event)"
                             notFoundText="No resultados">
                         </ng-select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="inputEmail4">Almacén</label>
+                        <ng-select [ngModelOptions]="{standalone: true}" [(ngModel)]="cotizacion.almacenId"
+                            bindLabel="nombre" bindValue="codigo" [items]="almacenesDestino" [loading]="loadingClientes"
+                            placeholder="Seleccione un almacén"
+                            [clearable]="false" 
+                            notFoundText="No resultados">
+                        </ng-select>
+                    </div>
+                    <div class="form-group col-md-12" *ngIf="cliente">
+                        <label for="nombre"> Dirección</label>
+                        <input disabled="true" type="text" name="nombre" id="nombre"
+                        [(ngModel)]="cotizacion.direccion"
+                            [ngClass]="{ 'form-control':true  }">
+                     
                     </div>
                     <hr>
                     <div class="col-12">
@@ -105,11 +123,10 @@
                         <label for="inputEmail4">Vendedor</label>
                         <ng-select bindLabel="nombre" bindValue="codigo" [items]="vendedores"
                             [ngModelOptions]="{standalone: true}" [(ngModel)]="cotizacion.vendedorId"
+                            placeholder="Seleccione un vendedor"
                             [loading]="loadingVendedores" [clearable]="false" notFoundText="No resultados">
                         </ng-select>
                     </div>
-
-
                     <div class="form-group col-md-6">
                         <label for="inputEmail4">Moneda</label>
                         <ng-select bindLabel="nombre" bindValue="codigo" [items]="monedaTipos"
@@ -117,17 +134,14 @@
                             [loading]="loadingMonedaTipos" [clearable]="false" notFoundText="No resultados">
                         </ng-select>
                     </div>
-
-
-
-                    <div class="col-12 table-responsive" style="min-height: 500px;">
+                   
                         <table class="table table-sm table-hover mb-0 no-wrap v-middle">
                             <thead>
                                 <tr>
                                     <th></th>
                                     <th>Artículo</th>
                                     <th>Precio</th>
-                                    <th>Almacen</th>
+                                    <th>Inventario</th>
                                     <th>Cant.</th>
                                     <th>% Desc.</th>
                                     <th>SubTotal</th>
@@ -137,7 +151,6 @@
                                     <th></th>
                                 </tr>
                             </thead>
-
                             <tbody>
                                 <tr *ngFor="let item of cotizacionDetalles; let i=index">
                                     <td>
@@ -147,8 +160,8 @@
                                         </button>
                                     </td>
                                     <td>
-                                        <ng-select style="width: 500px;" [items]="articulosCombobox" bindLabel="nombre"
-                                            [clearable]="false" bindValue="id" [loading]="loadingArticulosCombobox"
+                                        <ng-select style="width: 500px;" [items]="articulosCombobox" bindLabel="nombreYCodigoReferencia"
+                                            [clearable]="false" bindValue="articuloId" [loading]="loadingArticulosCombobox"
                                             [(ngModel)]="item.articuloId" [ngModelOptions]="{standalone: true}"
                                             (change)="onSelectArticulo($event,i)" notFoundText="No resultados">
                                         </ng-select>
@@ -159,21 +172,21 @@
                                             [readonly]="'true'" mask="separator" thousandSeparator=",">
                                     </td>
                                     <td>
-                                        <ng-select [items]="almacenes" bindLabel="codigo" bindValue="codigo"
-                                            [loading]="loadingAlmacenes" [(ngModel)]="item.almacenId"
-                                            [readonly]="!item.articuloId" [clearable]="false"
-                                            [ngModelOptions]="{standalone: true}" notFoundText="No resultados">
-                                        </ng-select>
+                                        <input style="width: 100px;" type="text" class="form-control" 
+                                        [(ngModel)]="item.inventario" [ngModelOptions]="{standalone: true}"
+                                        [readonly]="'true'" mask="separator" thousandSeparator=",">
                                     </td>
                                     <td>
                                         <input style="width: 70px;" type="number" class="form-control"
                                             [readonly]="!item.articuloId" (keyup)="calcularTotales()"
+                                            [ngClass]="{'form-control border-danger p-0' : item.hayErroresCantidad }"
                                             [(ngModel)]="item.cantidad" [ngModelOptions]="{standalone: true}">
                                     </td>
 
                                     <td>
                                         <input style="width: 50px;" type="number" class="form-control"
-                                            [readonly]="!item.articuloId" (keyup)="calcularTotales()"
+                                            [readonly]="!item.articuloId"  (keyup)="calcularTotales()"
+                                            [ngClass]="{'form-control border-danger p-0' : item.hayErroresPorcientoDescuento }"
                                             [(ngModel)]="item.porcientoDescuento" [ngModelOptions]="{standalone: true}">
                                     </td>
                                     <td>
@@ -197,8 +210,8 @@
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
-
+                   
+               
 
                     <div class="form-group text-right col-md-12" *ngIf="cliente">
                         <hr>

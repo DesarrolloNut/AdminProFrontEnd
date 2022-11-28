@@ -130,7 +130,7 @@
                                                 thousandSeparator="," 
                                                 [(ngModel)]="item.envio"
                                                 [disabled]="transferenciaInventarioConfirmado || item.articuloId==0"
-                                                
+        
                                                 [ngModelOptions]="{standalone: true}"
                                                 [ngClass]="{'form-control border-danger p-0' : item.hayErrores }"
                                                 (blur)="validarInventario($event,item.inventario,i,item.articuloId,modalLoteSolicitud)"

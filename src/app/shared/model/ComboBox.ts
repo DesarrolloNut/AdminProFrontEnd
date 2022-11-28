@@ -1,7 +1,8 @@
 export class ComboBox {
     codigo: number;
     nombre: string;
-    grupo: string
+    grupo: string;
+ 
     grupoID: string;
     disabled?:boolean;
     predeterminado?:boolean;
@@ -9,7 +10,7 @@ export class ComboBox {
 export class ComboBoxLote {
   codigo: string;
   nombre: string;
-  grupo: string
+  grupo: string;
   grupoID: number;
   disabled?:boolean;
   predeterminado?:boolean;
