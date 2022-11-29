@@ -17,5 +17,7 @@ export interface CotizacionDetalle {
     hayErroresPorcientoDescuento:boolean;
     companiaId:number;
     impuesto:number;
+    porcientoDescuentoSol:number;
+    estadoAutorizadoId:number;
    
 }

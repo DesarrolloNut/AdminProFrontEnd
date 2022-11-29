@@ -24,3 +24,13 @@ export class ComboBoxTipoComprobante {
   disabled?:boolean;
   predeterminado?:boolean;
 }
+
+export class ComboBoxAlmacenCotizacion {
+  codigo: number;
+  nombre: string;
+  otroProp: any;
+  grupo: string
+  grupoID: string;
+  disabled?:boolean;
+  predeterminado?:boolean;
+}

@@ -179,15 +179,17 @@
                                     <td>
                                         <input style="width: 70px;" type="number" class="form-control"
                                             [readonly]="!item.articuloId" (keyup)="calcularTotales()"
-                                            [ngClass]="{'form-control border-danger p-0' : item.hayErroresCantidad }"
+                                            [ngClass]="{' border-danger p-0' : item.hayErroresCantidad }"
                                             [(ngModel)]="item.cantidad" [ngModelOptions]="{standalone: true}">
                                     </td>
 
                                     <td>
-                                        <input style="width: 50px;" type="number" class="form-control"
-                                            [readonly]="!item.articuloId"  (keyup)="calcularTotales()"
-                                            [ngClass]="{'form-control border-danger p-0' : item.hayErroresPorcientoDescuento }"
+                                       <input style="width: 50px;" type="number" class="form-control"
+                                            [readonly]="!autorizarDescuento"  (keyup)="calcularTotales()"
+                                            [ngClass]="{' border-danger p-0' : item.hayErroresPorcientoDescuento }"
                                             [(ngModel)]="item.porcientoDescuento" [ngModelOptions]="{standalone: true}">
+
+                                     
                                     </td>
                                     <td>
                                         <span>${{ item.subtotal | number:'1.2-2'}}</span>
