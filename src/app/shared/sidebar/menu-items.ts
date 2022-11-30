@@ -1057,6 +1057,28 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ["mantenimientos_tipo_solicitud_devolucion"],
       },
+      {
+        path: '/mantenimientos/tipo-descuento',
+        label: '',
+        labelClass: '',
+        title: 'Tipo Descuento',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_tipo_descuento"],
+      },
+      {
+        path: '/mantenimientos/descuento-articulos',
+        label: '',
+        labelClass: '',
+        title: 'Descuento Articulos',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_descuento_articulos"],
+      },
     ]
   },
   {

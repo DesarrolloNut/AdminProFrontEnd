@@ -96,21 +96,16 @@
                                 <input [(ngModel)]="cliente.codigoReferencia" class="form-control" [readonly]="'true'"
                                     type="text" [ngModelOptions]="{standalone: true}">
                             </div>
-
                             <div class="form-group col-md-6">
                                 <label for="nombre"> <i class="fa fa-user"></i> Nombres</label>
                                 <input [(ngModel)]="cliente.nombres +' '+ cliente.apellidos" class="form-control"
                                     [readonly]="'true'" type="text" [ngModelOptions]="{standalone: true}">
                             </div>
-
                             <div class="form-group col-md-6">
                                 <label for="nombre"> <i class="fa fa-id-card"></i> Documento</label>
                                 <input [(ngModel)]="cliente.documento" class="form-control" [readonly]="'true'"
                                     type="text" [ngModelOptions]="{standalone: true}">
                             </div>
-
-                        
-
                             <div class="form-group col-md-12">
                                 <label for="nombre"> <i class="fa fa-map-marker"></i> Dirección</label>
                                 <input [(ngModel)]="cliente.calle" class="form-control" [readonly]="'true'" type="text"
@@ -134,12 +129,12 @@
                             [loading]="loadingMonedaTipos" [clearable]="false" notFoundText="No resultados">
                         </ng-select>
                     </div>
-                   
                         <table class="table table-sm table-hover mb-0 no-wrap v-middle">
                             <thead>
                                 <tr>
                                     <th></th>
                                     <th>Artículo</th>
+                                    <th></th>
                                     <th>Precio</th>
                                     <th>Inventario</th>
                                     <th>Cant.</th>
@@ -160,26 +155,33 @@
                                         </button>
                                     </td>
                                     <td>
-                                        <ng-select style="width: 500px;" [items]="articulosCombobox" bindLabel="nombreYCodigoReferencia"
+                                        <ng-select style="width: 700px;" [items]="articulosCombobox" bindLabel="nombreYCodigoReferencia"
                                             [clearable]="false" bindValue="articuloId" [loading]="loadingArticulosCombobox"
                                             [(ngModel)]="item.articuloId" [ngModelOptions]="{standalone: true}"
                                             (change)="onSelectArticulo($event,i)" notFoundText="No resultados">
                                         </ng-select>
+                                       
                                     </td>
                                     <td>
-                                        <input style="width: 100px;" type="text" class="form-control" prefix="$ "
+                                        <button *ngIf="item.cantidad" class="btn btn-sm  text-left "
+                                            (click)="openModalPromociones(modalPromociones,item)">
+                                            <i class=" fa fa-sm fa-info"></i>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <input style="width: 150px;" type="text" class="form-control" prefix="$ "
                                             [(ngModel)]="item.precio" [ngModelOptions]="{standalone: true}"
                                             [readonly]="'true'" mask="separator" thousandSeparator=",">
                                     </td>
                                     <td>
-                                        <input style="width: 100px;" type="text" class="form-control" 
+                                        <input style="width: 150px;" type="text" class="form-control" 
                                         [(ngModel)]="item.inventario" [ngModelOptions]="{standalone: true}"
                                         [readonly]="'true'" mask="separator" thousandSeparator=",">
                                     </td>
                                     <td>
                                         <input style="width: 70px;" type="number" class="form-control"
                                             [readonly]="!item.articuloId" (keyup)="calcularTotales()"
-                                            [ngClass]="{' border-danger p-0' : item.hayErroresCantidad }"
+                                            [ngClass]="{'border-danger p-0' : item.hayErroresCantidad }"
                                             [(ngModel)]="item.cantidad" [ngModelOptions]="{standalone: true}">
                                     </td>
 
@@ -188,8 +190,6 @@
                                             [readonly]="!autorizarDescuento"  (keyup)="calcularTotales()"
                                             [ngClass]="{' border-danger p-0' : item.hayErroresPorcientoDescuento }"
                                             [(ngModel)]="item.porcientoDescuento" [ngModelOptions]="{standalone: true}">
-
-                                     
                                     </td>
                                     <td>
                                         <span>${{ item.subtotal | number:'1.2-2'}}</span>
@@ -305,6 +305,50 @@
 
             </div>
 
+            <div class="col-12">
+                <app-loading-listado [hidden]="!loadingArticuloBalance"></app-loading-listado>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
+    </div>
+</ng-template>
+
+<ng-template #modalPromociones let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title font-weight-bold ">Promociones para {{articulo}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12" [hidden]="loadingArticuloBalance">
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover mb-0 no-wrap v-middle">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Artículo</th>
+                                <th>Regalo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of promociones">
+                                <td><span class="badge badge-light text-info ">0</span></td>
+                                <td>
+                                    <span> {{item.Articuloid}}</span>
+                                </td>
+                                <td>
+                                    <span> {{item.Regalo}} </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             <div class="col-12">
                 <app-loading-listado [hidden]="!loadingArticuloBalance"></app-loading-listado>
             </div>

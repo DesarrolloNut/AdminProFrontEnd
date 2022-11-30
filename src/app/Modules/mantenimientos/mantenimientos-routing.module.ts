@@ -101,6 +101,10 @@ import { TipoSolicitudDevolucionListadoComponent } from './tipoSolicitudDevoluci
 import { TipoSolicitudDevolucionFormularioComponent } from './tipoSolicitudDevolucion/tipoSolicitudDevolucion-formulario/tipoSolicitudDevolucion-formulario.component';
 import { ConfiguracionCompaniaListadoComponent } from './configuracionCompania/configuracion-compania-listado/configuracion-compania-listado.component';
 import { ConfiguracionCompaniaFormularioComponent } from './configuracionCompania/configuracion-compania-formulario/configuracion-compania-formulario.component';
+import { TipoDescuentoListadoComponent } from './tipoDescuento/tipo-descuento-listado/tipo-descuento-listado.component';
+import { TipoDescuentoFormularioComponent } from './tipoDescuento/tipo-descuento-formulario/tipo-descuento-formulario.component';
+import { DescuentoArticulosListadoComponent } from './descuento-articulos/descuento-articulos-listado/descuento-articulos-listado.component';
+import { DescuentoArticulosFormularioComponent } from './descuento-articulos/descuento-articulos-formulario/descuento-articulos-formulario.component';
 
 
 
@@ -1158,6 +1162,52 @@ const routes: Routes = [
           ]
         }
       },
+
+      {
+        path: 'tipo-descuento', component: TipoDescuentoListadoComponent, data: {
+          title: 'Tipo Descuento',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Tipo Descuento' }
+          ]
+        }
+      },
+      
+      {
+        path: 'tipo-descuento/:id', component: TipoDescuentoFormularioComponent, data: {
+          title: 'Tipo Descuento Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Tipo Descuento' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+      {
+        path: 'descuento-articulos', component: DescuentoArticulosListadoComponent, data: {
+          title: 'Descuento Articulos',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Descuento Articulos' }
+          ]
+        }
+      },
+      
+      {
+        path: 'descuento-articulos/:id', component: DescuentoArticulosFormularioComponent, data: {
+          title: 'Descuento Articulos Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Descuento Articulos' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+
+      
+      
     ]
 
   }];

@@ -19,5 +19,6 @@ export interface CotizacionDetalle {
     impuesto:number;
     porcientoDescuentoSol:number;
     estadoAutorizadoId:number;
+    nombre:string;
    
 }

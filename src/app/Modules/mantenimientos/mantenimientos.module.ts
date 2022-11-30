@@ -122,6 +122,10 @@ import { TipoSolicitudDevolucionListadoComponent } from './tipoSolicitudDevoluci
 import { TipoSolicitudDevolucionFormularioComponent } from './tipoSolicitudDevolucion/tipoSolicitudDevolucion-formulario/tipoSolicitudDevolucion-formulario.component';
 import { ConfiguracionCompaniaListadoComponent } from './configuracionCompania/configuracion-compania-listado/configuracion-compania-listado.component';
 import { ConfiguracionCompaniaFormularioComponent } from './configuracionCompania/configuracion-compania-formulario/configuracion-compania-formulario.component';
+import { TipoDescuentoFormularioComponent } from './tipoDescuento/tipo-descuento-formulario/tipo-descuento-formulario.component';
+import { TipoDescuentoListadoComponent } from './tipoDescuento/tipo-descuento-listado/tipo-descuento-listado.component';
+import { DescuentoArticulosFormularioComponent } from './descuento-articulos/descuento-articulos-formulario/descuento-articulos-formulario.component';
+import { DescuentoArticulosListadoComponent } from './descuento-articulos/descuento-articulos-listado/descuento-articulos-listado.component';
 
 
 
@@ -183,7 +187,11 @@ import { ConfiguracionCompaniaFormularioComponent } from './configuracionCompani
     ComprobanteFiscalListadoComponent,
     ComprobanteFiscalFormularioComponent,
     TipoComprobanteFiscaFormularioComponent,
-    TipoComprobanteFiscalListadoComponent
+    TipoComprobanteFiscalListadoComponent,
+    TipoDescuentoFormularioComponent,
+    TipoDescuentoListadoComponent,
+    DescuentoArticulosFormularioComponent,
+    DescuentoArticulosListadoComponent,
   ],
 
   imports: [
