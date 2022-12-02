@@ -66,8 +66,6 @@ import { ListaPreciosListadoComponent } from './listaPrecios/lista-precios-lista
 import { NivelAutorizacionModuloFormularioComponent } from './NivelAutorizacionModulo/nivel-autorizacion-modulo-formulario/nivel-autorizacion-modulo-formulario.component';
 import { NivelAutorizacionModuloListadoComponent } from './NivelAutorizacionModulo/nivel-autorizacion-modulo-listado/nivel-autorizacion-modulo-listado.component';
 import { SapconnectionFormularioComponent } from './sapconnection/sapconnection-formulario/sapconnection-formulario.component';
-import { PromocionesListadoComponent } from './promociones/promociones-listado/promociones-listado.component';
-import { PromocionesFormularioComponent } from './promociones/promociones-formulario/promociones-formulario.component';
 import { PerfilFormularioComponent } from './perfil-formulario/perfil-formulario.component';
 import { CargaMasivaPanelComponent } from './cargaMasiva/carga-masiva-panel/carga-masiva-panel.component';
 import { MonedasListadoComponent } from './monedas/monedas-listado/monedas-listado.component';
@@ -105,6 +103,9 @@ import { TipoDescuentoListadoComponent } from './tipoDescuento/tipo-descuento-li
 import { TipoDescuentoFormularioComponent } from './tipoDescuento/tipo-descuento-formulario/tipo-descuento-formulario.component';
 import { DescuentoArticulosListadoComponent } from './descuento-articulos/descuento-articulos-listado/descuento-articulos-listado.component';
 import { DescuentoArticulosFormularioComponent } from './descuento-articulos/descuento-articulos-formulario/descuento-articulos-formulario.component';
+import { PromocionListadoComponent } from './promocion/promocion-listado/promocion-listado.component';
+import { PromocionFormularioComponent } from './promocion/promocion-formulario/promocion-formulario.component';
+
 
 
 
@@ -313,27 +314,7 @@ const routes: Routes = [
       },
 
       // promocion
-      {
-        path: 'promocion', component: PromocionesListadoComponent, data: {
-          title: 'Promociones',
-          urls: [
-            { title: 'Mantenimientos' },
-            { title: 'Promociones' },
-          ]
-        }
-      },
-
-
-      {
-        path: 'promocion/:id', component: PromocionesFormularioComponent, data: {
-          title: 'Promociones Formulario',
-          urls: [
-            { title: 'Mantenimientos' },
-            { title: 'Promociones' },
-            { title: 'Formulario' }
-          ]
-        }
-      },
+     
 
       // Roles
       {
@@ -1204,10 +1185,31 @@ const routes: Routes = [
           ]
         }
       },
+      {
+        path: 'promociones', component: PromocionListadoComponent, data: {
+          title: 'Promoción',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Promoción' }
+          ]
+        }
+      },
+      
+      {
+        path: 'promociones/:id', component: PromocionFormularioComponent, data: {
+          title: 'Promoción Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Promoción' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
 
 
       
       
+   
     ]
 
   }];

@@ -65,8 +65,7 @@ import { RolesListadoComponent } from './roles/roles-listado/roles-listado.compo
 import { RolesFormularioComponent } from './roles/roles-formulario/roles-formulario.component';
 import { SapconnectionListadoComponent } from './sapconnection/sapconnection-listado/sapconnection-listado.component';
 import { SapconnectionFormularioComponent } from './sapconnection/sapconnection-formulario/sapconnection-formulario.component';
-import { PromocionesListadoComponent } from './promociones/promociones-listado/promociones-listado.component';
-import { PromocionesFormularioComponent } from './promociones/promociones-formulario/promociones-formulario.component';
+
 import { PermisosListadoComponent } from './permisos/permisos-listado/permisos-listado.component';
 import { PermisosFormularioComponent } from './permisos/permisos-formulario/permisos-formulario.component';
 import { PerfilFormularioComponent } from './perfil-formulario/perfil-formulario.component';
@@ -126,6 +125,11 @@ import { TipoDescuentoFormularioComponent } from './tipoDescuento/tipo-descuento
 import { TipoDescuentoListadoComponent } from './tipoDescuento/tipo-descuento-listado/tipo-descuento-listado.component';
 import { DescuentoArticulosFormularioComponent } from './descuento-articulos/descuento-articulos-formulario/descuento-articulos-formulario.component';
 import { DescuentoArticulosListadoComponent } from './descuento-articulos/descuento-articulos-listado/descuento-articulos-listado.component';
+import { PromocionFormularioComponent } from './promocion/promocion-formulario/promocion-formulario.component';
+import { PromocionListadoComponent } from './promocion/promocion-listado/promocion-listado.component';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+
+
 
 
 
@@ -153,8 +157,7 @@ import { DescuentoArticulosListadoComponent } from './descuento-articulos/descue
     ModuloFormularioComponent,
     SapconnectionListadoComponent,
     SapconnectionFormularioComponent,
-    PromocionesListadoComponent,
-    PromocionesFormularioComponent,
+ 
     PermisosListadoComponent,
     PermisosFormularioComponent,
     PerfilFormularioComponent,
@@ -192,6 +195,9 @@ import { DescuentoArticulosListadoComponent } from './descuento-articulos/descue
     TipoDescuentoListadoComponent,
     DescuentoArticulosFormularioComponent,
     DescuentoArticulosListadoComponent,
+    PromocionFormularioComponent,
+    
+    PromocionListadoComponent
   ],
 
   imports: [
@@ -209,6 +215,7 @@ import { DescuentoArticulosListadoComponent } from './descuento-articulos/descue
     }),
     NgbModule, //ng bootstrap
     TreeviewModule.forRoot(),
+    NgMultiSelectDropDownModule.forRoot()
 
   ]
 })

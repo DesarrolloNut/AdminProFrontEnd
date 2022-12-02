@@ -62,7 +62,7 @@
     "moment": "^2.29.1",
     "ng-chartist": "^1.1.1",
     "ng-connection-service": "^1.0.4",
-    "ng-multiselect-dropdown": "^0.2.3",
+    "ng-multiselect-dropdown": "^0.2.14",
     "ng-number-picker": "^1.1.9",
     "ng2-archwizard": "^2.1.0",
     "ng2-charts": "^2.3.2",

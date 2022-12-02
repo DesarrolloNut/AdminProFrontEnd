@@ -4,11 +4,10 @@
             <div class="card-body">
                 <div class="row mb-2">
                     <div class="col-md-6 align-middle">
-                        <h4 class="card-title">Listado de promociones</h4>
+                        <h4 class="card-title">Listado Descuento Artículo</h4>
                     </div>
                     <div class="col-md-6 text-right">
-                        <button [routerLink]="[0]" class="btn btn-info"> <i class="fa fa-plus"></i> Nueva
-                            promoción
+                        <button [routerLink]="[0]" class="btn btn-info"> <i class="fa fa-plus"></i>Registrar Modulo
                         </button>
                     </div>
                     <div class="col-md-12 p-2">
@@ -32,30 +31,40 @@
                         <thead>
                             <tr>
                                 <th></th>
-                                <th>Nombre</th>
+                                <th>Fecha Inicio</th>
+                                <th>Fecha Final</th>
+                                <th>Estado</th>
+                                <th>Artículo</th>
+                                <th>Lista de Precio</th>
+                                <th>% Descuento</th>
+                                <th>Compania</th>
+                                <th>Cliente</th>
+                                <th>Ruta</th>
+                                <th>Canal</th>
                                 <th></th>
-
                             </tr>
                         </thead>
                         <tbody [hidden]="Cargando">
 
                             <tr *ngFor="let item of data">
                                 <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
+                                <td><span> {{item.fechaDesde | date: 'dd/MM/yyyy ' }}</span></td>
+                                <td><span> {{item.fechaHasta | date: 'dd/MM/yyyy '}}</span></td>   
+                                <td><span> {{item.estadoId}}</span></td> 
+                                <td><span> {{item.articulo}}</span></td>                           
+                                <td><span> {{item.listaPrecio}}</span></td> 
+                                <td><span> {{item.porciento}}</span></td> 
+                                <td><span> {{item.compania}}</span></td> 
+                                <td><span> {{item.cliente}}</span></td> 
+                                <td><span> {{item.ruta}}</span></td> 
+                                <td><span> {{item.canal}}</span></td> 
                                 <td>
-                                    <span> {{item.nombre}}</span>
-                                </td>
-                                <td>
-                                    <span *ngIf="item.estadoID==1" class="badge badge-light">Desautorizado</span>
-                                    <span *ngIf="item.estadoID==2" class="badge badge-info">Solicitud
-                                        autorización</span>
-                                    <span *ngIf="item.estadoID==3" class="badge badge-success">Autorizado</span>
-                                    <span *ngIf="item.estadoID==4" class="badge badge-success">Sincronizado SAP <i
-                                            class="fa fa-check"></i> </span>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-info" [routerLink]="[item.id]">
+                                    <button class="btn btn-outline-info m-1" [routerLink]="[item.id]">
                                         <i class="fa fa-sm fa-edit"></i>
                                     </button>
+                                    <button   title="Eliminar" type="button" (click)="confirmarEliminacionDeModulo(item.id)" class="btn btn-outline-danger m-1">
+                                      <i class="fa fa-times"></i>
+                                  </button>
                                 </td>
                             </tr>
 

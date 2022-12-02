@@ -3,7 +3,6 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IDropdownSettings } from 'ng-multiselect-dropdown';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { Parametro } from 'src/app/core/http/model/Parametro';
@@ -12,11 +11,11 @@ import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { Modulo } from '../models/Modulo';
 @Component({
-  selector: 'app-descuento-articulos-formulario',
-  templateUrl: './descuento-articulos-formulario.component.html',
-  styleUrls: ['./descuento-articulos-formulario.component.scss']
+  selector: 'app-promocion-formulario',
+  templateUrl: './promocion-formulario.component.html',
+  styleUrls: ['./promocion-formulario.component.scss']
 })
-export class DescuentoArticulosFormularioComponent implements OnInit {
+export class PromocionFormularioComponent implements OnInit {
 
   Cargando: boolean = false;
   Formulario: FormGroup;
@@ -57,15 +56,6 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
   marcas: ComboBox[];
   loadingMarcas: boolean;
   filtro: string;
-  dropdownList: { item_id: number; item_text: string; }[];
-  selectedItems: { item_id: number; item_text: string; }[];
-
-  loadingEntidades: boolean;
-  entidades: ComboBox[];
-  search: string="";
-  dropdownSettings: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; clearSearchFilter: boolean; };
-  tipoSeleccionId: number;
-  tipoSeleccion: any;
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
@@ -81,7 +71,6 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
       this.actualizando = true;
     }
     this.CreateForm();
-    this.getDescuentoTipoSeleccion();
     this.getListasPrecios();
     this.getRutas();
     this.getClientes();
@@ -90,9 +79,10 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
     this.getTipoDescuento();
     this.getEstadoGeneral();
     this.getProvincias();
+    this.getDescuentoTipoSeleccion();
     this.getMarcas();
     this.getAlmacenes();
-    this.multiSelectSettings();
+  
   }
   private CreateForm() {
     this.Formulario = this.formBuilder.group({
@@ -103,13 +93,20 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
       fechaHasta: [null,[Validators.required]],
       estadoId: [1,[Validators.required]],
       articuloId: [0,[Validators.required]],
+      listaPrecioId: [0,],
       porciento: [0,[Validators.required]],
       descuentoTipoId: [0,[Validators.required]],
+      clienteId: [0,],
+      rutaId: [0,],
+      canalId: [0,],
+      provinciaId: [0,],
+      sectorId: [0,],
+      ciudadId: [0,],
       descuentoTipoSeleccionId: [0,],
-      cantidad: [0,[Validators.required]],
+      almacenId: [0,],
+      marcaId: [0,],
     });
   }
-
   get f() { return this.Formulario.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
 
   buscarCiudades()
@@ -120,15 +117,12 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
   buscarSectores(){
     this.getsectores(); 
   }
+ 
   guardar() {
-    let parametros: any = {
-      "ArticuloDescuento": this.Formulario.value,
-      "Entidades": this.selectedItems,
-    }
-    console.log(parametros);
     let metodo: string = this.actualizando ? "Update" : "Registrar";
     this.httpService.DoPostAny<Modulo>(DataApi.DescuentoArticulo,
-      metodo, parametros).subscribe(response => {
+      metodo, this.Formulario.value).subscribe(response => {
+
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
         } else {
@@ -180,7 +174,6 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
         this.toastService.error("No se pudo obtener las listas de ciudades", "Error conexion al servidor");
       });
   }
-
   getClientes() {
     this.loadingClientes = true;
     let parametros: Parametro[] = [
@@ -228,9 +221,9 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
         } else {
           this.descuentoTipoSeleccion = response.records;
           if (this.descuentoTipoSeleccion && this.descuentoTipoSeleccion.length > 0) {
-           this.filtro=this.descuentoTipoSeleccion[0].nombre;
+           this.Formulario.get('descuentoTipoSeleccionId').setValue(this.descuentoTipoSeleccion[0].codigo);
+           this.filtro=this.descuentoTipoSeleccion[0].nombre
           }
-        
         }
         this.loadingDescuentoTipoSeleccion = false;
       }, error => {
@@ -257,39 +250,6 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
         this.loadingestados = false;
         this.toastService.error("Error conexion al servidor");
       });
-  }
-
-  getEntidades() {
-
-    this.loadingEntidades = true;
-    let parametros: Parametro[] = [
-      { key: "TipoSeleccion", value: this.tipoSeleccion },
-      { key: "CompaniaId", value:this.authService.tokenDecoded.primarygroupsid },
-      { key: "search", value:this.search },
-    ];
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetEntidadesComboBox", parametros).subscribe(response => {
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          this.entidades = response.records;
-       
-   
-         if(this.entidades.length <=0)
-         {
-          this.search=""
-          this.getEntidades()
-         }
-         
-        }
-        this.loadingEntidades = false;
-      }, error => {
-        this.loadingEntidades = false;
-        this.toastService.error("Error conexion al servidor");
-      });
-      // setTimeout(() => {
-      //   this.getEntidades()
-      // }, 1000);
   }
   getItem(id: number) {
     this.Cargando = true;
@@ -441,39 +401,34 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
         this.toastService.error("No se pudo obtener las rutas", "Error conexion al servidor");
       });
   }
-  multiSelectSettings()
-  {
-    this.dropdownSettings = {
-      singleSelection: false,
-      idField: 'codigo',
-      textField: 'nombre',
-      selectAllText: 'Seleccionar todos',
-      unSelectAllText: 'Deseleccionar todos',
-      itemsShowLimit: 2000,
-      allowSearchFilter: true,
-      clearSearchFilter: true,
-    };
-  }
-  onFilterChange(event:any){
-    this.search=event
-     this.getEntidades();
-  }
   onSubmit() {
     this.submitted = true;
     
     if (this.Formulario.invalid) {
       return;
     }
-    console.log(this.Formulario.value);
-    console.log(this.selectedItems)
 
     this.guardar();
   }
   tipoDescuentoSeleccion(item:ComboBox){
+    console.log(item)
     this.filtro=item.nombre;
-    this.tipoSeleccion=item.codigo;
-    this.getEntidades();
-   
   }
+
+
+
+
+ 
+
+
+ 
+
+
+
+
+
+
+
+
 
 }

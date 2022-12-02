@@ -4,6 +4,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
+import { Parametro } from 'src/app/core/http/model/Parametro';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { ConfiguracionCompania } from 'src/app/Modules/configuraciones/models/ConfiguracionCompania';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
@@ -56,7 +57,7 @@ export class ConfiguracionCompaniaFormularioComponent implements OnInit {
   private CreateForm() {
     this.Formulario = this.formBuilder.group({
       id: [0],
-      companiaId: [null, [Validators.required]],
+      companiaId: [Number(this.authService.tokenDecoded.primarygroupsid), [Validators.required]],
       moduloId: [null,[Validators.required]],
       configValue: [null,],
       configuracionTipoCompaniaId: [null,[Validators.required]],
@@ -88,9 +89,12 @@ export class ConfiguracionCompaniaFormularioComponent implements OnInit {
   }
 
   getModulos() {
+    let parametros: Parametro[] = [
+      { key: "CompaniaId", value: this.authService.tokenDecoded.primarygroupsid },
+    ];
     this.loadingModulos = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetModuloComboBox", null).subscribe(response => {
+      "GetModuloPermisoComboBox", parametros).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
