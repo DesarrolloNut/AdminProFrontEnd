@@ -117,6 +117,7 @@ export class TransferenciaListadoComponent implements OnInit {
     this.solicitudSeleccionada = item
     this.files = []
   }
+
   openModalDetalle(content, item: any) {
     this.solicitudSeleccionada = item;
     this.almacenOrigin=item.almacenOrigen;
@@ -172,11 +173,14 @@ export class TransferenciaListadoComponent implements OnInit {
 
   confirmarTransferenciaInventario(content,idTransferenciaInventario:number){
     this.transferenciaInventarioId=idTransferenciaInventario;
+   
       if(this.configuracionCompania.configValue)
       {
+    
         this.modalService.open(content, { size: 'lg' });
       }
       else{
+  
         this.confirmar(idTransferenciaInventario)
       }
   }
