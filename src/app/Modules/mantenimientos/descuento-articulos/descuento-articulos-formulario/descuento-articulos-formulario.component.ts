@@ -1,9 +1,6 @@
-
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IDropdownSettings } from 'ng-multiselect-dropdown';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { Parametro } from 'src/app/core/http/model/Parametro';
@@ -48,6 +45,7 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
   sectores: ComboBox[];
   provinciaId: any;
   ciudades: ComboBox[];
+  canal:number;
   loadingCiudades: boolean;
   ciudadId: any;
   loadingDescuentoTipoSeleccion: boolean;
@@ -57,8 +55,7 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
   marcas: ComboBox[];
   loadingMarcas: boolean;
   filtro: string;
-  dropdownList: { item_id: number; item_text: string; }[];
-  selectedItems: { item_id: number; item_text: string; }[];
+  selectedItems: { codigo: number; nombre: string; }[];
 
   loadingEntidades: boolean;
   entidades: ComboBox[];
@@ -66,6 +63,7 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
   dropdownSettings: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; clearSearchFilter: boolean; };
   tipoSeleccionId: number;
   tipoSeleccion: any;
+  descuentoArticulo: any;
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
@@ -83,16 +81,12 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
     this.CreateForm();
     this.getDescuentoTipoSeleccion();
     this.getListasPrecios();
-    this.getRutas();
-    this.getClientes();
     this.getTodosArticulos();
     this.getComboBoxCanal();
     this.getTipoDescuento();
     this.getEstadoGeneral();
-    this.getProvincias();
-    this.getMarcas();
-    this.getAlmacenes();
     this.multiSelectSettings();
+   
   }
   private CreateForm() {
     this.Formulario = this.formBuilder.group({
@@ -103,22 +97,20 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
       fechaHasta: [null,[Validators.required]],
       estadoId: [1,[Validators.required]],
       articuloId: [0,[Validators.required]],
-      porciento: [0,[Validators.required]],
+      porciento: [null,[Validators.required]],
       descuentoTipoId: [0,[Validators.required]],
       descuentoTipoSeleccionId: [0,],
-      cantidad: [0,[Validators.required]],
+      cantidad: [null,[Validators.required]],
+      canal: [0,[Validators.required]],
     });
   }
-
   get f() { return this.Formulario.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
-
-  buscarCiudades()
-  {
-    this.getCiudades(); 
-  }
-
-  buscarSectores(){
-    this.getsectores(); 
+ 
+  canalSeleccionado(){
+    if(this.tipoSeleccion)
+    {
+      this.getEntidades();
+    }
   }
   guardar() {
     let parametros: any = {
@@ -141,66 +133,6 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
       });
   }
-  getAlmacenes() {
-    this.loadingAlmacenes = true;
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetAlmacenesComboBox", null).subscribe(response => {
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          this.almacenes = response.records;
-         
-        }
-        this.loadingAlmacenes = false;
-      }, error => {
-        this.loadingAlmacenes = false;
-        this.toastService.error("No se pudo obtener las listas de almaces", "Error conexion al servidor");
-      });
-  }
-  getCiudades() {
-    let parametros: Parametro[] = [
-      { key: "ProvinciaId", value: this.provinciaId? this.provinciaId:0 }
-    ];
-    this.loadingCiudades = true;
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetCiudadComboBox", parametros).subscribe(response => {
-
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          this.ciudades = response.records;
-          if (this.ciudades && this.ciudades.length > 0) {
-           
-            this.getsectores();
-           }
-        }
-        this.loadingCiudades = false;
-      }, error => {
-        this.loadingCiudades = false;
-        this.toastService.error("No se pudo obtener las listas de ciudades", "Error conexion al servidor");
-      });
-  }
-
-  getClientes() {
-    this.loadingClientes = true;
-    let parametros: Parametro[] = [
-      { key: "Compania", value: this.authService.tokenDecoded.primarygroupsid },
-      { key: "UsuarioId", value:this.authService.tokenDecoded.nameid },
-    ];
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetClientesComboBox", parametros).subscribe(response => {
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          this.clientes = response.records;
-         
-        }
-        this.loadingClientes = false;
-      }, error => {
-        this.loadingClientes = false;
-        this.toastService.error("Error conexion al servidor");
-      });
-  }
   getComboBoxCanal() {
     this.loadingcanales = true;
     let parametros: Parametro[] = [];
@@ -210,7 +142,12 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.canales = response.records;
-          
+          if (this.canales && this.canales.length > 0) {
+             if(!this.actualizando)
+             {
+              this.Formulario.get('canal').setValue(this.canales[0].codigo);
+             }
+           }
         }
         this.loadingcanales = false;
       }, error => {
@@ -230,7 +167,6 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
           if (this.descuentoTipoSeleccion && this.descuentoTipoSeleccion.length > 0) {
            this.filtro=this.descuentoTipoSeleccion[0].nombre;
           }
-        
         }
         this.loadingDescuentoTipoSeleccion = false;
       }, error => {
@@ -238,7 +174,6 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
       });
   }
-
   getEstadoGeneral() {
     this.loadingestados = true;
     let parametros: Parametro[] = [
@@ -250,7 +185,6 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.estados = response.records;
-          
         }
         this.loadingestados = false;
       }, error => {
@@ -258,14 +192,13 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
       });
   }
-
   getEntidades() {
-
     this.loadingEntidades = true;
     let parametros: Parametro[] = [
       { key: "TipoSeleccion", value: this.tipoSeleccion },
       { key: "CompaniaId", value:this.authService.tokenDecoded.primarygroupsid },
       { key: "search", value:this.search },
+      { key: "canal", value:this.canal },
     ];
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
       "GetEntidadesComboBox", parametros).subscribe(response => {
@@ -273,13 +206,32 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.entidades = response.records;
-       
-   
          if(this.entidades.length <=0)
          {
           this.search=""
           this.getEntidades()
          }
+        }
+        this.loadingEntidades = false;
+      }, error => {
+        this.loadingEntidades = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+
+  getEntidadesYaGuardados(descuentoId:number,descuentoTipoSeleccionId:number) {
+    this.loadingEntidades = true;
+    let parametros: Parametro[] = [
+      { key: "DescuentoId", value: descuentoId },
+      { key: "CompaniaId", value:this.authService.tokenDecoded.primarygroupsid },
+      { key: "DescuentoTipoSeleccionId", value:descuentoTipoSeleccionId },
+    ];
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetEntidadesYaGuardadosComboBox", parametros).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.selectedItems = response.records;
          
         }
         this.loadingEntidades = false;
@@ -287,21 +239,22 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
         this.loadingEntidades = false;
         this.toastService.error("Error conexion al servidor");
       });
-      // setTimeout(() => {
-      //   this.getEntidades()
-      // }, 1000);
   }
   getItem(id: number) {
     this.Cargando = true;
-    this.httpService.DoPostAny<Modulo>(DataApi.DescuentoArticulo,
+    this.httpService.DoPostAny<any>(DataApi.DescuentoArticulo,
       "GetDescuentoArticuloByID", id).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
           if (response != null && response.records != null && response.records.length > 0) {
-            let record = response.records[0]
-            this.Formulario.patchValue(record);
-           
+            this.descuentoArticulo = response.records[0];
+            //Captirando valores para llenar el combo entidad
+            this.tipoSeleccion=this.descuentoArticulo.descuentoTipoSeleccionId;
+            this.canal=this.descuentoArticulo.canal;
+            this.getEntidadesYaGuardados(this.descuentoArticulo.id,this.descuentoArticulo.descuentoTipoSeleccionId)
+            this.getEntidades();
+            this.Formulario.patchValue(this.descuentoArticulo);
           } else {
             this.toastService.warning("Registro no encontrada");
             this.router.navigateByUrl('/mantenimientos/tipo-descuento');
@@ -330,63 +283,9 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
         this.toastService.error("No se pudo obtener las listas de precios", "Error conexion al servidor");
       });
   }
-  getMarcas() {
-    this.loadingMarcas = true;
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetMarcasComboBox", null).subscribe(response => {
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          this.marcas = response.records;
-          
-        }
-        this.loadingMarcas = false;
-      }, error => {
-        this.loadingMarcas = false;
-        this.toastService.error("No se pudo obtener las listas de almaces", "Error conexion al servidor");
-      });
-  }
-  getProvincias() {
-    this.loadingProvincias = true;
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetProvinciaComboBox", null).subscribe(response => {
 
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          this.provincias = response.records;
-          if (this.provincias && this.provincias.length > 0) {
-            
-            this.getCiudades();
-           
-           }
-        }
-        this.loadingProvincias = false;
-      }, error => {
-        this.loadingProvincias = false;
-        this.toastService.error("No se pudo obtener las listas de províncias", "Error conexion al servidor");
-      });
-  }
-  getsectores() {
-    let parametros: Parametro[] = [
-      { key: "CiudadId", value: this.ciudadId?this.ciudadId:0 }
-    ];
-    this.loadingSectores = true;
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetSectorComboBox", parametros).subscribe(response => {
 
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          this.sectores = response.records;
-          
-        }
-        this.loadingSectores = false;
-      }, error => {
-        this.loadingSectores = false;
-        this.toastService.error("No se pudo obtener las listas de sectores", "Error conexion al servidor");
-      });
-  }
+
 
   
   getTodosArticulos() {
@@ -423,24 +322,7 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
       });
   }
- 
-  getRutas(tipoRuta?:number) {
-    this.cargadoRutas = true;
-    let parametros: Parametro[] = [{ key: "tipoRuta", value: 0}]
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetRutasComboBox", parametros).subscribe(response => {
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          this.rutas = response.records;
-         
-        }
-        this.cargadoRutas = false;
-      }, error => {
-        this.cargadoRutas = false;
-        this.toastService.error("No se pudo obtener las rutas", "Error conexion al servidor");
-      });
-  }
+
   multiSelectSettings()
   {
     this.dropdownSettings = {
@@ -454,6 +336,7 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
       clearSearchFilter: true,
     };
   }
+
   onFilterChange(event:any){
     this.search=event
      this.getEntidades();
@@ -470,10 +353,12 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
     this.guardar();
   }
   tipoDescuentoSeleccion(item:ComboBox){
+    this.getEntidadesYaGuardados(this.descuentoArticulo.id,this.tipoSeleccion)
     this.filtro=item.nombre;
     this.tipoSeleccion=item.codigo;
     this.getEntidades();
-   
   }
+ 
+
 
 }

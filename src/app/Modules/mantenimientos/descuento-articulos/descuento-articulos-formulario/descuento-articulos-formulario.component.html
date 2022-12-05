@@ -35,6 +35,7 @@
                                 [clearable]="false" bindValue="codigo" [loading]="loadingDescuentoTipoSeleccion"
                                 formControlName="descuentoTipoSeleccionId" 
                                 (change)="tipoDescuentoSeleccion($event)"
+                                [(ngModel)]="tipoSeleccion"
                             notFoundText="No resultados">
                             </ng-select>
                             </div>
@@ -118,6 +119,19 @@
                         <div *ngIf="f.estadoId.errors.required">El campo es obligatorio</div>
                     </div>
                </div>
+               <div class="form-group col-md-4">
+                <label for="inputEmail4">Canal</label>
+                <ng-select [items]="canales" bindLabel="nombre"
+                [clearable]="false" bindValue="codigo" [loading]="loadingcanales"
+                formControlName="canal" 
+                [(ngModel)]="canal"
+                (change)="canalSeleccionado()"
+            notFoundText="No resultados">
+            </ng-select>
+                <div class="invalid-feedback" *ngIf="submitted && f.canal.errors">
+                    <div *ngIf="f.canal.errors.required">El campo es obligatorio</div>
+                </div>
+            </div>
            
           <div class="form-group col-md-12">
             <label for="entidad">Entidad</label>

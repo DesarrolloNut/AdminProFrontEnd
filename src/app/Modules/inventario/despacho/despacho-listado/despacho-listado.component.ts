@@ -180,7 +180,7 @@ export class DespachoListadoComponent implements OnInit {
 
   async getALLAsync(){
     await  this.getDiferenciaMinima()
-    await  this.getDespachoMaxPorciento()
+   await  this.getDespachoMaxPorciento()
     await  this.getCanales();
     await  this.getAlmacenes();
   }

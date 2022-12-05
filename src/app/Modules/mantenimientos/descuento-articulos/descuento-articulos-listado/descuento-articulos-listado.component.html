@@ -35,12 +35,11 @@
                                 <th>Fecha Final</th>
                                 <th>Estado</th>
                                 <th>Artículo</th>
-                                <th>Lista de Precio</th>
                                 <th>% Descuento</th>
-                                <th>Compania</th>
-                                <th>Cliente</th>
-                                <th>Ruta</th>
                                 <th>Canal</th>
+                                <th>Tipo Selección</th>
+                                <th>Compania</th>
+                                
                                 <th></th>
                             </tr>
                         </thead>
@@ -52,12 +51,10 @@
                                 <td><span> {{item.fechaHasta | date: 'dd/MM/yyyy '}}</span></td>   
                                 <td><span> {{item.estadoId}}</span></td> 
                                 <td><span> {{item.articulo}}</span></td>                           
-                                <td><span> {{item.listaPrecio}}</span></td> 
                                 <td><span> {{item.porciento}}</span></td> 
+                                <td><span> {{item.canal}}</span></td>
+                                <td><span> {{item.tipoSeleccion}}</span></td>
                                 <td><span> {{item.compania}}</span></td> 
-                                <td><span> {{item.cliente}}</span></td> 
-                                <td><span> {{item.ruta}}</span></td> 
-                                <td><span> {{item.canal}}</span></td> 
                                 <td>
                                     <button class="btn btn-outline-info m-1" [routerLink]="[item.id]">
                                         <i class="fa fa-sm fa-edit"></i>
@@ -67,16 +64,10 @@
                                   </button>
                                 </td>
                             </tr>
-
                         </tbody>
                     </table>
-
                 </div>
-
-
-
                 <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
-
                 <div class="row ">
                     <div class="col-md-8 col-xs-12 ">
                         <ngb-pagination [collectionSize]="paginaTotalRecords" [(page)]="paginaNumeroActual"

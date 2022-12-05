@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
@@ -31,12 +32,15 @@ export class DescuentoArticulosListadoComponent implements OnInit {
   btnEliminarCargando: boolean;
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
+    private router: Router,
     private authService: AuthenticationService,
     public permissionsService: NgxPermissionsService,
   ) { }
   ngOnInit(): void {
    this.getData()
   }
+
+  
 
   getData() {
     this.Cargando = true;

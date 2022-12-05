@@ -103,8 +103,10 @@ import { TipoDescuentoListadoComponent } from './tipoDescuento/tipo-descuento-li
 import { TipoDescuentoFormularioComponent } from './tipoDescuento/tipo-descuento-formulario/tipo-descuento-formulario.component';
 import { DescuentoArticulosListadoComponent } from './descuento-articulos/descuento-articulos-listado/descuento-articulos-listado.component';
 import { DescuentoArticulosFormularioComponent } from './descuento-articulos/descuento-articulos-formulario/descuento-articulos-formulario.component';
-import { PromocionListadoComponent } from './promocion/promocion-listado/promocion-listado.component';
-import { PromocionFormularioComponent } from './promocion/promocion-formulario/promocion-formulario.component';
+import { PromocionFormularioComponent } from './promocion/promociones-formulario/promocion-formulario.component';
+import { PromocionListadoComponent } from './promocion/promociones-listado/promocion-listado.component';
+
+
 
 
 
