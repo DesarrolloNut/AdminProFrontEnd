@@ -35,8 +35,8 @@ export class PromocionFormularioComponent implements OnInit {
   clientes: ComboBox[];
   loadingArticulos: boolean;
   articulos: ComboBox[];
-  tipoDescuento: ComboBox[];
-  loadingTipoDescuento: boolean;
+  tipoPromocion: ComboBox[];
+  loadingTipoPromocion: boolean;
   canales: ComboBox[];
   loadingcanales: boolean;
   loadingestados: boolean;
@@ -49,13 +49,22 @@ export class PromocionFormularioComponent implements OnInit {
   ciudades: ComboBox[];
   loadingCiudades: boolean;
   ciudadId: any;
-  loadingDescuentoTipoSeleccion: boolean;
-  descuentoTipoSeleccion: ComboBox[];
+  loadingPromocionTipoSeleccion: boolean;
+  promocionTipoSeleccion: ComboBox[];
   almacenes: ComboBox[];
   loadingAlmacenes: boolean;
   marcas: ComboBox[];
   loadingMarcas: boolean;
   filtro: string;
+  loadingObjeto: boolean;
+  objetos: ComboBox[];
+  selectedItems=[];
+  dropdownSettings: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; clearSearchFilter: boolean; };
+  loadingEntidades: boolean;
+  tipoSeleccion: any;
+  search: any="";
+  canal: any;
+  entidades: ComboBox[];
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
@@ -76,12 +85,14 @@ export class PromocionFormularioComponent implements OnInit {
     this.getClientes();
     this.getTodosArticulos();
     this.getComboBoxCanal();
-    this.getTipoDescuento();
+    this.getTipoPromocion();
     this.getEstadoGeneral();
     this.getProvincias();
-    this.getDescuentoTipoSeleccion();
+    this.getPromocionTipoSeleccion();
     this.getMarcas();
     this.getAlmacenes();
+    this.getObjeto();
+    this.multiSelectSettings();
   
   }
   private CreateForm() {
@@ -91,20 +102,19 @@ export class PromocionFormularioComponent implements OnInit {
       usuarioId:[Number(this.authService.tokenDecoded.nameid), [Validators.required]],
       fechaDesde: [null,[Validators.required]],
       fechaHasta: [null,[Validators.required]],
-      estadoId: [1,[Validators.required]],
-      articuloId: [0,[Validators.required]],
-      listaPrecioId: [0,],
-      porciento: [0,[Validators.required]],
-      descuentoTipoId: [0,[Validators.required]],
-      clienteId: [0,],
-      rutaId: [0,],
-      canalId: [0,],
-      provinciaId: [0,],
-      sectorId: [0,],
-      ciudadId: [0,],
-      descuentoTipoSeleccionId: [0,],
-      almacenId: [0,],
-      marcaId: [0,],
+      estado: [null,[Validators.required]],
+      articuloId: [null,[Validators.required]],
+      cantidadRegale: [null,[Validators.required]],
+      condicion1: [null,[Validators.required]],
+      condicion2: [null,[Validators.required]],
+      condicionBase: [null,[Validators.required]],
+      nombre: [null,[Validators.required]],
+      objetoId: [null,[Validators.required]],
+      promocionTipoId: [null,[Validators.required]],
+      promocionTipoSeleccionId: [0,],
+      canal: [null,[Validators.required]],
+      
+    
     });
   }
   get f() { return this.Formulario.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
@@ -117,17 +127,27 @@ export class PromocionFormularioComponent implements OnInit {
   buscarSectores(){
     this.getsectores(); 
   }
+  canalSeleccionado(){
+    if(this.tipoSeleccion)
+    {
+      this.getEntidades();
+    }
+  }
  
   guardar() {
+    let parametros: any = {
+      "ArticuloDescuento": this.Formulario.value,
+      "Entidades": this.selectedItems,
+    }
     let metodo: string = this.actualizando ? "Update" : "Registrar";
-    this.httpService.DoPostAny<Modulo>(DataApi.DescuentoArticulo,
-      metodo, this.Formulario.value).subscribe(response => {
-
+    console.log(parametros);
+    this.httpService.DoPostAny<Modulo>(DataApi.Promociones,
+      metodo, parametros).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
         } else {
           this.toastService.success("Realizado", "OK");
-          this.router.navigateByUrl('/mantenimientos/descuento-articulos');
+          this.router.navigateByUrl('/mantenimientos/promociones');
         }
         this.btnGuardarCargando = false;
       }, error => {
@@ -203,7 +223,12 @@ export class PromocionFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.canales = response.records;
-          
+          if (this.canales && this.canales.length > 0) {
+             if(!this.actualizando)
+             {
+              this.Formulario.get('canal').setValue(this.canales[0].codigo);
+             }
+           }
         }
         this.loadingcanales = false;
       }, error => {
@@ -211,23 +236,48 @@ export class PromocionFormularioComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
       });
   }
-  getDescuentoTipoSeleccion() {
-    this.loadingDescuentoTipoSeleccion = true;
-    let parametros: Parametro[] = [];
+  getEntidades() {
+    this.loadingEntidades = true;
+    let parametros: Parametro[] = [
+      { key: "TipoSeleccion", value: this.tipoSeleccion },
+      { key: "CompaniaId", value:this.authService.tokenDecoded.primarygroupsid },
+      { key: "search", value:this.search },
+      { key: "canal", value:this.canal },
+    ];
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetDescuentoTipoSeleccion", parametros).subscribe(response => {
+      "GetEntidadesComboBox", parametros).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          this.descuentoTipoSeleccion = response.records;
-          if (this.descuentoTipoSeleccion && this.descuentoTipoSeleccion.length > 0) {
-           this.Formulario.get('descuentoTipoSeleccionId').setValue(this.descuentoTipoSeleccion[0].codigo);
-           this.filtro=this.descuentoTipoSeleccion[0].nombre
+          this.entidades = response.records;
+         if(this.entidades.length <=0)
+         {
+          this.search=""
+          this.getEntidades()
+         }
+        }
+        this.loadingEntidades = false;
+      }, error => {
+        this.loadingEntidades = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+  getPromocionTipoSeleccion() {
+    this.loadingPromocionTipoSeleccion = true;
+    let parametros: Parametro[] = [];
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetPromocionTipoSeleccion", parametros).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.promocionTipoSeleccion = response.records;
+          if (this.promocionTipoSeleccion && this.promocionTipoSeleccion.length > 0) {
+           this.filtro=this.promocionTipoSeleccion[0].nombre
           }
         }
-        this.loadingDescuentoTipoSeleccion = false;
+        this.loadingPromocionTipoSeleccion = false;
       }, error => {
-        this.loadingDescuentoTipoSeleccion = false;
+        this.loadingPromocionTipoSeleccion = false;
         this.toastService.error("Error conexion al servidor");
       });
   }
@@ -235,7 +285,7 @@ export class PromocionFormularioComponent implements OnInit {
   getEstadoGeneral() {
     this.loadingestados = true;
     let parametros: Parametro[] = [
-      { key: "NameKey", value: 'DESCEUNTOARTICULO' }
+      { key: "NameKey", value: 'mantenimientos_descuento_articulos' }
     ];
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
       "GetEstadoGeneral", parametros).subscribe(response => {
@@ -243,7 +293,6 @@ export class PromocionFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.estados = response.records;
-          
         }
         this.loadingestados = false;
       }, error => {
@@ -253,8 +302,8 @@ export class PromocionFormularioComponent implements OnInit {
   }
   getItem(id: number) {
     this.Cargando = true;
-    this.httpService.DoPostAny<Modulo>(DataApi.DescuentoArticulo,
-      "GetDescuentoArticuloByID", id).subscribe(response => {
+    this.httpService.DoPostAny<Modulo>(DataApi.Promociones,
+      "GetPromocionByID", id).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
@@ -264,7 +313,7 @@ export class PromocionFormularioComponent implements OnInit {
            
           } else {
             this.toastService.warning("Registro no encontrada");
-            this.router.navigateByUrl('/mantenimientos/tipo-descuento');
+            this.router.navigateByUrl('/mantenimientos/promociones');
           }
       }
       }, error => {
@@ -306,6 +355,23 @@ export class PromocionFormularioComponent implements OnInit {
         this.toastService.error("No se pudo obtener las listas de almaces", "Error conexion al servidor");
       });
   }
+  getObjeto() {
+    this.loadingObjeto= true;
+    let parametros: Parametro[] = [];
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetObjetoComboBox", parametros).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.objetos = response.records;
+        }
+        this.loadingObjeto = false;
+      }, error => {
+        this.loadingObjeto = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+ 
   getProvincias() {
     this.loadingProvincias = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
@@ -366,24 +432,25 @@ export class PromocionFormularioComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
       });
   }
-  getTipoDescuento() {
-    this.loadingTipoDescuento = true;
+  getTipoPromocion() {
+    this.loadingTipoPromocion = true;
     let parametros: Parametro[] = [];
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetTipoDescuento", parametros).subscribe(response => {
+      "GetTipoPromocion", parametros).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
-          this.tipoDescuento = response.records;
+          this.tipoPromocion = response.records;
         
         }
-        this.loadingTipoDescuento = false;
+        this.loadingTipoPromocion = false;
       }, error => {
-        this.loadingTipoDescuento = false;
+        this.loadingTipoPromocion = false;
         this.toastService.error("Error conexion al servidor");
       });
   }
- 
+
+  
   getRutas(tipoRuta?:number) {
     this.cargadoRutas = true;
     let parametros: Parametro[] = [{ key: "tipoRuta", value: 0}]
@@ -401,19 +468,39 @@ export class PromocionFormularioComponent implements OnInit {
         this.toastService.error("No se pudo obtener las rutas", "Error conexion al servidor");
       });
   }
+  multiSelectSettings()
+  {
+    this.dropdownSettings = {
+      singleSelection: false,
+      idField: 'codigo',
+      textField: 'nombre',
+      selectAllText: 'Seleccionar todos',
+      unSelectAllText: 'Deseleccionar todos',
+      itemsShowLimit: 2000,
+      allowSearchFilter: true,
+      clearSearchFilter: true,
+    };
+  }
   onSubmit() {
     this.submitted = true;
     
     if (this.Formulario.invalid) {
+    
       return;
     }
-
     this.guardar();
   }
-  tipoDescuentoSeleccion(item:ComboBox){
-    console.log(item)
-    this.filtro=item.nombre;
-  }
+  
+
+  tipoPromocionSeleccion(item:ComboBox){
+    // if(this.actualizando)
+    // {
+    //  this.getEntidadesYaGuardados(this.descuentoArticulo.id,this.tipoSeleccion);
+    // }
+   this.filtro=item.nombre;
+   this.tipoSeleccion=item.codigo;
+   this.getEntidades();
+ }
 
 
 

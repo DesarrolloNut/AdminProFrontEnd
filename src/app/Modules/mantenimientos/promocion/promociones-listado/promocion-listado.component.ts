@@ -41,7 +41,7 @@ export class PromocionListadoComponent implements OnInit {
   getData() {
     this.Cargando = true;
     let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
-    this.httpService.GetAllWithPagination<TipoDescuentoViewModel>(DataApi.DescuentoArticulo, "GetDescuentoArticuloListado", "ID", this.paginaNumeroActual,
+    this.httpService.GetAllWithPagination<TipoDescuentoViewModel>(DataApi.Promociones, "GetPromocionesListado", "ID", this.paginaNumeroActual,
       this.paginaSize, true, parametros).subscribe(x => {
         if (x.ok) {
           this.data = x.records;
@@ -98,8 +98,8 @@ export class PromocionListadoComponent implements OnInit {
      parametros.companiaId =Number(this.authService.tokenDecoded.primarygroupsid),
      parametros.id=id, 
     this.btnEliminarCargando = true;
-    this.httpService.DoPostAny<any>(DataApi.DescuentoArticulo,
-      "EliminarDescuentoArticulo", parametros).subscribe(response => {
+    this.httpService.DoPostAny<any>(DataApi.Promociones,
+      "EliminarPromocion", parametros).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
         } else {

@@ -155,6 +155,7 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
       });
   }
+ 
   getDescuentoTipoSeleccion() {
     this.loadingDescuentoTipoSeleccion = true;
     let parametros: Parametro[] = [];
