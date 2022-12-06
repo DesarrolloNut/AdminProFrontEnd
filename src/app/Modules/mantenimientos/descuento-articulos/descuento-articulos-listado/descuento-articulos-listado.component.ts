@@ -49,7 +49,7 @@ export class DescuentoArticulosListadoComponent implements OnInit {
       this.paginaSize, true, parametros).subscribe(x => {
         if (x.ok) {
           this.data = x.records;
-         //console.log(x.records)
+        
           this.asignarPagination(x);
         } else {
           this.toastService.error(x.errores[0]);

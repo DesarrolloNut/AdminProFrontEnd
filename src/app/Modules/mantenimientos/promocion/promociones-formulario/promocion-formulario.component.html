@@ -88,7 +88,7 @@
                                 <div *ngIf="f.articuloId.errors.required">El campo es obligatorio</div>
                             </div>
                     </div>
-                    <div *ngIf="filtro === 'Lista Precio'" class="form-group col-md-4">
+                    <!-- <div *ngIf="filtro === 'Lista Precio'" class="form-group col-md-4">
                             <label for="inputEmail4">Lista Precio</label>
                             <ng-select  [items]="listasPrecios" bindLabel="nombre"
                             [clearable]="false" bindValue="codigo" [loading]="loadingListaPrecios"
@@ -98,7 +98,7 @@
                             <div class="invalid-feedback" *ngIf="submitted && f.listaPrecioId.errors">
                                 <div *ngIf="f.listaPrecioId.errors.required">El campo es obligatorio</div>
                             </div>
-                    </div>
+                    </div> -->
                     <div  class="form-group col-md-4">
                         <label for="porciento">% Descuento</label>
                         <input formControlName="porciento" 
@@ -110,7 +110,7 @@
                         </div>
                         
                     </div>
-                    <div *ngIf="filtro === 'Cliente'"  class="form-group col-md-4">
+                    <!-- <div *ngIf="filtro === 'Cliente'"  class="form-group col-md-4">
                         <label for="clienteId">Cliente</label>
                         <ng-select [items]="clientes" bindLabel="nombre"
                         [clearable]="false" bindValue="codigo" [loading]="loadingClientes"
@@ -120,8 +120,8 @@
                         <div class="invalid-feedback" *ngIf="submitted && f.clienteId.errors">
                             <div *ngIf="f.clienteId.errors.required">El campo es obligatorio</div>
                         </div>
-                  </div>
-                  <div *ngIf="filtro === 'RutaId'" class="form-group col-md-4">
+                  </div> -->
+                  <!-- <div *ngIf="filtro === 'RutaId'" class="form-group col-md-4">
                         <label for="rutaId">Ruta</label>
                         <ng-select [items]="rutas" bindLabel="nombre"
                         [clearable]="false" bindValue="codigo" [loading]="cargadoRutas"
@@ -131,7 +131,7 @@
                         <div class="invalid-feedback" *ngIf="submitted && f.rutaId.errors">
                             <div *ngIf="f.rutaId.errors.required">El campo es obligatorio</div>
                        </div>
-                </div>
+                </div> -->
                 <div *ngIf="filtro === 'CanalId'" class="form-group col-md-4">
                     <label for="canalId">Canal</label>
                     <ng-select [items]="canales" bindLabel="nombre"
@@ -155,7 +155,7 @@
                         <div *ngIf="f.estadoId.errors.required">El campo es obligatorio</div>
                     </div>
                </div>
-               <div  *ngIf="filtro === 'Provincia' || filtro === 'Ciudad' || filtro === 'Sector'" class="form-group col-md-4">
+               <!-- <div  class="form-group col-md-4">
                     <label for="canalId">Província</label>
                         <ng-select  [items]="provincias" bindLabel="nombre"
                             [clearable]="false" bindValue="codigo" [loading]="loadingProvincias"
@@ -167,8 +167,8 @@
                     <div class="invalid-feedback" *ngIf="submitted && f.provinciaId.errors">
                         <div *ngIf="f.provinciaId.errors.required">El campo es obligatorio</div>
                     </div>
-              </div>
-              <div *ngIf="filtro === 'Ciudad' || filtro === 'Sector'" class="form-group col-md-4">
+              </div> -->
+              <!-- <div class="form-group col-md-4">
                 <label for="canalId">Ciudad</label>
                     <ng-select [items]="ciudades" bindLabel="nombre"
                         [clearable]="false" bindValue="codigo" [loading]="loadingCiudades"
@@ -180,8 +180,8 @@
                 <div class="invalid-feedback" *ngIf="submitted && f.ciudadId.errors">
                     <div *ngIf="f.ciudadId.errors.required">El campo es obligatorio</div>
                 </div>
-          </div>
-              <div  *ngIf="filtro === 'Sector'" class="form-group col-md-4">
+          </div> -->
+              <!-- <div   class="form-group col-md-4">
                 <label for="canalId">Sector</label>
                     <ng-select [items]="sectores" bindLabel="nombre"
                         [clearable]="false" bindValue="codigo" [loading]="loadingSectores"
@@ -191,8 +191,8 @@
                 <div class="invalid-feedback" *ngIf="submitted && f.sectorId.errors">
                     <div *ngIf="f.sectorId.errors.required">El campo es obligatorio</div>
                 </div>
-           </div>
-           <div *ngIf="filtro === 'Almacen'"  class="form-group col-md-4">
+           </div> -->
+           <!-- <div   class="form-group col-md-4">
             <label for="almacenId">Almacén</label>
                 <ng-select [items]="almacenes" bindLabel="nombre"
                     [clearable]="false" bindValue="codigo" [loading]="loadingAlmacenes"
@@ -202,9 +202,9 @@
             <div class="invalid-feedback" *ngIf="submitted && f.almacenId.errors">
                 <div *ngIf="f.almacenId.errors.required">El campo es obligatorio</div>
             </div>
-       </div>
+       </div> -->
 
-       <div *ngIf="filtro === 'Marca'"  class="form-group col-md-4">
+       <!-- <div   class="form-group col-md-4">
             <label for="marcaId">Marca</label>
                 <ng-select [items]="marcas" bindLabel="nombre"
                     [clearable]="false" bindValue="codigo" [loading]="loadingMarcas"
@@ -214,7 +214,22 @@
             <div class="invalid-feedback" *ngIf="submitted && f.marcaId.errors">
                 <div *ngIf="f.marcaId.errors.required">El campo es obligatorio</div>
             </div>
-      </div>
+      </div> -->
+
+      <!-- <div class="form-group col-md-12">
+        <label for="entidad">Entidad</label>
+        <ng-multiselect-dropdown
+            [placeholder]="'Seleccione las entidades de descuento'"
+            [settings]="dropdownSettings"
+      
+            [data]="entidades"
+            [ngModelOptions]="{standalone: true}"
+            [(ngModel)]="selectedItems"
+            
+            (onFilterChange)="onFilterChange($event)"
+            >
+       </ng-multiselect-dropdown>   
+     </div> -->
                     <div class="form-group text-right col-md-12">
                         <hr />
                         <button class="btn btn-light m-1" routerLink="../" type="button">

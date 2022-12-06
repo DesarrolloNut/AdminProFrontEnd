@@ -197,7 +197,7 @@ import { PromocionListadoComponent } from './promocion/promociones-listado/promo
     DescuentoArticulosFormularioComponent,
     DescuentoArticulosListadoComponent,
     PromocionFormularioComponent,
-    
+   
     PromocionListadoComponent
   ],
 

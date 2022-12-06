@@ -55,7 +55,7 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
   marcas: ComboBox[];
   loadingMarcas: boolean;
   filtro: string;
-  selectedItems: { codigo: number; nombre: string; }[];
+  selectedItems=[];
 
   loadingEntidades: boolean;
   entidades: ComboBox[];
@@ -95,7 +95,7 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
       usuarioId:[Number(this.authService.tokenDecoded.nameid), [Validators.required]],
       fechaDesde: [null,[Validators.required]],
       fechaHasta: [null,[Validators.required]],
-      estadoId: [1,[Validators.required]],
+      estadoId: [null,[Validators.required]],
       articuloId: [0,[Validators.required]],
       porciento: [null,[Validators.required]],
       descuentoTipoId: [0,[Validators.required]],
@@ -117,7 +117,7 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
       "ArticuloDescuento": this.Formulario.value,
       "Entidades": this.selectedItems,
     }
-    console.log(parametros);
+
     let metodo: string = this.actualizando ? "Update" : "Registrar";
     this.httpService.DoPostAny<Modulo>(DataApi.DescuentoArticulo,
       metodo, parametros).subscribe(response => {
@@ -177,7 +177,7 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
   getEstadoGeneral() {
     this.loadingestados = true;
     let parametros: Parametro[] = [
-      { key: "NameKey", value: 'DESCEUNTOARTICULO' }
+      { key: "NameKey", value: 'mantenimientos_descuento_articulos' }
     ];
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
       "GetEstadoGeneral", parametros).subscribe(response => {
@@ -232,7 +232,6 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.selectedItems = response.records;
-         
         }
         this.loadingEntidades = false;
       }, error => {
@@ -270,12 +269,10 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
     this.loadingListaPrecios = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
       "GetListaPreciosComboBox", null).subscribe(response => {
-
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
           this.listasPrecios = response.records;
-          
         }
         this.loadingListaPrecios = false;
       }, error => {
@@ -283,11 +280,6 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
         this.toastService.error("No se pudo obtener las listas de precios", "Error conexion al servidor");
       });
   }
-
-
-
-
-  
   getTodosArticulos() {
     this.loadingArticulos = true;
     let parametros: Parametro[] = [];
@@ -297,7 +289,6 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.articulos = response.records;
-         
         }
         this.loadingArticulos = false;
       }, error => {
@@ -314,7 +305,6 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.tipoDescuento = response.records;
-        
         }
         this.loadingTipoDescuento = false;
       }, error => {
@@ -343,17 +333,21 @@ export class DescuentoArticulosFormularioComponent implements OnInit {
   }
   onSubmit() {
     this.submitted = true;
-    
     if (this.Formulario.invalid) {
       return;
     }
-    console.log(this.Formulario.value);
-    console.log(this.selectedItems)
-
+    if(this.selectedItems ===null )
+    {
+      this.toastService.error("No se ha seleccionado un entidad.");
+      return;
+    }
     this.guardar();
   }
   tipoDescuentoSeleccion(item:ComboBox){
-    this.getEntidadesYaGuardados(this.descuentoArticulo.id,this.tipoSeleccion)
+     if(this.actualizando)
+     {
+      this.getEntidadesYaGuardados(this.descuentoArticulo.id,this.tipoSeleccion);
+     }
     this.filtro=item.nombre;
     this.tipoSeleccion=item.codigo;
     this.getEntidades();
