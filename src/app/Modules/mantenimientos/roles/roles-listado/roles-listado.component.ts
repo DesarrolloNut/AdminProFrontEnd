@@ -63,7 +63,7 @@ export class RolesListadoComponent implements OnInit {
     private authService: AuthenticationService
   ) { }
 
-
+  
   ngOnInit(): void {
     this.getData();
     this.getPermisos();
@@ -136,7 +136,7 @@ export class RolesListadoComponent implements OnInit {
         } else {
           this.permisos = response.records;
           this.source = response.records.map(x => {
-            return { "id": x.id, "nombre": x.nombre }
+            return { "id": x.id, "nombre": x.nameKey }
           });
         }
         this.loadingPermisos = false;
@@ -162,7 +162,7 @@ export class RolesListadoComponent implements OnInit {
         } else {
           this.permisos = response.records;
           this.confirmed = response.records.map(x => {
-            return { "id": x.id, "nombre": x.nombre }
+            return { "id": x.id, "nombre": x.nameKey }
           });
         }
         this.loadingPermisos = false;

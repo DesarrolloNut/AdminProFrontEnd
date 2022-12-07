@@ -27,19 +27,30 @@
                     </div>
                 </div>
                 <form class="form-row " [formGroup]="Formulario" (ngSubmit)="onSubmit()">
-                    <div class="form-group col-md-8">
+                    <div class="form-group col-md-6">
                         <label> Nombre</label>
-                        <textarea 
+                        <input 
                             formControlName="nombre" 
                             type="text"  
                             name="nombre" 
                             [ngClass]="{'is-invalid' : submitted && f.nombre.errors,  'form-control':true  }" 
                             placeholder="Digite un nombre">
-                        </textarea>
+                        
                         <div class="invalid-feedback" *ngIf="submitted && f.nombre.errors">
                             <div *ngIf="f.nombre.errors.required">El campo es obligatorio</div>
                         </div>
                     </div>
+                    <div class="form-group col-md-2">
+                        <label for="inputEmail4">Objeto</label>
+                        <ng-select  [items]="objetos" bindLabel="nombre"
+                        [clearable]="false" bindValue="codigo" [loading]="loadingObjeto"
+                        formControlName="objetoId" 
+                        notFoundText="No resultados">
+                    </ng-select>
+                        <div class="invalid-feedback" *ngIf="submitted && f.objetoId.errors">
+                            <div *ngIf="f.objetoId.errors.required">El campo es obligatorio</div>
+                        </div>
+                </div>
                     <div class="form-group col-md-4">
                         <label> Tipo Promoción Selección</label>
                              <ng-select [items]="promocionTipoSeleccion" bindLabel="nombre"
@@ -50,14 +61,14 @@
                              </ng-select>
                     </div>
                     <div class="form-group col-md-4">
-                        <label for="promocionTipoId">Tipo Promoción</label>
+                        <label for="promocionesTipoId">Tipo Promoción</label>
                         <ng-select [items]="tipoPromocion" bindLabel="nombre"
                         [clearable]="false" bindValue="codigo" [loading]="loadingTipoPromocion"
-                        formControlName="promocionTipoId" 
+                        formControlName="promocionesTipoId" 
                         notFoundText="No resultados">
                     </ng-select>
-                        <div class="invalid-feedback" *ngIf="submitted && f.promocionTipoId.errors">
-                            <div *ngIf="f.promocionTipoId.errors.required">El campo es obligatorio</div>
+                        <div class="invalid-feedback" *ngIf="submitted && f.promocionesTipoId.errors">
+                            <div *ngIf="f.promocionesTipoId.errors.required">El campo es obligatorio</div>
                         </div>
                     </div>
                     <div  class="form-group col-md-4">
@@ -85,54 +96,42 @@
                             <div *ngIf="f.fechaHasta.errors.required">El campo es obligatorio</div>
                         </div>
                     </div>
-                    <div class="form-group col-md-4">
-                        <label for="inputEmail4">Objeto</label>
-                        <ng-select  [items]="objetos" bindLabel="nombre"
-                        [clearable]="false" bindValue="codigo" [loading]="loadingObjeto"
-                        formControlName="objetoId" 
-                        notFoundText="No resultados">
-                    </ng-select>
-                        <div class="invalid-feedback" *ngIf="submitted && f.objetoId.errors">
-                            <div *ngIf="f.objetoId.errors.required">El campo es obligatorio</div>
-                        </div>
-                </div>
+                 
 
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-8">
                             <label for="inputEmail4">Artículo Compra</label>
                             <ng-select  [items]="articulos" bindLabel="nombre"
                             [clearable]="false" bindValue="codigo" [loading]="loadingArticulos"
-                            formControlName="articuloId" 
+                            formControlName="articuloIdCompra" 
                         notFoundText="No resultados">
                         </ng-select>
-                            <div class="invalid-feedback" *ngIf="submitted && f.articuloId.errors">
-                                <div *ngIf="f.articuloId.errors.required">El campo es obligatorio</div>
+                            <div class="invalid-feedback" *ngIf="submitted && f.articuloIdCompra.errors">
+                                <div *ngIf="f.articuloIdCompra.errors.required">El campo es obligatorio</div>
                             </div>
                     </div>
-
-                    <div class="form-group col-md-4">
-                        <label for="inputEmail4">Artículo Regala</label>
-                        <ng-select  [items]="articulos" bindLabel="nombre"
-                        [clearable]="false" bindValue="codigo" [loading]="loadingArticulos"
-                        formControlName="articuloId" 
-                    notFoundText="No resultados">
-                    </ng-select>
-                        <div class="invalid-feedback" *ngIf="submitted && f.articuloId.errors">
-                            <div *ngIf="f.articuloId.errors.required">El campo es obligatorio</div>
-                        </div>
-                </div>
-                   
-                    <div  class="form-group col-md-4">
-                        <label for="porciento">Cantidad a Regalar</label>
-                        <input formControlName="cantidadRegale" 
+                    <div  class="form-group col-md-2">
+                        <label for="porciento">Condición 1</label>
+                        <input formControlName="condicion1" 
                         type="number"  
-                        name="cantidadRegale" 
-                            [ngClass]="{'is-invalid' : submitted && f.cantidadRegale.errors,  'form-control':true  }" placeholder="Digite el porcentage de descuento">
-                        <div class="invalid-feedback" *ngIf="submitted && f.cantidadRegale.errors">
-                            <div *ngIf="f.cantidadRegale.errors.required">El campo es obligatorio</div>
+                        name="condicion1" 
+                            [ngClass]="{'is-invalid' : submitted && f.condicion1.errors,  'form-control':true  }" placeholder="Digite el porcentage de descuento">
+                        <div class="invalid-feedback" *ngIf="submitted && f.condicion1.errors">
+                            <div *ngIf="f.condicion1.errors.required">El campo es obligatorio</div>
                         </div>
                         
                     </div>
-                    <div  class="form-group col-md-4">
+                    <div  class="form-group col-md-2">
+                        <label for="porciento">Condición 2</label>
+                        <input formControlName="condicion2" 
+                        type="number"  
+                        name="condicion2" 
+                            [ngClass]="{'is-invalid' : submitted && f.condicion1.errors,  'form-control':true  }" placeholder="Digite el porcentage de descuento">
+                        <div class="invalid-feedback" *ngIf="submitted && f.condicion2.errors">
+                            <div *ngIf="f.condicion2.errors.required">El campo es obligatorio</div>
+                        </div>
+                        
+                    </div>
+                    <div  class="form-group col-md-2">
                         <label for="condicionBase">Condición Base</label>
                         <input formControlName="condicionBase" 
                         type="number"  
@@ -144,30 +143,31 @@
                         </div>
                         
                     </div>
-                    <div  class="form-group col-md-4">
-                        <label for="porciento">Condición 1</label>
-                        <input formControlName="condicion1" 
-                        type="number"  
-                        name="condicion1" 
-                            [ngClass]="{'is-invalid' : submitted && f.condicion1.errors,  'form-control':true  }" placeholder="Digite el porcentage de descuento">
-                        <div class="invalid-feedback" *ngIf="submitted && f.condicion1.errors">
-                            <div *ngIf="f.condicion1.errors.required">El campo es obligatorio</div>
+
+                    <div class="form-group col-md-8">
+                        <label for="inputEmail4">Artículo Regala</label>
+                        <ng-select  [items]="articulos" bindLabel="nombre"
+                        [clearable]="false" bindValue="codigo" [loading]="loadingArticulos"
+                        formControlName="articuloIdRegala" 
+                    notFoundText="No resultados">
+                    </ng-select>
+                        <div class="invalid-feedback" *ngIf="submitted && f.articuloIdRegala.errors">
+                            <div *ngIf="f.articuloIdRegala.errors.required">El campo es obligatorio</div>
                         </div>
-                        
-                    </div>
-                    <div  class="form-group col-md-4">
-                        <label for="porciento">Condición 1</label>
-                        <input formControlName="condicion2" 
-                        type="number"  
-                        name="condicion2" 
-                            [ngClass]="{'is-invalid' : submitted && f.condicion1.errors,  'form-control':true  }" placeholder="Digite el porcentage de descuento">
-                        <div class="invalid-feedback" *ngIf="submitted && f.condicion2.errors">
-                            <div *ngIf="f.condicion2.errors.required">El campo es obligatorio</div>
-                        </div>
-                        
-                    </div>
+                </div>
                    
-            
+                    <div  class="form-group col-md-2">
+                        <label for="porciento">Cantidad a Regalar</label>
+                        <input formControlName="cantidadRegala" 
+                        type="number"  
+                        name="cantidadRegala" 
+                            [ngClass]="{'is-invalid' : submitted && f.cantidadRegala.errors,  'form-control':true  }" placeholder="">
+                        <div class="invalid-feedback" *ngIf="submitted && f.cantidadRegala.errors">
+                            <div *ngIf="f.cantidadRegala.errors.required">El campo es obligatorio</div>
+                        </div>
+                        
+                    </div>
+
                 <div *ngIf="filtro === 'CanalId'" class="form-group col-md-4">
                     <label for="canalId">Canal</label>
                     <ng-select [items]="canales" bindLabel="nombre"

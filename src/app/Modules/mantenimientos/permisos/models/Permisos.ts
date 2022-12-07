@@ -1,7 +1,7 @@
 export class Permisos {
   constructor() {
       this.id = 0;
-      this.nombre = ""
+      this.nameKey = ""
       this.descripcion = ""
       this.permisoPadreId = 0
       this.companiaId= 0
@@ -9,7 +9,7 @@ export class Permisos {
 
   }
   id: number;
-  nombre: string;
+  nameKey: string;
   descripcion: string
   permisoPadreId: number
   companiaId:number;

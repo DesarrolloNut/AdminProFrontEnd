@@ -42,7 +42,8 @@
                         <ng-select [ngModelOptions]="{standalone: true}" [(ngModel)]="cotizacion.clienteId"
                             bindLabel="nombre" bindValue="codigo" [items]="clientes" [loading]="loadingClientes"
                             placeholder="Seleccione un cliente"
-                            [clearable]="false" (search)="getClientes($event)" (change)="onSelectCliente($event)"
+                            (keyup)="buscaMasCliente($event)"
+                            [clearable]="false"  (change)="onSelectCliente($event)"
                             notFoundText="No resultados">
                         </ng-select>
                     </div>

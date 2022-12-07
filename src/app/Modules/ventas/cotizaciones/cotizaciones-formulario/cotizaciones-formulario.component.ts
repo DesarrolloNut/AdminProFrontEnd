@@ -64,6 +64,7 @@ export class CotizacionesFormularioComponent implements OnInit {
   loadingPromociones: boolean;
   promociones: any[];
   articulo: any;
+  search: any="";
   constructor(
     private toastService: ToastrService,
     private httpService: BackendService,
@@ -87,6 +88,12 @@ export class CotizacionesFormularioComponent implements OnInit {
     this.getListasPrecios();
     this.getAlmacenesOrigenUsuarioEnrroll(0);
   }
+
+  buscaMasCliente(event:any){
+     this.search=event.target.value;
+     this.getClientes();
+  }
+
   getCotizacion(id: number) {
     this.Cargando = true;
     this.httpService.DoPostAny<Cotizacion>(DataApi.Cotizacion,
@@ -260,14 +267,13 @@ export class CotizacionesFormularioComponent implements OnInit {
       });
   }
  
-  getClientes(searchObj: any = null, clienteID: number = 0) {
-    let search = ""
-    if (searchObj)
-      search = searchObj.term;
+  getClientes() {
+  
     this.loadingClientes = true;
     let parametros: Parametro[] = [
       { key: "Compania", value: this.authService.tokenDecoded.primarygroupsid },
       { key: "UsuarioId", value: this.authService.tokenDecoded.nameid },
+      { key: "search", value: this.search},
     ];
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
       "GetClientesComboBox", parametros).subscribe(response => {
@@ -275,6 +281,11 @@ export class CotizacionesFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.clientes = response.records;
+          if(this.clientes.length <=0)
+          {
+           this.search=""
+           this.getClientes()
+          }
         }
         this.loadingClientes = false;
       }, error => {
