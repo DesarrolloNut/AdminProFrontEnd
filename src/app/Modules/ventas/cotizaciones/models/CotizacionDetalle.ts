@@ -8,6 +8,7 @@ export interface CotizacionDetalle {
     precio: number;
     subtotal: number;
     porcientoDescuento: number;
+    porcientoDescuentoBase: number;
     totalDescuento: number;
     totalImpuesto: number;
     totalNeto: number;
@@ -20,5 +21,6 @@ export interface CotizacionDetalle {
     porcientoDescuentoSol:number;
     estadoAutorizadoId:number;
     nombre:string;
+    descuentoAutorizado:boolean
    
 }

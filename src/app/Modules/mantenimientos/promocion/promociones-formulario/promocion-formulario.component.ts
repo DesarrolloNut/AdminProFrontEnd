@@ -81,17 +81,11 @@ export class PromocionFormularioComponent implements OnInit {
       this.actualizando = true;
     }
     this.CreateForm();
-    this.getListasPrecios();
-    this.getRutas();
-    this.getClientes();
     this.getTodosArticulos();
     this.getComboBoxCanal();
     this.getTipoPromocion();
     this.getEstadoGeneral();
-    this.getProvincias();
     this.getPromocionTipoSeleccion();
-    this.getMarcas();
-    this.getAlmacenes();
     this.getObjeto();
     this.multiSelectSettings();
   
@@ -196,26 +190,7 @@ export class PromocionFormularioComponent implements OnInit {
         this.toastService.error("No se pudo obtener las listas de ciudades", "Error conexion al servidor");
       });
   }
-  getClientes() {
-    this.loadingClientes = true;
-    let parametros: Parametro[] = [
-      { key: "Compania", value: this.authService.tokenDecoded.primarygroupsid },
-      { key: "UsuarioId", value:this.authService.tokenDecoded.nameid },
-    ];
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetClientesComboBox", parametros).subscribe(response => {
-        if (!response.ok) {
-          this.toastService.error(response.errores[0]);
-        } else {
-          this.clientes = response.records;
-         
-        }
-        this.loadingClientes = false;
-      }, error => {
-        this.loadingClientes = false;
-        this.toastService.error("Error conexion al servidor");
-      });
-  }
+
   getComboBoxCanal() {
     this.loadingcanales = true;
     let parametros: Parametro[] = [];
@@ -228,7 +203,8 @@ export class PromocionFormularioComponent implements OnInit {
           if (this.canales && this.canales.length > 0) {
              if(!this.actualizando)
              {
-              this.Formulario.get('canal').setValue(this.canales[0].codigo);
+              this.Formulario.get('canalId').setValue(this.canales[0].codigo);
+          
              }
            }
         }

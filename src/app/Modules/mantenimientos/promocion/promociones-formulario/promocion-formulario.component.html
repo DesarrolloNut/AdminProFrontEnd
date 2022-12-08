@@ -114,7 +114,7 @@
                         <input formControlName="condicion1" 
                         type="number"  
                         name="condicion1" 
-                            [ngClass]="{'is-invalid' : submitted && f.condicion1.errors,  'form-control':true  }" placeholder="Digite el porcentage de descuento">
+                            [ngClass]="{'is-invalid' : submitted && f.condicion1.errors,  'form-control':true  }" placeholder="">
                         <div class="invalid-feedback" *ngIf="submitted && f.condicion1.errors">
                             <div *ngIf="f.condicion1.errors.required">El campo es obligatorio</div>
                         </div>
@@ -125,7 +125,7 @@
                         <input formControlName="condicion2" 
                         type="number"  
                         name="condicion2" 
-                            [ngClass]="{'is-invalid' : submitted && f.condicion1.errors,  'form-control':true  }" placeholder="Digite el porcentage de descuento">
+                            [ngClass]="{'is-invalid' : submitted && f.condicion1.errors,  'form-control':true  }" placeholder="">
                         <div class="invalid-feedback" *ngIf="submitted && f.condicion2.errors">
                             <div *ngIf="f.condicion2.errors.required">El campo es obligatorio</div>
                         </div>
@@ -183,7 +183,7 @@
                <div class="form-group col-md-4">
                     <label for="canalId">Estado</label>
                         <ng-select [items]="estados" bindLabel="nombre"
-                            [clearable]="false" bindValue="codigo" [loading]="loadingcanales"
+                            [clearable]="false" bindValue="codigo" [loading]="loadingestados"
                             formControlName="estado" 
                             notFoundText="No resultados">
                         </ng-select>
@@ -195,13 +195,13 @@
                 <label for="inputEmail4">Canal</label>
                 <ng-select [items]="canales" bindLabel="nombre"
                         [clearable]="false" bindValue="codigo" [loading]="loadingcanales"
-                        formControlName="canal" 
+                        formControlName="canalId" 
                         [(ngModel)]="canal"
                         (change)="canalSeleccionado()"
                         notFoundText="No resultados">
                 </ng-select>
-                    <div class="invalid-feedback" *ngIf="submitted && f.canal.errors">
-                        <div *ngIf="f.canal.errors.required">El campo es obligatorio</div>
+                    <div class="invalid-feedback" *ngIf="submitted && f.canalId.errors">
+                        <div *ngIf="f.canalId.errors.required">El campo es obligatorio</div>
                     </div>
                </div>
                <div class="form-group col-md-12">

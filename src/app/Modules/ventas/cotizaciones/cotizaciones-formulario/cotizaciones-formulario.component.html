@@ -150,10 +150,14 @@
                             <tbody>
                                 <tr *ngFor="let item of cotizacionDetalles; let i=index">
                                     <td>
-                                        <button *ngIf="item.articuloId" class="btn btn-sm btn-light m-1"
-                                            (click)="openModal(modalExistenciaArticuloAlmacenes,item.articuloId)">
-                                            <i class=" fa fa-sm fa-warehouse"></i>
-                                        </button>
+                                        <button *ngIf="((item.articuloId && (item.porcientoDescuento > item.porcientoDescuentoBase )) && autorizarDescuento)&& !item.descuentoAutorizado" 
+                                            title="Autorizar" 
+                                            type="button" 
+                                            class="btn btn-outline-success m-1"
+                                            (click)="autorizarPorcientoDescuento(i)"
+                                            >
+                                            <i class="fas fa-check"></i>
+                                         </button>
                                     </td>
                                     <td>
                                         <ng-select style="width: 700px;" [items]="articulosCombobox" bindLabel="nombreYCodigoReferencia"
@@ -181,14 +185,15 @@
                                     </td>
                                     <td>
                                         <input style="width: 70px;" type="number" class="form-control"
-                                            [readonly]="!item.articuloId" (keyup)="calcularTotales()"
+                                            [readonly]="!item.articuloId" (keyup)="calcularTotales(item)"
+                                            (blur)="obtenerDescuento(item,i)"
                                             [ngClass]="{'border-danger p-0' : item.hayErroresCantidad }"
                                             [(ngModel)]="item.cantidad" [ngModelOptions]="{standalone: true}">
                                     </td>
 
                                     <td>
                                        <input style="width: 50px;" type="number" class="form-control"
-                                            [readonly]="!autorizarDescuento"  (keyup)="calcularTotales()"
+                                            [readonly]="noAplicaDescuento ||!item.articuloId"  (keyup)="validarDescuento(i)"
                                             [ngClass]="{' border-danger p-0' : item.hayErroresPorcientoDescuento }"
                                             [(ngModel)]="item.porcientoDescuento" [ngModelOptions]="{standalone: true}">
                                     </td>
