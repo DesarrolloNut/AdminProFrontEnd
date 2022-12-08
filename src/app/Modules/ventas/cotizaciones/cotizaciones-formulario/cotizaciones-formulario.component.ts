@@ -1,3 +1,4 @@
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -30,24 +31,17 @@ export class CotizacionesFormularioComponent implements OnInit {
 
 
   articulosCombobox: ArticuloListaPrecioViewModel[];
-
   loadingCondicionPagos: boolean;
   TipoCondicionPagos: ComboBox[];
-
   loadingMonedaTipos: boolean;
   monedaTipos: ComboBox[];
-
   loadingAlmacenes: boolean;
   almacenes: ComboBox[];
-
   vendedores: ComboBox[];
   loadingVendedores: boolean;
-
   usuario: Usuario;
-  ITBIS: number = 18;
   cotizacion: Cotizacion = new Cotizacion();
   cotizacionDetalles: CotizacionDetalle[] = [];
-
   loadingArticuloBalance: boolean;
   articuloBalance: ArticuloBalanceViewModel[];
   totalCantidadExistencia: number;
@@ -65,6 +59,8 @@ export class CotizacionesFormularioComponent implements OnInit {
   promociones: any[];
   articulo: any;
   search: any="";
+  noAplicaDescuento: boolean;
+
   constructor(
     private toastService: ToastrService,
     private httpService: BackendService,
@@ -88,12 +84,17 @@ export class CotizacionesFormularioComponent implements OnInit {
     this.getListasPrecios();
     this.getAlmacenesOrigenUsuarioEnrroll(0);
   }
-
+  autorizarPorcientoDescuento(index:number){
+    if(this.autorizarDescuento)
+    {
+      this.calcularTotales();
+      this.cotizacionDetalles[index].descuentoAutorizado=true;
+    }
+  }
   buscaMasCliente(event:any){
      this.search=event.target.value;
      this.getClientes();
   }
-
   getCotizacion(id: number) {
     this.Cargando = true;
     this.httpService.DoPostAny<Cotizacion>(DataApi.Cotizacion,
@@ -171,7 +172,7 @@ export class CotizacionesFormularioComponent implements OnInit {
                   break;
               case 'SOLICITADESCUENTO':
                 this.solicitarDescuento=true;
-                this.autorizarDescuento=true;
+                
                   break;
               case 'SOLICITADESCUENTOPROMOCION':
                   console.log("Indefinido.");
@@ -180,6 +181,7 @@ export class CotizacionesFormularioComponent implements OnInit {
                  console.log("Indefinido.");
                   break;
               case 'NOAPLICA':
+                this.noAplicaDescuento=true;
                 console.log("Indefinido.");
                   break;
               default:
@@ -203,7 +205,8 @@ export class CotizacionesFormularioComponent implements OnInit {
       cotizacionId: 0, id: 0,
       porcientoDescuento: undefined, precio: 0,
       subtotal: 0, totalDescuento: 0, totalImpuesto: 0, totalNeto: 0,codigoReferencia:"",
-      inventario:0,hayErroresCantidad:false, hayErroresPorcientoDescuento:false,companiaId:0,impuesto:0,porcientoDescuentoSol:0,estadoAutorizadoId:0,nombre:""
+      inventario:0,hayErroresCantidad:false, hayErroresPorcientoDescuento:false,companiaId:0,
+      impuesto:0,porcientoDescuentoSol:0,estadoAutorizadoId:0,nombre:"",porcientoDescuentoBase:0,descuentoAutorizado:false
     })
   }
   
@@ -229,7 +232,7 @@ export class CotizacionesFormularioComponent implements OnInit {
       this.toastService.error("Artículos con datos incompletos, revisa precios y cantidades.")
       return;
     }
-    if (this.cotizacionDetalles.some(x => x.porcientoDescuento > this.autorizacionDescuento.descuentoVenta)) {
+    if (this.cotizacionDetalles.some(x => x.porcientoDescuento > this.autorizacionDescuento.descuentoVenta) && this.autorizarDescuento) {
       this.toastService.error(`Solo puedes autorizar un descuento del ${this.autorizacionDescuento.descuentoVenta}%.`)
       return;
     }
@@ -268,7 +271,6 @@ export class CotizacionesFormularioComponent implements OnInit {
   }
  
   getClientes() {
-  
     this.loadingClientes = true;
     let parametros: Parametro[] = [
       { key: "Compania", value: this.authService.tokenDecoded.primarygroupsid },
@@ -300,6 +302,7 @@ export class CotizacionesFormularioComponent implements OnInit {
       "GetClienteByID", id).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
+          
         } else {
           //validar que existe
           if (response != null && response.records != null && response.records.length > 0) {
@@ -406,7 +409,7 @@ export class CotizacionesFormularioComponent implements OnInit {
        this.onDeleteitem(index)
        return;
     }
-    this.calcularTotales()
+    //this.calcularTotales()
   }
   getArticulosPrecioActual() {
     let parametros: Parametro[] = [
@@ -414,7 +417,6 @@ export class CotizacionesFormularioComponent implements OnInit {
       { key: "Companiaid ", value: this.authService.tokenDecoded.primarygroupsid },
       { key: "ListaPrecioId", value: this.cliente.listaPrecioId },
       { key: "almacenId", value: this.cotizacion.almacenId },
-      { key: "ClienteId  ", value: this.cotizacion.clienteId },
     ]
     this.httpService.DoPost<ArticuloListaPrecioViewModel>(DataApi.Articulo,
       "GetArticulosPrecioActual", parametros).subscribe(response => {
@@ -428,13 +430,11 @@ export class CotizacionesFormularioComponent implements OnInit {
             this.toastService.warning("La lista del cliente no tiene artículos");
           }
         }
-
       }, error => {
         this.Cargando = false;
         this.toastService.error("Error conexion al servidor");
       });
   }
-
   onDeleteitem(index: number) {
     this.cotizacionDetalles.splice(index, 1);
     if (!this.cotizacionDetalles.some(x => x.articuloId <= 0)) {
@@ -442,7 +442,20 @@ export class CotizacionesFormularioComponent implements OnInit {
     }
     this.calcularTotales()
   }
+  obtenerDescuento(item,i)
+  {
+    this.getDescuento(item.articuloId,i)
+  }
+  
+  validarDescuento(index:number){
+    
+      this.calcularTotales();
+      this.cotizacionDetalles[index].descuentoAutorizado=false;
+     
+   
+  }
   calcularTotales() {
+    
     this.limpiarTotales()
     this.cotizacionDetalles.forEach(x => {
       if(x.cantidad <=0)
@@ -505,6 +518,38 @@ export class CotizacionesFormularioComponent implements OnInit {
     this.cotizacion.totalNeto = 0;
     this.cotizacion.costoTotal = 0;
   }
+  getDescuento(articuloId:number,index:number) {
+   
+    let parametros: Parametro[] = [
+      { key: "fecha", value: new Date() },
+      { key: "listaPrecio", value: this.cliente.listaPrecioId},
+      { key: "clienteId", value: this.cotizacion.clienteId },
+      { key: "CompaniaId", value: this.authService.tokenDecoded.primarygroupsid },
+      { key: "ArticuloId", value: articuloId },
+      { key: "TipoDescuento", value: 'VENTAS' },
+      { key: "UsuarioId", value: this.authService.tokenDecoded.nameid },
+      { key: "AlmacenId", value: this.cotizacion.almacenId },
+      { key: "cantidad", value: 10 },
+    ]
+    this.httpService.DoPost<any>(DataApi.Cotizacion,
+      "GetDescuento", parametros).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          if (response != null && response.records != null && response.records.length > 0) {
+            this.cotizacionDetalles[index].porcientoDescuento=response.records[0].PorcientoDescuento !=null ?response.records[0].PorcientoDescuento:0 ;
+            //orcientoDescuentoBase para saber si el usuario cambio el descuento
+            this.cotizacionDetalles[index].porcientoDescuentoBase=response.records[0].PorcientoDescuento !=null ?response.records[0].PorcientoDescuento:0 ;
+            this.calcularTotales();
+          } else {
+            this.toastService.warning("No se pudo obtener el descuento.");
+          }
+        }
+      }, error => {
+        this.Cargando = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
 
   getTipoCondicionPago() {
     this.loadingCondicionPagos = true;
@@ -520,7 +565,6 @@ export class CotizacionesFormularioComponent implements OnInit {
       }, error => {
         this.loadingCondicionPagos = false;
         this.toastService.error("No se pudo obtener las condiciones de pago", "Error conexion al servidor");
-
         setTimeout(() => {
           this.getTipoCondicionPago();
         }, 1000);
@@ -528,7 +572,10 @@ export class CotizacionesFormularioComponent implements OnInit {
   }
 
   getVendedores(ClienteId:number) {
-    let parametros: Parametro[] = [{ key: "ClienteId", value: ClienteId },{ key: "Companiaid", value: this.authService.tokenDecoded.primarygroupsid }]
+    let parametros: Parametro[] = [
+      { key: "ClienteId", value: ClienteId },
+      { key: "Companiaid", value: this.authService.tokenDecoded.primarygroupsid }
+    ]
     this.loadingVendedores = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
       "GetVendedores", parametros).subscribe(response => {
@@ -554,7 +601,6 @@ export class CotizacionesFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.monedaTipos = response.records;
-
           if (this.monedaTipos && this.monedaTipos.length > 0) {
             this.cotizacion.monedaId = this.monedaTipos[0].codigo
           }
@@ -563,7 +609,6 @@ export class CotizacionesFormularioComponent implements OnInit {
       }, error => {
         this.loadingMonedaTipos = false;
         this.toastService.error("No se pudo obtener los tipos de monedas", "Error conexion al servidor");
-
         setTimeout(() => {
           this.getMonedaTipos();
         }, 1000);
@@ -617,7 +662,6 @@ export class CotizacionesFormularioComponent implements OnInit {
         } else {
           this.articuloBalance = response.records;
           this.totalCantidadExistencia = 0;
-
           if (this.articuloBalance) {
             this.articuloBalance.forEach(ab => this.totalCantidadExistencia += ab.existencia)
           }
@@ -632,7 +676,6 @@ export class CotizacionesFormularioComponent implements OnInit {
     this.loadingListaPrecios = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
       "GetListaPreciosComboBox", null).subscribe(response => {
-
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
@@ -642,15 +685,12 @@ export class CotizacionesFormularioComponent implements OnInit {
       }, error => {
         this.loadingListaPrecios = false;
         this.toastService.error("No se pudo obtener las listas de precios", "Error conexion al servidor");
-
         setTimeout(() => {
           this.getListasPrecios();
         }, 1000);
 
       });
   }
-
-
 }
 
 
