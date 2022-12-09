@@ -35,8 +35,6 @@
                             </div>
                         </div>
                     </div>
-
-                   
                     <div class="form-group col-md-6">
                         <label for="inputEmail4">Cliente</label>
                         <ng-select [ngModelOptions]="{standalone: true}" [(ngModel)]="cotizacion.clienteId"
@@ -61,12 +59,10 @@
                         <input disabled="true" type="text" name="nombre" id="nombre"
                         [(ngModel)]="cotizacion.direccion"
                             [ngClass]="{ 'form-control':true  }">
-                     
                     </div>
                     <hr>
                     <div class="col-12">
                         <div class="row" *ngIf="cliente">
-
                             <div class="col-md-6 form-group">
                                 <label for="condicionPagoId">Lista de precio</label>
                                 <ng-select bindLabel="nombre" bindValue="codigo" [items]="listasPrecios"
@@ -74,7 +70,6 @@
                                     [(ngModel)]="cliente.listaPrecioId" [readonly]="true" notFoundText="No resultados">
                                 </ng-select>
                             </div>
-
                             <div class=" col-md-6 form-group">
                                 <label for="condicionPagoId"> Condición de pago</label>
                                 <ng-select bindLabel="nombre" bindValue="codigo" [items]="TipoCondicionPagos"
@@ -83,38 +78,8 @@
                                     notFoundText="No resultados">
                                 </ng-select>
                             </div>
-
                         </div>
                     </div>
-
-                    <!-- <div class="col-12">
-                        <div class="row border border-light p-2" *ngIf="cliente">
-                            <div class="col-12">
-                                <h6 class="card-subtitle">Datos del cliente.</h6>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="nombre"><i class="fa fa-hashtag"></i> Código</label>
-                                <input [(ngModel)]="cliente.codigoReferencia" class="form-control" [readonly]="'true'"
-                                    type="text" [ngModelOptions]="{standalone: true}">
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="nombre"> <i class="fa fa-user"></i> Nombres</label>
-                                <input [(ngModel)]="cliente.nombres +' '+ cliente.apellidos" class="form-control"
-                                    [readonly]="'true'" type="text" [ngModelOptions]="{standalone: true}">
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="nombre"> <i class="fa fa-id-card"></i> Documento</label>
-                                <input [(ngModel)]="cliente.documento" class="form-control" [readonly]="'true'"
-                                    type="text" [ngModelOptions]="{standalone: true}">
-                            </div>
-                            <div class="form-group col-md-12">
-                                <label for="nombre"> <i class="fa fa-map-marker"></i> Dirección</label>
-                                <input [(ngModel)]="cliente.calle" class="form-control" [readonly]="'true'" type="text"
-                                    [ngModelOptions]="{standalone: true}">
-                            </div>
-                        </div>
-                    </div> -->
-
                     <div class="form-group col-md-6">
                         <label for="inputEmail4">Vendedor</label>
                         <ng-select bindLabel="nombre" bindValue="codigo" [items]="vendedores"
@@ -165,7 +130,6 @@
                                             [(ngModel)]="item.articuloId" [ngModelOptions]="{standalone: true}"
                                             (change)="onSelectArticulo($event,i)" notFoundText="No resultados">
                                         </ng-select>
-                                       
                                     </td>
                                     <td>
                                         <button *ngIf="item.cantidad" class="btn btn-sm  text-left "
@@ -190,7 +154,6 @@
                                             [ngClass]="{'border-danger p-0' : item.hayErroresCantidad }"
                                             [(ngModel)]="item.cantidad" [ngModelOptions]="{standalone: true}">
                                     </td>
-
                                     <td>
                                        <input style="width: 50px;" type="number" class="form-control"
                                             [readonly]="noAplicaDescuento ||!item.articuloId"  (keyup)="validarDescuento(i)"
@@ -218,9 +181,6 @@
                                 </tr>
                             </tbody>
                         </table>
-                   
-               
-
                     <div class="form-group text-right col-md-12" *ngIf="cliente">
                         <hr>
                         <h4>Subtotal: $ {{cotizacion.subtotal | number:'1.2-2' }}</h4>
@@ -228,19 +188,14 @@
                         <h4>Impuesto: $ {{cotizacion.impuestoTotal | number:'1.2-2' }}</h4>
                         <h4 class="font-weight-bold">Total Neto: $ {{cotizacion.totalNeto | number:'1.2-2' }}</h4>
                     </div>
-
-
                     <div class="form-group text-right col-md-12" *ngIf="cliente">
                         <hr />
-
                         <button class="btn btn-light m-1" routerLink="../" type="button">
                             <i class="fas fa-times"></i> Cancelar
                         </button>
-
                         <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="button" (click)="onSubmit()">
                             <i class="fas fa-check"></i> Guardar
                         </button>
-
                         <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
                             <span class="spinner-border spinner-border-sm"></span> Guardando
                         </button>
@@ -251,8 +206,6 @@
         </div>
     </div>
 </div>
-
-
 
 <ng-template #modalExistenciaArticuloAlmacenes let-modal>
     <div class="modal-header">
@@ -302,13 +255,9 @@
                                     </h3>
                                 </td>
                             </tr>
-
                         </tbody>
                     </table>
-
                 </div>
-
-
             </div>
 
             <div class="col-12">

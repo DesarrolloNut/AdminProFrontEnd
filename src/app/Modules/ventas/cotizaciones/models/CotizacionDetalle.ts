@@ -21,6 +21,7 @@ export interface CotizacionDetalle {
     porcientoDescuentoSol:number;
     estadoAutorizadoId:number;
     nombre:string;
-    descuentoAutorizado:boolean
+    descuentoAutorizado:boolean;
+    linea:number
    
 }
