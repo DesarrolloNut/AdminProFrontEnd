@@ -117,6 +117,7 @@ export class CotizacionesListadoComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.cotizacionDetalles = response.records;
+          console.log(this.cotizacionDetalles)
         }
         this.loadingCotizacionDetalle = false;
       }, error => {

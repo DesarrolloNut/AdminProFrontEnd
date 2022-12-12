@@ -453,6 +453,8 @@ export class TransferenciaFormularioComponent implements OnInit {
   this.guardar();
 };
 
+
+
   guardar() {
     let estado=this.Formulario.get('estado').value
     if(this.transferenciaInventarioConfirmado){
@@ -483,7 +485,7 @@ export class TransferenciaFormularioComponent implements OnInit {
       "TransferenciaInventarioDetalles": this.solicitudTransferenciaInventario.filter(x => x.articuloId > 0 && x.envio > 0),
       "LoteTransacciones": this.loteAlmacenSeleccionado.filter(x => x.cantidadEnvio > 0)
     }
- 
+  
 
     let metodo: string = this.actualizando ? "Update" : "Registrar";
     this.btnGuardarCargando = true;

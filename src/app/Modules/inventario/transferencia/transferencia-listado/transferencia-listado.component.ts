@@ -101,6 +101,7 @@ export class TransferenciaListadoComponent implements OnInit {
         this.Cargando = false;
       });
   }
+ 
   asignarPagination(x: ResponseContenido<any>) {
     if (x.pagina != null) {
       this.totalPaginas = x.pagina.totalPaginas == null ? 0 : x.pagina.totalPaginas;
@@ -141,7 +142,6 @@ export class TransferenciaListadoComponent implements OnInit {
         this.toastService.error(response.errores[0]);
       } else {
         this.configuracionCompania=response.records[0];
-        console.log(this.configuracionCompania);
       }
       this.loadingSolicitudDetalle = false;
     }, error => {

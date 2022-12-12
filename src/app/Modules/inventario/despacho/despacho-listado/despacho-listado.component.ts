@@ -170,7 +170,7 @@ export class DespachoListadoComponent implements OnInit {
 
   ) { }
 
-
+ 
   ngOnInit(): void {
     this.getALLAsync()
     this.getSucursalByUsuarioId();

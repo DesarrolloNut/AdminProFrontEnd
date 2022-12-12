@@ -70,6 +70,7 @@ export class CotizacionesFormularioComponent implements OnInit {
     private authService: AuthenticationService,
   ) { }
 
+
   ngOnInit(): void {
     let id = Number(this.route.snapshot.paramMap.get('id'));
     if (id > 0) {
@@ -84,6 +85,7 @@ export class CotizacionesFormularioComponent implements OnInit {
     this.getListasPrecios();
     this.getAlmacenesOrigenUsuarioEnrroll(0);
   }
+  
   autorizarPorcientoDescuento(index:number){
     if(this.autorizarDescuento)
     {
@@ -106,9 +108,10 @@ export class CotizacionesFormularioComponent implements OnInit {
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0]
             this.cotizacion = record;
-            console.log(this.cotizacion)
-            this.getClienteByID(this.cotizacion.clienteId)
-            this.getCotizacionDetalles(this.cotizacion.id)
+            console.log(this.cotizacion);
+            this.getClienteByID(this.cotizacion.clienteId);
+            this.getCotizacionDetalles(this.cotizacion.id);
+            this.getVendedores(this.cotizacion.clienteId);
           } else {
             this.toastService.warning("Cotizacion no encontrada");
             this.router.navigateByUrl('/ventas/cotizacion');
@@ -119,7 +122,7 @@ export class CotizacionesFormularioComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
       });
   }
-
+  
   getCotizacionDetalles(cotizacionID: number) {
     this.loadingCotizacionDetalle = true;
     this.httpService.DoPostAny<any>(DataApi.Cotizacion,
@@ -128,6 +131,7 @@ export class CotizacionesFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.cotizacionDetalles = response.records;
+          console.log(this.cotizacionDetalles);
           this.agregarDetalleVacio();
         }
         this.loadingCotizacionDetalle = false;
@@ -174,7 +178,7 @@ export class CotizacionesFormularioComponent implements OnInit {
                   break;
               case 'SOLICITADESCUENTO':
                 this.solicitarDescuento=true;
-                
+                //this.autorizarDescuento=true;
                   break;
               case 'SOLICITADESCUENTOPROMOCION':
                   console.log("Indefinido.");
@@ -256,7 +260,7 @@ export class CotizacionesFormularioComponent implements OnInit {
       "CotizacionDetalles": this.cotizacionDetalles.filter(x => x.articuloId > 0 && x.cantidad > 0 && x.precio > 0)
     }
     console.log(parametro)
-    this.btnGuardarCargando = true;
+    /*this.btnGuardarCargando = true;
     this.httpService.DoPostAny<any>(DataApi.Cotizacion,
       metodo, parametro).subscribe(response => {
 
@@ -270,7 +274,7 @@ export class CotizacionesFormularioComponent implements OnInit {
       }, error => {
         this.btnGuardarCargando = false;
         this.toastService.error("Error conexion al servidor");
-      });
+      });*/
   }
  
   getClientes() {
@@ -456,6 +460,7 @@ export class CotizacionesFormularioComponent implements OnInit {
   }
   
   validarDescuento(index:number){
+    alert("M la wi")
     
       this.calcularTotales();
       this.cotizacionDetalles[index].descuentoAutorizado=false;
