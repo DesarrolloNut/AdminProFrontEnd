@@ -11,20 +11,47 @@
                             cotización
                         </button>
                     </div>
-                    <div class="col-md-12 p-2">
+                    
 
+                    <div class="col-md-3 pt-2">
+                        <label for="">Busqueda</label>
                         <div class="input-group">
-                            <div class="input-group-prepend">
-                                <label for="search" class="input-group-text bg-white">
-                                    <span class="bg-white" style="border-right:none">
-                                        <i class="ti-search"></i>
-                                    </span>
-                                </label>
-                            </div>
-                            <input [(ngModel)]="Search" (keyup)="getData()" type="text"
-                                style="border-left:none !important;" class="form-control" placeholder="Buscar">
+            
+                          <div class="input-group-prepend">
+                            <label for="search" class="input-group-text bg-white">
+                              <span class="bg-white" style="border-right:none">
+                                <i class="ti-search"></i>
+                              </span>
+                            </label>
+                          </div>
+                          <input [(ngModel)]="Search" (keyup)="getData()" type="text"
+                            style="border-left:none !important;" class="form-control" placeholder="Buscar">
                         </div>
-                    </div>
+                      </div>
+                      <div class="form-group col-md-3 pt-2">
+                        <label for="">Vendedor</label>
+                        <ng-select [searchable]="true" bindLabel="nombre" bindValue="codigo" [items]="vendedores"
+                          [loading]="loadingVendedores" [clearable]=false [(ngModel)]="vendedor" (change)="onChangeVendedor($event)"
+                          placeholder="Seleccione un vendedor"
+                          notFoundText="No resultados">
+                        </ng-select>
+                      </div>
+            
+                      <div class="form-group col-md-3 pt-2">
+                        <label for="">Fecha</label>
+                        <ejs-datepicker [allowEdit]="false" [showClearButton]="false" (change)="onChangeFecha($event)"
+                          [(ngModel)]="fecha" [format]="'dd-MM-yyyy'">
+                        </ejs-datepicker>
+                      </div>
+            
+                      <div class="form-group col-md-3 pt-2">
+                        <label for="">EstadoERP</label>
+                        <ng-select [items]="estadoERPs" [searchable]="true" bindLabel="nombre" bindValue="codigo" (change)="onChangeEstadoERP($event)"
+                          [loading]="loadingEstadosERP"  placeholder="Seleccione un estado"
+                          [clearable]="false" notFoundText="No resultados" [(ngModel)]="estadoERPID">
+                        </ng-select>
+                      </div>
+                    
                 </div>
 
                 <div class="table-responsive">
@@ -41,6 +68,7 @@
                                 <th>Imp.</th>
                                 <th>Total Neto</th>
                                 <th>Fecha</th>
+                                <th>Estado</th>
                                 <th>EstadoERP</th>
                                 <!-- <th>Cotizador</th> -->
                                 <!-- <th>Estado</th> -->
@@ -100,7 +128,20 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <span> {{item.estadoERP }}</span>
+                                    <span> {{item.estado }}</span>
+                                </td>
+                                <td>
+                                    
+                                    <h5 *ngIf="item.estadoERPID==1" >
+                                        <span> <i class="fa fa-circle"
+                                                [ngStyle]="{'color': '#f4d03f'}"></i>
+                                           Pendiente</span>
+                                        </h5>
+                                          <h5 *ngIf="item.estadoERPID==0" >
+                                            <span> <i class="fa fa-circle"
+                                                    [ngStyle]="{'color': '#82e0aa'}"></i>
+                                                    Sincronizado</span>
+                                            </h5>
                                 </td>
                             </tr>
 

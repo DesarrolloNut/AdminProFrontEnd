@@ -53,7 +53,7 @@ export class AlmacenInventarioListadoComponent implements OnInit {
    this.getInventarioTipos();
   }
  
-
+  
   selectedAlmacen=1;
   selectedTipoInventario=1;
   getData() {

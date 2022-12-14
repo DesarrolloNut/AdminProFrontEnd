@@ -112,10 +112,13 @@
                                     <th></th>
                                 </tr>
                             </thead>
+                            <!-- <div>
+                                
+                            </div> -->
                             <tbody>
                                 <tr *ngFor="let item of cotizacionDetalles; let i=index">
                                     <td>
-                                        <button *ngIf="((item.articuloId && (item.porcientoDescuento > item.porcientoDescuentoBase )) && autorizarDescuento)&& !item.descuentoAutorizado" 
+                                        <button *ngIf="((item.articuloId && (item.porcientoDescuento > item.porcientoDescuentoBase )) && autorizarDescuento) && !item.descuentoAutorizado" 
                                             title="Autorizar" 
                                             type="button" 
                                             class="btn btn-outline-success m-1"
@@ -128,7 +131,8 @@
                                         <ng-select style="width: 700px;" [items]="articulosCombobox" bindLabel="nombreYCodigoReferencia"
                                             [clearable]="false" bindValue="articuloId" [loading]="loadingArticulosCombobox"
                                             [(ngModel)]="item.articuloId" [ngModelOptions]="{standalone: true}"
-                                            (change)="onSelectArticulo($event,i)" notFoundText="No resultados">
+                                            (change)="onSelectArticulo($event,i)" notFoundText="No resultados"
+                                            (keyup)=" buscaMasProductos($event)">
                                         </ng-select>
                                     </td>
                                     <td>

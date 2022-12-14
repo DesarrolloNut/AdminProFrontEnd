@@ -81,6 +81,7 @@ export class SolicitudCambioFormularioComponent implements OnInit {
   tipoSolicitudDevolucion: boolean;
   tipoSolicitudDevoluciones: ComboBox[];
   abilitarAlmacen: boolean=false;
+  searchProducto: any="";
  
 
   constructor(
@@ -113,7 +114,6 @@ export class SolicitudCambioFormularioComponent implements OnInit {
 
   }
 
- 
   private CreateForm() {
 
     this.Formulario = this.formBuilder.group({
@@ -137,6 +137,15 @@ export class SolicitudCambioFormularioComponent implements OnInit {
 
     });
   }
+
+  buscaMasProductos(event:any){
+    this.searchProducto=event.target.value;
+    this.getArticulosParaIntercambio(this.almacenesDesdeSeleccionado,this.clienteId);  
+    console.log(`${this.almacenesDesdeSeleccionado},${this.clienteId}`)
+
+
+ }
+
    seleccionarFactura(valor:any,index:number)
   {
     if ( valor.target.checked ) {
@@ -364,12 +373,13 @@ export class SolicitudCambioFormularioComponent implements OnInit {
   }
 
   getArticulosParaIntercambio(almacenid:number,clienteId:number ) {
-    let parametros = new ArticuloParaIntercambioRequest();
-    parametros.almacenid = almacenid;
-    parametros.companiaid = Number(this.authService.tokenDecoded.primarygroupsid);
-    parametros.clienteId=clienteId
-
-      this.httpService.DoPostAny<any>(DataApi.SolicitudCambio,
+    let parametros: Parametro[] = [
+      { key: "companiaid ", value: this.authService.tokenDecoded.primarygroupsid },
+      { key: "almacenid", value: almacenid },
+      { key: "clienteId", value: clienteId },
+      { key: "search", value: this.searchProducto },
+    ]
+      this.httpService.DoPost<any>(DataApi.SolicitudCambio,
         "GetArticulosParaIntercambio", parametros).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
@@ -380,9 +390,6 @@ export class SolicitudCambioFormularioComponent implements OnInit {
       }, error => {
         this.loadingArticulosDeTransferenciaInventario = false;
         this.toastService.error("No se pudo obtener los articulos", "Error conexion al servidor");
-        setTimeout(() => {
-          //this.getArticulosParaIntercambioDeAlmacen(almacenid);
-        }, 1000);
       });
   }
   agregarDetalleVacio() {
@@ -435,7 +442,7 @@ export class SolicitudCambioFormularioComponent implements OnInit {
       this.toastService.error("Hubo un problema seleccionar los productos");
       return;
     }
-  
+    
     this.getAlmacenesDestinUsuarioEnrroll(event.codigo);
     this.getArticulosParaIntercambio(event.codigo,this.clienteId);  
     

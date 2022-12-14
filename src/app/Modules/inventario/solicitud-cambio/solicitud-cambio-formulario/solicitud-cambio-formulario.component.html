@@ -161,6 +161,7 @@
                             [ngClass]="{'form-control border-danger p-0' : submitted && f.almacenId.errors }"
                             placeholder="Seleccione un alamcén"
                             (change)="onSelectAlmacen($event)"
+                            [(ngModel)]="almacenesDesdeSeleccionado"
                             notFoundText="No resultados" formControlName="almacenId">
                         </ng-select>
                         <div *ngIf="submitted && f.almacenId.errors" class="text-danger small">
@@ -214,6 +215,7 @@
                                             [clearable]="false" bindValue="articuloId" [loading]="loadingArticulosDeCompra"
                                             [(ngModel)]="item.id" [ngModelOptions]="{standalone: true}"
                                             (focus)="obtenerValorAnterior(item.articuloId,i)"
+                                            (keyup)=" buscaMasProductos($event)"
                                             (change)="onSelectArticulo($event,i)" notFoundText="No resultados">
                                         </ng-select>
 

@@ -12,12 +12,12 @@ export interface CotizacionDetalle {
     totalDescuento: number;
     totalImpuesto: number;
     totalNeto: number;
-    codigoReferencia:string
+    codigoReferenciaArticulo:string
     inventario:number;
     hayErroresCantidad:boolean;
     hayErroresPorcientoDescuento:boolean;
     companiaId:number;
-    impuesto:number;
+    porcientoImpuesto:number;
     porcientoDescuentoSol:number;
     estadoAutorizadoId:number;
     nombre:string;

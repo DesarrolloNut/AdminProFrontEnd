@@ -60,6 +60,7 @@ export class CotizacionesFormularioComponent implements OnInit {
   articulo: any;
   search: any="";
   noAplicaDescuento: boolean;
+  searchProducto: any="";
 
   constructor(
     private toastService: ToastrService,
@@ -98,6 +99,13 @@ export class CotizacionesFormularioComponent implements OnInit {
      this.getClientes();
   }
 
+  buscaMasProductos(event:any){
+    this.searchProducto=event.target.value;
+    this.getArticulosPrecioActual()
+  
+ }
+
+
   getCotizacion(id: number) {
     this.Cargando = true;
     this.httpService.DoPostAny<Cotizacion>(DataApi.Cotizacion,
@@ -108,7 +116,7 @@ export class CotizacionesFormularioComponent implements OnInit {
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0]
             this.cotizacion = record;
-            console.log(this.cotizacion);
+            //console.log(this.cotizacion);
             this.getClienteByID(this.cotizacion.clienteId);
             this.getCotizacionDetalles(this.cotizacion.id);
             this.getVendedores(this.cotizacion.clienteId);
@@ -141,6 +149,7 @@ export class CotizacionesFormularioComponent implements OnInit {
         this.router.navigateByUrl('/ventas/cotizacion');
       });
   }
+ 
   getUsuarioByID(usuarioID: number) {
     this.Cargando = true;
     this.httpService.DoPostAny<Usuario>(DataApi.Usuario,
@@ -210,9 +219,9 @@ export class CotizacionesFormularioComponent implements OnInit {
       almacenId: this.almacenes[0].codigo, articuloId: 0, cantidad: undefined, costo: 0,
       cotizacionId: 0, id: 0,
       porcientoDescuento: undefined, precio: 0,
-      subtotal: 0, totalDescuento: 0, totalImpuesto: 0, totalNeto: 0,codigoReferencia:"",
+      subtotal: 0, totalDescuento: 0, totalImpuesto: 0, totalNeto: 0,codigoReferenciaArticulo:"",
       inventario:0,hayErroresCantidad:false, hayErroresPorcientoDescuento:false,companiaId:0,
-      impuesto:0,porcientoDescuentoSol:0,estadoAutorizadoId:0,nombre:"",porcientoDescuentoBase:0,descuentoAutorizado:false,linea:0
+      porcientoImpuesto:0,porcientoDescuentoSol:0,estadoAutorizadoId:0,nombre:"",porcientoDescuentoBase:0,descuentoAutorizado:false,linea:0
     })
   }
   
@@ -260,7 +269,7 @@ export class CotizacionesFormularioComponent implements OnInit {
       "CotizacionDetalles": this.cotizacionDetalles.filter(x => x.articuloId > 0 && x.cantidad > 0 && x.precio > 0)
     }
     console.log(parametro)
-    /*this.btnGuardarCargando = true;
+    this.btnGuardarCargando = true;
     this.httpService.DoPostAny<any>(DataApi.Cotizacion,
       metodo, parametro).subscribe(response => {
 
@@ -274,7 +283,7 @@ export class CotizacionesFormularioComponent implements OnInit {
       }, error => {
         this.btnGuardarCargando = false;
         this.toastService.error("Error conexion al servidor");
-      });*/
+      });
   }
  
   getClientes() {
@@ -389,16 +398,22 @@ export class CotizacionesFormularioComponent implements OnInit {
     this.limpiarTotales()
     this.getVendedores(cliente.codigo);
   }
+
+ 
   onSelectArticulo(item: any, index: number) {
-    if(!this.cotizacionDetalles.some(x => x.codigoReferencia === item.codigoReferencia))
+
+ 
+    console.log(this.cotizacionDetalles);
+    if(!this.cotizacionDetalles.some(x => x.codigoReferenciaArticulo === item.codigoReferencia))
     {
-           this.cotizacionDetalles[index].codigoReferencia = item.codigoReferencia;
+           this.cotizacionDetalles[index].codigoReferenciaArticulo = item.codigoReferencia;
            this.cotizacionDetalles[index].articuloId = item.articuloId;
            this.cotizacionDetalles[index].precio = item.precioActual;
            this.cotizacionDetalles[index].almacenId = item.almacenId;
            this.cotizacionDetalles[index].costo = item.costo;
            this.cotizacionDetalles[index].inventario = item.disponible;
-           this.cotizacionDetalles[index].impuesto = item.impuesto;
+           this.cotizacionDetalles[index].porcientoImpuesto = item.impuesto;
+           this.cotizacionDetalles[index].porcientoDescuentoBase = item.impuesto;
            this.cotizacionDetalles[index].porcientoDescuento=item.porcientoDescuento;
            this.cotizacionDetalles[index].companiaId=Number(this.authService.tokenDecoded.primarygroupsid);
            this.cotizacionDetalles[index].porcientoDescuentoSol= this.solicitarDescuento ? item.porcientoDescuento :0;
@@ -425,6 +440,9 @@ export class CotizacionesFormularioComponent implements OnInit {
       { key: "Companiaid ", value: this.authService.tokenDecoded.primarygroupsid },
       { key: "ListaPrecioId", value: this.cliente.listaPrecioId },
       { key: "almacenId", value: this.cotizacion.almacenId },
+      { key: "search", value: this.searchProducto },
+
+      
     ]
     this.httpService.DoPost<ArticuloListaPrecioViewModel>(DataApi.Articulo,
       "GetArticulosPrecioActual", parametros).subscribe(response => {
@@ -460,16 +478,11 @@ export class CotizacionesFormularioComponent implements OnInit {
   }
   
   validarDescuento(index:number){
-    alert("M la wi")
-    
       this.calcularTotales();
       this.cotizacionDetalles[index].descuentoAutorizado=false;
-     
-   
   }
 
   calcularTotales() {
-    
     this.limpiarTotales()
     this.cotizacionDetalles.forEach(x => {
       if(x.cantidad <=0)
@@ -514,7 +527,7 @@ export class CotizacionesFormularioComponent implements OnInit {
       }
       x.subtotal = x.cantidad && x.articuloId ? (x.precio * x.cantidad) : 0;
       x.totalDescuento = x.porcientoDescuento ? (x.subtotal * x.porcientoDescuento / 100) : 0;
-      x.totalImpuesto = (x.subtotal - x.totalDescuento) * (x.impuesto / 100);
+      x.totalImpuesto = (x.subtotal - x.totalDescuento) * (x.porcientoImpuesto / 100);
       x.totalNeto = x.subtotal - x.totalDescuento + x.totalImpuesto;
       this.cotizacion.descuentoTotal += x.totalDescuento;
       this.cotizacion.subtotal += x.subtotal;
@@ -606,8 +619,6 @@ export class CotizacionesFormularioComponent implements OnInit {
         this.toastService.error("No se pudo obtener los vendedores", "Error conexion al servidor");
       });
   }
-
-
   getMonedaTipos() {
     this.loadingMonedaTipos = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,

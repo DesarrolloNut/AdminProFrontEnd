@@ -62,6 +62,8 @@ export class TransferenciaFormularioComponent implements OnInit {
   hayErrores: boolean=true;
   loteAlmacenSeleccionado=  [];
   btnRecepcionCargando: boolean;
+  searchProducto: any="";
+  
   
   
   constructor(
@@ -113,7 +115,13 @@ export class TransferenciaFormularioComponent implements OnInit {
     this.solicitudTransferenciaInventario.push(new SolicitudArticuloDetalle())
   }
   get f() { return this.Formulario.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
-  //articulosDeCompra
+
+  buscaMasProductos(event:any){
+    this.searchProducto=event.target.value;
+    this.getArticulosParaIntercambioDeAlmacen(Number(this.idAlamacenDesdeSeleccionado[0]));
+
+ }
+
   getTransferenciaInventario(id: number) {
     this.Cargando = true;
     this.httpService.DoPostAny<any>(DataApi.TransferenciaInventario,
@@ -335,10 +343,14 @@ export class TransferenciaFormularioComponent implements OnInit {
   }
   getArticulosParaIntercambioDeAlmacen(almacenid:any) {
 
-    let parametros = new ParametroArticuloParaIntercambioDeAlmacen();
-    parametros.almacenid = almacenid;
-    parametros.companiaid = Number(this.authService.tokenDecoded.primarygroupsid);
-      this.httpService.DoPostAny<any>(DataApi.Articulo,
+    let parametros: Parametro[] = [
+      { key: "companiaid ", value: this.authService.tokenDecoded.primarygroupsid },
+      { key: "almacenid", value: almacenid },
+      { key: "search", value: this.searchProducto },
+    ]
+
+
+      this.httpService.DoPost<any>(DataApi.Articulo,
         "GetArticulosParaIntercambioDeAlmaces", parametros).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
@@ -350,11 +362,11 @@ export class TransferenciaFormularioComponent implements OnInit {
       }, error => {
         this.loadingArticulosDeTransferenciaInventario = false;
         this.toastService.error("No se pudo obtener los articulos", "Error conexion al servidor");
-        setTimeout(() => {
-          this.getArticulosParaIntercambioDeAlmacen(almacenid);
-        }, 1000);
+       
 
       });
+
+     
   }
 
 
@@ -584,6 +596,7 @@ export class TransferenciaFormularioComponent implements OnInit {
 
       });
   }
+
   getAlmacenesDestinUsuarioEnrroll(almacenOrigenId:number,id:number) {
 
     let parametros: Parametro[] = [

@@ -68,6 +68,7 @@
                                 <label for="almacenOrigenId">Almacén Desde </label>
                                   <select    class="form-control" formControlName="almacenOrigenId" placeholder="almacenOrigenId"
                                   (change)="getAlmacenDesde($event)"
+                                  (keyup)=" buscaMasProductos($event)"
                                   [attr.disabled]="IdTransferenciaInventario ? 'disabled' : null"
                                   >
                                     <option [value]="ald.codigo+'|'+ ald.nombre" *ngFor="let ald  of almacenesDesde">{{ald.nombre}}</option>
@@ -117,6 +118,7 @@
                                             [clearable]="false" bindValue="articuloId" [loading]="loadingArticulosDeCompra"
                                             [(ngModel)]="item.articuloId" [ngModelOptions]="{standalone: true}"
                                             [readonly]="IdTransferenciaInventario"
+                                            (keyup)=" buscaMasProductos($event)"
                                             (change)="onSelectArticulo($event,i)" notFoundText="No resultados">
                                         </ng-select>
                                     </td>
