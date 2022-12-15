@@ -24,6 +24,7 @@ export class Cotizacion {
         this.estadoAutorizacionID = 0;
         this.clientePlazo = 0;
         this.companiaId=0;
+        this.estadoERPID = 1;
     }
 
     id = 0;
@@ -48,7 +49,7 @@ export class Cotizacion {
     usuarioId = 0;
     listaPrecioID = 0;
     estadoAutorizacionID = 0;
-    estadoERPID = 0;
+    estadoERPID = 1;
     estadoDespachoID = 0;
     clientePlazo = 0;
     companiaId:number;

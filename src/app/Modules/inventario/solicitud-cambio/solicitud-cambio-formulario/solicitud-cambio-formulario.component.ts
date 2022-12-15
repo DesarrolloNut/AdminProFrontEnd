@@ -428,7 +428,6 @@ export class SolicitudCambioFormularioComponent implements OnInit {
       this.onDeleteitem(index,item.articuloId)
         return;
      }
-    
   }
   onSelectAlmacen(event:any){
    
@@ -442,10 +441,8 @@ export class SolicitudCambioFormularioComponent implements OnInit {
       this.toastService.error("Hubo un problema seleccionar los productos");
       return;
     }
-    
     this.getAlmacenesDestinUsuarioEnrroll(event.codigo);
     this.getArticulosParaIntercambio(event.codigo,this.clienteId);  
-    
   }
   
   obtenerValorAnterior(codigoArticulo: any, index: number){
@@ -466,9 +463,7 @@ export class SolicitudCambioFormularioComponent implements OnInit {
         this.agregarDetalleVacio();
     }
   }
-
   actualizarTotal(value:any, index:number){
-
  if(this.hayFactura){
   if(this.solicitudCambio[index].cantidad > this.solicitudCambio[index].cantidadFijo && this.hayFactura)
       {
@@ -489,11 +484,8 @@ export class SolicitudCambioFormularioComponent implements OnInit {
     }
     else{
       this.solicitudCambio[index].hayErrores=false;
-
     }
  }
-     
-    
       this.solicitudCambio[index].cantidad=Number(value.target.value);
       let subTotal=(this.solicitudCambio[index].cantidad * this.solicitudCambio[index].precio)
       let descuento=   (subTotal*(this.solicitudCambio[index].porcientoDescuento/100))

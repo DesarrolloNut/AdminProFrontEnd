@@ -61,6 +61,8 @@ export class CotizacionesFormularioComponent implements OnInit {
   search: any="";
   noAplicaDescuento: boolean;
   searchProducto: any="";
+  loadingEstadoCotizacion: boolean;
+  estadosCotizaciones: ComboBox[];
 
   constructor(
     private toastService: ToastrService,
@@ -85,6 +87,7 @@ export class CotizacionesFormularioComponent implements OnInit {
     this.getMonedaTipos();
     this.getListasPrecios();
     this.getAlmacenesOrigenUsuarioEnrroll(0);
+    this.getEstadoCotizacion();
   }
   
   autorizarPorcientoDescuento(index:number){
@@ -116,7 +119,7 @@ export class CotizacionesFormularioComponent implements OnInit {
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0]
             this.cotizacion = record;
-            //console.log(this.cotizacion);
+
             this.getClienteByID(this.cotizacion.clienteId);
             this.getCotizacionDetalles(this.cotizacion.id);
             this.getVendedores(this.cotizacion.clienteId);
@@ -139,7 +142,6 @@ export class CotizacionesFormularioComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.cotizacionDetalles = response.records;
-          console.log(this.cotizacionDetalles);
           this.agregarDetalleVacio();
         }
         this.loadingCotizacionDetalle = false;
@@ -403,7 +405,7 @@ export class CotizacionesFormularioComponent implements OnInit {
   onSelectArticulo(item: any, index: number) {
 
  
-    console.log(this.cotizacionDetalles);
+
     if(!this.cotizacionDetalles.some(x => x.codigoReferenciaArticulo === item.codigoReferencia))
     {
            this.cotizacionDetalles[index].codigoReferenciaArticulo = item.codigoReferencia;
@@ -668,7 +670,36 @@ export class CotizacionesFormularioComponent implements OnInit {
 
       });
   }
+  
+  getEstadoCotizacion() {
+   
+    this.loadingEstadoCotizacion = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetgetEstadoCotizacion", null).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          if(response.records.length > 0)
+          {
+            this.estadosCotizaciones = response.records;
+            if(!this.actualizando)
+            {
+              this.cotizacion.estadoId=response.records[0].codigo;
+            }
+           
+          }
+         
+        }
+        this.loadingEstadoCotizacion = false;
+      }, error => {
+        this.loadingEstadoCotizacion = false;
+        this.toastService.error("No se pudo obtener los almacenes", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getAlmacenes()
+        }, 1000);
 
+      });
+  }
   openModal(content, articuloID: number) {
     this.articuloBalance = [];
     this.getArticuloBalanceAlmacenes(articuloID);
