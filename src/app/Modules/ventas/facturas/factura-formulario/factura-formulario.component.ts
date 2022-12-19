@@ -13,14 +13,15 @@ import { Usuario } from 'src/app/Modules/servicios/recepcion/models/Usuario';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKeyEnum';
 import { ComboBox, ComboBoxAlmacenCotizacion } from 'src/app/shared/model/ComboBox';
+import { CotizacionDetalle } from '../../cotizaciones/models/CotizacionDetalle';
 import { Cotizacion } from '../models/Cotizacion';
-import { CotizacionDetalle } from '../models/CotizacionDetalle';
+
 @Component({
-  selector: 'app-cotizaciones-formulario',
-  templateUrl: './cotizaciones-formulario.component.html',
-  styleUrls: ['./cotizaciones-formulario.component.scss']
+  selector: 'app-factura-formulario',
+  templateUrl: './factura-formulario.component.html',
+  styleUrls: ['./factura-formulario.component.scss']
 })
-export class CotizacionesFormularioComponent implements OnInit {
+export class FacturaFormularioComponent implements OnInit {
 
   Cargando: boolean = false;
   btnGuardarCargando = false;

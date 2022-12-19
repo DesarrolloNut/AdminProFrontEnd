@@ -56,6 +56,17 @@ export const ROUTES: RouteInfo[] = [
         permisos: ["ventas_cotizacion"],
       },
       {
+        path: '/ventas/factura',
+        label: '',
+        labelClass: '',
+        title: 'Factura',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["ventas_cotizacion"],
+      },
+      {
         path: '/ventas/cotizacion-seguimiento',
         label: '',
         labelClass: '',

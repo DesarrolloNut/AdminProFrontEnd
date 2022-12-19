@@ -12,6 +12,10 @@ import { PedidosEmpleadoFormularioComponent } from './pedidos-empleado/pedidos-e
 import { PedidosEmpleadosListadoComponent } from './pedidos-empleado/pedidos-empleado-listado/pedidos-empleado-listado.component';
 import { CotizacionesSeguimientoComponent } from './cotizaciones/cotizaciones-seguimiento/cotizaciones-seguimiento.component';
 import { PedidosEmpleadoPedidoModalComponent } from './pedidos-empleado/pedidos-empleado-pedido-modal/pedidos-empleado-pedido-modal.component';
+import { AutorizacionFacturaComponent } from './facturas/factura-cotizacion/autorizacion-factura.component';
+import { FacturaSeguimientoComponent } from './facturas/factura-seguimiento/factura-seguimiento.component';
+import { FacturaFormularioComponent } from './facturas/factura-formulario/factura-formulario.component';
+import { FacturaListadoComponent } from './facturas/factura-listado/factura-listado.component';
 
 
 const routes: Routes = [
@@ -141,6 +145,49 @@ const routes: Routes = [
       //     ]
       //   }
       // },
+
+   
+      
+
+        // Facturacion
+        {
+          path: 'factura', component: FacturaListadoComponent, data: {
+            title: 'Facturas',
+            urls: [
+              { title: 'Ventas' },
+              { title: 'Facturas' },
+            ]
+          }
+        },
+        {
+          path: 'factura/:id', component: FacturaFormularioComponent, data: {
+            title: 'Facturas',
+            urls: [
+              { title: 'Facturas' },
+              { title: 'Facturas' },
+              { title: 'Formulario' }
+  
+            ]
+          }
+        },
+        {
+          path: 'factura-seguimiento', component: FacturaSeguimientoComponent, data: {
+            title: 'Facturas Seguimiento',
+            urls: [
+              { title: 'Facturas' },
+              { title: 'Factura Seguimiento' },
+            ]
+          }
+        },
+        {
+          path: 'autorizacionfactura', component: AutorizacionFacturaComponent, data: {
+            title: 'Autorizacion Factura',
+            urls: [
+              { title: 'Autorizacion' },
+              { title: 'Autorizacion Factura' },
+            ]
+          }
+        },
 
     ]
 
