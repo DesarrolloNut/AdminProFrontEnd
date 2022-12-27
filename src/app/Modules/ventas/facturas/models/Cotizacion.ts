@@ -53,5 +53,6 @@ export class Cotizacion {
     estadoDespachoID = 0;
     clientePlazo = 0;
     companiaId:number;
+   
 
 }

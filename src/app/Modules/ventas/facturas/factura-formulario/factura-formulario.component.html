@@ -23,11 +23,48 @@
                     <div class="col-md-6 col-lg-6 col-12 text-right">
                     </div>
                 </div>
+             
+
+                <div class="col-12">
+                    <div class="row">
+                        <div class="form-group col-md-5 ">
+                            <button class="btn btn-info m-1"  type="button">
+                                Enviar <i class="fas fa-paper-plane"></i> 
+                            </button>
+                            <button  class="btn btn-info m-1" type="button" >
+                                <i class="fas fa-print"></i>  Imprimir
+                            </button>
+                            <button class="btn btn-info m-1"  type="button">
+                                <i class="fas fa-check"></i>  Confirmar
+                            </button>
+                            <button class="btn btn-info m-1"  type="button">
+                                <i class="fas fa-times"></i>  Cancelar
+                            </button>
+                            <button class="btn btn-info m-1"  type="button">
+                                Pagar <i class="fas fa-money-bille"></i> 
+                            </button>
+                        
+                        </div>
+                        <div class="form-group col-md-2 ">
+                           
+                        </div>
+                        <div class="form-group col-md-5 ">
+                            <div class="arrow-steps clearfix">
+                                <div [ngClass]="{'current done' : estadoFactura.borrador}" class="step "> <span>Borrador</span> </div>
+                                <div [ngClass]="{'current done' : estadoFactura.enviado}" class="step "> <span>Enviado</span> </div>
+                                <div [ngClass]="{'current done' : estadoFactura.confirmado}" class="step"> <span>Confirmado</span> </div>
+                                <div [ngClass]="{'current done' : estadoFactura.pagado}" class="step "> <span>Pagado</span> </div>
+                                <div [ngClass]="{'current done' : estadoFactura.entregado}" class="step"> <span>Entregado</span> </div>
+                              </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="form-row m-t-40">
 
                     <div class="col-12">
                         <div class="row">
                             <div class="form-group col-md-4 ">
+                            
                             </div>
                             <div class="form-group col-md-4 ">
                                 <label> <i class="fa fa-calendar"></i> Fecha de entrega</label>
@@ -36,10 +73,9 @@
                                     [showClearButton]="false"></ejs-datepicker>
                             </div>
                             <div class="form-group col-md-4 ">
-                                <label> Estado</label>
-                                <ng-select [ngModelOptions]="{standalone: true}" [(ngModel)]="cotizacion.estadoId"
-                                bindLabel="nombre" bindValue="codigo" [items]="estadosCotizaciones" [loading]="loadingEstadoCotizacion"
-                                placeholder="Seleccione un estado"
+                                <label>Terminos</label>
+                                <ng-select [ngModelOptions]="{standalone: true}" [(ngModel)]="cotizacion.plazoId"
+                                bindLabel="nombre" bindValue="codigo" [items]="terminos" [loading]="loadingTerminos"
                                 [clearable]="false" 
                                 notFoundText="No resultados">
                             </ng-select>

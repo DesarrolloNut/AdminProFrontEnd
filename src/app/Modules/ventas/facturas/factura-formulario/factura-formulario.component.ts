@@ -15,6 +15,7 @@ import { EstadosGeneralesKeyEnum } from 'src/app/shared/enums/EstadosGeneralesKe
 import { ComboBox, ComboBoxAlmacenCotizacion } from 'src/app/shared/model/ComboBox';
 import { CotizacionDetalle } from '../../cotizaciones/models/CotizacionDetalle';
 import { Cotizacion } from '../models/Cotizacion';
+import { EstadoFactura } from '../models/EstadoFactura';
 
 @Component({
   selector: 'app-factura-formulario',
@@ -64,6 +65,9 @@ export class FacturaFormularioComponent implements OnInit {
   searchProducto: any="";
   loadingEstadoCotizacion: boolean;
   estadosCotizaciones: ComboBox[];
+  loadingTerminos: boolean;
+  terminos: ComboBox[];
+  estadoFactura: EstadoFactura=new EstadoFactura();
 
   constructor(
     private toastService: ToastrService,
@@ -78,7 +82,9 @@ export class FacturaFormularioComponent implements OnInit {
   ngOnInit(): void {
     let id = Number(this.route.snapshot.paramMap.get('id'));
     if (id > 0) {
+      console.log(this.estadoFactura)
       this.getCotizacion(id);
+      this.getEstadoFactura(id)
       this.actualizando = true;
     }
     this.GetAutorizacionDescuento(Number(this.authService.tokenDecoded.nameid));
@@ -89,6 +95,7 @@ export class FacturaFormularioComponent implements OnInit {
     this.getListasPrecios();
     this.getAlmacenesOrigenUsuarioEnrroll(0);
     this.getEstadoCotizacion();
+    this.getTerminos();
   }
   
   autorizarPorcientoDescuento(index:number){
@@ -127,6 +134,27 @@ export class FacturaFormularioComponent implements OnInit {
           } else {
             this.toastService.warning("Cotizacion no encontrada");
             this.router.navigateByUrl('/ventas/cotizacion');
+          }
+        }
+      }, error => {
+        this.Cargando = false;
+        this.toastService.error("Error conexion al servidor");
+      });
+  }
+  getEstadoFactura(id: number) {
+    this.Cargando = true;
+    this.httpService.DoPostAny<any>(DataApi.Factura,
+      "GetEstadoFactura", id).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          if (response != null && response.records != null && response.records.length > 0) {
+            let record = response.records[0]
+            this.estadoFactura = record;
+            console.log(this.estadoFactura);
+          } else {
+            this.toastService.warning("Estodo no encontrado");
+           
           }
         }
       }, error => {
@@ -267,12 +295,12 @@ export class FacturaFormularioComponent implements OnInit {
     this.cotizacion.companiaId=Number(this.authService.tokenDecoded.primarygroupsid);
     this.cotizacion.listaPrecioID = this.cliente.listaPrecioId;
     let parametro: any = {
-      "Cotizacion": this.cotizacion,
-      "CotizacionDetalles": this.cotizacionDetalles.filter(x => x.articuloId > 0 && x.cantidad > 0 && x.precio > 0)
+      "Factura": this.cotizacion,
+      "FacturaDetalles": this.cotizacionDetalles.filter(x => x.articuloId > 0 && x.cantidad > 0 && x.precio > 0)
     }
     console.log(parametro)
     this.btnGuardarCargando = true;
-    this.httpService.DoPostAny<any>(DataApi.Cotizacion,
+    this.httpService.DoPostAny<any>(DataApi.Factura,
       metodo, parametro).subscribe(response => {
 
         if (!response.ok) {
@@ -692,6 +720,38 @@ export class FacturaFormularioComponent implements OnInit {
           this.getAlmacenes()
         }, 1000);
 
+      });
+  }
+
+  getTerminos() {
+   
+    this.loadingTerminos = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetTerminos", null).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          if(response.records.length > 0)
+          {
+            
+            if(response.records.length > 0)
+            {
+              this.terminos = response.records;
+              if(!this.actualizando)
+              {
+                this.cotizacion.plazoId=response.records[0].codigo;
+
+              }
+             
+            }
+          }
+         
+        }
+        this.loadingTerminos = false;
+      }, error => {
+        this.loadingTerminos = false;
+        this.toastService.error("No se pudo obtener los terminos", "Error conexion al servidor");
+       
       });
   }
   openModal(content, articuloID: number) {
