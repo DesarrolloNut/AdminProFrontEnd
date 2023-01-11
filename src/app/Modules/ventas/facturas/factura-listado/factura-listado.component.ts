@@ -63,9 +63,7 @@ export class FacturaListadoComponent implements OnInit {
     let parametros: Parametro[] = [
       { key: "Search", value: this.Search },
   ]
-
-
-    this.httpService.GetAllWithPagination<CotizacionListadoViewModel>(DataApi.Cotizacion, "GetCotizacionListado", "ID", this.paginaNumeroActual,
+    this.httpService.GetAllWithPagination<any>(DataApi.Factura, "GetFacturaListado", "ID", this.paginaNumeroActual,
       this.paginaSize, false, parametros).subscribe(x => {
 
         if (x.ok) {
