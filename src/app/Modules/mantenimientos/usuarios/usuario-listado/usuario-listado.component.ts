@@ -5,7 +5,7 @@ import { NgxPermissionsService } from 'ngx-permissions';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
-import { UsuarioListadoViewModel } from '../models/usuarioListadoViewModel';
+import { UsuarioListadoViewModel } from '../models/UsuarioListadoViewModel';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 
 @Component({
@@ -28,7 +28,7 @@ export class UsuarioListadoComponent implements OnInit {
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
-    private auth:AuthenticationService,
+    private auth: AuthenticationService,
     public permissionsService: NgxPermissionsService,
   ) { }
 
@@ -44,7 +44,7 @@ export class UsuarioListadoComponent implements OnInit {
     let parametros: Parametro[] = [{ key: "Search", value: this.Search },]
 
     this.httpService.GetAllWithPagination<UsuarioListadoViewModel>(DataApi.Usuario, "GetUsuarios", "ID", this.paginaNumeroActual,
-      this.paginaSize,true, parametros).subscribe(x => {
+      this.paginaSize, true, parametros).subscribe(x => {
 
         if (x.ok) {
           this.usuarios = x.records;

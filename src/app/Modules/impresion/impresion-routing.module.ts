@@ -17,7 +17,7 @@ const routes: Routes = [
 
       },
       {
-        path: 'inventario', loadChildren: () => import('./impresion-inventario/impresion-inventario.module').then(m => m.ImpresionInventarioModule)
+        path: 'inventario', loadChildren: () => import('./impresion-Inventario/impresion-inventario.module').then(m => m.ImpresionInventarioModule)
 
       },
     ],

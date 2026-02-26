@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
-import { SAPConnection } from '../models/sapconnection';
+import { SAPConnection } from '../models/SAPConnection';
 import { ServerTypes } from '../models/ServerType';
 
 @Component({
@@ -53,7 +53,7 @@ export class SapconnectionFormularioComponent implements OnInit {
       passwordDB: [null, [Validators.required]],
       dbServerType: [0, [Validators.required]],
       inUse: [false, [Validators.required]],
-      keyConnection:[null, Validators.required]
+      keyConnection: [null, Validators.required]
     });
   }
 
@@ -120,16 +120,16 @@ export class SapconnectionFormularioComponent implements OnInit {
     const keyValue = [];
 
     const keys = Object.keys(NameEnum);
-    let data =  keys.slice(keys.length / 2);
+    let data = keys.slice(keys.length / 2);
 
 
     for (const i in data) {
-        const value = data[i];
-        let codigonumber = Number(i) + 1;
-        keyValue.push({codigo: codigonumber, nombre: value});
+      const value = data[i];
+      let codigonumber = Number(i) + 1;
+      keyValue.push({ codigo: codigonumber, nombre: value });
     }
     return keyValue;
-}
+  }
 
 
 
