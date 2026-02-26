@@ -10,14 +10,15 @@ Panel administrativo web de **Nutriciosa** — sistema de gestión empresarial q
 2. [Estructura del Proyecto](#2--estructura-del-proyecto)
 3. [Instalación y Ejecución Local](#3--instalación-y-ejecución-local)
 4. [Configuración de Ambientes](#4--configuración-de-ambientes)
-5. [Arquitectura de Comunicación con el Backend](#5--arquitectura-de-comunicación-con-el-backend)
-6. [Autenticación y Sesión](#6--autenticación-y-sesión)
-7. [Módulos de Negocio](#7--módulos-de-negocio)
-8. [Sistema de APIs (DataApi Enum)](#8--sistema-de-apis-dataapi-enum)
-9. [Tiempo Real — SignalR](#9--tiempo-real--signalr)
-10. [Guía Rápida de Mantenimiento](#10--guía-rápida-de-mantenimiento)
-11. [⚠️ Hardcodes y Puntos Críticos](#11-️-hardcodes-y-puntos-críticos)
-12. [Checklist para Puesta en Producción](#12--checklist-para-puesta-en-producción)
+5. [Despliegue con Docker](#5--despliegue-con-docker)
+6. [Arquitectura de Comunicación con el Backend](#6--arquitectura-de-comunicación-con-el-backend)
+7. [Autenticación y Sesión](#7--autenticación-y-sesión)
+8. [Módulos de Negocio](#8--módulos-de-negocio)
+9. [Sistema de APIs (DataApi Enum)](#9--sistema-de-apis-dataapi-enum)
+10. [Tiempo Real — SignalR](#10--tiempo-real--signalr)
+11. [Guía Rápida de Mantenimiento](#11--guía-rápida-de-mantenimiento)
+12. [⚠️ Hardcodes y Puntos Críticos](#12-️-hardcodes-y-puntos-críticos)
+13. [Checklist para Puesta en Producción](#13--checklist-para-puesta-en-producción)
 
 ---
 
@@ -38,6 +39,8 @@ Panel administrativo web de **Nutriciosa** — sistema de gestión empresarial q
 | **moment** | 2.29 | Manipulación de fechas |
 | **Angular Reactive Forms** | — | Formularios reactivos |
 | **ngx-image-cropper** | 3.3 | Recorte de imágenes |
+| **Docker** | — | Contenedorización para despliegue |
+| **Nginx** | 1.25 | Servidor web en contenedor Docker |
 
 > 📌 **Nota importante**: Angular 9 ya no tiene soporte oficial de Google. Si en el futuro se actualiza, revisar breaking changes de Angular 10+.
 
@@ -47,16 +50,29 @@ Panel administrativo web de **Nutriciosa** — sistema de gestión empresarial q
 
 ```
 NutriciosaAdminFrontEnd/
+├── Dockerfile                     ← Build multi-stage (Node 12 → Nginx)
+├── docker-compose.yml             ← Orquestación del contenedor
+├── docker-entrypoint.sh           ← Inyecta variables de entorno en runtime
+├── nginx.conf                     ← Configuración del servidor web (Docker)
+├── .env.example                   ← Template de variables de entorno
+├── .dockerignore                  ← Archivos excluidos del build Docker
+│
 ├── src/
 │   ├── environments/              ← Configuración de ambientes (DEV / PROD)
-│   │   ├── environment.ts         ← Desarrollo
-│   │   └── environment.prod.ts   ← Producción (⚠️ requiere ajuste manual)
+│   │   ├── environment.ts         ← Desarrollo (build-time)
+│   │   └── environment.prod.ts    ← Producción (build-time, fallback)
+│   │
+│   ├── assets/
+│   │   └── config/
+│   │       └── app-config.json    ← Configuración runtime (Docker la sobrescribe)
+│   │
 │   └── app/
-│       ├── app.module.ts          ← Módulo raíz, proveedores globales, JWT config
+│       ├── app.module.ts          ← Módulo raíz, APP_INITIALIZER, JWT config
 │       ├── app-routing.module.ts  ← Rutas principales con lazy loading
 │       ├── app.component.ts       ← Componente raíz (spinner global)
 │       │
 │       ├── core/                  ← Infraestructura transversal (no negocio)
+│       │   ├── config/            ← AppConfigService (carga runtime config)
 │       │   ├── authentication/    ← AuthenticationService, TokenModel, Permiso
 │       │   ├── guards/            ← AuthGuard (protección de rutas)
 │       │   ├── http/              ← BackendService + modelos de request/response
@@ -126,49 +142,223 @@ apiUrl: 'http://localhost:50551/'
 
 ## 4. ⚙️ Configuración de Ambientes
 
-### Ambiente de Desarrollo (`environment.ts`)
+La aplicación soporta **dos mecanismos** de configuración que trabajan juntos:
+
+### 4.1 Configuración en Build-Time (`environment.ts`)
+
+Estos archivos se "queman" en la compilación. Angular los sustituye automáticamente al hacer `ng build --prod`:
+
+#### Ambiente de Desarrollo (`environment.ts`)
 
 ```typescript
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:50551/',      // ← Backend local activo
-  // apiUrl: 'http://192.168.0.174/NutriciosaAdmin/'    // LAN interno (comentado)
-  // apiUrl: 'https://appadmin.nutriciosa.com/NutriciosaAdminWeb/' // Producción (comentado)
+  apiUrl: 'http://localhost:50551/',
 };
 ```
 
-### Ambiente de Producción (`environment.prod.ts`)
+#### Ambiente de Producción (`environment.prod.ts`)
 
 ```typescript
 export const environment = {
   production: true,
-  // ⚠️ ATENCIÓN: El archivo está configurado como localhost por defecto.
-  // ANTES DE HACER BUILD DE PRODUCCIÓN, ajustar manualmente:
-
-  apiUrl: 'http://localhost:50551/',   // ← ❌ ESTO ES INCORRECTO PARA PRODUCCIÓN
-
-  // Opciones disponibles (descomentar la correcta):
-  // apiUrl: 'https://appadmin.nutriciosa.com/NutriciosaAdminWeb/',  // ← ✅ Producción HTTPS
-  // apiUrl: 'http://192.168.0.174/NutriciosaAdmin/',                // ← ✅ IP LAN interno
-  // apiUrl: 'http://testapp.nutriciosa.com:8888/NutriciosaAdmin/',  // ← ✅ Servidor de pruebas
+  apiUrl: 'http://localhost:50551/',     // ← Fallback, Docker lo sobrescribe
 };
 ```
 
-### Build para producción
+> ⚠️ **Nota**: `environment.prod.ts` actúa como fallback cuando la configuración runtime no está disponible. Para deploys sin Docker, ajustar manualmente la URL aquí.
 
-```bash
-# Primero: editar src/environments/environment.prod.ts con la URL correcta
+### 4.2 Configuración en Runtime (`app-config.json`)
 
-# Luego:
-ng build --prod
-# Los archivos generados quedan en /dist/xtreme-admin-angular/
+**Este es el mecanismo principal para producción con Docker.** La URL del API se puede cambiar **sin recompilar**.
+
+| Archivo | Ubicación | Propósito |
+|---|---|---|
+| `app-config.json` | `src/assets/config/app-config.json` | Config que Angular carga al arrancar |
+
+```json
+{
+  "apiUrl": "http://localhost:50551/"
+}
 ```
 
-Angular reemplaza automáticamente `environment.ts` con `environment.prod.ts` al hacer `--prod`.
+#### ¿Cómo funciona?
+
+1. Al iniciar la app, `AppConfigService` lee `/assets/config/app-config.json` vía HTTP
+2. El servicio se ejecuta **antes** de que la app arranque (usando `APP_INITIALIZER`)
+3. La URL cargada se inyecta como token `BASE_URL` en todos los servicios
+4. Si el archivo no existe o falla, se usa `environment.ts` como fallback
+
+#### Archivos involucrados
+
+| Archivo | Ruta | Función |
+|---|---|---|
+| `AppConfigService` | `src/app/core/config/app-config.service.ts` | Lee y expone la config runtime |
+| `app-config.json` | `src/assets/config/app-config.json` | Archivo de configuración |
+| `app.module.ts` | `src/app/app.module.ts` | Registra `APP_INITIALIZER` |
+
+#### Cadena de fallback
+```
+Docker env ($API_URL) → app-config.json → environment.ts (último recurso)
+```
 
 ---
 
-## 5. 🌐 Arquitectura de Comunicación con el Backend
+## 5. 🐳 Despliegue con Docker
+
+### 5.1 Arquitectura del contenedor
+
+La imagen Docker usa un **build multi-stage**:
+
+```
+┌──────────────────────────────────────────────────┐
+│  Stage 1: Build (node:12-alpine)                 │
+│  npm ci → ng build --prod → /app/dist/wwwroot    │
+└──────────────────┬───────────────────────────────┘
+                   │ COPY archivos compilados
+                   ▼
+┌──────────────────────────────────────────────────┐
+│  Stage 2: Serve (nginx:1.25-alpine)              │
+│  Nginx sirve los archivos estáticos              │
+│  docker-entrypoint.sh genera app-config.json     │
+└──────────────────────────────────────────────────┘
+```
+
+### 5.2 Archivos Docker
+
+| Archivo | Propósito |
+|---|---|
+| `Dockerfile` | Compilación multi-stage de la app + imagen Nginx |
+| `docker-compose.yml` | Orquestación con variables de entorno |
+| `docker-entrypoint.sh` | Genera `app-config.json` desde `$API_URL` al arrancar el contenedor |
+| `nginx.conf` | Configuración de Nginx (SPA routing, cache, seguridad) |
+| `.dockerignore` | Excluye `node_modules`, `dist`, `.git` del contexto de build |
+| `.env.example` | Template de variables de entorno (copiar como `.env`) |
+
+### 5.3 Variables de entorno
+
+| Variable | Requerida | Default | Descripción |
+|---|---|---|---|
+| `API_URL` | Sí | `http://localhost:50551/` | URL completa del backend API. **Debe incluir `/` al final.** |
+
+### 5.4 Despliegue paso a paso
+
+#### Opción A: Docker Compose (recomendado)
+
+```bash
+# 1. Copiar template de variables de entorno
+cp .env.example .env
+
+# 2. Editar .env con la URL de tu ambiente
+#    Abrir .env y cambiar:
+#    API_URL=https://appadmin.nutriciosa.com/NutriciosaAdminWeb/
+
+# 3. Construir y levantar
+docker-compose up -d --build
+
+# 4. Verificar que el contenedor está sano
+docker ps
+# Debe mostrar STATUS: Up ... (healthy)
+
+# 5. Verificar la config cargada
+docker logs nutriciosa-admin-frontend
+# Debe mostrar:
+# =============================================
+#  Nutriciosa Admin Frontend
+# =============================================
+#  API_URL: https://appadmin.nutriciosa.com/NutriciosaAdminWeb/
+#  Config:  /usr/share/nginx/html/assets/config/app-config.json
+# =============================================
+```
+
+#### Opción B: Docker run directo
+
+```bash
+# Construir
+docker build -t nutriciosa-admin-frontend .
+
+# Ejecutar con URL de producción
+docker run -d \
+  --name nutriciosa-admin-frontend \
+  -p 80:80 \
+  -e API_URL=https://appadmin.nutriciosa.com/NutriciosaAdminWeb/ \
+  --restart unless-stopped \
+  nutriciosa-admin-frontend
+```
+
+### 5.5 Cambiar la URL sin recompilar
+
+Para cambiar el endpoint del API, solo necesitas reiniciar el contenedor con la nueva variable:
+
+```bash
+# Con docker-compose: editar .env y reiniciar
+docker-compose down
+# Editar .env con la nueva URL
+docker-compose up -d
+
+# Con docker run: recrear el contenedor
+docker stop nutriciosa-admin-frontend
+docker rm nutriciosa-admin-frontend
+docker run -d -p 80:80 -e API_URL=http://nueva-url:puerto/ nutriciosa-admin-frontend
+```
+
+> 💡 **No es necesario reconstruir la imagen** (`docker build`). La misma imagen sirve para cualquier ambiente — solo cambia la variable `API_URL`.
+
+### 5.6 Ejemplos por ambiente
+
+| Ambiente | Comando |
+|---|---|
+| **Desarrollo local** | `docker run -p 80:80 -e API_URL=http://localhost:50551/ nutriciosa-admin-frontend` |
+| **Red LAN interna** | `docker run -p 80:80 -e API_URL=http://192.168.0.174/NutriciosaAdmin/ nutriciosa-admin-frontend` |
+| **Servidor de pruebas** | `docker run -p 80:80 -e API_URL=http://testapp.nutriciosa.com:8888/NutriciosaAdmin/ nutriciosa-admin-frontend` |
+| **Producción** | `docker run -p 80:80 -e API_URL=https://appadmin.nutriciosa.com/NutriciosaAdminWeb/ nutriciosa-admin-frontend` |
+
+### 5.7 Nginx — Configuración incluida
+
+El archivo `nginx.conf` incluye:
+
+| Característica | Detalle |
+|---|---|
+| **SPA Routing** | `try_files $uri $uri/ /index.html` — Angular gestiona las rutas |
+| **Cache estáticos** | JS, CSS, imágenes, fuentes → cache de 1 año |
+| **Sin cache config** | `app-config.json` e `index.html` → nunca se cachean |
+| **Compresión gzip** | Activado para JSON, JS, CSS, XML |
+| **Headers seguridad** | `X-Frame-Options`, `X-Content-Type-Options`, `X-XSS-Protection`, `Referrer-Policy` |
+| **Versión oculta** | `server_tokens off` — no expone la versión de Nginx |
+
+### 5.8 Healthcheck
+
+El contenedor incluye un **healthcheck** automático que verifica cada 30 segundos que `app-config.json` se está sirviendo correctamente:
+
+```bash
+# Ver estado de salud
+docker inspect --format='{{.State.Health.Status}}' nutriciosa-admin-frontend
+# Debe mostrar: healthy
+```
+
+### 5.9 Flujo completo interno
+
+```
+.env (API_URL=https://...)
+  ↓ docker-compose lee automáticamente
+docker-compose.yml (environment: API_URL=${API_URL})
+  ↓ pasa al contenedor como variable de entorno
+docker-entrypoint.sh
+  ↓ lee $API_URL
+  ↓ genera /assets/config/app-config.json
+  ↓ inicia Nginx
+Nginx sirve la app Angular + app-config.json
+  ↓
+Angular arranca: APP_INITIALIZER → AppConfigService.loadConfig()
+  ↓ lee /assets/config/app-config.json via HTTP
+  ↓ inyecta apiUrl en el provider 'BASE_URL'
+  ↓
+BackendService, TurnoSignalRService, etc. usan BASE_URL dinámico
+```
+
+---
+
+## 6. 🌐 Arquitectura de Comunicación con el Backend
 
 ### Flujo de una petición
 
@@ -182,6 +372,13 @@ Componente Angular
   Ejemplo: http://localhost:50551/api/Usuario/GetUsuarioByID
       ↓
   Backend ASP.NET Core → Base de datos SQL Server
+```
+
+### Origen del BASE_URL
+
+```
+Docker runtime     → AppConfigService lee app-config.json
+Sin Docker (local) → AppConfigService cae en fallback → environment.ts
 ```
 
 ### Estructura de Request
@@ -261,7 +458,7 @@ addParametersExtra(parametros) {
 
 ---
 
-## 6. 🔐 Autenticación y Sesión
+## 7. 🔐 Autenticación y Sesión
 
 ### Flujo de login
 
@@ -314,7 +511,7 @@ No hay sistema de **refresh token**. Cuando el JWT expira, el usuario es redirig
 
 ---
 
-## 7. 📦 Módulos de Negocio
+## 8. 📦 Módulos de Negocio
 
 | Módulo | Ruta | Layout | Guard | Descripción |
 |---|---|---|---|---|
@@ -351,7 +548,7 @@ No hay sistema de **refresh token**. Cuando el JWT expira, el usuario es redirig
 
 ---
 
-## 8. 🗺️ Sistema de APIs (DataApi Enum)
+## 9. 🗺️ Sistema de APIs (DataApi Enum)
 
 El archivo `src/app/shared/enums/DataApi.enum.ts` define **todos los controladores del backend disponibles**.
 
@@ -386,7 +583,7 @@ BASE_URL + dataApiRootMap[api] + "/" + Método
 
 ---
 
-## 9. 📡 Tiempo Real — SignalR
+## 10. 📡 Tiempo Real — SignalR
 
 ### SignalR de Turnos (TurnoSignalRService)
 
@@ -414,7 +611,7 @@ BASE_URL + dataApiRootMap[api] + "/" + Método
 
 ---
 
-## 10. 🔧 Guía Rápida de Mantenimiento
+## 11. 🔧 Guía Rápida de Mantenimiento
 
 ### Patrón de un Listado con Paginación
 
@@ -547,36 +744,14 @@ Los templates de reportes se agregan como métodos privados `TemplateReport_XxxP
 
 ---
 
-## 11. ⚠️ Hardcodes y Puntos Críticos
+## 12. ⚠️ Hardcodes y Puntos Críticos
 
-### 🔴 CRÍTICO — `environment.prod.ts` apunta a localhost
-
-**Archivo**: `src/environments/environment.prod.ts`
-
-```typescript
-// ❌ Estado actual — INCORRECTO para producción
-export const environment = {
-  production: true,
-  apiUrl: 'http://localhost:50551/',
-};
-
-// ✅ Lo que DEBE quedar cuando se hace deploy
-export const environment = {
-  production: true,
-  apiUrl: 'https://appadmin.nutriciosa.com/NutriciosaAdminWeb/',
-};
-```
-
-**Impacto**: Si se hace `ng build --prod` sin corregir esto, la app de producción intentará llamar a `localhost` — completamente rota para cualquier usuario externo.
-
----
-
-### 🔴 CRÍTICO — SignalR de Balanza hardcodeado en producción
+### 🟡 ATENCIÓN — SignalR de Balanza hardcodeado en producción
 
 **Archivo**: `src/app/Services/balanza-pesaje-signalr.service.ts`, línea 61
 
 ```typescript
-// ❌ Código actual — no usa environment
+// ❌ Código actual — no usa BASE_URL ni environment
 public startConnection = async (grupo) => {
   let url_1 = "https://appadmin.nutriciosa.com/nutriciosabalanza/balanzaPesaje";
   let url_2 = "http://localhost:50552/balanzaPesaje";  // ← declarada pero nunca usada
@@ -657,40 +832,26 @@ Si el backend está caído, esto genera requests infinitos. Considerar agregar u
 
 ---
 
-## 12. ✅ Checklist para Puesta en Producción
+## 13. ✅ Checklist para Puesta en Producción
 
-### Antes de hacer build
+### Sin Docker (deploy manual)
 
 - [ ] **Editar `src/environments/environment.prod.ts`**:
-  - Comentar: `// apiUrl: 'http://localhost:50551/'`
-  - Descomentar: `apiUrl: 'https://appadmin.nutriciosa.com/NutriciosaAdminWeb/'`
+  - Cambiar `apiUrl` a la URL de producción
+- [ ] **Verificar URL del backend de balanza** en `src/app/Services/balanza-pesaje-signalr.service.ts`
+- [ ] **Build**: `ng build --prod`
+- [ ] **Copiar** `dist/wwwroot/` al servidor web (IIS, Nginx, Apache)
+- [ ] La app usa **HashLocationStrategy** (`/#/home`, `/#/login`) — no requiere reescritura de URLs
 
-- [ ] **Verificar URL del backend de balanza** en `src/app/Services/balanza-pesaje-signalr.service.ts`:
-  - Confirmar que `url_1` apunta al hub correcto de producción
+### Con Docker (recomendado)
 
-- [ ] **Verificar que las URLs comentadas** en `environment.ts` de desarrollo no interfieran
-
-### Build de producción
-
-```bash
-# Build optimizado para producción
-ng build --prod
-
-# Los archivos quedan en:
-dist/xtreme-admin-angular/
-├── index.html
-├── main.*.js
-├── polyfills.*.js
-├── runtime.*.js
-├── styles.*.css
-└── assets/
-```
-
-### Deploy
-
-- Copiar contenido de `dist/xtreme-admin-angular/` al servidor web (IIS, Nginx, Apache)
-- El servidor debe estar configurado para servir `index.html` para todas las rutas (SPA routing con hash `#`)
-- La app usa **HashLocationStrategy** (`/#/home`, `/#/login`) — esto simplifica la configuración del servidor porque no requiere reescritura de URLs
+- [ ] **Crear `.env`** a partir de `.env.example`
+- [ ] **Configurar `API_URL`** con la URL del backend de producción
+- [ ] **Build imagen**: `docker-compose build`
+- [ ] **Levantar**: `docker-compose up -d`
+- [ ] **Verificar logs**: `docker logs nutriciosa-admin-frontend` — confirmar URL correcta
+- [ ] **Verificar health**: `docker ps` — STATUS debe decir `healthy`
+- [ ] **Verificar config**: Abrir `http://<servidor>/assets/config/app-config.json` en el navegador
 
 ### Variables de configuración del sistema (en BD)
 
@@ -726,4 +887,4 @@ El enum `Configuraciones` define IDs de configuraciones guardadas en base de dat
 
 ---
 
-*Documentación generada en Febrero 2026. Actualizar ante cualquier cambio de infraestructura o APIs.*
+*Documentación actualizada en Febrero 2026. Incluye documentación de despliegue Docker y configuración runtime.*
