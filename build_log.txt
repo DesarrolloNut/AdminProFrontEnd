@@ -1,0 +1,208 @@
+npm warn config production Use `--omit=dev` instead.
+
+> xtreme-admin-angular@0.0.0 build
+> ng build
+
+(node:35096) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+WARNING: You probably don't mean to use the color value blue in interpolation here.
+It may end up represented as blue, which will likely produce invalid CSS.
+Always quote color names when using them as strings or map keys (for example, "blue").
+If you really want to use the color value here, use '"" + $color'.
+
+  ╷
+4 │     --#{$color}: #{$value};
+  │         ^^^^^^
+  ╵
+    node_modules\bootstrap\scss\_root.scss 4:9       @import
+    node_modules\bootstrap\scss\bootstrap.scss 11:9  @import
+    stdin 14:9                                       root stylesheet
+
+WARNING: You probably don't mean to use the color value indigo in interpolation here.
+It may end up represented as indigo, which will likely produce invalid CSS.
+Always quote color names when using them as strings or map keys (for example, "indigo").
+If you really want to use the color value here, use '"" + $color'.
+
+  ╷
+4 │     --#{$color}: #{$value};
+  │         ^^^^^^
+  ╵
+    node_modules\bootstrap\scss\_root.scss 4:9       @import
+    node_modules\bootstrap\scss\bootstrap.scss 11:9  @import
+    stdin 14:9                                       root stylesheet
+
+WARNING: You probably don't mean to use the color value purple in interpolation here.
+It may end up represented as purple, which will likely produce invalid CSS.
+Always quote color names when using them as strings or map keys (for example, "purple").
+If you really want to use the color value here, use '"" + $color'.
+
+  ╷
+4 │     --#{$color}: #{$value};
+  │         ^^^^^^
+  ╵
+    node_modules\bootstrap\scss\_root.scss 4:9       @import
+    node_modules\bootstrap\scss\bootstrap.scss 11:9  @import
+    stdin 14:9                                       root stylesheet
+
+WARNING: You probably don't mean to use the color value pink in interpolation here.
+It may end up represented as pink, which will likely produce invalid CSS.
+Always quote color names when using them as strings or map keys (for example, "pink").
+If you really want to use the color value here, use '"" + $color'.
+
+  ╷
+4 │     --#{$color}: #{$value};
+  │         ^^^^^^
+  ╵
+    node_modules\bootstrap\scss\_root.scss 4:9       @import
+    node_modules\bootstrap\scss\bootstrap.scss 11:9  @import
+    stdin 14:9                                       root stylesheet
+
+WARNING: You probably don't mean to use the color value red in interpolation here.
+It may end up represented as red, which will likely produce invalid CSS.
+Always quote color names when using them as strings or map keys (for example, "red").
+If you really want to use the color value here, use '"" + $color'.
+
+  ╷
+4 │     --#{$color}: #{$value};
+  │         ^^^^^^
+  ╵
+    node_modules\bootstrap\scss\_root.scss 4:9       @import
+    node_modules\bootstrap\scss\bootstrap.scss 11:9  @import
+    stdin 14:9                                       root stylesheet
+
+WARNING: You probably don't mean to use the color value orange in interpolation here.
+It may end up represented as orange, which will likely produce invalid CSS.
+Always quote color names when using them as strings or map keys (for example, "orange").
+If you really want to use the color value here, use '"" + $color'.
+
+  ╷
+4 │     --#{$color}: #{$value};
+  │         ^^^^^^
+  ╵
+    node_modules\bootstrap\scss\_root.scss 4:9       @import
+    node_modules\bootstrap\scss\bootstrap.scss 11:9  @import
+    stdin 14:9                                       root stylesheet
+
+WARNING: You probably don't mean to use the color value yellow in interpolation here.
+It may end up represented as yellow, which will likely produce invalid CSS.
+Always quote color names when using them as strings or map keys (for example, "yellow").
+If you really want to use the color value here, use '"" + $color'.
+
+  ╷
+4 │     --#{$color}: #{$value};
+  │         ^^^^^^
+  ╵
+    node_modules\bootstrap\scss\_root.scss 4:9       @import
+    node_modules\bootstrap\scss\bootstrap.scss 11:9  @import
+    stdin 14:9                                       root stylesheet
+
+WARNING: You probably don't mean to use the color value green in interpolation here.
+It may end up represented as green, which will likely produce invalid CSS.
+Always quote color names when using them as strings or map keys (for example, "green").
+If you really want to use the color value here, use '"" + $color'.
+
+  ╷
+4 │     --#{$color}: #{$value};
+  │         ^^^^^^
+  ╵
+    node_modules\bootstrap\scss\_root.scss 4:9       @import
+    node_modules\bootstrap\scss\bootstrap.scss 11:9  @import
+    stdin 14:9                                       root stylesheet
+
+WARNING: You probably don't mean to use the color value teal in interpolation here.
+It may end up represented as teal, which will likely produce invalid CSS.
+Always quote color names when using them as strings or map keys (for example, "teal").
+If you really want to use the color value here, use '"" + $color'.
+
+  ╷
+4 │     --#{$color}: #{$value};
+  │         ^^^^^^
+  ╵
+    node_modules\bootstrap\scss\_root.scss 4:9       @import
+    node_modules\bootstrap\scss\bootstrap.scss 11:9  @import
+    stdin 14:9                                       root stylesheet
+
+WARNING: You probably don't mean to use the color value aqua in interpolation here.
+It may end up represented as cyan, which will likely produce invalid CSS.
+Always quote color names when using them as strings or map keys (for example, "aqua").
+If you really want to use the color value here, use '"" + $color'.
+
+  ╷
+4 │     --#{$color}: #{$value};
+  │         ^^^^^^
+  ╵
+    node_modules\bootstrap\scss\_root.scss 4:9       @import
+    node_modules\bootstrap\scss\bootstrap.scss 11:9  @import
+    stdin 14:9                                       root stylesheet
+
+WARNING: You probably don't mean to use the color value white in interpolation here.
+It may end up represented as white, which will likely produce invalid CSS.
+Always quote color names when using them as strings or map keys (for example, "white").
+If you really want to use the color value here, use '"" + $color'.
+
+  ╷
+4 │     --#{$color}: #{$value};
+  │         ^^^^^^
+  ╵
+    node_modules\bootstrap\scss\_root.scss 4:9       @import
+    node_modules\bootstrap\scss\bootstrap.scss 11:9  @import
+    stdin 14:9                                       root stylesheet
+
+WARNING: You probably don't mean to use the color value gray in interpolation here.
+It may end up represented as gray, which will likely produce invalid CSS.
+Always quote color names when using them as strings or map keys (for example, "gray").
+If you really want to use the color value here, use '"" + $color'.
+
+  ╷
+4 │     --#{$color}: #{$value};
+  │         ^^^^^^
+  ╵
+    node_modules\bootstrap\scss\_root.scss 4:9       @import
+    node_modules\bootstrap\scss\bootstrap.scss 11:9  @import
+    stdin 14:9                                       root stylesheet
+
+
+ERROR in ./src/assets/scss/style.scss (./node_modules/@angular-devkit/build-angular/src/angular-cli-files/plugins/raw-css-loader.js!./node_modules/postcss-loader/src??embedded!./node_modules/sass-loader/dist/cjs.js??ref--13-3!./src/assets/scss/style.scss)
+Module build failed (from ./node_modules/sass-loader/dist/cjs.js):
+SassError: It's not clear which file to import. Found:
+  src\assets\scss\mixins\_padding-margin.scss
+  src\assets\scss\mixins\padding-margin.scss
+  ╷
+2 │ @import 'mixins/padding-margin';
+  │         ^^^^^^^^^^^^^^^^^^^^^^^
+  ╵
+  src\assets\scss\_components.scss 2:9  @import
+  C:\Users\jvelez\Documents\projects\NutriciosaAdminFrontEnd\src\assets\scss\style.scss 17:9                            root stylesheet
+SassError: SassError: It's not clear which file to import. Found:
+  src\assets\scss\mixins\_padding-margin.scss
+  src\assets\scss\mixins\padding-margin.scss
+  ╷
+2 │ @import 'mixins/padding-margin';
+  │         ^^^^^^^^^^^^^^^^^^^^^^^
+  ╵
+  src\assets\scss\_components.scss 2:9  @import
+  C:\Users\jvelez\Documents\projects\NutriciosaAdminFrontEnd\src\assets\scss\style.scss 17:9                            root stylesheet
+    at C:\Users\jvelez\Documents\projects\NutriciosaAdminFrontEnd\node_modules\sass-loader\dist\index.js:73:16
+    at Function.call$2 (C:\Users\jvelez\Documents\projects\NutriciosaAdminFrontEnd\node_modules\@angular-devkit\build-angular\node_modules\sass\sass.dart.js:54311:16)
+    at _render_closure1.call$2 (C:\Users\jvelez\Documents\projects\NutriciosaAdminFrontEnd\node_modules\@angular-devkit\build-angular\node_modules\sass\sass.dart.js:33509:12)
+    at _RootZone.runBinary$3$3 (C:\Users\jvelez\Documents\projects\NutriciosaAdminFrontEnd\node_modules\@angular-devkit\build-angular\node_modules\sass\sass.dart.js:19817:18)
+    at _RootZone.runBinary$3 (C:\Users\jvelez\Documents\projects\NutriciosaAdminFrontEnd\node_modules\@angular-devkit\build-angular\node_modules\sass\sass.dart.js:19821:19)
+    at _FutureListener.handleError$1 (C:\Users\jvelez\Documents\projects\NutriciosaAdminFrontEnd\node_modules\@angular-devkit\build-angular\node_modules\sass\sass.dart.js:18286:19)
+    at _Future__propagateToListeners_handleError.call$0 (C:\Users\jvelez\Documents\projects\NutriciosaAdminFrontEnd\node_modules\@angular-devkit\build-angular\node_modules\sass\sass.dart.js:18574:40)
+    at Object._Future__propagateToListeners (C:\Users\jvelez\Documents\projects\NutriciosaAdminFrontEnd\node_modules\@angular-devkit\build-angular\node_modules\sass\sass.dart.js:3484:88)
+    at _Future._completeError$2 (C:\Users\jvelez\Documents\projects\NutriciosaAdminFrontEnd\node_modules\@angular-devkit\build-angular\node_modules\sass\sass.dart.js:18410:9)
+    at _AsyncAwaitCompleter.completeError$2 (C:\Users\jvelez\Documents\projects\NutriciosaAdminFrontEnd\node_modules\@angular-devkit\build-angular\node_modules\sass\sass.dart.js:17809:12)
+    at Object._asyncRethrow (C:\Users\jvelez\Documents\projects\NutriciosaAdminFrontEnd\node_modules\@angular-devkit\build-angular\node_modules\sass\sass.dart.js:3240:17)
+    at C:\Users\jvelez\Documents\projects\NutriciosaAdminFrontEnd\node_modules\@angular-devkit\build-angular\node_modules\sass\sass.dart.js:10538:20
+    at _wrapJsFunctionForAsync_closure.$protected (C:\Users\jvelez\Documents\projects\NutriciosaAdminFrontEnd\node_modules\@angular-devkit\build-angular\node_modules\sass\sass.dart.js:3263:15)
+    at _wrapJsFunctionForAsync_closure.call$2 (C:\Users\jvelez\Documents\projects\NutriciosaAdminFrontEnd\node_modules\@angular-devkit\build-angular\node_modules\sass\sass.dart.js:17830:12)
+    at _awaitOnObject_closure0.call$2 (C:\Users\jvelez\Documents\projects\NutriciosaAdminFrontEnd\node_modules\@angular-devkit\build-angular\node_modules\sass\sass.dart.js:17822:25)
+    at _RootZone.runBinary$3$3 (C:\Users\jvelez\Documents\projects\NutriciosaAdminFrontEnd\node_modules\@angular-devkit\build-angular\node_modules\sass\sass.dart.js:19817:18)
+    at _RootZone.runBinary$3 (C:\Users\jvelez\Documents\projects\NutriciosaAdminFrontEnd\node_modules\@angular-devkit\build-angular\node_modules\sass\sass.dart.js:19821:19)
+    at _FutureListener.handleError$1 (C:\Users\jvelez\Documents\projects\NutriciosaAdminFrontEnd\node_modules\@angular-devkit\build-angular\node_modules\sass\sass.dart.js:18286:19)
+    at _Future__propagateToListeners_handleError.call$0 (C:\Users\jvelez\Documents\projects\NutriciosaAdminFrontEnd\node_modules\@angular-devkit\build-angular\node_modules\sass\sass.dart.js:18574:40)
+    at Object._Future__propagateToListeners (C:\Users\jvelez\Documents\projects\NutriciosaAdminFrontEnd\node_modules\@angular-devkit\build-angular\node_modules\sass\sass.dart.js:3484:88)
+    at _Future._completeError$2 (C:\Users\jvelez\Documents\projects\NutriciosaAdminFrontEnd\node_modules\@angular-devkit\build-angular\node_modules\sass\sass.dart.js:18410:9)
+    at _AsyncAwaitCompleter.completeError$2 (C:\Users\jvelez\Documents\projects\NutriciosaAdminFrontEnd\node_modules\@angular-devkit\build-angular\node_modules\sass\sass.dart.js:17809:12)
+ @ ./src/assets/scss/style.scss 1:14-256
+ @ multi ./src/styles.css ./src/assets/scss/style.scss ./node_modules/ngx-toastr/toastr.css
