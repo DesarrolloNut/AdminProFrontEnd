@@ -1,0 +1,366 @@
+<div class="row">
+    <div class="control-section">
+        <div id="control_wrapper">
+        </div>
+    </div>
+</div>
+
+<div class="row mb-2">
+    <div class="col">
+        <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 col-12">
+                        <h4 class="card-title">Formulario de facturación</h4>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-12 text-right">
+                    </div>
+                </div>
+             
+
+                <div class="col-12">
+                    <div class="row">
+                        <div class="form-group col-md-5 ">
+                            <button class="btn btn-info m-1"  type="button">
+                                Enviar <i class="fas fa-paper-plane"></i> 
+                            </button>
+                            <button  class="btn btn-info m-1" type="button" >
+                                <i class="fas fa-print"></i>  Imprimir
+                            </button>
+                            <button class="btn btn-info m-1"  type="button">
+                                <i class="fas fa-check"></i>  Confirmar
+                            </button>
+                            <button class="btn btn-info m-1"  type="button">
+                                <i class="fas fa-times"></i>  Cancelar
+                            </button>
+                            <button class="btn btn-info m-1"  type="button">
+                                Pagar <i class="fas fa-money-bille"></i> 
+                            </button>
+                        
+                        </div>
+                        <div class="form-group col-md-2 ">
+                           
+                        </div>
+                        <div class="form-group col-md-5 ">
+                            <div class="arrow-steps clearfix">
+                                <div [ngClass]="{'current done' : estadoFactura.borrador}" class="step "> <span>Borrador</span> </div>
+                                <div [ngClass]="{'current done' : estadoFactura.enviado}" class="step "> <span>Enviado</span> </div>
+                                <div [ngClass]="{'current done' : estadoFactura.confirmado}" class="step"> <span>Confirmado</span> </div>
+                                <div [ngClass]="{'current done' : estadoFactura.pagado}" class="step "> <span>Pagado</span> </div>
+                                <div [ngClass]="{'current done' : estadoFactura.entregado}" class="step"> <span>Entregado</span> </div>
+                              </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row m-t-40">
+
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="form-group col-md-4 ">
+                            
+                            </div>
+                            <div class="form-group col-md-4 ">
+                                <label> <i class="fa fa-calendar"></i> Fecha de entrega</label>
+                                <ejs-datepicker [ngModelOptions]="{standalone: true}"
+                                    [(ngModel)]="cotizacion.fechaEntrega" [format]="'dd-MM-yyyy'"
+                                    [showClearButton]="false"></ejs-datepicker>
+                            </div>
+                            <div class="form-group col-md-4 ">
+                                <label>Terminos</label>
+                                <ng-select [ngModelOptions]="{standalone: true}" [(ngModel)]="cotizacion.plazoId"
+                                bindLabel="nombre" bindValue="codigo" [items]="terminos" [loading]="loadingTerminos"
+                                [clearable]="false" 
+                                notFoundText="No resultados">
+                            </ng-select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="inputEmail4">Cliente</label>
+                        <ng-select [ngModelOptions]="{standalone: true}" [(ngModel)]="cotizacion.clienteId"
+                            bindLabel="nombre" bindValue="codigo" [items]="clientes" [loading]="loadingClientes"
+                            placeholder="Seleccione un cliente"
+                            (keyup)="buscaMasCliente($event)"
+                            [clearable]="false"  (change)="onSelectCliente($event)"
+                            notFoundText="No resultados">
+                        </ng-select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="inputEmail4">Almacén</label>
+                        <ng-select [ngModelOptions]="{standalone: true}" [(ngModel)]="cotizacion.almacenId"
+                            bindLabel="nombre" bindValue="codigo" [items]="almacenesDestino" [loading]="loadingClientes"
+                            placeholder="Seleccione un almacén"
+                            [clearable]="false" 
+                            notFoundText="No resultados">
+                        </ng-select>
+                    </div>
+                    <div class="form-group col-md-12" *ngIf="cliente">
+                        <label for="nombre"> Dirección</label>
+                        <input disabled="true" type="text" name="nombre" id="nombre"
+                        [(ngModel)]="cotizacion.direccion"
+                            [ngClass]="{ 'form-control':true  }">
+                    </div>
+                    <hr>
+                    <div class="col-12">
+                        <div class="row" *ngIf="cliente">
+                            <div class="col-md-6 form-group">
+                                <label for="condicionPagoId">Lista de precio</label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="listasPrecios"
+                                    [loading]="loadingListaPrecios" [clearable]="false"
+                                    [(ngModel)]="cliente.listaPrecioId" [readonly]="true" notFoundText="No resultados">
+                                </ng-select>
+                            </div>
+                            <div class=" col-md-6 form-group">
+                                <label for="condicionPagoId"> Condición de pago</label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="TipoCondicionPagos"
+                                    [loading]="loadingCondicionPagos" [clearable]="false"
+                                    [(ngModel)]="cliente.condicionPagoId" [readonly]="true"
+                                    notFoundText="No resultados">
+                                </ng-select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="inputEmail4">Vendedor</label>
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="vendedores"
+                            [ngModelOptions]="{standalone: true}" [(ngModel)]="cotizacion.vendedorId"
+                            placeholder="Seleccione un vendedor"
+                            [loading]="loadingVendedores" [clearable]="false" notFoundText="No resultados">
+                        </ng-select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="inputEmail4">Moneda</label>
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="monedaTipos"
+                            [ngModelOptions]="{standalone: true}" [(ngModel)]="cotizacion.monedaId"
+                            [loading]="loadingMonedaTipos" [clearable]="false" notFoundText="No resultados">
+                        </ng-select>
+                    </div>
+                        <table class="table table-sm table-hover mb-0 no-wrap v-middle">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Artículo</th>
+                                    <th></th>
+                                    <th>Precio</th>
+                                    <th>Inventario</th>
+                                    <th>Cant.</th>
+                                    <th>% Desc.</th>
+                                    <th>SubTotal</th>
+                                    <th>Desc.</th>
+                                    <th>ITBIS</th>
+                                    <th>Total Neto</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <!-- <div>
+                                
+                            </div> -->
+                            <tbody>
+                                <tr *ngFor="let item of cotizacionDetalles; let i=index">
+                                    <td>
+                                        <button *ngIf="((item.articuloId && (item.porcientoDescuento > item.porcientoDescuentoBase )) && autorizarDescuento) && !item.descuentoAutorizado" 
+                                            title="Autorizar" 
+                                            type="button" 
+                                            class="btn btn-outline-success m-1"
+                                            (click)="autorizarPorcientoDescuento(i)"
+                                            >
+                                            <i class="fas fa-check"></i>
+                                         </button>
+                                    </td>
+                                    <td>
+                                        <ng-select style="width: 700px;" [items]="articulosCombobox" bindLabel="nombreYCodigoReferencia"
+                                            [clearable]="false" bindValue="articuloId" [loading]="loadingArticulosCombobox"
+                                            [(ngModel)]="item.articuloId" [ngModelOptions]="{standalone: true}"
+                                            (change)="onSelectArticulo($event,i)" notFoundText="No resultados"
+                                            (keyup)=" buscaMasProductos($event)">
+                                        </ng-select>
+                                    </td>
+                                    <td>
+                                        <button *ngIf="item.cantidad" class="btn btn-sm  text-left "
+                                            (click)="openModalPromociones(modalPromociones,item)">
+                                            <i class=" fa fa-sm fa-info"></i>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <input style="width: 150px;" type="text" class="form-control" prefix="$ "
+                                            [(ngModel)]="item.precio" [ngModelOptions]="{standalone: true}"
+                                            [readonly]="'true'" mask="separator" thousandSeparator=",">
+                                    </td>
+                                    <td>
+                                        <input style="width: 150px;" type="text" class="form-control" 
+                                        [(ngModel)]="item.inventario" [ngModelOptions]="{standalone: true}"
+                                        [readonly]="'true'" mask="separator" thousandSeparator=",">
+                                    </td>
+                                    <td>
+                                        <input style="width: 70px;" type="number" class="form-control"
+                                            [readonly]="!item.articuloId" (keyup)="calcularTotales(item)"
+                                            (blur)="obtenerDescuento(item,i)"
+                                            [ngClass]="{'border-danger p-0' : item.hayErroresCantidad }"
+                                            [(ngModel)]="item.cantidad" [ngModelOptions]="{standalone: true}">
+                                    </td>
+                                    <td>
+                                       <input style="width: 50px;" type="number" class="form-control"
+                                            [readonly]="noAplicaDescuento ||!item.articuloId"  (keyup)="validarDescuento(i)"
+                                            [ngClass]="{' border-danger p-0' : item.hayErroresPorcientoDescuento }"
+                                            [(ngModel)]="item.porcientoDescuento" [ngModelOptions]="{standalone: true}">
+                                    </td>
+                                    <td>
+                                        <span>${{ item.subtotal | number:'1.2-2'}}</span>
+                                    </td>
+                                    <td>
+                                        <span>${{ item.totalDescuento | number:'1.2-2'}}</span>
+                                    </td>
+                                    <td>
+                                        <span>${{ item.totalImpuesto | number:'1.2-2'}}</span>
+                                    </td>
+                                    <td>
+                                        <span>${{ item.totalNeto | number:'1.2-2'}}</span>
+                                    </td>
+                                    <td>
+                                        <button (click)="onDeleteitem(i)" type="button"
+                                            class="btn btn-sm btn-outline-danger">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    <div class="form-group text-right col-md-12" *ngIf="cliente">
+                        <hr>
+                        <h4>Subtotal: $ {{cotizacion.subtotal | number:'1.2-2' }}</h4>
+                        <h4>Descuento: $ {{cotizacion.descuentoTotal | number:'1.2-2' }}</h4>
+                        <h4>Impuesto: $ {{cotizacion.impuestoTotal | number:'1.2-2' }}</h4>
+                        <h4 class="font-weight-bold">Total Neto: $ {{cotizacion.totalNeto | number:'1.2-2' }}</h4>
+                    </div>
+                    <div class="form-group text-right col-md-12" *ngIf="cliente">
+                        <hr />
+                        <button class="btn btn-light m-1" routerLink="../" type="button">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                        <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="button" (click)="onSubmit()">
+                            <i class="fas fa-check"></i> Guardar
+                        </button>
+                        <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span> Guardando
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #modalExistenciaArticuloAlmacenes let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Existencia en almacenes</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12" [hidden]="loadingArticuloBalance">
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover mb-0 no-wrap v-middle">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Artículo</th>
+                                <th>Almacen</th>
+                                <th>Existencia</th>
+                                <!-- <th>Estado</th> -->
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr *ngFor="let item of articuloBalance">
+                                <td><span class="badge badge-light text-info ">{{item.articuloID}}</span></td>
+                                <td>
+                                    <span> {{item.articulo}}</span>
+                                </td>
+                                <td>
+                                    <span> #{{item.almacenID}} {{item.almacen}} </span>
+                                </td>
+                                <td>
+                                    <span> {{item.existencia}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                    <h3>
+                                        <span class="font-weight-bold"> {{totalCantidadExistencia | number}}</span>
+                                    </h3>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <app-loading-listado [hidden]="!loadingArticuloBalance"></app-loading-listado>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
+    </div>
+</ng-template>
+
+<ng-template #modalPromociones let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title font-weight-bold ">Promociones para {{articulo}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12" [hidden]="loadingArticuloBalance">
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover mb-0 no-wrap v-middle">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Artículo</th>
+                                <th>Regalo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of promociones">
+                                <td><span class="badge badge-light text-info ">0</span></td>
+                                <td>
+                                    <span> {{item.Articuloid}}</span>
+                                </td>
+                                <td>
+                                    <span> {{item.Regalo}} </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-12">
+                <app-loading-listado [hidden]="!loadingArticuloBalance"></app-loading-listado>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
+    </div>
+</ng-template>

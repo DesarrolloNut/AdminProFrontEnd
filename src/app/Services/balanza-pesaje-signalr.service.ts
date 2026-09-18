@@ -3,11 +3,16 @@ import * as signalR from '@aspnet/signalr';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from '../core/authentication/service/authentication.service';
 import { BalanzaPesoGrupoSignalREnum } from '../shared/enums/BalanzaPesoGrupoSignalREnum';
-
+import { Subscription } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
 export class BalanzaPesajeSignalrService {
+
+
+
+
+
 
   private hubConnection: signalR.HubConnection
   pesoBalanza = new EventEmitter<string>();
@@ -16,31 +21,65 @@ export class BalanzaPesajeSignalrService {
 
   almacenID: number = 0;
 
+
+  balanzaInitied=false;
   private grupoBalanzaPesaje = "GRUPO_PANTALLA_PESAJE_USUARIO_" + this.auth.tokenDecoded.nameid
   private grupoBalanzaListado = "GRUPO_PANTALLA_PESAJE_ALMACEN_"
-  // private grupoTurnoReceptores = "Receptores_Turnos_Sucursal_" + this.auth.tokenDecoded.groupsid
+
+  private ip="";
+  private port=0;
+
+  handlerPeso = (pesoBalanza: any) => {
+ //console.log(pesoBalanza)
+    if (pesoBalanza.ok) {
+      this.pesoBalanza.emit(pesoBalanza.data)
+    }else{
+      this.toaster.warning(pesoBalanza.message)
+      this.pesoBalanza.emit(pesoBalanza.message)
+      setTimeout(() => {
+    //    location.reload();
+      }, 3000);
+    }
+
+   // console.log(this.pesoBalanza)
+   // this.pesoBalanza.emit(pesoBalanza);
+ }
+
 
   constructor(
     @Inject('BASE_URL') _baseUrl: string,
     private auth: AuthenticationService,
     private toaster: ToastrService,
     // private f: SpeechSynthesisUtteranceFactoryService,
-    // private svc: SpeechSynthesisService,
   ) {
     this.baseUrl = _baseUrl;
   }
 
+  // https://appadmin.nutriciosa.com:5000/
+  public  startConnection =  async (grupo: BalanzaPesoGrupoSignalREnum) => {
 
-  public startConnection = (grupo: BalanzaPesoGrupoSignalREnum) => {
+        let url_1="https://appadmin.nutriciosa.com/nutriciosabalanza/balanzaPesaje"
+        let url_2="http://localhost:50552/balanzaPesaje"
+        let url_3="http://localhost:50551/balanzaPesaje"
+
+      if(this.hubConnection?.state==signalR.HubConnectionState.Connected){
+        this.hubConnection.off('SendPesoToScreen'.toLowerCase(),this.handlerPeso);
+        await  this.hubConnection.stop();
+      }
+
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(this.baseUrl + "balanzaPesaje")
+      .withUrl(url_1)
+      .withAutomaticReconnect()
+      .configureLogging(signalR.LogLevel.Information)
       .build();
-    this.hubConnection
+     this.hubConnection
       .start().
       then(ok => {
         this.subscribirMetodos();
         this.toaster.info("Actualización en tiempo real.", "Sistema pesaje.")
+        this.balanzaInitied=true;
         // this.JoinGroup(this.grupoBalanzaPesaje)
+
         switch (grupo) {
           case BalanzaPesoGrupoSignalREnum.Pantalla_Pesaje:
             this.JoinGroup(this.grupoBalanzaPesaje)
@@ -50,30 +89,26 @@ export class BalanzaPesajeSignalrService {
             this.JoinGroup(this.grupoBalanzaListado + this.almacenID)
             break;
 
-
           default:
             break;
         }
 
       })
       .catch(err => {
+        this.balanzaInitied=false;
 
         console.log('Error while starting connection: ' + err);
 
-        // this.toaster.error("Error conexión.", "Turnos realtime.")
-        // this.toaster.info("Se intentará nuevamente.", "Turnos realtime.")
-
-        setTimeout(() => {
-          this.startConnection(grupo);
-        }, 3000)
+        // setTimeout(() => {
+        //   this.startConnection(grupo);
+        // }, 3000)
 
       });
   }
 
 
   public desconectarConexion() {
-    // this.hubConnection.
-
+   //  this.hubConnection.
 
   }
 
@@ -81,9 +116,8 @@ export class BalanzaPesajeSignalrService {
 
   public subscribirMetodos = () => {
 
-    this.hubConnection.on('SendPesoToScreen', (pesoBalanza: string) => {
-      this.pesoBalanza.emit(pesoBalanza);
-    });
+
+   this.hubConnection.on('SendPesoToScreen',this.handlerPeso);
 
     this.hubConnection.on('RefreshListScreen', (refresh: boolean) => {
       this.refreshListado.emit(refresh);
@@ -95,7 +129,7 @@ export class BalanzaPesajeSignalrService {
 
 
 
-  //para refrescar el listado de pesajes 
+  //para refrescar el listado de pesajes
   //cuando en el formulario se registra un nuevo peso
   //para ese almacen
   public refrescarListadoPesajes(almacenID: number) {
@@ -106,17 +140,35 @@ export class BalanzaPesajeSignalrService {
 
   }
 
-  public getPesajeFromBalanza(port: number, ipBalanza: string) {
+  public getPesajeFromBalanza(port: number, ipBalanza: string)   {
     this.hubConnection.invoke("SendPesoToScreen", this.grupoBalanzaPesaje, port, ipBalanza).catch(err => {
+     // this.toaster.warning("Error conexion con balanza");
       return console.error(err);
     });
 
   }
 
 
+  public  async disconnectBalanza(port: number, ipBalanza: string)  {
+   if(!this.balanzaInitied){return;}
+    this.hubConnection.invoke("DisconnectBalanza",  this.grupoBalanzaPesaje, port, ipBalanza).then(
+       x =>{
+        this.toaster.success("Balanza desconectada", "Balanza")
+         this.balanzaInitied=false;
+         if(this.hubConnection?.state==signalR.HubConnectionState.Connected){
+          this.hubConnection.off('SendPesoToScreen'.toLowerCase(),this.handlerPeso)
+          this.hubConnection.stop();
+        }
+
+      }
+    ).catch(err => {
+      this.toaster.error("Error, no se pudo desconectar.", "Balanza")
+      return console.error(err);
+    });
+
+  }
   public JoinGroup(group: string) {
 
-    console.log(group)
 
     this.hubConnection.invoke("JoinGroup", group).then(
       x => console.log("Conectado al grupo")
@@ -144,6 +196,8 @@ export class BalanzaPesajeSignalrService {
     this.hubConnection.invoke("ExitGroup", grupoNombre).catch(err => {
       return console.error('ExitGroup error: ' + err);
     });
+
+
   }
 
 

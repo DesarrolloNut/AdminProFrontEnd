@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
+import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
@@ -27,31 +28,72 @@ export class CotizacionesListadoComponent implements OnInit {
   paginaSize: number = 10;
   paginaTotalRecords: number = 0;
   data: CotizacionListadoViewModel[] = [] //tu modelo
-
+  estadoERPID:any;
+  fecha= new Date()
+  vendedor:any;
+  
   cotizacionDetalles: CotizacionDetalleViewModel[];
   loadingCotizacionDetalle: boolean;
   estados: ComboBox[] = []
   loadingEstados: boolean;
   cotizacionSeleccionada: CotizacionListadoViewModel;
   loadingEstadoAutorizacionCotizacion: boolean = false;
+  loadingVendedores: boolean;
+  loadingEstadosERP: boolean;
+  vendedores: ComboBox[];
+  estadoERPs: ComboBox[];
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private modalService: NgbModal,
+    private authService: AuthenticationService,
     public permissionsService: NgxPermissionsService,
   ) { }
 
 
   ngOnInit(): void {
-    this.getEstados()
     this.getData()
+    this.getEstados()
+    this.getVendedores();
+    this.getEstadoERP();
   }
   getData() {
     this.Cargando = true;
+    let parametros: Parametro[] = [
+      { key: "Search", value: this.Search },
+  ]
 
-    let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
 
     this.httpService.GetAllWithPagination<CotizacionListadoViewModel>(DataApi.Cotizacion, "GetCotizacionListado", "ID", this.paginaNumeroActual,
+      this.paginaSize, false, parametros).subscribe(x => {
+
+        if (x.ok) {
+          this.data = x.records;
+          this.asignarPagination(x);
+          
+        } else {
+          this.toastService.error(x.errores[0]);
+          console.error(x.errores[0]);
+        }
+        this.Cargando = false;
+      }, error => {
+        console.error(error);
+        this.toastService.error("Error conexion al servidor");
+        this.Cargando = false;
+      });
+
+  }
+  getDataFiltrado() {
+    this.Cargando = true;
+    let parametros: Parametro[] = [
+      { key: "Search", value: this.Search },
+      { key: "fechaDocumento", value: this.fecha },
+      { key: "vendedorID", value: this.vendedor },
+      { key: "estadoERPID", value: this.estadoERPID }
+  ]
+  console.log(parametros)
+
+    this.httpService.GetAllWithPagination<CotizacionListadoViewModel>(DataApi.Cotizacion, "GetCotizacionListadoFiltrado", "ID", this.paginaNumeroActual,
       this.paginaSize, false, parametros).subscribe(x => {
 
         if (x.ok) {
@@ -86,11 +128,16 @@ export class CotizacionesListadoComponent implements OnInit {
   }
 
 
+  openModalMapaRelacion(modal: any): void {
+    this.modalService.open(modal, { size: 'xl', centered: true })
+  }
+
+
   openModal(content, cotizacion: CotizacionListadoViewModel) {
     this.cotizacionDetalles = [];
     this.getCotizacionDetalle(cotizacion.id);
     this.cotizacionSeleccionada = cotizacion;
-    this.modalService.open(content, { size: 'xl', });
+    this.modalService.open(content, { windowClass: "myCustomModalClass", });
   }
 
   openModalAutorizar(content, cotizacion: CotizacionListadoViewModel) {
@@ -109,6 +156,7 @@ export class CotizacionesListadoComponent implements OnInit {
           this.toastService.error(response.errores[0]);
         } else {
           this.cotizacionDetalles = response.records;
+          console.log(this.cotizacionDetalles)
         }
         this.loadingCotizacionDetalle = false;
       }, error => {
@@ -127,7 +175,7 @@ export class CotizacionesListadoComponent implements OnInit {
         } else {
           // this.cotizacionDetalles = response.records;
           this.modalService.dismissAll();
-          this.getData()
+          //this.getData()
         }
         this.loadingEstadoAutorizacionCotizacion = false;
       }, error => {
@@ -172,10 +220,77 @@ export class CotizacionesListadoComponent implements OnInit {
           this.toastService.success("Estado actualizado", "OK");
         }
       }, error => {
-        this.getData()
+        //this.getData()
         this.toastService.error("No se actualizar el estado", "Error conexion al servidor");
       });
 
+
+  }
+
+  onChangeFecha(fecha:any){
+    //this.getData();
+    //alert("Fecha change")
+    if(this.vendedor&& this.estadoERPID)
+    {
+      this.getDataFiltrado();
+    }
+  }
+  onChangeVendedor(vendedor:any)
+  {
+    this.getDataFiltrado();
+   
+  }
+  onChangeEstadoERP(estado:any)
+  {
+    this.getDataFiltrado();
+  
+  }
+  
+
+  getVendedores() {
+    
+    this.loadingVendedores = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetVendedoresCotizacion", null).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          if(response.records.length > 0)
+          {
+            this.vendedores = response.records;
+           this.vendedor=response.records[0].codigo;
+          
+           
+          }
+          
+        }
+        this.loadingVendedores = false;
+      }, error => {
+        this.loadingVendedores = false;
+        this.toastService.error("No se pudo obtener los vendedores", "Error conexion al servidor");
+      });
+  }
+
+  getEstadoERP() {
+    
+    this.loadingEstadosERP = true;
+    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+      "GetEstadosERP", null).subscribe(response => {
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          if(response.records.length > 0){
+            this.estadoERPs = response.records;
+            this.estadoERPID=(Number(response.records[0].codigo));
+          
+          }
+         
+        }
+        this.loadingEstadosERP = false;
+      }, error => {
+        this.loadingEstadosERP = false;
+        this.toastService.error("No se pudo obtener los Estados", "Error conexion al servidor");
+      });
   }
 
 

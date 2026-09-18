@@ -1,4 +1,4 @@
-<div class="container-fluid" [hidden]="Cargando">
+<!-- <div class="container-fluid" [hidden]="Cargando">
 
     <div class="row  pt-5  ">
 
@@ -159,13 +159,7 @@
                                 <div class="col-12" *ngIf="op.categoria == c.categoria ">
 
                                     <ng-template [ngIf]="op.tipoInput1=='color'">
-                                        <!-- <div *ngFor="let c of colores; let ii = index"
-                                            class="form-check form-check-inline border border-light p-2"
-                                            [ngStyle]="{'background': c.nombre}">
 
-                                            <input type="radio" [checked]="op.respuesta1 == c.codigo "
-                                                [(ngModel)]="op.respuesta1" name="{{i}}_radio" [value]="c.codigo">
-                                        </div> -->
 
                                         <span *ngFor="let c of colores; let ii = index">
                                             <i [ngStyle]="{'color': c.nombre}" [ngClass]="{'fa-check-square': op.respuesta1 == c.codigo,
@@ -181,11 +175,9 @@
                                         </label>
                                     </div>
                                     <div class="form-check form-check-inline" *ngIf="op.tipoInput2">
-                                        <!-- <input style="width: 70px !important" type="number" [(ngModel)]="op.respuesta2"
-                                            class="form-control" id="inputPassword2"> -->
+
                                         <span *ngIf="op.respuesta2 > 0">{{op.respuesta2}}</span>
                                         <span *ngIf="op.respuesta2 <= 0 ">0</span>
-                                        <!-- <label for="inlineRadio1" class="form-check-label">1</label> -->
                                     </div>
                                     <div class="form-check form-check-inline p-2" *ngIf="op.tipoInput2">
                                         <label for="inlineRadio112" class="form-check-label">
@@ -193,11 +185,9 @@
                                         </label>
                                     </div>
                                     <div class="form-check form-check-inline" *ngIf="op.tipoInput3">
-                                        <!-- <input style="width: 70px !important" type="number" [(ngModel)]="op.respuesta3"
-                                            class="form-control" id="inputPassword2"> -->
+
                                         <span *ngIf="op.respuesta3 > 0">{{op.respuesta3}}</span>
                                         <span *ngIf="op.respuesta3 <= 0 ">0</span>
-                                        <!-- <label for="inlineRadio1" class="form-check-label">1</label> -->
                                     </div>
                                     <div class="form-check form-check-inline p-2" *ngIf="op.tipoInput3">
                                         <label for="inlineRadio112" class="form-check-label">
@@ -215,9 +205,7 @@
                                                 Reparado
                                             </span>
                                         </label>
-                                        <!-- <input type="checkbox" class="form-check-input"
-                                            [(ngModel)]="op.multipuntoEstado" [attr.id]="'radioCheck' + i "
-                                            class="form-check-input"> -->
+
                                     </div>
 
                                 </div>
@@ -329,7 +317,6 @@
 
 
 
-<!--MODAL DE LAS FOTOS-->
 <div class="row">
     <ng-template #content let-modal>
         <div class="row">
@@ -346,4 +333,4 @@
             </div>
         </div>
     </ng-template>
-</div>
+</div> -->

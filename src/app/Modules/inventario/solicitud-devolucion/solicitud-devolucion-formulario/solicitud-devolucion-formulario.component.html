@@ -1,0 +1,225 @@
+<div class="row">
+    <div class="control-section">
+        <div id="control_wrapper">
+        </div>
+    </div>
+</div>
+
+<div class="row mb-2">
+    <div class="col">
+        <a class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</a>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 col-12">
+                        <h4 class="card-title">Solicitud de Devolución</h4>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-12 text-right">
+                    </div>
+                </div>
+                <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
+                <form class="form-row m-t-40" [formGroup]="Formulario" (keydown.enter)="$event.preventDefault()" (ngSubmit)="onSubmit()" #aForm>
+                    <div class="col-12 mb-2" *ngIf="usuario">
+                        <div class="row border border-light p-2">
+
+                            <div class="col-12">
+                                <h4 class="card-subtitle">
+                                    <span class="badge badge-info">Datos del Solicitante</span>
+                                </h4>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="nombre"><i class="fa fa-hashtag"></i> Código</label>
+                                <input [(ngModel)]="usuario.codigoReferencia" class="form-control" [readonly]="'true'"
+                                    type="text" [ngModelOptions]="{standalone: true}" name="nombre" id="nombre">
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                <label for="nombre"> <i class="fa fa-user"></i> Nombres</label>
+                                <input [(ngModel)]="usuario.nombres +' '+ usuario.apellidos" class="form-control"
+                                    [readonly]="'true'" type="text" [ngModelOptions]="{standalone: true}" name="nombre"
+                                    id="nombre">
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                <label for="nombre"> <i class="fa fa-id-card"></i> Doc.</label>
+                                <input [(ngModel)]="usuario.documento" class="form-control" [readonly]="'true'"
+                                    type="text" [ngModelOptions]="{standalone: true}" name="nombre" id="nombre">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                      
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="tipoSolicitudDevoluciones"
+                            [clearable]="false"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.tipoSolicitudDevolucionId.errors }"
+                            
+                            placeholder="Seleccione el tipo de devolución"
+                            notFoundText="No resultados" formControlName="tipoSolicitudDevolucionId">
+                        </ng-select>
+                        <div *ngIf="submitted && f.tipoSolicitudDevolucionId.errors" class="text-danger small">
+                            <div *ngIf="f.tipoSolicitudDevolucionId.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="row border border-light p-2">
+                            <div class="col-12">
+                                <h4 class="card-subtitle">
+                                    <span class="badge badge-info">Datos de la Factura</span>
+                                </h4>
+                            </div>
+                        
+                            <div class="form-group col-md-3">
+                                <label for="numeroFactura"> Código Factura</label>
+                                <input formControlName="numeroFactura" autocomplete="off" (blur)="getFacturaByID($event)" (keyup.enter)=" getFacturaByID($event)" class="form-control" 
+                                    type="text"  name="numeroFactura" id="numeroFactura">
+                            </div>
+
+                           <div class="form-group col-md-3">
+                                <label for="secuenciaFactura"> Secuencia Factura</label>
+                                <input  formControlName="secuenciaFactura" class="form-control" [readonly]="'true'"
+                                    type="text"  name="secuenciaFactura" id="secuenciaFactura">
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="ncf">NCF</label>
+                                <input  formControlName="ncf" class="form-control" [readonly]="'true'"
+                                    type="text"  name="ncf" id="ncf">
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="fechaCreacion"> Fecha Creación</label>
+                                <input   formControlName="fechaCreacion" class="form-control" [readonly]="'true'"
+                                    type="text"  name="fechaCreacion" id="fechaCreacion">
+                            </div>
+                        
+                            <div class="form-group col-md-3">
+                                <label for="codigoreferenciaCliente">Código Refencia Cliente</label>
+                                <input  formControlName="codigoreferenciaCliente" class="form-control" [readonly]="'true'"
+                                    type="text"  name="codigoreferenciaCliente" id="codigoreferenciaCliente">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="cliente"> Cliente</label>
+                                <input  formControlName="cliente" class="form-control" [readonly]="'true'"
+                                    type="text"  name="cliente" id="cliente">
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="totalNetoFactura"> Total Neto</label>
+                                <input  formControlName="totalNetoFactura" class="form-control" [readonly]="'true'"
+                                    type="text"  name="totalNetoFactura" id="totalNetoFactura">
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="row border border-light p-2">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+
+                        <table class="table table-hover mb-0 no-wrap v-middle">
+                            <thead>
+                                <tr>
+                                    <th scope="col"></th>
+                                    <th scope="col">Núm. Factura</th>
+                                    <th scope="col">Descripción</th> 
+                                    <th scope="col" >Cantidad </th>
+                                    <th scope="col">Precio</th>
+                                    <th scope="col">% Descuento</th>
+                                    <th scope="col">Descuento</th>
+                                    <th scope="col">Impuesto</th>
+                                    <th scope="col">Total Neto</th>
+                                   
+                                </tr>
+                            </thead>
+                           
+                            <tbody>
+                                <!-- <tr *ngFor="let item of confirmed | filter: searchText; let i  = index"> -->
+                                <tr *ngFor="let item of solicitudDevolucionDetalle let i=index">
+                                    <td>
+                                    <input class="form-check-input"  (change)="seleccionarFactura($event,i)" type="checkbox" id="predeterminado"
+                                    class="form-control"
+                                    [ngModelOptions]="{standalone: true}"
+                                    > 
+                                    </td>
+                                    <td>
+                                        {{item.id}}
+                                    </td>
+                                    <td>
+                                        {{item.descripcion}}
+                                    </td>
+                                    <td >
+                                        <div class="ml-3">
+                                            <input style="width: 100px;" type="text" class="form-control"
+                                            mask="separator"
+                                            (blur)="actualizarTotal($event,i)"
+                                            (keyup.enter)="actualizarTotal($event,i)"
+                                            thousandSeparator="," 
+                                            [disabled]="!item.destalleFacturaSelecionada"
+                                            [(ngModel)]="item.cantidad"
+                                            [ngModelOptions]="{standalone: true}"
+                                            [ngClass]="{'form-control border-danger p-0' : item.hayErrores }"
+                                            
+                                            >
+                                        </div>
+                                    </td>
+                                    <td>
+                                    
+                                     {{item.precio | number}} 
+                                    </td>
+                                    <td>
+                                        {{item.porcientoDescuento | number}} 
+                                    </td>
+                                    <td>
+                                        
+                                        {{item.totalDescuento | number}} 
+                                    </td>
+                                 
+                                    
+                                    <td>
+                                      
+                                       {{item.totalImpuesto | number}} 
+                                    </td>
+                                    <td>
+                                        {{item.totalNeto | number}} 
+                                     </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="form-group text-right col-md-12">
+                        <hr />
+                   
+                     <h3  class="font-weight-bold ">
+                        Total:{{totalDelaFactura | number}}
+                      </h3>
+                     
+                    </div>
+
+                    <div class="form-group text-right col-md-12">
+                        <hr />
+
+                        <a class="btn btn-light m-1" routerLink="../" type="button">
+                            <i class="fas fa-times"></i> Cancelar
+                        </a>
+
+                        <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+                            <i class="fas fa-check"></i> Guardar
+                        </button>
+
+                        <!-- boton cargando -->
+                        <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span> Guardando
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>  
+

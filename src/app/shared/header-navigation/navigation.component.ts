@@ -8,6 +8,7 @@ import {
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { TokenModel } from 'src/app/core/authentication/model/TokenModel';
 import { AuthenticationService } from '../../core/authentication/service/authentication.service';
+import { ConnectionBalanzaComponent } from '../connection-balanza/connection-balanza.component';
 declare var $: any;
 
 @Component({
@@ -27,7 +28,7 @@ export class NavigationComponent implements AfterViewInit, OnInit {
 
 
   ngOnInit(): void {
-    this.usuario = this.autenticationService.tokenDecoded
+    this.usuario = this.autenticationService.tokenDecoded;
   }
 
 
@@ -40,7 +41,9 @@ export class NavigationComponent implements AfterViewInit, OnInit {
   }
 
 
-
+ openModalConnectionBalanza(){
+  this.modalService.open(ConnectionBalanzaComponent)
+ }
 
 
   // This is for Notifications
@@ -108,4 +111,5 @@ export class NavigationComponent implements AfterViewInit, OnInit {
   ];
 
   ngAfterViewInit() { }
+
 }

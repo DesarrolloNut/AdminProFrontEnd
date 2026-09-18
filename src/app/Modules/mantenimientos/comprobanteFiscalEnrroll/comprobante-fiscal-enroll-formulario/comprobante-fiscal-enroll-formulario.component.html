@@ -1,0 +1,100 @@
+<div class="row">
+    <div class="control-section">
+        <div id="control_wrapper">
+        </div>
+    </div>
+</div>
+
+<div class="row mb-2">
+    <div class="col">
+        <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 col-12">
+                        <h4 class="card-title">Formulario de almacenes</h4>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-12 text-right">
+                    </div>
+                </div>
+                <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
+                <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
+
+                    <div class="form-group col-md-6">
+                        <label for="example-email">Tipo Comprobante</label>
+                        <ng-select [items]="tipoComprobantes" bindLabel="nombre" bindValue="codigo" [loading]="loadingUsuarios"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.tipoComprobanteId.errors }"
+                            notFoundText="No resultados" formControlName="tipoComprobanteId">
+                        </ng-select>
+                        <div *ngIf="submitted && f.tipoComprobanteId.errors"
+                            class="text-danger small animated animated--fade-in">
+                            <div *ngIf="f.tipoComprobanteId.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                 
+
+                    <div class="form-group col-md-6">
+                        <label for="tipoAsignacionComprobanteId">Tipo Asignación Comprobante </label>
+                          <select    class="form-control" formControlName="tipoAsignacionComprobanteId" placeholder="tipoAsignacionComprobanteId"
+                          (change)="getTipoAsignacionComprobanteSeleccionado($event)"
+                          >
+                            <option [value]="ald.codigo+'|'+ ald.nombre" *ngFor="let ald  of tipoAsignacionComprobante">{{ald.nombre}}</option>
+                          </select>
+                          <div style="color:red;" *ngIf=" submitted && f.tipoAsignacionComprobanteId.errors ">Elige el Almacén</div>
+                    </div>
+                 
+
+                    <div class="form-group col-md-6">
+                        <label for="example-email">Valor</label>
+                        <ng-select [items]="valores"  bindLabel="nombre" bindValue="codigo"
+                            [loading]="loadingNivelAutorizacionCategorias" [clearable]="false"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.valorId.errors }"
+                            notFoundText="No resultados" formControlName="valorId">
+                           
+                        </ng-select>
+                        <div *ngIf="submitted && f.valorId.errors"
+                            class="text-danger small animated animated--fade-in">
+                            <div *ngIf="f.valorId.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="nombre"> Referencia</label>
+                        <input formControlName="codigoReferencia" type="text" autocomplete="off"  name="codigoReferencia" id="codigoReferencia"
+                            [ngClass]="{'is-invalid' : submitted && f.codigoReferencia.errors,  'form-control':true  }" placeholder="Código Referencia">
+                        <div class="invalid-feedback" *ngIf="submitted && f.codigoReferencia.errors">
+                            <div *ngIf="f.codigoReferencia.errors.required">El campo es obligatorio</div>
+                        </div>
+
+                    </div>
+
+                  
+
+                    <div class="form-group text-right col-md-12">
+                        <hr />
+
+                        <button class="btn btn-light m-1" routerLink="../" type="button">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+
+                        <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+                            <i class="fas fa-check"></i> Guardar
+                        </button>
+
+                        <!-- boton cargando -->
+                        <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span> Guardando
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

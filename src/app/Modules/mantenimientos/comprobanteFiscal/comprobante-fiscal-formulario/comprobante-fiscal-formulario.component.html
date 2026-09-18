@@ -28,7 +28,7 @@
 
                     <div class="form-group col-md-4">
                         <label for="serie"> Serie</label>
-                        <input formControlName="serie" type="text" mask="AAA"
+                        <input formControlName="serie" [(ngModel)]="_serie"  [attr.disabled]="true" type="text" mask="AAAA"
                             [ngClass]="{'is-invalid' : submitted && f.serie.errors,  'form-control':true }">
                         <div class="invalid-feedback" *ngIf="submitted && f.serie.errors">
                             <div *ngIf="f.serie.errors.required">El campo es obligatorio</div>
@@ -39,37 +39,36 @@
                         <div class="row">
                             <div class="form-group col-md-4  ">
                                 <label for="secuenciaDesde"> Secuencia Desde</label>
-                                <input formControlName="secuenciaDesde" type="text" mask="00000000"
+                                <input formControlName="secuenciaDesde" type="text" mask="0000000" [attr.disabled]="hayDetalle"
                                     [ngClass]="{'is-invalid' : submitted && f.secuenciaDesde.errors,  'form-control':true }">
                                 <div class="invalid-feedback" *ngIf="submitted && f.secuenciaDesde.errors">
                                     <div *ngIf="f.secuenciaDesde.errors.required">El campo es obligatorio</div>
-                                    <div *ngIf="f.secuenciaDesde.errors.minlength">Mínimo 8 caracteres </div>
+                                    <div *ngIf="f.secuenciaDesde.errors.minlength">Mínimo 7 caracteres </div>
                                 </div>
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="secuenciaHasta"> Secuencia Hasta</label>
-                                <input formControlName="secuenciaHasta" type="text" mask="00000000"
+                                <input formControlName="secuenciaHasta" type="text" mask="0000000"
                                     [ngClass]="{'is-invalid' : submitted && f.secuenciaHasta.errors,  'form-control':true }">
                                 <div class="invalid-feedback" *ngIf="submitted && f.secuenciaHasta.errors">
                                     <div *ngIf="f.secuenciaHasta.errors.required">El campo es obligatorio</div>
-                                    <div *ngIf="f.secuenciaHasta.errors.minlength">Mínimo 8 caracteres </div>
+                                    <div *ngIf="f.secuenciaHasta.errors.minlength">Mínimo 7 caracteres </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
+             
+
                     <div class="form-group col-md-4">
-                        <label for="example-email">Tipo</label>
-                        <ng-select [items]="tipoComprobantes" bindLabel="nombre" bindValue="codigo"
-                            [loading]="loadingTipoComprobantes"
-                            [ngClass]="{'form-control border-danger p-0' : submitted && f.tipoComprobanteID.errors }"
-                            notFoundText="No resultados" formControlName="tipoComprobanteID">
-                        </ng-select>
-                        <div *ngIf="submitted && f.tipoComprobanteID.errors"
-                            class="text-danger small animated animated--fade-in">
-                            <div *ngIf="f.tipoComprobanteID.errors.required  ">El campo es obligatorio</div>
-                        </div>
-                    </div>
+                      <label for="tipoComprobanteID">Tipo </label>
+                        <select    class="form-control" formControlName="tipoComprobanteID" [attr.disabled]="hayDetalle" placeholder="tipoComprobanteID"
+                        (change)="getSerie($event)"
+                        >
+                          <option [value]="tc.codigo" *ngFor="let tc  of tipoComprobantes">{{tc.nombre}}</option>
+                        </select>
+                        <div style="color:red;" *ngIf=" submitted && f.tipoComprobanteID.errors ">Elige el Almacén</div>
+                  </div>
 
                     <div class="form-group col-md-4">
                         <label>Fecha de vencimiento</label>

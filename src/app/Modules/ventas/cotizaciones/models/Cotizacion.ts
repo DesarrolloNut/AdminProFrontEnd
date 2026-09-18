@@ -3,11 +3,13 @@ export class Cotizacion {
         this.id = 0;
         this.sucursalId = 0;
         this.condicionPagoId = 0;
+        this.almacenId=null;
         this.codigoReferencia = "";
-        this.clienteId = 0;
+        this.clienteId = null;
+        this.direccion="";
         this.fechaCreacion = new Date();
         this.fechaEntrega = new Date();
-        this.vendedorId = 0;
+        this.vendedorId = null;
         this.plazoId = 0;
         this.costoTotal = 0;
         this.subtotal = 0;
@@ -20,13 +22,18 @@ export class Cotizacion {
         this.usuarioId = 0;
         this.listaPrecioID = 0;
         this.estadoAutorizacionID = 0;
+        this.clientePlazo = 0;
+        this.companiaId=0;
+        this.estadoERPID = 1;
     }
 
     id = 0;
     sucursalId = 0;
     condicionPagoId = 0;
+    almacenId:number;
     codigoReferencia: string;
     clienteId = 0;
+    direccion:string;
     fechaCreacion: Date;
     fechaEntrega: Date;
     vendedorId = 0;
@@ -42,7 +49,9 @@ export class Cotizacion {
     usuarioId = 0;
     listaPrecioID = 0;
     estadoAutorizacionID = 0;
-    estadoERPID = 0;
+    estadoERPID = 1;
     estadoDespachoID = 0;
+    clientePlazo = 0;
+    companiaId:number;
 
 }

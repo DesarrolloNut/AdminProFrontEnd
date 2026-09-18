@@ -76,8 +76,8 @@ export class CotizacionesSeguimientoComponent implements OnInit, OnDestroy {
 
   configRangeDates() {
     var date = new Date();
-    var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
-    var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    var firstDay = new Date();
+    var lastDay = new Date();
 
     this.fechaDesde = firstDay;
     this.fechaHasta = lastDay;

@@ -21,6 +21,10 @@ import {NumberPickerModule} from 'ng-number-picker';
 import { PedidosEmpleadoProductosComponent } from './pedidos-empleado/pedidos-empleado-productos/pedidos-empleado-productos.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { PedidosEmpleadoCarritoComponent } from './pedidos-empleado/pedidos-empleado-carrito/pedidos-empleado-carrito.component';
+import { AutorizacionFacturaComponent } from './facturas/factura-cotizacion/autorizacion-factura.component';
+import { FacturaFormularioComponent } from './facturas/factura-formulario/factura-formulario.component';
+import { FacturaListadoComponent } from './facturas/factura-listado/factura-listado.component';
+import { FacturaSeguimientoComponent } from './facturas/factura-seguimiento/factura-seguimiento.component';
 
 @NgModule({
   declarations:
@@ -37,7 +41,10 @@ import { PedidosEmpleadoCarritoComponent } from './pedidos-empleado/pedidos-empl
     ReporteprontopagoComponent,
 
   AutorizacionCotizacionComponent,
-
+  FacturaSeguimientoComponent,
+  FacturaListadoComponent,
+  FacturaFormularioComponent,
+  AutorizacionFacturaComponent,
   CotizacionesSeguimientoComponent],
   imports: [
     CommonModule,

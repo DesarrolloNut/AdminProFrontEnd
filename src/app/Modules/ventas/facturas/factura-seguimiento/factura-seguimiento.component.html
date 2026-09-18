@@ -1,0 +1,470 @@
+<div class="row">
+    <div class="col-12">
+
+        <div class="d-none d-md-block">
+            <div class="row">
+
+                <!-- COTIZADO -->
+                <div class="col-lg-2 col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h3 class="">
+                                        <i [hidden]="!loadingSeguimientoCount" class="fa fa-spin fa-spinner text-light">
+                                        </i>
+                                        <span [hidden]="loadingSeguimientoCount">
+                                            {{ (seguimientoCount?.cotizado / seguimientoCountTotal) | percent}}
+                                        </span>
+                                    </h3>
+                                    <h6 class="card-subtitle text-dark">Cotizado ({{seguimientoCount?.cotizado |number
+                                        }})
+                                    </h6>
+                                </div>
+                                <div class="col-12">
+                                    <div class="progress">
+                                        <div role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"
+                                            class="progress-bar bg-dark" style="height: 6px;"
+                                            [ngStyle]="{'width':(seguimientoCount?.cotizado / seguimientoCountTotal) | percent}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PEDIDO -->
+                <div class="col-lg-2 col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h3 class="">
+                                        <i [hidden]="!loadingSeguimientoCount" class="fa fa-spin fa-spinner text-light">
+                                        </i>
+                                        <span [hidden]="loadingSeguimientoCount">
+                                            {{ (seguimientoCount?.pedido / seguimientoCountTotal) | percent}}
+                                        </span>
+                                    </h3>
+                                    <h6 class="card-subtitle text-primary">Pedido ({{seguimientoCount?.pedido |number
+                                        }})
+                                    </h6>
+                                </div>
+                                <div class="col-12">
+                                    <div class="progress">
+                                        <div role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"
+                                            class="progress-bar bg-primary" style="height: 6px;"
+                                            [ngStyle]="{'width':(seguimientoCount?.pedido / seguimientoCountTotal) | percent}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FINANZAS -->
+                <div class="col-lg-2 col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h3 class="">
+                                        <i [hidden]="!loadingSeguimientoCount" class="fa fa-spin fa-spinner text-light">
+                                        </i>
+                                        <span [hidden]="loadingSeguimientoCount">
+                                            {{ (seguimientoCount?.pendienteFinanzas / seguimientoCountTotal) | percent}}
+                                        </span>
+                                    </h3>
+                                    <h6 class="card-subtitle text-warning">Finanzas
+                                        ({{seguimientoCount?.pendienteFinanzas |number
+                                        }})
+                                    </h6>
+                                </div>
+                                <div class="col-12">
+                                    <div class="progress">
+                                        <div role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"
+                                            class="progress-bar bg-warning" style="height: 6px;"
+                                            [ngStyle]="{'width':(seguimientoCount?.pendienteFinanzas / seguimientoCountTotal) | percent}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FACTURADO -->
+                <div class="col-lg-2 col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h3 class="">
+                                        <i [hidden]="!loadingSeguimientoCount" class="fa fa-spin fa-spinner text-light">
+                                        </i>
+                                        <span [hidden]="loadingSeguimientoCount">
+                                            {{ (seguimientoCount?.facturado / seguimientoCountTotal) | percent}}
+                                        </span>
+                                    </h3>
+                                    <h6 class="card-subtitle text-info">Facturado
+                                        ({{seguimientoCount?.facturado |number
+                                        }})
+                                    </h6>
+                                </div>
+                                <div class="col-12">
+                                    <div class="progress">
+                                        <div role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"
+                                            class="progress-bar bg-info" style="height: 6px;"
+                                            [ngStyle]="{'width':(seguimientoCount?.facturado / seguimientoCountTotal) | percent}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DESPACHO -->
+                <div class="col-lg-2 col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h3 class="">
+                                        <i [hidden]="!loadingSeguimientoCount" class="fa fa-spin fa-spinner text-light">
+                                        </i>
+                                        <span [hidden]="loadingSeguimientoCount">
+                                            {{ (seguimientoCount?.pendienteDespacho / seguimientoCountTotal) | percent}}
+                                        </span>
+                                    </h3>
+                                    <h6 class="card-subtitle text-warning">Despacho
+                                        ({{seguimientoCount?.pendienteDespacho |number
+                                        }})
+                                    </h6>
+                                </div>
+                                <div class="col-12">
+                                    <div class="progress">
+                                        <div role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"
+                                            class="progress-bar bg-warning" style="height: 6px;"
+                                            [ngStyle]="{'width':(seguimientoCount?.pendienteDespacho / seguimientoCountTotal) | percent}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- ENTREGADO -->
+                <div class="col-lg-2 col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h3 class="">
+                                        <i [hidden]="!loadingSeguimientoCount" class="fa fa-spin fa-spinner text-light">
+                                        </i>
+                                        <span [hidden]="loadingSeguimientoCount">
+                                            {{ (seguimientoCount?.entregado / seguimientoCountTotal) | percent}}
+                                        </span>
+                                    </h3>
+                                    <h6 class="card-subtitle text-success">Entregado
+                                        ({{seguimientoCount?.entregado |number
+                                        }})
+                                    </h6>
+                                </div>
+                                <div class="col-12">
+                                    <div class="progress">
+                                        <div role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"
+                                            class="progress-bar bg-success" style="height: 6px;"
+                                            [ngStyle]="{'width':(seguimientoCount?.entregado / seguimientoCountTotal) | percent}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+
+
+        <div class="card">
+            <div class="card-body">
+
+
+                <div class="row mb-2">
+
+                    <div class="col-lg-2 col-md-6">
+                        <label> Desde</label>
+                        <ejs-datepicker [showClearButton]="false" (change)="onChangeFechaDesdeFiltro($event)"
+                            [max]="fechaHasta" [(ngModel)]="fechaDesde" [format]="'dd-MM-yyyy'">
+                        </ejs-datepicker>
+                    </div>
+
+                    <div class="col-lg-2 col-md-6">
+                        <label> Hasta</label>
+                        <ejs-datepicker [showClearButton]="false" (change)="onChangeFechaHastaFiltro($event)"
+                            [(ngModel)]="fechaHasta" [format]="'dd-MM-yyyy'" [min]="fechaDesde">
+                        </ejs-datepicker>
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 ">
+                        <label>Estado</label>
+                        <ng-select [items]="estados" bindLabel="nombre" bindValue="codigo" [searchable]="false"
+                            (change)="getData()" [(ngModel)]="estadoID" [clearable]="false">
+
+                            <ng-template ng-label-tmp let-item="item">
+                                <span>
+                                    <i class="fa fa-circle" [ngStyle]="{'color': item.grupo}"></i> {{item.nombre}}
+                                </span>
+                            </ng-template>
+                            <ng-template ng-option-tmp let-item="item" let-index="index">
+                                <span>
+                                    <i class="fa fa-circle" [ngStyle]="{'color': item.grupo}"></i> {{item.nombre}}
+                                </span>
+
+                                <!-- <span class="badge badge-light badge-pill"> {{10}} </span> -->
+
+                            </ng-template>
+                        </ng-select>
+
+                    </div>
+                    <div class="col-lg-4 col-md-6 ">
+                        <label>Vendedor</label>
+                        <ng-select [items]="vendedores" bindLabel="nombre" bindValue="codigo" [searchable]="false"
+                            (change)="onVendedorComboChange()" [(ngModel)]="vendedorID" [clearable]="true">
+
+                            <ng-template ng-label-tmp let-item="item">
+                                <span>
+                                    <i class="fa fa-user text-muted"></i>
+                                    {{item.nombre}}
+                                </span>
+                            </ng-template>
+                            <ng-template ng-option-tmp let-item="item" let-index="index">
+                                <span>
+                                    <i class="fa fa-user text-muted"></i>
+                                    {{item.nombre}}
+                                </span>
+                            </ng-template>
+                        </ng-select>
+
+                    </div>
+
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 no-wrap v-middle">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>#</th>
+                                <th>ERP</th>
+                                <th>Cliente</th>
+                                <!-- <th>SubTotal</th> -->
+                                <th>Desc.</th>
+                                <th>Imp.</th>
+                                <th>Total Neto</th>
+                                <th>Fecha</th>
+                                <!-- <th>Cotizador</th> -->
+                                <!-- <th>Estado</th> -->
+                            </tr>
+                        </thead>
+                        <tbody [hidden]="Cargando">
+
+                            <tr *ngFor="let item of data; let i = index">
+                                <td>
+                                    <button class="btn btn-sm btn-light"
+                                        (click)="openModal(modalDetalleCotizacion,item)">
+                                        <i class="fa fa-sm fa-eye"></i>
+                                    </button>
+
+                                    <!-- <button class="btn btn-sm btn-info m-1" [routerLink]="[item.id]">
+                                        <i class="fa fa-sm fa-edit"></i>
+                                    </button> -->
+
+                                </td>
+                                <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
+                                <td><span class="badge badge-light text-info ">{{item.codigoReferencia}}</span></td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <!-- <i class="fa fa-user-circle fa-3x text-light"></i> -->
+                                        <div class="ml-3">
+                                            <p class="font-bold mb-0">{{item.cliente | titlecase }}</p>
+                                            <small class="text-info"> <i class="fa fa-id-card"></i>
+                                                {{item.clienteDocumento | uppercase }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <!-- <td>
+                                    <span> ${{item.subTotal | number:'1.2-2'}}</span>
+                                </td> -->
+                                <td>
+                                    <span> ${{item.descuentoTotal | number:'1.2-2'}}</span>
+                                </td>
+                                <td>
+                                    <span> ${{item.impuestoTotal | number:'1.2-2'}}</span>
+                                </td>
+                                <td>
+                                    <span class="font-weight-bold"> ${{item.totalNeto | number:'1.2-2'}}</span>
+                                </td>
+                                <td>
+                                    <span class="text-muted"><i class="far fa-calendar"></i>
+                                        {{item.fechaCreacion | date:'dd/MM/yy' }}
+                                    </span>
+                                </td>
+                               
+                                <!-- <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="ml-3">
+                                            <p class="mb-0">{{item.cotizador | titlecase }}</p>
+                                            <small class="text-info"> <i class="fa fa-map-marker"></i>
+                                                Sucursal: {{item.sucursal | uppercase }}</small>
+                                        </div>
+                                    </div>
+                                </td> -->
+                                <!-- <td>
+                                    <ng-select style="width: 120px;" [items]="estados" bindLabel="nombre"
+                                        [clearable]="false" bindValue="codigo" [loading]="loadingEstados"
+                                        [(ngModel)]="item.estadoID" [ngModelOptions]="{standalone: true}"
+                                        (change)="onChangeEstado(item,i)" notFoundText="No resultados">
+                                    </ng-select>
+                                </td> -->
+
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+
+
+                <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+
+                <div class="row ">
+                    <div class="col-md-8 col-xs-12 ">
+                        <ngb-pagination [collectionSize]="paginaTotalRecords" [(page)]="paginaNumeroActual"
+                            [pageSize]="paginaSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="getData()">
+                        </ngb-pagination>
+                    </div>
+
+                    <div class="col-md-4 text-right d-none d-md-block  ">
+                        <select class="form-control d-block" name="paginaSize" [(ngModel)]="paginaSize"
+                            (change)="getData()">
+                            <option [ngValue]="5">5 registro por pagina</option>
+                            <option [ngValue]="10">10 registro por pagina</option>
+                            <option [ngValue]="15">15 registro por pagina</option>
+                        </select>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<ng-template #modalDetalleCotizacion let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Detalle de cotización</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+
+            <div class="col-12">
+                <h5 class="text-info"> <i class="fa fa-user"></i> Cliente: {{cotizacionSeleccionada.cliente}}</h5>
+                <h5> <i class="fa fa-id-card"></i> Documento: {{cotizacionSeleccionada.clienteDocumento}}</h5>
+                <h5> <i class="fa fa-calendar"></i> Fecha: {{cotizacionSeleccionada.fechaCreacion |
+                    date:'dd/MM/yy'}}</h5>
+                <!-- <hr>
+                <h5> <i class="fa fa-user-circle"></i> Cotizador: {{cotizacionSeleccionada.cotizador}}</h5>
+                <h5> <i class="fa fa-map-marker"></i> Sucursal: {{cotizacionSeleccionada.sucursal}}</h5>
+                <h5> <i class="fa fa-user-circle"></i>Vendedor: {{cotizacionSeleccionada.vendedor}}</h5> -->
+            </div>
+
+            <div class="col-12" [hidden]="loadingCotizacionDetalle">
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover mb-0 no-wrap v-middle">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Artículo</th>
+                                <th>Cantidad</th>
+                                <th>Precio</th>
+                                <th>% Desc</th>
+                                <!-- <th>SubTotal</th> -->
+                                <th>Desc</th>
+                                <th>Impuesto</th>
+                                <th>Total Neto</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr *ngFor="let item of cotizacionDetalles">
+                                <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
+                                <td>
+                                    <span> {{item.articulo}}</span>
+                                </td>
+                                <td>
+                                    <span> {{item.cantidad}}</span>
+                                </td>
+                                <td>
+                                    <span> ${{item.precio | number:'1.2-2'}} </span>
+                                </td>
+                                <td>
+                                    <span> %{{item.porcientoDescuento | number:'1.2-2'}}</span>
+                                </td>
+                                <!-- <td>
+                                    <span> ${{item.subtotal | number:'1.2-2'}} </span>
+                                </td> -->
+                                <td>
+                                    <span> ${{item.totalDescuento | number:'1.2-2'}} </span>
+                                </td>
+                                <td>
+                                    <span> ${{item.totalImpuesto | number:'1.2-2'}} </span>
+                                </td>
+                                <td>
+                                    <span class="font-weight-bold"> ${{item.totalNeto | number:'1.2-2'}} </span>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+
+            </div>
+
+            <div class="col-12 text-right">
+                <hr>
+                <!-- <h4>Subtotal: $ {{cotizacionSeleccionada.subTotal | number:'1.2-2' }}</h4> -->
+                <h4>Descuento: $ {{cotizacionSeleccionada.descuentoTotal | number:'1.2-2' }}</h4>
+                <h4>Impuesto: $ {{cotizacionSeleccionada.impuestoTotal | number:'1.2-2' }}</h4>
+                <h4 class="font-weight-bold">Total Neto: $ {{cotizacionSeleccionada.totalNeto | number:'1.2-2' }}</h4>
+            </div>
+
+            <div class="col-12">
+                <app-loading-listado [hidden]="!loadingCotizacionDetalle"></app-loading-listado>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light m-1" (click)="modal.close('Close click')">Cerrar</button>
+    </div>
+</ng-template>

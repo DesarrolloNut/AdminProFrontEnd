@@ -2,18 +2,19 @@
   <div class="row" >
     <div class="col-md-12 pb-1" >
      <div class="input-group mt-1">
-       <div class="input-group-prepend">
-         <span class="input-group-text" id="basic-addon1">
-           <i class="fa fa-search" aria-hidden="true"></i> Buscar
-         </span>
-       </div>
+
        <input style="height: 50px;" type="text"
+       id="search-bar"
        [(ngModel)]="filter"
-        class="form-control"
-        placeholder="ARTICULOS/PRODUCTOS"
+        class="form-control border-right-0"
+        placeholder="¿Con que puedo ayudarte hoy?"
         aria-label="Productos"
         aria-describedby="basic-addon1">
-
+        <div class="input-group-prepend">
+          <span class="input-group-text bg-white border-left-0" style="font-size: 25px;" id="basic-addon1">
+            <i class="fa fa-search" aria-hidden="true"></i>
+          </span>
+        </div>
       </div>
      </div>
 
@@ -25,7 +26,7 @@
         <div class="row">
           <div class="col-xl-2  col-lg-3 col-md-4 col-sm-6 col-xs-12 container_product"  (click)="openModalDetalle(DetalleArticulo,p)" *ngFor="let p of (articulos)  | filter:filter">
 
-            <div class="count_in_cart position-absolute" *ngIf="p.cant>0"
+            <div class="count_in_cart position-absolute" *ngIf="p.cant>0 && p.cartAdded"
              style="z-index: 50;    right: 0px;
             top: -10px;">
               <h4 class="heading text-white" style="    border-radius: 50%;
@@ -38,7 +39,7 @@
               </h4>
             </div>
 
-            <div class="card product  " [style.background-image]="getSantizeUrl(p.imagenUrl)"   [ngClass]="{'product_added_venta':p.cant>0}" >
+            <div class="card product  " [style.background-image]="getSantizeUrl(p.imagenUrl)"   [ngClass]="{'product_added_venta':p.cant>0 && p.cartAdded}" >
 
                 <div class="mt-5 "> </div>
 
@@ -74,7 +75,7 @@
   <div class="modal-body">
     <div class="card">
       <div class="card-body">
-        <h3 class="card-title">{{artDetalleSeleccionado.nombre}}</h3>
+        <h3 class="card-title font-weight-bold">{{artDetalleSeleccionado.nombre}}</h3>
         <h6 class="card-subtitle font-weight-bold">CODIGO #{{artDetalleSeleccionado.codigoReferencia}}</h6>
         <div class="row">
           <div class="col-lg-6 col-md-3 col-sm-6">
@@ -96,21 +97,36 @@
               sabor auténtico.
             </p>
             <span class="badge badge-pill badge-info">{{artDetalleSeleccionado.unidadMedida}}</span>
-            <div class="product_counter mt-3 " >
-              <button type="button" (click)="AddOrRemoveCantArticulo(artDetalleSeleccionado,-1)" class="btn btn-sm btn-outline-secondary" >
-                <i class="fa fa-minus" aria-hidden="true"></i>
-              </button>
-              <h3  class="mx-2" style="display:inline-block;">{{artDetalleSeleccionado.cant}}</h3>
-              <button type="button" (click)="AddOrRemoveCantArticulo(artDetalleSeleccionado,1)" class="btn btn-sm btn-outline-secondary">
-                <i class="fa fa-plus" aria-hidden="true"></i>
-              </button>
+            <div class="product_counter mt-3  "  style="width: 40%;">
+              <ng-number-picker
+              [(value)]="artDetalleSeleccionado.cant"
+              [min]="'1'"
+              [max]="'300'"
+              [step]="'1'"
+              [pickStartAfter]="'500'"
+              [pickTimer]="'100'"
+              [buttonsOrientation]="'h'"
+              [size]="'sm'"
+              [showDownButton]="true"
+              [showUpButton]="true"
+              [inputReadOnly]="false"
+              [mouseWheel]="true"
+              [arrowKeys]="true"
+              [customClass]="{
+                container: '',
+                up: '',
+                down: '',
+                prefix: '',
+                postfix: ''
+              }"
+            ></ng-number-picker>
             <!-- <span class="text-danger ml-2">Disponible 20</span> -->
 
             </div>
             <h2 class="mt-4" style="    color: #44974f;">
                 {{artDetalleSeleccionado.precioActual | currency}}
             </h2>
-            <button class="btn btn-dark me-1 mr-2" data-bs-toggle="tooltip" title=""
+            <button class="btn btn-dark me-1 mr-2"  data-bs-toggle="tooltip" title=""
               data-original-title="Add to cart" (click)="addToCart(artDetalleSeleccionado)" data-bs-original-title="">
               <i class="fa fa-shopping-cart" aria-hidden="true"></i>
               Añadir al carrito

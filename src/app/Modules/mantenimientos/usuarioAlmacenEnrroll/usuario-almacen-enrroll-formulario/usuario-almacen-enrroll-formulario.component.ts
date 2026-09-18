@@ -2,10 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { UsuarioAlmacenEnrroll } from '../models/UsuarioAlmacenEnrroll';
+import { Parametro } from 'src/app/core/http/model/Parametro';
 
 @Component({
   selector: 'app-usuario-almacen-enrroll-formulario',
@@ -28,11 +30,14 @@ export class UsuarioAlmacenEnrrollFormularioComponent implements OnInit {
   almacenes: ComboBox[];
   loadingNivelAutorizacionCategorias: boolean;
   NivelAutorizacionCategorias: ComboBox[];
-
+  moduloSeleccionado:number;
+  mostrarAcceso: string="";
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
     private httpService: BackendService,
+    private auth:AuthenticationService,
+    private authService: AuthenticationService,
     private router: Router,
     private formBuilder: FormBuilder) { }
 
@@ -41,6 +46,7 @@ export class UsuarioAlmacenEnrrollFormularioComponent implements OnInit {
     let id = Number(this.route.snapshot.paramMap.get('id'));
 
     if (id > 0) {
+      this.GetNivelAutorizacionModuloComboBox()
       this.getItem(id);
       this.actualizando = true;
     }
@@ -60,6 +66,10 @@ export class UsuarioAlmacenEnrrollFormularioComponent implements OnInit {
       almacenID: [null, Validators.required],
       moduloID: [null, Validators.required],
       predeterminado: [false],
+      validarInventario:[true],
+      enviar:[true],
+      recibir:[true],
+      companiaID: [Number(this.auth.tokenDecoded.primarygroupsid),],
     });
   }
 
@@ -77,6 +87,8 @@ export class UsuarioAlmacenEnrrollFormularioComponent implements OnInit {
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0]
             this.Formulario.setValue(record);
+            this.mostrarAcceso= this.NivelAutorizacionCategorias.find(X=>X.codigo==record.moduloID).nombre;
+          
           } else {
             this.toastService.warning("Enrroll no encontrado");
             this.router.navigateByUrl('/mantenimientos/usuario-almacen-enrroll');
@@ -89,7 +101,10 @@ export class UsuarioAlmacenEnrrollFormularioComponent implements OnInit {
       });
   }
 
-
+  changeFn(moduloID){
+    
+    this.mostrarAcceso= this.NivelAutorizacionCategorias.find(X=>X.codigo==moduloID).nombre;
+  }
   onSubmit() {
 
     this.submitted = true;
@@ -97,6 +112,7 @@ export class UsuarioAlmacenEnrrollFormularioComponent implements OnInit {
       return;
     }
     this.guardar();
+    
   }
 
 
@@ -147,14 +163,16 @@ export class UsuarioAlmacenEnrrollFormularioComponent implements OnInit {
   }
 
   GetNivelAutorizacionModuloComboBox() {
+    let param: Parametro[] = [{ key: "companiaId", value: this.authService.tokenDecoded.primarygroupsid }]
     this.loadingNivelAutorizacionCategorias = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetNivelAutorizacionModuloComboBox", null).subscribe(response => {
+      "GetPermisosAlmacen", param).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
           this.NivelAutorizacionCategorias = response.records;
+
         }
         this.loadingNivelAutorizacionCategorias = false;
       }, error => {

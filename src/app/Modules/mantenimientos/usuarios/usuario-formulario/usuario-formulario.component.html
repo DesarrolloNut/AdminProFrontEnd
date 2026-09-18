@@ -64,10 +64,7 @@
 
                     </div>
                 </div>
-                <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
                 <form class="form-row m-t-40" [formGroup]="Formulario" (ngSubmit)="onSubmit()">
-
-
 
                     <div class="form-group col-md-6">
                         <label for="userName"> <i class="fa fa-user-circle"></i> Usuario</label>
@@ -99,16 +96,6 @@
                         </div>
                     </div>
 
-                    <div class="form-group col-md-6" *ngIf="MostrarRutas">
-                        <label for="inputEmail4">Rutas</label>
-                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="rutas" [loading]="loadingRutas"
-                            [ngClass]="{'form-control border-danger p-0' : submitted && f.rutaId.errors }"
-                            notFoundText="No resultados" formControlName="rutaId" (change)="VerificarRutaEnUso($event)">
-                        </ng-select>
-                        <div *ngIf="submitted && f.rutaId.errors" class="text-danger small">
-                            <div *ngIf="f.rutaId.errors.required  ">El campo es obligatorio</div>
-                        </div>
-                    </div>
 
                     <div class="form-group col-md-6">
                         <label for="email"> <i class="fa fa-envelope-open"></i> Email</label>
@@ -170,7 +157,8 @@
                         </div>
                     </div>
 
-                    <div class="form-group col-md-6 col-8">
+
+                    <div class="form-group col-md-4 col-8">
                         <label for="telefono"><i class="fa fa-phone"></i> Teléfono</label>
                         <input formControlName="telefono" type="text" name="telefono" id="telefono"
                             mask="(000) 000-0000"
@@ -181,16 +169,16 @@
                     </div>
 
                     <div class="form-group col-md-2 col-4">
-                        <label for="telefonoExtension"> Ext.</label>
-                        <input formControlName="telefonoExtension" type="text" name="telefonoExtension"
-                            id="telefonoExtension"
-                            [ngClass]="{'is-invalid' : submitted && f.telefonoExtension.errors,  'form-control':true  }">
-                        <div class="invalid-feedback" *ngIf="submitted && f.telefonoExtension.errors">
-                            <div *ngIf="f.telefonoExtension.errors.required">El campo es obligatorio</div>
-                        </div>
-                    </div>
+                      <label for="telefonoExtension"> Ext.</label>
+                      <input formControlName="telefonoExtension" type="text" name="telefonoExtension"
+                          id="telefonoExtension"
+                          [ngClass]="{'is-invalid' : submitted && f.telefonoExtension.errors,  'form-control':true  }">
+                      <div class="invalid-feedback" *ngIf="submitted && f.telefonoExtension.errors">
+                          <div *ngIf="f.telefonoExtension.errors.required">El campo es obligatorio</div>
+                      </div>
+                  </div>
 
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-3">
                         <label for="celular"><i class="fa fa-mobile"></i> Celular</label>
                         <input formControlName="celular" type="text" name="celular" id="celular" mask="(000) 000-0000"
                             [ngClass]="{'is-invalid' : submitted && f.celular.errors,  'form-control':true  }">
@@ -198,6 +186,18 @@
                             <div *ngIf="f.celular.errors.required">El campo es obligatorio</div>
                         </div>
                     </div>
+
+                    <div class="form-group col-md-3" *ngIf="MostrarRutas">
+                      <label for="inputEmail4">Rutas</label>
+                      <ng-select bindLabel="nombre" bindValue="codigo" [items]="rutas" [loading]="loadingRutas"
+                          [ngClass]="{'form-control border-danger p-0' : submitted && f.rutaId.errors }"
+                          notFoundText="No resultados" formControlName="rutaId" (change)="VerificarRutaEnUso($event)">
+                      </ng-select>
+                      <div *ngIf="submitted && f.rutaId.errors" class="text-danger small">
+                          <div *ngIf="f.rutaId.errors.required  ">El campo es obligatorio</div>
+                      </div>
+                    </div>
+
 
                     <div class="form-group col-md-4">
                         <label for="inputEmail4"> Supervisor</label>
@@ -212,32 +212,41 @@
                     </div>
 
                     <div class="form-group col-md-4">
-                        <label for="sucursalID"> <i class="fa fa-map-marker"></i> Sucursal </label>
+                        <label for="sucursalId"> <i class="fa fa-map-marker"></i> Sucursal </label>
                         <ng-select bindLabel="nombre" bindValue="codigo" [items]="sucursales"
                             [loading]="loadingSucursales"
-                            [ngClass]="{'form-control border-danger p-0' : submitted && f.sucursalID.errors }"
-                            notFoundText="No resultados" formControlName="sucursalID">
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.sucursalId.errors }"
+                            notFoundText="No resultados" formControlName="sucursalId">
                         </ng-select>
-                        <div *ngIf="submitted && f.sucursalID.errors" class="text-danger small">
-                            <div *ngIf="f.sucursalID.errors.required  ">El campo es obligatorio</div>
+                        <div *ngIf="submitted && f.sucursalId.errors" class="text-danger small">
+                            <div *ngIf="f.sucursalId.errors.required  ">El campo es obligatorio</div>
                         </div>
                     </div>
 
 
                     <div class="form-group col-md-4">
-                        <label for="departamentoID"> <i class="fa fa-map-marker"></i> Departamento </label>
+                        <label for="departamentoId"> <i class="fa fa-map-marker"></i> Departamento </label>
                         <ng-select bindLabel="nombre" bindValue="codigo" [items]="departamentos"
                             [loading]="loadingDepartamentos"
-                            [ngClass]="{'form-control border-danger p-0' : submitted && f.departamentoID.errors }"
-                            notFoundText="No resultados" formControlName="departamentoID">
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.departamentoId.errors }"
+                            notFoundText="No resultados" formControlName="departamentoId">
                         </ng-select>
-                        <div *ngIf="submitted && f.departamentoID.errors" class="text-danger small">
-                            <div *ngIf="f.departamentoID.errors.required  ">El campo es obligatorio</div>
+                        <div *ngIf="submitted && f.departamentoId.errors" class="text-danger small">
+                            <div *ngIf="f.departamentoId.errors.required  ">El campo es obligatorio</div>
                         </div>
                     </div>
+                    <div class="form-group col-md-4" >
+                      <label for="inputEmail4">Tipos de Solicitud</label>
+                      <ng-select bindLabel="nombre" bindValue="codigo" [items]="usuarioTiposSolicitud" [loading]="loadingUsuarioTiposSolicitud"
+                          [ngClass]="{'form-control border-danger p-0' : submitted && f.usuarioTipoSolicitudId.errors }"
+                          notFoundText="No resultados" formControlName="usuarioTipoSolicitudId" >
+                      </ng-select>
+                      <div *ngIf="submitted && f.usuarioTipoSolicitudId.errors" class="text-danger small">
+                          <div *ngIf="f.usuarioTipoSolicitudId.errors.required  ">El campo es obligatorio</div>
+                      </div>
+                  </div>
 
-
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-4">
                         <label for="descuentoVenta"> Descuento venta</label>
                         <input formControlName="descuentoVenta" type="number" name="descuentoVenta" id="descuentoVenta"
                             [ngClass]="{'is-invalid' : submitted && f.descuentoVenta.errors,  'form-control':true  }">
@@ -246,7 +255,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-4">
                         <label for="descuentoCompra"> Descuento compra</label>
                         <input formControlName="descuentoCompra" type="number" name="descuentoCompra"
                             id="descuentoCompra"

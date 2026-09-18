@@ -1,0 +1,219 @@
+<div class="row">
+  <div class="col-12">
+      <div class="card">
+          <div class="card-body">
+              <div class="row  mb-2">
+                <div class="col-md-9 align-middle ">
+                  <h4 class="card-title d-inline-block mr-1" >Listado de  despachos </h4>
+                  <app-loading-realtime [hidden]="!CargandoRealtime"></app-loading-realtime>
+                </div>
+
+                <div class="col-md-3 text-right">
+                  <ejs-datepicker [allowEdit]="false" [showClearButton]="false" (change)="onChangeFechaDesdeFiltro($event)"
+                    [(ngModel)]="fecha" [format]="'dd-MM-yyyy'">
+                  </ejs-datepicker>
+                </div>
+
+              </div>
+              <div class="table-responsive mt-3">
+
+
+
+
+                <table class="table table-hover mb-0 no-wrap v-middle" *ngxPermissionsOnly="['op_asignacion_despacho'] ; else ConsultaPantalla;">
+                  <thead>
+                    <tr>
+                      <th scope="col">Acciones</th>
+                      <th scope="col">Distribuidor</th>
+                      <th scope="col">Pickeador -></th>
+                      <th scope="col">Validador -></th>
+                      <th scope="col">Sucursal</th>
+                    </tr>
+                  </thead>
+                  <tbody   [hidden]="Cargando" style="   height: 230px; min-height: 200px;">
+                     <tr  *ngFor="let item of dataPreventa; let i = index">
+                      <td  *ngxPermissionsOnly="['op_asignacion_despacho']">
+
+
+                        <div class="acciones-btn" *ngIf="validaDiferenciaMinimaDespacho(item)">
+
+                          <button [disabled]="btnCargandoPrint || item.despachador==null" class="btn  font-bold btn-secondary m-1"
+                            (click)="exportDespachoPreventaDetalle(item,1)">
+                            <i class="fa fa-print" aria-hidden="true"></i>
+                          </button>
+                          <span class="badge  badge-light font-weight-bold text-info"  *ngIf="item.fechaInicioDespachador!=null&&item.fechaFinDespachador==null">Actual</span>
+
+                        </div>
+
+                        <div class="acciones-mensaje" *ngIf="!validaDiferenciaMinimaDespacho(item)">
+                          <span class=" font-bold text-info">Sync...</span>
+                        </div>
+                      </td>
+
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="ml-3">
+                            <p class="font-bold mb-0">{{item.distribuidor | titlecase }} <span class="text-info">{{item.ruta }}</span>
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                         <span *ngIf="item.despachador==null" class="badge badge-secondary font-weight-bold">No Asignado</span>
+                         <span *ngIf="item.despachador!=null" class="badge badge-info font-weight-bold">
+                           {{item.despachador}}
+                          </span>
+
+
+                      </td>
+                      <td>
+                        <span *ngIf="item.validador==null" class="badge badge-secondary font-weight-bold">No Asignado</span>
+                        <span *ngIf="item.validador!=null" class="badge badge-info font-weight-bold">{{item.validador}}</span>
+
+                     </td>
+                      <td>
+                        <span class="font-weight-bold" ><i class="fa fa-map-marker  text-secondary mr-1"></i>{{getNameOfSucursal(item.sucursalID)}}</span>
+                       </td>
+                     </tr>
+                     <div class="over_despacho" *ngIf="!despachoPuedeHorario || loadingRangosFechaDespacho || despachoOn==0">
+                      <div class="row justify-content-center  text-center align-items-center "
+                        style="font-size: 20px;     height: 100%;">
+
+
+                       <!--
+                        <h3 *ngIf="!loadingRangosFechaDespacho  && despachoOn==1" class="font-weight-bold h3_over_despacho">
+                          <i class="fa fa-clock" style="font-size: 30px;" aria-hidden="true"></i>
+                          {{dia | uppercase}}
+
+                          <br>
+                          El horario a despachar es entre {{fDesde | date:'shortTime'}} - {{fHasta | date:'shortTime'}}
+                        </h3>
+
+
+                        <h3 *ngIf="!loadingRangosFechaDespacho && despachoOn==0" class="font-weight-bold h3_over_despacho">
+                          <i class="fa fa-clock" style="font-size: 30px;" aria-hidden="true"></i>
+                          <br>
+                          No se puede despachar en este momento
+                        </h3>
+                          -->
+                        <h3 *ngIf="loadingRangosFechaDespacho" class="font-weight-bold h3_over_despacho">
+                          <i class="spinner-border spinner-border-sm"></i>
+
+                          <br>
+                          Cargando...
+                        </h3>
+
+                      </div>
+                    </div>
+
+
+                  </tbody>
+                </table>
+                <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+               </div>
+          </div>
+      </div>
+  </div>
+</div>
+<ng-template #modalLoadingDespacho let-modal>
+  <div class="container-fluid ">
+    <div class="row">
+      <div class="col">
+        <div class="modal-body text-center" >
+          <i class="fa fa-spinner fa-spin fa-2x text-info"></i>
+          <h4 class="mt-2 text-black-50"><strong>{{loadingStatusMessaje}}</strong> </h4>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<ng-template #ConsultaPantalla>
+  <table class="table table-hover mb-0 no-wrap v-middle">
+    <thead>
+      <tr>
+        <th scope="col">Distribuidor</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Pickeador -></th>
+        <th scope="col">Validador -></th>
+        <th scope="col">Picking</th>
+        <th scope="col">Validacion</th>
+        <th scope="col">Sucursal</th>
+      </tr>
+    </thead>
+    <tbody   [hidden]="Cargando" style=" font-size: 20px;">
+
+       <tr  *ngFor="let item of dataPreventaF; let i = index">
+        <td class="td_c_screen">
+          <div class="d-flex align-items-center">
+            <div class="ml-3">
+              <p class="font-bold mb-0">{{item.distribuidor | titlecase }} <span class="text-info">{{item.ruta }}</span>
+              </p>
+            </div>
+          </div>
+        </td>
+        <td class="td_c_screen">
+          <span *ngIf="item.estadoAsignacion==1" class="badge badge-warning font-weight-bold">{{item.estadoAsignacionMsg}}</span>
+          <span *ngIf="item.estadoAsignacion==2" class="badge badge-info font-weight-bold">{{item.estadoAsignacionMsg}}</span>
+          <span *ngIf="item.estadoAsignacion==3" class="badge badge-success font-weight-bold">{{item.estadoAsignacionMsg}}</span>
+
+
+       </td>
+        <td class="td_c_screen">
+           <span *ngIf="item.despachador==null" class="badge badge-secondary font-weight-bold">No Asignado</span>
+           <span *ngIf="item.despachador!=null" class="badge badge-light text-info font-weight-bold">{{item.despachador}}</span>
+
+        </td>
+        <td class="td_c_screen">
+          <span *ngIf="item.validador==null" class="badge badge-secondary font-weight-bold">No Asignado</span>
+          <span *ngIf="item.validador!=null" class="badge badge-light text-info font-weight-bold">{{item.validador}}</span>
+
+       </td>
+        <td class="td_c_screen">
+          <span class="text-dark font-bold"><i class="far fa-clock"></i>
+          {{ getLapsoTime(item.fechaInicioDespachador,item.fechaFinDespachador,item.despachador)}}
+         </span>
+        </td>
+
+        <td class="td_c_screen">
+          <span class="text-dark font-bold"><i class="far fa-clock"></i>
+            {{ getLapsoTime(item.fechainicioValidador,item.fechaFinalizacionValidador,item.despachador)}}
+           </span>
+        </td>
+
+        <td class="td_c_screen">
+          <span class="font-weight-bold" ><i class="fa fa-map-marker  text-secondary mr-1"></i>{{getNameOfSucursal(item.sucursalID)}}</span>
+         </td>
+      </tr>
+
+
+
+       <div class="over_despacho" *ngIf="!despachoPuedeHorario || loadingRangosFechaDespacho || despachoOn==0">
+        <div class="row justify-content-center  text-center align-items-center "
+          style="font-size: 20px;     height: 100%;">
+          <h3 *ngIf="!loadingRangosFechaDespacho  && despachoOn==1" class="font-weight-bold h3_over_despacho">
+            <i class="fa fa-clock" style="font-size: 30px;" aria-hidden="true"></i>
+            {{dia | uppercase}}
+
+            <br>
+            El horario a despachar es entre {{fDesde | date:'shortTime'}} - {{fHasta | date:'shortTime'}}
+          </h3>
+
+
+          <h3 *ngIf="!loadingRangosFechaDespacho && despachoOn==0" class="font-weight-bold h3_over_despacho">
+            <i class="fa fa-clock" style="font-size: 30px;" aria-hidden="true"></i>
+            <br>
+            No se puede despachar en este momento
+          </h3>
+
+          <h3 *ngIf="loadingRangosFechaDespacho" class="font-weight-bold h3_over_despacho">
+            <i class="spinner-border spinner-border-sm"></i>
+
+            <br>
+            Cargando...
+          </h3>
+
+        </div>
+      </div>
+    </tbody>
+  </table>
+</ng-template>

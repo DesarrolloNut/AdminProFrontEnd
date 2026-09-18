@@ -1,11 +1,10 @@
-import { MapsAPILoader, Marker } from '@agm/core';
+
 import { animate, style, transition, trigger } from '@angular/animations';
-import { ViewportScroller } from '@angular/common';
-import { Component, ElementRef, EventEmitter, HostListener, Input, NgZone, OnInit, Output, ViewChild, AfterViewInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { Component, EventEmitter, HostListener, Input, NgZone, OnInit, Output, ViewChild, AfterViewInit } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { thresholdFreedmanDiaconis } from 'd3';
+
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
@@ -14,8 +13,12 @@ import { BackendService } from 'src/app/core/http/service/backend.service';
 import { ParametrosCita } from 'src/app/Modules/turno/models/ParametrosCita';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
-import { cedulaestructura, validaExistCedulaORNC } from 'src/app/shared/validators/cedula-estructura.validator';
-import { Cliente, ClienteTabsValida, Coordenadas } from '../models/Cliente';
+import { cedulaestructura } from 'src/app/shared/validators/cedula-estructura.validator';
+import { Cliente, ClienteTabsValida, Coordenadas, ValidaExisteClienteViewModel } from '../models/Cliente';
+
+
+
+
 
 const fadeInOut = trigger('fadeInOut', [
   transition(':enter', [
@@ -84,14 +87,18 @@ export class ClienteDatosGeneralesComponent implements OnInit,AfterViewInit {
   //OBJETOS Y DEMAS
   TipoSexo: any[] = [{ codigo: 'M', nombre: 'Hombre' }, { codigo: 'F', nombre: 'Mujer' }];
   geoRegex = '^-?([1-8]?[1-9]|[1-9]0)\\.{1}\\d{1,6}';
-
+  Ref="";
+  nombreCliente="";
+  Calle="";
   latitud:number;
   longitud:number;
-  clientePadreSearched = new Cliente();
+  clientePadreSearched = new ValidaExisteClienteViewModel();
   coordenadas: EventEmitter<Coordenadas> = new EventEmitter<Coordenadas>();
   searchLocalidadEvent:EventEmitter<string> = new EventEmitter<string>();
   searchLocalidad:string;
 
+  puedeModificarDocAndInfo=true;
+  tipoDocumento:string="CEDULA";
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
@@ -107,12 +114,13 @@ export class ClienteDatosGeneralesComponent implements OnInit,AfterViewInit {
     config.keyboard = false;
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     //CREACION DE FORMULARIO
     this.createForm();
 
     if (this.clientId > 0) {
-
+      this.puedeModificarDocAndInfo= await this.permissionsService.hasPermission('mantenimientos_cliente_editar_doc_and_info')
+      console.log(this.puedeModificarDocAndInfo)
       this.getClienteByID(this.clientId);
       this.actualizando = true;
     }
@@ -165,31 +173,13 @@ export class ClienteDatosGeneralesComponent implements OnInit,AfterViewInit {
             this.toastService.error("Error conexion al servidor");
         });
 }
-  onSubmit(confirmSucursal=false) {
-    this.btnGuardarCargando=false;
-
-    this.modalService.dismissAll()
-
-
-    if (this.FormGenerales.invalid)
-      return;
-
-
-   if(this.f.clientePadreId.value>0 || confirmSucursal){
-
-    this.identificaSucursalOPrincipal()
-      if(this.clientePadreSearched.clienteTipoID!=this.f.clienteTipoID.value){
-        this.toastService.error("Debes seleccionar el mismo tipo de cliente que tiene la principal");
-        return;
-
-      }
-   }
-
-
-    if(this.f.clienteTipoID.value==15 || this.f.clienteTipoID.value==12){
-      this.f.isClientPrincipal.setValue(0);
-    }
+  onSubmit() {
     this.submitted = true;
+
+    if (this.FormGenerales.invalid){
+      return;
+    }
+   this.f.isClientPrincipal.setValue(0);
     this.guardarCliente();
   }
   onSubmitWithoutAction() {
@@ -215,8 +205,8 @@ export class ClienteDatosGeneralesComponent implements OnInit,AfterViewInit {
       clienteTipoID: [null, [Validators.required]],
       nombres: [null,  [Validators.required]],
       apellidos: [null,  [Validators.required] ],
-      clienteNombre: [null,  [Validators.required]],
-      documento: [null, [Validators.required, Validators.minLength(9)]],
+      clienteNombre: [null,  [Validators.required,Validators.maxLength(100)]],
+      documento: [null, [Validators.required,Validators.minLength(9),Validators.maxLength(11)]],
       documentoAnterior: [null],
 
       email: ['', [ Validators.email]],
@@ -228,11 +218,11 @@ export class ClienteDatosGeneralesComponent implements OnInit,AfterViewInit {
       sexo: [null,[Validators.required]],
       codigoReferencia: [null,],
 
-      calle: [null, [Validators.required]],
+      calle: [null, [Validators.required, Validators.maxLength(100)]],
       numero: [null, [Validators.required]],
       residencial: [null],
       apartamento: [null],
-      referencia: [null],
+      referencia: [null,[ Validators.maxLength(10)]],
       provinciaID: [null, Validators.required],
       ciudadID: [null, Validators.required],
       sectorID: [null, Validators.required],
@@ -248,6 +238,7 @@ export class ClienteDatosGeneralesComponent implements OnInit,AfterViewInit {
       longitud: [null, [Validators.required,this.regexValidator(new RegExp('^-?([1-8]?[1-9]|[1-9]0)\\.{1}\\d{1,6}'), {'valid': ''})]],
       latitud:[null, [Validators.required, this.regexValidator(new RegExp('^-?([1-8]?[1-9]|[1-9]0)\\.{1}\\d{1,6}'), {'valid': ''})]],
       sucursalId:[0, [Validators.required]],
+      companiaId:[Number(this.auth.tokenDecoded.primarygroupsid)],
       salario:[0, [Validators.required]],
       estadoERPID: [0],
       clientePadreId: [0],
@@ -261,9 +252,13 @@ export class ClienteDatosGeneralesComponent implements OnInit,AfterViewInit {
         validator: cedulaestructura('documento', 'documentoTipoID'),
       });
   }
+  
 
   get f() { return this.FormGenerales.controls; } // acceder a los controles del formulario para no escribir tanto codigo en el html
 
+  get referencianovalida(){
+    return this.FormGenerales.get('referencia').invalid &&   this.FormGenerales.get('referencia').touched
+   }
 
 
   guardarCliente() {
@@ -292,12 +287,9 @@ export class ClienteDatosGeneralesComponent implements OnInit,AfterViewInit {
           this.toastService.error(response.errores[0], "Error");
           this.btnGuardarCargando = false;
         } else {
-            if(response.valores[0].tienePadre){
-              this.openModal(this.contentConfirmSucursalModal);
-              return;
-            }
             this.scrollToTop();
             this.toastService.success("Realizado", "OK");
+            this.router.navigateByUrl('/mantenimientos/cliente');
           if(!this.actualizando){
 
             this.clientId=response.valores[0].clienteId;
@@ -352,8 +344,10 @@ export class ClienteDatosGeneralesComponent implements OnInit,AfterViewInit {
         } else {
           //validar que existe
           if (response.records.length > 0) {
-            let cliente = response.records[0];
-            console.log( response.records[0])
+            let cliente:any = response.records[0];
+
+
+
 
             //Transforma DATA
             cliente.documentoTipoID = cliente.documentoTipoID<=0 ? null : cliente.documentoTipoID
@@ -643,47 +637,41 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
   if(documento=="" || documento==null || documentoTipoID==0 || documentoTipoID==null){
     return;
   }
+
   this.buscandoDocumento = true;
 
   let parametros = new ParametrosCita();
   parametros.clienteDocumento = documento;
   parametros.documentoTipoID = documentoTipoID;
+  parametros.clienteID = this.f.id.value;
 
-  this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
+
+  this.httpService.DoPostAny<ValidaExisteClienteViewModel>(DataApi.Cliente,
     "GetClienteByCedulaOrRnc", parametros).subscribe(response => {
-
+       console.log(response)
       if (response.ok) {
-        if (response != null && response.ok && response.records != null && response.records.length > 0) {
-           this.clientePadreSearched = response.records[0];
+        if (response != null && response.ok && response.valores != null && response.valores.length > 0) {
+           this.clientePadreSearched = response.valores[0];
 
            //SI ESTE CLIENTE ES UN EMPLEADO NO SE PUEDE CREAR OTRO CLIENTE CON ESTE MISMO NO. DOCUMENTO
-           if(this.clientePadreSearched.clienteTipoID==12 || this.clientePadreSearched.clienteTipoID==15 )
-              {
+               console.log(this.f.id.value)
+               console.log(this.clientePadreSearched.id)
 
-                if(this.f.id.value!=this.clientePadreSearched.id){
-                  this.toastService.error('Ya existe un cliente de tipo empleado con este numero de documento');
+             if(this.clientePadreSearched.existeEnWebAdmin){
+                  this.toastService.error('Ya existe un cliente con este numero de documento');
+
+                }else{
+                  this.f.nombres.setValue(this.clientePadreSearched.nombres);
+                  this.f.apellidos.setValue(this.clientePadreSearched.apellidos!=null?this.clientePadreSearched.apellidos:"");
+                  this.f.clienteNombre.setValue(this.clientePadreSearched.nombres +' ' +    this.f.apellidos.value )
+                  this.f.fechaNacimiento.setValue(this.clientePadreSearched.fechaNacimiento);
+                  this.f.sexo.setValue(this.clientePadreSearched.sexo);
+
                 }
-                this.buscandoDocumento = false;
-                return;
-              }
 
+              this.buscandoDocumento = false;
+              return;
 
-              this.f.nombres.setValue(this.clientePadreSearched.nombres);
-              this.f.apellidos.setValue(this.clientePadreSearched.apellidos!=null?this.clientePadreSearched.apellidos:"");
-              this.f.clienteNombre.setValue(this.clientePadreSearched.nombres +' ' +    this.f.apellidos.value )
-              this.f.fechaNacimiento.setValue(this.clientePadreSearched.fechaNacimiento);
-              this.f.sexo.setValue(this.clientePadreSearched.sexo);
-
-
-            if(this.clientePadreSearched.clienteTipoID>0 &&  this.clientePadreSearched.clienteTipoID !=null)
-            {
-              this.f.clientePadreTipoId.setValue(this.clientePadreSearched.clienteTipoID)
-            }
-
-          if(this.f.clienteTipoID.value!=15 || this.f.clienteTipoID.value!=12){
-
-            this.identificaSucursalOPrincipal();
-          }
 
         } else {
           if(this.f.documentoTipoID.value==2){
@@ -695,6 +683,7 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
           this.toastService.warning("Datos no encontrados");
          // this.f.nombres.setValue(null);
           // this.f.celular.setValue(null);
+          this.buscandoDocumento = false;
         }
       } else {
         this.toastService.error(response.errores[0]);
@@ -706,7 +695,6 @@ buscarClienteByRncOCedula(documento: string,documentoTipoID:number) {
     });
 
 }
-
 
 identificaSucursalOPrincipal(){
 
@@ -845,7 +833,7 @@ onSelectClienteTipo(tipo: ComboBox) {
 onClickRadioPrincipalOSucursal(value:number){
     //SOLO SE EJECUTA
    // SI EL CLIENTE TIPO ES DIFERENTE DE  EMPLEADO(12) O EMPLEADOS RELACIONADOS(15)
-   if(this.f.clienteTipoID.value==12 || this.f.clienteTipoID.value==15 ){ return;}
+   if(this.f.clienteTipoID.value==12 || this.f.clienteTipoID.value==15 || this.actualizando ){ return;}
     this.f.isClientPrincipal.setValue(value)
     if(value==1){
       this.f.clientePadreId.setValidators([Validators.required]);
@@ -858,10 +846,8 @@ onClickRadioPrincipalOSucursal(value:number){
     this.f.clientePadreId.updateValueAndValidity();
 
 }
-
 //METODOS LOGIC
-onDocumentoKeyUp() {
-
+onDocumentoKeyUp(event) {
   if (this.f.documento.valid) {
     this.buscarClienteByRncOCedula(this.f.documento.value,this.f.documentoTipoID.value);
   }
@@ -890,13 +876,13 @@ onSectorChange() {
 
 onTipoDocumentoChange(tipo:ComboBox) {
  // this.f.documento.setValue(null)
+  this.tipoDocumento=tipo.nombre.toUpperCase();
   this.f.documento.setErrors(null);
   this.f.apellidos.setValue(null);
   this.buscarClienteByRncOCedula(this.f.documento.value,tipo.codigo);
   this.clearOrputValidatosSomeField();
   this.getTipoComprobante();
 }
-
 
 clearOrputValidatosSomeField(){
 

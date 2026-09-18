@@ -8,7 +8,6 @@ export class CartService {
   constructor() {}
 
   items:ArticuloListaPrecioViewModel[] = [];
-
   addToCart(addedItem) {
     this.items.push(addedItem);
     // console.log(addedItem);
@@ -41,7 +40,7 @@ export class CartService {
     localStorage.setItem('cart_items', JSON.stringify(this.items));
   }
 
-  clearCart(items) {
+  clearCart(items=[]) {
     this.items = [];
 
     localStorage.removeItem("cart_items")

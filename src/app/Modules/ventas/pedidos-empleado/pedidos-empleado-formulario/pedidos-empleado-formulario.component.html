@@ -1,24 +1,55 @@
 
 
-  <div class="modal-header ">
+  <div class="modal-header " style="    box-shadow: 0 1px 3px rgb(225 225 225 / 12%), 0 1px 2px rgb(211 211 211 / 24%);">
 
-    <div class="row w-75" *ngIf="!loadingInfoCliente">
+    <div class="row" *ngIf="!loadingInfoCliente && clienteExiste">
 
-      <div class="col-12 ml-0">
+      <div class="col-12 ml-0 mb-1">
          <h4 class="modal-title font-weight-bold"   id="modal-basic-title" style="font-size: 25px;">Bienvenido, {{cliente.nombres | titlecase}}</h4>
       </div>
 
-        <div class="col-12">
+        <div class="col-12 mb-1">
           <div class="row">
-            <div class=" col-lg-4 col-md-6">
-              <div class="card overflow-hidden">
+            <div class="col-lg-3 col-md-4 mt-2 ">
+              <div class="card overflow-hidden shadow-sm p-1 mb-0">
+                <div class="d-flex flex-row  p-1">
+                  <div>
+                    <span class="font-weight-bold text-black-50">Condición de pago</span>
+                    <span class="badge badge-info">{{cliente.condicionPago}}</span>
+                  </div>
+                  <div>
+                    <span class="font-weight-bold text-black-50">Plazo</span>
+                    <span class="badge badge-info">{{cliente.plazo}}</span>
+                  </div>
+
+
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-4 mt-2">
+              <div class="card overflow-hidden mb-0">
                 <div class="d-flex flex-row">
-                  <div class="p-3 bg-light-success">
+                  <div class="p-1 bg-light-warning">
+                    <h3 class="text-warning box mb-0">
+                      <i class="fa fa-money-bill-alt"></i>
+                    </h3>
+                  </div>
+                  <div class="p-1">
+                    <h3 class="text-warning mb-0">{{cliente.limiteCredito  | currency}}</h3>
+                    <span class="font-weight-bold text-black-50">Limite de credito</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class=" col-lg-3 col-md-4  mt-2">
+              <div class="card overflow-hidden mb-0">
+                <div class="d-flex flex-row">
+                  <div class="p-1 bg-light-success">
                     <h3 class="text-success box mb-0">
                       <i class="fa fa-money-bill-alt"></i>
                     </h3>
                   </div>
-                  <div class="p-3">
+                  <div class="p-1">
                     <h3 class="text-success mb-0">{{cliente.balance | currency}}</h3>
                     <span class="font-weight-bold text-black-50">Balance</span>
                   </div>
@@ -26,21 +57,22 @@
               </div>
             </div>
 
-            <div class="col-lg-4 col-md-6">
-              <div class="card overflow-hidden">
+            <div class=" col-lg-3 col-md-4  mt-2">
+              <div class="card overflow-hidden mb-0">
                 <div class="d-flex flex-row">
-                  <div class="p-3 bg-light-warning">
-                    <h3 class="text-warning box mb-0">
+                  <div class="p-1 bg-light-success">
+                    <h3 class="text-success box mb-0">
                       <i class="fa fa-money-bill-alt"></i>
                     </h3>
                   </div>
-                  <div class="p-3">
-                    <h3 class="text-warning mb-0">{{cliente.limiteCredito  | currency}}</h3>
-                    <span class="font-weight-bold text-black-50">Limite de credito</span>
+                  <div class="p-1">
+                    <h3 class="text-success mb-0">{{cliente.balance | currency}}</h3>
+                    <span class="font-weight-bold text-black-50">TOTAL PEDIDO</span>
                   </div>
                 </div>
               </div>
             </div>
+
           </div>
 
         </div>
@@ -49,7 +81,7 @@
 
 
     <!-- LOADING INFO CLIENTE -->
-    <div class="row w-75" *ngIf="loadingInfoCliente">
+    <div class="row w-75" *ngIf="loadingInfoCliente" >
 
       <div class="col-12 ml-0">
         <ngx-skeleton-loader     [theme]="{    width: '400px' }" count="1" ></ngx-skeleton-loader>
@@ -57,10 +89,10 @@
 
         <div class="col-12">
           <div class="row">
-            <div class=" col-lg-4 col-md-6 d-inline-block">
+            <div class=" col-lg-3 col-md-4 d-inline-block">
               <div class="section-wrapper d-inline-flex">
                 <div class="icon">
-                  <ngx-skeleton-loader [theme]="{ width: '80px', height: '80px' }">
+                  <ngx-skeleton-loader [theme]="{ width: '55px', height: '55px' }">
                   </ngx-skeleton-loader>
                 </div>
                 <div class="title ml-2">
@@ -70,7 +102,7 @@
                         width: '200px',
                         'border-radius': '0',
                         height: '15px',
-                        'margin-top': '15px'
+                        'margin-top': '6px'
                       }"
                     ></ngx-skeleton-loader>
                   </div>
@@ -79,7 +111,7 @@
                       [theme]="{
                         width: '170px',
                         'border-radius': '0',
-                        'margin-top': '0px',
+                        'margin-top': '-5px',
                         height: '15px'
                       }"
                     ></ngx-skeleton-loader>
@@ -88,10 +120,10 @@
               </div>
 
             </div>
-            <div class=" col-lg-4 col-md-6 d-inline-block">
+            <div class=" col-lg-3 col-md-4 d-inline-block">
               <div class="section-wrapper d-inline-flex">
                 <div class="icon">
-                  <ngx-skeleton-loader [theme]="{ width: '80px', height: '80px' }">
+                  <ngx-skeleton-loader [theme]="{ width: '55px', height: '55px' }">
                   </ngx-skeleton-loader>
                 </div>
                 <div class="title ml-2">
@@ -101,7 +133,7 @@
                         width: '200px',
                         'border-radius': '0',
                         height: '15px',
-                        'margin-top': '15px'
+                        'margin-top': '6px'
                       }"
                     ></ngx-skeleton-loader>
                   </div>
@@ -110,6 +142,7 @@
                       [theme]="{
                         width: '170px',
                         'border-radius': '0',
+                        'margin-top': '-5px',
                         height: '15px'
                       }"
                     ></ngx-skeleton-loader>
@@ -118,7 +151,68 @@
               </div>
 
             </div>
+            <div class=" col-lg-3 col-md-4 d-inline-block">
+              <div class="section-wrapper d-inline-flex">
+                <div class="icon">
+                  <ngx-skeleton-loader [theme]="{ width: '55px', height: '55px' }">
+                  </ngx-skeleton-loader>
+                </div>
+                <div class="title ml-2">
+                  <div>
+                    <ngx-skeleton-loader
+                      [theme]="{
+                        width: '200px',
+                        'border-radius': '0',
+                        height: '15px',
+                        'margin-top': '6px'
+                      }"
+                    ></ngx-skeleton-loader>
+                  </div>
+                  <div>
+                    <ngx-skeleton-loader
+                    [theme]="{
+                      width: '170px',
+                      'border-radius': '0',
+                      'margin-top': '-5px',
+                      height: '15px'
+                    }"
+                    ></ngx-skeleton-loader>
+                  </div>
+                </div>
+              </div>
 
+            </div>
+            <div class=" col-lg-3 col-md-4 d-inline-block">
+              <div class="section-wrapper d-inline-flex">
+                <div class="icon">
+                  <ngx-skeleton-loader [theme]="{ width: '55px', height: '55px' }">
+                  </ngx-skeleton-loader>
+                </div>
+                <div class="title ml-2">
+                  <div>
+                    <ngx-skeleton-loader
+                      [theme]="{
+                        width: '200px',
+                        'border-radius': '0',
+                        height: '15px',
+                        'margin-top': '6px'
+                      }"
+                    ></ngx-skeleton-loader>
+                  </div>
+                  <div>
+                    <ngx-skeleton-loader
+                    [theme]="{
+                      width: '170px',
+                      'border-radius': '0',
+                      'margin-top': '-5px',
+                      height: '15px'
+                    }"
+                    ></ngx-skeleton-loader>
+                  </div>
+                </div>
+              </div>
+
+            </div>
           </div>
 
         </div>
@@ -128,29 +222,44 @@
 
 
     <div class="row ">
-      <button type="button" class="btn btn-danger" aria-label="Close"   (click)=" closeModal()" >
+      <button type="button" style="    z-index: 10;" class="btn btn-danger" aria-label="Close"   (click)=" closeModal()" >
         <i class="fa fa-window-close"></i>
-        Cancelar Pedido
+         Cerrar
       </button>
     </div>
+
   </div>
   <div class="modal-body">
 
     <div  class="row"  *ngIf="!loadingInfoCliente">
       <div class="col-1"></div>
-      <div class="col-10  productos_factura" @onProductos  *ngIf="!showSummaryCart">
+      <div class="col-10  productos_factura" @onProductos   *ngIf="showView=='products'" >
          <app-pedidos-empleado-productos
           [articulos]="articulosData"
           (articulosInCart)="refreshCart()">
         </app-pedidos-empleado-productos>
       </div>
 
-      <div class="col-10" @onCarrito *ngIf="showSummaryCart" >
+      <div class="col-10" @onCarrito *ngIf="showView=='cart'" >
          <app-pedidos-empleado-carrito
+         [ITBIS]="ITBIS"
+         [clienteInfo]="cliente"
+         (pedidoSendToCreate)="beforeCrearPedido($event)"
          (articulosInCart)="refreshCart()">
          </app-pedidos-empleado-carrito>
       </div>
 
+     <div class="col-10 " style="    min-height: 650px;" @onCarrito *ngIf="showView=='creandoPedido'" >
+           <!-- Column -->
+          <div class="text-center mt-5" *ngIf="btnCrearCargando">
+            <i class="fa fa-shopping-cart" aria-hidden="true" style="font-size: 100px;"></i><br>
+             <app-loading-realtime></app-loading-realtime> <h3 class="font-weight-bold">Creando pedido, un momento.</h3>
+          </div>
+          <div class="text-center mt-5" *ngIf="!btnCrearCargando">
+            <i class="fa fa-check-circle text-success" aria-hidden="true" style="font-size: 100px;"></i><br>
+            <h3 class="font-weight-bold mt-1">Pedido creado correctamente.</h3>
+          </div>
+     </div>
     </div>
 
 
@@ -163,25 +272,32 @@
 
     <!-- CUANDO ESTE SELECCIONANDO EN EL CARRITO -->
 
-    <button type="button" *ngIf="!showSummaryCart" class="btn btn-success  mb-3 font-weight-bold p-2 pr-2 pl-2" style=" border-radius: 10px;"
-        (click)="changeView(true)">
+    <button type="button" *ngIf="showView=='products'" class="btn btn-success  mb-3 font-weight-bold p-2 pr-2 pl-2" style=" border-radius: 10px;"
+        (click)="changeView('cart')">
       <i class="fa fa-shopping-cart" aria-hidden="true"></i>
       IR AL CARRITO
       <span class="badge rounded-pill bg-light text-dark ml-1 font-weight-bold ">{{articulosInCart.length}}</span>    </button>
 
     <!-- CUANDO ESTE SELECCIONANDO EN EL CARRITO -->
 
-      <button *ngIf="showSummaryCart"
+      <button *ngIf="showView=='cart'"
       style=" border-radius: 10px;"
-       class="btn   btn-light  mb-3 font-weight-bold p-2 pr-2 pl-2"
-        (click)="changeView(false)" >
+       class="btn   btn-outline-success btn_volverTienda  mb-3 font-weight-bold p-2 pr-2 pl-2"
+        (click)="changeView('products')" >
         <svg xmlns="http://www.w3.org/2000/svg"  width="24" height="24" viewBox="0 0 24 24"
         fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round"
          class="feather feather-arrow-left fill-white feather-sm">
          <line x1="19" y1="12" x2="5" y2="12"></line>
          <polyline points="12 19 5 12 12 5"></polyline></svg>
-          SEGUIR COMPRANDO
+          Volver a la tienda
+      </button>
+
+      <button *ngIf="showView=='creandoPedido' && !btnCrearCargando"
+      style=" border-radius: 10px;"
+       class="btn   btn-outline-dark  mb-3 font-weight-bold p-2 pr-2 pl-2"
+        (click)="changeView('cart')" >
+           Ver estado pedido
       </button>
 
   </div>

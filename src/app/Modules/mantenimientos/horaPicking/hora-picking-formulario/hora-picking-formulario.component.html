@@ -1,0 +1,134 @@
+<div class="row">
+    <div class="control-section">
+        <div id="control_wrapper">
+        </div>
+    </div>
+</div>
+<div class="row mb-2">
+    <div class="col">
+        <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 col-12">
+                        <h4 class="card-title">Formulario de Hora Picking</h4>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-12 text-right">
+                       
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-10 col-lg-10 col-12">
+                     
+                    </div>
+                    <div class="col-md-2 col-lg-2 col-12 text-right">
+                      
+                    </div>
+                </div>
+
+            
+             
+                <form class="form-row " [formGroup]="Formulario" (ngSubmit)="onSubmit()">
+                    <div class=" col-md-6">
+                    </div>
+                  <div class="form-group col-md-1 ">
+                    <label >  </label>
+                    <div class="text-right">
+                        <label class="switch">
+                            <input class="switch-input" formControlName="hayHorario" type="checkbox" (change)="activarHorario($event)" />
+                            <span class="switch-label" data-on="On" data-off="Off"></span> 
+                            <span class="switch-handle"></span> 
+                        </label>
+                    </div>
+                  </div>
+                  <div class=" col-md-1">
+                 
+                </div>
+                 
+                <div  class="form-group col-md-4 ">
+                    <div [hidden]="!hayHorario">
+                    <label for="nombre"> Hora Tope</label>
+                    <input formControlName="horaTope" [format]="12" type="text" [ngxTimepicker]="horaTope" name="horaTope" id="horaTope"
+                    [ngClass]="{'is-invalid' : submitted && f.horaTope.errors,  'form-control':true  }" placeholder="Seleccionar la hora de Inicio">
+                    <div class="invalid-feedback" *ngIf="submitted && f.horaTope.errors">
+                        <div *ngIf="f.horaTope.errors.required">El campo es obligatorio</div>
+                    </div>
+                    <ngx-material-timepicker #horaTope></ngx-material-timepicker>
+                </div>
+                </div>
+
+            
+                <div class="form-group col-md-4">
+                    <label for="sucursalId"> Sucursal </label>
+                    <ng-select bindLabel="nombre" bindValue="codigo" placeholder="Seleccionar una Sucursal" [items]="Sucursal"
+                        [clearable]="false"
+                        [ngClass]="{'form-control border-danger p-0' : submitted && f.sucursalId.errors }"
+
+                        notFoundText="No resultados" formControlName="sucursalId">
+                    </ng-select>
+                    <div *ngIf="submitted && f.sucursalId.errors" class="text-danger small">
+                        <div *ngIf="f.sucursalId.errors.required  ">El campo es obligatorio</div>
+                    </div>
+                </div>
+
+
+
+
+                    <div class="form-group col-md-4">
+                        <label for="Dia">Día</label>
+                          <select    class="form-control" formControlName="diaId" placeholder="Dia">
+                            <option value="">Seleccionar un día</option>
+                           <option [value]="dia.codigo" *ngFor="let dia of dias">
+                             {{dia.nombre}}
+                            </option>
+                          </select>
+                          <div style="color:red;" *ngIf=" submitted && f.diaId.errors ">
+                                          Elige el día
+                                           </div>
+                        </div>
+
+                        
+                       
+
+                    <div [hidden]="!hayHorario" class="form-group col-md-4">
+                        <label for="nombre"> Hora Desde</label>
+                        <input formControlName="horaDesde" [format]="12" type="text" [ngxTimepicker]="horaDesde" name="horaDesde" id="horaDesde"
+                            [ngClass]="{'is-invalid' : submitted && f.horaDesde.errors,  'form-control':true  }" placeholder="Seleccionar la hora de Inicio">
+                        <div class="invalid-feedback" *ngIf="submitted && f.horaDesde.errors">
+                            <div *ngIf="f.horaDesde.errors.required">El campo es obligatorio</div>
+                        </div>
+                        <ngx-material-timepicker #horaDesde></ngx-material-timepicker>
+                    </div>
+                    <div [hidden]="!hayHorario" class="form-group col-md-4">
+                        <label for="horaHasta"> Hora Hasta</label>
+                        <input [(ngModel)]="horaValida" formControlName="horaHasta"  [format]="12" [ngxTimepicker]="horaHasta" (blur)="validarHora($event)" type="text" name="horaHasta" id="horaHasta"
+                            [ngClass]="{'is-invalid' : submitted && f.horaHasta.errors,  'form-control':true  }" placeholder="Seleccionar la hora de Final">
+                        <div class="invalid-feedback" *ngIf="submitted && f.horaHasta.errors">
+                            <div *ngIf="f.horaHasta.errors.required">El campo es obligatorio</div>
+                        </div>
+                        <ngx-material-timepicker #horaHasta></ngx-material-timepicker>
+                    </div>
+                
+                    <div class="form-group text-right col-md-12">
+                        <hr />
+                        <button class="btn btn-light m-1" routerLink="../" type="button">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                        <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+                            <i class="fas fa-check"></i> Guardar
+                        </button>
+                        <!-- boton cargando -->
+                        <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span> Guardando
+                        </button>
+                       
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

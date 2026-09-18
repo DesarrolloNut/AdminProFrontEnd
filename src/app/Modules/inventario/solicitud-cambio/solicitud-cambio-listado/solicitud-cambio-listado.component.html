@@ -1,0 +1,401 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row mb-2">
+          <div class="col-md-6 align-middle">
+            <h4 class="card-title">Listado de solicitudes de solicitud cambio</h4>
+          </div>
+          <div class="col-md-6 text-right">
+            <a [routerLink]="[0]" class="btn btn-info"> <i class="fa fa-plus"></i> Nuevo
+            </a>
+          </div>
+          <div class="col-md-12 p-2">
+
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <label for="search" class="input-group-text bg-white">
+                  <span class="bg-white" style="border-right:none">
+                    <i class="ti-search"></i>
+                  </span>
+                </label>
+              </div>
+              <input [(ngModel)]="Search" (keyup)="getData()" type="text" style="border-left:none !important;"
+                class="form-control" placeholder="Buscar">
+            </div>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover mb-0 no-wrap v-middle">
+            <thead>
+              <tr>
+                <th></th>
+                <th>ID</th>
+                <th>Código Referencia</th>
+                <th>Fecha Creación</th>
+                <th>Cliente</th>
+                <th>NCF</th>
+                <th>Estado</th>
+                <th>EstadoERP</th>
+                <th>Subtotal</th>
+                <th>Impuesto</th>
+                <th>Descuento</th>
+                <th>Total Neto</th>
+                <th></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody [hidden]="Cargando">
+              <tr *ngFor="let item of data">
+                <td>
+                  <button [hidden]=" autorizado == null || item.estado =='Rechazado' || autorizado ==item.estadoId" title="Autorizar" type="button" 
+                  [ngClass]="item.estadoId ==autorizado  ? 'btn btn-success mx-1' : 'btn btn-outline-success mx-1'"
+                    (click)="confirmarSolicitudDevolucion(item.id,'Autorizar')">
+                    <i class="fas fa-check"></i>
+                   
+                 </button>
+                </td>
+                <td>
+                  <span class="badge badge-light text-info ">{{item.id}}</span> 
+                  <small class="badge" [ngClass]="{'badge-danger': item.tipoID == 2}"> {{ item.tipo}}</small>
+
+                </td>
+                <td>
+                  <div >{{item.codigoReferencia  }}</div> <br>
+                </td>
+                <td>
+                  
+                  <div class="d-flex align-items-center">
+                    <i class=" far fa-calendar-alt fa-2x text-light"></i>
+                    <div class="ml-3">
+                      <p class="mb-0"><span class=" font-weight-bold">{{ item.fechaDocumento | date: 'dd/MM/yyyy hh:mm a' }}  </span></p>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                 
+                  <div class="d-flex align-items-center">
+                    <i class="fa fa-user fa-2x text-light"></i>
+                    <div class="ml-3">
+                      <p class="mb-0"><span class=" font-weight-bold">{{item.nombre | titlecase }} </span></p>
+                    </div>
+                    
+                  </div>
+             
+               
+                </td>
+                <td>
+                  {{item.ncf}}
+                </td>
+                <td>
+                  <div *ngIf="item.estado =='Autorizado'" class="my-2"> <span class="text-600 text-90"></span> <span class="badge badge-success badge-pill px-25">{{item.estado}}</span></div>
+                  <div *ngIf="item.estado =='Pendiente'"  class="my-2"> <span class="text-600 text-90"></span> <span class="badge badge-warning badge-pill px-25">{{item.estado}}</span></div>
+                  <div *ngIf="item.estado =='Rechazado'"  class="my-2"> <span class="text-600 text-90"></span> <span class="badge badge-danger badge-pill px-25">{{item.estado}}</span></div>
+                </td>
+                <td>
+                  <h5 *ngIf="item.estadoERPID==1" >
+                    <span> <i class="fa fa-circle"
+                            [ngStyle]="{'color': '#f4d03f'}"></i>
+                       Pendiente</span>
+                    </h5>
+                      <h5 *ngIf="item.estadoERPID==0" >
+                        <span> <i class="fa fa-circle"
+                                [ngStyle]="{'color': '#82e0aa'}"></i>
+                                Sincronizado</span>
+                        </h5>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <i class="fas fa-dollar-sign fa-2x text-light"></i>
+                    <div class="ml-3">
+                      <p class="mb-0"><span class=" font-weight-bold">{{item.subtotal | number}} </span></p>
+                    </div>
+                  </div>
+                  
+                </td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <i class="fas fa-dollar-sign fa-2x text-light"></i>
+                    <div class="ml-3">
+                      <p class="mb-0"><span class=" font-weight-bold">{{item.impuestoTotal | number}} </span></p>
+                    </div>
+                  </div>
+                  
+                </td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <i class="fas fa-dollar-sign fa-2x text-light"></i>
+                    <div class="ml-3">
+                      <p class="mb-0"><span class=" font-weight-bold">{{item.descuentoTotal | number}} </span></p>
+                    </div>
+                  </div>
+                  
+                </td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <i class="fas fa-dollar-sign fa-2x text-success"></i>
+                    <div class="ml-3">
+                      <p class="mb-0"><span class=" font-weight-bold">{{item.totalNeto | number}} </span></p>
+                    </div>
+                  </div>
+                  
+                </td>
+                <td>
+                  <button  type="button" title="Ver  Detalle" class="btn  btn-light m-1" 
+                  (click)="openModalAnexo(modalUploadAnexos,item)"
+                  >
+                    <i class="fa  fa-upload"></i>
+                </button>
+                  <button  type="button" title="Ver Detalle" class="btn  btn-light m-1" 
+                  (click)="openModalSolicitud(modalDetalleSolicitud,item)"
+                  >
+                    <i class="fa  fa-eye"></i>
+                </button>
+                  <button [hidden]=" autorizado == null || item.estado =='Rechazado' || autorizado ==item.estadoId "  title="Rechazar" type="button" class="btn btn-outline-danger m-1"
+                  (click)="autorizarSolicitudDevolucion(item.id,'Rechazar')">
+                    <i class="fa fa-times"></i>
+                </button>
+               
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+      
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #modalDetalleSolicitud let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Detalle Solicitud Devolución</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+<div class="page-content container">
+    <div class="page-header text-blue-d2">
+        <h1 class="page-title text-secondary-d1">
+            Factura
+            <small class="page-info">
+                <i class="fa fa-angle-double-right text-80"></i>
+                {{solicitudDevolucionSeleccionada.ncf}}
+            </small>
+        </h1>
+
+        <div class="page-tools">
+            <div class="action-buttons">
+                <a class="btn bg-white btn-light mx-1px text-95" href="#" data-title="Print">
+                    <i class="mr-1 fa fa-print text-primary-m1 text-120 w-2"></i>
+                    Imprimir
+                </a>
+                <a class="btn bg-white btn-light mx-1px text-95" href="#" data-title="PDF">
+                    <i class="mr-1 fa fa-file-pdf-o text-danger-m1 text-120 w-2"></i>
+                    Exportar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container px-0">
+        <div class="row mt-4">
+            <div class="col-12 col-lg-12">
+                <div class="row">
+                    <div class="text-95 col-sm-6 align-self-start d-sm-flex ">
+                      <hr class="d-sm-none" />
+                      <div class="text-grey-m2">
+                          <div class="my-2"><i class="fa fa-user text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">Cliente:</span> {{solicitudDevolucionSeleccionada.nombre}}</div>
+
+                          <div class="my-2"><i class="fa fa-map text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">Dirección:</span> {{solicitudDevolucionSeleccionada.direccion}}</div>
+
+                          <div class="my-2"><i class="fa fa-phone fa-flip-horizontal text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">Tel:</span> <span> {{solicitudDevolucionSeleccionada.telefono}}</span></div>
+                      </div>
+                  </div>
+                    <div class="text-95 col-sm-6 align-self-start d-sm-flex justify-content-end">
+                        <hr class="d-sm-none" />
+                        <div class="text-grey-m2">
+                            <div class="my-2"><i class="fa fa-hashtag text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">Núm. Factura:</span>  {{solicitudDevolucionSeleccionada.codigoReferencia}}</div>
+
+                            <div class="my-2"><i class="far fa-calendar text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">Fecha Creación:</span> {{solicitudDevolucionSeleccionada.fechaDocumento | date: 'dd/MM/yyyy hh:mm a'}}</div>
+
+                            <div class="my-2"><i class="fa fa-circle text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">Estado:</span> <span class="badge badge-warning badge-pill px-25">Autorizado</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <div class="row text-600 text-white bgc-default-tp1 py-25">
+                        <div class="d-none d-sm-block col-1">#</div>
+                        <div class="col-9 col-sm-5">Descripción</div>
+                        
+                        <div class="d-none d-sm-block col-4 col-sm-2">Cantidad</div>
+                        <div class="d-none d-sm-block col-sm-2">Precio</div>
+
+                        <div class="col-2">Total</div>
+                    </div>
+                    <div class="text-95 text-secondary-d3" *ngFor="let item of solicitudDevolucionDetalle">
+                        <div class="row mb-2 mb-sm-0 py-25">
+                            <div class="d-none d-sm-block col-1">{{item.id}}</div>
+                            <div class="col-9 col-sm-5">{{item.articulo}}</div>
+                            <div class="d-none d-sm-block col-2">{{item.cantidad | number}}</div>
+                            <div class="d-none d-sm-block col-2 text-95">{{item.precio}}</div>
+                            <div class="col-2 text-secondary-d2">{{item.total | number}}</div>
+                        </div>
+                        <hr />
+                    </div>
+                    <div class="row border-b-2 brc-default-l2"></div>
+                    <div class="row mt-3">
+                        <hr />
+                        <div class="col-12 col-sm-5 text-grey text-90 order-first order-sm-last">
+                            <div class="row my-2">
+                                <div class="col-7 text-right">
+                                    SubTotal
+                                </div>
+                                <div class="col-5">
+                                    <span class="text-120 text-secondary-d1">{{solicitudDevolucionSeleccionada.subtotal | number}}</span>
+                                </div>
+                            </div>
+
+                            <div class="row my-2">
+                                <div class="col-7 text-right">
+                                    Impuesto (18%)
+                                </div>
+                                <div class="col-5">
+                                    <span class="text-110 text-secondary-d1">{{solicitudDevolucionSeleccionada.impuestoTotal | number}}</span>
+                                </div>
+                            </div>
+                            <div class="row my-2">
+                              <div class="col-7 text-right">
+                                  Descuento (10%)
+                              </div>
+                              <div class="col-5">
+                                  <span class="text-110 text-secondary-d1">{{solicitudDevolucionSeleccionada.descuentoTotal | number}}</span>
+                              </div>
+                          </div>
+                            <hr />
+                            <div class="row my-2 align-items-center bgc-primary-l3 p-2">
+                                <div class="col-7 text-right">
+                                    Total Neto
+                                </div>
+                                <div class="col-5">
+                                    <span class="text-150 text-success-d3 opacity-2">{{solicitudDevolucionSeleccionada.totalNeto | number}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+  </div>
+</ng-template>
+<ng-template #modalUploadAnexos let-modal>
+  <div class="container-fluid">
+    <div class="row" *ngIf="!cargandoAnexos">
+      <div class="col">
+        <div class="modal-header">
+          <h4 class="modal-title" id="modal-title">Subida de anexos</h4>
+          <button type="button" class="close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+       
+          <div class="row">
+            <div class="col-12">
+              <div class="box-part text-center">
+                <input accept="application/png" class="d-none" (change)="setFiles(file.files)" #file 
+                  type="file" />
+
+                <button class="btn btn-info" (click)="file.click()"> <i class="fa fa-upload text-white"></i>
+                  Seleccionar
+                  archivos</button>
+
+              </div>
+              <hr>
+            </div>
+          </div>
+
+          <div class="row">
+
+           <div class="col-md-6 p-2 text-center border-light border rounded-sm"
+              *ngFor="let item of files; let i = index">
+
+              <div class="row">
+
+                <div class="col-12 text-right">
+                  <button class="btn btn-sm" (click)="onDeleteitem(i)"><i class="fa fa-times"></i></button>
+                </div>
+
+                <div class="col-12 text-center">
+                  <span>
+                    <i  [ngClass]="item.type == 'application/pdf'? 'fa fa-file-pdf text-danger fa-3x' : 'fa fa-image fa-3x'" ></i>
+                  </span>
+                  <h6 class="mt-2 text-info">{{item.name}}</h6>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+         <br>
+          <div class="row">
+            <div class="col text-right">
+              <button  type="button" class="btn btn-info" *ngIf="files.length > 0" (click)="subirArchivosAlServidor()">
+                <span>Subir {{files.length}} archivo</span> <span *ngIf="files.length > 1">s</span></button>
+            </div>
+          </div>
+        
+      
+                <div class="col-12">
+                  <hr>
+                  <h6>Anexos subidos <span class="badge badge-info badge-pill">{{filesSubidos.length}}</span></h6>
+                </div>
+
+                <div class="col-12">
+                  <div class="table-responsive">
+                    <table class="table table-hover table-sm mb-0 no-wrap v-middle">
+                      <thead>
+                        <tr>
+                          <th></th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody [hidden]="Cargando">
+                        <tr *ngFor="let item of filesSubidos; let i = index">
+                          <td>
+                            <span class=""> {{item.nombre}}</span>
+                          </td>
+                          <td>
+                            <a target="_blank" [href]="item.url"
+                              class="btn btn-sm btn-light m-1"><i class="fa fa-download"></i></a>
+                            <button *ngIf="estadoDevolucion =='Pendiente'" class="btn btn-sm"
+                              (click)="deleteSolicitudDevolucionArchivoByID(item.id)"><i
+                                class="fa fa-times"></i></button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+              
+            
+          
+
+
+        </div>
+      </div>
+    </div>
+
+    <app-loading-listado [hidden]="!cargandoAnexos"></app-loading-listado>
+
+  </div>
+</ng-template>
+
+

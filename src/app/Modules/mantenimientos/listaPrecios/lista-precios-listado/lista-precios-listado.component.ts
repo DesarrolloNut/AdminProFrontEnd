@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DualListComponent } from 'angular-dual-listbox';
-import { timeHours } from 'd3-time';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
@@ -22,7 +21,6 @@ import { ListaPrecio } from '../models/ListaPrecio';
   styleUrls: ['./lista-precios-listado.component.scss']
 })
 export class ListaPreciosListadoComponent implements OnInit {
-
   // COPIAR AL CREAR UN LISTADO NUEVO
   Search: string = "";
   paginaNumeroActual = 1;
@@ -32,8 +30,7 @@ export class ListaPreciosListadoComponent implements OnInit {
   paginaSize: number = 5;
   paginaTotalRecords: number = 0;
   data: ListaPrecio[] = [] //tu modelo
-
-  // Dual List options 
+  // Dual List options
   tab = 1;
   keepSorted = true;
   key: string;
@@ -43,40 +40,31 @@ export class ListaPreciosListadoComponent implements OnInit {
   confirmed: Array<any>;
   userAdd = '';
   disabled = false;
-
   sourceLeft = true;
   // format: any = DualListComponent.DEFAULT_FORMAT;
   format = {
     add: 'Agregar', remove: 'Remover', all: 'Seleccionar Todos', none: 'Deseleccionar',
     direction: DualListComponent.LTR, draggable: true, locale: 'da'
   };
-
   loadingArticulos: boolean;
   listaSeleccionada: number;
   loadingArticulosSeleccionados: boolean;
   guardandoArticulos: boolean;
   searchText: string;
-
   estadoIDAutorizacionDefault: number;
   estadoAutorizacionUsuario: number;
-
   estadosAutorizacion: ComboBox[];
   IsArticuloSeleccionado: boolean;
   estadoAutorizacionSiguiente: ComboBox;
   estadoAutorizacionAnterior: ComboBox;
-
   mostrarBtnCancelarAceptar: boolean
   isAutorizando: boolean
   fechaActual: Date;
-
-
   //modal subir precios masivo
   listasPrecio: ComboBox[];
   cargandoListaPrecio: boolean;
   preciosParaSubir: ArticuloPrecioUploadExcelModel[] = [];
   guardandoPrecios: boolean;
-
-
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
@@ -85,34 +73,24 @@ export class ListaPreciosListadoComponent implements OnInit {
     public permissionsService: NgxPermissionsService,
   ) { }
 
-
   ngOnInit(): void {
-
     this.getData()
     this.configDualList()
     this.getArticulosVenta()
     this.getEstadoAutorizacionDefault()
     this.getHoraActual()
-
     this.addPrecioParaSubirEmptyItem();
 
   }
-
-
   addPrecioParaSubirEmptyItem() {
     let fecha = new Date();
-
     fecha.setDate(fecha.getDate() + 1);
-    this.preciosParaSubir.push({ "articuloCodigoReferencia": null, "listaPrecioCodigoReferencia": null, "fechaAplicacion": fecha, "precio": null });
+    this.preciosParaSubir.push({ "articuloCodigoReferencia": null, "listaPrecioCodigoReferencia": null, "fechaAplicacion": fecha, "precio": null,"CompaniaId":null });
 
   }
-
-
   getData() {
     this.Cargando = true;
-
     let parametros: Parametro[] = [{ key: "Search", value: this.Search }]
-
     this.httpService.GetAllWithPagination<ListaPrecio>(DataApi.ListaPrecio, "GetListaPrecioListado", "ID", this.paginaNumeroActual,
       this.paginaSize, true, parametros).subscribe(x => {
 
@@ -131,10 +109,7 @@ export class ListaPreciosListadoComponent implements OnInit {
       });
 
   }
-
-
   asignarPagination(x: ResponseContenido<any>) {
-
     if (x.pagina != null) {
       this.totalPaginas = x.pagina.totalPaginas == null ? 0 : x.pagina.totalPaginas;
       this.paginaTotalRecords = x.pagina.totalRecords == null ? 0 : x.pagina.totalRecords;
@@ -144,33 +119,47 @@ export class ListaPreciosListadoComponent implements OnInit {
       this.paginaTotalRecords = 0;
       this.paginaSize = 0;
     }
-
   }
-
-
-
   openModal(content, listaId: number) {
     this.modalService.open(content, { windowClass: "myCustomModalClass", backdrop: "static", });
     this.listaSeleccionada = listaId;
     this.getArticulosSeleccionadosLista(listaId);
   }
-
-
-
-
+    configDualList() {
+    this.key = 'id';
+    this.display = 'nombre';
+    this.keepSorted = true;
+  }
   getArticulosSeleccionadosLista(listaId: number) {
     this.loadingArticulosSeleccionados = true;
     let param: Parametro[] = [{ key: "listaID", value: listaId }]
-
     this.httpService.DoPost<any>(DataApi.Articulo,
       "GetArticulosAsignadosListaPrecio", param).subscribe(response => {
-
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          this.confirmed = response.records.map(x => {
+            return { "id": x.id, "nombre": x.nombre }
+          });
+        }
+        this.loadingArticulosSeleccionados = false;
+      }, error => {
+        this.loadingArticulosSeleccionados = false;
+        this.toastService.error("No se pudo obtener los articulos seleccionados", "Error conexion al servidor");
+        setTimeout(() => {
+          this.getArticulosSeleccionadosLista(listaId)
+        }, 1000);
+      });
+  }
+  GetArticulosAsignadosListaPrecioModal(listaId: number) {
+    this.loadingArticulosSeleccionados = true;
+    let param: Parametro[] = [{ key: "listaID", value: listaId }]
+    this.httpService.DoPost<any>(DataApi.Articulo,
+      "GetArticulosAsignadosListaPrecioModal", param).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
           this.confirmed = response.records;
-          console.log(this.confirmed)
-
         }
         this.loadingArticulosSeleccionados = false;
       }, error => {
@@ -178,21 +167,11 @@ export class ListaPreciosListadoComponent implements OnInit {
         this.toastService.error("No se pudo obtener los articulos seleccionados", "Error conexion al servidor");
 
         setTimeout(() => {
-          this.getArticulosSeleccionadosLista(listaId)
-        }, 1000);
-
+          this.GetArticulosAsignadosListaPrecioModal(listaId)
+        }, 1000)
       });
   }
-
-  configDualList() {
-    this.key = 'id';
-    this.display = 'nombre';
-    this.keepSorted = true;
-  }
-
   //#region MODAL ASIGNACION ARTICULOS
-
-
   getArticulosVenta() {
     this.loadingArticulos = true;
     this.httpService.DoPost<Articulo>(DataApi.Articulo,
@@ -205,34 +184,26 @@ export class ListaPreciosListadoComponent implements OnInit {
           this.source = response.records.map(x => {
             return { "id": x.id, "nombre": x.nombre }
           });
-
         }
         this.loadingArticulos = false;
       }, error => {
         this.loadingArticulos = false;
         this.toastService.error("No se pudo obtener todos los articulos", "Error conexion al servidor");
-
         setTimeout(() => {
           this.getArticulosVenta()
         }, 1000);
-
       });
   }
-
   guardarArticulosSeleccionados() {
-
     let param = this.confirmed.map(x => {
-      return { "ArticuloID": x.id, "ListaPrecioID": this.listaSeleccionada }
+      return { "ArticuloID": x.id, "ListaPrecioID": this.listaSeleccionada, "CompaniaId": Number(this.authService.tokenDecoded.primarygroupsid)}
     })
-
     if (param.length == 0) {
-      param.push({ "ListaPrecioID": this.listaSeleccionada, "ArticuloID": 0 })
+      param.push({ "ListaPrecioID": this.listaSeleccionada, "ArticuloID": 0,"CompaniaId":0 })
     }
-
     this.guardandoArticulos = true;
     this.httpService.DoPostAny<any>(DataApi.Articulo,
       "RegistrarArticulosAListaPrecio", param).subscribe(response => {
-
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
           console.error(response.errores[0]);
@@ -246,7 +217,6 @@ export class ListaPreciosListadoComponent implements OnInit {
         this.toastService.error("No se pudo guardar", "Error conexion al servidor");
         console.error(error);
       });
-
   }
 
 
@@ -341,7 +311,6 @@ export class ListaPreciosListadoComponent implements OnInit {
 
       });
   }
-
 
   getEstadoAutorizacionUsuario() {
     let parametro = {
@@ -470,7 +439,7 @@ export class ListaPreciosListadoComponent implements OnInit {
     this.listaSeleccionada = listaId;
     this.preciosParaSubir = []
     this.addPrecioParaSubirEmptyItem();
-    this.getArticulosSeleccionadosLista(listaId);
+    this.GetArticulosAsignadosListaPrecioModal(listaId);
     this.getListasPrecio()
 
   }
@@ -499,12 +468,9 @@ export class ListaPreciosListadoComponent implements OnInit {
   onListaPrecioChange() {
     this.getArticulosSeleccionadosLista(this.listaSeleccionada);
   }
-
-
   onSubmit() {
 
     let listaPrecioCodRef: string = this.listasPrecio.find(l => l.codigo == this.listaSeleccionada)?.grupo;
-
     if (!listaPrecioCodRef) {
       this.toastService.warning("Código de lista de precio no encontrado.");
       return;
@@ -523,6 +489,7 @@ export class ListaPreciosListadoComponent implements OnInit {
     this.preciosParaSubir.forEach(x => {
       x.listaPrecioCodigoReferencia = listaPrecioCodRef
       x.precio = Number(x.precio)
+      x.CompaniaId=Number(this.authService.tokenDecoded.primarygroupsid)
     })
 
     this.guardarPreciosMasivo();

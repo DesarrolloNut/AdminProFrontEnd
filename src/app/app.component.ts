@@ -29,7 +29,7 @@ export class AppComponent implements AfterViewInit {
     }
 
     ngOnInit() {
-
+ 
         this.connectionService.monitor().subscribe(isConnected => {
             this.isConnected = isConnected;
             if (this.isConnected) {
@@ -45,6 +45,10 @@ export class AppComponent implements AfterViewInit {
 
         if (this.authenticationService.loggedIn()) {
             this.authenticationService.setPermissions();
+            if(this.authenticationService.tokenDecoded.role=='PantallaAsignadorDespacho'){
+               this.router.navigateByUrl('inventario/despacho-asignacion')
+            }
+
         }
     }
 

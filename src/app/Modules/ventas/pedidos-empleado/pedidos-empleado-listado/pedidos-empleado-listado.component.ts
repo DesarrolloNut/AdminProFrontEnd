@@ -57,8 +57,8 @@ export class PedidosEmpleadosListadoComponent implements OnInit {
 
   ngOnInit(): void {
     // this.getEstados()
-    // this.getClienteByUsuarioID(Number(this.authService.tokenDecoded.nameid))
-
+   this.getClienteByUsuarioID(Number(this.authService.tokenDecoded.nameid))
+  /// this.getData();
   }
   getData() {
     this.Cargando = true;
@@ -140,29 +140,28 @@ export class PedidosEmpleadosListadoComponent implements OnInit {
   }
 
   validExistPedidoSinFacturar() {
-    this.router.navigateByUrl('/ventas/pedidos-empleado/0');
-    // this.loadingValidaExistPedidoSinFacturar = true;
-    // this.httpService.DoPostAny<PedidoEmpleadoDetalleViewModel>(DataApi.PedidosEmpleado,
-    //   "GetExistePedidoSinFacturarEmpleado", Number(this.authService.tokenDecoded.nameid)).subscribe(response => {
+    this.loadingValidaExistPedidoSinFacturar = true;
+    this.httpService.DoPostAny<PedidoEmpleadoDetalleViewModel>(DataApi.PedidosEmpleado,
+      "GetExistePedidoSinFacturarEmpleado", Number(this.authService.tokenDecoded.nameid)).subscribe(response => {
 
-    //     if (!response.ok) {
-    //       this.toastService.error(response.errores[0]);
-    //     } else {
-    //       if(response.valores.length>0){
-    //          if(response.valores[0]>0){
-    //           this.toastService.warning("No puede crear un nuevo pedido");
-    //          }else{
-    //           this.router.navigateByUrl('/ventas/pedidos-empleado/0');
-    //          }
-    //       }else{
-    //         this.router.navigateByUrl('/ventas/pedidos-empleado/0');
-    //       }
-    //     }
-    //     this.loadingValidaExistPedidoSinFacturar = false;
-    //   }, error => {
-    //     this.loadingValidaExistPedidoSinFacturar = false;
-    //     this.toastService.error("No se pudo validar la existencia de pedidos sin facturar", "Error conexion al servidor");
-    //   });
+        if (!response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          if(response.valores.length>0){
+             if(response.valores[0]>0){
+              this.toastService.warning("No puede crear un nuevo pedido");
+             }else{
+              this.router.navigateByUrl('/ventas/pedidos-empleado/0');
+             }
+          }else{
+            this.router.navigateByUrl('/ventas/pedidos-empleado/0');
+          }
+        }
+        this.loadingValidaExistPedidoSinFacturar = false;
+      }, error => {
+        this.loadingValidaExistPedidoSinFacturar = false;
+        this.toastService.error("No se pudo validar la existencia de pedidos sin facturar", "Error conexion al servidor");
+      });
   }
 
 

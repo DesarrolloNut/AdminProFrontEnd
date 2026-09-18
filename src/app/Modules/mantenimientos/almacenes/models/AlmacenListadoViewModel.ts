@@ -15,3 +15,8 @@ export class AlmacenListadoViewModel {
     sucursalID: number
     sucursal: string
 }
+
+
+
+
+

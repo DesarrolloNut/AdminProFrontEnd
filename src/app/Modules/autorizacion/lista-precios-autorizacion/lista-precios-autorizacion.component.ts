@@ -79,7 +79,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
     private modalService: NgbModal,
     public permissionsService: NgxPermissionsService,
   ) { }
-
+ 
 
   ngOnInit(): void {
     this.getEstadoAutorizacionUsuario()
@@ -263,6 +263,8 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
 
 
   actualizarEstadoArticulos(item: any) {
+
+  
     item.cargando = true;
     // if (this.confirmed.filter(x => x.IsChecked).length < 1) {
     //   this.toastService.warning("Selecciona uno o más artículos para actualizar");
@@ -292,8 +294,7 @@ export class ListaPreciosAutorizacionComponent implements OnInit {
         map(x => { return { "ListaPrecioID": x.listaPrecioID, "ArticuloID": x.id, "Precio": x.precio } })
     }
 
-    console.log(articulos)
-    console.log(param)
+ 
 
     this.httpService.DoPostAny<any>(DataApi.NivelAutorizacion,
       "ActualizarArticuloPrecioEstadoID", param).subscribe(response => {

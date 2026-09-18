@@ -53,12 +53,20 @@ export enum DataApi {
     ComprobanteFiscal = 78,
     SAPCotizacion = 79,
     ChequeDevuelto = 80,
-
-
-
-
-
-
+    HoraPicking = 81,
+    TransferenciaInventario = 82,
+    ComprobanteEnrroll = 83,
+    TipoComprobanteFiscal = 84,
+    SolicitudDevolucion=85,
+    SolicitudCambio=86,
+    Modulo=87,
+    TipoSolicitudDevolucion=88,
+    AlmacenInventario=89,
+    ModuloCompaniaEnrroll=90,
+    ConfiguracionCompania=91,
+    TipoDescuento=92,
+    DescuentoArticulo=93,
+    Promociones=94,
     Usuario = 1,
     Authentication = 2,
     ComboBox = 3,
@@ -91,11 +99,7 @@ export enum DataApi {
     Recall = 30,
     Oferta = 31,
 }
-
-
 export const dataApiRootMap: { [api: string]: string } = {
-
-
     "32": "api/ListaPrecio",
     "33": "api/Ruta",
     "35": "api/NivelAutorizacion",
@@ -144,19 +148,20 @@ export const dataApiRootMap: { [api: string]: string } = {
     "78": "api/ComprobanteFiscal",
     "79": "api/SAPCotizacion",
     "80": "api/ChequeDevuelto",
-
-
-
-
-
-
-
-
-
-
-
-
-
+    "81": "api/HoraPicking",
+    "82": "api/TransferenciaInventario",
+    "83":"api/ComprobanteEnrroll",
+    "84":"api/TipoComprobanteFiscal",
+    "85":"api/SolicitudDevolucion",
+    "86":"api/SolicitudCambio",
+    "87":"api/Modulo",
+    "88":"api/TipoSolicitudDevolucion",
+    "89":"api/AlmacenInventario",
+    "90":"api/ModuloCompaniaEnrroll",
+    "91":"api/ConfiguracionCompania",
+    "92":"api/TipoDescuento",
+    "93":"api/DescuentoArticulo",
+    "94":"api/Promociones",
     "1": "api/Usuario",
     "2": "api/Authentication",
     "3": "api/ComboBox",

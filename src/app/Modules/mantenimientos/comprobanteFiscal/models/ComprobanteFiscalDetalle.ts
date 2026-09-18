@@ -6,6 +6,8 @@ export interface ComprobanteFiscalDetalle {
     asignados: number
     comprobanteID: number
     tipoID: number
-
     editable: boolean
+    companiaId:number
+    estadoERPID: number
+
 }

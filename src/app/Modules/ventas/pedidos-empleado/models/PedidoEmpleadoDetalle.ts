@@ -1,3 +1,5 @@
+import { PedidoEmpleado } from "./PedidoEmpleado";
+
 export interface PedidoEmpleadoDetalle {
     id: number;
     cotizacionId: number;
@@ -7,7 +9,11 @@ export interface PedidoEmpleadoDetalle {
 
     imagenUrl:string;
     almacenId: number;
+    peso: number;
+
     cantidad: number;
+    cantidadCalculada?: number;
+
     costo: number;
     precio: number;
     subtotal: number;
@@ -15,4 +21,9 @@ export interface PedidoEmpleadoDetalle {
     totalDescuento: number;
     totalImpuesto: number;
     totalNeto: number;
+    unidadMedida:string;
+}
+export class PedidoEmpleadoRequest {
+  pedido:PedidoEmpleado;
+  pedidoDetalles?:PedidoEmpleadoDetalle[];
 }

@@ -4,7 +4,7 @@
             <div class="card-body">
                 <div class="row mb-2">
                     <div class="col-md-6 align-middle">
-                        <h4 class="card-title">Listado de pedidos</h4>
+                        <h4 class="card-title">Mis pedidos</h4>
                     </div>
                     <!-- <div class="col-md-6 text-right">
                         <button  [disabled]="loadingValidaExistPedidoSinFacturar || !clienteExiste" (click)="validExistPedidoSinFacturar()"
@@ -13,7 +13,8 @@
                         </button>
                     </div> -->
                     <div class="col-md-6 text-right">
-                      <button  [disabled]="loadingValidaExistPedidoSinFacturar || !clienteExiste" [routerLink]="[0]"
+                      <button  [disabled]="loadingValidaExistPedidoSinFacturar || !clienteExiste"
+                      (click)="validExistPedidoSinFacturar()"
                        class="btn btn-info"> <i class="fa fa-plus"></i> Nuevo
                           pedido
                       </button>
@@ -40,14 +41,15 @@
                             <tr>
                                 <th></th>
                                 <th>No. Pedido</th>
-                                <th>Cliente(Empleado)</th>
-                                <th>SubTotal</th>
-                                <th>Desc.</th>
-                                <th>Imp.</th>
-                                <th>Total Neto</th>
-                                <th>Fecha</th>
+                                <!-- <th>SubTotal</th> -->
+                                <!-- <th>Desc.</th> -->
+                                <!-- <th>Imp.</th> -->
                                 <th>Estado</th>
+
+                                <th>Fecha</th>
                                 <th>Vendedor</th>
+                                <th>Total Pedido </th>
+
                                 <!-- <th>Estado</th> -->
                             </tr>
                         </thead>
@@ -74,38 +76,21 @@
 
                                 </td>
                                 <td><span class="badge badge-light text-info font-bold"  >{{item.id}}</span></td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <!-- <i class="fa fa-user-circle fa-3x text-light"></i> -->
-                                        <div class="ml-3">
-                                            <p class="font-bold mb-0">{{item.cliente | titlecase }}</p>
-                                            <small class="text-info"> <i class="fa fa-id-card"></i>
-                                                {{item.clienteDocumento | uppercase }}</small>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span> ${{item.subTotal | number:'1.2-2'}}</span>
-                                </td>
-                                <td>
-                                    <span> ${{item.descuentoTotal | number:'1.2-2'}}</span>
-                                </td>
-                                <td>
-                                    <span> ${{item.impuestoTotal | number:'1.2-2'}}</span>
-                                </td>
-                                <td>
-                                    <span class="font-weight-bold"> ${{item.totalNeto | number:'1.2-2'}}</span>
-                                </td>
-                                <td>
-                                    <span class="text-muted"><i class="far fa-calendar"></i>
-                                        {{item.fechaCreacion | date:'dd/MM/yy' }}
-                                    </span>
-                                </td>
+
+
 
                                 <td>
-                                    <span  class="badge badge-warning">{{item.estadoDespacho}}</span>
+                                  <span  class="badge badge-warning">{{item.estadoDespacho}}</span>
 
+                              </td>
+
+                                <td>
+                                  <span class="text-muted">
+                                    <i class="fa fa-calendar-alt"></i>
+                                    {{item.fechaCreacion |date : 'dd/MM/yy'}}
+                                </span>
                                 </td>
+
                                 <td>
 
                                     <div class="d-flex align-items-center">
@@ -117,6 +102,9 @@
                                         </div>
                                     </div>
                                 </td>
+                                <td>
+                                  <span class="font-weight-bold">RD$ {{item.totalNeto | number: '1.2'}}</span>
+                              </td>
                                 <!-- <td>
                                     <ng-select style="width: 120px;" [items]="estados" bindLabel="nombre"
                                         [clearable]="false" bindValue="codigo" [loading]="loadingEstados"

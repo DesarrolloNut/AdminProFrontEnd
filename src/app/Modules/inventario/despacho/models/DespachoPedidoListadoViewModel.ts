@@ -27,6 +27,7 @@ export class DespachoListadoPreventaVM  {
   ruta: number;
   rutaId: number;
   finalizado: number;
+  sync:boolean;
   estadoERP: number;
   noEditable: number;
   inUse: boolean;
@@ -39,8 +40,66 @@ export class DespachoListadoPreventaVM  {
   almacen_Destino: number;
   estadoDespacho: number;
   rutasVendedoresDistribuidor:string;
+  fechacreacion: string;
   totales:DespachoListadoPreventaVMTotales = new DespachoListadoPreventaVMTotales();
+
+  sucursalID:number;
+  despachador?:string;
+  validador?:string;
+  // despachoDispositivo:boolean;
+  // fechaInicioDespachador:string;
+  // fechaFinDespachador:string;
+  // fechainicioValidador:string;
+  // fechaFinalizacionValidador:string;
+  // // Tiempo_Picking:string;
+  // // Tiempo_Validacion:string;
+  // // Tiempo_Total:string;
+
+
 }
+
+
+
+export class DespachoListadoPreventaAsignacionVM  {
+  fechaEntrega: string;
+  canalId: number;
+  distribuidorId: number;
+  distribuidor: string;
+  ruta: number;
+  rutaId: number;
+  finalizado: number;
+  sync:boolean;
+  estadoERP: number;
+  noEditable: number;
+  inUse: boolean;
+  pedido: number;
+  despacho: number;
+  almacen_Origen: number;
+  almacen_Destino: number;
+  estadoDespacho: number;
+
+  totalMontoPedido: number;
+  totalMontoPedidoERP: number;
+  totalMontoDespacho: number;
+  sucursalID:number;
+  despachador?:string;
+  validador?:string;
+  despachoDispositivo:boolean;
+  fechaInicioDespachador:string;
+  fechaFinDespachador:string;
+  fechainicioValidador:string;
+  fechaFinalizacionValidador:string;
+  prioridadOrden:number;
+  // Tiempo_Picking:string;
+  // Tiempo_Validacion:string;
+  // Tiempo_Total:string;
+
+
+  estadoAsignacion:number;
+  estadoAsignacionMsg:string;
+
+}
+
 export class DespachoListadoPreventaVMTotales {
   fechaEntrega: string;
   sucursalId: number;
@@ -51,12 +110,15 @@ export class DespachoListadoPreventaVMTotales {
 export class DepachoHorasVM   {
   diaNombre: string;
   horaDesde: HoraTimeObject;
-  horaDesdeSTR: string;
+   horaDesdeSTR: string;
   horaHasta: HoraTimeObject;
   horaHastaSTR: string;
   horaActual: HoraTimeObject;
   horaActualSTR: string;
   puedeDespachar: boolean;
+  HorarioEstablecido: boolean;
+  id :number;
+  hayHorario:boolean;
 }
 export class HoraTimeObject   {
   hours: number;

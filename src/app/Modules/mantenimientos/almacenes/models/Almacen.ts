@@ -3,13 +3,13 @@ export class Almacen {
         this.id = 0;
         this.nombre = ""
         this.descripcion = ""
-        this.estadoID = 0
+        this.estado = 0
         this.companiaID = 0
     }
     id: number;
     nombre: string;
     codigoRefencia: string;
     descripcion: string
-    estadoID: number
+    estado: number
     companiaID: number
 }

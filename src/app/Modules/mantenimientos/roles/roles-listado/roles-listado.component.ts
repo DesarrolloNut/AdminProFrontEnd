@@ -1,3 +1,4 @@
+import { AuthenticationService } from './../../../../core/authentication/service/authentication.service';
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DualListComponent } from 'angular-dual-listbox';
@@ -34,7 +35,7 @@ export class RolesListadoComponent implements OnInit {
   loadingPermisos: boolean;
   permisos: Array<Permisos>;
 
-  // Dual List options 
+  // Dual List options
   tab = 1;
   keepSorted = true;
   key: string;
@@ -53,13 +54,16 @@ export class RolesListadoComponent implements OnInit {
   };
 
 
+
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     private modalService: NgbModal,
+    private auth:AuthenticationService,
     public permissionsService: NgxPermissionsService,
+    private authService: AuthenticationService
   ) { }
 
-
+  
   ngOnInit(): void {
     this.getData();
     this.getPermisos();
@@ -118,17 +122,21 @@ export class RolesListadoComponent implements OnInit {
     this.modalService.open(content, { size: 'xl', backdrop: "static", });
   }
 
+
   getPermisos() {
+    let param: Parametro[] = [{ key: "companiaId", value: this.authService.tokenDecoded.primarygroupsid }]
+  //  console.log(param);
     this.loadingPermisos = true;
+
     this.httpService.DoPost<Permisos>(DataApi.Permisos,
-      "GetAllPermisos", null).subscribe(response => {
+      "GetAllPermisos", param).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
           this.permisos = response.records;
           this.source = response.records.map(x => {
-            return { "id": x.id, "nombre": x.nombre }
+            return { "id": x.id, "nombre": x.nameKey }
           });
         }
         this.loadingPermisos = false;
@@ -154,7 +162,7 @@ export class RolesListadoComponent implements OnInit {
         } else {
           this.permisos = response.records;
           this.confirmed = response.records.map(x => {
-            return { "id": x.id, "nombre": x.nombre }
+            return { "id": x.id, "nombre": x.nameKey }
           });
         }
         this.loadingPermisos = false;
@@ -174,7 +182,7 @@ export class RolesListadoComponent implements OnInit {
 
   guardarPermisosSeleccionados() {
 
-    let param = { "RolID": this.RolID, "Permisos": this.confirmed.map(x => x.id) }
+    let param = { "RolID": this.RolID,"CompaniaID":parseInt(this.auth.tokenDecoded.primarygroupsid) , "Permisos": this.confirmed.map(x => x.id) }
     this.guardandoPermisos = true;
     this.httpService.DoPostAny<Permisos>(DataApi.Rol,
       "InsertRolPermisoEnrroll", param).subscribe(response => {

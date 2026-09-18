@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
+import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { Parametro } from 'src/app/core/http/model/Parametro';
 import { ResponseContenido } from 'src/app/core/http/model/ResponseContenido';
 import { BackendService } from 'src/app/core/http/service/backend.service';
@@ -49,11 +50,13 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
   ocultarBotonesAgregar: boolean;
   excedioLimite: boolean;
   btnEnviandoSAP: boolean;
+  comprobanteID: number=0;
 
 
   constructor(private toastService: ToastrService,
     private httpService: BackendService,
     public permissionsService: NgxPermissionsService,
+    private authService: AuthenticationService,
     private modalService: NgbModal,
 
   ) { }
@@ -62,9 +65,7 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
   ngOnInit(): void {
     this.getComprobanteFiscalEstados();
     this.getSucursales()
-    this.getRutasVendedores()
-
-
+    this.getRutasComprobantes()
   }
 
   filterRutas(item: ComprobanteFiscalDetalle): boolean {
@@ -88,6 +89,7 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
 
         if (x.ok) {
           this.data = x.records;
+         
           this.asignarPagination(x);
         } else {
           this.toastService.error(x.errores[0]);
@@ -101,8 +103,6 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
       });
 
   }
-
-
   asignarPagination(x: ResponseContenido<any>) {
 
     if (x.pagina != null) {
@@ -116,8 +116,6 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
     }
 
   }
-
-
   getComprobanteFiscalEstados() {
     this.loadingEstados = true;
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
@@ -147,23 +145,23 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
       });
   }
 
-
   openModal(content, item: ComprobanteFiscalListadoViewModel) {
     this.modalService.open(content, { windowClass: "myCustomModalClass", });
     this.itemSelected = item;
-
+    this.comprobanteID=item.tipoComprobanteID;
     this.getComprobanteDetalles(item.id);
-
+    this.getRutasComprobantes();
+    this.getSucursales();
   }
-
-
-
-  getRutasVendedores() {
+  getRutasComprobantes() {
     this.loadingRutasVendedores = true;
-    let parametros: Parametro[] = [{ key: "tipoRuta", value: TipoRutaEnum.VENTAS }]
+    let parametros: Parametro[] = [
+      { key: "tipoRuta", value: TipoRutaEnum.VENTAS },
+      { key: "TipoComprobanteId", value:  this.comprobanteID  }
+    ]
 
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetRutasComboBox", parametros).subscribe(response => {
+      "GetRutasComprobantesComboBox", parametros).subscribe(response => {
 
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
@@ -176,7 +174,7 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
         this.toastService.error("No se pudo obtener las rutas", "Error conexion al servidor");
 
         setTimeout(() => {
-          this.getRutasVendedores();
+          this.getRutasComprobantes();
         }, 1000);
 
       });
@@ -184,10 +182,12 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
 
   getSucursales() {
     this.loadingSucursales = true;
+    let parametros: Parametro[] = [
+      { key: "TipoComprobanteId", value:  this.comprobanteID  }
+    ]
 
     this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
-      "GetSucursales", null).subscribe(response => {
-
+      "GetSucursalesDetalleComprobanteFiscal", parametros).subscribe(response => {
         if (!response.ok) {
           this.toastService.error(response.errores[0]);
         } else {
@@ -222,6 +222,7 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
     }
 
     this.guardarDetalle();
+
   }
 
 
@@ -239,6 +240,7 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
         .filter(x => x.valorID > 0)
     }
 
+
     this.btnGuardarCargando = true;
 
     this.httpService.DoPostAny<any>(DataApi.ComprobanteFiscal,
@@ -249,7 +251,7 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
         } else {
           this.toastService.success("Realizado", "OK");
           // this.router.navigateByUrl('/ventas/comprobante');
-          // this.modalService.dismissAll()
+           this.modalService.dismissAll()
 
           this.getComprobanteDetalles(this.itemSelected.id);
 
@@ -289,10 +291,8 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
 
 
   agregarDetalleVacio(tipo: ComprobanteFiscalTipoEnum.RUTA | ComprobanteFiscalTipoEnum.SUCURSAL) {
-
     this.comprobanteDetalles.push
-      ({ comprobanteID: 0, desde: 0, hasta: 0, id: 0, valorID: 0, asignados: 0, tipoID: tipo, editable: true })
-
+      ({ comprobanteID: 0, desde: 0, hasta: 0, id: 0, valorID: 0, asignados: 0, tipoID: tipo, editable: true, companiaId:Number(this.authService.tokenDecoded.primarygroupsid),estadoERPID:1 })
   }
 
 
@@ -322,7 +322,7 @@ export class ComprobanteFiscalListadoComponent implements OnInit {
     this.excedioLimite = this.comprobanteDetalles.some(x => x.hasta > this.itemSelected.secuenciaHasta)
   }
 
-
+  
   ActualizarNumerosComprobantesFiscalesSAP(itemSucursal: ComprobanteFiscalDetalle) {
 
     this.btnEnviandoSAP = true;

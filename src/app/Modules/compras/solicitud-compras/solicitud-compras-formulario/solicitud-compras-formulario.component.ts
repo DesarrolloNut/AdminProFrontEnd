@@ -95,7 +95,7 @@ export class SolicitudComprasFormularioComponent implements OnInit {
       sucursalID: [null, [Validators.required]],
       estadoID: [0,],
       fechaSolicitud: [new Date(),],
-      compradorID: [null, [Validators.required]],
+      compradorID: [1, [Validators.required]],
       // fechaEntrega: [new Date(), [Validators.required]],
       proveedorID: [0],
       tipoSolicitudID: [1, [Validators.required]],
@@ -132,6 +132,7 @@ export class SolicitudComprasFormularioComponent implements OnInit {
         this.toastService.error("Error conexion al servidor");
       });
   }
+
 
   getSolicitudCompraDetalles(id: number) {
     this.loadingCotizacionDetalle = true;

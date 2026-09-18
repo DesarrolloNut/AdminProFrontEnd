@@ -1,0 +1,96 @@
+<div class="row">
+    <div class="control-section">
+        <div id="control_wrapper">
+        </div>
+    </div>
+</div>
+<div class="row mb-2">
+    <div class="col">
+        <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 col-12">
+                        <h4 class="card-title">Formulario de Configuración Compañia</h4>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-12 text-right">
+                       
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-10 col-lg-10 col-12">
+                     
+                    </div>
+                    <div class="col-md-2 col-lg-2 col-12 text-right">
+                      
+                    </div>
+                </div>
+
+            
+             
+                <form class="form-row " [formGroup]="Formulario" (ngSubmit)="onSubmit()">
+                 
+                        <div class="form-group col-md-6">
+                            <label for="configuracionTipoCompaniaId"> Configuración Tipo Compañia </label>
+                            <ng-select bindLabel="nombre" bindValue="codigo" [items]="configuracionTipoCompanias"
+                                [clearable]="false"
+                                placeholder="Selecione un Modulo"
+                                [ngClass]="{'form-control border-danger p-0' : submitted && f.configuracionTipoCompaniaId.errors }"
+                                notFoundText="No resultados" formControlName="configuracionTipoCompaniaId">
+                            </ng-select>
+                            <div *ngIf="submitted && f.configuracionTipoCompaniaId.errors" class="text-danger small">
+                                <div *ngIf="f.configuracionTipoCompaniaId.errors.required  ">El campo es obligatorio</div>
+                            </div>
+                        </div>
+                   
+                    <div class="form-group col-md-6">
+                        <label for=""> </label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="configValue"
+                                formControlName="configValue">
+                            <label class="form-check-label" for="configValue">
+                                Valor de Configuración
+                            </label>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group col-md-6">
+                        <label for="moduloId"> Modulo </label>
+                        <ng-select bindLabel="nombre" bindValue="codigo" [items]="modulos"
+                            [clearable]="false"
+                            placeholder="Selecione un Modulo"
+                            [ngClass]="{'form-control border-danger p-0' : submitted && f.moduloId.errors }"
+                            notFoundText="No resultados" formControlName="moduloId">
+                        </ng-select>
+                        <div *ngIf="submitted && f.moduloId.errors" class="text-danger small">
+                            <div *ngIf="f.moduloId.errors.required  ">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+               
+
+                
+                    <div class="form-group text-right col-md-12">
+                        <hr />
+                        <button class="btn btn-light m-1" routerLink="../" type="button">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                        <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+                            <i class="fas fa-check"></i> Guardar
+                        </button>
+                        <!-- boton cargando -->
+                        <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span> Guardando
+                        </button>
+                       
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -10,7 +10,7 @@ import { ParametrosCita } from 'src/app/Modules/turno/models/ParametrosCita';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ComboBox } from 'src/app/shared/model/ComboBox';
 import { cedulaestructura } from 'src/app/shared/validators/cedula-estructura.validator';
-import { Cliente } from '../models/Cliente';
+import { Cliente, ValidaExisteClienteViewModel } from '../models/Cliente';
 import { ClienteContactos, ClienteContactosRequest, ContactosResponse } from '../models/ClienteContactos';
 import { FrecuenciaVisita } from '../models/FrecuenciaVisita';
 
@@ -58,7 +58,7 @@ export class ClienteContactosComponent implements OnInit {
    this.CreateForm();
    this.getPuestos();
    if (this.clientId > 0) {
-    this.GetContactosByClienteID();
+    //this.GetContactosByClienteID();
     this.actualizando = true;
   }
 
@@ -79,12 +79,13 @@ export class ClienteContactosComponent implements OnInit {
     this.FormContactos = this.formBuilder.group({
       clienteId: [this.clientId, [Validators.required]],
       usuarioId: [Number(this.auth.tokenDecoded.nameid)],
+      companiaId: [Number(this.auth.tokenDecoded.primarygroupsid)],
       contactos: new FormArray([])
     }
      );
 
   }
-
+ 
   get f() { return this.FormContactos.controls; }
   get c() { return this.f.contactos as FormArray; }
 
@@ -105,6 +106,7 @@ export class ClienteContactosComponent implements OnInit {
                  this.isnotNecesaryFieldsComplete= v.ok;
                  this.isnotNecesaryFieldsCompleteO.emit(v.ok);
                  this.toastService.success("Realizado", "OK");
+                 this.router.navigateByUrl('/mantenimientos/cliente');
                }
             }
           }
@@ -241,7 +243,7 @@ export class ClienteContactosComponent implements OnInit {
   }
 
   send(values) {
-    console.log(values);
+    //console.log(values);
   }
   buscarCliente(documento: string) {
     this.buscandoDocumento = true;
@@ -249,7 +251,7 @@ export class ClienteContactosComponent implements OnInit {
     let parametros = new ParametrosCita();
     parametros.clienteDocumento = documento;
 
-    this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
+    this.httpService.DoPostAny<ValidaExisteClienteViewModel>(DataApi.Cliente,
       "GetClienteOPadronDatos", parametros).subscribe(response => {
 
         if (response.ok) {
@@ -292,13 +294,12 @@ onDocumentoKeyUp(contact: FormGroup) {
     parametros.clienteDocumento = documento;
     parametros.documentoTipoID = documentoTipoID;
 
-    this.httpService.DoPostAny<Cliente>(DataApi.Cliente,
+    this.httpService.DoPostAny<ValidaExisteClienteViewModel>(DataApi.Cliente,
       "GetClienteByCedulaOrRnc", parametros).subscribe(response => {
 
         if (response.ok) {
-          if (response != null && response.ok && response.records != null && response.records.length > 0) {
-            let cliente = response.records[0];
-            console.log(cliente);
+          if (response != null && response.ok && response.valores != null && response.valores.length > 0) {
+            let cliente = response.valores[0];
             contact.get('nombres').setValue(cliente.nombres +' '+ cliente.apellidos);
             // this.f.celular.setValue(cliente.celular);
           } else {
@@ -320,7 +321,7 @@ onDocumentoKeyUp(contact: FormGroup) {
   openModal(content, contact: FormGroup,index:any) {
     this.modalService.open(content, { size: 'sm',centered:true });
     this.contactoFormGroupToDelete= contact;
-    console.log(this.contactoFormGroupToDelete.get('id').value)
+   // console.log(this.contactoFormGroupToDelete.get('id').value)
     this.contactoIndexToDelete = index;
     // this.articuloSeleccionado = item
   }

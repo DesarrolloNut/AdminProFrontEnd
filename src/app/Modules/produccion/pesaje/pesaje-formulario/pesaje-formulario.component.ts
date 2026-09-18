@@ -31,7 +31,7 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
   pesoArticuloBalanza: number
   pesoCanastos: number = 0;
   pesoNeto: number = 0;
-
+  
   cargando: boolean;
   search: string;
   searching: boolean;
@@ -81,6 +81,7 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
     this.getAlmacenesUsuarioEnrroll()
     this.subscribirPesoBalanzaCambios()
     this.getUsuarioLogueado()
+    
 
     for (let i = 1; i <= 100; i++) {
       this.cantidades.push(i)
@@ -335,6 +336,8 @@ export class PesajeFormularioComponent implements OnInit, OnDestroy {
 
 
   getArticuloByCodigoReferencia(codigoRefencia: string) {
+    console.log('s')
+
     this.searching = true;
     this.httpService.DoPostAny<Articulo>(DataApi.Articulo,
       "GetArticuloByCodigoReferencia", { codigoRefencia }).subscribe(response => {

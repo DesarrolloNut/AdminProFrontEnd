@@ -36,4 +36,7 @@ export interface CotizacionListadoViewModel {
     fechaUltimoPago?: Date;
     promedioCompras: number;
 
+    fechaEntrega: Date;
+    estadoERP: string;
+
 }

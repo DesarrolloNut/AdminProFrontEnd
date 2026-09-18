@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { Departamento } from '../models/Departamento';
@@ -23,6 +24,7 @@ export class DepartamentosFormularioComponent implements OnInit {
     private toastService: ToastrService,
     private route: ActivatedRoute,
     private httpService: BackendService,
+    private auth:AuthenticationService,
     private router: Router,
     private formBuilder: FormBuilder) { }
 
@@ -45,6 +47,9 @@ export class DepartamentosFormularioComponent implements OnInit {
       id: [0],
       nombre: [null, [Validators.required]],
       descripcion: [null],
+      companiaID:[Number(this.auth.tokenDecoded.primarygroupsid) ],
+      codigoReferencia:[null],
+
     });
   }
 

@@ -33,6 +33,18 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     timeOut: NodeJS.Timeout;
 
+    dias: ComboBox[] = [
+        {codigo:1,nombre:"Lunes", grupoID:"", grupo:""},
+        {codigo:2,nombre:"Martes", grupoID:"", grupo:""},
+        {codigo:3,nombre:"Miercoles", grupoID:"", grupo:""},
+        {codigo:4,nombre:"Jueves", grupoID:"", grupo:""},
+        {codigo:5,nombre:"Viernes", grupoID:"", grupo:""},
+        {codigo:6,nombre:"Sabado", grupoID:"", grupo:""},
+        {codigo:7,nombre:"Domingo", grupoID:"", grupo:""},
+    ]
+
+
+
 
     FormularioChangePassword: FormGroup;
     submittedPassword: boolean

@@ -1,7 +1,5 @@
 import { RouteInfo } from './sidebar.metadata';
-
 export const ROUTES: RouteInfo[] = [
-
   {
     path: '/home',
     title: 'Inicio',
@@ -13,7 +11,6 @@ export const ROUTES: RouteInfo[] = [
     submenu: [],
     permisos: [],
   },
-
   // ******************************************************
   {
     path: '/',
@@ -26,7 +23,6 @@ export const ROUTES: RouteInfo[] = [
     submenu: [],
     permisos: ["crm"],
   },
-
   {
     path: '/',
     title: 'Ventas',
@@ -53,6 +49,17 @@ export const ROUTES: RouteInfo[] = [
         label: '',
         labelClass: '',
         title: 'Cotizaciones',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["ventas_cotizacion"],
+      },
+      {
+        path: '/ventas/factura',
+        label: '',
+        labelClass: '',
+        title: 'Factura',
         icon: '',
         class: '',
         extralink: false,
@@ -113,7 +120,6 @@ export const ROUTES: RouteInfo[] = [
             submenu: [],
             permisos: ["ventas_reportes_ofertas_otorgadas"],
           },
-
           {
             path: '/ventas/reporteprontopago',
             label: '',
@@ -125,13 +131,10 @@ export const ROUTES: RouteInfo[] = [
             submenu: [],
             permisos: ["ventas_reporte_prontopago"]
           },
-
-
         ]
       },
     ],
   },
-
   {
     path: '/',
     title: 'Compras',
@@ -164,20 +167,8 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ["compras_orden_compra"],
       },
-      // {
-      //   path: '/compras/solicitud-compras-autorizacion',
-      //   label: '',
-      //   labelClass: '',
-      //   title: 'Auth. Solicitud de compras',
-      //   icon: '',
-      //   class: '',
-      //   extralink: false,
-      //   submenu: [],
-      //   permisos: ["compras_solicitud_compra"],
-      // },
     ],
   },
-
   {
     path: '/',
     title: 'Finanzas',
@@ -211,35 +202,8 @@ export const ROUTES: RouteInfo[] = [
           },
         ],
       },
-
-      // {
-      //   path: '/',
-      //   label: '',
-      //   labelClass: '',
-      //   title: 'Cuentas Por Pagar',
-      //   icon: '',
-      //   class: 'has-arrow',
-      //   extralink: false,
-      //   permisos: ["finanzas_cuentas_por_pagar"],
-      //   submenu: [
-      //     // {
-      //     //   path: '/finanzas/cuentas-por-cobrar/cheques-devueltos',
-      //     //   label: '',
-      //     //   labelClass: '',
-      //     //   title: 'Cheques Devueltos',
-      //     //   icon: '',
-      //     //   class: '',
-      //     //   extralink: false,
-      //     //   permisos: ["finanzas_cuentas_por_cobrar_cheques_devueltos"],
-      //     //   submenu: [],
-      //     // },
-      //   ],
-      // },
-
     ],
   },
-
-
   {
     path: '/',
     title: 'Recursos Humanos',
@@ -251,8 +215,6 @@ export const ROUTES: RouteInfo[] = [
     submenu: [],
     permisos: ["recursos-humanos"],
   },
-
-
   {
     path: '',
     title: 'Inventario',
@@ -307,20 +269,63 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ['despacho'],
       },
-      // {
-      //   path: '/inventario/autorizaciondevoluciones',
-      //   title: 'Autorizacion Devoluciones',
-      //   label: '',
-      //   icon: '',
-      //   class: '',
-      //   labelClass: '',
-      //   extralink: false,
-      //   submenu: [],
-      //   permisos: ['inventario_autorizacion_devoluciones'],
-      // },
+      {
+        path: '/inventario/despacho-asignacion',
+        title: 'Despacho Asignacion',
+        label: '',
+        icon: '',
+        class: '',
+        labelClass: '',
+        extralink: false,
+        submenu: [],
+        permisos: ['asignacion_despacho'],
+      },
+      {
+        path: '/inventario/transferencia',
+        title: 'Transferencia',
+        label: '',
+        icon: '',
+        class: '',
+        labelClass: '',
+        extralink: false,
+        submenu: [],
+        permisos: ['inventario_transferencia_despacho'],
+      },
+      {
+        path: '/inventario/solicitud-devolucion',
+        title: 'Solicitud de Devolución',
+        label: '',
+        icon: '',
+        class: '',
+        labelClass: '',
+        extralink: false,
+        submenu: [],
+        permisos: ['inventario_solicitud_devolucion'],
+      },
+      {
+        path: '/inventario/solicitud-cambio',
+        title: 'Solicitud Cambio',
+        label: '',
+        icon: '',
+        class: '',
+        labelClass: '',
+        extralink: false,
+        submenu: [],
+        permisos: ['inventario_solicitud_cambio'],
+      },
+      {
+        path: '/inventario/almacen-inventario',
+        title: 'Almacén Inventario',
+        label: '',
+        icon: '',
+        class: '',
+        labelClass: '',
+        extralink: false,
+        submenu: [],
+        permisos: ['inventario_transferencia_despacho'],
+      },
     ],
   },
-
 
   {
     path: '/',
@@ -561,6 +566,17 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ["mantenimientos_articulo"],
       },
+      /*{
+        path: '/mantenimientos/asignacion-almacen',
+        label: '',
+        labelClass: '',
+        title: 'Asignación Almacén',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_hora_picking"],
+      },*/
       {
         path: '/mantenimientos/articulo-categoria',
         label: '',
@@ -594,6 +610,7 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ["mantenimientos_almacen"],
       },
+      
       // {
       //   path: '/mantenimientos/autorizacionprecios',
       //   label: '',
@@ -617,6 +634,18 @@ export const ROUTES: RouteInfo[] = [
         permisos: ["mantenimientos_moneda"],
       },
       {
+        path: '/mantenimientos/hora-picking',
+        label: '',
+        labelClass: '',
+        title: 'Hora Picking',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_hora_picking"],
+      },
+     
+      {
         path: '/mantenimientos/listaprecios',
         label: '',
         labelClass: '',
@@ -638,6 +667,29 @@ export const ROUTES: RouteInfo[] = [
         extralink: false,
         submenu: [],
         permisos: ["mantenimientos_comprobante_fiscal"],
+      },
+
+      {
+        path: '/mantenimientos/comprobante-fiscal-enrroll',
+        label: '',
+        labelClass: '',
+        title: 'Comprobante Fiscal Enroll',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_comprobante_fiscal_enroll"],
+      },
+      {
+        path: '/mantenimientos/tipo-comprobante-fiscal',
+        label: '',
+        labelClass: '',
+        title: 'Tipo Comprobante Fiscal',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_tipos_comprobante_fiscal"],
       },
 
       {
@@ -730,6 +782,18 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ["mantenimientos_permiso"],
       },
+      {
+        path: '/mantenimientos/modulo',
+        label: '',
+        labelClass: '',
+        title: 'Modulo',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_permiso"],
+      },
+      
       {
         path: '/mantenimientos/proveedor',
         label: '',
@@ -993,8 +1057,50 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
         permisos: ["mantenimientos_asignaciones_rutas"],
       },
-
-
+      {
+        path: '/mantenimientos/tipoSolicitudDevolucion',
+        label: '',
+        labelClass: '',
+        title: 'Tipo Solicitud Devolución',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_tipo_solicitud_devolucion"],
+      },
+      {
+        path: '/mantenimientos/tipo-descuento',
+        label: '',
+        labelClass: '',
+        title: 'Tipo Descuento',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_tipo_descuento"],
+      },
+      {
+        path: '/mantenimientos/descuento-articulos',
+        label: '',
+        labelClass: '',
+        title: 'Descuento Articulos',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_descuento_articulos"],
+      },
+      {
+        path: '/mantenimientos/promociones',
+        label: '',
+        labelClass: '',
+        title: 'Promociones',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_promociones"],
+      },
     ]
   },
   {
@@ -1221,6 +1327,17 @@ export const ROUTES: RouteInfo[] = [
         permisos: ["mantenimientos_estado_general"],
       },
       {
+        path: '/mantenimientos/configuracion-compania',
+        label: '',
+        labelClass: '',
+        title: 'Configuración Compañia',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_configuration_compania"],
+      },
+      {
         path: '/mantenimientos/sapconnection',
         label: '',
         labelClass: '',
@@ -1253,6 +1370,28 @@ export const ROUTES: RouteInfo[] = [
         extralink: false,
         submenu: [],
         permisos: ["configuraciones_sap_panel_sincronizacion"],
+      },
+      {
+        path: '/configuraciones/modulo-compania-enrroll',
+        label: '',
+        labelClass: '',
+        title: 'Modulo Compañia Enrroll',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["configuraciones_modulo-compania-enrroll"],
+      },
+      {
+        path: '/mantenimientos/permisos',
+        label: '',
+        labelClass: '',
+        title: 'Permisos',
+        icon: '',
+        class: '',
+        extralink: false,
+        submenu: [],
+        permisos: ["mantenimientos_permiso"],
       },
 
 

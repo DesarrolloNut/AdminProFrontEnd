@@ -6,7 +6,7 @@ import { NgxPermissionsModule } from 'ngx-permissions';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CommonModule, LocationStrategy, HashLocationStrategy } from '@angular/common';
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
@@ -32,6 +32,19 @@ import { environment } from 'src/environments/environment';
 import { ToastrModule } from 'ngx-toastr';
 
 import { SpeechSynthesisModule } from '@kamiazya/ngx-speech-synthesis';
+import { AppConfigService } from './core/config/app-config.service';
+
+export function initializeApp(configService: AppConfigService) {
+  return () => configService.loadConfig();
+}
+
+export function jwtWhitelistedDomains(configService: AppConfigService): string[] {
+  return [configService.getHostname()];
+}
+
+export function jwtBlacklistedRoutes(configService: AppConfigService): string[] {
+  return [configService.apiUrl + 'api/Authentication'];
+}
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -50,14 +63,15 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     BreadcrumbComponent,
     SidebarComponent,
     LoginComponent,
+
   ],
   imports: [
 
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
-        whitelistedDomains: [getHost()],
-        blacklistedRoutes: [getHost() + '/' + 'api/Authentication']
+        whitelistedDomains: [environment.apiUrl],
+        blacklistedRoutes: [environment.apiUrl + 'api/Authentication']
       }
     }),
     SpeechSynthesisModule.forRoot({
@@ -77,20 +91,27 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     HttpClientModule,
     RouterModule.forRoot(Approutes),
 
+
   ],
   providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeApp,
+      deps: [AppConfigService],
+      multi: true
+    },
     { provide: PERFECT_SCROLLBAR_CONFIG, useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG },
-    { provide: 'BASE_URL', useFactory: getHost },
-     AuthGuard,
+    {
+      provide: 'BASE_URL',
+      useFactory: (configService: AppConfigService) => configService.apiUrl,
+      deps: [AppConfigService]
+    },
+    AuthGuard,
     { provide: LocationStrategy, useClass: HashLocationStrategy }
   ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
-
-export function getHost() {
-  return environment.apiUrl;
-}
 
 export function tokenGetter() {
   return localStorage.getItem("token");

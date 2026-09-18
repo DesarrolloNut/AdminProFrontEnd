@@ -1,0 +1,62 @@
+
+<div class="row">
+    <div class="col"  *ngxPermissionsOnly="['op_asignacion_despacho']">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 p-2" >
+                      <label>Busqueda por lector</label>
+                        <div class="input-group">
+                            <input [ngModel]='search' [disabled]="searching"  (ngModelChange)='onSearchChange($event)' type="text" id="inputSearch"
+                                style="border-left:none !important;" class="form-control" placeholder="Buscar despachador ">
+
+                            <div class="input-group-prepend">
+                                <label for="search" class="input-group-text bg-white" style="cursor: pointer;"
+                                    (click)="onClearSearch()">
+                                    <span class=" bg-white" style="border-right:none">
+                                        <i class="fa fa-times-circle"></i>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 text-center mt-4 pt-4 text-info">
+                        <h5 *ngIf="searching" > <span class="text-info font-weight-bold"><i class="fa fa-spinner fa-spin"></i> Buscando usuario</span> </h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<app-despacho-asignacion-listado   (dataPreventaEmit)="refreshData($event)"></app-despacho-asignacion-listado>
+
+<ng-template #modalConfirm let-modal>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col">
+        <div class="modal-body text-center">
+          <i class="fa fa-exclamation-triangle fa-3x text-info" aria-hidden="true"></i>
+          <h4 class="mt-2"><strong>Se realizará/cerrará una apertura de este despacho, para cerrarlo debe leer el codigo de la hoja</strong></h4>
+          <h4 class="mt-2 text-black-50"><strong>{{search}}</strong> </h4>
+          <!-- <h4 class="mt-2 text-black-50"><strong>{{search}}</strong></h4> -->
+          <span class="font-weight-bold text-danger" style="position: relative;top: -10px;">({{timerSeconds}}s)</span>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #modalLoadingApertura let-modal>
+  <div class="container-fluid ">
+    <div class="row">
+      <div class="col">
+        <div class="modal-body text-center" >
+          <i class="fa fa-spinner fa-spin fa-2x text-info"></i>
+          <h4 class="mt-2 text-black-50"><strong>Espere un momento...</strong> </h4>
+        </div>
+      </div>
+    </div>
+  </div>

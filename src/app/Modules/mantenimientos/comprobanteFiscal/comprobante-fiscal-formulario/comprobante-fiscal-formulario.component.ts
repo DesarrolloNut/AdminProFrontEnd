@@ -1,11 +1,13 @@
+import { filter } from 'rxjs/operators';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FocusEventArgs } from '@syncfusion/ej2-angular-calendars';
 import { ToastrService } from 'ngx-toastr';
+import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
-import { ComboBox } from 'src/app/shared/model/ComboBox';
+import { ComboBox, ComboBoxTipoComprobante } from 'src/app/shared/model/ComboBox';
 import { ComprobanteFiscal } from '../models/ComprobanteFiscal';
 import { ComprobanteFiscalEstadosEnum } from '../models/ComprobanteFiscalEstadosEnum';
 
@@ -21,16 +23,19 @@ export class ComprobanteFiscalFormularioComponent implements OnInit {
   submitted = false;
   btnGuardarCargando = false;
   actualizando = false;
+  _serie:string="";
 
   tipoComprobantes: any;
   loadingTipoComprobantes: boolean;
   fechaActual: Date;
+  hayDetalle: boolean;
 
   constructor(
     private toastService: ToastrService,
     private route: ActivatedRoute,
     private httpService: BackendService,
     private router: Router,
+    private authService: AuthenticationService,
     private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
@@ -51,12 +56,13 @@ export class ComprobanteFiscalFormularioComponent implements OnInit {
 
     this.Formulario = this.formBuilder.group({
       id: [0],
-      serie: [null, [Validators.required, Validators.minLength(3)]],
+      serie: [null, [Validators.required, Validators.minLength(4)]],
       tipoComprobanteID: [null, Validators.required],
-      secuenciaDesde: [null, [Validators.required, Validators.minLength(8)]],
-      secuenciaHasta: [null, [Validators.required, Validators.minLength(8)]],
+      secuenciaDesde: [null, [Validators.required, Validators.minLength(7)]],
+      secuenciaHasta: [null, [Validators.required, Validators.minLength(7)]],
       fechaVencimiento: [null, Validators.required],
       estadoID: [ComprobanteFiscalEstadosEnum.No_SINCRONIZADO,],
+      companiaId: [Number(this.authService.tokenDecoded.primarygroupsid),],
     });
   }
 
@@ -74,23 +80,37 @@ export class ComprobanteFiscalFormularioComponent implements OnInit {
           if (response != null && response.records != null && response.records.length > 0) {
             let record = response.records[0]
             this.Formulario.setValue(record);
+            this.getComprobanteDetalles(id);
           } else {
             this.toastService.warning("No encontrado");
             this.router.navigateByUrl('/mantenimientos/comprobante-fiscal');
           }
         }
-
       }, error => {
         this.Cargando = false;
         this.toastService.error("Error conexion al servidor");
       });
   }
 
+  getComprobanteDetalles(comprobanteID: number) {
+    this.httpService.DoPostAny<any>(DataApi.ComprobanteFiscal,
+      "GetComprobanteDetalles", comprobanteID).subscribe(response => {
+        if (!response || !response.ok) {
+          this.toastService.error(response.errores[0]);
+        } else {
+          if (response.records) {
+            this.hayDetalle=true;
+          }
+        }
+      }, error => {
+        this.toastService.error("No se pudo obtener el detalle", "Error conexion al servidor");
+      });
+  }
 
   onSubmit() {
 
     this.submitted = true;
-    
+
     if (this.Formulario.invalid) {
       return;
     }
@@ -99,7 +119,7 @@ export class ComprobanteFiscalFormularioComponent implements OnInit {
       this.toastService.warning("Secuencia hasta no puede ser menor a secuencia desde.");
       return;
     }
-
+    console.log(this.Formulario.value);
     this.guardar();
   }
 
@@ -130,7 +150,7 @@ export class ComprobanteFiscalFormularioComponent implements OnInit {
 
   getTipoComprobantes() {
     this.loadingTipoComprobantes = true;
-    this.httpService.DoPost<ComboBox>(DataApi.ComboBox,
+    this.httpService.DoPost<ComboBoxTipoComprobante>(DataApi.ComboBox,
       "GetTipoComprobante", null).subscribe(response => {
 
         if (!response.ok) {
@@ -148,6 +168,11 @@ export class ComprobanteFiscalFormularioComponent implements OnInit {
         }, 1000);
 
       });
+  }
+  getSerie(event){
+    const tipoComprobanteId=(event.target as HTMLInputElement).value.split("|",1)[0];
+    this._serie=this.tipoComprobantes.find(x=>x.codigo==tipoComprobanteId).otroProp;
+
   }
 
 

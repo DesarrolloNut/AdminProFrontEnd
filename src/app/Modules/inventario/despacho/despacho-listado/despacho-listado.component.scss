@@ -1,7 +1,25 @@
-::ng-deep .myCustomModalClass .modal-dialog {
-    max-width: 99%;
-    width: 99%;
+body
+{
+  zoom: 1.3 !important;
+}
+
+  :host {
+    min-height: 99.9vh;
+
   }
+  ::ng-deep .myCustomModalClass .modal-dialog {
+    max-width: 100%;
+    width: 100%;
+    height: 100%;
+
+  }
+  ::ng-deep .myCustomModalClass .modal-dialog {
+    position: absolute;
+    top: -29px;
+  }
+
+
+
 
   .tdcss_DetalleDespacho{
     padding: 0.7rem;
@@ -13,7 +31,7 @@
 
 .table_DetalleDespachoPreventa {width: 100%;}
 
-.column_a {width: 70%;}
+.column_a {width:70%;}
 
 
 
@@ -24,17 +42,17 @@
   }
 
   .left_detalle{
-    background-color: #FCFCFC;
-    border-right: 1px solid gainsboro;
     margin-top: -16px;
     margin-bottom: -16px;
-    margin-left: -6px;
+    padding-left: 3rem !important;
+    padding-right: 3rem !important;
   }
 
   .right_detalle{
     margin-top: -16px;
     margin-bottom: -16px;
-    margin-left: 15px;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
   }
   .input_check{
     width: 21px;
@@ -60,17 +78,61 @@
 .input_CantidadPedido{
   font-weight: 500;
   font-size: 25px;
-  height: 70px;
+  height: 55px;
 }
 .input_CantidadDespacho{
   font-weight: 500;
   font-size: 25px;
-  height: 70px;
+  height: 55px;
+
+}
+.parpadea_focus {
+
+  animation-name: parpadeo;
+  animation-duration: 1s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+
+  -webkit-animation-name:parpadeo;
+  -webkit-animation-duration: 1s;
+  -webkit-animation-timing-function: linear;
+  -webkit-animation-iteration-count: infinite;
+}
+
+@-moz-keyframes parpadeo{
+  0% {  box-shadow: 0 0 0 0.2rem RGB(0 123 255 / 25%);}
+  25% {  box-shadow: 0 0 0 0.2rem RGB(0 123 255 / 25%);}
+  50% { box-shadow: none;}
+  75% {  box-shadow: 0 0 0 0.2rem RGB(0 123 255 / 25%);}
+  100% { box-shadow: 0 0 0 0.2rem rgba(0, 150, 67, 0.61);}
+}
+
+@-webkit-keyframes parpadeo {
+  0% {  box-shadow: 0 0 0 0.2rem RGB(0 123 255 / 25%);}
+  25% {  box-shadow: 0 0 0 0.2rem RGB(0 123 255 / 25%);}
+  50% { box-shadow: none;}
+  75% {  box-shadow: 0 0 0 0.2rem RGB(0 123 255 / 25%);}
+  100% { box-shadow: 0 0 0 0.2rem RGB(0 123 255 / 25%);}
+}
+
+@keyframes parpadeo {
+  0% {  box-shadow: 0 0 0 0.2rem RGB(0 123 255 / 25%);}
+  25% {  box-shadow: 0 0 0 0.2rem RGB(0 123 255 / 25%);}
+  50% { box-shadow: none;}
+  75% {  box-shadow: 0 0 0 0.2rem RGB(0 123 255 / 25%);}
+  100% { box-shadow: 0 0 0 0.2rem RGB(0 123 255 / 25%);}
+}
+
+
+.input_CantidadBalanza{
+  font-weight: 500;
+  font-size: 25px;
+  height: 40px;
 }
 .input_Lote{
   font-weight: 500;
   font-size: 25px;
-  height: 70px;
+  height: 55px;
 }
 
 
@@ -84,14 +146,14 @@
 
 
 .ng-select.customSelect_lote {
-  height: 70px !important;
+  height: 55px !important;
 }
 .ng-select.customSelect_lote .ng-select-container  {
-  height: 70px !important;
+  height: 55px !important;
 }
 
 .ng-select.customSelect_lote ::ng-deep .ng-select-container  {
-  height: 70px !important;
+  height: 55px !important;
 }
 .over_despacho{
   position: absolute;
@@ -122,3 +184,15 @@
   left: 3px;
 }
 
+
+
+
+.btn_finaliza_despacho{
+height: 50px;
+font-size: 18px;
+}
+
+.table_articulosExtras td, .table_articulosExtras th {
+
+  padding: 0px !important;
+}

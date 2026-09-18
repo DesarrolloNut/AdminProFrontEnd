@@ -66,11 +66,12 @@ import { ListaPreciosListadoComponent } from './listaPrecios/lista-precios-lista
 import { NivelAutorizacionModuloFormularioComponent } from './NivelAutorizacionModulo/nivel-autorizacion-modulo-formulario/nivel-autorizacion-modulo-formulario.component';
 import { NivelAutorizacionModuloListadoComponent } from './NivelAutorizacionModulo/nivel-autorizacion-modulo-listado/nivel-autorizacion-modulo-listado.component';
 import { SapconnectionFormularioComponent } from './sapconnection/sapconnection-formulario/sapconnection-formulario.component';
-import { PromocionesListadoComponent } from './promociones/promociones-listado/promociones-listado.component';
-import { PromocionesFormularioComponent } from './promociones/promociones-formulario/promociones-formulario.component';
 import { PerfilFormularioComponent } from './perfil-formulario/perfil-formulario.component';
 import { CargaMasivaPanelComponent } from './cargaMasiva/carga-masiva-panel/carga-masiva-panel.component';
 import { MonedasListadoComponent } from './monedas/monedas-listado/monedas-listado.component';
+
+
+
 import { MonedasFormularioComponent } from './monedas/monedas-formulario/monedas-formulario.component';
 import { DepartamentosListadoComponent } from './departamentos/departamentos-listado/departamentos-listado.component';
 import { EnrrollvendedorentregasupervisorListadoComponent } from './enrrollvendedorentregasupervisor/enrrollvendedorentregasupervisor-listado/enrrollvendedorentregasupervisor-listado.component';
@@ -84,6 +85,30 @@ import { PlazosListadoComponent } from './plazos/plazos-listado/plazos-listado.c
 import { PlazosFormularioComponent } from './plazos/plazos-formulario/plazos-formulario.component';
 import { ComprobanteFiscalListadoComponent } from './comprobanteFiscal/comprobante-fiscal-listado/comprobante-fiscal-listado.component';
 import { ComprobanteFiscalFormularioComponent } from './comprobanteFiscal/comprobante-fiscal-formulario/comprobante-fiscal-formulario.component';
+import { HoraPickingListadoComponent } from './horaPicking/hora-picking-listado/hora-picking-listado.component';
+import { HoraPickingFormularioComponent } from './horaPicking/hora-picking-formulario/hora-picking-formulario.component';
+import { AsignacionAlmacenFormularioComponent } from './asignacionDeAlmacenDestino/asignacion-almacen-formulario/asignacion-almacen-formulario.component';
+import { AsignacionAlmacenListadoComponent } from './asignacionDeAlmacenDestino/asignacion-almacen-listado/asignacion-almacen-listado.component';
+import { ComprobanteFiscalEnrollListadoComponent } from './comprobanteFiscalEnrroll/comprobante-fiscal-enroll-listado/comprobante-fiscal-enroll-listado.component';
+import { ComprobanteFiscalEnrollFormularioComponent } from './comprobanteFiscalEnrroll/comprobante-fiscal-enroll-formulario/comprobante-fiscal-enroll-formulario.component';
+import { TipoComprobanteFiscalListadoComponent } from './tipoComprobanteFiscal/tipo-comprobante-fiscal-listado/tipo-comprobante-fiscal-listado.component';
+import { TipoComprobanteFiscaFormularioComponent } from './tipoComprobanteFiscal/tipo-comprobante-fiscal-formulario/tipo-comprobante-fiscal-formulario.component';
+import { ModuloFormularioComponent } from './modulos/modulo-formulario/modulo-formulario.component';
+import { ModuloListadoComponent } from './modulos/modulo-listado/modulo-listado.component';
+import { TipoSolicitudDevolucionListadoComponent } from './tipoSolicitudDevolucion/tipoSolicitudDevolucion-listado/tipoSolicitudDevolucion-listado.component';
+import { TipoSolicitudDevolucionFormularioComponent } from './tipoSolicitudDevolucion/tipoSolicitudDevolucion-formulario/tipoSolicitudDevolucion-formulario.component';
+import { ConfiguracionCompaniaListadoComponent } from './configuracionCompania/configuracion-compania-listado/configuracion-compania-listado.component';
+import { ConfiguracionCompaniaFormularioComponent } from './configuracionCompania/configuracion-compania-formulario/configuracion-compania-formulario.component';
+import { TipoDescuentoListadoComponent } from './tipoDescuento/tipo-descuento-listado/tipo-descuento-listado.component';
+import { TipoDescuentoFormularioComponent } from './tipoDescuento/tipo-descuento-formulario/tipo-descuento-formulario.component';
+import { DescuentoArticulosListadoComponent } from './descuento-articulos/descuento-articulos-listado/descuento-articulos-listado.component';
+import { DescuentoArticulosFormularioComponent } from './descuento-articulos/descuento-articulos-formulario/descuento-articulos-formulario.component';
+import { PromocionFormularioComponent } from './promocion/promociones-formulario/promocion-formulario.component';
+import { PromocionListadoComponent } from './promocion/promociones-listado/promocion-listado.component';
+
+
+
+
 
 
 
@@ -109,6 +134,27 @@ const routes: Routes = [
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Comprobantes fiscales' },
+          ]
+        }
+      },
+
+       //Asignacion almacen
+       {
+        path: 'asignacion-almacen', component: AsignacionAlmacenListadoComponent, data: {
+          title: 'Asignación Almacén',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Asignación Almacén' }
+          ]
+        }
+      },
+      {
+        path: 'asignacion-almacen/:id', component: AsignacionAlmacenFormularioComponent, data: {
+          title: 'Asignación Almacén Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Asignación Almacén' },
+            { title: 'Formulario' }
           ]
         }
       },
@@ -270,27 +316,7 @@ const routes: Routes = [
       },
 
       // promocion
-      {
-        path: 'promocion', component: PromocionesListadoComponent, data: {
-          title: 'Promociones',
-          urls: [
-            { title: 'Mantenimientos' },
-            { title: 'Promociones' },
-          ]
-        }
-      },
-
-
-      {
-        path: 'promocion/:id', component: PromocionesFormularioComponent, data: {
-          title: 'Promociones Formulario',
-          urls: [
-            { title: 'Mantenimientos' },
-            { title: 'Promociones' },
-            { title: 'Formulario' }
-          ]
-        }
-      },
+     
 
       // Roles
       {
@@ -530,6 +556,7 @@ const routes: Routes = [
           ]
         }
       },
+     
 
       {
         path: 'almacen/:id', component: AlmacenesFormularioComponent, data: {
@@ -676,6 +703,53 @@ const routes: Routes = [
           ]
         }
       },
+      
+     // Tipo Solicitud Devolucion
+    {
+      path: 'tipoSolicitudDevolucion', component: TipoSolicitudDevolucionListadoComponent, data: {
+        title: 'Tipo Solicitud Devolución',
+        urls: [
+          { title: 'Mantenimientos' },
+          { title: 'Tipo Solicitud Devolución' }
+        ]
+      }
+    },
+
+    {
+      path: 'tipoSolicitudDevolucion/:id', component: TipoSolicitudDevolucionFormularioComponent, data: {
+        title: 'Tipo Solicitud Devolución Formulario',
+        urls: [
+          { title: 'Mantenimientos' },
+          { title: 'Tipo Solicitud Devolución' },
+          { title: 'Formulario' }
+        ]
+      }
+    },
+
+
+
+     // Configuracion Compañia
+     {
+      path: 'configuracion-compania', component: ConfiguracionCompaniaListadoComponent, data: {
+        title: 'Configuración Compañia',
+        urls: [
+          { title: 'Mantenimientos' },
+          { title: 'Configuración Compañia' }
+        ]
+      }
+    },
+
+    {
+      path: 'configuracion-compania/:id', component: ConfiguracionCompaniaFormularioComponent, data: {
+        title: 'Configuración Compañia Formulario',
+        urls: [
+          { title: 'Mantenimientos' },
+          { title: 'Configuración Compañia' },
+          { title: 'Formulario' }
+        ]
+      }
+    },
+
 
 
       // sucursal
@@ -864,8 +938,6 @@ const routes: Routes = [
           ]
         }
       },
-
-
       // Moneda
       {
         path: 'moneda', component: MonedasListadoComponent, data: {
@@ -876,13 +948,72 @@ const routes: Routes = [
           ]
         }
       },
-
       {
         path: 'moneda/:id', component: MonedasFormularioComponent, data: {
           title: 'Moneda Formulario',
           urls: [
             { title: 'Mantenimientos' },
             { title: 'Moneda' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+      //Hora Picking
+      {
+        path: 'hora-picking', component: HoraPickingListadoComponent, data: {
+          title: 'Hora Picking',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Horario Picking' }
+          ]
+        }
+      },
+      
+      {
+        path: 'hora-picking/:id', component: HoraPickingFormularioComponent, data: {
+          title: 'Hora Picking Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Hora Picking' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+      {
+        path: 'comprobante-fiscal-enrroll', component: ComprobanteFiscalEnrollListadoComponent, data: {
+          title: 'Comprobante Fiscal Enrrol',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Comprobante Fiscal Enrrol' }
+          ]
+        }
+      },
+     
+      {
+        path: 'comprobante-fiscal-enrroll/:id', component: ComprobanteFiscalEnrollFormularioComponent, data: {
+          title: 'Comprobante Fiscal Enrrol',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Comprobante Fiscal Enrrol' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+      {
+        path: 'tipo-comprobante-fiscal', component: TipoComprobanteFiscalListadoComponent, data: {
+          title: 'Tipo Comprobante Fiscal',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Tipo Comprobante Fiscal' }
+          ]
+        }
+      },
+      {
+        path: 'tipo-comprobante-fiscal/:id', component: TipoComprobanteFiscaFormularioComponent, data: {
+          title: 'Comprobante Fiscal Fiscal',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Tipo Comprobante Fiscal' },
             { title: 'Formulario' }
           ]
         }
@@ -994,6 +1125,93 @@ const routes: Routes = [
           ]
         }
       },
+      {
+        path: 'modulo', component: ModuloListadoComponent, data: {
+          title: 'Modulo',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Modulo' }
+          ]
+        }
+      },
+      
+      {
+        path: 'modulo/:id', component: ModuloFormularioComponent, data: {
+          title: 'Modulo Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Modulo' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+      {
+        path: 'tipo-descuento', component: TipoDescuentoListadoComponent, data: {
+          title: 'Tipo Descuento',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Tipo Descuento' }
+          ]
+        }
+      },
+      
+      {
+        path: 'tipo-descuento/:id', component: TipoDescuentoFormularioComponent, data: {
+          title: 'Tipo Descuento Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Tipo Descuento' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+      {
+        path: 'descuento-articulos', component: DescuentoArticulosListadoComponent, data: {
+          title: 'Descuento Articulos',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Descuento Articulos' }
+          ]
+        }
+      },
+      
+      {
+        path: 'descuento-articulos/:id', component: DescuentoArticulosFormularioComponent, data: {
+          title: 'Descuento Articulos Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Descuento Articulos' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+      {
+        path: 'promociones', component: PromocionListadoComponent, data: {
+          title: 'Promoción',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Promoción' }
+          ]
+        }
+      },
+      
+      {
+        path: 'promociones/:id', component: PromocionFormularioComponent, data: {
+          title: 'Promoción Formulario',
+          urls: [
+            { title: 'Mantenimientos' },
+            { title: 'Promoción' },
+            { title: 'Formulario' }
+          ]
+        }
+      },
+
+
+      
+      
+   
     ]
 
   }];

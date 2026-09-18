@@ -1,0 +1,409 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row mb-2">
+          <div class="col-md-6 align-middle">
+            <h4 class="card-title">Listado de solicitudes de transferencias</h4>
+          </div>
+          <div class="col-md-6 text-right">
+            <a [routerLink]="[0]" class="btn btn-info"> <i class="fa fa-plus"></i> Nuevo
+            </a>
+          </div>
+          <div class="col-md-12 p-2">
+
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <label for="search" class="input-group-text bg-white">
+                  <span class="bg-white" style="border-right:none">
+                    <i class="ti-search"></i>
+                  </span>
+                </label>
+              </div>
+              <input [(ngModel)]="Search" (keyup)="getData()" type="text" style="border-left:none !important;"
+                class="form-control" placeholder="Buscar">
+            </div>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover mb-0 no-wrap v-middle">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Solicitud</th>
+                <th>Referencia</th>
+                <th>Almacén</th>
+                <th>Usuario</th>
+                <th>Estado</th>
+                <th>Estado ERP</th>
+                <th></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody [hidden]="Cargando">
+              <tr *ngFor="let item of data">
+                <td>
+                  <span class="badge badge-light text-info ">{{item.id}}</span>
+                  <small class="badge" [ngClass]="{'badge-danger': item.tipoID == 2}"> {{ item.tipo}}</small>
+
+                  <button  type="button" title="Imprimir" class="btn btn-outline-light m-1"
+                  (click)="imprimirToPDF(item)"
+                  >
+                    <i class="fa fa-print"></i>
+                </button>
+                </td>
+                <td>
+                  {{ item.fecha | date: 'dd/MM/yyyy hh:mm a' }}
+                </td>
+                <td>
+                  {{ item.solicitud }}
+                </td>
+                <td>
+                  <small>{{item.codigoReferencia}}</small>
+                </td>
+                <td>
+                   <div class="text-info"> <i class="fa fa-warehouse m-1"></i> Origen: {{item.almacenOrigen}}</div> <br>
+                   <div><i class="fa fa-map-marker m-1"></i> Destino: {{item.almacenDestino }}</div>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <i class="fa fa-user fa-3x text-light"></i>
+                    <div class="ml-3">
+                      <p class="mb-0"><span class="small font-weight-bold">{{item.usuario | titlecase }} </span></p>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <h5>
+                    <span> <i class="fa fa-circle"
+                            [ngStyle]="{'color': item.colorEstado}"></i>
+                        {{item.nombreEstado}}</span>
+                    </h5>
+                </td>
+                <td>
+                  <h5 *ngIf="item.estadoIdERP==1" >
+                    <span> <i class="fa fa-circle"
+                            [ngStyle]="{'color': '#f4d03f'}"></i>
+                       Pendiente</span>
+                    </h5>
+                      <h5 *ngIf="item.estadoIdERP==0" >
+                        <span> <i class="fa fa-circle"
+                                [ngStyle]="{'color': '#82e0aa'}"></i>
+                                Sincronizado</span>
+                        </h5>
+                </td>
+                <td>
+                  <button  type="button" title="Ver Detalle" class="btn  btn-light m-1"
+                  (click)="openModalDetalle(modalDetalleSolicitud,item)"
+                  >
+                    <i class="fa  fa-eye"></i>
+                </button>
+                  <button [hidden]="item.nombreEstado == 'Confirmado' || item.nombreEstado == 'Recibido' || item.nombreEstado == 'Cancelado' || item.enviar==false || item.nombreEstado == 'Enviado' || item.nombreEstado == 'Confimar Diferencias'" title="Confirmar" type="button" class="btn btn-outline-success m-1"
+                  (click)="confirmarTransferenciaInventario(uploadTransferenciaInventarioAnexosEnvioAsync,item.id)" 
+                  >
+                    <i class="fas fa-check"></i>
+                 </button>
+                  <button  type="button" title="Ver Anexos Subidos" class="btn  btn-light m-1"
+                  (click)="mostrarAnexosSubidos(axesosSubidos,item)"
+                  >
+                    <i class="fa  fa-download"></i>
+                </button>
+                  <button  [hidden]="item.nombreEstado == 'Confirmado' || item.nombreEstado == 'Recibido' || item.nombreEstado == 'Cancelado' || item.nombreEstado == 'Enviado' || item.nombreEstado == 'Confimar Diferencias'" title="Editar"  type="button" class="btn btn-outline-info m-1" [routerLink]="[item.id]" >
+                    <i class="fa fa-edit"></i>
+                </button>
+                  <button [hidden]="item.nombreEstado == 'Confirmado' || item.nombreEstado == 'Recibido' || item.nombreEstado == 'Cancelado' || item.nombreEstado == 'Enviado' || item.nombreEstado == 'Confimar Diferencias'" title="Cancelar" type="button" class="btn btn-outline-danger m-1"
+                  (click)="cancelarTransferenciaInventario(item.id)"
+                  >
+                    <i class="fa fa-times"></i>
+                </button>
+                <button [hidden]="item.recibir==false || item.nombreEstado == 'Pendiente' || item.nombreEstado == 'Recibido' || item.nombreEstado == 'Cancelado' || item.nombreEstado == 'Confirmado' || item.nombreEstado == 'Confimar Diferencias'" (click)="confirmarRecepcion(uploadTransferenciaInventarioAnexosRecibidoAsync,item.id)" title="Confirmar Recepción" type="button" class="btn btn-outline-success m-1"
+                >
+                  <i class="mdi mdi-package-variant-closed"></i>
+               </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <app-loading-listado [hidden]="!Cargando"></app-loading-listado>
+        <div class="row ">
+          <div class="col-md-8 col-xs-12 ">
+            <ngb-pagination [collectionSize]="paginaTotalRecords" [(page)]="paginaNumeroActual" [pageSize]="paginaSize"
+              [maxSize]="5" [boundaryLinks]="true" (pageChange)="getData()">
+            </ngb-pagination>
+          </div>
+          <div class="col-md-4 text-right d-none d-md-block  ">
+            <select class="form-control d-block" name="paginaSize" [(ngModel)]="paginaSize" (change)="getData()">
+              <option [ngValue]="5">5 registro por pagina</option>
+              <option [ngValue]="10">10 registro por pagina</option>
+              <option [ngValue]="15">15 registro por pagina</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #modalDetalleSolicitud let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Detalle De Transferencia Inventario</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+
+      <div class="col-8">
+        <h5 class="text-info"> <i class="fa fa-warehouse fa-2x m-1"></i> {{almacenOrigin}}</h5>
+      </div>
+      <div class="col-4">
+        <h5 class=""> <i class="fa fa-user fa-2x m-1 "></i>{{usuario}}</h5>
+      </div>
+      <div class="col-12">
+        <hr>
+        <h5 > <i class="fa fa-map-marker fa-2x "></i>{{almacenDestino}}</h5>
+      </div>
+
+      <div class="col-12" [hidden]="loadingSolicitudDetalle">
+        <div class="table-responsive">
+          <table class="table table-sm table-hover mb-0 no-wrap v-middle">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Código</th>
+                <th>Artículo</th>
+                <th>Envio</th>
+                <th>Recepción</th>
+                <th>Costo</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of transferenciaInventarioDetalles">
+                <td><span class="badge badge-light text-info ">{{item.id}}</span></td>
+                <td>
+                  <span> {{item.codigoReferencia}}</span>
+                </td>
+                <td>
+                  <span> {{item.nombre}}</span>
+                </td>
+                <td>
+                  <span> {{item.envio}}</span>
+                </td>
+                <td>
+                  <span> {{item.recepcion}}</span>
+                </td>
+                <td>
+                  <span> {{item.costo}}</span>
+                </td>
+                <td>
+                <!--item.estado !==5 quiere decir CONFIRMARDIFERENCIA y item.estado !== 5 quiere decir Recibido -->
+                <div [hidden]="estadoTransferencia !=='Confimar Diferencias'" >
+                  <button [hidden]=" item.enviar == false || !(item.recepcion !== item.envio) || item.validarDiferencias " title="Autorizar" type="button" class="btn btn-outline-success m-1"
+                  (click)="validarContidadProductoTransferenciaInventario(item.id,item.encabezadoTransferenciaInventarioId)"
+                  >
+                    <i class="fas fa-check"></i>
+                 </button>
+                </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col-12">
+        <app-loading-listado [hidden]="!loadingSolicitudDetalle"></app-loading-listado>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #uploadTransferenciaInventarioAnexosEnvioAsync let-modal>
+  <div class="container-fluid">
+    <div class="row" *ngIf="!cargandoAnexos">
+      <div class="col">
+        <div class="modal-header">
+          <h4 class="modal-title" id="modal-title">Subida de anexos</h4>
+          <button type="button" class="close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+       
+          <div class="row">
+            <div class="col-12">
+              <div class="box-part text-center">
+                <input accept="application/png" class="d-none" (change)="setFiles(file.files)" #file 
+                  type="file" />
+
+                <button class="btn btn-info" (click)="file.click()"> <i class="fa fa-upload text-white"></i>
+                  Seleccionar
+                  archivos</button>
+
+              </div>
+              <hr>
+            </div>
+          </div>
+
+          <div class="row">
+           <div class="col-md-6 p-2 text-center border-light border rounded-sm"
+              *ngFor="let item of files; let i = index">
+              <div class="row">
+                <div class="col-12 text-right">
+                  <button class="btn btn-sm" (click)="onDeleteitem(i)"><i class="fa fa-times"></i></button>
+                </div>
+                <div class="col-12 text-center">
+                  <span>
+                    <i  [ngClass]="item.type == 'application/pdf'? 'fa fa-file-pdf text-danger fa-3x' : 'fa fa-image fa-3x'" ></i>
+                  </span>
+                  <h6 class="mt-2 text-info">{{item.name}}</h6>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+          <div class="row">
+            <div class="col text-right">
+              <button (click)="uploadTransferenciaInventarioAnexosEnvio()" type="button" class="btn btn-info" *ngIf="files.length > 0" >
+                <span>Subir {{files.length}} archivo</span> <span *ngIf="files.length > 1">s</span></button>
+            </div>
+          </div> 
+         
+        </div>
+      </div>
+    </div>
+    <app-loading-listado [hidden]="!cargandoAnexos"></app-loading-listado>
+  </div>
+</ng-template>
+
+<ng-template #uploadTransferenciaInventarioAnexosRecibidoAsync let-modal>
+  <div class="container-fluid">
+    <div class="row" *ngIf="!cargandoAnexos">
+      <div class="col">
+        <div class="modal-header">
+          <h4 class="modal-title" id="modal-title">Subida de anexos</h4>
+          <button type="button" class="close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+       
+          <div class="row">
+            <div class="col-12">
+              <div class="box-part text-center">
+                <input accept="application/png" class="d-none" (change)="setFiles(file.files)" #file 
+                  type="file" />
+
+                <button class="btn btn-info" (click)="file.click()"> <i class="fa fa-upload text-white"></i>
+                  Seleccionar
+                  archivos</button>
+
+              </div>
+              <hr>
+            </div>
+          </div>
+
+          <div class="row">
+           <div class="col-md-6 p-2 text-center border-light border rounded-sm"
+              *ngFor="let item of files; let i = index">
+              <div class="row">
+                <div class="col-12 text-right">
+                  <button class="btn btn-sm" (click)="onDeleteitem(i)"><i class="fa fa-times"></i></button>
+                </div>
+                <div class="col-12 text-center">
+                  <span>
+                    <i  [ngClass]="item.type == 'application/pdf'? 'fa fa-file-pdf text-danger fa-3x' : 'fa fa-image fa-3x'" ></i>
+                  </span>
+                  <h6 class="mt-2 text-info">{{item.name}}</h6>
+                </div>
+              </div>
+            </div>
+          </div>
+         <br>
+          <div class="row">
+            <div class="col text-right">
+              <button (click)="uploadTransferenciaInventarioAnexosRecibido()" type="button" class="btn btn-info" *ngIf="files.length > 0" >
+                <span>Subir {{files.length}} archivo</span> <span *ngIf="files.length > 1">s</span></button>
+            </div>
+          </div>  
+        </div>
+      </div>
+    </div>
+    <app-loading-listado [hidden]="!cargandoAnexos"></app-loading-listado>
+  </div>
+</ng-template>
+
+
+
+
+
+<ng-template #axesosSubidos let-modal>
+  <div class="container-fluid">
+    <div class="row" *ngIf="!cargandoAnexos">
+      <div class="col">
+        <div class="modal-header">
+          <h4 class="modal-title" id="modal-title">Anexos subidos</h4>
+          <button type="button" class="close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col text-right">
+              <button  type="button" class="btn btn-info" *ngIf="files.length > 0" (click)="uploadTransferenciaInventarioAnexosEnvioAsync()">
+                <span>Subir {{files.length}} archivo</span> <span *ngIf="files.length > 1">s</span></button>
+            </div>
+          </div>
+                <div class="col-12">
+                  <hr>
+                  <h6>Anexos subidos <span class="badge badge-info badge-pill">{{filesSubidos.length}}</span></h6>
+                </div>
+                <div class="col-12">
+                  <div class="table-responsive">
+                    <table class="table table-hover table-sm mb-0 no-wrap v-middle">
+                      <thead>
+                        <tr>
+                          <th></th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody [hidden]="Cargando">
+                        <tr >
+                          <td>
+                            <span class="">Axeso Envio</span>
+                          </td>
+                          <td>
+                            <a target="_blank" [href]="anexoEnvio"
+                              class="btn btn-sm btn-light m-1"><i class="fa fa-download"></i></a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <span class="">Axeso Recepción</span>
+                          </td>
+                          <td>
+                            <a target="_blank" [href]="anexoRecepcion"
+                              class="btn btn-sm btn-light m-1"><i class="fa fa-download"></i></a>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+          <div class="row">
+            <div class="col text-right">
+              <button (click)="uploadTransferenciaInventarioAnexosRecibido()" type="button" class="btn btn-info" *ngIf="files.length > 0" >
+                <span>Subir {{files.length}} archivo</span> <span *ngIf="files.length > 1">s</span></button>
+            </div>
+          </div>  
+        </div>
+      </div>
+    </div>
+    <app-loading-listado [hidden]="!cargandoAnexos"></app-loading-listado>
+  </div>
+</ng-template>
+

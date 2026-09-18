@@ -25,9 +25,10 @@
               <tr>
                 <th scope="col">Codigo</th>
                 <th scope="col">Descripcion</th>
-                <th scope="col">Unidad de medida</th>
+                <th scope="col">Medida</th>
                 <!-- <th scope="col">Lote</th> -->
-                <!-- <th scope="col">Piezas</th> -->
+                 <th scope="col">Piezas</th>
+                 <th scope="col"> </th>
                 <th scope="col">Cantidad</th>
                 <th scope="col"> </th>
                 <th scope="col"> </th>
@@ -54,11 +55,14 @@
                   <!-- <td>
                   <span> {{item.lote}}</span>
                   </td> -->
-<!--
-                <td>
-                  <span>   {{(item.pedido / item.peso) | number : '1.1-2'}}</span>
-              </td> -->
-                  <td>
+
+                <td  style="text-align: center;">
+                  <span *ngIf="item.unidadMedida=='LBS'">   {{(item.pedido / item.peso) | number : '1.1-2'}}</span>
+               </td>
+               <td>
+                <span></span>
+              </td>
+                  <td style="text-align: center;">
                     <span>{{item.pedido}} </span>
                   </td>
                   <td>
@@ -67,8 +71,8 @@
                   <td>
                     <span></span>
                   </td>
-                 <td>
-                  <span> {{item.despacho}}</span>
+                 <td  style="text-align: center;">
+                  <span *ngIf="item.despacho>0"> {{item.despacho}}</span>
                 </td>
 
               <td>

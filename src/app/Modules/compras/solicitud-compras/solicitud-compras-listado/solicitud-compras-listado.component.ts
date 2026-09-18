@@ -111,7 +111,7 @@ export class SolicitudComprasListadoComponent implements OnInit {
     this.modalService.open(content, { size: 'lg' });
     this.solicitudSeleccionada = item
     this.files = []
-    this.getArchivosSubidos()
+   this.getArchivosSubidos()
   }
 
 
@@ -158,6 +158,8 @@ export class SolicitudComprasListadoComponent implements OnInit {
     for (let file of this.files)
       formData.append("files", file);
 
+      console.log(formData);
+
     this.httpService.DoPostAny<any>(DataApi.Upload,
       "UploadSolicitudCompraAnexos", formData).subscribe(response => {
 
@@ -185,7 +187,6 @@ export class SolicitudComprasListadoComponent implements OnInit {
     this.cargandoAnexos = true;
     this.httpService.DoPostAny<Archivo>(DataApi.SolicitudCompra,
       "GetSolicitudCompraAnexosArchivos", this.solicitudSeleccionada.id).subscribe(response => {
-
         if (!response.ok) {
           this.toastService.error(response.errores[0], "Error");
         } else {

@@ -30,7 +30,7 @@ export class CargaMasivaPanelComponent implements OnInit {
   metodoEndPoint: string;
   dataApi: DataApi;
   filter: string;
-
+  fecha:Date;
 
   @ViewChild('myInputFileReestructuracliente')
   myInputFileReestructuracliente: ElementRef;
@@ -63,10 +63,7 @@ export class CargaMasivaPanelComponent implements OnInit {
   ngOnInit(): void {
   }
 
-
   onFileChange(event, modal, accionID: number) {
-    console.log("file change")
-    console.log(accionID)
     this.accionId = accionID;
     this.openModal(modal)
     this.processFile(event)
@@ -75,7 +72,6 @@ export class CargaMasivaPanelComponent implements OnInit {
   openModal(content) {
     this.modalService.open(content, { size: "xl", backdrop: 'static', keyboard: false });
   }
-
   processFile(event: any) {
     /* wire up file reader */
     const target: DataTransfer = <DataTransfer>(event.target);
@@ -95,17 +91,13 @@ export class CargaMasivaPanelComponent implements OnInit {
 
       /* save data */
       const data = XLSX.utils.sheet_to_json(ws); // to get 2d array pass 2nd parameter as object {header: 1}
-
       this.dataExcel = data
+      console.log(this.dataExcel)
       this.getPropiedadesExcel()
     };
   }
 
-
-
-
   transformData() {
-
     if (this.accionId == 1) { //precios articulos
       if (this.validarCargaArticuloPrecios()) {
 
@@ -143,19 +135,18 @@ export class CargaMasivaPanelComponent implements OnInit {
     } else if (this.accionId == 3) {
       if (this.validarCargaClienteRutaTipo()) {
 
+       
         this.dataTransformed = this.dataExcel.map((x) => {
           let arrayValues = Object.values(x);
           return {
-            "CodigoReferencia": arrayValues[0].toString(),
-            "Memo ": arrayValues[1],
+            "CodigoCliente": arrayValues[0].toString(),
+            "Ruta": arrayValues[1],
             "DiaVisita": Number(arrayValues[2]),
-            "RutaCodigoReferencia": Number(arrayValues[3]),
-            "Prioridad": arrayValues[4] == null ? "" : arrayValues[4],
-            "TerritorioId": Number(arrayValues[5])
+            "Prioridad": arrayValues[3] == null ? "" : arrayValues[4],
+            "Semana": Number(arrayValues[4]),
+            "Fecha":this.fecha
           };
         });
-        console.table(this.dataTransformed)
-
         this.dataApi = DataApi.Cliente;
         this.metodoEndPoint = "UploadExcelFileReestructuraCliente"
         this.subirDatosExcel()
@@ -165,17 +156,19 @@ export class CargaMasivaPanelComponent implements OnInit {
   }
 
   subirDatosExcel() {
-
-    console.table(this.dataTransformed)
-
-
+    
     if (this.dataExcel.length <= 0) {
       this.toastService.warning("No hay records para subir.")
-      return
+      return;
     }
-
+    if(this.fecha == undefined)
+    {
+      this.toastService.error("Selecciona un fecha sincronización.")
+      return;
+    }
+    
     this.guardandoDataExcel = true;
-
+    console.log(this.metodoEndPoint)
     this.httpService.DoPostAny<any>(this.dataApi,
       this.metodoEndPoint, this.dataTransformed).subscribe(response => {
         this.resetInputsFile();
@@ -191,7 +184,6 @@ export class CargaMasivaPanelComponent implements OnInit {
         this.guardandoDataExcel = false;
       }, error => {
         this.resetInputsFile();
-
         console.log(error)
         this.guardandoDataExcel = false;
         this.toastService.error("Error conexion al servidor");
@@ -226,8 +218,6 @@ export class CargaMasivaPanelComponent implements OnInit {
 
     return true;
   }
-
-
   private getPropiedadesExcel(): void {
     if (this.dataExcel != null && this.dataExcel.length > 0) {
       let objeto = this.dataExcel[0];
@@ -235,13 +225,7 @@ export class CargaMasivaPanelComponent implements OnInit {
     }
   }
 
-
-
-
-
-
   ///PENDIENTE MOVER A OTRO COMPONENTE
-
   getCargasReestructuracion() {
     this.showCargasReestructuracion = true;
     this.getCargasMasivasReestructuracionclientes();

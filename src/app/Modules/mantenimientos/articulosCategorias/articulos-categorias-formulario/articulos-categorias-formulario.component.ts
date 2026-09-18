@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { AuthenticationService } from 'src/app/core/authentication/service/authentication.service';
 import { BackendService } from 'src/app/core/http/service/backend.service';
 import { DataApi } from 'src/app/shared/enums/DataApi.enum';
 import { ArticuloCategoria } from '../models/ArticuloCategoria';
@@ -23,6 +24,7 @@ export class ArticulosCategoriasFormularioComponent implements OnInit {
     private toastService: ToastrService,
     private route: ActivatedRoute,
     private httpService: BackendService,
+    private auth:AuthenticationService,
     private router: Router,
     private formBuilder: FormBuilder) { }
 
@@ -41,8 +43,10 @@ export class ArticulosCategoriasFormularioComponent implements OnInit {
 
     this.Formulario = this.formBuilder.group({
       id: [0],
+      codigoReferencia: [null, [Validators.required]],
       nombre: [null, [Validators.required]],
       descripcion: [null,],
+      companiaId:[Number(this.auth.tokenDecoded.primarygroupsid)]
     });
   }
 
@@ -99,6 +103,7 @@ export class ArticulosCategoriasFormularioComponent implements OnInit {
 
         this.btnGuardarCargando = false;
       }, error => {
+        console.log(error)
         this.btnGuardarCargando = false;
         this.toastService.error("Error conexion al servidor");
       });

@@ -1,0 +1,316 @@
+<div class="row">
+    <div class="control-section">
+        <div id="control_wrapper">
+        </div>
+    </div>
+</div>
+
+<div class="row mb-2">
+    <div class="col">
+        <a class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</a>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 col-12">
+                        <h4 class="card-title">Formulario de transferencia</h4>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-12 text-right">
+                    </div>
+                </div>
+                <!--<h6 class="card-subtitle">Just add <code>form-material</code> class to the form that's it.</h6>-->
+                <form class="form-row m-t-40" [formGroup]="Formulario" (keydown.enter)="$event.preventDefault()"  (ngSubmit)="onSubmit()">
+                    <div class="col-12 mb-2" *ngIf="usuario">
+                        <div class="row border border-light p-2">
+
+                            <div class="col-12">
+                                <h4 class="card-subtitle">
+                                    <span class="badge badge-info">Datos del usuario</span>
+                                </h4>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="nombre"><i class="fa fa-hashtag"></i> Código</label>
+                                <input [(ngModel)]="usuario.codigoReferencia" class="form-control" [readonly]="'true'"
+                                    type="text" [ngModelOptions]="{standalone: true}" name="nombre" id="nombre">
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                <label for="nombre"> <i class="fa fa-user"></i> Nombres</label>
+                                <input [(ngModel)]="usuario.nombres +' '+ usuario.apellidos" class="form-control"
+                                    [readonly]="'true'" type="text" [ngModelOptions]="{standalone: true}" name="nombre"
+                                    id="nombre">
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                <label for="nombre"> <i class="fa fa-id-card"></i> Doc.</label>
+                                <input [(ngModel)]="usuario.documento" class="form-control" [readonly]="'true'"
+                                    type="text" [ngModelOptions]="{standalone: true}" name="nombre" id="nombre">
+                            </div>
+
+                         
+
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="row border border-light p-2">
+                            <div class="col-12">
+                                <h4 class="card-subtitle">
+                                    <span class="badge badge-info">Datos del Almacén</span>
+                                </h4>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="almacenOrigenId">Almacén Desde </label>
+                                  <select    class="form-control" formControlName="almacenOrigenId" placeholder="almacenOrigenId"
+                                  (change)="getAlmacenDesde($event)"
+                                  (keyup)=" buscaMasProductos($event)"
+                                  [attr.disabled]="IdTransferenciaInventario ? 'disabled' : null"
+                                  >
+                                    <option [value]="ald.codigo+'|'+ ald.nombre" *ngFor="let ald  of almacenesDesde">{{ald.nombre}}</option>
+                                  </select>
+                                  <div style="color:red;" *ngIf=" submitted && f.almacenOrigenId.errors ">Elige el Almacén</div>
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label for="almacenDestinoId"> Almacén Hasta </label>
+                                <ng-select bindLabel="nombre" bindValue="codigo" [items]="almacenesHasta"
+                                    [clearable]="false"
+                                    [ngClass]="{'form-control border-danger p-0' : submitted && f.almacenOrigenId.errors }"
+                                    [readonly]="IdTransferenciaInventario"
+                                    notFoundText="No resultados" formControlName="almacenDestinoId">
+                                </ng-select>
+                                <div *ngIf="submitted && f.almacenDestinoId.errors" class="text-danger small">
+                                    <div *ngIf="f.almacenDestinoId.errors.required  ">El campo es obligatorio</div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="row border border-light p-2">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+
+                        <table class="table table-hover mb-0 no-wrap v-middle">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Código</th>
+        
+                                    <th scope="col" >{{cantidad}} </th>
+                                    <th scope="col" [hidden]="!transferenciaInventarioConfirmado">Recepción</th>
+                                    <th scope="col">Costo</th>
+                                    <th scope="col">Inventario</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <!-- <tr *ngFor="let item of confirmed | filter: searchText; let i  = index"> -->
+                                <tr *ngFor="let item of solicitudTransferenciaInventario let i=index">
+                                    <td>
+                                        <ng-select style="width: 600px;" [items]="articulosDeTransferenciaInventario" bindLabel="nombreYCodigoReferencia"
+                                            [clearable]="false" bindValue="articuloId" [loading]="loadingArticulosDeCompra"
+                                            [(ngModel)]="item.articuloId" [ngModelOptions]="{standalone: true}"
+                                            [readonly]="IdTransferenciaInventario"
+                                            (keyup)=" buscaMasProductos($event)"
+                                            (change)="onSelectArticulo($event,i)" notFoundText="No resultados">
+                                        </ng-select>
+                                    </td>
+                                  
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            
+                                            <div class="ml-3">
+                                                <input style="width: 100px;" type="text" class="form-control"
+                                                [disabled]="!cantidadEditable"  mask="separator"
+                                                thousandSeparator="," 
+                                                [(ngModel)]="item.envio"
+                                                [disabled]="transferenciaInventarioConfirmado || item.articuloId==0"
+        
+                                                [ngModelOptions]="{standalone: true}"
+                                                [ngClass]="{'form-control border-danger p-0' : item.hayErrores }"
+                                                (blur)="validarInventario($event,item.inventario,i,item.articuloId,modalLoteSolicitud)"
+                                                (keyup.enter)="validarInventario($event,item.inventario,i,item.articuloId,modalLoteSolicitud)"
+                                                >
+                                            </div>
+                                                <!--<i class="fas fa-cubes text-right m-1" [hidden]="!transferenciaInventarioConfirmado || !item.gestionado " title="Ver Lotes"
+                                                (click)="validarInventario(item.envio,item.inventario,i,item.articuloId,modalLoteSolicitud)"
+                                                ></i>-->
+                                          </div>
+                                    </td>
+                                    <td [hidden]="!transferenciaInventarioConfirmado">
+                                        <input style="width: 100px;" type="text" class="form-control"
+                                        [disabled]="!cantidadEditable"  mask="separator"
+                                        thousandSeparator="," 
+                                        [(ngModel)]="item.recepcion"
+                                        [ngModelOptions]="{standalone: true}"
+                                        [ngClass]="{'form-control border-danger p-0' : item.hayErrores }"
+                                        (blur)="validarInventario($event,item.inventario,i,item.articuloId,modalLoteSolicitud)"
+                                        (keyup.enter)="validarInventario($event,item.inventario,i,item.articuloId,modalLoteSolicitud)"
+                                        >
+                                    </td>
+                                    <td>
+                                        <input style="width: 200px;" type="text" class="form-control"
+                                            [(ngModel)]="item.costo"
+                                            [disabled]="!cantidadEditable"  mask="separator"
+                                            thousandSeparator=","
+                                            [disabled]="true"
+                                            [ngModelOptions]="{standalone: true}">
+                                    </td>
+                                    <td>
+                                        <input style="width: 200px;" type="text" class="form-control"
+                                            [(ngModel)]="item.inventario"
+                                            [disabled]="!cantidadEditable"  mask="separator"
+                                            thousandSeparator=","
+                                            [disabled]="true"
+                                            [ngModelOptions]="{standalone: true}"
+                                            >
+                                    </td>
+                                    <td>
+                                        <button [hidden]="transferenciaInventarioConfirmado" title="Eliminar" (click)="onDeleteitem(i,item.articuloId)" type="button" class="btn btn-outline-danger">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- <div class="form-group text-right col-md-12" *ngIf="total > 0">
+                        <h1>$ {{total | number:'1.2-5' }}</h1>
+                    </div> -->
+
+                    <div class="form-group text-right col-md-12">
+                        <hr />
+
+                        <a class="btn btn-light m-1" routerLink="../" type="button">
+                            <i class="fas fa-times"></i> Cancelar
+                        </a>
+
+                        <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+                            <i class="fas fa-check"></i> Guardar
+                        </button>
+
+                        <!-- boton cargando -->
+                        <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span> Guardando
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>  
+
+<ng-template #modalLoteSolicitud let-modal class="modal hide" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+      <h4 class="modal-title">Elección de Lote</h4>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+
+        <div class="col-6">
+          <h5 class="text-info"> <i class="fa fa-warehouse "></i>{{ almacenesDesdeSeleccionado}}  </h5>
+          <hr>
+        </div>
+        <div class="col-6">
+            <h5> <i class="fas fa-cubes"></i>Cantidad a Transferir: {{cantidadAtransferir}}  </h5>
+           
+          </div>
+  
+        <div class="col-md-12">
+
+            <table class="table table-hover mb-0 no-wrap v-middle">
+                <thead>
+                    <tr>
+                        <th scope="col">Lote</th>
+                        <th scope="col">Envio</th> 
+                        <th [hidden]="!transferenciaInventarioConfirmado" scope="col">Recepción</th> 
+                        <th scope="col">Existencia</th>
+                        <th scope="col">Vencimiento</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- <tr *ngFor="let item of confirmed | filter: searchText; let i  = index"> -->
+                    <tr *ngFor="let item of loteAlmacen let i=index">
+                        <td>
+                            <input style="width: 100px;" type="text" class="form-control"
+                             placeholder="Lote" 
+                             [(ngModel)]="item.lote"
+                             [ngModelOptions]="{standalone: true}"
+                             [disabled]="true"
+                            >
+                        </td>
+
+                        <td>
+                            <input style="width: 100px;" type="text" class="form-control"
+                                [disabled]="!cantidadEditable"  
+                                thousandSeparator="," 
+                                [(ngModel)]="item.cantidadEnvio"
+                                [disabled]="transferenciaInventarioConfirmado"
+                                [ngClass]="{'form-control border-danger p-0' : item.hayErrores }"
+                                [ngModelOptions]="{standalone: true}"
+                                (blur)="agregarCantidadEnAlmacenLote($event,i,item.cantidad)"
+                                (keyup.enter)="agregarCantidadEnAlmacenLote($event,i,item.cantidad)"
+                                >
+                        </td>
+                        <td  [hidden]="!transferenciaInventarioConfirmado">
+                            <input style="width: 100px;" type="text" class="form-control"
+                                [disabled]="!cantidadEditable"  
+                                thousandSeparator="," 
+                                [(ngModel)]="item.recepcion"
+                                [ngClass]="{'form-control border-danger p-0' : item.hayErrores }"
+                                [ngModelOptions]="{standalone: true}"
+                                (blur)="agregarCantidadEnAlmacenLote($event,i,item.cantidad)"
+                                (keyup.enter)="agregarCantidadEnAlmacenLote($event,i,item.cantidad)"
+                                >
+                        </td>
+                      
+                        <td>
+                            <input style="width: 100px;" type="text"  class="form-control"
+                                [(ngModel)]="item.cantidad"
+                                [disabled]="!cantidadEditable"  
+                                thousandSeparator=","
+                                [disabled]="true"
+                                [ngModelOptions]="{standalone: true}"
+                                >
+                        </td>
+                        <td>
+                            <input style="width: 150px;" type="text" class="form-control"
+                                [(ngModel)]="item.fechaExpira"
+                                [disabled]="!cantidadEditable"  
+                                thousandSeparator=","
+                                [disabled]="true"
+                                [ngModelOptions]="{standalone: true}"
+                                >
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-12">
+          <app-loading-listado [hidden]="!loadingSolicitudDetalle"></app-loading-listado>
+        </div>
+      </div>
+      <div class="form-group text-right col-md-12">
+        <hr />
+        <button class="btn btn-light m-1" (click)="modal.dismiss('Cross click')"  type="button">
+            <i class="fas fa-times"></i> Cancelar
+        </button>
+        <button  class="btn btn-info m-1" 
+        (click)="validarCantidadLoteAlmacenAtransferir(modalLoteSolicitud)" 
+        [disabled]="hayErrores"
+        type="button">
+            <i class="fas fa-check"></i> Validar
+        </button>
+    </div>
+    </div>
+  </ng-template>

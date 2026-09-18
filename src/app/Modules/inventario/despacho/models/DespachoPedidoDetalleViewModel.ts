@@ -1,3 +1,5 @@
+import { ArticuloPesosExtrasViewModel } from "src/app/Modules/produccion/pesaje/models/ArticuloPesosExtrasViewModel";
+
 export class DespachoPedidoDetalleViewModel {
     id: number;
     cotizacionId: number;
@@ -55,6 +57,9 @@ export class DespachoPreventaDetalleViewModel   {
   despacho: number;
   validado: number;
   precio: number;
+  costo: number;
+  pedidoOferta: number;
+  pedidoVentas: number;
   totalMonto: number;
   totalMontoDespacho: number;
   peso: number;
@@ -63,16 +68,26 @@ export class DespachoPreventaDetalleViewModel   {
   lote: string;
   noTieneLote:boolean;
   selected:boolean;
-  page:number;
+  articulosExtraPesajeString?:string;
+
+  articulosExtraPesaje?:ArticuloPesosExtrasViewModel[];
 }
-export class DespachoPreventaDetalleExcelVM   {
+export class DespachoPreventaDetalleExportVM   {
   FechaEntrega?: string;
+  Distribuidor?:string;
+  Despachador?:string;
+
+  Ruta?:number;
+  RutaId?:number;
+
   CodigoArticulo: string;
   Descripcion: string;
   Almacen_Desde: string;
   Almacen_Hasta: string;
   Unidad?: string;
   Peso?: number;
+  Piezas?: number;
+  PiezasRestantes?: number;
   Pedido: number;
   Despacho?: number;
   Lote?: string;
@@ -86,10 +101,19 @@ export class DespachoPreventaRequestModel {
   almacen_Destino: string;
   articuloId: number;
   lote: string;
-  precio
+  precio:number;
+  costo:number;
+  montoPedido:number;
+  pedidoVentas:number;
+
+  pedidoOferta:number;
+  despachoTipo:number;
+
   pedido: number;
   despacho: number;
   validado: number;
+  articulosPesajeExtra?:ArticuloPesosExtrasViewModel[];
+
 }
 
 export class SAPLoteDespachoPedido   {
@@ -108,4 +132,5 @@ export class DespachoInUseVM  {
 }
 export class DespachoRangoHoraRequestModel {
   fecha: Date;
+  SucursalId:number;
 }

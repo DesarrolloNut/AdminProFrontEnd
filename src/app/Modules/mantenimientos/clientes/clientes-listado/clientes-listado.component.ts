@@ -81,6 +81,7 @@ export class ClientesListadoComponent implements OnInit {
 
       });
   }
+  
   getClientes() {
     this.showButtonAutorizar=false;
     this.Cargando = true;
@@ -88,9 +89,8 @@ export class ClientesListadoComponent implements OnInit {
     let parametros: Parametro[] = [
     { key: "Search", value: this.Search },
     { key: "UsuarioId", value:this.usuarioId},
-    { key: "Tipo", value: this.tipo },]
-
-
+    { key: "Tipo", value: this.tipo },
+  ]
     this.httpService.GetAllWithPagination<ClienteViewModelCustomized>(DataApi.Cliente, "GetClientesListadoCustomized", "ID", this.paginaNumeroActual,
       this.paginaSize, false, parametros).subscribe(x => {
 

@@ -1,0 +1,166 @@
+<div class="row">
+    <div class="control-section">
+        <div id="control_wrapper">
+        </div>
+    </div>
+</div>
+<div class="row mb-2">
+    <div class="col">
+        <button class="btn btn-light" routerLink="../"><i class="fa fa-arrow-left"></i> Regresar</button>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 col-12">
+                        <h4 class="card-title">Formulario descuento articulos</h4>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-12 text-right">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-10 col-lg-10 col-12">
+                    </div>
+                    <div class="col-md-2 col-lg-2 col-12 text-right">
+                    </div>
+                </div>
+                <form class="form-row " [formGroup]="Formulario" (ngSubmit)="onSubmit()">
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="form-group col-md-6 col-lg-4 offset-md-6 offset-lg-8 col-6 offset-6">
+                                <label> Tipo Descuento Selección</label>
+                                <ng-select [items]="descuentoTipoSeleccion" bindLabel="nombre"
+                                [clearable]="false" bindValue="codigo" [loading]="loadingDescuentoTipoSeleccion"
+                                formControlName="descuentoTipoSeleccionId" 
+                                (change)="tipoDescuentoSeleccion($event)"
+                                [(ngModel)]="tipoSeleccion"
+                            notFoundText="No resultados">
+                            </ng-select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="inputEmail4">Tipo Descuento</label>
+                        <ng-select [items]="tipoDescuento" bindLabel="nombre"
+                        [clearable]="false" bindValue="codigo" [loading]="loadingTipoDescuento"
+                        formControlName="descuentoTipoId" 
+                    notFoundText="No resultados">
+                    </ng-select>
+                        <div class="invalid-feedback" *ngIf="submitted && f.descuentoTipoId.errors">
+                            <div *ngIf="f.descuentoTipoId.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+                    <div  class="form-group col-md-4">
+                        <div class="form-group ">
+                            <label> <i class="fa fa-calendar"></i> Fecha Desde</label>
+                            <ejs-datepicker 
+                            formControlName="fechaDesde"
+                               [format]="'dd-MM-yyyy'"
+                                [showClearButton]="false"></ejs-datepicker>
+                        </div>
+                        <div class="invalid-feedback" *ngIf="submitted && f.fechaDesde.errors">
+                            <div *ngIf="f.fechaDesde.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+                    <div  class="form-group col-md-4">
+                        <div class="form-group ">
+                            <label> <i class="fa fa-calendar"></i> Fecha Hasta</label>
+                            <ejs-datepicker 
+                            formControlName="fechaHasta"
+                               [format]="'dd-MM-yyyy'"
+                                [showClearButton]="false"></ejs-datepicker>
+                        </div>
+                        <div class="invalid-feedback" *ngIf="submitted && f.fechaHasta.errors">
+                            <div *ngIf="f.fechaHasta.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-4">
+                            <label for="inputEmail4">Artículo</label>
+                            <ng-select  [items]="articulos" bindLabel="nombre"
+                            [clearable]="false" bindValue="codigo" [loading]="loadingArticulos"
+                            formControlName="articuloId" 
+                        notFoundText="No resultados">
+                        </ng-select>
+                            <div class="invalid-feedback" *ngIf="submitted && f.articuloId.errors">
+                                <div *ngIf="f.articuloId.errors.required">El campo es obligatorio</div>
+                            </div>
+                    </div>
+                    <div  class="form-group col-md-4">
+                        <label for="porciento">Cantidad</label>
+                        <input formControlName="cantidad" 
+                        type="number"  
+                        name="cantidad" 
+                            [ngClass]="{'is-invalid' : submitted && f.cantidad.errors,  'form-control':true  }" placeholder="Digite un cantidad">
+                        <div class="invalid-feedback" *ngIf="submitted && f.cantidad.errors">
+                            <div *ngIf="f.cantidad.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+                    <div  class="form-group col-md-4">
+                        <label for="porciento">% Descuento</label>
+                        <input formControlName="porciento" 
+                        type="number"  
+                        name="porciento" 
+                            [ngClass]="{'is-invalid' : submitted && f.porciento.errors,  'form-control':true  }" placeholder="Digite el porcentage de descuento">
+                        <div class="invalid-feedback" *ngIf="submitted && f.porciento.errors">
+                            <div *ngIf="f.porciento.errors.required">El campo es obligatorio</div>
+                        </div>
+                    </div>
+               <div class="form-group col-md-4">
+                    <label for="canalId">Estado</label>
+                        <ng-select [items]="estados" bindLabel="nombre"
+                            [clearable]="false" bindValue="codigo" [loading]="loadingcanales"
+                            formControlName="estadoId" 
+                            notFoundText="No resultados">
+                        </ng-select>
+                    <div class="invalid-feedback" *ngIf="submitted && f.estadoId.errors">
+                        <div *ngIf="f.estadoId.errors.required">El campo es obligatorio</div>
+                    </div>
+               </div>
+               <div class="form-group col-md-4">
+                <label for="inputEmail4">Canal</label>
+                <ng-select [items]="canales" bindLabel="nombre"
+                        [clearable]="false" bindValue="codigo" [loading]="loadingcanales"
+                        formControlName="canal" 
+                        [(ngModel)]="canal"
+                        (change)="canalSeleccionado()"
+                        notFoundText="No resultados">
+                </ng-select>
+                    <div class="invalid-feedback" *ngIf="submitted && f.canal.errors">
+                        <div *ngIf="f.canal.errors.required">El campo es obligatorio</div>
+                    </div>
+               </div>
+           
+          <div class="form-group col-md-12">
+            <label for="entidad">Entidad</label>
+            <ng-multiselect-dropdown
+                [placeholder]="'Seleccione las entidades de descuento'"
+                [settings]="dropdownSettings"
+                [data]="entidades"
+                [ngModelOptions]="{standalone: true}"
+                [(ngModel)]="selectedItems"
+                (onFilterChange)="onFilterChange($event)"
+                >
+           </ng-multiselect-dropdown>   
+         </div>
+                    <div class="form-group text-right col-md-12">
+                        <hr />
+                        <button class="btn btn-light m-1" routerLink="../" type="button">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                        <button *ngIf="!btnGuardarCargando" class="btn btn-info m-1" type="submit">
+                            <i class="fas fa-check"></i> Guardar
+                        </button>
+                        <!-- boton cargando -->
+                        <button *ngIf="btnGuardarCargando" disabled class="btn btn-info m-1" type="button">
+                            <span class="spinner-border spinner-border-sm"></span> Guardando
+                        </button>
+                       
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
